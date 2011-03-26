@@ -107,14 +107,24 @@ namespace Money
             return new Money(CultureInfo.CurrentCulture, value);
         }
 
+        public static implicit operator Money(decimal value)
+        {
+            return new Money(CultureInfo.CurrentCulture, value);
+        }
+
         public static implicit operator long(Money value)
         {
-            return (long) value.ScaleDown();
+            return (long) value.ScaleDownToDouble();
         }
 
         public static implicit operator double(Money value)
         {
-            return value.ScaleDown();
+            return value.ScaleDownToDouble();
+        }
+
+        public static implicit operator decimal(Money value)
+        {
+            return value.ScaleDownToDecimal();
         }
     }
 }

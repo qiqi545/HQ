@@ -30,6 +30,11 @@ namespace Money
 
         }
 
+        public Money(decimal value) : this(CultureInfo.CurrentCulture, value)
+        {
+
+        }
+
         private Money(CurrencyInfo currencyInfo) : this()
         {
             _createdDate = DateTime.UtcNow;
@@ -42,6 +47,11 @@ namespace Money
         }
 
         public Money(CurrencyInfo currencyInfo, double value) : this(currencyInfo)
+        {
+            _units = ScaleUp(value);
+        }
+
+        public Money(CurrencyInfo currencyInfo, decimal value) : this(currencyInfo)
         {
             _units = ScaleUp(value);
         }
@@ -68,19 +78,19 @@ namespace Money
 
         public string ToString(string format, IFormatProvider formatProvider)
         {
-            var value = ScaleDown();
+            var value = ScaleDownToDouble();
 
             return value.ToString(format, formatProvider);
         }
 
         public bool Equals(double other)
         {
-            return other == ScaleDown();
+            return other == ScaleDownToDouble();
         }
 
         public bool Equals(long other)
         {
-            return other == ScaleUp(ScaleDown());
+            return other == ScaleUp(ScaleDownToDouble());
         }
 
         public override bool Equals(object other)
@@ -99,7 +109,7 @@ namespace Money
             return _units.GetHashCode();
         }
 
-        private double ScaleDown()
+        private double ScaleDownToDouble()
         {
             if (_override.HasValue)
             {
@@ -111,6 +121,19 @@ namespace Money
             var scalingFactor = Math.Pow(10, _places);
 
             var scaled = _units/scalingFactor;
+
+            var rounded = Math.Round(scaled, numberFormat.CurrencyDecimalDigits);
+
+            return rounded;
+        }
+
+        private decimal ScaleDownToDecimal()
+        {
+            var numberFormat = _currencyInfo.DisplayCulture.NumberFormat;
+
+            var scalingFactor = Convert.ToDecimal(Math.Pow(10, _places));
+
+            var scaled = _units / scalingFactor;
 
             var rounded = Math.Round(scaled, numberFormat.CurrencyDecimalDigits);
 
@@ -130,6 +153,19 @@ namespace Money
             var scalingFactor = Math.Pow(10, places);
 
             var scaled = Convert.ToInt64(value*scalingFactor);
+
+            _places = places;
+
+            return scaled;
+        }
+
+        private long ScaleUp(decimal value)
+        {
+            var places = CountDecimalPlaces(value);
+
+            var scalingFactor = Convert.ToDecimal(Math.Pow(10, places));
+
+            var scaled = Convert.ToInt64(value * scalingFactor);
 
             _places = places;
 
@@ -235,6 +271,15 @@ namespace Money
         }
 
         private static int CountDecimalPlaces(double input)
+        {
+            var value = input.ToString();
+
+            var places = value.Substring(value.IndexOf('.') + 1).Length;
+
+            return places;
+        }
+
+        private static int CountDecimalPlaces(decimal input)
         {
             var value = input.ToString();
 

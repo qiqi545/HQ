@@ -121,6 +121,16 @@ namespace Money.Tests
         }
 
         [Test]
+        public void Can_divide_money_with_decimals()
+        {
+            const decimal left = 20.00m;
+            const decimal right = 2.00m;
+
+            Money total = left / right;
+            Assert.AreEqual(10.00m, total);
+        }
+
+        [Test]
         public void Can_divide_money_by_negative_identity()
         {
             var left = new Money(1);
@@ -131,6 +141,16 @@ namespace Money.Tests
         }
 
         [Test]
+        public void Can_divide_money_by_negative_identity_with_decimals()
+        {
+            var left = new Money(1m);
+            var right = new Money(-1m);
+
+            var total = right / left;
+            Assert.AreEqual(-1m, total);
+        }
+
+        [Test]
         public void Can_divide_money_by_positive_identity()
         {
             var left = new Money(1);
@@ -138,6 +158,16 @@ namespace Money.Tests
 
             var total = right/left;
             Assert.AreEqual(1, total);
+        }
+
+        [Test]
+        public void Can_divide_money_by_positive_identity_with_decimals()
+        {
+            var left = new Money(1m);
+            var right = new Money(1m);
+
+            var total = right / left;
+            Assert.AreEqual(1m, total);
         }
 
         [Test]
@@ -152,10 +182,28 @@ namespace Money.Tests
         }
 
         [Test]
+        public void Can_handle_division_without_precision_loss_with_decimals()
+        {
+            Money left = 45m;
+            Money right = 13m;
+
+            var total = left / right; // 3.461538461538462
+
+            Assert.AreEqual(3.46m, total);
+        }
+
+        [Test]
         public void Can_handle_small_fractions()
         {
             Money total = 0.1;
             Assert.AreEqual(0.10, (double) total);
+        }
+
+        [Test]
+        public void Can_handle_small_fractions_with_decimals()
+        {
+            Money total = 0.1m;
+            Assert.AreEqual(0.10m, total);
         }
 
         [Test]
@@ -169,6 +217,16 @@ namespace Money.Tests
         }
 
         [Test]
+        public void Can_multiply_identity_without_casting_with_decimals()
+        {
+            var left = new Money(1.00m);
+            var right = new Money(1.00m);
+
+            var total = right * left;
+            Assert.AreEqual(1.00m, total);
+        }
+
+        [Test]
         public void Can_multiply_money()
         {
             var left = new Money(10.00);
@@ -176,6 +234,16 @@ namespace Money.Tests
 
             var total = right*left;
             Assert.AreEqual(200.00, (double) total);
+        }
+
+        [Test]
+        public void Can_multiply_money_with_decimals()
+        {
+            var left = new Money(10.00m);
+            var right = new Money(20.00m);
+
+            var total = right * left;
+            Assert.AreEqual(200.00m, total);
         }
 
         [Test]
@@ -208,7 +276,6 @@ namespace Money.Tests
             Assert.AreEqual(16.00, (double) total);
         }
 
-
         [Test]
         public void Can_preserve_internal_precision()
         {
@@ -222,6 +289,21 @@ namespace Money.Tests
             total += 0.005; // 115.81391
 
             Assert.AreEqual(115.81, (double) total);
+        }
+
+        [Test]
+        public void Can_preserve_internal_precision_with_decimals()
+        {
+            Money total = 0.335678m * 345m; // 115.80891
+
+            // Loss of precision based on rounding rules
+            Assert.AreEqual(115.81m, total);
+
+            // Adding .005 to 115.81 would equal 115.82 
+            // due to rounding if precision was lost
+            total += 0.005m; // 115.81391
+
+            Assert.AreEqual(115.81m, total);
         }
 
         [Test]
@@ -239,6 +321,20 @@ namespace Money.Tests
         }
 
         [Test]
+        public void Can_preserve_internal_rounding_against_larger_fractions_with_decimals()
+        {
+            Money total = 0.335678m * 345m; // 115.80891
+
+            // Loss of precision based on rounding rules
+            Assert.AreEqual(115.81m, total);
+
+            // This number has greater precision than the original
+            total += .00082809m; // 115.80973809
+
+            Assert.AreEqual(115.81m, total);
+        }
+
+        [Test]
         public void Can_preserve_internal_rounding_against_smaller_fractions()
         {
             Money total = 0.335678*345; // 115.80891
@@ -250,6 +346,20 @@ namespace Money.Tests
             total += .456; // 116.26491
 
             Assert.AreEqual(116.26, (double) total);
+        }
+
+        [Test]
+        public void Can_preserve_internal_rounding_against_smaller_fractions_with_decimals()
+        {
+            Money total = 0.335678m * 345m; // 115.80891
+
+            // Loss of precision based on rounding rules
+            Assert.AreEqual(115.81m, total);
+
+            // This number has lesser precision than the original
+            total += .456m; // 116.26491
+
+            Assert.AreEqual(116.26m, total);
         }
 
         [Test]

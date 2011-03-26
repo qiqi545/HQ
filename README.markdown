@@ -85,30 +85,32 @@ that turns disambiguation off.
 
 #### Culture Awareness
 
+Because Money knows that Canada has a French equivalent, it elects to display
+the currency in the "fr-CA" display culture. 
+
 		// Your customer is using your application from Paris, France...
 		Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
 
 		// But you want to display currency in Canadian Dollars
 		Money money = new Money(Currency.CAD, 1000);
         Console.WriteLine(money.ToString());		// Output: 1 000,00 $
-		
-Because Money knows that Canada has a French equivalent, it elects to display
-the currency in the "fr-CA" display culture. 
+	
+The same thing happens if we want to display Canadian currency in Britain;
+Since Canada also has an English equivalent, we get the closest match for
+outputting in English.
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
         Money money = new Money(Currency.CAD, 1000);
         Console.WriteLine(money.ToString());		// Output: $1,000.00 
 
-The same thing happens if we want to display Canadian currency in Britain;
-Since Canada also has an English equivalent, we get the closest match for
-outputting in English.
+There is no CAD equivalent in Germany, so currency display reverts to its
+home and native land.
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
 		Money money = new Money(Currency.CAD, 1000);
         Console.WriteLine(money.ToString());		// Output: $1,000.00 
 
-There is no CAD equivalent in Germany, so currency display reverts to its
-home and native land. Note that this is _not_ the same as if we displayed 
+Note that this is _not_ the same as if we displayed 
 CAD in Germany; _origin matters!_
 
 		Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
