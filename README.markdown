@@ -33,7 +33,7 @@ the constructor, or copy other currency types by passing in their CurrencyInfo i
 	Money fin = new Money(Currency.USD, 5.00);
 	Money fiddy = new Money(money.CurrencyInfo, 50.00);	
 
-Now that we have a money instance, we get access to all kind of regional info:
+Now that we have a money instance, we get access to all kinds of regional info:
 
 	Console.WriteLine(money.CurrencyInfo.Code);				// Outputs: USD
     Console.WriteLine(money.CurrencyInfo.DisplayCulture);   // Outputs: en-US (it's a CultureInfo instance)
@@ -118,11 +118,11 @@ CAD in Germany; _origin matters!_
 
 #### Calculating Money
 
-The Money type supports rounding with large numbers of decimal places, which is troublesome
+The Money type supports currency with large numbers of decimal places, which is troublesome
 using native .NET types, particularly with rounding off. Money acts on Martin Fowler's 
 suggestion of using whole numbers, and internally scales decimal places up and down
 accordingly, so it should meet your needs for accurate rounding without headaches. All
 standard arithmetical operators are provided so you can work with the Money type like
 you normally work with .NET floating point types. In addition, for those working on 
-currency conversion operations, Money stores the time it was created, so that exchange
-rate precedence is established.
+currency conversion operations, Money stores the time it was created in CreatedDate, so that 
+exchange rate precedence is established.
