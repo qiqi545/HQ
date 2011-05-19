@@ -37,7 +37,7 @@ namespace Paging
         // Caches result if source count is ever evaluated
         private int? _sourceCount;
 
-        // Caches result if slice counot is ever evaluated
+        // Caches result if slice count is ever evaluated
         private int? _sliceCount;
 
         public int PageIndex { get; private set; }

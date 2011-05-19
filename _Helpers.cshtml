@@ -1,0 +1,70 @@
+﻿@using Paging;
+
+@helper PagerHeader(IPageable source, string className="") {
+<div class="@className">
+	<p>Showing <b>@source.PageStart - @source.PageEnd</b> of <b>@source.TotalCount</b> results</p>
+</div>
+}
+
+@helper PagerPrev(IPageable source, string text = "« prev") {
+    var prev = source.PageIndex - 1;
+    if (source.HasPreviousPage)
+    {
+		<a href="?page=@prev">@text</a>
+    }  
+}
+
+@helper PagerNext(IPageable source, string text = "next »") {
+    var next = source.PageIndex + 1;
+    if (source.HasNextPage)
+    {
+		<a href="?page=@next">@text</a>
+    }    
+}
+
+@helper Pager(IPageable source, string className = "") {   
+    var last1 = source.TotalPages;
+    var last2 = source.TotalPages - 1;
+    var delta = Math.Abs(source.TotalPages - source.PageIndex);               
+    var start = delta > 8 ? source.PageIndex > 3 ? source.PageIndex - 2 : 1 : source.PageIndex > 1 ? source.PageIndex - 2 : 1;
+    var cells = delta > 8 ? source.PageIndex >= 3 ? source.PageIndex + 2 : 4 : source.PageIndex >= 7 ? source.PageIndex + 1 : 7;
+<div class="@className">
+	<p>	    
+        @*Display the previous page link if available*@
+        @PagerPrev(source)
+
+        @*Display first page and ellipsis if index is far enough away*@
+        @if (source.PageIndex > 3) {            
+        <a href="?page=1">1</a>
+            if(source.PageIndex > 4) {                        
+        <text>...</text>               
+            }         
+        }
+        
+        @*Display pager cells*@        
+        @for (var i = start > 0 ? start : 1; i < cells; i++) {
+            if (source.PageIndex == i) {
+        <span class="pagination-active">@i</span>
+            } else {
+        <a href="?page=@i">@i</a>
+            }
+        }
+
+        @*Display last two pages and ellipsis if index is far enough away*@
+        @if (source.TotalPages > 8 && source.PageIndex < last2 - 1) {        
+		<text>...</text>           
+        }
+        
+        @*Display the last two page cells if we haven't already*@
+        @if (source.PageIndex <= last1 - 1) {
+            if(source.PageIndex != last2) {
+        <a href="?page=@last2">@last2</a>
+            }
+        <a href="?page=@last1">@last1</a>
+        }
+        
+        @*Display the next page link if available*@
+        @PagerNext(source)
+	</p>
+</div>
+}

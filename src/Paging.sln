@@ -5,10 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paging", "Paging\Paging.csp
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4CB8A162-1E44-4CFE-B19B-2ADFBF2B172F}"
 	ProjectSection(SolutionItems) = preProject
-		..\Membership\Membership\App_Code\_Helpers.cshtml = ..\Membership\Membership\App_Code\_Helpers.cshtml
-		LICENSE = LICENSE
-		pager.png = pager.png
-		README.markdown = README.markdown
+		..\_Helpers.cshtml = ..\_Helpers.cshtml
+		..\LICENSE = ..\LICENSE
+		..\pack-nuget.bat = ..\pack-nuget.bat
+		..\paging.nuspec = ..\paging.nuspec
+		..\README.markdown = ..\README.markdown
 	EndProjectSection
 EndProject
 Global
