@@ -32,18 +32,39 @@ namespace Dates
             CalculateSeconds(start, end);
         }
 
+        /// <summary>
+        /// The number of discrete years occurring in this span
+        /// </summary>
         public int Years { get; private set; }
 
+        /// <summary>
+        /// The number of discrete months occurring in this span
+        /// </summary>
         public int Months { get; private set; }
 
+        /// <summary>
+        /// The number of discrete weeks occurring in this span
+        /// </summary>
         public int Weeks { get; private set; }
 
+        /// <summary>
+        /// The number of discrete days occurring in this span
+        /// </summary>
         public int Days { get; private set; }
 
+        /// <summary>
+        /// The number of discrete hours occurring in this span
+        /// </summary>
         public int Hours { get; private set; }
 
+        /// <summary>
+        /// The number of discrete minutes occurring in this span
+        /// </summary>
         public int Minutes { get; private set; }
-
+        
+        /// <summary>
+        /// The number of discrete seconds occurring in this span
+        /// </summary>
         public int Seconds { get; private set; }
 
         /// <summary>

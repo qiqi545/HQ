@@ -12,41 +12,75 @@ namespace Dates
     [DebuggerDisplay("{Frequency} x {Quantifier}")]
     public struct DatePeriod
     {
+        ///<param name="frequency">The period frequency, paired with the quantifier</param>
+        ///<param name="quantifier">The period quantifier, paired with frequency</param>
         public DatePeriod(DatePeriodFrequency frequency, int quantifier) : this()
         {
             Frequency = frequency;
             Quantifier = quantifier;
         }
 
+        /// <summary>
+        /// The period frequency, paired with <see cref="Quantifier" />
+        /// </summary>
         public DatePeriodFrequency Frequency { get; private set; }
 
+        /// <summary>
+        /// The period quantifier, paired with <see cref="Frequency" />
+        /// </summary>
         public int Quantifier { get; private set; }
 
+        /// <summary>
+        /// A period of time occurring every day
+        /// </summary>
+        public static DatePeriod Daily
+        {
+            get { return new DatePeriod(DatePeriodFrequency.Days, 1); }
+        }
+
+        /// <summary>
+        /// A period of time occurring every month
+        /// </summary>
         public static DatePeriod Monthly
         {
             get { return new DatePeriod(DatePeriodFrequency.Months, 1); }
         }
 
+        /// <summary>
+        /// A period of time occurring every other month
+        /// </summary>
         public static DatePeriod BiMonthly
         {
             get { return new DatePeriod(DatePeriodFrequency.Months, 2); }
         }
 
+        /// <summary>
+        /// A period of time occurring every week
+        /// </summary>
         public static DatePeriod Weekly
         {
             get { return new DatePeriod(DatePeriodFrequency.Weeks, 1); }
         }
 
+        /// <summary>
+        /// A period of time occurring every other week
+        /// </summary>
         public static DatePeriod BiWeekly
         {
             get { return new DatePeriod(DatePeriodFrequency.Weeks, 2); }
         }
 
+        /// <summary>
+        /// A period of time occurring every year
+        /// </summary>
         public static DatePeriod Annually
         {
             get { return new DatePeriod(DatePeriodFrequency.Years, 1); }
         }
 
+        /// <summary>
+        /// A period of time occurring every other year
+        /// </summary>
         public static DatePeriod BiAnnually
         {
             get { return new DatePeriod(DatePeriodFrequency.Years, 2); }
