@@ -7,11 +7,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "tophat", "tophat\tophat.xpr
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "container", "container\container.xproj", "{738C3165-994C-4013-A589-2F1E850C31DA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3A7EEA7-2B75-4A74-B8E4-AA53A750C27A}"
-	ProjectSection(SolutionItems) = preProject
-		..\imeo\global.json = ..\imeo\global.json
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
