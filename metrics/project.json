@@ -1,0 +1,29 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "metrics Class Library",
+  "authors": [ "Daniel" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+  "dependencies": {
+    "System.Collections.Concurrent": "4.0.11-beta-23225",
+    "System.Console": "4.0.0-beta-23225",
+    "System.IO.FileSystem": "4.0.1-beta-23225",
+    "System.Runtime.Serialization.Primitives": "4.0.11-beta-23225",
+    "System.Security.Cryptography.RandomNumberGenerator": "4.0.0-beta-23109",
+    "System.Threading.Thread": "4.0.0-beta-23225",
+  },
+
+  "frameworks": {
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23225",
+        "System.Collections": "4.0.11-beta-23225",
+        "System.Linq": "4.0.1-beta-23225",
+        "System.Runtime": "4.0.21-beta-23225",
+        "System.Threading": "4.0.11-beta-23225"
+      }
+    }
+  }
+}
