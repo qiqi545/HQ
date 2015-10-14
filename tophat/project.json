@@ -1,15 +1,14 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "container",
-  "authors": [ "Daniel Crenna" ],
+  "description": "tophat",
+  "authors": [ "Daniel" ],
   "tags": [ "" ],
-  "projectUrl": "https://bitbucket.org/danielcrenna/webstack.dnx5/container",
+  "projectUrl": "https://bitbucket.org/danielcrenna/webstack.dnx5/tophat",
   "licenseUrl": "https://opensource.org/licenses/MIT",
 
   "dependencies": {
-    "Microsoft.Dnx.Runtime": "1.0.0-beta7",
-    "Microsoft.Framework.Logging": "1.0.0-beta7",
-    "Microsoft.Framework.DependencyInjection": "1.0.0-beta7"
+    "container": "1.0.0-*",
+    "System.Data.Common": "4.0.1-beta-23225"
   },
 
   "frameworks": {
@@ -23,4 +22,5 @@
       }
     }
   }
+
 }
