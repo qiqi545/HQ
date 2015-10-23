@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
-using hashing;
 
-namespace gadfly.Core
+namespace hashing
 {
     public class HashidsHashProvider : IReversibleHashProvider
     {
@@ -15,6 +14,21 @@ namespace gadfly.Core
         public string Hash(long value)
         {
             return _hashIds.EncodeLong(value);
+        }
+
+        public string Hash(byte[] value)
+        {
+            int[] buffer = new int[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                buffer[i] = value[i];
+            }
+            return _hashIds.Encode(buffer);
+        }
+
+        public Task<string> HashAsync(byte[] value)
+        {
+            return Task.Run(() => Hash(value));
         }
 
         public Task<string> HashAsync(long value)
