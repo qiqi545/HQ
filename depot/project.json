@@ -1,0 +1,27 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "depot",
+  "authors": [ "Daniel" ],
+  "tags": [ "" ],
+  "projectUrl": "https://bitbucket.org/danielcrenna/webstack.dnx5/depot",
+  "licenseUrl": "https://opensource.org/licenses/MIT",
+
+  "dependencies": {
+    "Microsoft.Framework.Caching.Memory": "1.0.0-beta7",
+    "Microsoft.Framework.Caching.Abstractions": "1.0.0-beta7",
+    "System.IO.Compression": "4.0.1-beta-23225",
+    "System.Threading.Thread": "4.0.0-beta-23225"
+  },
+
+  "frameworks": {
+    "dnxcore50": {
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23225",
+        "System.Collections": "4.0.11-beta-23225",
+        "System.Linq": "4.0.1-beta-23225",
+        "System.Runtime": "4.0.21-beta-23225",
+        "System.Threading": "4.0.11-beta-23225"
+      }
+    }
+  }
+}
