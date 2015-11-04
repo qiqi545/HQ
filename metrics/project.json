@@ -12,7 +12,7 @@
     "System.IO.FileSystem": "4.0.1-beta-23225",
     "System.Runtime.Serialization.Primitives": "4.0.11-beta-23225",
     "System.Security.Cryptography.RandomNumberGenerator": "4.0.0-beta-23109",
-    "System.Threading.Thread": "4.0.0-beta-23225",
+    "System.Threading.Thread": "4.0.0-beta-23225"
   },
 
   "frameworks": {
