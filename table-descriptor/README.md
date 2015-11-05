@@ -14,9 +14,3 @@ will save you the work of performing meta-data oriented tasks, and provide
 fast member access for the times you want to invoke get/set against that 
 mapping.
 
-### Features
-
-### Mapping a type by convention
-
-### Mapping a type with your own convention
-

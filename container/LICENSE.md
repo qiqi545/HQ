@@ -17,5 +17,5 @@ IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 Currently includes an embedded version of Munq:
 Munq (http://munq.codeplex.com)
 --------------------------------------
-© Copyright 2011 by Matthew Dennis.
+ï¿½ Copyright 2011 by Matthew Dennis.
 Released under the Microsoft Public License (Ms-PL) http://www.opensource.org/licenses/ms-pl.html
