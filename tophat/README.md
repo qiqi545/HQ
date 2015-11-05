@@ -6,10 +6,10 @@ PM> Install-Package tophat
 
 ### Introduction
 Tophat gives you a unit of work to perform data operations against, independent of your database.
-Any database that provides support for `IDbConnection` works in tophat. Most ORMs today provide
+Any database that provides support for `DbConnection` works in tophat. Most ORMs today provide
 some kind of session scoping (NHibernate uses Session, Linq-To-SQL uses DataContext, etc.) but
 for many use cases, ORMs are unnecessary. New micro-ORM layers like Dapper and PetaPoco simply extend
-the `IDbConnection` interface. Tophat provides scoping the same way.
+the `DbConnection` interface. Tophat provides scoping the same way.
 
 ### Features
 
