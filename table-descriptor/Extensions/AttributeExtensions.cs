@@ -10,5 +10,11 @@ namespace table_descriptor.Extensions
             Attribute exists = accessor.Attributes.OfType<T>().FirstOrDefault();
             return exists != null;
         }
+
+        public static T Get<T>(this PropertyAccessor accessor) where T : Attribute
+        {
+            var exists = accessor.Attributes.OfType<T>().FirstOrDefault();
+            return exists;
+        }
     }
 }

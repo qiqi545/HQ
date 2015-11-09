@@ -1,6 +1,6 @@
 ### tuxedo
 
-Tuxedo is a database-agnostic SQL generator for DML. It also includes optional `IDbConnection` extension methods
+Tuxedo is a database-agnostic SQL generator for DML. It also includes optional `DbConnection` extension methods
 that use Dapper underneath to provide `Insert`, `Update`, and `Delete` commands. Basically
 it lets you use Dapper for query construction, but alleviates the tedium of `INSERT`, `UPDATE`, and `DELETE` calls
 that are formulaic. It uses [TableDescriptor](http://github.com/danielcrenna/TableDescriptor) to perform the

@@ -2,7 +2,7 @@
 
 namespace table_descriptor
 {
-    public interface Descriptor
+    public interface IDescriptor
     {
         string Schema { get; set; }
         string Table { get; }

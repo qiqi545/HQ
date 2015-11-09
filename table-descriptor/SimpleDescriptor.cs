@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using fastmember;
 using table_descriptor.Extensions;
 
@@ -18,13 +20,15 @@ namespace table_descriptor
     /// CreatedAt -> Computed (assumes timestamp field)
     /// </remarks>
     /// </summary>
-    public class SimpleDescriptor : Descriptor
+    public class SimpleDescriptor : IDescriptor
     {
         private static readonly Hashtable Descriptors = new Hashtable();
+
         public static SimpleDescriptor Create<T>()
         {
             return Create(typeof(T));
         }
+
         public static SimpleDescriptor Create(Type type)
         {
             var obj = (SimpleDescriptor)Descriptors[type];
@@ -43,23 +47,27 @@ namespace table_descriptor
         public string Schema { get; set; }
         public string Table { get; private set; }
         public PropertyToColumn Identity { get; private set; }
+        public PropertyToColumn SearchKey { get; private set; }
         public IList<PropertyToColumn> All { get; private set; }
         public IList<PropertyToColumn> Insertable { get; private set; }
         public IList<PropertyToColumn> Computed { get; private set; }
         public IList<PropertyToColumn> Keys { get; private set; }
         public IList<PropertyToColumn> Assigned { get; private set; }
         public Type Type { get; private set; }
-        
+
         public PropertyToColumn this[int index]
         {
             get { return All[index]; }
             set { All[index] = value; }
         }
 
-        public SimpleDescriptor(Type type)
+        protected SimpleDescriptor(Type type)
         {
             Type = type;
-            Table = type.Name;
+
+            TableNameAttribute tableNameAttribute = type.GetTypeInfo().GetCustomAttribute<TableNameAttribute>();
+            Table = tableNameAttribute != null ? tableNameAttribute.Name : type.Name;
+
             All = new List<PropertyToColumn>();
             Describe();
             BuildCachedProperties();
@@ -68,6 +76,7 @@ namespace table_descriptor
         private void BuildCachedProperties()
         {
             Identity = All.SingleOrDefault(p => p.IsIdentity);
+            SearchKey = All.SingleOrDefault(p => p.IsSearchKey);
             Insertable = All.Where(p => !p.IsComputed && !p.IsIdentity).ToList();
             Computed = All.Where(p => p.IsComputed).ToList();
             Keys = All.Where(p => p.IsKey).ToList();
@@ -77,8 +86,10 @@ namespace table_descriptor
         public void Describe()
         {
             All.Clear();
+
             var ids = new List<PropertyToColumn>();
             var properties = ProjectFromTypeAccessor().ToList();
+            var columnMappings = new List<PropertyToColumn>();
 
             foreach (var property in properties)
             {
@@ -89,37 +100,50 @@ namespace table_descriptor
 
                 var column = new PropertyToColumn(property)
                 {
-                    IsComputed = property.Has<ComputedAttribute>()
+                    IsComputed = property.Has<ComputedAttribute>(),
+                    IsSearchKey = property.Has<SearchKeyAttribute>()
                 };
 
-                All.Add(column);
-                
-                if (column.Property.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase))
+                if (property.Has<ColumnNameAttribute>())
                 {
-                    AssignKey(property, column, ids);
+                    column.ColumnName = property.Get<ColumnNameAttribute>().Name;
+                    columnMappings.Add(column);
                 }
 
-                if(column.Property.Name.Equals("createdat", StringComparison.OrdinalIgnoreCase))
+                All.Add(column);
+
+                // If a class property ends with ID, assume it to be a Identity Key column unless user opts out w/ Key attribute
+                if (column.Property.Name.EndsWith("id", StringComparison.OrdinalIgnoreCase))
+                {
+                    var hasKey = property.Has<KeyAttribute>();
+                    if (!hasKey || property.Get<KeyAttribute>().Identity)
+                    {
+                        AssignKey(property, column, ids);
+                    }
+                }
+
+                // If a class property is CreatedAt, assume it to be a database-side timestamp field
+                if (column.Property.Name.Equals("createdat", StringComparison.OrdinalIgnoreCase))
                 {
                     column.IsComputed = true;
                 }
             }
 
             MakeCompositeKeyIfMultiplePossibleIdentities(ids);
-            
+
             foreach (var property in properties)
             {
-                if (property.Has<IdentityAttribute>())
-                {
-                    var column = All.SingleOrDefault(a => a.ColumnName.Equals(property.Name));
-                    if (column != null)
-                    {
-                        column.IsIdentity = true;
-                        column.IsComputed = true;
-                    }
-                }
+                if (!property.Has<IdentityAttribute>()) continue;
+                var column = All.SingleOrDefault(a => a.ColumnName.Equals(property.Name));
+                if (column == null) continue;
+
+                column.IsIdentity = true;
+                column.IsComputed = true;
             }
+
         }
+
+        public virtual void OnDescribed() { }
 
         private static void AssignKey(PropertyAccessor property, PropertyToColumn column, ICollection<PropertyToColumn> ids)
         {
