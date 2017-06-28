@@ -5,7 +5,7 @@ This library contains code for simplifying .NET Core platform execution. This me
 
 ```csharp
 
-var handlers = new HandlerFactory(new PlatformCompilerContext());
+var handlers = new HandlerFactory();
 
 var info = new HandlerInfo {
 	Namespace = "hq",
