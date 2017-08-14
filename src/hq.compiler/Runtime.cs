@@ -9,8 +9,10 @@ namespace hq.compiler
     {
         public static IEnumerable<Assembly> GetRuntimeAssemblies()
         {
-            var assemblies = DependencyContext.Default.RuntimeLibraries
-                .SelectMany(info => info.Assemblies)
+            var dependencies = DependencyContext.Default.RuntimeLibraries
+                .SelectMany(info => info.Dependencies);
+
+            var assemblies = dependencies
                 .Select(info => Assembly.Load(info.Name));
 
             return assemblies;

@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using hq.compiler;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using hq.compiler;
 
-namespace Example
+namespace hq.compiler.example
 {
     public class Startup
     {
@@ -19,17 +18,15 @@ namespace Example
             services.AddSingleton(r => new HandlerFactory(r.GetRequiredService<IAssemblyBuilder>()));
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            loggerFactory.AddConsole();
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
 
             var handlers = app.ApplicationServices.GetRequiredService<HandlerFactory>();
-            
+
             app.Run(async context =>
             {
                 MethodInfo h = handlers.BuildHandler(new HandlerInfo());
