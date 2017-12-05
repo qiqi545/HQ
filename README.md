@@ -22,15 +22,14 @@ the `IDbConnection` interface. Tophat provides scoping the same way.
 
 ```csharp
 // One database connection per web request
-var connectionString = "Data Source=(local);Initial Catalog=MyDatabase;Integrated Security=true";
+var connectionString = "...";
 services.AddDatabaseConnection<SqlServerConnectionFactory>(connectionString, ConnectionScope.ByRequest);
 ```
 
 ### Using a scoped connection (per-class resolution, supporting multiple database types)
 ```csharp
-
 // Somewhere in your DI code...
-var connectionString = "Data Source=(local);Initial Catalog=MyDatabase;Integrated Security=true";
+var connectionString = "...";
 services.AddDatabaseConnection<MyRepository, SqlServerConnectionFactory>(connectionString, ConnectionScope.ByRequest);
 
 using tophat;
@@ -46,13 +45,13 @@ public class MyRepository
     }
 
     public IEnumerable<Foo> GetFooz()
-	{
-		// Automatic handling of connection scope
-		IDbConnection db = _connection.Current;
+    {
+        // Automatic handling of connection scope
+        IDbConnection db = _connection.Current;
 
-		// Regular Dapper operations against an IDbConnection
-		return db.Query<Fooz>("SELECT * FROM Fooz");
-	}
+        // Regular Dapper operations against an IDbConnection
+        return db.Query<Fooz>("SELECT * FROM Fooz");
+    }
 }
 ```
 
@@ -64,15 +63,15 @@ using Dapper;
 public class MyRepository
 {
     public IEnumerable<Foo> GetFooz()
-	{
-	     // Manual handling of connection scope
-		 var cs = "Data Source=(local);Initial Catalog=MyDatabase;Integrated Security=true";
+    {
+         // Manual handling of connection scope
+         var cs = "...";
          using (var db = new SqlServerDataContext(cs))
          {
              // Regular Dapper operations against an IDbConnection
-		     return db.Query<Foo>("SELECT * FROM Fooz");
-         }		
-	}
+             return db.Query<Foo>("SELECT * FROM Fooz");
+         }        
+    }
 }
 ```
 
