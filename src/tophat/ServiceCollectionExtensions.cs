@@ -20,22 +20,27 @@ namespace tophat
 		    {
 			    case ConnectionScope.AlwaysNew:
 				    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)));
-				    break;
+				    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)));
+					break;
 			    case ConnectionScope.ByRequest:
 				    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Request);
-				    break;
+				    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)), Lifetime.Request);
+					break;
 			    case ConnectionScope.ByThread:
 				    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Thread);
-				    break;
+				    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)), Lifetime.Thread);
+					break;
 			    case ConnectionScope.KeepAlive:
 				    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Permanent);
-				    break;
+				    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)), Lifetime.Permanent);
+					break;
 			    default:
 				    throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
 		    }
 
 		    services.AddTransient(r => Container.Resolve<DataContext>(slot));
-		    return services;
+		    services.AddTransient(r => Container.Resolve<IDataConnection>(slot));
+			return services;
 	    }
 
 		public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(this IServiceCollection services, string connectionString, ConnectionScope scope) 

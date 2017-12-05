@@ -13,6 +13,7 @@
     <Copyright>(c) 2012-2017 Daniel Crenna</Copyright>
     <Description>Provides unit-of-work style connection scoping to any ADO.NET supporting database.</Description>
     <PackageReleaseNotes>v2.0.0 - .NET Standard support and API redesign</PackageReleaseNotes>
+    <PackageTags>IDbConnection Dapper</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
