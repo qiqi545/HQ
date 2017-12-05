@@ -1,7 +1,7 @@
-### webstack
-#### http://bitbucket.org/danielcrenna/webstack.dnx5
+### tophat
+#### http://github.com/danielcrenna/tophat
 
-Copyright (c) 2009-2015 Conatus Creative Inc.
+Copyright (c) 2012-2017 Daniel Crenna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
 documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
