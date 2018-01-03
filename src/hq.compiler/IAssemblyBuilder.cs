@@ -4,6 +4,7 @@ namespace hq.compiler
 {
     public interface IAssemblyBuilder
     {
-        Assembly Create(string code, params Assembly[] assemblies);
+        Assembly CreateInMemory(string code, params Assembly[] assemblies);
+	    Assembly CreateOnDisk(string code, string outputPath, string pdbPath = null, params Assembly[] dependencies);
     }
 }

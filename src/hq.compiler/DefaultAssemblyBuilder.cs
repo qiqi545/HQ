@@ -8,6 +8,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
 using Microsoft.Extensions.DependencyModel;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace hq.compiler
 {
@@ -15,39 +17,62 @@ namespace hq.compiler
     {
         private readonly AssemblyLoadContext _context;
         private readonly IEnumerable<IMetadataReferenceResolver> _resolvers;
-        
-        public DefaultAssemblyBuilder(IAssemblyLoadContextProvider provider, IEnumerable<IMetadataReferenceResolver> resolvers)
+	    private readonly ILogger<DefaultAssemblyBuilder> _logger;
+
+	    public DefaultAssemblyBuilder(IAssemblyLoadContextProvider provider, IEnumerable<IMetadataReferenceResolver> resolvers, ILogger<DefaultAssemblyBuilder> logger = null)
         {
             _resolvers = resolvers;
-            _context = provider.Get();
+	        _logger = logger;
+	        _context = provider.Get();
         }
 
-        public Assembly Create(string code, params Assembly[] dependencies)
+        public Assembly CreateInMemory(string code, params Assembly[] dependencies)
         {
-            var references = ResolveReferences(dependencies);
-            var syntaxTree = CSharpSyntaxTree.ParseText(code);
+	        var compilation = CreateCompilation(code, dependencies);
 
-            CSharpCompilation compilation = CSharpCompilation.Create(
-                $"{Guid.NewGuid()}.dll",
-                new[] { syntaxTree },
-                references,
-                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-
-            using (var peStream = new MemoryStream())
+	        using (var peStream = new MemoryStream())
             {
                 using (var pdbStream = new MemoryStream())
                 {
                     EmitResult result = compilation.Emit(peStream, pdbStream);
+					IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+					foreach(var failure in failures)
+						_logger?.LogError(JsonConvert.SerializeObject(failure));
 
-                    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
                     peStream.Seek(0, SeekOrigin.Begin);
-                    Assembly assembly = _context.LoadFromStream(peStream, pdbStream);
+                    var assembly = _context.LoadFromStream(peStream, pdbStream);
                     return assembly;
                 }
             }
         }
 
-        private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
+	    public Assembly CreateOnDisk(string code, string outputPath, string pdbPath = null, params Assembly[] dependencies)
+	    {
+			var compilation = CreateCompilation(code, dependencies);
+
+		    EmitResult result = compilation.Emit(outputPath, pdbPath);
+		    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+		    foreach (var failure in failures)
+			    _logger?.LogError(JsonConvert.SerializeObject(failure));
+
+			Assembly assembly = Assembly.LoadFile(outputPath);
+		    return assembly;
+		}
+
+		private CSharpCompilation CreateCompilation(string code, Assembly[] dependencies)
+	    {
+		    var references = ResolveReferences(dependencies);
+		    var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+		    CSharpCompilation compilation = CSharpCompilation.Create(
+			    $"{Guid.NewGuid()}.dll",
+			    new[] {syntaxTree},
+			    references,
+			    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+		    return compilation;
+	    }
+		
+	    private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
         {
             var compiled = GetCompileTimeReferences();
             var references = new HashSet<MetadataReference>(compiled);

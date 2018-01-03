@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using Xunit;
 
 namespace hq.compiler.tests
@@ -21,12 +23,40 @@ namespace hq.compiler.tests
         [Fact]
         public void Can_build_default_handler()
         {
-            var info = new HandlerInfo
-            {
-                Namespace = "hq",
-                Function = "Execute",
-                Entrypoint = "hq.Main",
-                Code = @"
+            var info = CreateDefaultHandler();
+			var h = _fixture.Factory.BuildHandler(info);
+            var r = (string) h.Invoke(null, new object[] {});
+			Assert.Equal("Hello, World!", r);
+        }
+
+	    [Fact]
+	    public void Can_roundtrip_assembly()
+	    {
+		    var tempPath = Path.GetTempFileName();
+
+			var info = CreateDefaultHandler();
+		    var a = _fixture.Factory.BuildAssemblyOnDisk(info, tempPath);
+			Assert.NotNull(a);
+
+		    string entrypoint = info.Entrypoint ?? $"{info.Namespace ?? "hq"}.Main";
+		    Type t = a?.GetType(entrypoint);
+		    string function = info.Function ?? "Execute";
+		    MethodInfo h = t?.GetMethod(function, BindingFlags.Public | BindingFlags.Static);
+
+			var r = (string)h.Invoke(null, new object[] { });
+		    Assert.Equal("Hello, World!", r);
+
+		    File.Delete(tempPath);
+	    }
+
+		private static HandlerInfo CreateDefaultHandler()
+	    {
+		    var info = new HandlerInfo
+		    {
+			    Namespace = "hq",
+			    Function = "Execute",
+			    Entrypoint = "hq.Main",
+			    Code = @"
 namespace hq
 { 
     public class Main
@@ -37,12 +67,8 @@ namespace hq
         }
     }
 }"
-            };
-
-            var h = _fixture.Factory.BuildHandler(info);
-            var r = (string) h.Invoke(null, new object[] {});
-
-            Console.WriteLine(r); // Hello, World!
-        }
+		    };
+		    return info;
+	    }
     }
 }
