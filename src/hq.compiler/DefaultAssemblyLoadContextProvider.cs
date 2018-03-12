@@ -2,7 +2,7 @@ using System.Runtime.Loader;
 
 namespace hq.compiler
 {
-    public class AssemblyLoadContextProvider : IAssemblyLoadContextProvider
+    public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
     {
         public AssemblyLoadContext Get()
         {

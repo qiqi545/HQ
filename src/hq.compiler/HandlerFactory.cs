@@ -10,7 +10,7 @@ namespace hq.compiler
         private readonly IAssemblyBuilder _builder;
         private readonly IEnumerable<Assembly> _defaultDependencies;
 
-        public HandlerFactory(IAssemblyBuilder builder, IEnumerable<Assembly> defaultDependencies)
+	    public HandlerFactory(IAssemblyBuilder builder, IEnumerable<Assembly> defaultDependencies)
         {
             _builder = builder;
             _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
@@ -22,10 +22,9 @@ namespace hq.compiler
             _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
         }
 
-		public static HandlerFactory Default = new HandlerFactory(new DefaultAssemblyBuilder(new AssemblyLoadContextProvider(), new IMetadataReferenceResolver[]
-	    {
-		    new DefaultMetadataReferenceResolver()
-	    }));
+	    public HandlerFactory() : this (new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), new IMetadataReferenceResolver[] { new DefaultMetadataReferenceResolver() })) { }
+		
+		public static HandlerFactory Default = new HandlerFactory();
 
 	    public Assembly BuildAssemblyInMemory(HandlerInfo info, params Assembly[] dependencies)
 	    {

@@ -1,7 +1,8 @@
 HQ.io
 ==============
 
-This library contains code for simplifying .NET Core platform execution. This means helper functions and running and compiling arbitrary code in isolation.
+This library contains code for simplifying .NET Core platform execution. 
+This means helper functions and running and compiling arbitrary code in isolation.
 
 ```csharp
 
@@ -28,5 +29,4 @@ namespace hq
 
   Console.WriteLine(r); // Hello, World!
 }
-
 ```

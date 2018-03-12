@@ -13,7 +13,7 @@ namespace hq.compiler.tests
         public HandlerFactoryFixture()
         {
             var resolvers = new List<IMetadataReferenceResolver> { new DefaultMetadataReferenceResolver() };
-            var builder = new DefaultAssemblyBuilder(new AssemblyLoadContextProvider(), resolvers);
+            var builder = new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), resolvers);
             Factory = new HandlerFactory(builder, typeof(string).GetTypeInfo().Assembly); // mscorlib
         }
 
