@@ -41,13 +41,11 @@ namespace hq.compiler
         public object CreateInstance(Type implementationType)
         {
             // activator 
-            ParameterlessObjectActivator activator;
-            if (!_emptyActivators.TryGetValue(implementationType, out activator))
-            {
-                ConstructorInfo ctor = implementationType.GetConstructor(Type.EmptyTypes);
-                _emptyActivators[implementationType] = activator = DynamicMethodFactory.Build(implementationType, ctor);
-            }
-            return activator();
+	        if (_emptyActivators.TryGetValue(implementationType, out var activator))
+		        return activator();
+	        var ctor = implementationType.GetConstructor(Type.EmptyTypes);
+	        _emptyActivators[implementationType] = activator = DynamicMethodFactory.Build(implementationType, ctor);
+	        return activator();
         }
 
         /// <summary> Create an instance of a type assuming a set of parameters. </summary>
@@ -57,11 +55,10 @@ namespace hq.compiler
                 return CreateInstance(implementationType);
 
             // activator 
-            ObjectActivator activator;
-            if (!_activators.TryGetValue(implementationType, out activator))
+	        if (!_activators.TryGetValue(implementationType, out var activator))
             {
-                ConstructorInfo ctor = GetOrCacheConstructorForType(implementationType);
-                ParameterInfo[] parameters = GetOrCacheParametersForConstructor(ctor);
+                var ctor = GetOrCacheConstructorForType(implementationType);
+                var parameters = GetOrCacheParametersForConstructor(ctor);
                 _activators[implementationType] = activator = DynamicMethodFactory.Build(implementationType, ctor, parameters);
             }
 
@@ -71,8 +68,7 @@ namespace hq.compiler
         public ParameterInfo[] GetOrCacheParametersForConstructor(ConstructorInfo ctor)
         {
             // constructor->parameters
-            ParameterInfo[] parameters;
-            if (!_constructorParameters.TryGetValue(ctor, out parameters))
+	        if (!_constructorParameters.TryGetValue(ctor, out var parameters))
                 _constructorParameters[ctor] = parameters = ctor.GetParameters();
             return parameters;
         }
@@ -80,16 +76,15 @@ namespace hq.compiler
         public ConstructorInfo GetOrCacheConstructorForType(Type implementationType)
         {
             // type->constructor
-            ConstructorInfo ctor;
-            if (!_constructors.TryGetValue(implementationType, out ctor))
+	        if (!_constructors.TryGetValue(implementationType, out var ctor))
                 _constructors[implementationType] = ctor = GetWidestConstructor(implementationType);
             return ctor;
         }
 
         private static ConstructorInfo GetWidestConstructor(Type implementationType)
         {
-            ConstructorInfo[] ctors = implementationType.GetConstructors();
-            ConstructorInfo ctor = ctors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
+            var ctors = implementationType.GetConstructors();
+            var ctor = ctors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
             return ctor ?? implementationType.GetConstructor(Type.EmptyTypes);
         }
 
@@ -110,7 +105,7 @@ namespace hq.compiler
             {
                 var dynamicMethod = new DynamicMethod($"{implementationType.FullName}.ctor", implementationType, new[] { typeof(object[]) });
                 var il = dynamicMethod.GetILGenerator();
-                for (int i = 0; i < parameters.Count; i++)
+                for (var i = 0; i < parameters.Count; i++)
                 {
                     il.Emit(OpCodes.Ldarg_0);
                     switch (i)
@@ -127,7 +122,7 @@ namespace hq.compiler
                         default: il.Emit(OpCodes.Ldc_I4, i); break;
                     }
                     il.Emit(OpCodes.Ldelem_Ref);
-                    Type paramType = parameters[i].ParameterType;
+                    var paramType = parameters[i].ParameterType;
                     il.Emit(paramType.GetTypeInfo().IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass, paramType);
                 }
 

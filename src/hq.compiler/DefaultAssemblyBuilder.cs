@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace hq.compiler
 {
-    public class DefaultAssemblyBuilder : IAssemblyBuilder
+	public class DefaultAssemblyBuilder : IAssemblyBuilder
     {
         private readonly AssemblyLoadContext _context;
         private readonly IEnumerable<IMetadataReferenceResolver> _resolvers;
@@ -34,12 +34,10 @@ namespace hq.compiler
             {
                 using (var pdbStream = new MemoryStream())
                 {
-                    EmitResult result = compilation.Emit(peStream, pdbStream);
-					IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
-					foreach(var failure in failures)
-						_logger?.LogError(JsonConvert.SerializeObject(failure));
+                    var result = compilation.Emit(peStream, pdbStream);
+					MaybeLogWarningsAndErrors(result);
 
-                    peStream.Seek(0, SeekOrigin.Begin);
+					peStream.Seek(0, SeekOrigin.Begin);
                     var assembly = _context.LoadFromStream(peStream, pdbStream);
                     return assembly;
                 }
@@ -50,16 +48,33 @@ namespace hq.compiler
 	    {
 			var compilation = CreateCompilation(code, dependencies);
 
-		    EmitResult result = compilation.Emit(outputPath, pdbPath);
-		    IEnumerable<Diagnostic> failures = result.Diagnostics.Where(diagnostic => diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
-		    foreach (var failure in failures)
-			    _logger?.LogError(JsonConvert.SerializeObject(failure));
+		    var result = compilation.Emit(outputPath, pdbPath);
+			MaybeLogWarningsAndErrors(result);
 
-			Assembly assembly = Assembly.LoadFile(outputPath);
+		    var assembly = Assembly.LoadFile(outputPath);
 		    return assembly;
 		}
 
-		private CSharpCompilation CreateCompilation(string code, Assembly[] dependencies)
+	    private void MaybeLogWarningsAndErrors(EmitResult result)
+	    {
+		    var warnings = result.Diagnostics.Where(diagnostic =>
+			    !diagnostic.IsSuppressed && !diagnostic.IsWarningAsError && diagnostic.Severity == DiagnosticSeverity.Warning);
+		    foreach (var warning in warnings)
+		    {
+				if(_logger.IsEnabled(LogLevel.Warning))
+					_logger?.LogWarning(JsonConvert.SerializeObject(warning));
+		    }
+
+			var errors = result.Diagnostics.Where(diagnostic =>
+				!diagnostic.IsSuppressed && diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+		    foreach (var error in errors)
+		    {
+				if(_logger.IsEnabled(LogLevel.Error))
+					_logger?.LogError(JsonConvert.SerializeObject(error));
+		    }
+	    }
+
+	    private CSharpCompilation CreateCompilation(string code, IEnumerable<Assembly> dependencies)
 	    {
 		    var references = ResolveReferences(dependencies);
 		    var syntaxTree = CSharpSyntaxTree.ParseText(code);

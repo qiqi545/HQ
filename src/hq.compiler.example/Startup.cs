@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +23,8 @@ namespace hq.compiler.example
 
             app.Run(async context =>
             {
-                MethodInfo h = handlers.BuildHandler(new HandlerInfo());
-
-                var r = (string)h.Invoke(null, new object[] { });
-
+                var h = handlers.BuildHandler(new HandlerInfo());
+	            var r = (string) h.DynamicInvoke(null, null);
                 await context.Response.WriteAsync(r);
             });
         }
