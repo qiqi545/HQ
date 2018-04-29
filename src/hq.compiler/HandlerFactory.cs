@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Security.Cryptography;
+using System.Text;
+using Microsoft.AspNetCore.NodeServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace hq.compiler
 {
@@ -12,27 +17,44 @@ namespace hq.compiler
 	    public delegate object Handler(object target, object[] parameters);
 
 		private readonly IAssemblyBuilder _builder;
-        private readonly IEnumerable<Assembly> _defaultDependencies;
+	    private readonly INodeServices _nodeServices;
+	    private readonly IEnumerable<Assembly> _defaultDependencies;
 
-	    public HandlerFactory(IAssemblyBuilder builder, IEnumerable<Assembly> defaultDependencies)
+	    public HandlerFactory(
+		    IAssemblyBuilder builder,
+		    INodeServices nodeServices,
+			IEnumerable<Assembly> defaultDependencies)
         {
             _builder = builder;
-            _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
+	        _nodeServices = nodeServices;
+	        _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
         }
 
-        public HandlerFactory(IAssemblyBuilder builder, params Assembly[] defaultDependencies)
+        public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices, params Assembly[] defaultDependencies)
         {
             _builder = builder;
-            _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
+	        _nodeServices = nodeServices;
+	        _defaultDependencies = defaultDependencies ?? Runtime.GetRuntimeAssemblies();
         }
 
-	    public HandlerFactory() : this (new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), new IMetadataReferenceResolver[] { new DefaultMetadataReferenceResolver() })) { }
-		
-		public static HandlerFactory Default = new HandlerFactory();
+	    public HandlerFactory() : this (
+		    new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), new IMetadataReferenceResolver[] { new DefaultMetadataReferenceResolver() }),
+		    NodeServicesFactory.CreateNodeServices(DefaultNodeServicesOptions())) { }
+
+	    private static NodeServicesOptions DefaultNodeServicesOptions()
+	    {
+		    var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider())
+		    {
+			    ProjectPath = Directory.GetCurrentDirectory()
+		    };
+			return options;
+	    }
+
+	    public static HandlerFactory Default = new HandlerFactory();
 
 	    public Assembly BuildAssemblyInMemory(HandlerInfo info, params Assembly[] dependencies)
 	    {
-			var code = info.Code ?? NoCodeHandler;
+			var code = info.Code ?? NoCSharpCodeHandler;
 		    var mergedDependencies = _defaultDependencies.Union(dependencies).Distinct().ToArray();
 		    var a = _builder.CreateInMemory(code, mergedDependencies);
 		    return a;
@@ -40,7 +62,7 @@ namespace hq.compiler
 
 	    public Assembly BuildAssemblyOnDisk(HandlerInfo info, string outputPath, string pdbPath = null, params Assembly[] dependencies)
 	    {
-		    var code = info.Code ?? NoCodeHandler;
+		    var code = info.Code ?? NoCSharpCodeHandler;
 		    var mergedDependencies = _defaultDependencies.Union(dependencies).Distinct().ToArray();
 		    var a = _builder.CreateOnDisk(code, outputPath, pdbPath, mergedDependencies);
 		    return a;
@@ -54,7 +76,7 @@ namespace hq.compiler
 		    return t;
 	    }
 
-		public Handler BuildHandler(HandlerInfo info, DelegateBuildStrategy strategy = DelegateBuildStrategy.MethodInfo, params Assembly[] dependencies)
+		public Handler BuildCSharpHandler(HandlerInfo info, DelegateBuildStrategy strategy = DelegateBuildStrategy.MethodInfo, params Assembly[] dependencies)
 		{
 			var type = BuildType(info, dependencies);
 			var function = info.Function ?? "Execute";
@@ -191,7 +213,7 @@ namespace hq.compiler
 			}
 		}
 
-		public MethodInfo BuildHandlerDirect(HandlerInfo info, params Assembly[] dependencies)
+		public MethodInfo BuildCSharpHandlerDirect(HandlerInfo info, params Assembly[] dependencies)
 	    {
 		    var t = BuildType(info, dependencies);
 		    var function = info.Function ?? "Execute";
@@ -206,7 +228,25 @@ namespace hq.compiler
 			Emit
 	    }
 
-		private const string NoCodeHandler = @"
+		public Handler BuildJavaScriptHandler<T>(HandlerInfo info)
+	    {
+		    var @namespace = info.Namespace ?? "module";
+		    var entrypoint = info.Entrypoint ?? "exports";
+			var code = info.Code ?? $"{@namespace}.{entrypoint} = {NoJavaScriptCodeHandler}";
+
+			var md5 = MD5.Create();
+			var inputBytes = Encoding.UTF8.GetBytes(code);
+		    var hash = md5.ComputeHash(inputBytes);
+		    var sb = new StringBuilder();
+		    for (var i = 0; i < hash.Length; i++)
+			    sb.Append(hash[i].ToString("X2"));
+			var moduleName = $"{sb}.js";
+
+			File.WriteAllText(moduleName, code);
+		    return (t, p) => _nodeServices.InvokeAsync<string>(moduleName, p).Result;
+		}
+
+	    private const string NoCSharpCodeHandler = @"
 namespace hq
 { 
     public class Main
@@ -217,5 +257,11 @@ namespace hq
         }
     }
 }";
-    }
+
+	    private const string NoJavaScriptCodeHandler = @"
+function(callback) { 
+  var result = 'Hello, World!';
+  callback(null, result); 
+};";
+	}
 }

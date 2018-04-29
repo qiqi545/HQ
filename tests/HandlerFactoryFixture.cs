@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using Microsoft.AspNetCore.NodeServices;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace hq.compiler.tests
 {
+    /// <inheritdoc />
     /// <summary>
     /// We need to explicitly provide the mscorlib assembly here, whereas doing so in a platform scenario
     /// like ASP.NET would cause compilation failure. 
@@ -14,7 +18,10 @@ namespace hq.compiler.tests
         {
             var resolvers = new List<IMetadataReferenceResolver> { new DefaultMetadataReferenceResolver() };
             var builder = new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), resolvers);
-            Factory = new HandlerFactory(builder, typeof(string).GetTypeInfo().Assembly); // mscorlib
+
+	        var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider()) { ProjectPath = Directory.GetCurrentDirectory() };
+	        var nodeServices = NodeServicesFactory.CreateNodeServices(options);
+			Factory = new HandlerFactory(builder, nodeServices, typeof(string).GetTypeInfo().Assembly); // mscorlib
         }
 
         public HandlerFactory Factory { get; }

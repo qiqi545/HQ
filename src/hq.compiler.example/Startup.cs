@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,7 @@ namespace hq.compiler.example
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(r => HandlerFactory.Default);
+	        services.AddSingleton(r => HandlerFactory.Default);
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -23,9 +24,21 @@ namespace hq.compiler.example
 
             app.Run(async context =>
             {
-                var h = handlers.BuildHandler(new HandlerInfo());
-	            var r = (string) h.DynamicInvoke(null, null);
-                await context.Response.WriteAsync(r);
+				// .NET
+	            {
+					var h = handlers.BuildCSharpHandler(new HandlerInfo());
+					var r = (string)h.DynamicInvoke(null, null);
+					await context.Response.WriteAsync(r);
+				}
+
+	            await context.Response.WriteAsync(Environment.NewLine);
+
+				// Node.js
+				{
+		            var h = handlers.BuildJavaScriptHandler<string>(new HandlerInfo());
+					var r = (string)h.DynamicInvoke(null, null);
+		            await context.Response.WriteAsync(r);
+	            }
             });
         }
     }

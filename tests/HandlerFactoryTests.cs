@@ -26,7 +26,7 @@ namespace hq.compiler.tests
         public void Can_build_default_handler()
         {
             var info = CreateDefaultHandler();
-			var h = _fixture.Factory.BuildHandler(info);
+			var h = _fixture.Factory.BuildCSharpHandler(info);
             var r = (string) h.DynamicInvoke();
 			Assert.Equal("Hello, World!", r);
         }
@@ -40,7 +40,7 @@ namespace hq.compiler.tests
 		    var sw = Stopwatch.StartNew();
 
 		    var noArgs = new object[] { };
-		    var m = _fixture.Factory.BuildHandlerDirect(info);
+		    var m = _fixture.Factory.BuildCSharpHandlerDirect(info);
 		    sw.Restart();
 		    for (var i = 0; i < trials; i++)
 			    Assert.Equal("Hello, World!", m.Invoke(null, noArgs));
@@ -54,7 +54,7 @@ namespace hq.compiler.tests
 	    private void BenchStrategy(Stopwatch sw, int trials, HandlerFactory.DelegateBuildStrategy strategy, HandlerInfo info)
 	    {
 		    var noArgs = new object[] { };
-			var d = _fixture.Factory.BuildHandler(info, strategy);
+			var d = _fixture.Factory.BuildCSharpHandler(info, strategy);
 			sw.Restart();
 		    for (var i = 0; i < trials; i++)
 			    Assert.Equal("Hello, World!", d.DynamicInvoke(null, noArgs));
