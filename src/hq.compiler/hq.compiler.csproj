@@ -2,7 +2,7 @@
 
   <PropertyGroup>
      <TargetFramework>netstandard2.0</TargetFramework>
-     <Version>1.2.2</Version>
+     <Version>1.3.0</Version>
      <Authors>HQ.io</Authors>
      <Company>HQ.io</Company>
      <Description>Simplifies the creation and execution of arbitrary code on .NET core.</Description>

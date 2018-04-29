@@ -36,7 +36,7 @@ namespace hq
 
 JavaScript
 ----------
-- requires Node.js installed with a PATH system environment variable set.
+_(Requires Node.js installed with a PATH system environment variable set_)
 
 ```csharp
 var handlers = new HandlerFactory();
