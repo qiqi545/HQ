@@ -169,8 +169,7 @@ namespace hq.compiler
 					{
 						il.Emit(OpCodes.Ldarg_1);
 						EmitFastInt(il, i);
-						
-							il.Emit(OpCodes.Ldelem_Ref);
+						il.Emit(OpCodes.Ldelem_Ref);
 						il.Emit(parameterTypes[i].IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass, parameterTypes[i]);
 						il.Emit(OpCodes.Stloc, locals[i]);
 					}
@@ -243,7 +242,7 @@ namespace hq.compiler
 			var moduleName = $"{sb}.js";
 
 			File.WriteAllText(moduleName, code);
-		    return (t, p) => _nodeServices.InvokeAsync<string>(moduleName, p).Result;
+		    return (t, p) => _nodeServices.InvokeAsync<T>(moduleName, p).Result;
 		}
 
 	    private const string NoCSharpCodeHandler = @"
