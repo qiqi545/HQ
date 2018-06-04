@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace hq.compiler
+namespace snippets
 {
     /// <summary> Provides high-performance object activation. </summary>
     public class InstanceFactory

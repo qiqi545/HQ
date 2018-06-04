@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace hq.compiler.tests
+namespace snippets.tests
 {
     public class InstanceFactoryTests
     {

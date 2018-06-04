@@ -1,6 +1,7 @@
 using System.Runtime.Loader;
+using hq.compiler;
 
-namespace hq.compiler
+namespace snippets
 {
     public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
     {

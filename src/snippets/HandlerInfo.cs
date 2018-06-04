@@ -1,4 +1,4 @@
-﻿namespace hq.compiler
+﻿namespace snippets
 {
     public struct HandlerInfo
     {

@@ -3,7 +3,7 @@ using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace hq.compiler.tests
+namespace snippets.tests
 {
     /// <inheritdoc />
     /// <summary>

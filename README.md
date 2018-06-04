@@ -1,9 +1,9 @@
-HQ.io
+snippets
 ==============
 
-This library contains code for simplifying .NET Core platform execution. 
-This means helper functions and running and compiling arbitrary code in isolation.
+Helper functions for working with Roslyn and arbitrary code. 
 
+Also contains wrapper functions for executing JavaScript via Node.js.
 
 C#
 --

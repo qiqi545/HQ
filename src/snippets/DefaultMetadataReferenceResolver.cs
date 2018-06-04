@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis;
+using snippets;
 
 namespace hq.compiler
 {

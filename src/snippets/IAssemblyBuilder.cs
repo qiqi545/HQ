@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace hq.compiler
+namespace snippets
 {
     public interface IAssemblyBuilder
     {

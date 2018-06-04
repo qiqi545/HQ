@@ -1,6 +1,6 @@
 using System.Runtime.Loader;
 
-namespace hq.compiler
+namespace snippets
 {
     public interface IAssemblyLoadContextProvider
     {

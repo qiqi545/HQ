@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using hq.compiler;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace hq.compiler.tests
+namespace snippets.tests
 {
     /// <inheritdoc />
     /// <summary>

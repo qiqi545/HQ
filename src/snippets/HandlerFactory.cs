@@ -7,10 +7,11 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Security.Cryptography;
 using System.Text;
+using hq.compiler;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace hq.compiler
+namespace snippets
 {
 	public class HandlerFactory
     {

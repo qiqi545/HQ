@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\hq.compiler\hq.compiler.csproj" />
+    <ProjectReference Include="..\snippets\snippets.csproj" />
   </ItemGroup>
 
 </Project>

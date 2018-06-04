@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.CodeAnalysis;
 
-namespace hq.compiler
+namespace snippets
 {
     public interface IMetadataReferenceResolver
     {

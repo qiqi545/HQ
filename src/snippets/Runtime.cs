@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyModel;
 
-namespace hq.compiler
+namespace snippets
 {
     public static class Runtime
     {
