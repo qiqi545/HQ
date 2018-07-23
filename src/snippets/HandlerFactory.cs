@@ -17,9 +17,9 @@ namespace snippets
     {
 	    public delegate object Handler(object target, object[] parameters);
 
-		private readonly IAssemblyBuilder _builder;
-	    private readonly INodeServices _nodeServices;
-	    private readonly IEnumerable<Assembly> _defaultDependencies;
+		readonly IAssemblyBuilder _builder;
+	    readonly INodeServices _nodeServices;
+	    readonly IEnumerable<Assembly> _defaultDependencies;
 
 	    public HandlerFactory(
 		    IAssemblyBuilder builder,
@@ -72,7 +72,7 @@ namespace snippets
 		public Type BuildType(HandlerInfo info, Assembly[] dependencies)
 	    {
 		    var a = BuildAssemblyInMemory(info, dependencies);
-		    var entrypoint = info.Entrypoint ?? $"{info.Namespace ?? "hq"}.Main";
+		    var entrypoint = info.Entrypoint ?? $"{info.Namespace ?? "HelloWorld"}.Main";
 		    var t = a?.GetType(entrypoint);
 		    return t;
 	    }
@@ -150,7 +150,7 @@ namespace snippets
 						}
 					}
 
-					var dynamicMethod = new DynamicMethod(string.Empty, typeof(object), new[] { typeof(object), typeof(object[]) }, methodInfo.DeclaringType.Module);
+					var dynamicMethod = new DynamicMethod(string.Empty, typeof(object), new[] { typeof(object), typeof(object[]) }, methodInfo.DeclaringType?.Module);
 					var il = dynamicMethod.GetILGenerator();
 					var parameters = methodInfo.GetParameters();
 					var parameterTypes = new Type[parameters.Length];
@@ -238,16 +238,16 @@ namespace snippets
 			var inputBytes = Encoding.UTF8.GetBytes(code);
 		    var hash = md5.ComputeHash(inputBytes);
 		    var sb = new StringBuilder();
-		    for (var i = 0; i < hash.Length; i++)
-			    sb.Append(hash[i].ToString("X2"));
-			var moduleName = $"{sb}.js";
+		    foreach (var c in hash)
+			    sb.Append(c.ToString("X2"));
+		    var moduleName = $"{sb}.js";
 
 			File.WriteAllText(moduleName, code);
 		    return (t, p) => _nodeServices.InvokeAsync<T>(moduleName, p).Result;
 		}
 
-	    private const string NoCSharpCodeHandler = @"
-namespace hq
+	    const string NoCSharpCodeHandler = @"
+namespace HelloWorld
 { 
     public class Main
     { 

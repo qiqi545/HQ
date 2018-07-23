@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using snippets.example;
 
-namespace hq.compiler.example
+namespace snippets.example
 {
     public class Program
     {

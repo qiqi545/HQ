@@ -13,8 +13,8 @@ namespace snippets.tests
     /// </summary>
     public class HandlerFactoryTests : IClassFixture<HandlerFactoryFixture>
     {
-        private readonly HandlerFactoryFixture _fixture;
-	    private readonly ITestOutputHelper _console;
+        readonly HandlerFactoryFixture _fixture;
+	    readonly ITestOutputHelper _console;
 
 	    public HandlerFactoryTests(HandlerFactoryFixture fixture, ITestOutputHelper console)
 	    {
@@ -27,7 +27,7 @@ namespace snippets.tests
         {
             var info = CreateDefaultHandler();
 			var h = _fixture.Factory.BuildCSharpHandler(info);
-            var r = (string) h.DynamicInvoke();
+            var r = (string) h.DynamicInvoke(null, null);
 			Assert.Equal("Hello, World!", r);
         }
 
@@ -51,7 +51,7 @@ namespace snippets.tests
 			BenchStrategy(sw, trials, HandlerFactory.DelegateBuildStrategy.MethodInfo, info);
 	    }
 
-	    private void BenchStrategy(Stopwatch sw, int trials, HandlerFactory.DelegateBuildStrategy strategy, HandlerInfo info)
+	    void BenchStrategy(Stopwatch sw, int trials, HandlerFactory.DelegateBuildStrategy strategy, HandlerInfo info)
 	    {
 		    var noArgs = new object[] { };
 			var d = _fixture.Factory.BuildCSharpHandler(info, strategy);
@@ -68,7 +68,7 @@ namespace snippets.tests
 		    var a = _fixture.Factory.BuildAssemblyInMemory(info);
 			Assert.NotNull(a);
 
-		    var entrypoint = info.Entrypoint ?? $"{info.Namespace ?? "hq"}.Main";
+		    var entrypoint = info.Entrypoint ?? $"{info.Namespace ?? "HelloWorld"}.Main";
 		    var t = a?.GetType(entrypoint);
 		    var function = info.Function ?? "Execute";
 		    var h = t?.GetMethod(function, BindingFlags.Public | BindingFlags.Static);
@@ -81,11 +81,11 @@ namespace snippets.tests
 	    {
 		    var info = new HandlerInfo
 		    {
-			    Namespace = "hq",
+			    Namespace = "HelloWorld",
 			    Function = "Execute",
-			    Entrypoint = "hq.Main",
+			    Entrypoint = "HelloWorld.Main",
 			    Code = @"
-namespace hq
+namespace HelloWorld
 { 
     public class Main
     { 
@@ -95,7 +95,7 @@ namespace hq
         }
     }
 }"
-		    };
+			};
 		    return info;
 	    }
     }
