@@ -89,15 +89,15 @@ namespace snippets
 			    !diagnostic.IsSuppressed && !diagnostic.IsWarningAsError && diagnostic.Severity == DiagnosticSeverity.Warning);
 		    foreach (var warning in warnings)
 		    {
-				if(_logger.IsEnabled(LogLevel.Warning))
-					_logger?.LogWarning(JsonConvert.SerializeObject(warning));
+				if(_logger != null && _logger.IsEnabled(LogLevel.Warning))
+					_logger.LogWarning(JsonConvert.SerializeObject(warning));
 		    }
 
 			var errors = result.Diagnostics.Where(diagnostic =>
 				!diagnostic.IsSuppressed && diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
 		    foreach (var error in errors)
 		    {
-				if(_logger.IsEnabled(LogLevel.Error))
+				if(_logger != null && _logger.IsEnabled(LogLevel.Error))
 					_logger?.LogError(JsonConvert.SerializeObject(error));
 		    }
 	    }
@@ -159,7 +159,6 @@ namespace snippets
 		    }
 		    return references;
 	    }
-
 
 		static IEnumerable<MetadataReference> GetCompileTimeReferences()
         {
