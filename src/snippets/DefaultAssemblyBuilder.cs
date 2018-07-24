@@ -43,7 +43,25 @@ namespace snippets
             }
         }
 
-	    public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params Assembly[] dependencies)
+	    public Assembly CreateInMemory(string assemblyName, string code, params string[] dependencyLocations)
+	    {
+		    var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
+
+		    using (var peStream = new MemoryStream())
+		    {
+			    using (var pdbStream = new MemoryStream())
+			    {
+				    var result = compilation.Emit(peStream, pdbStream);
+				    MaybeLogWarningsAndErrors(result);
+
+				    peStream.Seek(0, SeekOrigin.Begin);
+				    var assembly = _context.LoadFromStream(peStream, pdbStream);
+				    return assembly;
+			    }
+		    }
+	    }
+
+		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params Assembly[] dependencies)
 	    {
 			var compilation = CreateCompilation(assemblyName, code, dependencies);
 
@@ -54,7 +72,18 @@ namespace snippets
 		    return assembly;
 		}
 
-	    void MaybeLogWarningsAndErrors(EmitResult result)
+	    public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params string[] dependencyLocations)
+	    {
+		    var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
+
+		    var result = compilation.Emit(outputPath, pdbPath);
+		    MaybeLogWarningsAndErrors(result);
+
+		    var assembly = Assembly.LoadFile(outputPath);
+		    return assembly;
+	    }
+
+		void MaybeLogWarningsAndErrors(EmitResult result)
 	    {
 		    var warnings = result.Diagnostics.Where(diagnostic =>
 			    !diagnostic.IsSuppressed && !diagnostic.IsWarningAsError && diagnostic.Severity == DiagnosticSeverity.Warning);
@@ -85,8 +114,21 @@ namespace snippets
 			    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 		    return compilation;
 	    }
-		
-	    IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
+
+	    CSharpCompilation CreateCompilation(string assemblyName, string code, IEnumerable<string> dependencyLocations)
+	    {
+		    var references = ResolveReferences(dependencyLocations);
+		    var syntaxTree = CSharpSyntaxTree.ParseText(code);
+
+		    var compilation = CSharpCompilation.Create(
+			    assemblyName,
+			    new[] { syntaxTree },
+			    references,
+			    new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+		    return compilation;
+	    }
+
+		IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
         {
             var compiled = GetCompileTimeReferences();
             var references = new HashSet<MetadataReference>(compiled);
@@ -102,7 +144,24 @@ namespace snippets
             return references;
         }
 
-        static IEnumerable<MetadataReference> GetCompileTimeReferences()
+	    IEnumerable<MetadataReference> ResolveReferences(IEnumerable<string> assemblyLocations)
+	    {
+		    var compiled = GetCompileTimeReferences();
+		    var references = new HashSet<MetadataReference>(compiled);
+		    foreach (var dependency in assemblyLocations)
+		    {
+			    foreach (var resolver in _resolvers)
+			    {
+				    var reference = resolver.Resolve(dependency);
+				    if (reference != null)
+					    references.Add(reference);
+			    }
+		    }
+		    return references;
+	    }
+
+
+		static IEnumerable<MetadataReference> GetCompileTimeReferences()
         {
             return
                 from library in DependencyContext.Default.CompileLibraries

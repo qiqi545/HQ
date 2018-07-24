@@ -6,5 +6,6 @@ namespace snippets
     public interface IMetadataReferenceResolver
     {
         MetadataReference Resolve(Assembly assembly);
-    }
+	    MetadataReference Resolve(string location);
+	}
 }

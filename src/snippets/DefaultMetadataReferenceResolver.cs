@@ -10,5 +10,10 @@ namespace hq.compiler
         {
             return MetadataReference.CreateFromFile(assembly.Location);
         }
-    }
+
+	    public MetadataReference Resolve(string location)
+	    {
+		    return MetadataReference.CreateFromFile(location);
+	    }
+	}
 }
