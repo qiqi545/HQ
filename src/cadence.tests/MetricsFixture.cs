@@ -4,9 +4,18 @@ namespace cadence.tests
 {
 	public class MetricsFixture : IDisposable
 	{
+		readonly MetricsInstance _instance;
+
+		public MetricsInstance Metrics => _instance;
+
+		public MetricsFixture()
+		{
+			_instance = new MetricsInstance();
+		}
+
 		public void Dispose()
 		{
-			Metrics.Clear();
+			_instance.Clear();
 		}
 	}
 }

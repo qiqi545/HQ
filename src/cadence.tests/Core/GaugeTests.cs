@@ -4,9 +4,16 @@ using Xunit;
 
 namespace cadence.tests.Core
 {
-    public class GaugeTests
+    public class GaugeTests : IClassFixture<MetricsFixture>
     {
-        [Fact]
+	    readonly MetricsFixture _fixture;
+
+	    public GaugeTests(MetricsFixture fixture)
+	    {
+		    _fixture = fixture;
+	    }
+
+		[Fact]
         public void Can_gauge_scalar_value()
         {
             var queue = new Queue<int>();
@@ -27,7 +34,7 @@ namespace cadence.tests.Core
         public void Can_use_gauge_metric()
         {
             var queue = new Queue<int>();
-            var gauge = Metrics.Gauge(typeof(GaugeTests), "Can_use_gauge_metric", () => queue.Count);
+            var gauge = _fixture.Metrics.Gauge(typeof(GaugeTests), "Can_use_gauge_metric", () => queue.Count);
             queue.Enqueue(5);
             Assert.Equal(1, gauge.Value);
         }

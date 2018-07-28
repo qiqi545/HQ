@@ -58,7 +58,7 @@ namespace cadence.Reporting
                 }
                 _out.WriteLine();
 
-                foreach (var entry in Utils.SortMetrics(Metrics.All))
+                foreach (var entry in Utils.SortMetrics(Metrics.Global.All))
                 {
                     _out.Write(entry.Key);
                     _out.WriteLine(':');

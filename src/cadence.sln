@@ -8,7 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\docs\codeconf.pdf = ..\docs\codeconf.pdf
 		..\LICENSE = ..\LICENSE
 		..\README.markdown = ..\README.markdown
-		..\THIRD_PARTY_LICENSES.txt = ..\THIRD_PARTY_LICENSES.txt
+		..\THIRD_PARTY_LICENSES = ..\THIRD_PARTY_LICENSES
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "cadence", "cadence\cadence.csproj", "{C47DABF0-81DA-44C2-8DEF-AD4DB4E2A663}"
