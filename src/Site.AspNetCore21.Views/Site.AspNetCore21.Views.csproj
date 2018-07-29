@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ.Cadence.AspNetCore\HQ.Cadence.AspNetCore.csproj" />
+    <ProjectReference Include="..\HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj" />
+    <ProjectReference Include="..\HQ.Cadence\HQ.Cadence.csproj" />
+  </ItemGroup>
+
+</Project>
