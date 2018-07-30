@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Cadence
+namespace HQ.Cadence.Internal
 {
 	internal class MetricsBuilder : IMetricsBuilder
 	{

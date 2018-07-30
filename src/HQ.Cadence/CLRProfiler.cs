@@ -31,12 +31,9 @@ namespace HQ.Cadence
         /// <summary>
         /// Returns the number of seconds the CLR process has been running
         /// </summary>
-        public static long Uptime
-        {
-            get { return Convert.ToInt64(_process.TotalProcessorTime.TotalSeconds); }
-        }
-        
-        /// <summary>
+        public static long Uptime => Convert.ToInt64(_process.TotalProcessorTime.TotalSeconds);
+
+	    /// <summary>
         /// Returns the percentage of the CLR's heap which is being used
         /// </summary>
         public static double HeapUsage

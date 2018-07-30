@@ -2,6 +2,7 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
+using HQ.Cadence.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Cadence.AspNetCore.Mvc
@@ -10,20 +11,21 @@ namespace HQ.Cadence.AspNetCore.Mvc
     public class CounterAttribute : ActionFilterAttribute
 	{
 		readonly long _incrementBy;
-		readonly Type _owner;
-		readonly string _name;
+		
+		public string Name { get; set; }
+		public Type Owner { get; set; }
 
-		public CounterAttribute(long incrementBy = 1L, Type owner = null, string name = null)
+		public CounterAttribute(long incrementBy = 1L, string name = null, Type owner = null)
 		{
 			_incrementBy = incrementBy;
-			_owner = owner;
-			_name = name;
+			Name = name;
+			Owner = owner;
 		}
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
 			var metricsHost = filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
-			var counter = metricsHost?.Counter(_owner ?? filterContext.GetMetricOwner(), _name ?? filterContext.GetMetricName<CounterMetric>());
+			var counter = metricsHost?.Counter(Owner ?? filterContext.GetMetricOwner(), Name ?? filterContext.GetMetricName<CounterMetric>());
 			counter?.Increment(_incrementBy);
 		}
 	}

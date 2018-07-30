@@ -39,5 +39,3 @@ namespace HQ.Cadence.Stats
         ICollection<long> Values { get; }
     }
 }
-
-

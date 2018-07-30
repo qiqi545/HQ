@@ -2,7 +2,6 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json.Serialization;
@@ -14,15 +13,7 @@ namespace HQ.Cadence.Internal
     /// </summary>
     internal class JsonConventionResolver : DefaultContractResolver
     {
-        public class ToStringComparer : IComparer
-        {
-            public int Compare(object x, object y)
-            {
-                return x.ToString().CompareTo(y.ToString());
-            }
-        }
-
-        protected override IList<JsonProperty> CreateProperties(Type type, Newtonsoft.Json.MemberSerialization memberSerialization)
+	    protected override IList<JsonProperty> CreateProperties(Type type, Newtonsoft.Json.MemberSerialization memberSerialization)
         {
             var properties = base.CreateProperties(type, memberSerialization);
 

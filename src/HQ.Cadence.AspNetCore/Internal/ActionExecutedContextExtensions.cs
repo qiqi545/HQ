@@ -4,7 +4,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Cadence.AspNetCore.Mvc
+namespace HQ.Cadence.AspNetCore.Internal
 {
 	internal static class ActionExecutedContextExtensions
 	{

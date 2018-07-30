@@ -2,6 +2,7 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System.Diagnostics;
+using HQ.Cadence.Internal;
 using HQ.Cadence.Support;
 using Xunit;
 

@@ -9,19 +9,19 @@ namespace HQ.Cadence.Support
     /// <summary>
     /// Provides statistically relevant random number generation
     /// </summary>
-    public class Random
+    internal class Random
     {
-        private static readonly RandomNumberGenerator _random;
+        private static readonly RandomNumberGenerator Inner;
 
         static Random()
         {
-            _random = RandomNumberGenerator.Create();   
+            Inner = RandomNumberGenerator.Create();
         }
         
         public static long NextLong()
         {
             var buffer = new byte[sizeof(long)];
-            _random.GetBytes(buffer);
+            Inner.GetBytes(buffer);
             var value = BitConverter.ToInt64(buffer, 0);
             return value;
         }

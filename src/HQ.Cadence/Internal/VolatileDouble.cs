@@ -3,12 +3,12 @@
 
 using System.Threading;
 
-namespace HQ.Cadence.Support
+namespace HQ.Cadence.Internal
 {
     /// <summary>
     /// Provides support for volatile operations around a <see cref="double" /> value
     /// </summary>
-    public struct VolatileDouble
+    internal struct VolatileDouble
     {
         private double _value;
 

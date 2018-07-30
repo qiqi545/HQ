@@ -4,8 +4,8 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using HQ.Cadence.Reporters.Console.Internal;
-using HQ.Cadence.Util;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Cadence.Reporters.Console
@@ -13,24 +13,20 @@ namespace HQ.Cadence.Reporters.Console
 	/// <summary>
 	///  A simple reporter which prints out application metrics to a <see cref="TextWriter" /> periodically
 	/// </summary>
-	public class ConsoleReporter : IMetricsReporter
+	public sealed class ConsoleReporter : IMetricsReporter
 	{
 		readonly IMetricsRegistry _registry;
-		static readonly NamedThreadFactory _factory = new NamedThreadFactory("metrics-console-reporter");
-		Thread _tickThread;
 		readonly TextWriter _out;
-		TimeSpan _interval;
+		readonly TimeSpan _interval;
+		CancellationTokenSource _cancel;
 
-		public ConsoleReporter(TextWriter @out)
+		Task _task;
+
+		internal ConsoleReporter(TextWriter @out)
 		{
 			_out = @out;
 		}
 
-		/// <summary>
-		/// Enables the console reporter and causes it to print to STDOUT with the specified period
-		/// </summary>
-		/// <param name="period">The period between successive outputs</param>
-		/// <param name="unit">The time unit of the period</param>
 		public ConsoleReporter(IMetricsRegistry registry, IOptions<ConsoleReporterOptions> options)
 		{
 			_registry = registry;
@@ -38,37 +34,35 @@ namespace HQ.Cadence.Reporters.Console
 			_interval = options?.Value?.Interval ?? TimeSpan.FromSeconds(5);
 		}
 
-		public void Start()
+		public Task Start()
 		{
-			Start(_interval);
+			_cancel = new CancellationTokenSource();
+			_task = OnTimer(()=> Report(_cancel.Token), _cancel.Token);
+			return _task;
 		}
 
-		/// <summary>
-		/// Starts printing output to the specified <see cref="TextWriter" />
-		/// </summary>
-		/// <param name="period">The period between successive displays</param>
-		/// <param name="unit">The period time unit</param>
-		public void Start(long period, TimeUnit unit)
+		public void Stop()
 		{
-			var seconds = unit.Convert(period, TimeUnit.Seconds);
-			var interval = TimeSpan.FromSeconds(seconds);
-
-			Start(interval);
+			if (_task.IsCompleted)
+			{
+				_task?.Dispose();
+			}
+			else
+			{
+				_cancel.Cancel();
+				_task?.Dispose();
+				_cancel.Dispose();
+			}
 		}
 
-		void Start(TimeSpan interval)
-		{
-			_tickThread?.Abort();
-			_tickThread = _factory.New(() => { new Timer(s => Run(), null, interval, interval); });
-			_tickThread.Start();
-		}
-
-		public void Run()
+		public void Report(CancellationToken? cancellationToken = null)
 		{
 			try
 			{
+				cancellationToken?.ThrowIfCancellationRequested();
+
 				var now = DateTime.Now;
-				var dateTime = now.ToShortDateString() + " " + now.ToShortTimeString();
+				var dateTime = $"{now.ToShortDateString()} {now.ToShortTimeString()}";
 				_out.Write(dateTime);
 				_out.Write(' ');
 				for (var i = 0; i < (80 - dateTime.Length - 1); i++)
@@ -91,25 +85,23 @@ namespace HQ.Cadence.Reporters.Console
 							_out.WriteLine(':');
 
 							var metric = subEntry.Value;
-							if (metric is GaugeMetric)
+							switch (metric)
 							{
-								WriteGauge((GaugeMetric)metric);
-							}
-							else if (metric is CounterMetric)
-							{
-								WriteCounter((CounterMetric)metric);
-							}
-							else if (metric is HistogramMetric)
-							{
-								WriteHistogram((HistogramMetric)metric);
-							}
-							else if (metric is MeterMetric)
-							{
-								WriteMetered((MeterMetric)metric);
-							}
-							else if (metric is TimerMetric)
-							{
-								WriteTimer((TimerMetric)metric);
+								case GaugeMetric _:
+									WriteGauge((GaugeMetric)metric);
+									break;
+								case CounterMetric _:
+									WriteCounter((CounterMetric)metric);
+									break;
+								case HistogramMetric _:
+									WriteHistogram((HistogramMetric)metric);
+									break;
+								case MeterMetric _:
+									WriteMetered((MeterMetric)metric);
+									break;
+								case TimerMetric _:
+									WriteTimer((TimerMetric)metric);
+									break;
 							}
 							_out.WriteLine();
 						}
@@ -123,19 +115,31 @@ namespace HQ.Cadence.Reporters.Console
 				_out.WriteLine(e.StackTrace);
 			}
 		}
-		private void WriteGauge(GaugeMetric gauge)
+
+		public async Task OnTimer(Action action, CancellationToken cancellationToken)
+		{
+			while (!cancellationToken.IsCancellationRequested)
+			{
+				await Task.Delay(_interval, cancellationToken);
+
+				if (!cancellationToken.IsCancellationRequested)
+					action();
+			}
+		}
+
+		void WriteGauge(GaugeMetric gauge)
 		{
 			_out.Write("    value = ");
 			_out.WriteLine(gauge.ValueAsString);
 		}
 
-		private void WriteCounter(CounterMetric counter)
+		void WriteCounter(CounterMetric counter)
 		{
 			_out.Write("    count = ");
 			_out.WriteLine(counter.Count);
 		}
 
-		private void WriteMetered(IMetered meter)
+		void WriteMetered(IMetered meter)
 		{
 			var unit = Abbreviate(meter.RateUnit);
 			_out.Write("             count = {0}\n", meter.Count);
@@ -145,7 +149,7 @@ namespace HQ.Cadence.Reporters.Console
 			_out.Write("    15-minute rate = {0} {1}/{2}\n", meter.FifteenMinuteRate, meter.EventType, unit);
 		}
 
-		private void WriteHistogram(HistogramMetric histogram)
+		void WriteHistogram(HistogramMetric histogram)
 		{
 			var percentiles = histogram.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
@@ -161,7 +165,7 @@ namespace HQ.Cadence.Reporters.Console
 			_out.Write("            99.9%% <= %{0:2}\n", percentiles[5]);
 		}
 
-		private void WriteTimer(TimerMetric timer)
+		void WriteTimer(TimerMetric timer)
 		{
 			WriteMetered(timer);
 
@@ -181,7 +185,7 @@ namespace HQ.Cadence.Reporters.Console
 			_out.Write("            99.9%% <= %{0:2}{1}\n", percentiles[5], durationUnit);
 		}
 
-		private static string Abbreviate(TimeUnit unit)
+		static string Abbreviate(TimeUnit unit)
 		{
 			switch (unit)
 			{
@@ -204,6 +208,9 @@ namespace HQ.Cadence.Reporters.Console
 			}
 		}
 
-		public void Dispose() { }
+		public void Dispose()
+		{
+			Stop();
+		}
 	}
 }

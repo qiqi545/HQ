@@ -30,7 +30,7 @@ namespace HQ.Cadence.Tests.Reporters
             queue.Enqueue(2);
 
             var reporter = new ConsoleReporter(Console.Out);
-            reporter.Run();
+            reporter.Report();
         }
     }
 }

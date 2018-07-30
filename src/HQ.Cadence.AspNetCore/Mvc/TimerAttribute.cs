@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using HQ.Cadence.AspNetCore.Internal;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Cadence.AspNetCore.Mvc
@@ -12,29 +13,30 @@ namespace HQ.Cadence.AspNetCore.Mvc
 	{
 		readonly TimeUnit _durationUnit;
 		readonly TimeUnit _rateUnit;
-		readonly Type _owner;
-		readonly string _name;
+		
+		public string Name { get; set; }
+		public Type Owner { get; set; }
 
 		public TimerAttribute(TimeUnit durationUnit, TimeUnit rateUnit, string name = null, Type owner = null)
 		{
 			_durationUnit = durationUnit;
 			_rateUnit = rateUnit;
-			_name = name;
-			_owner = owner;
+			Name = name;
+			Owner = owner;
 		}
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
-			var type = _owner ?? filterContext.GetMetricOwner();
-			var name = _name ?? filterContext.GetMetricName<TimerMetric>();
+			var type = Owner ?? filterContext.GetMetricOwner();
+			var name = Name ?? filterContext.GetMetricName<TimerMetric>();
 
 			filterContext.HttpContext.Items[$"{type}.{name}"] = Stopwatch.StartNew();
 		}
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
-			var type = _owner ?? filterContext.GetMetricOwner();
-			var name = _name ?? filterContext.GetMetricName<TimerMetric>();
+			var type = Owner ?? filterContext.GetMetricOwner();
+			var name = Name ?? filterContext.GetMetricName<TimerMetric>();
 
 			var metricsHost = filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
 			var timer = metricsHost?.Timer(type,  name, _durationUnit, _rateUnit);

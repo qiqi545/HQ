@@ -3,7 +3,7 @@
 
 using System.Threading;
 
-namespace HQ.Cadence.Support
+namespace HQ.Cadence.Internal
 {
     /// <summary>
     /// Provides support for volatile operations around a typed value
