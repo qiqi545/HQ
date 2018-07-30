@@ -12,7 +12,7 @@ namespace HQ.Cadence
 		GaugeMetric<T> Gauge<T>(Type type, string name, Func<T> evaluator);
 		CounterMetric Counter(Type type, string name);
 		HistogramMetric Histogram(Type type, string name, SampleType sampleType);
-		MeterMetric Meter(Type type, string name, string eventType, TimeUnit unit);
+		MeterMetric Meter(Type type, string name, string eventType, TimeUnit rateUnit);
 		TimerMetric Timer(Type type, string name, TimeUnit durationUnit, TimeUnit rateUnit);
 		void Clear();
 	}

@@ -6,9 +6,10 @@ using Newtonsoft.Json;
 
 namespace HQ.Cadence
 {
-    public abstract class GaugeMetric
+    public abstract class GaugeMetric : IMetric
     {
         public abstract string ValueAsString { get; }
+	    public abstract IMetric Copy { get; }
     }
 
     /// <summary>
@@ -21,7 +22,7 @@ namespace HQ.Cadence
     /// </code>
     /// </example>
     /// </summary>
-    public sealed class GaugeMetric<T> : GaugeMetric, IMetric
+    public sealed class GaugeMetric<T> : GaugeMetric
     {
         readonly Func<T> _evaluator;
 
@@ -30,11 +31,11 @@ namespace HQ.Cadence
             _evaluator = evaluator;
         }
 
-        public T Value => _evaluator.Invoke();
+        public T Value => _evaluator();
 
 	    public override string ValueAsString => Value.ToString();
 
 	    [JsonIgnore]
-        public IMetric Copy => new GaugeMetric<T>(_evaluator);
+        public override IMetric Copy => new GaugeMetric<T>(_evaluator);
     }
 }

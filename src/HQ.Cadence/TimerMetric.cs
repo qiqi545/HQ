@@ -10,21 +10,30 @@ using Newtonsoft.Json;
 namespace HQ.Cadence
 {
     /// <summary>
-    /// A timer metric which aggregates timing durations and provides duration
-    /// statistics, plus throughput statistics via <see cref="MeterMetric" />.
+    /// A timer metric which aggregates timing durations and provides duration statistics, plus throughput statistics via <see cref="MeterMetric" />.
     /// </summary>
     public class TimerMetric : IMetric, IMetered
     {
-        private readonly MeterMetric _meter;
-        private readonly HistogramMetric _histogram;
+        readonly MeterMetric _meter;
+        readonly HistogramMetric _histogram;
 
-        public TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit)
-            : this(durationUnit, rateUnit, MeterMetric.New("calls", rateUnit), new HistogramMetric(SampleType.Biased), clear: true)
+	    /// <summary>
+	    ///  Returns the timer's duration scale unit
+	    /// </summary>
+	    public TimeUnit DurationUnit { get; }
+
+	    /// <summary>
+	    /// Returns the meter's rate unit
+	    /// </summary>
+	    /// <returns></returns>
+	    public TimeUnit RateUnit { get; }
+
+		public TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit, rateUnit, MeterMetric.New("calls", rateUnit), new HistogramMetric(SampleType.Biased), clear: true)
         {
 
         }
 
-        private TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram, bool clear)
+        TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram, bool clear)
         {
             DurationUnit = durationUnit;
             RateUnit = rateUnit;
@@ -35,18 +44,7 @@ namespace HQ.Cadence
                 Clear();
             }
         }
-
-        /// <summary>
-        ///  Returns the timer's duration scale unit
-        /// </summary>
-        public TimeUnit DurationUnit { get; }
-
-        /// <summary>
-        /// Returns the meter's rate unit
-        /// </summary>
-        /// <returns></returns>
-        public TimeUnit RateUnit { get; }
-
+		
         /// <summary>
         /// Clears all recorded durations
         /// </summary>
@@ -55,17 +53,24 @@ namespace HQ.Cadence
             _histogram.Clear();
         }
 
-        public void Update(long duration, TimeUnit unit)
+        public void Update(long duration, TimeUnit durationUnit)
         {
-            Update(unit.ToNanos(duration));
+            Update(durationUnit.ToNanos(duration));
         }
 
-        /// <summary>
-        /// Times and records the duration of an event
-        /// </summary>
-        /// <typeparam name="T">The type of the value returned by the event</typeparam>
-        /// <param name="event">A function whose duration should be timed</param>
-        public T Time<T>(Func<T> @event)
+	    private void Update(long duration)
+	    {
+		    if (duration < 0) return;
+		    _histogram.Update(duration);
+		    _meter.Mark();
+	    }
+
+		/// <summary>
+		/// Times and records the duration of an event
+		/// </summary>
+		/// <typeparam name="T">The type of the value returned by the event</typeparam>
+		/// <param name="event">A function whose duration should be timed</param>
+		public T Time<T>(Func<T> @event)
         {
             var stopwatch = new Stopwatch();
             try
@@ -185,13 +190,6 @@ namespace HQ.Cadence
             }
         }
 		
-        private void Update(long duration)
-        {
-            if (duration < 0) return;
-            _histogram.Update(duration);
-            _meter.Mark();
-        }
-
         private double ConvertFromNanos(double nanos)
         {
             return nanos / TimeUnit.Nanoseconds.Convert(1, DurationUnit);

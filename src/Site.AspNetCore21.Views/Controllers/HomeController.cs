@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using HQ.Cadence;
+using HQ.Cadence.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Site.AspNetCore21.Views.Models;
 
@@ -14,11 +15,13 @@ namespace Site.AspNetCore21.Views.Controllers
 		    _metrics = metrics;
 	    }
 		
+		[Counter, 
+		 Timer(TimeUnit.Seconds, TimeUnit.Seconds), 
+		 Meter("requests", TimeUnit.Seconds),
+		 Histogram(SampleType.Biased, 1L)]
         public IActionResult Index()
         {
-	        _metrics.Counter("Counter").Increment();
-
-            return View();
+	        return View();
         }
 
         public IActionResult About()

@@ -59,7 +59,7 @@ namespace HQ.Cadence
 		/// <param name="eventType">The plural name of the type of events the meter is measuring (e.g., <code>"requests"</code>)</param>
 		/// <param name="unit">The rate unit of the new meter</param>
 		/// <returns></returns>
-		public MeterMetric Meter(Type type, string name, string eventType, TimeUnit unit)
+		public MeterMetric Meter(Type type, string name, string eventType, TimeUnit rateUnit)
 		{
 			var metricName = new MetricName(type, name);
 			if (_store.TryGetValue(metricName, out var existingMetric))
@@ -67,7 +67,7 @@ namespace HQ.Cadence
 				return (MeterMetric)existingMetric;
 			}
 
-			var metric = MeterMetric.New(eventType, unit);
+			var metric = MeterMetric.New(eventType, rateUnit);
 			var justAddedMetric = _store.GetOrAdd(metricName, metric);
 			return justAddedMetric == null ? metric : (MeterMetric)justAddedMetric;
 		}
