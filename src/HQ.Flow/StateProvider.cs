@@ -334,12 +334,18 @@ namespace HQ.Flow
 
 		private static MethodTable ShallowCloneToDerived(MethodTable state, Type derivedType, Type stateMachineType)
         {
-            var baseType = state.GetType();
+	        if (derivedType.IsGenericType)
+	        {
+		        var typeSource = stateMachineType.IsGenericType ? stateMachineType : state.GetType();
+		        derivedType = derivedType.MakeGenericType(typeSource.GetGenericArguments()[0]);
+	        }
+
+			var baseType = state.GetType();
             if(!baseType.IsAssignableFrom(derivedType))
                 throw new Exception("Method table inheritance hierarchy error.");
 
-	        if (derivedType.IsGenericType)
-		        derivedType = derivedType.MakeGenericType(stateMachineType.GetGenericArguments()[0]);
+	        if (derivedType.ContainsGenericParameters)
+		        return state;
 			
 	        var derivedMethodTable = (MethodTable)Activator.CreateInstance(derivedType);
 	        foreach (var field in baseType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))

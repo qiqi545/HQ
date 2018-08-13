@@ -2,7 +2,7 @@
 
 namespace HQ.Flow
 {
-	public class StateMachine : StateProvider
+	public class StateMachine<TStateData> : StateProvider
 	{
 		public StateMachine()
 		{
@@ -12,10 +12,10 @@ namespace HQ.Flow
 		public new class MethodTable : StateProvider.MethodTable
 		{
 			[AlwaysNullChecked]
-			public Action<StateMachine, UserData, State> BeginState;
+			public Action<StateMachine<TStateData>, TStateData, State> BeginState;
 
 			[AlwaysNullChecked]
-			public Action<StateMachine, UserData, State> EndState;
+			public Action<StateMachine<TStateData>, TStateData, State> EndState;
 		}
 
 		public MethodTable StateMethods => (MethodTable)CurrentState.methodTable;
@@ -26,12 +26,12 @@ namespace HQ.Flow
 			return $"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
 		}
 
-		public void SetState<TState>(UserData stateData, bool allowStateRestart = false) where TState : State, new()
+		public void SetState<TState>(TStateData stateData, bool allowStateRestart = false) where TState : State, new()
 		{
 			DirectlySetState(GetState<TState>(), stateData, allowStateRestart);
 		}
 
-		private void DirectlySetState(State nextState, UserData stateData, bool allowStateRestart)
+		private void DirectlySetState(State nextState, TStateData stateData, bool allowStateRestart)
 		{
 			if (!allowStateRestart && ReferenceEquals(CurrentState, nextState))
 				return;

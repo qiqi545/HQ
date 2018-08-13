@@ -7,15 +7,15 @@ namespace HQ.Flow.Tests
         [Fact]
         public void Can_transition_between_states()
         {
-			StateProvider.Setup(typeof(BusinessObject).Assembly, typeof(AlwaysNullCheckedAttribute).Assembly);
+			StateProvider.Setup(typeof(Actor).Assembly, typeof(AlwaysNullCheckedAttribute).Assembly);
 
 	        var userData = new UserData();
 
-			var bo = new BusinessObject();
+			var bo = new Actor();
 
-	        bo.SetState<BusinessObject.StateA>(userData);
-	        bo.SetState<BusinessObject.StateB>(userData);
-			bo.SetState<BusinessObject.StateC>(userData);
+	        bo.SetState<Actor.StateA>(userData);
+	        bo.SetState<Actor.StateB>(userData);
+			bo.SetState<Actor.StateC>(userData);
 
 			Assert.True(userData.BeginStateA);
 	        Assert.True(userData.EndStateA);
@@ -23,7 +23,15 @@ namespace HQ.Flow.Tests
 	        Assert.True(userData.EndStateB);
 		}
 
-	    public class BusinessObject : Actor
+	    public class UserData
+	    {
+		    public bool BeginStateA;
+		    public bool EndStateA;
+		    public bool BeginStateB;
+		    public bool EndStateB;
+	    }
+
+		public class Actor : StateMachine<UserData>
 	    {
 		    #region StateA
 
