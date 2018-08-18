@@ -13,17 +13,17 @@ namespace HQ.Flow.Tests
 			{
 				StateProvider.Setup<ThreeValidStaticStates>();
 
-				var userData = new ThreeValidStatesData();
-				var bo = new ThreeValidStaticStates();
+				var data = new ThreeValidStatesData();
+				var actor = new ThreeValidStaticStates();
 
-				bo.SetState<ThreeValidStaticStates.StateA>(userData);
-				bo.SetState<ThreeValidStaticStates.StateB>(userData);
-				bo.SetState<ThreeValidStaticStates.StateC>(userData);
+				actor.SetState<ThreeValidStaticStates.StateA>(data);
+				actor.SetState<ThreeValidStaticStates.StateB>(data);
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
 
-				Assert.True(userData.BeginStateA);
-				Assert.True(userData.EndStateA);
-				Assert.True(userData.BeginStateB);
-				Assert.True(userData.EndStateB);
+				Assert.True(data.BeginStateA);
+				Assert.True(data.EndStateA);
+				Assert.True(data.BeginStateB);
+				Assert.True(data.EndStateB);
 			}
 		}
 
@@ -33,10 +33,22 @@ namespace HQ.Flow.Tests
 			using (new StateProviderFixture())
 			{
 				StateProvider.Setup<StateInheritance>();
+				var actor = new StateInheritance();
+				actor.SetState<StateInheritance.StateA>();
+			}
+		}
 
-				var bo = new StateInheritance();
+		[Fact]
+		public void Can_inherit_state_data()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<StateDataInheritance>();
 
-				bo.SetState<StateInheritance.StateA>();
+				var data = new BaseStateData {A = true};
+				var actor = new StateDataInheritance();
+				actor.SetState<StateDataInheritance.StateA>(data);
+				Assert.False(data.A);
 			}
 		}
 	}

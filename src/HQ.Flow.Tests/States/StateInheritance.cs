@@ -17,4 +17,10 @@ namespace HQ.Flow.Tests.States
 				throw new Exception("widgets had unexpected value");
 		}
 	}
+
+	public class DerivedState : StateProvider.State
+	{
+		public virtual int Sprockets => 10;
+		public virtual int Widgets => 5;
+	}
 }
