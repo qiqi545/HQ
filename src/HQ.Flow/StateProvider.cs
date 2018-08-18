@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace HQ.Flow
 {
 	public class StateProvider
     {
-        public interface IHaveSymbol
+	    private const string StateDisambiguatorPrefix = "State_";
+
+	    public interface IHaveSymbol
         {
             string Symbol { get; }
         }
@@ -55,7 +59,7 @@ namespace HQ.Flow
             return StateInstanceLookup<TState>.ForType[typeof (TType)];
         }
 
-        public static IReadOnlyList<State> GetAllStatesFor(Type type)
+        public static ReadOnlyCollection<State> GetAllStatesFor(Type type)
         {
             return new List<State>(_allStatesByType[type]).AsReadOnly();
         }
@@ -91,7 +95,10 @@ namespace HQ.Flow
 	    /// <summary>Initialize all state machines. Can only be called once.</summary>
 	    public static void Setup(params Assembly[] assemblies)
 	    {
-			Setup((IEnumerable<Assembly>)assemblies);
+			if(assemblies.Length == 0)
+				Setup((IEnumerable<Assembly>)AppDomain.CurrentDomain.GetAssemblies());
+			else
+				Setup((IEnumerable<Assembly>)assemblies);
 	    }
 
 		/// <summary>Initialize all state machines. Can only be called once.</summary>
@@ -162,8 +169,9 @@ namespace HQ.Flow
             }
 
 	        const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-	        var stateMethods = stateMachineType.GetMethods(bindingFlags)
-                    .Where(mi => mi.Name.StartsWith("State_")).ToDictionary(mi => mi.Name);
+
+	        var typeMethods = stateMachineType.GetMethods(bindingFlags);
+	        var stateMethods = typeMethods.ToDictionary(mi => mi.Name);
 
 			Type methodTableType;
             var methodTableSearchType = stateMachineType;
@@ -208,13 +216,38 @@ namespace HQ.Flow
                 SetupStateTypeRecursive(states, abstractStates, stateType, stateMachineType, methodTableType, stateMethods);
             }
 
-			if(stateMethods.Count > 0)
-            {
-                Debug.Assert(false);
-                throw new Exception("State methods were unused (probably a naming error or undefined state):\n" + string.Join("\n", stateMethods.Values));
-            }
+	        var stateTypesToMethodTables = states
+		        .Select(kvp => new KeyValuePair<Type, MethodTable>(kvp.Key, kvp.Value.methodTable))
+		        .Concat(abstractStates).ToList();
+			
+			foreach (var typeToMethodTable in stateTypesToMethodTables)
+	        {
+		        var methodTable = typeToMethodTable.Value;
+				var allMethodTableEntries = methodTable.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance)
+			        .Where(fi => fi.FieldType.BaseType == typeof(MulticastDelegate)).ToList();
 
-			var stateTypesToMethodTables = states.Select(kvp => new KeyValuePair<Type, MethodTable>(kvp.Key, kvp.Value.methodTable)).Concat(abstractStates);
+		        if (!allMethodTableEntries.Any())
+			        stateMethods.Clear();
+
+		        var toRemove = new List<string>(stateMethods.Keys);
+		        foreach (var fieldInfo in allMethodTableEntries)
+		        {
+			        foreach (var stateMethod in stateMethods)
+			        {
+				        if (Regex.IsMatch(stateMethod.Key, $@"{StateDisambiguatorPrefix}_\w*_{fieldInfo.Name}") || Regex.IsMatch(stateMethod.Key, $@"\w*_{fieldInfo.Name}"))
+					        toRemove.Remove(stateMethod.Key);
+					}
+		        }
+
+		        foreach (var stateMethod in toRemove)
+			        stateMethods.Remove(stateMethod);
+	        }
+			
+	        if (stateMethods.Count > 0)
+            {
+                throw new StateProviderSetupException("State methods were unused (probably a naming error or undefined state):\n" + string.Join("\n", stateMethods.Values), stateMethods.Values);
+            }
+			
             foreach(var typeToMethodTable in stateTypesToMethodTables)
             {
                 MethodTable methodTable = typeToMethodTable.Value;
@@ -363,58 +396,80 @@ namespace HQ.Flow
 
             foreach(var fieldInfo in allMethodTableEntries)
             {
-                string potentialMethodName = $"State_{GetStateName(stateType)}_{fieldInfo.Name}";
-	            if(stateMethods.TryGetValue(potentialMethodName, out var methodInStateMachine))
-                {
-                    var methodInMethodTable = fieldInfo.FieldType.GetMethod("Invoke");
-	                Debug.Assert(methodInMethodTable != null, nameof(methodInMethodTable) + " != null");
+	            var naturalName = $"{GetStateName(stateType)}_{fieldInfo.Name}";
+	            var disambiguatedName = $"{StateDisambiguatorPrefix}{naturalName}";
 
-					if (methodInStateMachine.ReturnType != methodInMethodTable.ReturnType)
-                        ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+	            if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
+	            {
+		            PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, naturalName);
+	            }
 
-                    var methodInMethodTableParameters = methodInMethodTable.GetParameters();
-                    var methodInStateMachineParameters = methodInStateMachine.GetParameters();
-
-                    if(methodInStateMachineParameters.Length != methodInMethodTableParameters.Length-1) // -1 to account for 'this' parameter to open delegate
-                        ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
-
-                    for(var i = 0; i < methodInStateMachineParameters.Length; i++)
-                        if (methodInStateMachineParameters[i].ParameterType != methodInMethodTableParameters[i + 1].ParameterType &&  // +1 to account for 'this' parameter to open delegate     
-                           !methodInMethodTableParameters[i + 1].ParameterType.IsAssignableFrom(methodInStateMachineParameters[i].ParameterType)) // i.e. supports custom implementations of IUpdateContext
-                            ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
-                    
-                    if(!stateMachineType.IsAssignableFrom(methodInMethodTableParameters[0].ParameterType))
-                    {
-                        Debug.Assert(methodInMethodTableParameters[0].ParameterType.IsAssignableFrom(stateMachineType));
-                        DynamicMethod dynamicMethod = new DynamicMethod($"CastingShim_{potentialMethodName}", methodInMethodTable.ReturnType, methodInMethodTableParameters.Select(pi => pi.ParameterType).ToArray(), stateMachineType);
-                        var il = dynamicMethod.GetILGenerator();
-                        il.Emit(OpCodes.Ldarg_0);
-                        il.Emit(OpCodes.Castclass, stateMachineType); // <- the casting bit of the shim
-                        if(methodInMethodTableParameters.Length > 1) il.Emit(OpCodes.Ldarg_1);
-                        if(methodInMethodTableParameters.Length > 2) il.Emit(OpCodes.Ldarg_2);
-                        if(methodInMethodTableParameters.Length > 3) il.Emit(OpCodes.Ldarg_3);
-                        for(var i = 4; i < methodInMethodTableParameters.Length; i++)
-                        {
-                            if(i <= byte.MaxValue)
-                                il.Emit(OpCodes.Ldarg_S, (byte)i);
-                            else
-                                il.Emit(OpCodes.Ldarg, (ushort)i);
-                        }
-                        il.Emit(OpCodes.Callvirt, methodInStateMachine);
-                        il.Emit(OpCodes.Ret);
-
-                        fieldInfo.SetValue(methodTable, dynamicMethod.CreateDelegate(fieldInfo.FieldType));
-                    }
-                    else
-                    {
-                        fieldInfo.SetValue(methodTable, Delegate.CreateDelegate(fieldInfo.FieldType, methodInStateMachine));
-                    }
-                    stateMethods.Remove(potentialMethodName);
-                }
-            }
+	            if (stateMethods.TryGetValue(disambiguatedName, out methodInStateMachine))
+	            {
+		            PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, disambiguatedName);
+	            }
+			}
         }
 
-		private static void ThrowMethodMismatch(MethodInfo methodInStateMachine, MethodInfo methodInMethodTable)
+	    private static void PotentialMethodNameMatch(MethodTable methodTable, Type stateMachineType, Dictionary<string, MethodInfo> stateMethods,
+		    FieldInfo fieldInfo, MethodInfo methodInStateMachine, string potentialMethodName)
+	    {
+		    var methodInMethodTable = fieldInfo.FieldType.GetMethod("Invoke");
+		    Debug.Assert(methodInMethodTable != null, nameof(methodInMethodTable) + " != null");
+
+		    if (methodInStateMachine.ReturnType != methodInMethodTable.ReturnType)
+			    ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+
+		    var methodInMethodTableParameters = methodInMethodTable.GetParameters();
+		    var methodInStateMachineParameters = methodInStateMachine.GetParameters();
+
+		    if (methodInStateMachineParameters.Length != methodInMethodTableParameters.Length - 1
+		    ) // -1 to account for 'this' parameter to open delegate
+			    ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+
+		    for (var i = 0; i < methodInStateMachineParameters.Length; i++)
+			    if (methodInStateMachineParameters[i].ParameterType !=
+			        methodInMethodTableParameters[i + 1]
+				        .ParameterType && // +1 to account for 'this' parameter to open delegate     
+			        !methodInMethodTableParameters[i + 1].ParameterType
+				        .IsAssignableFrom(methodInStateMachineParameters[i].ParameterType)
+			    ) // i.e. supports custom implementations of IUpdateContext
+				    ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+
+		    if (!stateMachineType.IsAssignableFrom(methodInMethodTableParameters[0].ParameterType))
+		    {
+			    Debug.Assert(methodInMethodTableParameters[0].ParameterType.IsAssignableFrom(stateMachineType));
+			    DynamicMethod dynamicMethod = new DynamicMethod($"CastingShim_{potentialMethodName}",
+				    methodInMethodTable.ReturnType, methodInMethodTableParameters.Select(pi => pi.ParameterType).ToArray(),
+				    stateMachineType);
+			    var il = dynamicMethod.GetILGenerator();
+			    il.Emit(OpCodes.Ldarg_0);
+			    il.Emit(OpCodes.Castclass, stateMachineType); // <- the casting bit of the shim
+			    if (methodInMethodTableParameters.Length > 1) il.Emit(OpCodes.Ldarg_1);
+			    if (methodInMethodTableParameters.Length > 2) il.Emit(OpCodes.Ldarg_2);
+			    if (methodInMethodTableParameters.Length > 3) il.Emit(OpCodes.Ldarg_3);
+			    for (var i = 4; i < methodInMethodTableParameters.Length; i++)
+			    {
+				    if (i <= byte.MaxValue)
+					    il.Emit(OpCodes.Ldarg_S, (byte) i);
+				    else
+					    il.Emit(OpCodes.Ldarg, (ushort) i);
+			    }
+
+			    il.Emit(OpCodes.Callvirt, methodInStateMachine);
+			    il.Emit(OpCodes.Ret);
+
+			    fieldInfo.SetValue(methodTable, dynamicMethod.CreateDelegate(fieldInfo.FieldType));
+		    }
+		    else
+		    {
+			    fieldInfo.SetValue(methodTable, Delegate.CreateDelegate(fieldInfo.FieldType, methodInStateMachine));
+		    }
+
+		    stateMethods.Remove(potentialMethodName);
+	    }
+
+	    private static void ThrowMethodMismatch(MethodInfo methodInStateMachine, MethodInfo methodInMethodTable)
         {
             throw new Exception($"Method signature does not match: \"{methodInStateMachine}\" cannot be used for \"{methodInMethodTable}\"");
         }
