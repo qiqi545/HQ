@@ -6,7 +6,7 @@ namespace HQ.Flow.Tests
 	public class StateProviderTests
 	{
 		[Fact]
-		public void Calling_setup_once_does_not_fail()
+		public void Calling_setup_once_does_not_throw()
 		{
 			using (new StateProviderFixture())
 			{
@@ -25,7 +25,20 @@ namespace HQ.Flow.Tests
 				});
 			}
 		}
-		
+
+		[Fact]
+		public void Duplicate_state_method_throws()
+		{
+			using (new StateProviderFixture())
+			{
+				Assert.Throws<DuplicateStateMethodException>(() =>
+				{
+					StateProvider.Setup<DuplicateStateMethods>();
+				});
+			}
+		}
+
+
 		[Fact]
 		public void Clear_is_idempotent()
 		{
@@ -38,7 +51,7 @@ namespace HQ.Flow.Tests
 		}
 
 		[Fact]
-		public void Calling_setup_twice_fails()
+		public void Calling_setup_twice_throws()
 		{
 			using (new StateProviderFixture())
 			{
@@ -51,7 +64,7 @@ namespace HQ.Flow.Tests
 		}
 
 		[Fact]
-		public void Calling_setup_after_clear_does_not_fail()
+		public void Calling_setup_after_clear_does_not_throw()
 		{
 			using (new StateProviderFixture())
 			{

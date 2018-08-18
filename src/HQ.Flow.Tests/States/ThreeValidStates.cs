@@ -4,9 +4,12 @@ namespace HQ.Flow.Tests.States
 	{
 		#region StateA
 
-		public class StateA : State { }
+		public class StateA : State
+		{
 
-		private void StateA_BeginState(ThreeValidStatesData stateData, State previousState)
+		}
+
+		private void State_StateA_BeginState(ThreeValidStatesData stateData, State previousState)
 		{
 			stateData.BeginStateA = true;
 		}

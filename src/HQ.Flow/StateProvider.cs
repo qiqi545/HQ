@@ -32,18 +32,22 @@ namespace HQ.Flow
         {
             internal static readonly Dictionary<Type, TState> ForType = new Dictionary<Type, TState>();
 
-	        internal static void Add(Type stateMachineType, TState state)
+	        // ReSharper disable once UnusedMember.Local
+			internal static void Add(Type stateMachineType, TState state)
             {
                 ForType.Add(stateMachineType, state);
             }
 
+	        // ReSharper disable once UnusedMember.Local
 			internal static TState Get(Type stateMachineType)
 			{
 				ForType.TryGetValue(stateMachineType, out var result);
 				return result;
 			}
 
-			internal static void Clear()
+	        // ReSharper disable once UnusedMember.Local
+	        // ReSharper disable once MemberHidesStaticFromOuterClass
+	        internal static void Clear()
 	        {
 		        ForType.Clear();
 	        }
@@ -64,10 +68,10 @@ namespace HQ.Flow
             return StateInstanceLookup<TState>.ForType[typeof (TType)];
         }
 
-        public static ReadOnlyCollection<State> GetAllStatesFor(Type type)
+        public static ReadOnlyCollection<State> GetAllStatesByType(Type type)
         {
-            return new List<State>(_allStatesByType[type]).AsReadOnly();
-        }
+			return _allStatesByType[type].AsReadOnly();
+		}
 		
         public State GetStateBySymbol(string symbol)
         {
@@ -75,6 +79,7 @@ namespace HQ.Flow
 
             foreach (var state in _allStatesByType[type])
             {
+	            // ReSharper disable once SuspiciousTypeConversion.Global
 	            if(!(state is IHaveSymbol queryable))
                     continue;
 
@@ -84,19 +89,14 @@ namespace HQ.Flow
             return null;
         }
 
-        public static List<State> DeveloperGetAllStatesByType(Type type)
-        {
-            return _allStatesByType[type];
-        }
-
         #endregion
 
-	    public static List<State> AllStateInstances
+	    public static ReadOnlyCollection<State> AllStateInstances
 	    {
 		    get
 		    {
 			    Debug.Assert(_allStateInstances != null);
-				return _allStateInstances;
+				return _allStateInstances.AsReadOnly();
 			}
 	    }
 
@@ -155,7 +155,7 @@ namespace HQ.Flow
 		    {
 			    foreach (var state in stateMachineAndStates.Value.NetworkOrder(kvp => kvp.Key.ToString()))
 			    {
-				    AllStateInstances.Add(state.Value);
+				    _allStateInstances.Add(state.Value);
 
 				    if (!_allStatesByType.TryGetValue(stateMachineAndStates.Key, out var states))
 				    {
@@ -430,7 +430,7 @@ namespace HQ.Flow
             return derivedMethodTable;
         }
 		
-        private static void FillMethodTableWithOverrides(Type stateType, MethodTable methodTable, Type stateMachineType, Dictionary<string, MethodInfo> stateMethods)
+        private static void FillMethodTableWithOverrides(MemberInfo stateType, MethodTable methodTable, Type stateMachineType, Dictionary<string, MethodInfo> stateMethods)
         {
             var allMethodTableEntries = methodTable.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance)
                     .Where(fi => fi.FieldType.BaseType == typeof(MulticastDelegate));
@@ -442,17 +442,23 @@ namespace HQ.Flow
 
 	            if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
 	            {
+					if(stateMethods.ContainsKey(disambiguatedName))
+						throw new DuplicateStateMethodException(naturalName, disambiguatedName);
+
 		            PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, naturalName);
-	            }
+				}
 
 	            if (stateMethods.TryGetValue(disambiguatedName, out methodInStateMachine))
 	            {
-		            PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, disambiguatedName);
-	            }
+		            if (stateMethods.ContainsKey(naturalName))
+			            throw new DuplicateStateMethodException(naturalName, disambiguatedName);
+
+					PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, disambiguatedName);
+				}
 			}
         }
 
-	    private static void PotentialMethodNameMatch(MethodTable methodTable, Type stateMachineType, Dictionary<string, MethodInfo> stateMethods,
+	    private static void PotentialMethodNameMatch(MethodTable methodTable, Type stateMachineType, IDictionary<string, MethodInfo> stateMethods,
 		    FieldInfo fieldInfo, MethodInfo methodInStateMachine, string potentialMethodName)
 	    {
 		    var methodInMethodTable = fieldInfo.FieldType.GetMethod("Invoke");
@@ -464,17 +470,12 @@ namespace HQ.Flow
 		    var methodInMethodTableParameters = methodInMethodTable.GetParameters();
 		    var methodInStateMachineParameters = methodInStateMachine.GetParameters();
 
-		    if (methodInStateMachineParameters.Length != methodInMethodTableParameters.Length - 1
-		    ) // -1 to account for 'this' parameter to open delegate
+		    if (methodInStateMachineParameters.Length != methodInMethodTableParameters.Length - 1) // -1 to account for 'this' parameter to open delegate
 			    ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
 
 		    for (var i = 0; i < methodInStateMachineParameters.Length; i++)
-			    if (methodInStateMachineParameters[i].ParameterType !=
-			        methodInMethodTableParameters[i + 1]
-				        .ParameterType && // +1 to account for 'this' parameter to open delegate     
-			        !methodInMethodTableParameters[i + 1].ParameterType
-				        .IsAssignableFrom(methodInStateMachineParameters[i].ParameterType)
-			    ) // i.e. supports custom implementations of IUpdateContext
+			    if (methodInStateMachineParameters[i].ParameterType != methodInMethodTableParameters[i + 1].ParameterType && // +1 to account for 'this' parameter to open delegate     
+			        !methodInMethodTableParameters[i + 1].ParameterType.IsAssignableFrom(methodInStateMachineParameters[i].ParameterType)) // i.e. supports custom implementations of TStateData
 				    ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
 
 		    if (!stateMachineType.IsAssignableFrom(methodInMethodTableParameters[0].ParameterType))
