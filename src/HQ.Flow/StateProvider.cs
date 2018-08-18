@@ -32,17 +32,22 @@ namespace HQ.Flow
         {
             internal static readonly Dictionary<Type, TState> ForType = new Dictionary<Type, TState>();
 
-            internal static void Add(Type stateMachineType, TState state)
+	        internal static void Add(Type stateMachineType, TState state)
             {
                 ForType.Add(stateMachineType, state);
             }
 
-            internal static TState Get(Type stateMachineType)
-            {
-	            ForType.TryGetValue(stateMachineType, out var result);
-                return result;
-            }
-        }
+			internal static TState Get(Type stateMachineType)
+			{
+				ForType.TryGetValue(stateMachineType, out var result);
+				return result;
+			}
+
+			internal static void Clear()
+	        {
+		        ForType.Clear();
+	        }
+		}
 
         public TState GetState<TState>() where TState : State, new()
         {
@@ -86,63 +91,99 @@ namespace HQ.Flow
 
         #endregion
 
-		public static List<State> AllStateInstances { get { Debug.Assert(_allStateInstances != null); return _allStateInstances; } }
+	    public static List<State> AllStateInstances
+	    {
+		    get
+		    {
+			    Debug.Assert(_allStateInstances != null);
+				return _allStateInstances;
+			}
+	    }
+
 	    private static List<State> _allStateInstances;
 	    private static Dictionary<Type, List<State>> _allStatesByType;
 
 		#region Setup
 
-	    /// <summary>Initialize all state machines. Can only be called once.</summary>
-	    public static void Setup(params Assembly[] assemblies)
+	    /// <summary>Initialize all state machines. </summary>
+	    public static void Setup()
 	    {
-			if(assemblies.Length == 0)
-				Setup((IEnumerable<Assembly>)AppDomain.CurrentDomain.GetAssemblies());
-			else
-				Setup((IEnumerable<Assembly>)assemblies);
-	    }
+		    Setup((IEnumerable<Assembly>)AppDomain.CurrentDomain.GetAssemblies());
+		}
 
-		/// <summary>Initialize all state machines. Can only be called once.</summary>
+	    /// <summary>Initialize all state machines. </summary>
+		public static void Setup(params Assembly[] assemblies)
+	    {
+			Setup((IEnumerable<Assembly>)assemblies);
+		}
+
+		/// <summary>Initialize all state machines. </summary>
 		public static void Setup(IEnumerable<Assembly> assemblies)
         {
-            if(Interlocked.CompareExchange(ref _allStateInstances, new List<State>(), null) != null)
-            {
-                Debug.Assert(false);
-                throw new InvalidOperationException("StateProvider was already setup");
-            }
-            
-            var stateMachinesToStates = new Dictionary<Type, Dictionary<Type, State>>();
-            var stateMachinesToAbstractStates = new Dictionary<Type, Dictionary<Type, MethodTable>>();
+            var types = assemblies.SelectMany(a => a.GetTypes());
 
-            var allStateMachineTypes = assemblies.SelectMany(a => a.GetTypes()).Where(t => typeof(StateProvider).IsAssignableFrom(t));
-            foreach(var type in allStateMachineTypes)
-            {
-                SetupStateMachineTypeRecursive(stateMachinesToStates, stateMachinesToAbstractStates, type);
-            }
-
-            _allStatesByType = new Dictionary<Type, List<State>>();
-            foreach(var stateMachineAndStates in stateMachinesToStates.NetworkOrder(kvp => kvp.Key.ToString()))
-            {
-                foreach(var state in stateMachineAndStates.Value.NetworkOrder(kvp => kvp.Key.ToString()))
-                {
-                    AllStateInstances.Add(state.Value);
-
-	                if (!_allStatesByType.TryGetValue(stateMachineAndStates.Key, out var states))
-                    {
-                        states = new List<State>();
-                        _allStatesByType.Add(stateMachineAndStates.Key, states);
-                    }
-                    _allStatesByType[stateMachineAndStates.Key].Add(state.Value);
-
-                    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.Key);
-
-	                const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-	                stateInstanceLookupType.GetMethod("Add", bindingFlags)?
-		                .Invoke(null, new object[] {stateMachineAndStates.Key, state.Value});
-                }
-            }
+			Setup(types);
         }
+		
+	    /// <summary>Initialize all state machines. </summary>
+	    public static void Setup(params Type[] types)
+	    {
+			Setup((IEnumerable<Type>)types);
+		}
 
-        private static string GetStateName(MemberInfo stateType)
+	    /// <summary>Initialize all state machines. </summary>
+	    public static void Setup<T>()
+	    {
+		    Setup(typeof(T));
+	    }
+
+	    /// <summary>Initialize all state machines. </summary>
+	    public static void Setup(IEnumerable<Type> types)
+	    {
+		    Initialize();
+
+		    var stateMachinesToStates = new Dictionary<Type, Dictionary<Type, State>>();
+		    var stateMachinesToAbstractStates = new Dictionary<Type, Dictionary<Type, MethodTable>>();
+
+		    foreach (var type in types.Where(t => typeof(StateProvider).IsAssignableFrom(t)))
+		    {
+			    SetupStateMachineTypeRecursive(stateMachinesToStates, stateMachinesToAbstractStates, type);
+		    }
+
+		    _allStatesByType = new Dictionary<Type, List<State>>();
+		    foreach (var stateMachineAndStates in stateMachinesToStates.NetworkOrder(kvp => kvp.Key.ToString()))
+		    {
+			    foreach (var state in stateMachineAndStates.Value.NetworkOrder(kvp => kvp.Key.ToString()))
+			    {
+				    AllStateInstances.Add(state.Value);
+
+				    if (!_allStatesByType.TryGetValue(stateMachineAndStates.Key, out var states))
+				    {
+					    states = new List<State>();
+					    _allStatesByType.Add(stateMachineAndStates.Key, states);
+				    }
+
+				    _allStatesByType[stateMachineAndStates.Key].Add(state.Value);
+
+				    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.Key);
+
+				    const BindingFlags bindingFlags =
+					    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+				    stateInstanceLookupType.GetMethod("Add", bindingFlags)?
+					    .Invoke(null, new object[] {stateMachineAndStates.Key, state.Value});
+			    }
+		    }
+	    }
+
+	    private static void Initialize()
+	    {
+		    if (Interlocked.CompareExchange(ref _allStateInstances, new List<State>(), null) != null)
+		    {
+			    throw new AlreadyInitializedException();
+		    }
+	    }
+
+		private static string GetStateName(MemberInfo stateType)
         {
             var stateName = stateType.Name;
             if(stateName != "State" && stateName.EndsWith("State"))
@@ -245,7 +286,7 @@ namespace HQ.Flow
 			
 	        if (stateMethods.Count > 0)
             {
-                throw new StateProviderSetupException("State methods were unused (probably a naming error or undefined state):\n" + string.Join("\n", stateMethods.Values), stateMethods.Values);
+                throw new UnusedStateMethodsException(stateMethods.Values);
             }
 			
             foreach(var typeToMethodTable in stateTypesToMethodTables)
@@ -475,5 +516,25 @@ namespace HQ.Flow
         }
 
         #endregion
+
+	    public static void Clear()
+	    {
+			if (_allStateInstances != null)
+		    {
+			    foreach (var state in _allStateInstances)
+			    {
+				    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.GetType());
+				    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+				    var clearMethod = stateInstanceLookupType.GetMethod("Clear", bindingFlags);
+				    clearMethod?.Invoke(null, null);
+			    }
+		    }
+
+		    _allStatesByType?.Clear();
+		    _allStatesByType = null;
+
+		    _allStateInstances?.Clear();
+		    _allStateInstances = null;
+		}
     }
 }

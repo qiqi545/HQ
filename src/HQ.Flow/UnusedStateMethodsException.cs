@@ -9,19 +9,19 @@ using System.Security.Permissions;
 namespace HQ.Flow
 {
 	[Serializable]
-	public class StateProviderSetupException : Exception
+	public class UnusedStateMethodsException : Exception
 	{
-		private ReadOnlyCollection<MethodInfo> StateMethods { get; }
+		public ReadOnlyCollection<string> StateMethods { get; }
 
-		public StateProviderSetupException(string message, IEnumerable<MethodInfo> stateMethods) : base(message)
+		public UnusedStateMethodsException(ICollection<MethodInfo> stateMethods) : base("State methods were unused (probably a naming error or undefined state):\n" + string.Join("\n", stateMethods))
 		{
-			StateMethods = new ReadOnlyCollection<MethodInfo>(stateMethods.ToList());
+			StateMethods = new ReadOnlyCollection<string>(stateMethods.Select(x => x.Name).ToList());
 		}
 
-		protected StateProviderSetupException(SerializationInfo info, StreamingContext context)
+		protected UnusedStateMethodsException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
-			StateMethods = info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<MethodInfo>)) as ReadOnlyCollection<MethodInfo>;
+			StateMethods = info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<string>)) as ReadOnlyCollection<string>;
 		}
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
