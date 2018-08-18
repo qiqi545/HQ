@@ -219,9 +219,9 @@ namespace HQ.Flow
 				var newStateTypeMethods = newStateType.GetMethods(bindingFlags);
 		        foreach (var newStateTypeMethod in newStateTypeMethods)
 		        {
-			        var stateMethod = newStateTypeMethod.Name;
+			        var stateMethod = $"{newStateTypeMethod?.DeclaringType?.Name}_{newStateTypeMethod?.Name}";
 
-			        if (stateMethods.ContainsKey(stateMethod))
+					if (stateMethods.ContainsKey(stateMethod))
 			        {
 				        var duplicateMethods = new List<string> {stateMethod};
 
@@ -239,7 +239,6 @@ namespace HQ.Flow
 					stateMethods.Add(stateMethod, newStateTypeMethod);
 		        }
 	        }
-
 
 			Type methodTableType;
             var methodTableSearchType = stateMachineType;
@@ -301,9 +300,15 @@ namespace HQ.Flow
 		        {
 			        foreach (var stateMethod in stateMethods)
 			        {
-				        if (Regex.IsMatch(stateMethod.Key, $@"{StateDisambiguatorPrefix}_\w*_{fieldInfo.Name}") || Regex.IsMatch(stateMethod.Key, $@"\w*_{fieldInfo.Name}"))
+				        var aliasName = $@"{fieldInfo.Name}";
+						var disambiguatedName = $@"{StateDisambiguatorPrefix}_\w*_{fieldInfo.Name}";
+				        var naturalName = $@"\w*_{fieldInfo.Name}";
+
+				        if (Regex.IsMatch(stateMethod.Key, disambiguatedName) || 
+				            Regex.IsMatch(stateMethod.Key, naturalName) ||
+				            stateMethod.Key == aliasName)
 					        toRemove.Remove(stateMethod.Key);
-					}
+			        }
 		        }
 
 		        foreach (var stateMethod in toRemove)
@@ -465,20 +470,20 @@ namespace HQ.Flow
             {
 	            var naturalName = $"{GetStateName(stateType)}_{fieldInfo.Name}";
 	            var disambiguatedName = $"{StateDisambiguatorPrefix}{naturalName}";
-
-	            if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
+				
+				if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
 	            {
 					if(stateMethods.ContainsKey(disambiguatedName))
 						throw new DuplicateStateMethodException(naturalName, disambiguatedName);
-
-		            PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, naturalName);
+		            
+					PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, naturalName);
 				}
 
 	            if (stateMethods.TryGetValue(disambiguatedName, out methodInStateMachine))
 	            {
 		            if (stateMethods.ContainsKey(naturalName))
-			            throw new DuplicateStateMethodException(naturalName, disambiguatedName);
-
+			            throw new DuplicateStateMethodException(disambiguatedName, naturalName);
+		            
 					PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo, methodInStateMachine, disambiguatedName);
 				}
 			}

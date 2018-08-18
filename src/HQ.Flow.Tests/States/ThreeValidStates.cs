@@ -6,12 +6,12 @@ namespace HQ.Flow.Tests.States
 
 		public class StateA : State
 		{
-			private void StateA_BeginState(ThreeValidStatesData stateData, State previousState)
+			private void BeginState(ThreeValidStatesData stateData, State previousState)
 			{
 				stateData.BeginStateA = true;
 			}
 			
-			private void StateA_EndState(ThreeValidStatesData stateData, State nextState)
+			private void EndState(ThreeValidStatesData stateData, State nextState)
 			{
 				stateData.EndStateA = true;
 			}
@@ -21,11 +21,13 @@ namespace HQ.Flow.Tests.States
 
 		#region StateB
 
+		private bool _dataFromParent = true;
+
 		public class StateB : State { }
 
 		private void State_StateB_BeginState(ThreeValidStatesData threeValidStatesData, State previousState)
 		{
-			threeValidStatesData.BeginStateB = true;
+			threeValidStatesData.BeginStateB = _dataFromParent;
 		}
 
 		private void State_StateB_EndState(ThreeValidStatesData threeValidStatesData, State nextState)
