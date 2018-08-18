@@ -2,7 +2,7 @@
 
 namespace HQ.Flow
 {
-	public class StateMachine<TStateData> : StateProvider
+	public class StateMachine<TStateData> : StateProvider where TStateData : class
 	{
 		public StateMachine()
 		{
@@ -26,7 +26,7 @@ namespace HQ.Flow
 			return $"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
 		}
 
-		public void SetState<TState>(TStateData stateData, bool allowStateRestart = false) where TState : State, new()
+		public void SetState<TState>(TStateData stateData = null, bool allowStateRestart = false) where TState : State, new()
 		{
 			DirectlySetState(GetState<TState>(), stateData, allowStateRestart);
 		}

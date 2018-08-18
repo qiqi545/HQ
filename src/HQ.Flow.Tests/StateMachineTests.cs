@@ -5,25 +5,38 @@ using Xunit;
 namespace HQ.Flow.Tests
 {
 	public class StateMachineTests
-    {
-	    [Fact]
-        public void Can_transition_between_states()
-        {
-	        using (new StateProviderFixture())
-	        {
-		        StateProvider.Setup(typeof(ThreeValidStaticStates));
+	{
+		[Fact]
+		public void Can_transition_between_states()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
 
-		        var userData = new ThreeValidStatesData();
-		        var bo = new ThreeValidStaticStates();
+				var userData = new ThreeValidStatesData();
+				var bo = new ThreeValidStaticStates();
 
-		        bo.SetState<ThreeValidStaticStates.StateA>(userData);
-		        bo.SetState<ThreeValidStaticStates.StateB>(userData);
-		        bo.SetState<ThreeValidStaticStates.StateC>(userData);
+				bo.SetState<ThreeValidStaticStates.StateA>(userData);
+				bo.SetState<ThreeValidStaticStates.StateB>(userData);
+				bo.SetState<ThreeValidStaticStates.StateC>(userData);
 
-		        Assert.True(userData.BeginStateA);
-		        Assert.True(userData.EndStateA);
-		        Assert.True(userData.BeginStateB);
-		        Assert.True(userData.EndStateB);
+				Assert.True(userData.BeginStateA);
+				Assert.True(userData.EndStateA);
+				Assert.True(userData.BeginStateB);
+				Assert.True(userData.EndStateB);
+			}
+		}
+
+		[Fact]
+		public void Can_inherit_states_and_pass_null_context()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<StateInheritance>();
+
+				var bo = new StateInheritance();
+
+				bo.SetState<StateInheritance.StateA>();
 			}
 		}
 	}
