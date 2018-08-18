@@ -60,8 +60,7 @@ namespace HQ.Flow
             return StateInstanceLookup<TState>.ForType[type];
         }
 
-
-        public static TState GetState<TType, TState>()
+		public static TState GetState<TType, TState>()
             where TType : StateProvider
             where TState : State, new()
         {
@@ -214,6 +213,34 @@ namespace HQ.Flow
 	        var typeMethods = stateMachineType.GetMethods(bindingFlags);
 	        var stateMethods = typeMethods.ToDictionary(mi => mi.Name);
 
+	        var newStateTypes = stateMachineType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic).Where(nt => typeof(State).IsAssignableFrom(nt)).ToArray();
+	        foreach (var newStateType in newStateTypes)
+	        {
+				var newStateTypeMethods = newStateType.GetMethods(bindingFlags);
+		        foreach (var newStateTypeMethod in newStateTypeMethods)
+		        {
+			        var stateMethod = newStateTypeMethod.Name;
+
+			        if (stateMethods.ContainsKey(stateMethod))
+			        {
+				        var duplicateMethods = new List<string> {stateMethod};
+
+				        if (stateMethod.StartsWith(StateDisambiguatorPrefix))
+						{
+							var naturalName = stateMethod.Replace(StateDisambiguatorPrefix, string.Empty);
+
+							if (stateMethods.ContainsKey(naturalName))
+								duplicateMethods.Add(naturalName);
+						}
+
+				        throw new DuplicateStateMethodException(duplicateMethods.ToArray());
+			        }
+
+					stateMethods.Add(stateMethod, newStateTypeMethod);
+		        }
+	        }
+
+
 			Type methodTableType;
             var methodTableSearchType = stateMachineType;
             while((methodTableType = methodTableSearchType?.GetNestedType("MethodTable", BindingFlags.Public | BindingFlags.NonPublic)) == null)
@@ -251,7 +278,6 @@ namespace HQ.Flow
                 }
             }
 
-            var newStateTypes = stateMachineType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic).Where(nt => typeof(State).IsAssignableFrom(nt)).ToArray();
             foreach(var stateType in newStateTypes)
             {
                 SetupStateTypeRecursive(states, abstractStates, stateType, stateMachineType, methodTableType, stateMethods);

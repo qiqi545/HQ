@@ -6,17 +6,15 @@ namespace HQ.Flow.Tests.States
 
 		public class StateA : State
 		{
-
-		}
-
-		private void State_StateA_BeginState(ThreeValidStatesData stateData, State previousState)
-		{
-			stateData.BeginStateA = true;
-		}
-
-		private void State_StateA_EndState(ThreeValidStatesData stateData, State nextState)
-		{
-			stateData.EndStateA = true;
+			private void StateA_BeginState(ThreeValidStatesData stateData, State previousState)
+			{
+				stateData.BeginStateA = true;
+			}
+			
+			private void StateA_EndState(ThreeValidStatesData stateData, State nextState)
+			{
+				stateData.EndStateA = true;
+			}
 		}
 
 		#endregion
