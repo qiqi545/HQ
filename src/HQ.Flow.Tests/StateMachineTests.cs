@@ -11,14 +11,14 @@ namespace HQ.Flow.Tests
         {
 	        using (new StateProviderFixture())
 	        {
-		        StateProvider.Setup(typeof(ThreeValidStates));
+		        StateProvider.Setup(typeof(ThreeValidStaticStates));
 
 		        var userData = new ThreeValidStatesData();
-		        var bo = new ThreeValidStates();
+		        var bo = new ThreeValidStaticStates();
 
-		        bo.SetState<ThreeValidStates.StateA>(userData);
-		        bo.SetState<ThreeValidStates.StateB>(userData);
-		        bo.SetState<ThreeValidStates.StateC>(userData);
+		        bo.SetState<ThreeValidStaticStates.StateA>(userData);
+		        bo.SetState<ThreeValidStaticStates.StateB>(userData);
+		        bo.SetState<ThreeValidStaticStates.StateC>(userData);
 
 		        Assert.True(userData.BeginStateA);
 		        Assert.True(userData.EndStateA);

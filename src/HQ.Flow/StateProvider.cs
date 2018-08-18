@@ -166,8 +166,7 @@ namespace HQ.Flow
 
 				    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.Key);
 
-				    const BindingFlags bindingFlags =
-					    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+				    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
 				    stateInstanceLookupType.GetMethod("Add", bindingFlags)?
 					    .Invoke(null, new object[] {stateMachineAndStates.Key, state.Value});
 			    }
@@ -211,23 +210,23 @@ namespace HQ.Flow
 	        const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
 	        var typeMethods = stateMachineType.GetMethods(bindingFlags);
-	        var stateMethods = typeMethods.ToDictionary(mi => mi.Name);
-
+			var stateMethods = typeMethods.ToDictionary(mi => mi.Name);
+			
 	        var newStateTypes = stateMachineType.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic).Where(nt => typeof(State).IsAssignableFrom(nt)).ToArray();
 	        foreach (var newStateType in newStateTypes)
 	        {
 				var newStateTypeMethods = newStateType.GetMethods(bindingFlags);
 		        foreach (var newStateTypeMethod in newStateTypeMethods)
 		        {
-			        var stateMethod = $"{newStateTypeMethod?.DeclaringType?.Name}_{newStateTypeMethod?.Name}";
+			        var methodName = GetFullyQualifiedStateMethodName(newStateTypeMethod);
 
-					if (stateMethods.ContainsKey(stateMethod))
+			        if (stateMethods.ContainsKey(methodName))
 			        {
-				        var duplicateMethods = new List<string> {stateMethod};
+				        var duplicateMethods = new List<string> { methodName };
 
-				        if (stateMethod.StartsWith(StateDisambiguatorPrefix))
+				        if (methodName.StartsWith(StateDisambiguatorPrefix))
 						{
-							var naturalName = stateMethod.Replace(StateDisambiguatorPrefix, string.Empty);
+							var naturalName = methodName.Replace(StateDisambiguatorPrefix, string.Empty);
 
 							if (stateMethods.ContainsKey(naturalName))
 								duplicateMethods.Add(naturalName);
@@ -236,7 +235,7 @@ namespace HQ.Flow
 				        throw new DuplicateStateMethodException(duplicateMethods.ToArray());
 			        }
 
-					stateMethods.Add(stateMethod, newStateTypeMethod);
+					stateMethods.Add(methodName, newStateTypeMethod);
 		        }
 	        }
 
@@ -352,7 +351,25 @@ namespace HQ.Flow
             stateMachinesToAbstractStates.Add(stateMachineType, abstractStates);
         }
 
-        private static void EmitDefault(ILGenerator il, Type type)
+	    private static string GetFullyQualifiedStateMethodName(MethodInfo newStateTypeMethod)
+	    {
+		    var methodName = newStateTypeMethod.Name;
+
+		    var stateTypeName = newStateTypeMethod.DeclaringType?.Name;
+
+		    if (methodName.StartsWith($"{stateTypeName}_"))
+		    {
+			    methodName = $"{StateDisambiguatorPrefix}{methodName}";
+		    }
+		    else if (!methodName.StartsWith($"{StateDisambiguatorPrefix}{stateTypeName}_"))
+		    {
+			    methodName = $"{StateDisambiguatorPrefix}{newStateTypeMethod?.DeclaringType?.Name}_{newStateTypeMethod?.Name}";
+		    }
+
+		    return methodName;
+	    }
+
+	    private static void EmitDefault(ILGenerator il, Type type)
         {
             if(type == typeof(void))
                 return;
