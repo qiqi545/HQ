@@ -54,14 +54,19 @@ namespace HQ.Flow.Tests.States
 		{
 			public string Name => "StateC";
 
-			private bool State_StateC_PreCondition(ThreeValidStatesData stateData, State nextState)
+			private bool State_StateC_BeforeBeginState(ThreeValidStatesData stateData, State nextState)
 			{
-				return stateData.AllowStateC;
+				return stateData.AllowBeginStateC;
 			}
 
 			private void BeginState(ThreeValidStatesData stateData, State previousState)
 			{
 				
+			}
+
+			private bool State_StateC_BeforeEndState(ThreeValidStatesData stateData, State previousState)
+			{
+				return stateData.AllowEndStateC;
 			}
 
 			private void EndState(ThreeValidStatesData stateData, State nextState)

@@ -8,6 +8,7 @@ namespace HQ.Flow.Tests.States
 		public bool EndStateB;
 		public int TicksA;
 		public int TicksB;
-		public bool AllowStateC = true;
+		public bool AllowBeginStateC = true;
+		public bool AllowEndStateC = true;
 	}
 }

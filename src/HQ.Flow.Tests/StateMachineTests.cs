@@ -105,18 +105,36 @@ namespace HQ.Flow.Tests
 		}
 
 		[Fact]
-		public void Precondition_failure_blocks_state_transition()
+		public void BeforeBegin_failure_blocks_state_transition()
 		{
 			using (new StateProviderFixture())
 			{
 				StateProvider.Setup<ThreeValidStaticStates>();
 
-				var data = new ThreeValidStatesData {AllowStateC = false};
+				var data = new ThreeValidStatesData {AllowBeginStateC = false};
 				var actor = new ThreeValidStaticStates();
 
 				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
 				actor.SetState<ThreeValidStaticStates.StateC>(data);
 				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+			}
+		}
+
+		[Fact]
+		public void BeforeEnd_failure_blocks_state_transition()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData { AllowEndStateC = false };
+				var actor = new ThreeValidStaticStates();
+
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
+				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateB>(data);
+				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
 			}
 		}
 

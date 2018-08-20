@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Diagnostics;
 
 namespace HQ.Flow
@@ -16,13 +19,16 @@ namespace HQ.Flow
 		public new class MethodTable : StateProvider.MethodTable
 		{
 			[AlwaysNullChecked]
-			public Func<StateMachine<TStateData>, TStateData, State, bool> PreCondition;
+			public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeBeginState;
 
 			[AlwaysNullChecked]
 			public Action<StateMachine<TStateData>, TStateData, State> BeginState;
 
 			[AlwaysNullChecked]
 			public Action<StateMachine<TStateData>, TStateData> Update;
+
+			[AlwaysNullChecked]
+			public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeEndState;
 
 			[AlwaysNullChecked]
 			public Action<StateMachine<TStateData>, TStateData, State> EndState;
@@ -47,11 +53,22 @@ namespace HQ.Flow
 			if (!allowStateRestart && ReferenceEquals(CurrentState, nextState))
 				return;
 
-			if (nextState?.methodTable is MethodTable methodTable)
 			{
-				var precondition = methodTable.PreCondition?.Invoke(this, stateData, nextState);
-				if (precondition.HasValue && !precondition.Value)
-					return;
+				if (CurrentState?.methodTable is MethodTable methodTable)
+				{
+					var beforeEnd = methodTable.BeforeEndState?.Invoke(this, stateData, CurrentState);
+					if (beforeEnd.HasValue && !beforeEnd.Value)
+						return;
+				}
+			}
+
+			{
+				if (nextState?.methodTable is MethodTable methodTable)
+				{
+					var beforeBegin = methodTable.BeforeBeginState?.Invoke(this, stateData, nextState);
+					if (beforeBegin.HasValue && !beforeBegin.Value)
+						return;
+				}
 			}
 			
 			StateMethods.EndState?.Invoke(this, stateData, nextState);
