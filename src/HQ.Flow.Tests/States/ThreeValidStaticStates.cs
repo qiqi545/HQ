@@ -4,8 +4,10 @@ namespace HQ.Flow.Tests.States
 	{
 		#region StateA
 
-		public class StateA : State
+		public class StateA : State, INamedState
 		{
+			public string Name => "StateA";
+
 			private void State_StateA_BeginState(ThreeValidStatesData stateData, State previousState)
 			{
 				stateData.BeginStateA = true;
@@ -14,6 +16,11 @@ namespace HQ.Flow.Tests.States
 			private void State_StateA_EndState(ThreeValidStatesData stateData, State nextState)
 			{
 				stateData.EndStateA = true;
+			}
+
+			private void State_StateA_Update(ThreeValidStatesData stateData)
+			{
+				stateData.TicksA++;
 			}
 		}
 
@@ -32,14 +39,26 @@ namespace HQ.Flow.Tests.States
 			{
 				stateData.EndStateB = true;
 			}
+
+			private void State_StateB_Update(ThreeValidStatesData stateData)
+			{
+				stateData.TicksB++;
+			}
 		}
 		
 		#endregion
 
 		#region StateC
 
-		public class StateC : State
+		public class StateC : State, INamedState
 		{
+			public string Name => "StateC";
+
+			private bool State_StateC_PreCondition(ThreeValidStatesData stateData, State nextState)
+			{
+				return stateData.AllowStateC;
+			}
+
 			private void BeginState(ThreeValidStatesData stateData, State previousState)
 			{
 				

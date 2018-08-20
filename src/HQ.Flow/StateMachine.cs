@@ -1,12 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace HQ.Flow
 {
-	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
-	internal class DefaultUpdateAttribute : Attribute { }
-
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
 	public class StateMachine<TStateData> : StateProvider where TStateData : class
 	{
+		public string DisplayName => $"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
+
 		public StateMachine()
 		{
 			CurrentState = GetState<State>();
@@ -30,20 +31,15 @@ namespace HQ.Flow
 		public MethodTable StateMethods => (MethodTable)CurrentState.methodTable;
 		public State CurrentState { get; private set; }
 
-		public override string ToString()
-		{
-			return $"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
-		}
-
 		public void SetState<TState>(TStateData stateData = null, bool allowStateRestart = false) where TState : State, new()
 		{
 			DirectlySetState(GetState<TState>(), stateData, allowStateRestart);
 		}
 
-		[DefaultUpdate]
+		[IgnoreStateMethod]
 		public virtual void Update(TStateData stateData)
 		{
-			StateMethods?.Update(this, stateData);
+			StateMethods.Update?.Invoke(this, stateData);
 		}
 
 		private void DirectlySetState(State nextState, TStateData stateData, bool allowStateRestart)
@@ -51,10 +47,13 @@ namespace HQ.Flow
 			if (!allowStateRestart && ReferenceEquals(CurrentState, nextState))
 				return;
 
-			var precondition = StateMethods.PreCondition?.Invoke(this, stateData, nextState);
-			if (precondition.HasValue && !precondition.Value)
-				return;
-
+			if (nextState?.methodTable is MethodTable methodTable)
+			{
+				var precondition = methodTable.PreCondition?.Invoke(this, stateData, nextState);
+				if (precondition.HasValue && !precondition.Value)
+					return;
+			}
+			
 			StateMethods.EndState?.Invoke(this, stateData, nextState);
 			var previousState = CurrentState;
 

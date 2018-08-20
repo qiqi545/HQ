@@ -1,3 +1,4 @@
+using System.Text;
 using HQ.Flow.Tests.Fixtures;
 using HQ.Flow.Tests.States;
 using Xunit;
@@ -24,6 +25,98 @@ namespace HQ.Flow.Tests
 				Assert.True(data.EndStateA);
 				Assert.True(data.BeginStateB);
 				Assert.True(data.EndStateB);
+
+				// last state was C
+				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
+				Assert.Equal("ThreeValidStaticStates (StateC)", actor.DisplayName);
+
+				// all states A and C have names
+				Assert.NotNull(actor.GetState<ThreeValidStaticStates.StateA>().Name);
+				Assert.NotNull(actor.GetState<ThreeValidStaticStates.StateC>().Name);
+
+				// can lookup state by name
+				Assert.Equal(typeof(ThreeValidStaticStates.StateA), actor.GetStateByName("StateA").GetType());
+
+				// can enumerate all states
+				var allStates = StateProvider.GetAllStatesByType<ThreeValidStaticStates>();
+				Assert.Equal(4, allStates.Count);
+			}
+		}
+
+		[Fact]
+		public void Non_reentrant_state_does_nothing_when_reentering()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData();
+				var actor = new ThreeValidStaticStates();
+
+				actor.SetState<ThreeValidStaticStates.StateA>(data);
+				actor.SetState<ThreeValidStaticStates.StateA>(data);
+
+				Assert.True(data.BeginStateA);
+				Assert.False(data.EndStateA);
+			}
+		}
+		
+		[Fact]
+		public void Reentrant_state_ends_itself()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData();
+				var actor = new ThreeValidStaticStates();
+
+				actor.SetState<ThreeValidStaticStates.StateA>(data);
+				actor.SetState<ThreeValidStaticStates.StateA>(data, allowStateRestart: true);
+
+				Assert.True(data.BeginStateA);
+				Assert.True(data.EndStateA);
+			}
+		}
+
+		[Fact]
+		public void Update_respects_current_state_and_is_optional()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData();
+				var actor = new ThreeValidStaticStates();
+
+				Assert.Equal(0, data.TicksA);
+				Assert.Equal(0, data.TicksB);
+
+				actor.SetState<ThreeValidStaticStates.StateA>(data);
+				actor.Update(data);
+				actor.SetState<ThreeValidStaticStates.StateB>(data);
+				actor.Update(data);
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
+				actor.Update(data);
+				
+				Assert.Equal(1, data.TicksA);
+				Assert.Equal(1, data.TicksB);
+			}
+		}
+
+		[Fact]
+		public void Precondition_failure_blocks_state_transition()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData {AllowStateC = false};
+				var actor = new ThreeValidStaticStates();
+
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
 			}
 		}
 

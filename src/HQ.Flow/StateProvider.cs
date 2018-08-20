@@ -15,9 +15,9 @@ namespace HQ.Flow
 	    private const string StateDisambiguatorPrefix = "State" + Separator;
 	    private const string Separator = "_";
 
-	    public interface IHaveSymbol
+	    public interface INamedState
         {
-            string Symbol { get; }
+            string Name { get; }
         }
 
         public class MethodTable { }
@@ -38,13 +38,6 @@ namespace HQ.Flow
             {
                 ForType.Add(stateMachineType, state);
             }
-
-	        // ReSharper disable once UnusedMember.Local
-			internal static TState Get(Type stateMachineType)
-			{
-				ForType.TryGetValue(stateMachineType, out var result);
-				return result;
-			}
 
 	        // ReSharper disable once UnusedMember.Local
 	        // ReSharper disable once MemberHidesStaticFromOuterClass
@@ -72,18 +65,23 @@ namespace HQ.Flow
         {
 			return _allStatesByType[type].AsReadOnly();
 		}
-		
-        public State GetStateBySymbol(string symbol)
+
+	    public static ReadOnlyCollection<State> GetAllStatesByType<T>()
+	    {
+		    return GetAllStatesByType(typeof(T));
+	    }
+
+		public State GetStateByName(string symbol)
         {
             var type = GetType();
 
             foreach (var state in _allStatesByType[type])
             {
 	            // ReSharper disable once SuspiciousTypeConversion.Global
-	            if(!(state is IHaveSymbol queryable))
+	            if(!(state is INamedState queryable))
                     continue;
 
-                if(queryable.Symbol == symbol)
+                if(queryable.Name == symbol)
                     return state;
             }
             return null;
@@ -168,7 +166,7 @@ namespace HQ.Flow
 				    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.Key);
 
 				    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-				    stateInstanceLookupType.GetMethod("Add", bindingFlags)?
+				    stateInstanceLookupType.GetMethod(nameof(StateInstanceLookup<State>.Add), bindingFlags)?
 					    .Invoke(null, new object[] {stateMachineAndStates.Key, state.Value});
 			    }
 		    }
@@ -204,7 +202,7 @@ namespace HQ.Flow
             if(stateMachineType != typeof(StateProvider))
             {
                 SetupStateMachineTypeRecursive(stateMachinesToStates, stateMachinesToAbstractStates, stateMachineType.BaseType);
-                baseStates = stateMachinesToStates[stateMachineType.BaseType ?? throw new InvalidOperationException("MethodTable base type not found")];
+                baseStates = stateMachinesToStates[stateMachineType.BaseType ?? throw new InvalidOperationException($"{nameof(MethodTable)} base type not found")];
                 baseAbstractStates = stateMachinesToAbstractStates[stateMachineType.BaseType];
             }
 
@@ -242,7 +240,7 @@ namespace HQ.Flow
 
 			Type methodTableType;
             var methodTableSearchType = stateMachineType;
-            while((methodTableType = methodTableSearchType?.GetNestedType("MethodTable", BindingFlags.Public | BindingFlags.NonPublic)) == null)
+            while((methodTableType = methodTableSearchType?.GetNestedType(nameof(MethodTable), BindingFlags.Public | BindingFlags.NonPublic)) == null)
             {
                 if(!typeof(StateProvider).IsAssignableFrom(methodTableSearchType?.BaseType))
                     break;
@@ -250,10 +248,10 @@ namespace HQ.Flow
             }
 
             if(methodTableType == null)
-                throw new InvalidOperationException($"MethodTable not found for {stateMachineType}");
+                throw new InvalidOperationException($"{nameof(MethodTable)} not found for {stateMachineType}");
 
             if(!typeof(MethodTable).IsAssignableFrom(methodTableType))
-                throw new InvalidOperationException("MethodTable must be derived from StateMachine.MethodTable");
+                throw new InvalidOperationException($"{nameof(MethodTable)} must be derived from StateMachine.MethodTable");
 
             var states = new Dictionary<Type, State>();
             var abstractStates = new Dictionary<Type, MethodTable>();
@@ -300,7 +298,7 @@ namespace HQ.Flow
 		        {
 			        foreach (var stateMethod in stateMethods)
 			        {
-						var ignore = stateMethod.Value.GetCustomAttributes(typeof(DefaultUpdateAttribute), false);
+						var ignore = stateMethod.Value.GetCustomAttributes(typeof(IgnoreStateMethodAttribute), false);
 				        if (ignore.Length > 0)
 					        continue;
 
@@ -340,7 +338,7 @@ namespace HQ.Flow
                         var methodInMethodTable = fieldInfo.FieldType.GetMethod("Invoke");
 	                    Debug.Assert(methodInMethodTable != null, nameof(methodInMethodTable) + " != null");
 
-						DynamicMethod dynamicMethod = new DynamicMethod($"DoNothing{Separator}{GetStateName(typeToMethodTable.Key)}_{fieldInfo.Name}", methodInMethodTable.ReturnType,
+						DynamicMethod dynamicMethod = new DynamicMethod($"DoNothing{Separator}{GetStateName(typeToMethodTable.Key)}{Separator}{fieldInfo.Name}", methodInMethodTable.ReturnType,
                                 methodInMethodTable.GetParameters().Select(pi => pi.ParameterType).ToArray(), stateMachineType);
 
                         var il = dynamicMethod.GetILGenerator();
@@ -490,7 +488,7 @@ namespace HQ.Flow
 
             foreach(var fieldInfo in allMethodTableEntries)
             {
-	            var naturalName = $"{GetStateName(stateType)}_{fieldInfo.Name}";
+	            var naturalName = $"{GetStateName(stateType)}{Separator}{fieldInfo.Name}";
 	            var disambiguatedName = $"{StateDisambiguatorPrefix}{naturalName}";
 				
 				if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
@@ -534,7 +532,7 @@ namespace HQ.Flow
 		    if (!stateMachineType.IsAssignableFrom(methodInMethodTableParameters[0].ParameterType))
 		    {
 			    Debug.Assert(methodInMethodTableParameters[0].ParameterType.IsAssignableFrom(stateMachineType));
-			    DynamicMethod dynamicMethod = new DynamicMethod($"CastingShim_{potentialMethodName}",
+			    DynamicMethod dynamicMethod = new DynamicMethod($"CastingShim{Separator}{potentialMethodName}",
 				    methodInMethodTable.ReturnType, methodInMethodTableParameters.Select(pi => pi.ParameterType).ToArray(),
 				    stateMachineType);
 			    var il = dynamicMethod.GetILGenerator();
@@ -579,7 +577,7 @@ namespace HQ.Flow
 			    {
 				    var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.GetType());
 				    const BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-				    var clearMethod = stateInstanceLookupType.GetMethod("Clear", bindingFlags);
+				    var clearMethod = stateInstanceLookupType.GetMethod(nameof(StateInstanceLookup<State>.Clear), bindingFlags);
 				    clearMethod?.Invoke(null, null);
 			    }
 		    }
