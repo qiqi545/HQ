@@ -38,7 +38,6 @@ namespace HQ.Flow.Tests
 			}
 		}
 
-
 		[Fact]
 		public void Clear_is_idempotent()
 		{

@@ -12,7 +12,8 @@ namespace HQ.Flow
 {
 	public class StateProvider
     {
-	    private const string StateDisambiguatorPrefix = "State_";
+	    private const string StateDisambiguatorPrefix = "State" + Separator;
+	    private const string Separator = "_";
 
 	    public interface IHaveSymbol
         {
@@ -284,8 +285,8 @@ namespace HQ.Flow
 	        var stateTypesToMethodTables = states
 		        .Select(kvp => new KeyValuePair<Type, MethodTable>(kvp.Key, kvp.Value.methodTable))
 		        .Concat(abstractStates).ToList();
-			
-			foreach (var typeToMethodTable in stateTypesToMethodTables)
+
+	        foreach (var typeToMethodTable in stateTypesToMethodTables)
 	        {
 		        var methodTable = typeToMethodTable.Value;
 				var allMethodTableEntries = methodTable.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance)
@@ -299,7 +300,11 @@ namespace HQ.Flow
 		        {
 			        foreach (var stateMethod in stateMethods)
 			        {
-				        var aliasName = $@"{fieldInfo.Name}";
+						var ignore = stateMethod.Value.GetCustomAttributes(typeof(DefaultUpdateAttribute), false);
+				        if (ignore.Length > 0)
+					        continue;
+
+						var aliasName = $@"{fieldInfo.Name}";
 						var disambiguatedName = $@"{StateDisambiguatorPrefix}_\w*_{fieldInfo.Name}";
 				        var naturalName = $@"\w*_{fieldInfo.Name}";
 
@@ -335,7 +340,7 @@ namespace HQ.Flow
                         var methodInMethodTable = fieldInfo.FieldType.GetMethod("Invoke");
 	                    Debug.Assert(methodInMethodTable != null, nameof(methodInMethodTable) + " != null");
 
-						DynamicMethod dynamicMethod = new DynamicMethod($"DoNothing_{GetStateName(typeToMethodTable.Key)}_{fieldInfo.Name}", methodInMethodTable.ReturnType,
+						DynamicMethod dynamicMethod = new DynamicMethod($"DoNothing{Separator}{GetStateName(typeToMethodTable.Key)}_{fieldInfo.Name}", methodInMethodTable.ReturnType,
                                 methodInMethodTable.GetParameters().Select(pi => pi.ParameterType).ToArray(), stateMachineType);
 
                         var il = dynamicMethod.GetILGenerator();
@@ -351,19 +356,19 @@ namespace HQ.Flow
             stateMachinesToAbstractStates.Add(stateMachineType, abstractStates);
         }
 
-	    private static string GetFullyQualifiedStateMethodName(MethodInfo newStateTypeMethod)
+	    private static string GetFullyQualifiedStateMethodName(MemberInfo newStateTypeMethod)
 	    {
 		    var methodName = newStateTypeMethod.Name;
 
 		    var stateTypeName = newStateTypeMethod.DeclaringType?.Name;
 
-		    if (methodName.StartsWith($"{stateTypeName}_"))
+		    if (methodName.StartsWith($"{stateTypeName}{Separator}"))
 		    {
 			    methodName = $"{StateDisambiguatorPrefix}{methodName}";
 		    }
-		    else if (!methodName.StartsWith($"{StateDisambiguatorPrefix}{stateTypeName}_"))
+		    else if (!methodName.StartsWith($"{StateDisambiguatorPrefix}{stateTypeName}{Separator}"))
 		    {
-			    methodName = $"{StateDisambiguatorPrefix}{newStateTypeMethod?.DeclaringType?.Name}_{newStateTypeMethod?.Name}";
+			    methodName = $"{StateDisambiguatorPrefix}{newStateTypeMethod?.DeclaringType?.Name}{Separator}{newStateTypeMethod.Name}";
 		    }
 
 		    return methodName;
