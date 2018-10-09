@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -8,15 +8,15 @@ namespace HQ.Cadence
 {
 	public class MetricsHost : IMetricsHost
 	{
-		readonly IMetricsStore _store;
-		
+		private readonly IMetricsStore _store;
+
 		public MetricsHost(IMetricsStore store)
 		{
 			_store = store;
 		}
 
 		/// <summary>
-		/// Creates a new gauge metric and registers it under the given type and name
+		///     Creates a new gauge metric and registers it under the given type and name
 		/// </summary>
 		/// <typeparam name="T">The type the gauge measures</typeparam>
 		/// <param name="type">The type that owns the metric</param>
@@ -29,7 +29,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new counter metric and registers it under the given type and name
+		///     Creates a new counter metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="type">The type that owns the metric</param>
 		/// <param name="name">The metric name</param>
@@ -40,7 +40,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new histogram metric and registers it under the given type and name
+		///     Creates a new histogram metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="type">The type that owns the metric</param>
 		/// <param name="name">The metric name</param>
@@ -52,28 +52,25 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new meter metric and registers it under the given type and name
+		///     Creates a new meter metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="type">The type that owns the metric</param>
 		/// <param name="name">The metric name</param>
 		/// <param name="eventType">The plural name of the type of events the meter is measuring (e.g., <code>"requests"</code>)</param>
-		/// <param name="unit">The rate unit of the new meter</param>
+		/// <param name="rateUnit">The rate unit of the new meter</param>
 		/// <returns></returns>
 		public MeterMetric Meter(Type type, string name, string eventType, TimeUnit rateUnit)
 		{
 			var metricName = new MetricName(type, name);
-			if (_store.TryGetValue(metricName, out var existingMetric))
-			{
-				return (MeterMetric)existingMetric;
-			}
+			if (_store.TryGetValue(metricName, out var existingMetric)) return (MeterMetric) existingMetric;
 
 			var metric = MeterMetric.New(eventType, rateUnit);
 			var justAddedMetric = _store.GetOrAdd(metricName, metric);
-			return justAddedMetric == null ? metric : (MeterMetric)justAddedMetric;
+			return justAddedMetric == null ? metric : (MeterMetric) justAddedMetric;
 		}
 
 		/// <summary>
-		/// reates a new timer metric and registers it under the given type and name
+		///     reates a new timer metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="type">The type that owns the metric</param>
 		/// <param name="name">The metric name</param>
@@ -83,39 +80,33 @@ namespace HQ.Cadence
 		public TimerMetric Timer(Type type, string name, TimeUnit durationUnit, TimeUnit rateUnit)
 		{
 			var metricName = new MetricName(type, name);
-			if (_store.TryGetValue(metricName, out var existingMetric))
-			{
-				return (TimerMetric)existingMetric;
-			}
+			if (_store.TryGetValue(metricName, out var existingMetric)) return (TimerMetric) existingMetric;
 
 			var metric = new TimerMetric(durationUnit, rateUnit);
 			var justAddedMetric = _store.GetOrAdd(metricName, metric);
-			return justAddedMetric == null ? metric : (TimerMetric)justAddedMetric;
+			return justAddedMetric == null ? metric : (TimerMetric) justAddedMetric;
 		}
 
-	    /// <summary>
-		/// Returns a copy of all currently registered metrics in an immutable collection
+		/// <summary>
+		///     Returns a copy of all currently registered metrics in an immutable collection
 		/// </summary>
-		public IReadOnlyDictionary<MetricName, IMetric> All => _store.AsReadOnly();
+		public IReadOnlyDictionary<MetricName, IMetric> AsReadOnly => _store.AsReadOnly();
 
 		/// <summary>
-		/// Clears all previously registered metrics
+		///     Clears all previously registered metrics
 		/// </summary>
 		public void Clear()
 		{
 			_store.Clear();
 		}
 
-		T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
+		private T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
 		{
-			if (_store.Contains(name))
-			{
-				return (T)_store[name];
-			}
+			if (_store.Contains(name)) return (T) _store[name];
 
-			IMetric added = _store.AddOrUpdate(name, metric, (n, m) => m);
+			var added = _store.AddOrUpdate(name, metric);
 
-			return added == null ? metric : (T)added;
+			return added == null ? metric : (T) added;
 		}
 	}
 }

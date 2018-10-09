@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System.Runtime.CompilerServices;
@@ -7,5 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Cadence.Reporters.Console
 {
-	internal class Masthead { }
+	internal class InternalsVisibleTo
+	{
+	}
 }

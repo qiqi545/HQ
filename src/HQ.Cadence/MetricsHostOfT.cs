@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -8,7 +8,7 @@ namespace HQ.Cadence
 {
 	public class MetricsHost<TOwner> : IMetricsHost<TOwner>
 	{
-		readonly IMetricsHost _host;
+		private readonly IMetricsHost _host;
 
 		public MetricsHost(IMetricsHost host)
 		{
@@ -16,7 +16,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new gauge metric and registers it under the given type and name
+		///     Creates a new gauge metric and registers it under the given type and name
 		/// </summary>
 		/// <typeparam name="T">The type the gauge measures</typeparam>
 		/// <param name="name">The metric name</param>
@@ -28,7 +28,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new counter metric and registers it under the given type and name
+		///     Creates a new counter metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="name">The metric name</param>
 		/// <returns></returns>
@@ -38,7 +38,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new histogram metric and registers it under the given type and name
+		///     Creates a new histogram metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="name">The metric name</param>
 		/// <param name="sampleType">The sample type</param>
@@ -49,7 +49,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Creates a new meter metric and registers it under the given type and name
+		///     Creates a new meter metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="name">The metric name</param>
 		/// <param name="eventType">The plural name of the type of events the meter is measuring (e.g., <code>"requests"</code>)</param>
@@ -61,7 +61,7 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// reates a new timer metric and registers it under the given type and name
+		///     reates a new timer metric and registers it under the given type and name
 		/// </summary>
 		/// <param name="name">The metric name</param>
 		/// <param name="durationUnit">The duration scale unit of the new timer</param>
@@ -73,12 +73,12 @@ namespace HQ.Cadence
 		}
 
 		/// <summary>
-		/// Returns a copy of all currently registered metrics in an immutable collection
+		///     Returns a copy of all currently registered metrics in an immutable collection
 		/// </summary>
-		public IReadOnlyDictionary<MetricName, IMetric> All => _host.All;
+		public IReadOnlyDictionary<MetricName, IMetric> All => _host.AsReadOnly;
 
 		/// <summary>
-		/// Clears all previously registered metrics
+		///     Clears all previously registered metrics
 		/// </summary>
 		public void Clear()
 		{

@@ -1,17 +1,17 @@
 ﻿// Copyright (c) HQ Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
-using System;
 using System.Collections.Generic;
 using HQ.Cadence.Reporters.Console;
 using HQ.Cadence.Tests.Core;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace HQ.Cadence.Tests.Reporters
 {
     public class ConsoleReporterTests : IClassFixture<MetricsFixture>
     {
-	    readonly MetricsFixture _fixture;
+	    private readonly MetricsFixture _fixture;
 
 	    public ConsoleReporterTests(MetricsFixture fixture)
 	    {
@@ -29,8 +29,9 @@ namespace HQ.Cadence.Tests.Reporters
             queue.Enqueue(1);
             queue.Enqueue(2);
 
-            var reporter = new ConsoleReporter(Console.Out);
-            reporter.Report();
+	        var registry = new InMemoryMetricsRegistry();
+	        var reporter = new ConsoleReporter(registry, Options.Create(new ConsoleReporterOptions()));
+	        reporter.Report();
         }
     }
 }

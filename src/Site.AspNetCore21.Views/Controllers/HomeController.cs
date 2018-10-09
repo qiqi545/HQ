@@ -8,17 +8,14 @@ namespace Site.AspNetCore21.Views.Controllers
 {
     public class HomeController : Controller
     {
-	    readonly IMetricsHost<HomeController> _metrics;
+	    private readonly IMetricsHost<HomeController> _metrics;
 
 	    public HomeController(IMetricsHost<HomeController> metrics)
 	    {
 		    _metrics = metrics;
 	    }
 		
-		[Counter, 
-		 Timer(TimeUnit.Seconds, TimeUnit.Seconds), 
-		 Meter("requests", TimeUnit.Seconds),
-		 Histogram(SampleType.Biased, 1L)]
+		[Counter, Timer(TimeUnit.Seconds, TimeUnit.Seconds), Meter("requests", TimeUnit.Seconds), Histogram(SampleType.Biased, 1L)]
         public IActionResult Index()
         {
 	        return View();

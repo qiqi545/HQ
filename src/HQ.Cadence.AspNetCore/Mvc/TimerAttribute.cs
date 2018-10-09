@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -11,11 +11,8 @@ namespace HQ.Cadence.AspNetCore.Mvc
 	[AttributeUsage(AttributeTargets.Method)]
 	public class TimerAttribute : ActionFilterAttribute
 	{
-		readonly TimeUnit _durationUnit;
-		readonly TimeUnit _rateUnit;
-		
-		public string Name { get; set; }
-		public Type Owner { get; set; }
+		private readonly TimeUnit _durationUnit;
+		private readonly TimeUnit _rateUnit;
 
 		public TimerAttribute(TimeUnit durationUnit, TimeUnit rateUnit, string name = null, Type owner = null)
 		{
@@ -24,6 +21,9 @@ namespace HQ.Cadence.AspNetCore.Mvc
 			Name = name;
 			Owner = owner;
 		}
+
+		public string Name { get; set; }
+		public Type Owner { get; set; }
 
 		public override void OnActionExecuting(ActionExecutingContext filterContext)
 		{
@@ -38,8 +38,9 @@ namespace HQ.Cadence.AspNetCore.Mvc
 			var type = Owner ?? filterContext.GetMetricOwner();
 			var name = Name ?? filterContext.GetMetricName<TimerMetric>();
 
-			var metricsHost = filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
-			var timer = metricsHost?.Timer(type,  name, _durationUnit, _rateUnit);
+			var metricsHost =
+				filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
+			var timer = metricsHost?.Timer(type, name, _durationUnit, _rateUnit);
 
 			if (filterContext.HttpContext.Items[$"{type}.{name}"] is Stopwatch stopwatch)
 			{

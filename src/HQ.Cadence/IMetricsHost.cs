@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -8,7 +8,7 @@ namespace HQ.Cadence
 {
 	public interface IMetricsHost
 	{
-		IReadOnlyDictionary<MetricName, IMetric> All { get; }
+		IReadOnlyDictionary<MetricName, IMetric> AsReadOnly { get; }
 		GaugeMetric<T> Gauge<T>(Type type, string name, Func<T> evaluator);
 		CounterMetric Counter(Type type, string name);
 		HistogramMetric Histogram(Type type, string name, SampleType sampleType);

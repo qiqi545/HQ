@@ -1,5 +1,3 @@
-using System;
-
 namespace Site.AspNetCore21.Views.Models
 {
     public class ErrorViewModel

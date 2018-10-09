@@ -1,6 +1,6 @@
 Initial port was licensed under MIT as at July 13th, 2011, commit `e7be757bb2e88ada0caec02bf7be3ca1bab020de` in this source history.
 
-Metrics (http://github.com/danielcrenna/metrics)
+Metrics (https://github.com/danielcrenna/vault/tree/master/metrics-net)
 --------------------------------------
 Copyright (c) 2011 Daniel Crenna, Wildbit.com
 

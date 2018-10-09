@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Site.AspNetCore21.Views
 {
@@ -30,12 +31,21 @@ namespace Site.AspNetCore21.Views
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-	        services.AddMetrics(options =>
+			services.AddMetrics(Configuration.GetSection("Metrics"), builder =>
 	        {
-		        options.AddConsoleReporter(o => { o.Interval = TimeSpan.FromSeconds(1); });
+		        builder.AddLogReporter(o =>
+		        {
+			        o.Interval = TimeSpan.FromSeconds(1);
+			        o.CategoryName = "MyMetrics";
+			        o.LogLevel = LogLevel.Information;
+		        });
+		        builder.AddHealthChecks(o =>
+		        {
+			        
+		        });
 	        });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+	        services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,8 +64,7 @@ namespace Site.AspNetCore21.Views
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
-			app.UseMetricsReporting();
+	        app.UseMetrics();
 
 			app.UseMvc(routes =>
             {

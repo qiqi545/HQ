@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -11,11 +11,13 @@ namespace HQ.Cadence.Reporters.Console
 	{
 		public static IMetricsBuilder AddConsoleReporter(this IMetricsBuilder builder)
 		{
-			builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricsReporter, ConsoleReporter>());
+			var descriptor = ServiceDescriptor.Singleton<IMetricsReporter, ConsoleReporter>();
+			builder.Services.TryAddEnumerable(descriptor);
 			return builder;
 		}
 
-		public static IMetricsBuilder AddConsoleReporter(this IMetricsBuilder builder, Action<ConsoleReporterOptions> configure)
+		public static IMetricsBuilder AddConsoleReporter(this IMetricsBuilder builder,
+			Action<ConsoleReporterOptions> configure)
 		{
 			if (configure == null)
 				throw new ArgumentNullException(nameof(configure));

@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -10,14 +10,12 @@ namespace HQ.Cadence.AspNetCore.Mvc
 	[AttributeUsage(AttributeTargets.Method)]
 	public class MeterAttribute : ActionFilterAttribute
 	{
-		readonly string _eventType;
-		readonly TimeUnit _rateUnit;
-		readonly long _eventOccurrences;
+		private readonly long _eventOccurrences;
+		private readonly string _eventType;
+		private readonly TimeUnit _rateUnit;
 
-		public string Name { get; set; }
-		public Type Owner { get; set; }
-
-		public MeterAttribute(string eventType, TimeUnit rateUnit, long eventOccurrences = 1L, string name = null, Type owner = null)
+		public MeterAttribute(string eventType, TimeUnit rateUnit, long eventOccurrences = 1L, string name = null,
+			Type owner = null)
 		{
 			_eventType = eventType;
 			_rateUnit = rateUnit;
@@ -25,6 +23,9 @@ namespace HQ.Cadence.AspNetCore.Mvc
 			Name = name;
 			Owner = owner;
 		}
+
+		public string Name { get; set; }
+		public Type Owner { get; set; }
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{

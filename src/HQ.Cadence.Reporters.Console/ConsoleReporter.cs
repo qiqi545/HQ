@@ -1,191 +1,161 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using HQ.Cadence.Reporters.Console.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Cadence.Reporters.Console
 {
 	/// <summary>
-	///  A simple reporter which prints out application metrics to a <see cref="TextWriter" /> periodically
+	///     A simple reporter which prints out application metrics to a <see cref="TextWriter" /> periodically
 	/// </summary>
-	public sealed class ConsoleReporter : IMetricsReporter
+	public sealed class ConsoleReporter : PeriodicReporter
 	{
-		readonly IMetricsRegistry _registry;
-		readonly TextWriter _out;
-		readonly TimeSpan _interval;
-		CancellationTokenSource _cancel;
+		private readonly TextWriter _out;
+		private readonly IMetricsRegistry _registry;
+		private readonly IOptions<ConsoleReporterOptions> _options;
 
-		Task _task;
+		public ConsoleReporter(IMetricsRegistry registry, IOptions<ConsoleReporterOptions> options) : this(System.Console.Out, registry, options) { }
 
-		internal ConsoleReporter(TextWriter @out)
+		private ConsoleReporter(TextWriter @out, IMetricsRegistry registry, IOptions<ConsoleReporterOptions> options) : base(options.Value.Interval)
 		{
 			_out = @out;
-		}
-
-		public ConsoleReporter(IMetricsRegistry registry, IOptions<ConsoleReporterOptions> options)
-		{
 			_registry = registry;
-			_out = System.Console.Out;
-			_interval = options?.Value?.Interval ?? TimeSpan.FromSeconds(5);
+			_options = options;
 		}
 
-		public Task Start()
+		public override void Report(CancellationToken? cancellationToken = null)
 		{
-			_cancel = new CancellationTokenSource();
-			_task = OnTimer(()=> Report(_cancel.Token), _cancel.Token);
-			return _task;
+			if (!TryWrite(_registry, _out, cancellationToken) && _options.Value.StopOnError)
+				Stop();
 		}
 
-		public void Stop()
+		internal static bool TryWrite(IMetricsRegistry registry, TextWriter @out, CancellationToken? cancellationToken)
 		{
-			if (_task.IsCompleted)
-			{
-				_task?.Dispose();
-			}
-			else
-			{
-				_cancel.Cancel();
-				_task?.Dispose();
-				_cancel.Dispose();
-			}
-		}
+			if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+				return true;
 
-		public void Report(CancellationToken? cancellationToken = null)
-		{
 			try
 			{
 				cancellationToken?.ThrowIfCancellationRequested();
 
 				var now = DateTime.Now;
 				var dateTime = $"{now.ToShortDateString()} {now.ToShortTimeString()}";
-				_out.Write(dateTime);
-				_out.Write(' ');
-				for (var i = 0; i < (80 - dateTime.Length - 1); i++)
-				{
-					_out.Write('=');
-				}
-				_out.WriteLine();
+				@out.Write(dateTime);
+				@out.Write(' ');
+				for (var i = 0; i < 80 - dateTime.Length - 1; i++) @out.Write('=');
+				@out.WriteLine();
 
-				foreach (var host in _registry)
+				foreach (var host in registry)
+				foreach (var entry in host.AsReadOnly.Sort())
 				{
-					foreach (var entry in host.All.Sort())
+					@out.Write(entry.Key);
+					@out.WriteLine(':');
+
+					foreach (var subEntry in entry.Value)
 					{
-						_out.Write(entry.Key);
-						_out.WriteLine(':');
+						@out.Write("  ");
+						@out.Write(subEntry.Key);
+						@out.WriteLine(':');
 
-						foreach (var subEntry in entry.Value)
+						var metric = subEntry.Value;
+						switch (metric)
 						{
-							_out.Write("  ");
-							_out.Write(subEntry.Key);
-							_out.WriteLine(':');
-
-							var metric = subEntry.Value;
-							switch (metric)
-							{
-								case GaugeMetric _:
-									WriteGauge((GaugeMetric)metric);
-									break;
-								case CounterMetric _:
-									WriteCounter((CounterMetric)metric);
-									break;
-								case HistogramMetric _:
-									WriteHistogram((HistogramMetric)metric);
-									break;
-								case MeterMetric _:
-									WriteMetered((MeterMetric)metric);
-									break;
-								case TimerMetric _:
-									WriteTimer((TimerMetric)metric);
-									break;
-							}
-							_out.WriteLine();
+							case GaugeMetric _:
+								WriteGauge(@out, (GaugeMetric) metric);
+								break;
+							case CounterMetric _:
+								WriteCounter(@out, (CounterMetric) metric);
+								break;
+							case HistogramMetric _:
+								WriteHistogram(@out, (HistogramMetric) metric);
+								break;
+							case MeterMetric _:
+								WriteMetered(@out, (MeterMetric) metric);
+								break;
+							case TimerMetric _:
+								WriteTimer(@out, (TimerMetric) metric);
+								break;
 						}
-						_out.WriteLine();
-						_out.Flush();
+
+						@out.WriteLine();
 					}
+
+					@out.WriteLine();
+					@out.Flush();
 				}
+
+				return true;
 			}
 			catch (Exception e)
 			{
-				_out.WriteLine(e.StackTrace);
+				@out.WriteLine(e.StackTrace);
+				return false;
 			}
 		}
 
-		public async Task OnTimer(Action action, CancellationToken cancellationToken)
+		private static void WriteGauge(TextWriter writer, GaugeMetric gauge)
 		{
-			while (!cancellationToken.IsCancellationRequested)
-			{
-				await Task.Delay(_interval, cancellationToken);
-
-				if (!cancellationToken.IsCancellationRequested)
-					action();
-			}
+			writer.Write("    value = ");
+			writer.WriteLine(gauge.ValueAsString);
 		}
 
-		void WriteGauge(GaugeMetric gauge)
+		private static void WriteCounter(TextWriter writer, CounterMetric counter)
 		{
-			_out.Write("    value = ");
-			_out.WriteLine(gauge.ValueAsString);
+			writer.Write("    count = ");
+			writer.WriteLine(counter.Count);
 		}
 
-		void WriteCounter(CounterMetric counter)
-		{
-			_out.Write("    count = ");
-			_out.WriteLine(counter.Count);
-		}
-
-		void WriteMetered(IMetered meter)
+		private static void WriteMetered(TextWriter writer, IMetered meter)
 		{
 			var unit = Abbreviate(meter.RateUnit);
-			_out.Write("             count = {0}\n", meter.Count);
-			_out.Write("         mean rate = {0} {1}/{2}\n", meter.MeanRate, meter.EventType, unit);
-			_out.Write("     1-minute rate = {0} {1}/{2}\n", meter.OneMinuteRate, meter.EventType, unit);
-			_out.Write("     5-minute rate = {0} {1}/{2}\n", meter.FiveMinuteRate, meter.EventType, unit);
-			_out.Write("    15-minute rate = {0} {1}/{2}\n", meter.FifteenMinuteRate, meter.EventType, unit);
+			writer.Write("             count = {0}\n", meter.Count);
+			writer.Write("         mean rate = {0} {1}/{2}\n", meter.MeanRate, meter.EventType, unit);
+			writer.Write("     1-minute rate = {0} {1}/{2}\n", meter.OneMinuteRate, meter.EventType, unit);
+			writer.Write("     5-minute rate = {0} {1}/{2}\n", meter.FiveMinuteRate, meter.EventType, unit);
+			writer.Write("    15-minute rate = {0} {1}/{2}\n", meter.FifteenMinuteRate, meter.EventType, unit);
 		}
 
-		void WriteHistogram(HistogramMetric histogram)
+		private static void WriteHistogram(TextWriter writer, HistogramMetric histogram)
 		{
 			var percentiles = histogram.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
-			_out.Write("               min = %{0:2}\n", histogram.Min);
-			_out.Write("               max = %{0:2}\n", histogram.Max);
-			_out.Write("              mean = %{0:2}\n", histogram.Mean);
-			_out.Write("            stddev = %{0:2}\n", histogram.StdDev);
-			_out.Write("            median = %{0:2}\n", percentiles[0]);
-			_out.Write("              75%% <= %{0:2}\n", percentiles[1]);
-			_out.Write("              95%% <= %{0:2}\n", percentiles[2]);
-			_out.Write("              98%% <= %{0:2}\n", percentiles[3]);
-			_out.Write("              99%% <= %{0:2}\n", percentiles[4]);
-			_out.Write("            99.9%% <= %{0:2}\n", percentiles[5]);
+			writer.Write("               min = %{0:2}\n", histogram.Min);
+			writer.Write("               max = %{0:2}\n", histogram.Max);
+			writer.Write("              mean = %{0:2}\n", histogram.Mean);
+			writer.Write("            stddev = %{0:2}\n", histogram.StdDev);
+			writer.Write("            median = %{0:2}\n", percentiles[0]);
+			writer.Write("              75%% <= %{0:2}\n", percentiles[1]);
+			writer.Write("              95%% <= %{0:2}\n", percentiles[2]);
+			writer.Write("              98%% <= %{0:2}\n", percentiles[3]);
+			writer.Write("              99%% <= %{0:2}\n", percentiles[4]);
+			writer.Write("            99.9%% <= %{0:2}\n", percentiles[5]);
 		}
 
-		void WriteTimer(TimerMetric timer)
+		private static void WriteTimer(TextWriter writer, TimerMetric timer)
 		{
-			WriteMetered(timer);
+			WriteMetered(writer, timer);
 
 			var durationUnit = Abbreviate(timer.DurationUnit);
 
 			var percentiles = timer.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
-			_out.Write("               min = %{0:2}{1}\n", timer.Min, durationUnit);
-			_out.Write("               max = %{0:2}{1}\n", timer.Max, durationUnit);
-			_out.Write("              mean = %{0:2}{1}\n", timer.Mean, durationUnit);
-			_out.Write("            stddev = %{0:2}{1}\n", timer.StdDev, durationUnit);
-			_out.Write("            median = %{0:2}{1}\n", percentiles[0], durationUnit);
-			_out.Write("              75%% <= %{0:2}{1}\n", percentiles[1], durationUnit);
-			_out.Write("              95%% <= %{0:2}{1}\n", percentiles[2], durationUnit);
-			_out.Write("              98%% <= %{0:2}{1}\n", percentiles[3], durationUnit);
-			_out.Write("              99%% <= %{0:2}{1}\n", percentiles[4], durationUnit);
-			_out.Write("            99.9%% <= %{0:2}{1}\n", percentiles[5], durationUnit);
+			writer.Write("               min = %{0:2}{1}\n", timer.Min, durationUnit);
+			writer.Write("               max = %{0:2}{1}\n", timer.Max, durationUnit);
+			writer.Write("              mean = %{0:2}{1}\n", timer.Mean, durationUnit);
+			writer.Write("            stddev = %{0:2}{1}\n", timer.StdDev, durationUnit);
+			writer.Write("            median = %{0:2}{1}\n", percentiles[0], durationUnit);
+			writer.Write("              75%% <= %{0:2}{1}\n", percentiles[1], durationUnit);
+			writer.Write("              95%% <= %{0:2}{1}\n", percentiles[2], durationUnit);
+			writer.Write("              98%% <= %{0:2}{1}\n", percentiles[3], durationUnit);
+			writer.Write("              99%% <= %{0:2}{1}\n", percentiles[4], durationUnit);
+			writer.Write("            99.9%% <= %{0:2}{1}\n", percentiles[5], durationUnit);
 		}
 
-		static string Abbreviate(TimeUnit unit)
+		private static string Abbreviate(TimeUnit unit)
 		{
 			switch (unit)
 			{
@@ -206,11 +176,6 @@ namespace HQ.Cadence.Reporters.Console
 				default:
 					throw new ArgumentOutOfRangeException(nameof(unit));
 			}
-		}
-
-		public void Dispose()
-		{
-			Stop();
 		}
 	}
 }
