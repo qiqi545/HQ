@@ -13,18 +13,10 @@ build:
   verbosity: minimal
 
 environment:
-   TEST_PROJECT_NAME:
-     HQ.Cadence.Tests
-   XUNIT_CONSOLE_VERSION:
-      2.4.0
-   OPENCOVER_VERSION:
-      4.6.519   
-   COVERALLS_VERSION:
-      1.0.0
    COVERALLS_REPO_TOKEN:  
       secure: ybaVTwokoDe5aIFj3RF2Aea5999hmNS7zaLNnSSy0tJkaC+3SJ3MpBbeTVZqF3q+
   
 test_script:
 - ps: >-
-    .\packages\OpenCover.$env:OPENCOVER_VERSION\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:"".\packages\xunit.runner.console.$env:XUNIT_CONSOLE_VERSION\tools\netcoreapp2.1\xunit.console.dll"" ""src\$env:TEST_PROJECT_NAME\bin\$env:CONFIGURATION\netcoreapp2.1\$env:TEST_PROJECT_NAME.dll"" -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
-    $coveralls = ".\tools\csmacnz.coveralls.exe" --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
+    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:"".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll"" ""src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\netcoreapp2.1\HQ.Cadence.Tests.dll"" -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
+    ".\tools\csmacnz.coveralls.exe" --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
