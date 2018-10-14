@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\THIRD_PARTY_LICENSES.md = ..\THIRD_PARTY_LICENSES.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Site.AspNetCore21.Views", "Site.AspNetCore21.Views\Site.AspNetCore21.Views.csproj", "{C5439448-3DEF-41F4-933F-327FFFD171DF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence", "HQ.Cadence\HQ.Cadence.csproj", "{B0FC93DD-2848-4B8D-A574-AD9BF6C3B673}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence.Reporters.Console", "HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj", "{A9AC4D73-87BD-4C36-A256-05BA3A35E5E1}"
@@ -32,18 +30,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Debug|x86.Build.0 = Debug|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|x86.ActiveCfg = Release|Any CPU
-		{C5439448-3DEF-41F4-933F-327FFFD171DF}.Release|x86.Build.0 = Release|Any CPU
 		{B0FC93DD-2848-4B8D-A574-AD9BF6C3B673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0FC93DD-2848-4B8D-A574-AD9BF6C3B673}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0FC93DD-2848-4B8D-A574-AD9BF6C3B673}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
