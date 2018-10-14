@@ -18,6 +18,7 @@ environment:
   
 test_script:
 - ps: >-
+    nuget install xunit.runner.console -OutputDirectory packages -Version 2.4.0
 
     .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:"".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll"" ""src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\netcoreapp2.1\HQ.Cadence.Tests.dll"" -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
 
