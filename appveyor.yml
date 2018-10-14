@@ -27,7 +27,6 @@ environment:
 test_script:
 - ps: >-
     nuget install xunit.runner.console -OutputDirectory packages -Version $env:XUNIT_CONSOLE_VERSION
-    nuget install OpenCover -OutputDirectory packages -Version $env:OPENCOVER_VERSION
-    dotnet tool install coveralls.net --version $env:COVERALLS_VERSION --tool-path tools
+    nuget install OpenCover -OutputDirectory packages -Version $env:OPENCOVER_VERSION    
     .\packages\OpenCover.$env:OPENCOVER_VERSION\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:"".\packages\xunit.runner.console.$env:XUNIT_CONSOLE_VERSION\tools\netcoreapp2.1\xunit.console.dll"" ""src\$env:TEST_PROJECT_NAME\bin\$env:CONFIGURATION\netcoreapp2.1\$env:TEST_PROJECT_NAME.dll"" -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
     $coveralls = ".\tools\csmacnz.coveralls.exe" --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
