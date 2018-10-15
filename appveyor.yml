@@ -18,21 +18,30 @@ environment:
     secure: T9CbXFG4JLSyZH/8mkjRSXpP4zzVSV4x3boRGkWvlsvCnVz94FVmQFSLnMETA7VH
   
 # See: https://github.com/opencover/opencover/wiki/Usage#notes-on-spaces-in-arguments
+# See: https://help.appveyor.com/discussions/problems/4394-problem-with-args-to-xunit-in-powershell
 
 test_script:
 - ps: >-
     nuget install xunit.runner.console -OutputDirectory packages -Version 2.4.0
-
+    
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
 
-    $coverageFilePath = Resolve-Path -path "TestResults\*\*.coverage"
- 
-    $coverageFilePath = $coverageFilePath.ToString()
+    nuget install OpenCover -OutputDirectory packages -Version 4.6.519
+
+    $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
+       
+    $xunit = (Resolve-Path "packages\xunit.runner.console.*\tools\xunit.console.exe").ToString()
+
+    $filters = "+[*]*"
 
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
+
+    $opencover = (Resolve-Path "packages\OpenCover.*\tools\OpenCover.Console.exe").ToString()
+
+    & $opencover "-register:user" "-target:$xunit" "-targetargs:$assemblies -noshadow -appveyor" "-filter:$filters" "-output:coverage.xml"
         
     & "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Dynamic Code Coverage Tools\CodeCoverage.exe" analyze /output:coverage.xml "$coverageFilePath"
 
-    $coveralls = "tools/csmacnz.Coveralls.exe"
+     $coveralls = (Resolve-Path "packages\coveralls.net.*\tools\csmacnz.coveralls.exe").ToString()
 
-    & $coveralls --dynamiccodecoverage -i .\coverage.xml --useRelativePaths
+    & $coveralls --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
