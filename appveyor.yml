@@ -22,19 +22,15 @@ environment:
 
 test_script:
 - ps: >-
+    dotnet add package coverlet.msbuild
+    
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
 
-    dotnet tool install coverlet.console --tool-path tools
-    
     $assembly = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll"
     
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    dotnet test ".\src\HQ.Cadence.Tests" -c Release
-
-    $coverlet = "tools/coverlet.exe"
-
-    & $coverlet $assembly --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests --no-build"
+    dotnet test ".\src\HQ.Cadence.Tests" -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput='./coverage.xml'
 
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
