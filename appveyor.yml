@@ -25,7 +25,7 @@ test_script:
 
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
 
-    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:.\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll .\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\netcoreapp2.1\HQ.Cadence.Tests.dll -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
+    .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:.\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\netcoreapp2.1\HQ.Cadence.Tests.dll" -noshadow -appveyor" -filter:"+[*]*" -oldStyle -output:coverage.xml
 
      $coveralls = ".\tools\csmacnz.coveralls.exe"
          
