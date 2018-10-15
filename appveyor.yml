@@ -26,6 +26,8 @@ test_script:
     
     nuget install OpenCover -OutputDirectory packages -Version 4.6.519
 
+    nuget install System.Runtime packages -Version 4.2.0.0 
+
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
