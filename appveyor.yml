@@ -28,7 +28,7 @@ test_script:
     
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    dotnet test ".\src\HQ.Cadence.Tests" -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage.xml
+    dotnet test ".\src\HQ.Cadence.Tests" -c Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./coverage.xml
 
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
