@@ -24,11 +24,9 @@ test_script:
 - ps: >-
     nuget install xunit.runner.console -OutputDirectory packages -Version 2.4.0
     
-    nuget install System.Runtime packages -Version 4.2.0.0 
-
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
 
-    dotnet tool install coverlet.console -tool-path tools
+    dotnet tool install coverlet.console --tool-path tools
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
     
