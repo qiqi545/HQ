@@ -32,11 +32,9 @@ test_script:
     
     $xunit = ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.0\xunit.console.dll"
     
-    $filters = "+[*]*"
-
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    dotnet test "$env:APPVEYOR_BUILD_FOLDER\src\HQ.Cadence.Tests]" -c $env:CONFIGURATION
+    dotnet test ".\src\HQ.Cadence.Tests" -c $env:CONFIGURATION
 
     $coverlet = "tools/coverlet.exe"
 
