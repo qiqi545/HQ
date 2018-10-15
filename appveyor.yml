@@ -30,4 +30,4 @@ test_script:
 
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
-    & $coveralls --opencover -i coverage.xml --useRelativePaths
+    & $coveralls --opencover -i ./coverage.xml --useRelativePaths
