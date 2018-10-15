@@ -24,11 +24,11 @@ test_script:
 - ps: >-
     nuget install xunit.runner.console -OutputDirectory packages -Version 2.4.0
     
-    nuget install OpenCover -OutputDirectory packages -Version 4.6.519
-
     nuget install System.Runtime packages -Version 4.2.0.0 
 
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
+
+    dotnet tool install coverlet.console -tool-path tools
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
     
@@ -38,10 +38,12 @@ test_script:
 
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    $opencover = "./packages/OpenCover.4.6.519/tools/OpenCover.Console.exe"
+    dotnet test "$env:APPVEYOR_BUILD_FOLDER\src\HQ.Cadence.Tests]" -c $env:CONFIGURATION
 
-    & $opencover "-register:user" "-target:$xunit" "-targetargs:$assemblies -noshadow -appveyor" "-filter:$filters" "-output:coverage.xml"
-       
+    $coverlet = "tools/coverlet.exe"
+
+    & $coverlet "$assemblies" --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests --no-build"
+
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
     & $coveralls --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
