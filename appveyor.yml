@@ -26,7 +26,7 @@ test_script:
 
     dotnet tool install coverlet.console --tool-path tools
     
-    $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
+    $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll"
     
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
@@ -34,7 +34,7 @@ test_script:
 
     $coverlet = "tools/coverlet.exe"
 
-    & $coverlet "$assemblies" --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests\bin\Release\HQ.Cadence.Tests --no-build"
+    & $coverlet "$assemblies" --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests --no-build"
 
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
