@@ -22,15 +22,11 @@ environment:
 
 test_script:
 - ps: >-
-    nuget install xunit.runner.console -OutputDirectory packages -Version 2.4.0
-    
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
 
     dotnet tool install coverlet.console --tool-path tools
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
-    
-    $xunit = ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.0\xunit.console.dll"
     
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
@@ -38,7 +34,7 @@ test_script:
 
     $coverlet = "tools/coverlet.exe"
 
-    & $coverlet "$assemblies" --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests --no-build"
+    & $coverlet "$assemblies" --output ./coverage.xml --format opencover --target "dotnet" --targetargs "test .\src\HQ.Cadence.Tests\bin\Release\HQ.Cadence.Tests --no-build"
 
     $coveralls = "tools/csmacnz.Coveralls.exe"
 
