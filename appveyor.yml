@@ -29,17 +29,17 @@ test_script:
     dotnet tool install coveralls.net --version 1.0.0 --tool-path tools
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
-       
-    $xunit = (Resolve-Path ".\packages\xunit.runner.console.*\tools\xunit.console.exe").ToString()
-
+    
+    $xunit = ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll"
+    
     $filters = "+[*]*"
 
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    $opencover = (Resolve-Path ".\packages\OpenCover.*\tools\OpenCover.Console.exe").ToString()
+    $opencover = "./packages/OpenCover.4.6.519/tools/OpenCover.Console.exe"
 
     & $opencover "-register:user" "-target:$xunit" "-targetargs:$assemblies -noshadow -appveyor" "-filter:$filters" "-output:coverage.xml"
        
-    $coveralls = (Resolve-Path ".\packages\coveralls.net.*\tools\csmacnz.coveralls.exe").ToString()
+    $coveralls = "tools/csmacnz.Coveralls.exe"
 
     & $coveralls --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
