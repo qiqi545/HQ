@@ -30,7 +30,7 @@ test_script:
     
     $assemblies = ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\HQ.Cadence.Tests.dll "
     
-    $xunit = ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll"
+    $xunit = ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.exe"
     
     $filters = "+[*]*"
 
