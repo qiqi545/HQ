@@ -14,8 +14,8 @@ build:
   verbosity: minimal
 
 environment:
-   COVERALLS_REPO_TOKEN:  
-      secure: ybaVTwokoDe5aIFj3RF2Aea5999hmNS7zaLNnSSy0tJkaC+3SJ3MpBbeTVZqF3q+
+  COVERALLS_REPO_TOKEN:
+    secure: T9CbXFG4JLSyZH/8mkjRSXpP4zzVSV4x3boRGkWvlsvCnVz94FVmQFSLnMETA7VH
   
 test_script:
 - ps: >-
