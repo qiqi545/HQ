@@ -28,6 +28,4 @@ test_script:
     # See: https://github.com/opencover/opencover/wiki/Usage#notes-on-spaces-in-arguments
     .\packages\OpenCover.4.6.519\tools\OpenCover.Console.exe -register:user -target:dotnet.exe "-targetargs:-noshadow -appveyor ".\packages\xunit.runner.console.2.4.0\tools\netcoreapp2.1\xunit.console.dll" ".\src\HQ.Cadence.Tests\bin\$env:CONFIGURATION\netcoreapp2.1\HQ.Cadence.Tests.dll"" -filter:"+[*]*" -oldStyle -output:coverage.xml
 
-    $coveralls = ".\tools\csmacnz.coveralls.exe"
-         
-    & $coveralls --opencover -i coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
+    .\tools\csmacnz.coveralls.exe --opencover -i ./coverage.xml --repoToken $env:COVERALLS_REPO_TOKEN --commitId $env:APPVEYOR_REPO_COMMIT --commitBranch $env:APPVEYOR_REPO_BRANCH --commitAuthor $env:APPVEYOR_REPO_COMMIT_AUTHOR --commitEmail $env:APPVEYOR_REPO_COMMIT_AUTHOR_EMAIL --commitMessage $env:APPVEYOR_REPO_COMMIT_MESSAGE --jobId $env:APPVEYOR_JOB_ID
