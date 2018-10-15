@@ -34,7 +34,7 @@ test_script:
     
     if(Test-Path .\coverage.xml) { rm .\coverage.xml }
 
-    dotnet test ".\src\HQ.Cadence.Tests" -c $env:CONFIGURATION
+    dotnet test ".\src\HQ.Cadence.Tests" -c Release
 
     $coverlet = "tools/coverlet.exe"
 
