@@ -2,6 +2,7 @@ Harmony by HQ
 =============
 
 [![License](https://img.shields.io/badge/License-RPL%201.5-red.svg)](https://opensource.org/licenses/RPL-1.5)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Harmony.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Harmony?ref=badge_shield)
 
 ## Documentation
 
