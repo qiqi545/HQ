@@ -1,35 +1,37 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Collections.Generic;
 
-namespace nocontainer
+namespace HQ.Harmony
 {
 	public struct NameAndType
 	{
-		public readonly Type Type;
-		public readonly string Name;
+		public readonly Type type;
+		public readonly string name;
 
 		public NameAndType(string name, Type type)
 		{
-			Name = name;
-			Type = type;
+			this.name = name;
+			this.type = type;
 		}
 
 		public bool Equals(NameAndType other)
 		{
-			return Type == other.Type && string.Equals(Name, other.Name);
+			return type == other.type && string.Equals(name, other.name);
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (ReferenceEquals(null, obj)) return false;
-			return obj is NameAndType && Equals((NameAndType)obj);
+			return !ReferenceEquals(null, obj) && obj is NameAndType andType && Equals(andType);
 		}
 
 		public override int GetHashCode()
 		{
 			unchecked
 			{
-				return ((Type?.GetHashCode() ?? 0) * 397) ^ (Name?.GetHashCode() ?? 0);
+				return ((type?.GetHashCode() ?? 0) * 397) ^ (name?.GetHashCode() ?? 0);
 			}
 		}
 
@@ -37,14 +39,14 @@ namespace nocontainer
 		{
 			public bool Equals(NameAndType x, NameAndType y)
 			{
-				return x.Type == y.Type && string.Equals(x.Name, y.Name);
+				return x.type == y.type && string.Equals(x.name, y.name);
 			}
 
 			public int GetHashCode(NameAndType obj)
 			{
 				unchecked
 				{
-					return ((obj.Type?.GetHashCode() ?? 0) * 397) ^ (obj.Name?.GetHashCode() ?? 0);
+					return ((obj.type?.GetHashCode() ?? 0) * 397) ^ (obj.name?.GetHashCode() ?? 0);
 				}
 			}
 		}

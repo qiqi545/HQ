@@ -1,73 +1,81 @@
-﻿using Xunit;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using Xunit;
 
 namespace HQ.Harmony.Tests
 {
-    public class ResolveTests : IClassFixture<HarmonyContainerFixture>
-    {
-        private readonly HarmonyContainerFixture _fixture;
+	public class ResolveTests : IClassFixture<HarmonyContainerFixture>
+	{
+		public ResolveTests(HarmonyContainerFixture fixture)
+		{
+			_fixture = fixture;
+		}
 
-        public ResolveTests(HarmonyContainerFixture fixture)
-        {
-            _fixture = fixture;
-        }
+		private readonly HarmonyContainerFixture _fixture;
 
-        [Fact]
-        public void Can_resolve_transient_twice_with_different_references()
-        {
-            _fixture.C.Register<IFoo>(() => new Foo());
+		public interface IFoo
+		{
+		}
 
-            var first = _fixture.C.Resolve<IFoo>();
-            var second = _fixture.C.Resolve<IFoo>();
+		public class Foo : IFoo
+		{
+		}
 
-            Assert.NotSame(first, second);
-        }
+		public class Bar
+		{
+			public Bar(IFoo baz)
+			{
+				Baz = baz;
+			}
 
-        [Fact]
-        public void Can_resolve_singleton_twice_with_same_reference()
-        {
-            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
+			public IFoo Baz { get; set; }
+		}
 
-            var first = _fixture.C.Resolve<IFoo>();
-            var second = _fixture.C.Resolve<IFoo>();
+		[Fact]
+		public void Can_resolve_arbitrary_types()
+		{
+			_fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
 
-            Assert.Same(first, second);
-        }
+			var first = _fixture.C.Resolve<Bar>();
+			var second = _fixture.C.Resolve<Bar>();
 
-        [Fact]
-        public void Can_resolve_instance_twice_with_same_reference()
-        {
-            var instance = new Foo();
-            _fixture.C.Register<IFoo>(instance);
+			Assert.NotSame(first, second);
+			Assert.Same(first.Baz, second.Baz);
+		}
 
-            var first = _fixture.C.Resolve<IFoo>();
-            var second = _fixture.C.Resolve<IFoo>();
+		[Fact]
+		public void Can_resolve_instance_twice_with_same_reference()
+		{
+			var instance = new Foo();
+			_fixture.C.Register<IFoo>(instance);
 
-            Assert.Same(first, second);
-        }
+			var first = _fixture.C.Resolve<IFoo>();
+			var second = _fixture.C.Resolve<IFoo>();
 
-        [Fact]
-        public void Can_resolve_arbitrary_types()
-        {
-            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
+			Assert.Same(first, second);
+		}
 
-            var first = _fixture.C.Resolve<Bar>();
-            var second = _fixture.C.Resolve<Bar>();
+		[Fact]
+		public void Can_resolve_singleton_twice_with_same_reference()
+		{
+			_fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
 
-            Assert.NotSame(first, second);
-            Assert.Same(first.Baz, second.Baz);
-        }
+			var first = _fixture.C.Resolve<IFoo>();
+			var second = _fixture.C.Resolve<IFoo>();
 
-        public interface IFoo { }
-        public class Foo : IFoo { }
+			Assert.Same(first, second);
+		}
 
-        public class Bar
-        {
-            public IFoo Baz { get; set; }
+		[Fact]
+		public void Can_resolve_transient_twice_with_different_references()
+		{
+			_fixture.C.Register<IFoo>(() => new Foo());
 
-            public Bar(IFoo baz)
-            {
-                Baz = baz;
-            }
-        }
-    }
+			var first = _fixture.C.Resolve<IFoo>();
+			var second = _fixture.C.Resolve<IFoo>();
+
+			Assert.NotSame(first, second);
+		}
+	}
 }
