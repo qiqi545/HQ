@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Harmony\HQ.Harmony.csproj" />
   </ItemGroup>
 

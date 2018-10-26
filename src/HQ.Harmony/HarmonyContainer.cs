@@ -15,346 +15,28 @@ namespace HQ.Harmony
 {
 	public sealed class HarmonyContainer : IContainer
 	{
-		private readonly IEnumerable<Assembly> _fallbackAssemblies;
+		private readonly List<IResolverExtension> _extensions;
 		private readonly InstanceFactory _factory;
-
-		public bool ThrowIfCantResolve { get; set; }
+		private readonly IEnumerable<Assembly> _fallbackAssemblies;
 
 		public HarmonyContainer(IEnumerable<Assembly> fallbackAssemblies = null)
 		{
 			_fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
 			_factory = new InstanceFactory();
+			_extensions = new List<IResolverExtension>();
 		}
 
-		#region Register
+		public bool ThrowIfCantResolve { get; set; }
 
-		private readonly IDictionary<Type, Func<object>>
-			_registrations = new ConcurrentDictionary<Type, Func<object>>();
-
-		private readonly IDictionary<NameAndType, Func<object>> _namedRegistrations =
-			new ConcurrentDictionary<NameAndType, Func<object>>();
-
-		private readonly IDictionary<Type, List<Func<object>>> _collectionRegistrations =
-			new ConcurrentDictionary<Type, List<Func<object>>>();
-
-		public void Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+		public void Dispose()
 		{
-			var next = WrapLifecycle(builder, lifetime);
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
+			// No scopes, so nothing to dispose
 		}
 
-		public void Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		internal void AddExtension<T>(T extension) where T : IResolverExtension
 		{
-			var type = typeof(T);
-			Func<object> next = WrapLifecycle(builder, lifetime);
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
+			_extensions.Add(extension);
 		}
-
-		public void Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
-		{
-			var type = typeof(T);
-			_namedRegistrations[new NameAndType(name, type)] = WrapLifecycle(builder, lifetime);
-		}
-
-		public void Register<T>(string name, Func<IDependencyResolver, T> builder,
-			Lifetime lifetime = Lifetime.AlwaysNew) where T : class
-		{
-			var registration = WrapLifecycle(builder, lifetime);
-			_namedRegistrations[new NameAndType(name, typeof(T))] = () => registration(this);
-		}
-
-		public void Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class
-		{
-			var type = typeof(T);
-			Func<object> next = () => WrapLifecycle(builder, lifetime)(this);
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
-		}
-
-		public void Register<T>(T instance)
-		{
-			var type = typeof(T);
-			Func<object> next = () => instance;
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
-		}
-
-		private void RegisterManyUnnamed(Type type, Func<object> previous)
-		{
-			List<Func<object>> collectionBuilder;
-			if (!_collectionRegistrations.TryGetValue(type, out collectionBuilder))
-			{
-				collectionBuilder = new List<Func<object>> {previous};
-				_collectionRegistrations.Add(type, collectionBuilder);
-			}
-
-			collectionBuilder.Add(_registrations[type]);
-
-			// implied registration of the enumerable equivalent
-			Register(typeof(IEnumerable<>).MakeGenericType(type), () =>
-			{
-				var collection = (IList) _factory.CreateInstance(typeof(List<>).MakeGenericType(type));
-				foreach (var item in YieldCollection(collectionBuilder))
-					collection.Add(item);
-				return collection;
-			}, Lifetime.Permanent);
-		}
-
-		#endregion
-
-		#region Resolve
-
-		public T Resolve<T>() where T : class
-		{
-			var serviceType = typeof(T);
-			Func<object> builder;
-			if (!_registrations.TryGetValue(serviceType, out builder))
-				return AutoResolve(serviceType) as T;
-			var resolved = builder() as T;
-			if (resolved != null)
-				return resolved;
-			if (ThrowIfCantResolve)
-				throw new InvalidOperationException($"No registration for {serviceType}");
-			return null;
-		}
-
-		public IEnumerable<T> ResolveAll<T>() where T : class
-		{
-			var serviceType = typeof(T);
-			List<Func<object>> collectionBuilder;
-			return _collectionRegistrations.TryGetValue(serviceType, out collectionBuilder)
-				? YieldCollection<T>(collectionBuilder)
-				: Enumerable.Empty<T>();
-		}
-
-		private static IEnumerable<T> YieldCollection<T>(IEnumerable<Func<object>> collectionBuilder) where T : class
-		{
-			foreach (var builder in collectionBuilder)
-				yield return builder() as T;
-		}
-
-		public object Resolve(Type serviceType)
-		{
-			Func<object> builder;
-			if (!_registrations.TryGetValue(serviceType, out builder))
-				return AutoResolve(serviceType);
-			var resolved = builder();
-			if (resolved != null)
-				return resolved;
-			if (ThrowIfCantResolve)
-				throw new InvalidOperationException($"No registration for {serviceType}");
-			return null;
-		}
-
-		public IEnumerable ResolveAll(Type serviceType)
-		{
-			List<Func<object>> collectionBuilder;
-			return _collectionRegistrations.TryGetValue(serviceType, out collectionBuilder)
-				? YieldCollection(collectionBuilder)
-				: Enumerable.Empty<object>();
-		}
-
-		private static IEnumerable YieldCollection(IEnumerable<Func<object>> collectionBuilder)
-		{
-			foreach (var builder in collectionBuilder)
-				yield return builder();
-		}
-
-		public T Resolve<T>(string name) where T : class
-		{
-			Func<object> builder;
-			if (_namedRegistrations.TryGetValue(new NameAndType(name, typeof(T)), out builder))
-				return builder() as T;
-			if (ThrowIfCantResolve)
-				throw new InvalidOperationException($"No registration for {typeof(T)} named {name}");
-			return null;
-		}
-
-		public object Resolve(string name, Type serviceType)
-		{
-			Func<object> builder;
-			if (_namedRegistrations.TryGetValue(new NameAndType(name, serviceType), out builder))
-				return builder();
-			if (ThrowIfCantResolve)
-				throw new InvalidOperationException($"No registration for {serviceType} named {name}");
-			return null;
-		}
-
-		#endregion
-
-		#region Auto-Resolve w/ Fallback
-
-		private object CreateInstance(Type implementationType)
-		{
-			// type->constructor
-			var ctor = _factory.GetOrCacheConstructorForType(implementationType);
-
-			// constructor->parameters
-			var parameters = _factory.GetOrCacheParametersForConstructor(ctor);
-
-			// parameterless ctor
-			if (parameters.Length == 0)
-				return _factory.CreateInstance(implementationType);
-
-			// auto-resolve widest ctor
-			var args = new object[parameters.Length];
-			for (var i = 0; i < parameters.Length; i++)
-				args[i] = AutoResolve(parameters[i].ParameterType);
-
-			return _factory.CreateInstance(implementationType, args);
-		}
-
-		public object AutoResolve(Type serviceType)
-		{
-			while (true)
-			{
-				Func<object> creator;
-
-				// got it:
-				if (_registrations.TryGetValue(serviceType, out creator))
-					return creator();
-
-				// want it:
-				var typeInfo = serviceType.GetTypeInfo();
-				if (!typeInfo.IsAbstract)
-					return CreateInstance(serviceType);
-
-				// need it:
-				var type = _fallbackAssemblies.SelectMany(s => s.GetTypes())
-					.FirstOrDefault(i => serviceType.IsAssignableFrom(i) && !i.GetTypeInfo().IsInterface);
-				if (type == null)
-				{
-					if (ThrowIfCantResolve)
-						throw new InvalidOperationException($"No registration for {serviceType}");
-
-					return null;
-				}
-
-				serviceType = type;
-			}
-		}
-
-		#endregion
-
-		#region Lifetime Management
-
-		private Func<IDependencyResolver, T> WrapLifecycle<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime)
-			where T : class
-		{
-			Func<IDependencyResolver, T> registration;
-			switch (lifetime)
-			{
-				case Lifetime.AlwaysNew:
-					registration = builder;
-					break;
-				case Lifetime.Permanent:
-					registration = ProcessMemoize(builder);
-					break;
-				case Lifetime.Thread:
-					registration = ThreadMemoize(builder);
-					break;
-#if SupportsRequests
-                case Lifetime.Request:
-                    registration = RequestMemoize(builder);
-                    break;
-#endif
-				default:
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
-			}
-
-			return registration;
-		}
-
-		private Func<T> WrapLifecycle<T>(Func<T> builder, Lifetime lifetime) where T : class
-		{
-			Func<T> registration;
-			switch (lifetime)
-			{
-				case Lifetime.AlwaysNew:
-					registration = builder;
-					break;
-				case Lifetime.Permanent:
-					registration = ProcessMemoize(builder);
-					break;
-				case Lifetime.Thread:
-					registration = ThreadMemoize(builder);
-					break;
-#if SupportsRequests
-                case Lifetime.Request:
-                    registration = RequestMemoize(builder);
-                    break;
-#endif
-				default:
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
-			}
-
-			return registration;
-		}
-
-		private static Func<T> ProcessMemoize<T>(Func<T> f)
-		{
-			var cache = new ConcurrentDictionary<Type, T>();
-
-			return () => cache.GetOrAdd(typeof(T), v => f());
-		}
-
-		private static Func<T> ThreadMemoize<T>(Func<T> f)
-		{
-			var cache = new ThreadLocal<T>(f);
-
-			return () => cache.Value;
-		}
-
-		private Func<IDependencyResolver, T> ProcessMemoize<T>(Func<IDependencyResolver, T> f)
-		{
-			var cache = new ConcurrentDictionary<Type, T>();
-
-			return r => cache.GetOrAdd(typeof(T), v => f(this));
-		}
-
-		private Func<IDependencyResolver, T> ThreadMemoize<T>(Func<IDependencyResolver, T> f)
-		{
-			var cache = new ThreadLocal<T>(() => f(this));
-
-			return r => cache.Value;
-		}
-
-		#endregion
 
 		#region Instancing
 
@@ -364,8 +46,6 @@ namespace HQ.Harmony
 			public delegate object ObjectActivator(params object[] parameters);
 
 			public delegate object ParameterlessObjectActivator();
-
-			public static InstanceFactory Instance = new InstanceFactory();
 
 			private readonly IDictionary<Type, ObjectActivator> _activators =
 				new ConcurrentDictionary<Type, ObjectActivator>();
@@ -524,10 +204,326 @@ namespace HQ.Harmony
 
 		#endregion
 
-		#region ASP.NET Features
+		#region Register
 
+		private readonly IDictionary<Type, Func<object>>
+			_registrations = new ConcurrentDictionary<Type, Func<object>>();
+
+		private readonly IDictionary<NameAndType, Func<object>> _namedRegistrations =
+			new ConcurrentDictionary<NameAndType, Func<object>>();
+
+		private readonly IDictionary<Type, List<Func<object>>> _collectionRegistrations =
+			new ConcurrentDictionary<Type, List<Func<object>>>();
+
+		public void Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+		{
+			var next = WrapLifecycle(builder, lifetime);
+			if (_registrations.ContainsKey(type))
+			{
+				var previous = _registrations[type];
+				_registrations[type] = next;
+				RegisterManyUnnamed(type, previous);
+			}
+			else
+			{
+				_registrations[type] = next;
+			}
+		}
+
+		public void Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		{
+			var type = typeof(T);
+			Func<object> next = WrapLifecycle(builder, lifetime);
+			if (_registrations.ContainsKey(type))
+			{
+				var previous = _registrations[type];
+				_registrations[type] = next;
+				RegisterManyUnnamed(type, previous);
+			}
+			else
+			{
+				_registrations[type] = next;
+			}
+		}
+
+		public void Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		{
+			var type = typeof(T);
+			_namedRegistrations[new NameAndType(name, type)] = WrapLifecycle(builder, lifetime);
+		}
+
+		public void Register<T>(string name, Func<IDependencyResolver, T> builder,
+			Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		{
+			var registration = WrapLifecycle(builder, lifetime);
+			_namedRegistrations[new NameAndType(name, typeof(T))] = () => registration(this);
+		}
+
+		public void Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+			where T : class
+		{
+			var type = typeof(T);
+			Func<object> next = () => WrapLifecycle(builder, lifetime)(this);
+			if (_registrations.ContainsKey(type))
+			{
+				var previous = _registrations[type];
+				_registrations[type] = next;
+				RegisterManyUnnamed(type, previous);
+			}
+			else
+			{
+				_registrations[type] = next;
+			}
+		}
+
+		public void Register<T>(T instance)
+		{
+			var type = typeof(T);
+			Func<object> next = () => instance;
+			if (_registrations.ContainsKey(type))
+			{
+				var previous = _registrations[type];
+				_registrations[type] = next;
+				RegisterManyUnnamed(type, previous);
+			}
+			else
+			{
+				_registrations[type] = next;
+			}
+		}
+
+		private void RegisterManyUnnamed(Type type, Func<object> previous)
+		{
+			if (!_collectionRegistrations.TryGetValue(type, out var collectionBuilder))
+			{
+				collectionBuilder = new List<Func<object>> {previous};
+				_collectionRegistrations.Add(type, collectionBuilder);
+			}
+
+			collectionBuilder.Add(_registrations[type]);
+
+			// implied registration of the enumerable equivalent
+			Register(typeof(IEnumerable<>).MakeGenericType(type), () =>
+			{
+				var collection = (IList) _factory.CreateInstance(typeof(List<>).MakeGenericType(type));
+				foreach (var item in YieldCollection(collectionBuilder))
+					collection.Add(item);
+				return collection;
+			}, Lifetime.Permanent);
+		}
+
+		#endregion
+
+		#region Resolve
+
+		public T Resolve<T>() where T : class
+		{
+			var serviceType = typeof(T);
+			if (!_registrations.TryGetValue(serviceType, out var builder))
+				return AutoResolve(serviceType) as T;
+			if (builder() is T resolved)
+				return resolved;
+			if (ThrowIfCantResolve)
+				throw new InvalidOperationException($"No registration for {serviceType}");
+			return null;
+		}
+
+		public IEnumerable<T> ResolveAll<T>() where T : class
+		{
+			var serviceType = typeof(T);
+			return _collectionRegistrations.TryGetValue(serviceType, out var collectionBuilder)
+				? YieldCollection<T>(collectionBuilder)
+				: Enumerable.Empty<T>();
+		}
+
+		private static IEnumerable<T> YieldCollection<T>(IEnumerable<Func<object>> collectionBuilder) where T : class
+		{
+			return collectionBuilder.Select(builder => builder() as T);
+		}
+
+		public object Resolve(Type serviceType)
+		{
+			if (!_registrations.TryGetValue(serviceType, out var builder))
+				return AutoResolve(serviceType);
+			var resolved = builder();
+			if (resolved != null)
+				return resolved;
+			if (ThrowIfCantResolve)
+				throw new InvalidOperationException($"No registration for {serviceType}");
+			return null;
+		}
+
+		public IEnumerable ResolveAll(Type serviceType)
+		{
+			return _collectionRegistrations.TryGetValue(serviceType, out var collectionBuilder)
+				? YieldCollection(collectionBuilder)
+				: Enumerable.Empty<object>();
+		}
+
+		private static IEnumerable YieldCollection(IEnumerable<Func<object>> collectionBuilder)
+		{
+			return collectionBuilder.Select(builder => builder());
+		}
+
+		public T Resolve<T>(string name) where T : class
+		{
+			if (_namedRegistrations.TryGetValue(new NameAndType(name, typeof(T)), out var builder))
+				return builder() as T;
+			if (ThrowIfCantResolve)
+				throw new InvalidOperationException($"No registration for {typeof(T)} named {name}");
+			return null;
+		}
+
+		public object Resolve(string name, Type serviceType)
+		{
+			if (_namedRegistrations.TryGetValue(new NameAndType(name, serviceType), out var builder))
+				return builder();
+			if (ThrowIfCantResolve)
+				throw new InvalidOperationException($"No registration for {serviceType} named {name}");
+			return null;
+		}
+
+		#endregion
+
+		#region Auto-Resolve w/ Fallback
+
+		private object CreateInstance(Type implementationType)
+		{
+			// type->constructor
+			var ctor = _factory.GetOrCacheConstructorForType(implementationType);
+
+			// constructor->parameters
+			var parameters = _factory.GetOrCacheParametersForConstructor(ctor);
+
+			// parameterless ctor
+			if (parameters.Length == 0)
+				return _factory.CreateInstance(implementationType);
+
+			// auto-resolve widest ctor
+			var args = new object[parameters.Length];
+			for (var i = 0; i < parameters.Length; i++)
+				args[i] = AutoResolve(parameters[i].ParameterType);
+
+			return _factory.CreateInstance(implementationType, args);
+		}
+
+		public object AutoResolve(Type serviceType)
+		{
+			while (true)
+			{
+				// got it:
+				if (_registrations.TryGetValue(serviceType, out var creator))
+					return creator();
+
+				// want it:
+				var typeInfo = serviceType.GetTypeInfo();
+				if (!typeInfo.IsAbstract)
+					return CreateInstance(serviceType);
+
+				// need it:
+				var type = _fallbackAssemblies.SelectMany(s => s.GetTypes())
+					.FirstOrDefault(i => serviceType.IsAssignableFrom(i) && !i.GetTypeInfo().IsInterface);
+				if (type == null)
+				{
+					if (ThrowIfCantResolve)
+						throw new InvalidOperationException($"No registration for {serviceType}");
+
+					return null;
+				}
+
+				serviceType = type;
+			}
+		}
+
+		#endregion
+
+		#region Lifetime Management
+
+		private Func<IDependencyResolver, T> WrapLifecycle<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime)
+			where T : class
+		{
+			Func<IDependencyResolver, T> registration;
+			switch (lifetime)
+			{
+				case Lifetime.AlwaysNew:
+					registration = builder;
+					break;
+				case Lifetime.Permanent:
+					registration = ProcessMemoize(builder);
+					break;
+				case Lifetime.Thread:
+					registration = ThreadMemoize(builder);
+					break;
 #if SupportsRequests
+                case Lifetime.Request:
+                    registration = RequestMemoize(builder);
+                    break;
 #endif
+				default:
+					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+			}
+
+			return registration;
+		}
+
+		private Func<T> WrapLifecycle<T>(Func<T> builder, Lifetime lifetime) where T : class
+		{
+			Func<T> registration;
+			switch (lifetime)
+			{
+				case Lifetime.AlwaysNew:
+					registration = builder;
+					break;
+				case Lifetime.Permanent:
+					registration = ProcessMemoize(builder);
+					break;
+				case Lifetime.Thread:
+					registration = ThreadMemoize(builder);
+					break;
+				case Lifetime.Request:
+					foreach (var extension in _extensions)
+						if (extension.CanResolve(lifetime))
+							return extension.Memoize(this, builder);
+					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
+						"No extensions can serve this lifetime.");
+				default:
+					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+			}
+
+			return registration;
+		}
+
+		private static Func<T> ProcessMemoize<T>(Func<T> f)
+		{
+			var cache = new ConcurrentDictionary<Type, T>();
+
+			return () => cache.GetOrAdd(typeof(T), v => f());
+		}
+
+		private static Func<T> ThreadMemoize<T>(Func<T> f)
+		{
+			var cache = new ThreadLocal<T>(f);
+
+			return () => cache.Value;
+		}
+
+		private Func<IDependencyResolver, T> ProcessMemoize<T>(Func<IDependencyResolver, T> f)
+		{
+			var cache = new ConcurrentDictionary<Type, T>();
+
+			return r => cache.GetOrAdd(typeof(T), v => f(this));
+		}
+
+		private Func<IDependencyResolver, T> ThreadMemoize<T>(Func<IDependencyResolver, T> f)
+		{
+			var cache = new ThreadLocal<T>(() => f(this));
+
+			return r => cache.Value;
+		}
+
+		#endregion
+
+		#region Scoping Features
 
 		public IServiceProvider Populate(IServiceCollection services)
 		{
@@ -601,10 +597,5 @@ namespace HQ.Harmony
 		}
 
 		#endregion
-
-		public void Dispose()
-		{
-			// No scopes, so nothing to dispose
-		}
 	}
 }

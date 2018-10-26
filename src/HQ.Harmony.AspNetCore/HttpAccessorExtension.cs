@@ -6,8 +6,13 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Harmony.AspNetCore
 {
-	public class HttpAccessorExtension : IRequestExtension
+	internal class HttpAccessorExtension : IResolverExtension
 	{
+		public bool CanResolve(Lifetime lifetime)
+		{
+			return lifetime == Lifetime.Request;
+		}
+
 		public Func<T> Memoize<T>(IDependencyResolver host, Func<T> f)
 		{
 			return () =>
