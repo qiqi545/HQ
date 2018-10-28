@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,9 +14,9 @@ namespace HQ.Flow
 	[Serializable]
 	public class UnusedStateMethodsException : Exception
 	{
-		public ReadOnlyCollection<string> StateMethods { get; }
-
-		public UnusedStateMethodsException(ICollection<MethodInfo> stateMethods) : base("State methods were unused (probably a naming error or undefined state):\n" + string.Join("\n", stateMethods))
+		public UnusedStateMethodsException(ICollection<MethodInfo> stateMethods) : base(
+			"State methods were unused (probably a naming error or undefined state):\n" +
+			string.Join("\n", stateMethods))
 		{
 			StateMethods = new ReadOnlyCollection<string>(stateMethods.Select(x => x.Name).ToList());
 		}
@@ -21,8 +24,11 @@ namespace HQ.Flow
 		protected UnusedStateMethodsException(SerializationInfo info, StreamingContext context)
 			: base(info, context)
 		{
-			StateMethods = info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<string>)) as ReadOnlyCollection<string>;
+			StateMethods =
+				info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<string>)) as ReadOnlyCollection<string>;
 		}
+
+		public ReadOnlyCollection<string> StateMethods { get; }
 
 		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)

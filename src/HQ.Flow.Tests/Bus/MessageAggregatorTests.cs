@@ -3,11 +3,11 @@
 
 using System;
 using HQ.Flow.Bus;
-using HQ.Flow.Tests.Handlers;
-using HQ.Flow.Tests.Messages;
+using HQ.Flow.Tests.Bus.Handlers;
+using HQ.Flow.Tests.Bus.Messages;
 using Xunit;
 
-namespace HQ.Flow.Tests
+namespace HQ.Flow.Tests.Bus
 {
 	public class MessageAggregatorTests
 	{

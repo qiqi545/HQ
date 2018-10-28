@@ -1,4 +1,6 @@
-using System.Text;
+// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
 using HQ.Flow.Tests.Fixtures;
 using HQ.Flow.Tests.States;
 using Xunit;
@@ -7,6 +9,65 @@ namespace HQ.Flow.Tests
 {
 	public class StateMachineTests
 	{
+		[Fact]
+		public void BeforeBegin_failure_blocks_state_transition()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData {AllowBeginStateC = false};
+				var actor = new ThreeValidStaticStates();
+
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+			}
+		}
+
+		[Fact]
+		public void BeforeEnd_failure_blocks_state_transition()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<ThreeValidStaticStates>();
+
+				var data = new ThreeValidStatesData {AllowEndStateC = false};
+				var actor = new ThreeValidStaticStates();
+
+				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateC>(data);
+				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
+				actor.SetState<ThreeValidStaticStates.StateB>(data);
+				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
+			}
+		}
+
+		[Fact]
+		public void Can_inherit_state_data()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<StateDataInheritance>();
+
+				var data = new BaseStateData {A = true};
+				var actor = new StateDataInheritance();
+				actor.SetState<StateDataInheritance.StateA>(data);
+				Assert.False(data.A);
+			}
+		}
+
+		[Fact]
+		public void Can_inherit_states_and_pass_null_context()
+		{
+			using (new StateProviderFixture())
+			{
+				StateProvider.Setup<StateInheritance>();
+				var actor = new StateInheritance();
+				actor.SetState<StateInheritance.StateA>();
+			}
+		}
+
 		[Fact]
 		public void Can_transition_between_states()
 		{
@@ -60,7 +121,7 @@ namespace HQ.Flow.Tests
 				Assert.False(data.EndStateA);
 			}
 		}
-		
+
 		[Fact]
 		public void Reentrant_state_ends_itself()
 		{
@@ -72,7 +133,7 @@ namespace HQ.Flow.Tests
 				var actor = new ThreeValidStaticStates();
 
 				actor.SetState<ThreeValidStaticStates.StateA>(data);
-				actor.SetState<ThreeValidStaticStates.StateA>(data, allowStateRestart: true);
+				actor.SetState<ThreeValidStaticStates.StateA>(data, true);
 
 				Assert.True(data.BeginStateA);
 				Assert.True(data.EndStateA);
@@ -98,68 +159,9 @@ namespace HQ.Flow.Tests
 				actor.Update(data);
 				actor.SetState<ThreeValidStaticStates.StateC>(data);
 				actor.Update(data);
-				
+
 				Assert.Equal(1, data.TicksA);
 				Assert.Equal(1, data.TicksB);
-			}
-		}
-
-		[Fact]
-		public void BeforeBegin_failure_blocks_state_transition()
-		{
-			using (new StateProviderFixture())
-			{
-				StateProvider.Setup<ThreeValidStaticStates>();
-
-				var data = new ThreeValidStatesData {AllowBeginStateC = false};
-				var actor = new ThreeValidStaticStates();
-
-				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
-				actor.SetState<ThreeValidStaticStates.StateC>(data);
-				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
-			}
-		}
-
-		[Fact]
-		public void BeforeEnd_failure_blocks_state_transition()
-		{
-			using (new StateProviderFixture())
-			{
-				StateProvider.Setup<ThreeValidStaticStates>();
-
-				var data = new ThreeValidStatesData { AllowEndStateC = false };
-				var actor = new ThreeValidStaticStates();
-
-				Assert.Equal(typeof(StateProvider.State), actor.CurrentState.GetType());
-				actor.SetState<ThreeValidStaticStates.StateC>(data);
-				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
-				actor.SetState<ThreeValidStaticStates.StateB>(data);
-				Assert.Equal(typeof(ThreeValidStaticStates.StateC), actor.CurrentState.GetType());
-			}
-		}
-
-		[Fact]
-		public void Can_inherit_states_and_pass_null_context()
-		{
-			using (new StateProviderFixture())
-			{
-				StateProvider.Setup<StateInheritance>();
-				var actor = new StateInheritance();
-				actor.SetState<StateInheritance.StateA>();
-			}
-		}
-
-		[Fact]
-		public void Can_inherit_state_data()
-		{
-			using (new StateProviderFixture())
-			{
-				StateProvider.Setup<StateDataInheritance>();
-
-				var data = new BaseStateData {A = true};
-				var actor = new StateDataInheritance();
-				actor.SetState<StateDataInheritance.StateA>(data);
-				Assert.False(data.A);
 			}
 		}
 	}

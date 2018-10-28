@@ -9,35 +9,19 @@ namespace HQ.Flow
 	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
 	public class StateMachine<TStateData> : StateProvider where TStateData : class
 	{
-		public string DisplayName => $"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
-
 		public StateMachine()
 		{
 			CurrentState = GetState<State>();
 		}
 
-		public new class MethodTable : StateProvider.MethodTable
-		{
-			[AlwaysNullChecked]
-			public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeBeginState;
+		public string DisplayName =>
+			$"{GetType().Name} ({(CurrentState != null ? CurrentState.GetType().Name : "(null)")})";
 
-			[AlwaysNullChecked]
-			public Action<StateMachine<TStateData>, TStateData, State> BeginState;
-
-			[AlwaysNullChecked]
-			public Action<StateMachine<TStateData>, TStateData> Update;
-
-			[AlwaysNullChecked]
-			public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeEndState;
-
-			[AlwaysNullChecked]
-			public Action<StateMachine<TStateData>, TStateData, State> EndState;
-		}
-
-		public MethodTable StateMethods => (MethodTable)CurrentState.methodTable;
+		public MethodTable StateMethods => (MethodTable) CurrentState.methodTable;
 		public State CurrentState { get; private set; }
 
-		public void SetState<TState>(TStateData stateData = null, bool allowStateRestart = false) where TState : State, new()
+		public void SetState<TState>(TStateData stateData = null, bool allowStateRestart = false)
+			where TState : State, new()
 		{
 			DirectlySetState(GetState<TState>(), stateData, allowStateRestart);
 		}
@@ -70,12 +54,25 @@ namespace HQ.Flow
 						return;
 				}
 			}
-			
+
 			StateMethods.EndState?.Invoke(this, stateData, nextState);
 			var previousState = CurrentState;
 
 			CurrentState = nextState;
 			StateMethods.BeginState?.Invoke(this, stateData, previousState);
+		}
+
+		public new class MethodTable : StateProvider.MethodTable
+		{
+			[AlwaysNullChecked] public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeBeginState;
+
+			[AlwaysNullChecked] public Func<StateMachine<TStateData>, TStateData, State, bool> BeforeEndState;
+
+			[AlwaysNullChecked] public Action<StateMachine<TStateData>, TStateData, State> BeginState;
+
+			[AlwaysNullChecked] public Action<StateMachine<TStateData>, TStateData, State> EndState;
+
+			[AlwaysNullChecked] public Action<StateMachine<TStateData>, TStateData> Update;
 		}
 	}
 }

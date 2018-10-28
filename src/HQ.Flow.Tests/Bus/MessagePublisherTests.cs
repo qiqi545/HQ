@@ -3,11 +3,11 @@
 
 using System;
 using HQ.Flow.Bus;
-using HQ.Flow.Tests.Handlers;
-using HQ.Flow.Tests.Messages;
+using HQ.Flow.Tests.Bus.Handlers;
+using HQ.Flow.Tests.Bus.Messages;
 using Xunit;
 
-namespace HQ.Flow.Tests
+namespace HQ.Flow.Tests.Bus
 {
 	public class MessagePublisherTests
 	{
@@ -67,13 +67,13 @@ namespace HQ.Flow.Tests
 			var pub = (IMessagePublisher) hub;
 			var sub = (IMessageAggregator) hub;
 
-			sub.Subscribe(new FailingHandler());    // always false
+			sub.Subscribe(new FailingHandler()); // always false
 			sub.Subscribe(new SucceedingHandler()); // always true
 
-			var bad = pub.Publish(new ErrorMessage { Error = true });
+			var bad = pub.Publish(new ErrorMessage {Error = true});
 			Assert.False(bad);
 
-			var good = pub.Publish(new ErrorMessage { Error = false });
+			var good = pub.Publish(new ErrorMessage {Error = false});
 			Assert.False(good);
 		}
 	}

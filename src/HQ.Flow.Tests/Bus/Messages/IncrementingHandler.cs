@@ -3,7 +3,7 @@
 
 using HQ.Flow.Bus;
 
-namespace HQ.Flow.Tests.Messages
+namespace HQ.Flow.Tests.Bus.Messages
 {
 	public class IncrementingHandler : IMessageHandler<IMessage>
 	{

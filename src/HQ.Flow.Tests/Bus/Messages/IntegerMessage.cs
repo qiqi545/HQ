@@ -3,7 +3,7 @@
 
 using System;
 
-namespace HQ.Flow.Tests.Messages
+namespace HQ.Flow.Tests.Bus.Messages
 {
 	public class IntegerMessage : IEquatable<IntegerMessage>
 	{

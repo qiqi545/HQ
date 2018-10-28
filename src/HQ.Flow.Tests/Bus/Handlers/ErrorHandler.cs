@@ -3,9 +3,9 @@
 
 using System;
 using HQ.Flow.Bus;
-using HQ.Flow.Tests.Messages;
+using HQ.Flow.Tests.Bus.Messages;
 
-namespace HQ.Flow.Tests.Handlers
+namespace HQ.Flow.Tests.Bus.Handlers
 {
 	public class ErrorHandler : IMessageHandler<ErrorMessage>
 	{

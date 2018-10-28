@@ -1,3 +1,6 @@
+// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
 namespace HQ.Flow.Tests.States
 {
 	public class ThreeValidStaticStates : StateMachine<ThreeValidStatesData>
@@ -12,7 +15,7 @@ namespace HQ.Flow.Tests.States
 			{
 				stateData.BeginStateA = true;
 			}
-			
+
 			private void State_StateA_EndState(ThreeValidStatesData stateData, State nextState)
 			{
 				stateData.EndStateA = true;
@@ -45,7 +48,7 @@ namespace HQ.Flow.Tests.States
 				stateData.TicksB++;
 			}
 		}
-		
+
 		#endregion
 
 		#region StateC
@@ -61,7 +64,6 @@ namespace HQ.Flow.Tests.States
 
 			private void BeginState(ThreeValidStatesData stateData, State previousState)
 			{
-				
 			}
 
 			private bool State_StateC_BeforeEndState(ThreeValidStatesData stateData, State previousState)
@@ -70,11 +72,10 @@ namespace HQ.Flow.Tests.States
 			}
 
 			private void EndState(ThreeValidStatesData stateData, State nextState)
-			{ 
-				
+			{
 			}
 		}
-		
+
 		#endregion
 	}
 }

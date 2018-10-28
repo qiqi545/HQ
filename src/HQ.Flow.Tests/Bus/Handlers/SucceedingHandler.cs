@@ -2,9 +2,9 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using HQ.Flow.Bus;
-using HQ.Flow.Tests.Messages;
+using HQ.Flow.Tests.Bus.Messages;
 
-namespace HQ.Flow.Tests.Handlers
+namespace HQ.Flow.Tests.Bus.Handlers
 {
 	public class SucceedingHandler : IMessageHandler<IMessage>
 	{
