@@ -2,13 +2,11 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
-using System.Collections.Generic;
 
-namespace HQ.Flow
+namespace HQ.Flow.Bus
 {
-	public interface IObservableWithOutcomes<out T> : IObservable<T>
+	[Serializable]
+	public class DuplicateSubscriptionException : Exception
 	{
-		bool Handled { get; }
-		ICollection<ObservableOutcome> Outcomes { get; }
 	}
 }
