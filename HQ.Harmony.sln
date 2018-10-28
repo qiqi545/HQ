@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.Tests", "src\HQ.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.AspNetCore", "src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj", "{1C8E6035-83CE-40B9-A76F-3AA2F92E8AF4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Harmony.Benchmarks", "HQ.Harmony.Benchmarks\HQ.Harmony.Benchmarks.csproj", "{3AAED419-FFFD-4748-A45C-F09A71B6344D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.Benchmarks", "src\HQ.Harmony.Benchmarks\HQ.Harmony.Benchmarks.csproj", "{1AEBC8A9-4752-48D4-8EF5-DF149A6CC17A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +37,10 @@ Global
 		{1C8E6035-83CE-40B9-A76F-3AA2F92E8AF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C8E6035-83CE-40B9-A76F-3AA2F92E8AF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C8E6035-83CE-40B9-A76F-3AA2F92E8AF4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3AAED419-FFFD-4748-A45C-F09A71B6344D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3AAED419-FFFD-4748-A45C-F09A71B6344D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3AAED419-FFFD-4748-A45C-F09A71B6344D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3AAED419-FFFD-4748-A45C-F09A71B6344D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AEBC8A9-4752-48D4-8EF5-DF149A6CC17A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AEBC8A9-4752-48D4-8EF5-DF149A6CC17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AEBC8A9-4752-48D4-8EF5-DF149A6CC17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AEBC8A9-4752-48D4-8EF5-DF149A6CC17A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

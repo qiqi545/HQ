@@ -454,11 +454,12 @@ namespace HQ.Harmony
 				case Lifetime.Thread:
 					registration = ThreadMemoize(builder);
 					break;
-#if SupportsRequests
                 case Lifetime.Request:
-                    registration = RequestMemoize(builder);
-                    break;
-#endif
+					foreach (var extension in _extensions)
+		                if (extension.CanResolve(lifetime))
+			                return extension.Memoize(this, builder);
+	                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
+		                "No extensions can serve this lifetime.");
 				default:
 					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
 			}
