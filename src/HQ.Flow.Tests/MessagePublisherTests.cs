@@ -23,7 +23,7 @@ namespace HQ.Flow.Tests
 			// SubscribeWithDelegate:
 			{
 				hub.Subscribe<InheritedMessage>(e => throw new Exception(), (m, ex) => { errors++; });
-				object @event = new InheritedMessage { Id = 123, Value = "ABC"};
+				object @event = new InheritedMessage {Id = 123, Value = "ABC"};
 				sent = hub.Publish(@event);
 				Assert.False(sent, "publishing an exception should bubble as false to the publish result");
 				Assert.Equal(1, errors);
@@ -33,17 +33,17 @@ namespace HQ.Flow.Tests
 			{
 				var handler = new ManifoldHierarchicalMessageHandler();
 				hub.Subscribe(handler, (m, ex) => { errors++; });
-				sent = hub.Publish(new ErrorMessage { Error = true });
+				sent = hub.Publish(new ErrorMessage {Error = true});
 				Assert.False(sent);
-				Assert.Equal(3, errors);
+				Assert.Equal(2, errors);
 			}
 
 			// SubscribeWithInterface:
 			{
 				hub.Subscribe(new ThrowingHandler());
-				sent = hub.Publish(new ErrorMessage { Error = true });
+				sent = hub.Publish(new ErrorMessage {Error = true});
 				Assert.False(sent);
-				Assert.Equal(4, errors);
+				Assert.Equal(3, errors);
 			}
 		}
 
@@ -67,20 +67,14 @@ namespace HQ.Flow.Tests
 			var pub = (IMessagePublisher) hub;
 			var sub = (IMessageAggregator) hub;
 
-			// two handlers for the same event
-			sub.Subscribe(new FailingHandler()); // false
-			sub.Subscribe(new SucceedingHandler()); // true
+			sub.Subscribe(new FailingHandler());    // always false
+			sub.Subscribe(new SucceedingHandler()); // always true
 
-			// and one command to rule them all
-			var two = pub.Publish(new ErrorMessage {Error = false});
-			var one = pub.Publish(new ErrorMessage {Error = true});
+			var bad = pub.Publish(new ErrorMessage { Error = true });
+			Assert.False(bad);
 
-			var bad = one;
-			Assert.False(bad, "whoops, outcomes are optimistic"); // <-- pessimistic
-
-			// now, send another message, because we have to ensure outcomes are cleared!
-			var good = two;
-			Assert.True(good, "whoops, outcomes are broken"); // <-- idempotent outcomes
+			var good = pub.Publish(new ErrorMessage { Error = false });
+			Assert.False(good);
 		}
 	}
 }

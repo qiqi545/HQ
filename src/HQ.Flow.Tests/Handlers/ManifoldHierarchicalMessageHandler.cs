@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using HQ.Flow.Bus;
 using HQ.Flow.Tests.Messages;
 
@@ -20,9 +23,10 @@ namespace HQ.Flow.Tests.Handlers
 			return true;
 		}
 
-		public bool Handle(InheritedMessage message)
+		public bool Handle(ErrorMessage message)
 		{
-			HandledInherited++;
+			if (message.Error)
+				throw new Exception("the message made me do it!");
 			return true;
 		}
 
@@ -32,10 +36,9 @@ namespace HQ.Flow.Tests.Handlers
 			return true;
 		}
 
-		public bool Handle(ErrorMessage message)
+		public bool Handle(InheritedMessage message)
 		{
-			if(message.Error)
-				throw new Exception("the message made me do it!");
+			HandledInherited++;
 			return true;
 		}
 	}
