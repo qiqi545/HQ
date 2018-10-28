@@ -430,10 +430,8 @@ namespace HQ.Flow.Producers
 
 		private void ProduceOn(BlockingCollection<T> source, ParallelOptions options)
 		{
-			var partitioner = source.GetConsumingPartitioner();
-
-			Parallel.ForEach(partitioner, options,
-				async (@event, state) => await ProductionCycle(options, @event, state));
+			var partitioner = Partitioner.Create(source.GetConsumingEnumerable(options.CancellationToken), EnumerablePartitionerOptions.NoBuffering);
+			Parallel.ForEach(partitioner, options, async (@event, state) => await ProductionCycle(options, @event, state));
 		}
 
 		private async Task ProductionCycle(ParallelOptions options, T message, ParallelLoopState state)

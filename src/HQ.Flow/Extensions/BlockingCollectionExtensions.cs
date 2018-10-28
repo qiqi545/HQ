@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
@@ -14,26 +13,22 @@ namespace HQ.Flow.Extensions
 {
 	internal static class BlockingCollectionExtensions
 	{
-		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, int n,
-			CancellationToken cancellationToken)
+		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, int n, CancellationToken cancellationToken = default)
 		{
 			return sequence.AsConsumingObservable(cancellationToken).Buffer(n);
 		}
 
-		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, TimeSpan w,
-			CancellationToken cancellationToken)
+		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, TimeSpan w, CancellationToken cancellationToken = default)
 		{
 			return sequence.AsConsumingObservable(cancellationToken).Buffer(w);
 		}
 
-		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, int n,
-			TimeSpan w, CancellationToken cancellationToken)
+		public static IObservable<IList<T>> AsBatchingObservable<T>(this BlockingCollection<T> sequence, int n, TimeSpan w, CancellationToken cancellationToken = default)
 		{
 			return sequence.AsConsumingObservable(cancellationToken).Buffer(w, n);
 		}
 
-		public static IObservable<T> AsConsumingObservable<T>(this BlockingCollection<T> sequence,
-			CancellationToken cancellationToken)
+		public static IObservable<T> AsConsumingObservable<T>(this BlockingCollection<T> sequence, CancellationToken cancellationToken = default)
 		{
 			var subject = new Subject<T>();
 			var token = new CancellationToken();
@@ -65,8 +60,7 @@ namespace HQ.Flow.Extensions
 		}
 
 		// Original source from: http://codereview.stackexchange.com/questions/11377/implementation-of-a-throttled-concurrentqueue-rx-observer
-		public static IObservable<T> AsRateLimitedObservable<T>(this BlockingCollection<T> sequence, int occurrences,
-			TimeSpan timeUnit, CancellationToken cancellationToken)
+		public static IObservable<T> AsRateLimitedObservable<T>(this BlockingCollection<T> sequence, int occurrences, TimeSpan timeUnit, CancellationToken cancellationToken = default)
 		{
 			var subject = new Subject<T>();
 			var token = new CancellationToken();
@@ -100,16 +94,7 @@ namespace HQ.Flow.Extensions
 
 			return new TaskAwareObservable<T>(subject, consumingTask, tokenSource);
 		}
-
-		// Original source from: http://code.msdn.microsoft.com/ParExtSamples
-		// See: http://blogs.msdn.com/b/pfxteam/archive/2010/04/06/9990420.aspx
-		// Existing issue: http://connect.microsoft.com/VisualStudio/feedback/details/674705/blockingcollection-getconsumingenumerable-and-parallel-foreach-hang
-		// Forum post: http://social.msdn.microsoft.com/Forums/en-US/parallelextensions/thread/bcb4c46b-8ac4-423d-a7e6-7dacaa574e5c
-		public static Partitioner<T> GetConsumingPartitioner<T>(this BlockingCollection<T> collection)
-		{
-			return new BlockingCollectionPartitioner<T>(collection);
-		}
-
+		
 		// Original source from: http://codereview.stackexchange.com/questions/11377/implementation-of-a-throttled-concurrentqueue-rx-observer
 		private class TaskAwareObservable<T> : IObservable<T>, IDisposable
 		{
@@ -142,7 +127,7 @@ namespace HQ.Flow.Extensions
 			}
 		}
 
-		// Original source from: http://www.pennedobjects.com/2010/10/better-rate-limiting-with-dot-net/
+		// Original source from: http://www.jackleitch.net/2010/10/better-rate-limiting-with-dot-net/
 		internal class Throttle : IDisposable
 		{
 			private readonly Timer _exitTimer;
@@ -186,7 +171,7 @@ namespace HQ.Flow.Extensions
 				_exitTimer.Change(timeUntilNextCheck, -1);
 			}
 
-			public bool WaitToProceed(int millisecondsTimeout)
+			public bool WaitToProceed(int millisecondsTimeout = Timeout.Infinite)
 			{
 				var entered = _semaphore.Wait(millisecondsTimeout);
 				if (entered)
@@ -194,50 +179,15 @@ namespace HQ.Flow.Extensions
 					var exitTime = unchecked(Environment.TickCount + TimeUnitMilliseconds);
 					_exitTimes.Enqueue(exitTime);
 				}
-
 				return entered;
 			}
-
-			public bool WaitToProceed(TimeSpan timeout)
-			{
-				return WaitToProceed((int) timeout.TotalMilliseconds);
-			}
-
-			public void WaitToProceed()
-			{
-				WaitToProceed(Timeout.Infinite);
-			}
-
+			
 			protected virtual void Dispose(bool isDisposing)
 			{
 				if (!isDisposing || _isDisposed) return;
 				_semaphore.Dispose();
 				_exitTimer.Dispose();
 				_isDisposed = true;
-			}
-		}
-
-		private class BlockingCollectionPartitioner<T> : Partitioner<T>
-		{
-			private readonly BlockingCollection<T> _collection;
-
-			internal BlockingCollectionPartitioner(BlockingCollection<T> collection)
-			{
-				_collection = collection ?? throw new ArgumentNullException(nameof(collection));
-			}
-
-			public override bool SupportsDynamicPartitions => true;
-
-			public override IList<IEnumerator<T>> GetPartitions(int partitionCount)
-			{
-				var dynamicPartitioner = GetDynamicPartitions();
-
-				return Enumerable.Range(0, partitionCount).Select(_ => dynamicPartitioner.GetEnumerator()).ToArray();
-			}
-
-			public override IEnumerable<T> GetDynamicPartitions()
-			{
-				return _collection.GetConsumingEnumerable();
 			}
 		}
 	}
