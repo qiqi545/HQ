@@ -1,58 +1,12 @@
-snippets
-==============
+Remix by HQ
+=============
 
-Helper functions for working with Roslyn and arbitrary code. 
+[![License](https://img.shields.io/badge/License-RPL%201.5-red.svg)](https://opensource.org/licenses/RPL-1.5)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Remix.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Remix?ref=badge_shield)
 
-Also contains wrapper functions for executing JavaScript via Node.js.
+## Documentation
 
-C#
---
+All project documentation can be found here: https://docs.hq.io
 
-```csharp
-var handlers = new HandlerFactory();
-
-var info = new HandlerInfo {
-	Namespace = "hq",
-	Function = "Execute",
-	Entrypoint = "hq.Main",
-	Code = @"
-namespace hq
-{ 
-    public class Main
-    { 
-        public static string Execute()
-        { 
-            return ""Hello, World!"";
-        }
-    }
-}"};
-
-  var h = handlers.BuildCSharpHandler(info);
-  var r = (string)h.DynamicInvoke(null, null)
-
-  Console.WriteLine(r); // Hello, World!
-}
-```
-
-JavaScript
-----------
-_(Requires Node.js installed with a PATH system environment variable set_)
-
-```csharp
-var handlers = new HandlerFactory();
-
-var info = new HandlerInfo {
-	Namespace = "module",
-	Entrypoint = "exports",
-	Code = @"
-function(callback) { 
-  var result = 'Hello, World!';
-  callback(null, result); 
-};"};
-
-  var h = handlers.BuildJavaScriptHandler(info);
-  var r = (string)h.DynamicInvoke(null, null)
-
-  Console.WriteLine(r); // Hello, World!
-}
-```
+## License
+Remix is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Remix/blob/master/LICENSE.md)

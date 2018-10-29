@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\snippets\snippets.csproj" />
+    <ProjectReference Include="..\HQ.Remix\HQ.Remix.csproj" />
   </ItemGroup>
 
   <ItemGroup>
