@@ -1,8 +1,8 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: hq.platform.PlatformCompiler
-// Assembly: hq.platform, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
-// MVID: AD23095B-C5CD-42A2-B496-1FB560BA52AA
-// Assembly location: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.1\hq.platform.dll
+// Assembly: hq.platform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=null
+// MVID: 12984D5C-898E-482A-A33E-5B0D369B3830
+// Assembly location: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.2\hq.platform.dll
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -47,8 +47,8 @@ namespace hq.platform
       moniker = moniker ?? (Func<string>) (() => Guid.NewGuid().ToString("N"));
       IEnumerable<MetadataReference> metadataReferences = PlatformCompiler.GetMetadataReferences(context, dependencies);
       SyntaxTree text = CSharpSyntaxTree.ParseText(code, (CSharpParseOptions) null, "", (Encoding) null, new CancellationToken());
-      string assemblyName = string.Format("{0}.dll", (object) moniker());
-      compilation = CSharpCompilation.Create(assemblyName, (IEnumerable<SyntaxTree>) new SyntaxTree[1]
+      string str = string.Format("{0}.dll", (object) moniker());
+      compilation = CSharpCompilation.Create(str, (IEnumerable<SyntaxTree>) new SyntaxTree[1]
       {
         text
       }, metadataReferences, new CSharpCompilationOptions((OutputKind) 2, false, (string) null, (string) null, (string) null, (IEnumerable<string>) null, (OptimizationLevel) 0, false, false, (string) null, (string) null, new ImmutableArray<byte>(), new bool?(), (Platform) 0, (ReportDiagnostic) 0, 4, (IEnumerable<KeyValuePair<string, ReportDiagnostic>>) null, true, false, (XmlReferenceResolver) null, (SourceReferenceResolver) null, (MetadataReferenceResolver) null, (AssemblyIdentityComparer) null, (StrongNameProvider) null, false));

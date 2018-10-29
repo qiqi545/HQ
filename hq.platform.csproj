@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--Project was exported from assembly: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.1\hq.platform.dll-->
+  <!--Project was exported from assembly: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.2\hq.platform.dll-->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E6652E94-DD78-4A03-85F4-9163EF306260}</ProjectGuid>
+    <ProjectGuid>{D8CA776F-9CE3-4E0F-9CCE-9FCD6CC1C655}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>hq.platform</AssemblyName>
-    <ApplicationVersion>1.0.1.0</ApplicationVersion>
+    <ApplicationVersion>1.0.2.0</ApplicationVersion>
     <RootNamespace>hq.platform</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

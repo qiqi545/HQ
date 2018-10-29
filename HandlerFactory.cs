@@ -1,8 +1,8 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: hq.platform.HandlerFactory
-// Assembly: hq.platform, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
-// MVID: AD23095B-C5CD-42A2-B496-1FB560BA52AA
-// Assembly location: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.1\hq.platform.dll
+// Assembly: hq.platform, Version=1.0.2.0, Culture=neutral, PublicKeyToken=null
+// MVID: 12984D5C-898E-482A-A33E-5B0D369B3830
+// Assembly location: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.2\hq.platform.dll
 
 using System;
 using System.Collections.Generic;
