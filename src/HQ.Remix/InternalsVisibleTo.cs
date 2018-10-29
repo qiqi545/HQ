@@ -4,6 +4,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Remix.Tests")]
+[assembly: InternalsVisibleTo("HQ.Remix.Benchmarks")]
 
 namespace HQ.Remix
 {
