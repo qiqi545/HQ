@@ -18,5 +18,29 @@ namespace HQ.Remix.Tests
 			Assert.NotNull(foo1);
 			Assert.NotNull(foo2);
 		}
+
+		public class Class { }
+
+		[Fact]
+		public void Can_use_expression_factory()
+		{
+			var ctor = typeof(Class).GetConstructor(Type.EmptyTypes);
+			var activator = InstanceFactory.CompiledExpressionFactory.Build(ctor);
+			for (var i = 0; i < 100000; i++)
+			{
+				activator();
+			}
+		}
+
+		[Fact]
+		public void Can_use_dynamic_factory()
+		{
+			var ctor = typeof(Class).GetConstructor(Type.EmptyTypes);
+			var activator = InstanceFactory.DynamicMethodFactory.Build(typeof(Class), ctor);
+			for (var i = 0; i < 100000; i++)
+			{
+				activator();
+			}
+		}
 	}
 }

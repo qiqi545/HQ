@@ -98,7 +98,7 @@ namespace HQ.Remix
 			return ctor ?? implementationType.GetConstructor(Type.EmptyTypes);
 		}
 
-		private static class CompiledExpressionFactory
+		internal static class CompiledExpressionFactory
 		{
 			public static ObjectActivator Build(ConstructorInfo ctor)
 			{
@@ -116,7 +116,7 @@ namespace HQ.Remix
 			}
 		}
 
-		private static class DynamicMethodFactory
+		internal static class DynamicMethodFactory
 		{
 			public static ParameterlessObjectActivator Build(Type implementationType, ConstructorInfo ctor)
 			{
