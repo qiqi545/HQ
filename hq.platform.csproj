@@ -1,0 +1,59 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!--Project was exported from assembly: C:\Users\User\Desktop\hq.platform.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{15AFBCEB-3071-476C-B9EC-F493155AECF1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>hq.platform</AssemblyName>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <RootNamespace>hq.platform</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Reflection" />
+    <Reference Include="Microsoft.CodeAnalysis.CSharp" />
+    <Reference Include="System.IO" />
+    <Reference Include="System.Threading.Tasks" />
+    <Reference Include="System.Collections.Immutable" />
+    <Reference Include="System.Collections" />
+    <Reference Include="Microsoft.Extensions.DependencyModel" />
+    <Reference Include="System.IO.FileSystem" />
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <Reference Include="System.Runtime.Loader" />
+    <Reference Include="System.Linq" />
+    <Reference Include="System.Reflection.TypeExtensions" />
+    <Reference Include="System.Text.Encoding" />
+    <Reference Include="System.Reflection.Metadata" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="HandlerFactory.cs" />
+    <Compile Include="HandlerInfo.cs" />
+    <Compile Include="PlatformCompiler.cs" />
+    <Compile Include="PlatformCompilerContext.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
