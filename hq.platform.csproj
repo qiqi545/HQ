@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <!--Project was exported from assembly: C:\Users\User\Desktop\hq.platform.dll-->
+  <!--Project was exported from assembly: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.1\hq.platform.dll-->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{15AFBCEB-3071-476C-B9EC-F493155AECF1}</ProjectGuid>
+    <ProjectGuid>{E6652E94-DD78-4A03-85F4-9163EF306260}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AssemblyName>hq.platform</AssemblyName>
-    <ApplicationVersion>1.0.0.0</ApplicationVersion>
+    <ApplicationVersion>1.0.1.0</ApplicationVersion>
     <RootNamespace>hq.platform</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,7 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.InteropServices" />
     <Reference Include="System.Reflection" />
+    <Reference Include="System.Reflection.Emit.Lightweight" />
+    <Reference Include="System.Reflection.Emit.ILGeneration" />
     <Reference Include="Microsoft.CodeAnalysis.CSharp" />
     <Reference Include="System.IO" />
     <Reference Include="System.Threading.Tasks" />
@@ -45,14 +48,17 @@
     <Reference Include="System.Runtime.Loader" />
     <Reference Include="System.Linq" />
     <Reference Include="System.Reflection.TypeExtensions" />
+    <Reference Include="System.Collections.Concurrent" />
     <Reference Include="System.Text.Encoding" />
     <Reference Include="System.Reflection.Metadata" />
+    <Reference Include="System.Reflection.Primitives" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HandlerFactory.cs" />
     <Compile Include="HandlerInfo.cs" />
     <Compile Include="PlatformCompiler.cs" />
     <Compile Include="PlatformCompilerContext.cs" />
+    <Compile Include="InstanceFactory.cs" />
     <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

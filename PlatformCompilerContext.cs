@@ -1,8 +1,8 @@
 ﻿// Decompiled with JetBrains decompiler
 // Type: hq.platform.PlatformCompilerContext
-// Assembly: hq.platform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-// MVID: 6EC00BB3-D92E-4DC4-8941-F29EEA84E4A3
-// Assembly location: C:\Users\User\Desktop\hq.platform.dll
+// Assembly: hq.platform, Version=1.0.1.0, Culture=neutral, PublicKeyToken=null
+// MVID: AD23095B-C5CD-42A2-B496-1FB560BA52AA
+// Assembly location: D:\Drive\HQ.IO\src\Archive\Reconstructions\Decompile\hq.platform.1.0.1\hq.platform.dll
 
 using Microsoft.Extensions.DependencyModel;
 using Microsoft.Extensions.Logging;
