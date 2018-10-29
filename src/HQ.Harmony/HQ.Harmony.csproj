@@ -13,4 +13,8 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
+  </ItemGroup>
+
 </Project>
