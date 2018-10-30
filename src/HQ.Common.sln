@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Common", "HQ.Common\HQ.Common.csproj", "{46942E81-BA18-4084-A22A-6C941571EEF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{89531A6B-2A9A-4854-8A46-A75DE317640D}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE.md = ..\LICENSE.md
+		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
+		..\README.md = ..\README.md
+		..\THIRD_PARTY_LICENSES.md = ..\THIRD_PARTY_LICENSES.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{46942E81-BA18-4084-A22A-6C941571EEF4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46942E81-BA18-4084-A22A-6C941571EEF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46942E81-BA18-4084-A22A-6C941571EEF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46942E81-BA18-4084-A22A-6C941571EEF4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D5445DB3-EE7A-47D3-AA5D-36B03E4D6FFF}
+	EndGlobalSection
+EndGlobal
