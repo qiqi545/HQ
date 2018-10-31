@@ -1,8 +1,11 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.PooledObjects;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common.Helpers
 {
 	public static class StopwatchPool
 	{

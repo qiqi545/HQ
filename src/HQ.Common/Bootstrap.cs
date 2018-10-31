@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
@@ -30,6 +33,8 @@ namespace HQ.Common
 			};
 		}
 
-		public static void EnsureInitialized() { }
+		public static void EnsureInitialized()
+		{
+		}
 	}
 }
