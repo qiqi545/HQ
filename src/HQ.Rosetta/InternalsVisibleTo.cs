@@ -4,6 +4,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
+[assembly: InternalsVisibleTo("HQ.Adapt")]
 
 namespace HQ.Rosetta
 {

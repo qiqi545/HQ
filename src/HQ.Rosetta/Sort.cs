@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace HQ.Rosetta
 {
-	[DebuggerDisplay("{Field} {ToString}")]
+	[DebuggerDisplay("{" + nameof(ToString) + "}")]
 	public class Sort
 	{
 		public string Field { get; set; }

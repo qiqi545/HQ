@@ -24,7 +24,7 @@ namespace HQ.Rosetta
 			Errors = errors;
 		}
 
-		public string Message { get; }
+		public string Message { get; internal set; }
 		public HttpStatusCode StatusCode { get; }
 		public IEnumerable<Error> Errors { get; }
 	}

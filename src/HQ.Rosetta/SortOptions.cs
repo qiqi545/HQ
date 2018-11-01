@@ -10,6 +10,8 @@ namespace HQ.Rosetta
 {
 	public class SortOptions : IQueryValidator, IEnumerable<KeyValuePair<string, bool>>
 	{
+		public static readonly SortOptions Empty = new SortOptions();
+
 		public List<Sort> Fields { get; } = new List<Sort>();
 
 		public IEnumerator<KeyValuePair<string, bool>> GetEnumerator()

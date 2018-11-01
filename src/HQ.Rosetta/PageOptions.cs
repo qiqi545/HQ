@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 
 namespace HQ.Rosetta
 {
@@ -14,10 +15,8 @@ namespace HQ.Rosetta
 		public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
 		{
 			var list = new List<Error>();
-
-			if (Page < 1) list.Add(new Error(ErrorStrings.PageRangeInvalid));
-
-			if (PerPage > options.PerPageMax) list.Add(new Error(ErrorStrings.PerPageTooHigh));
+			if (Page < 1) list.Add(new Error(ErrorStrings.PageRangeInvalid, HttpStatusCode.BadRequest));
+			if (PerPage > options.PerPageMax) list.Add(new Error(ErrorStrings.PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
 
 			errors = list;
 			return list.Count == 0;

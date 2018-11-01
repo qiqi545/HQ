@@ -14,14 +14,14 @@ namespace HQ.Rosetta
 		public ICollection<Error> Errors { get; } = new List<Error>();
 
 		public FieldOptions Fields { get; set; }
-		public SortOptions Sort { get; set; }
+		public SortOptions Sorting { get; set; }
 		public PageOptions Paging { get; set; }
 		public FilterOptions Filters { get; set; }
 		public ProjectionOptions Projections { get; set; }
 
 		public object Execute(IObjectRepository repository)
 		{
-			var parameters = new object[] {Sort, Paging, Fields, Filters, Projections};
+			var parameters = new object[] {Sorting, Paging, Fields, Filters, Projections};
 
 			return Handle?.Invoke(repository, parameters);
 		}
