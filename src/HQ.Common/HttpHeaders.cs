@@ -6,11 +6,12 @@ namespace HQ.Common
 	internal static class HttpHeaders
 	{
 		public const string ContentType = "Content-Type";
-		public const string IfModifiedSince = "If-Modified-Since";
-		public const string IfNoneMatch = "If-None-Match";
-		public const string IfUnmodifiedSince = "If-Unmodified-Since";
-		public const string LastModified = "Last-Modified";
 		public const string ETag = "ETag";
+		public const string IfMatch = "If-Match";
+		public const string IfNoneMatch = "If-None-Match";
+		public const string LastModified = "Last-Modified";
+		public const string IfModifiedSince = "If-Modified-Since";
+		public const string IfUnmodifiedSince = "If-Unmodified-Since";
 
 		public const string MethodOverride = "X-HTTP-Method-Override";
 		public const string Action = "X-Action";

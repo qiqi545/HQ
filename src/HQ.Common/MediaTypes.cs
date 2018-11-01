@@ -6,6 +6,7 @@ namespace HQ.Common
 	internal static class MediaTypes
 	{
 		public const string Json = "application/json";
+		public const string JsonPatch = "application/json-patch+json";
 		public const string JsonMergePatch = "application/merge-patch+json";
 	}
 }
