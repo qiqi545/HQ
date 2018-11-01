@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
@@ -7,25 +10,28 @@ using System.Net;
 using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using HQ.Common.Extensions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using HQ.Common;
+using HQ.Common.Helpers;
+using HQ.Domicile.Models;
+using HQ.Domicile.Serialization;
 using HQ.MissionControl.Configuration;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace HQ.MissionControl
 {
 	public static class Use
 	{
-		public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app, Action<IRouteBuilder> configureRoutes = null)
+		public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app,
+			Action<IRouteBuilder> configureRoutes = null)
 		{
 			Bootstrap.EnsureInitialized();
 
@@ -63,16 +69,12 @@ namespace HQ.MissionControl
 					{
 						if (options.Value.EnableRouteDebugging)
 						{
-							Task GetRoutes(HttpContext c)
+							Task GetRoutesHandler(HttpContext context)
 							{
-								var provider = c.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>();
-								var objects = provider.ActionDescriptors.Items.Select(Map);
-								var json = JsonConvert.SerializeObject(objects);
-								c.Response.Headers.Add(HttpHeaders.ContentType, MediaTypes.Json);
-								return c.Response.WriteAsync(json);
+								return WriteResultAsJson(app, context, context.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>().ActionDescriptors.Items.Select(Map));
 							}
 
-							routes.MapGet(options.Value.RouteDebuggingPath ?? "routes", GetRoutes);
+							routes.MapGet(options.Value.RouteDebuggingPath ?? "routes", GetRoutesHandler);
 						}
 
 						configureRoutes?.Invoke(routes);
@@ -89,7 +91,6 @@ namespace HQ.MissionControl
 			{
 				var options = context.RequestServices.GetService<IOptions<DevOpsOptions>>();
 				if (options?.Value != null && options.Value.EnableRequestProfiling)
-				{
 					StopwatchPool.Scoped(async sw =>
 					{
 						context.Response.OnStarting(() =>
@@ -101,11 +102,8 @@ namespace HQ.MissionControl
 
 						await next();
 					});
-				}
 				else
-				{
 					await next();
-				}
 			});
 		}
 
@@ -126,7 +124,7 @@ namespace HQ.MissionControl
 			string GetNetCoreVersion()
 			{
 				var assembly = typeof(GCSettings).Assembly;
-				var assemblyPath = assembly.CodeBase.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+				var assemblyPath = assembly.CodeBase.Split(new[] {'/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
 				var netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
 				return netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2
 					? assemblyPath[netCoreAppIndex + 1]
@@ -138,8 +136,8 @@ namespace HQ.MissionControl
 				var options = context.RequestServices.GetRequiredService<IOptions<DevOpsOptions>>();
 				var template = options.Value.RootPath + options.Value.EnvironmentEndpointPath;
 
-				if (options?.Value != null && 
-				    options.Value.EnableEnvironmentEndpoint && 
+				if (options.Value != null &&
+				    options.Value.EnableEnvironmentEndpoint &&
 				    context.Request.Path.Value.StartsWith(template))
 				{
 					var hosting = context.RequestServices.GetRequiredService<IHostingEnvironment>();
@@ -150,7 +148,7 @@ namespace HQ.MissionControl
 					var hostEntry = Dns.GetHostEntry(hostName);
 
 					IDictionary<string, object> configuration = new ExpandoObject();
-					foreach(var entry in config.AsEnumerable())
+					foreach (var entry in config.AsEnumerable())
 						configuration.Add(entry.Key, entry.Value);
 
 					var env = new
@@ -170,7 +168,7 @@ namespace HQ.MissionControl
 							Description = RuntimeInformation.OSDescription,
 							Architecture = RuntimeInformation.OSArchitecture,
 							Version = Environment.OSVersion,
-							Is64Bit = Environment.Is64BitOperatingSystem,
+							Is64Bit = Environment.Is64BitOperatingSystem
 						},
 						Process = new
 						{
@@ -185,7 +183,7 @@ namespace HQ.MissionControl
 							process.PeakWorkingSet64,
 							process.PrivateMemorySize64,
 							process.StartTime,
-							Is64Bit = Environment.Is64BitProcess,
+							Is64Bit = Environment.Is64BitProcess
 						},
 						Environment = new
 						{
@@ -194,29 +192,50 @@ namespace HQ.MissionControl
 							hosting.ContentRootPath,
 							hosting.WebRootPath,
 							Environment.CurrentDirectory,
-							Environment.CurrentManagedThreadId,
+							Environment.CurrentManagedThreadId
 						},
 						Framework = new
 						{
 							Version = $"{RuntimeInformation.FrameworkDescription}",
 							NetCoreVersion = GetNetCoreVersion(),
-							ClrVersion = Environment.Version.ToString(),
+							ClrVersion = Environment.Version.ToString()
 						},
-						Configuration = configuration,
+						Configuration = configuration
 					};
 
-					context.Response.Headers.Add(HttpHeaders.ContentType, MediaTypes.Json);
-					var serializerSettings = app.ApplicationServices.GetService<JsonSerializerSettings>();
-
-					var json = serializerSettings != null
-						? JsonConvert.SerializeObject(env, serializerSettings)
-						: JsonConvert.SerializeObject(env);
-
-					await context.Response.WriteAsync(json);
+					await WriteResultAsJson(app, context, env);
 					return;
 				}
+
 				await next();
 			});
+		}
+
+		private static async Task WriteResultAsJson(IApplicationBuilder app, HttpContext context, object env)
+		{
+			context.Response.Headers.Add(HttpHeaders.ContentType, MediaTypes.Json);
+			await context.Response.WriteAsync(SerializeObject(app, context, env));
+		}
+
+		private static string SerializeObject(IApplicationBuilder app, HttpContext context, object instance)
+		{
+			var serializerSettings = app.ApplicationServices.GetService<JsonSerializerSettings>();
+			if (serializerSettings != null)
+			{
+				if (context.Items[HqContextKeys.JsonMulticase] is ITextTransform transform)
+				{
+					serializerSettings.ContractResolver =
+						new JsonContractResolver(transform, JsonProcessingDirection.Output);
+				}
+				else
+				{
+					serializerSettings = JsonConvert.DefaultSettings();
+				}
+			}
+			var json = serializerSettings != null
+				? JsonConvert.SerializeObject(instance, serializerSettings)
+				: JsonConvert.SerializeObject(instance);
+			return json;
 		}
 	}
 }

@@ -1,10 +1,12 @@
-﻿using HQ.Common;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using HQ.Common;
 
 namespace HQ.MissionControl.Configuration
 {
 	public class DevOpsOptions
 	{
-		public bool Enabled { get; set; } = true;
 		public string RootPath { get; set; } = "/ops";
 
 		public bool EnableRouteDebugging { get; set; } = true;
