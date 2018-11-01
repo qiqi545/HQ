@@ -7,6 +7,7 @@ namespace HQ.Rosetta
 	{
 		Refused,
 		Error,
-		Executed
+		Succeeded,
+		SucceededWithErrors
 	}
 }
