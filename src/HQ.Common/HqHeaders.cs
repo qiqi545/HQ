@@ -5,6 +5,9 @@ namespace HQ.Common
 {
 	internal static class HqHeaders
 	{
-		public const string ExecutionTimeMs = "X-HQ-ExecutionTime-Milliseconds";
+		/// <summary>
+		/// See: https://www.w3.org/TR/server-timing/
+		/// </summary>
+		public const string ServiceTiming = "Server-Timing";
 	}
 }

@@ -5,11 +5,10 @@ using System;
 
 namespace HQ.Common.Models
 {
-	public class LocalServerTimestampService : IServerTimestampService
+	public interface ITypeRegistry
 	{
-		public DateTimeOffset GetCurrentTime()
-		{
-			return DateTimeOffset.Now;
-		}
+		bool Register(Type type);
+		bool RegisterIfNotRegistered(Type type);
+		bool TryGetType(string name, out Type type);
 	}
 }

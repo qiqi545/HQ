@@ -1,0 +1,2 @@
+﻿Location: https://github.com/mgravell/fast-member/tree/19ac487e6f30cbd308811a850a48da660621fdbe
+License: Apache 2.0
