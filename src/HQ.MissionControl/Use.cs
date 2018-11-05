@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -38,7 +39,7 @@ namespace HQ.MissionControl
 			app.UseRequestProfiling();
 			app.UseEnvironmentEndpoint();
 
-			var options = app.ApplicationServices.GetService<IOptions<DevOpsOptions>>();
+			var options = app.ApplicationServices.GetService<IOptions<DevOpsApiOptions>>();
 			var enabled = options.Value.EnableRouteDebugging;
 			if (options?.Value != null && enabled)
 			{
@@ -89,21 +90,21 @@ namespace HQ.MissionControl
 		{
 			return app.Use(async (context, next) =>
 			{
-				var options = context.RequestServices.GetService<IOptions<DevOpsOptions>>();
+				var options = context.RequestServices.GetService<IOptions<DevOpsApiOptions>>();
 				if (options?.Value != null && options.Value.EnableRequestProfiling)
-					StopwatchPool.Scoped(async sw =>
-					{
-						context.Response.OnStarting(() =>
-						{
-							var header = options.Value.RequestProfilingHeader ?? HqHeaders.ExecutionTimeMs;
-							context.Response.Headers.Add(header, $"{sw.Elapsed.TotalMilliseconds}");
-							return Task.CompletedTask;
-						});
+				{
+					var sw = PooledStopwatch.StartInstance();
 
-						await next();
+					context.Response.OnStarting(() =>
+					{
+						sw.Free();
+						var header = options.Value.RequestProfilingHeader ?? HqHeaders.ServiceTiming;
+						context.Response.Headers.Add(header, $"{sw.Elapsed.TotalMilliseconds}");
+						return Task.CompletedTask;
 					});
-				else
-					await next();
+				}
+				
+				await next();
 			});
 		}
 
@@ -133,7 +134,7 @@ namespace HQ.MissionControl
 
 			return app.Use(async (context, next) =>
 			{
-				var options = context.RequestServices.GetRequiredService<IOptions<DevOpsOptions>>();
+				var options = context.RequestServices.GetRequiredService<IOptions<DevOpsApiOptions>>();
 				var template = options.Value.RootPath + options.Value.EnvironmentEndpointPath;
 
 				if (options.Value != null &&
@@ -222,7 +223,7 @@ namespace HQ.MissionControl
 			var serializerSettings = app.ApplicationServices.GetService<JsonSerializerSettings>();
 			if (serializerSettings != null)
 			{
-				if (context.Items[HqContextKeys.JsonMulticase] is ITextTransform transform)
+				if (context.Items[HqContextKeys.JsonMultiCase] is ITextTransform transform)
 				{
 					serializerSettings.ContractResolver =
 						new JsonContractResolver(transform, JsonProcessingDirection.Output);

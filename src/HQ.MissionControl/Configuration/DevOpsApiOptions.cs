@@ -5,7 +5,7 @@ using HQ.Common;
 
 namespace HQ.MissionControl.Configuration
 {
-	public class DevOpsOptions
+	public class DevOpsApiOptions
 	{
 		public string RootPath { get; set; } = "/ops";
 
@@ -13,7 +13,7 @@ namespace HQ.MissionControl.Configuration
 		public string RouteDebuggingPath { get; set; } = "/routes";
 
 		public bool EnableRequestProfiling { get; set; } = true;
-		public string RequestProfilingHeader { get; set; } = HqHeaders.ExecutionTimeMs;
+		public string RequestProfilingHeader { get; set; } = HqHeaders.ServiceTiming;
 
 		public bool EnableEnvironmentEndpoint { get; set; } = true;
 		public string EnvironmentEndpointPath { get; set; } = "/env";

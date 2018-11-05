@@ -11,7 +11,7 @@ namespace HQ.MissionControl
 	{
 		public static IServiceCollection AddDevOpsApi(this IServiceCollection services, IConfiguration config)
 		{
-			services.Configure<DevOpsOptions>(config);
+			services.Configure<DevOpsApiOptions>(config);
 			services.AddSingleton(config);
 			return services;
 		}
