@@ -4,7 +4,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace HQ.Cadence.Support
+namespace HQ.Cadence.Internal
 {
 	/// <summary>
 	///     Provides statistically relevant random number generation

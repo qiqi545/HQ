@@ -17,8 +17,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj" />
-    <ProjectReference Include="..\HQ.Cadence\HQ.Cadence.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Cadence.AspNetCore\HQ.Cadence.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Cadence\HQ.Cadence.csproj" />
   </ItemGroup>
 
 </Project>

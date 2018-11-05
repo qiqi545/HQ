@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 
 namespace HQ.Cadence.Internal
 {
+	/// <inheritdoc />
 	/// <summary>
 	///     Properly serializes a metrics hash
 	/// </summary>

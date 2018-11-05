@@ -1,13 +1,13 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using Xunit;
 
-namespace HQ.Cadence.Tests.Core
+namespace HQ.Cadence.Tests
 {
 	public class CounterTests : IClassFixture<MetricsFixture>
     {
-	    readonly MetricsFixture _fixture;
+	    private readonly MetricsFixture _fixture;
 
 	    public CounterTests(MetricsFixture fixture)
 	    {

@@ -9,7 +9,5 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Cadence
 {
-	internal class InternalsVisibleTo
-	{
-	}
+	internal class InternalsVisibleTo { }
 }

@@ -29,8 +29,7 @@ namespace HQ.Cadence.AspNetCore.Mvc
 			var type = Owner ?? filterContext.GetMetricOwner();
 			var name = Name ?? filterContext.GetMetricName<HistogramMetric>();
 
-			var metricsHost =
-				filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
+			var metricsHost = filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
 			var histogram = metricsHost?.Histogram(type, name, _sampleType);
 			histogram?.Update(_value);
 		}

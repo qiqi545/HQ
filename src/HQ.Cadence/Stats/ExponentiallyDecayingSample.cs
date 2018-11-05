@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using HQ.Cadence.Internal;
 using Newtonsoft.Json;
-using Random = HQ.Cadence.Support.Random;
+using Random = HQ.Cadence.Internal.Random;
 
 namespace HQ.Cadence.Stats
 {
