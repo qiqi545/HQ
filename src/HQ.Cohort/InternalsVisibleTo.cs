@@ -1,13 +1,14 @@
 ﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
-using System.Threading;
-using Microsoft.AspNetCore.Identity;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("HQ.Zero")]
+[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
 
 namespace HQ.Cohort
 {
-	public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
+	internal sealed class InternalsVisibleTo
 	{
-		CancellationToken CancellationToken { get; }
 	}
 }

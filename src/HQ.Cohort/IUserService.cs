@@ -1,4 +1,4 @@
-﻿// Copyright (c) HQ Corporation. All rights reserved.
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort
 {
-	public interface IUserService<TUser, TKey> where TUser : IdentityUser<TKey> where TKey : IEquatable<TKey>
+	public interface IUserService<TUser> where TUser : IdentityUser
 	{
 		IQueryable<TUser> Users { get; }
 		Task<Operation<TUser>> CreateAsync(CreateUserModel model);
