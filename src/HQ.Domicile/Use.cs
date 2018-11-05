@@ -107,7 +107,7 @@ namespace HQ.Domicile
 					{
 						if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
 							continue;
-						context.Items[HqContextKeys.JsonMulticase] = entry;
+						context.Items[HqContextKeys.JsonMultiCase] = entry;
 						break;
 					}
 
