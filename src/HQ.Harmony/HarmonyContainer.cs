@@ -13,16 +13,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Harmony
 {
-	public sealed class HarmonyContainer : IContainer
+	public sealed class HarmonyContainer : IContainer, IMethodResolver
 	{
 		private readonly List<IResolverExtension> _extensions;
-		private readonly InstanceFactory _factory;
 		private readonly IEnumerable<Assembly> _fallbackAssemblies;
 
-		public HarmonyContainer(IEnumerable<Assembly> fallbackAssemblies = null)
+		private readonly IServiceProvider _fallbackProvider;
+
+		public HarmonyContainer(IServiceProvider fallbackProvider = null,
+			IEnumerable<Assembly> fallbackAssemblies = null)
 		{
+			_fallbackProvider = fallbackProvider;
 			_fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
-			_factory = new InstanceFactory();
 			_extensions = new List<IResolverExtension>();
 		}
 
@@ -30,13 +32,81 @@ namespace HQ.Harmony
 
 		public void Dispose()
 		{
-			// No scopes, so nothing to dispose
 		}
 
-		internal void AddExtension<T>(T extension) where T : IResolverExtension
+		internal bool AddExtension<T>(T extension) where T : IResolverExtension
 		{
+			if (_extensions.Contains(extension))
+				return false;
 			_extensions.Add(extension);
+			return true;
 		}
+
+		#region Method Resolution
+
+		private const DelegateBuildStrategy HandlerBuildStrategy = DelegateBuildStrategy.ObjectExecutor;
+
+		public MethodInfo ResolveMethod(Type serviceType, string name)
+		{
+			var implementation = Resolve(serviceType);
+			if (implementation == null)
+				return null;
+
+			// type(name)->method
+			return MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
+		}
+
+		public MethodInfo ResolveMethod<T>(string name) where T : class
+		{
+			return ResolveMethod(typeof(T), name);
+		}
+
+		public object InvokeMethod(Type serviceType, string name)
+		{
+			var implementation = Resolve(serviceType);
+			if (implementation == null)
+				return null;
+
+			// type(name)->method
+			var method = MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
+
+			// method->parameters
+			var parameters = MethodFactory.Default.GetOrCacheParametersForMethod(method);
+
+			// auto-resolve widest method
+			var args = new object[parameters.Length];
+			for (var i = 0; i < parameters.Length; i++)
+			{
+				var arg = AutoResolve(parameters[i].ParameterType);
+				if (arg == null)
+					return null;
+				args[i] = arg;
+			}
+
+			var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method, HandlerBuildStrategy);
+
+			return handler?.Invoke(implementation, args);
+		}
+
+		public object InvokeMethod<T>(string name) where T : class
+		{
+			return InvokeMethod(typeof(T), name);
+		}
+
+		public Handler ResolveHandler(Type serviceType, string name)
+		{
+			var method = ResolveMethod(serviceType, name);
+			return method == null
+				? null
+				: HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method, HandlerBuildStrategy);
+		}
+
+		public Handler ResolveHandler<T>(string name) where T : class
+		{
+			return ResolveHandler(typeof(T), name);
+		}
+
+		#endregion
 
 		#region Register
 
@@ -49,7 +119,7 @@ namespace HQ.Harmony
 		private readonly IDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
-		public void Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+		public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
 		{
 			var next = WrapLifecycle(builder, lifetime);
 			if (_registrations.ContainsKey(type))
@@ -62,9 +132,11 @@ namespace HQ.Harmony
 			{
 				_registrations[type] = next;
 			}
+
+			return this;
 		}
 
-		public void Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		public IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
 		{
 			var type = typeof(T);
 			Func<object> next = WrapLifecycle(builder, lifetime);
@@ -78,22 +150,28 @@ namespace HQ.Harmony
 			{
 				_registrations[type] = next;
 			}
+
+			return this;
 		}
 
-		public void Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+			where T : class
 		{
 			var type = typeof(T);
 			_namedRegistrations[new NameAndType(name, type)] = WrapLifecycle(builder, lifetime);
+			return this;
 		}
 
-		public void Register<T>(string name, Func<IDependencyResolver, T> builder,
+		public IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder,
 			Lifetime lifetime = Lifetime.AlwaysNew) where T : class
 		{
 			var registration = WrapLifecycle(builder, lifetime);
 			_namedRegistrations[new NameAndType(name, typeof(T))] = () => registration(this);
+			return this;
 		}
 
-		public void Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+		public IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder,
+			Lifetime lifetime = Lifetime.AlwaysNew)
 			where T : class
 		{
 			var type = typeof(T);
@@ -108,9 +186,11 @@ namespace HQ.Harmony
 			{
 				_registrations[type] = next;
 			}
+
+			return this;
 		}
 
-		public void Register<T>(T instance)
+		public IDependencyRegistrar Register<T>(T instance)
 		{
 			var type = typeof(T);
 			Func<object> next = () => instance;
@@ -124,6 +204,8 @@ namespace HQ.Harmony
 			{
 				_registrations[type] = next;
 			}
+
+			return this;
 		}
 
 		private void RegisterManyUnnamed(Type type, Func<object> previous)
@@ -139,7 +221,7 @@ namespace HQ.Harmony
 			// implied registration of the enumerable equivalent
 			Register(typeof(IEnumerable<>).MakeGenericType(type), () =>
 			{
-				var collection = (IList) _factory.CreateInstance(typeof(List<>).MakeGenericType(type));
+				var collection = (IList) InstanceFactory.Default.CreateInstance(typeof(List<>).MakeGenericType(type));
 				foreach (var item in YieldCollection(collectionBuilder))
 					collection.Add(item);
 				return collection;
@@ -221,27 +303,7 @@ namespace HQ.Harmony
 
 		#region Auto-Resolve w/ Fallback
 
-		private object CreateInstance(Type implementationType)
-		{
-			// type->constructor
-			var ctor = _factory.GetOrCacheConstructorForType(implementationType);
-
-			// constructor->parameters
-			var parameters = _factory.GetOrCacheParametersForConstructor(ctor);
-
-			// parameterless ctor
-			if (parameters.Length == 0)
-				return _factory.CreateInstance(implementationType);
-
-			// auto-resolve widest ctor
-			var args = new object[parameters.Length];
-			for (var i = 0; i < parameters.Length; i++)
-				args[i] = AutoResolve(parameters[i].ParameterType);
-
-			return _factory.CreateInstance(implementationType, args);
-		}
-
-		public object AutoResolve(Type serviceType)
+		private object AutoResolve(Type serviceType)
 		{
 			while (true)
 			{
@@ -255,18 +317,41 @@ namespace HQ.Harmony
 					return CreateInstance(serviceType);
 
 				// need it:
+				var fallback = _fallbackProvider?.GetService(serviceType);
+				if (fallback != null)
+					return fallback;
+
 				var type = _fallbackAssemblies.SelectMany(s => s.GetTypes())
 					.FirstOrDefault(i => serviceType.IsAssignableFrom(i) && !i.GetTypeInfo().IsInterface);
 				if (type == null)
 				{
 					if (ThrowIfCantResolve)
 						throw new InvalidOperationException($"No registration for {serviceType}");
-
 					return null;
 				}
 
 				serviceType = type;
 			}
+		}
+
+		private object CreateInstance(Type implementationType)
+		{
+			// type->constructor
+			var ctor = InstanceFactory.Default.GetOrCacheConstructorForType(implementationType);
+
+			// constructor->parameters
+			var parameters = InstanceFactory.Default.GetOrCacheParametersForConstructor(ctor);
+
+			// parameterless ctor
+			if (parameters.Length == 0)
+				return InstanceFactory.Default.CreateInstance(implementationType);
+
+			// auto-resolve widest ctor
+			var args = new object[parameters.Length];
+			for (var i = 0; i < parameters.Length; i++)
+				args[i] = AutoResolve(parameters[i].ParameterType);
+
+			return InstanceFactory.Default.CreateInstance(implementationType, args);
 		}
 
 		#endregion
@@ -288,12 +373,12 @@ namespace HQ.Harmony
 				case Lifetime.Thread:
 					registration = ThreadMemoize(builder);
 					break;
-                case Lifetime.Request:
+				case Lifetime.Request:
 					foreach (var extension in _extensions)
-		                if (extension.CanResolve(lifetime))
-			                return extension.Memoize(this, builder);
-	                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
-		                "No extensions can serve this lifetime.");
+						if (extension.CanResolve(lifetime))
+							return extension.Memoize(this, builder);
+					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
+						"No extensions can serve this lifetime.");
 				default:
 					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
 			}
