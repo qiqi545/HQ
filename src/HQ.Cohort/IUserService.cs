@@ -30,9 +30,16 @@ namespace HQ.Cohort
 		Task<Operation<string>> GenerateChangePhoneNumberTokenAsync(TUser user, string phoneNumber);
 		Task<Operation<string>> GenerateChangeEmailTokenAsync(TUser user, string newEmail);
 		Task<Operation<string>> GenerateEmailConfirmationTokenAsync(TUser user);
+		Task<Operation<string>> GeneratePasswordResetTokenAsync(TUser user);
+		Task<Operation<IEnumerable<string>>> GenerateNewTwoFactorRecoveryCodesAsync(TUser user, int number);
 
 		Task<Operation> ChangePhoneNumberAsync(TUser user, string phoneNumber, string token);
 		Task<Operation> ChangeEmailAsync(TUser user, string newEmail, string token);
+		Task<Operation> ChangePasswordAsync(TUser user, string token, string newPassword);
 		Task<Operation> ConfirmEmailAsync(TUser user, string token);
+		Task<Operation> ResetPasswordAsync(TUser user, string token, string newPassword);
+
+
+		Task<Operation> UpdateAsync(TUser user);
 	}
 }
