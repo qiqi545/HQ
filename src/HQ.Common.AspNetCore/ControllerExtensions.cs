@@ -12,7 +12,6 @@ namespace HQ.Common.AspNetCore
 			if (!controller.ModelState.IsValid)
 			{
 				errorResult = controller.BadRequestWithErrors();
-
 				return false;
 			}
 
