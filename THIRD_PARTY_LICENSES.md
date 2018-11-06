@@ -1,4 +1,5 @@
-HQ.Common uses a modified version of Marc Gravell's FastMember as at commit `19ac487e6f30cbd308811a850a48da660621fdbe` on July 18th, 2018
+HQ.Common uses a modified version of Marc Gravell's FastMember as at commit `19ac487e6f30cbd308811a850a48da660621fdbe` on July 18th, 2018:
+--------------------------------------------------------------------------------------------------------
 
                               Apache License
                            Version 2.0, January 2004
@@ -202,7 +203,8 @@ HQ.Common uses a modified version of Marc Gravell's FastMember as at commit `19a
    See the License for the specific language governing permissions and
    limitations under the License.
 
-HQ.Common uses Roslyn's pooling support classes as at commit '8a34dfb2e06bdb4807c82419b5bb36e692967139'.
+HQ.Common uses Roslyn's pooling support classes as at commit '8a34dfb2e06bdb4807c82419b5bb36e692967139':
+--------------------------------------------------------------------------------------------------------
 
                                  Apache License
                            Version 2.0, January 2004
