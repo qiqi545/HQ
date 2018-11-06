@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Runtime.CompilerServices;
-using System;
 using Microsoft.CSharp.RuntimeBinder;
 
 namespace FastMember

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Dynamic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using System.Collections.Generic;
-using System.Dynamic;
 
 namespace FastMember
 {

@@ -42,10 +42,10 @@ namespace FastMember
 
             bool allMembers = members == null || members.Length == 0;
 
-            this.accessor = TypeAccessor.Create(type);
+            accessor = TypeAccessor.Create(type);
             if (accessor.GetMembersSupported)
             {
-                var typeMembers = this.accessor.GetMembers();
+                var typeMembers = accessor.GetMembers();
 
                 if (allMembers)
                 {
@@ -57,7 +57,7 @@ namespace FastMember
                 }
 
                 this.allowNull = new BitArray(members.Length);
-                this.effectiveTypes = new Type[members.Length];
+                effectiveTypes = new Type[members.Length];
                 for (int i = 0; i < members.Length; i++)
                 {
                     Type memberType = null;
@@ -84,7 +84,7 @@ namespace FastMember
                         }
                     }
                     this.allowNull[i] = allowNull;
-                    this.effectiveTypes[i] = memberType ?? typeof(object);
+                    effectiveTypes[i] = memberType ?? typeof(object);
                 }
             }
             else if (allMembers)
@@ -92,8 +92,8 @@ namespace FastMember
                 throw new InvalidOperationException("Member information is not available for this type; the required members must be specified explicitly");
             }
 
-            this.current = null;
-            this.memberNames = (string[])members.Clone();
+            current = null;
+            memberNames = (string[])members.Clone();
 
             this.source = source.GetEnumerator();
         }
@@ -317,7 +317,7 @@ namespace FastMember
         public override int GetValues(object[] values)
         {
             // duplicate the key fields on the stack
-            var members = this.memberNames;
+            var members = memberNames;
             var current = this.current;
             var accessor = this.accessor;
 

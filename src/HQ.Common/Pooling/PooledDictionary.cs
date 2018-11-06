@@ -21,13 +21,13 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 		public ImmutableDictionary<K, V> ToImmutableDictionaryAndFree()
 		{
 			var result = this.ToImmutableDictionary();
-			this.Free();
+			Free();
 			return result;
 		}
 
 		public void Free()
 		{
-			this.Clear();
+			Clear();
 			_pool?.Free(this);
 		}
 

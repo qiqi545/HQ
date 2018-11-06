@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -41,7 +42,7 @@ namespace FastMember
             set { throw new NotSupportedException(); }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
         bool ICollection<Member>.Remove(Member item) { throw new NotSupportedException(); }
         void ICollection<Member>.Add(Member item) { throw new NotSupportedException(); }
         void ICollection<Member>.Clear() { throw new NotSupportedException(); }

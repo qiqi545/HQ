@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) HQ.IO Corporation. All rights reserved.
+// Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
+
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -13,7 +16,8 @@ namespace HQ.Common.Extensions
 			return constructor ?? type.GetConstructor(Type.EmptyTypes);
 		}
 
-		public static MethodInfo GetWidestMethod(this Type type, string name, StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+		public static MethodInfo GetWidestMethod(this Type type, string name,
+			StringComparison comparison = StringComparison.OrdinalIgnoreCase)
 		{
 			var allPublic = type.GetMethods().Where(m => m.Name.Equals(name, comparison));
 			var method = allPublic.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();

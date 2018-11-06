@@ -1,8 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-namespace FastMember
+﻿namespace FastMember
 {
 
     internal static class TypeHelpers

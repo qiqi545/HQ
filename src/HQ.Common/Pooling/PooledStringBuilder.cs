@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Microsoft.  All Rights Reserved.  Licensed under the Apache License, Version 2.0.  See License.txt in the project root for license information.
 
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -27,12 +28,12 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 
 		public int Length
 		{
-			get { return this.Builder.Length; }
+			get { return Builder.Length; }
 		}
 
 		public void Free()
 		{
-			var builder = this.Builder;
+			var builder = Builder;
 
 			// do not store builders that are too large.
 			if (builder.Capacity <= 1024)
@@ -46,24 +47,24 @@ namespace Microsoft.CodeAnalysis.PooledObjects
 			}
 		}
 
-		[System.Obsolete("Consider calling ToStringAndFree instead.")]
+		[Obsolete("Consider calling ToStringAndFree instead.")]
 		public new string ToString()
 		{
-			return this.Builder.ToString();
+			return Builder.ToString();
 		}
 
 		public string ToStringAndFree()
 		{
-			string result = this.Builder.ToString();
-			this.Free();
+			string result = Builder.ToString();
+			Free();
 
 			return result;
 		}
 
 		public string ToStringAndFree(int startIndex, int length)
 		{
-			string result = this.Builder.ToString(startIndex, length);
-			this.Free();
+			string result = Builder.ToString(startIndex, length);
+			Free();
 
 			return result;
 		}
