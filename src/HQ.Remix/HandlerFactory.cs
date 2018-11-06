@@ -2,7 +2,9 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -18,8 +20,6 @@ namespace HQ.Remix
 {
 	public class HandlerFactory
 	{
-		public delegate object Handler(object target, object[] parameters);
-
 		private const string NoCSharpCodeHandler = @"
 namespace HelloWorld
 { 
@@ -44,7 +44,8 @@ function(callback) {
 		private readonly IEnumerable<Assembly> _defaultDependencies;
 		private readonly INodeServices _nodeServices;
 
-		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices, IEnumerable<Assembly> defaultDependencies)
+		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices,
+			IEnumerable<Assembly> defaultDependencies)
 		{
 			_builder = builder;
 			_nodeServices = nodeServices;
@@ -100,39 +101,13 @@ function(callback) {
 			return t;
 		}
 
-		public Handler BuildCSharpHandler(string assemblyName, HandlerInfo info, DelegateBuildStrategy strategy = DelegateBuildStrategy.MethodInfo, params Assembly[] dependencies)
+		public Handler BuildCSharpHandler(string assemblyName, HandlerInfo info,
+			DelegateBuildStrategy strategy = DelegateBuildStrategy.MethodInfo, params Assembly[] dependencies)
 		{
 			var type = BuildType(assemblyName, info, dependencies);
 			var function = info.Function ?? "Execute";
 			var methodInfo = type?.GetMethod(function, BindingFlags.Public | BindingFlags.Static);
-			if (methodInfo == null)
-				return null;
-
-			switch (strategy)
-			{
-				case DelegateBuildStrategy.MethodInfo:
-				{
-					return (t, p) => methodInfo.Invoke(t, p);
-				}
-				case DelegateBuildStrategy.Expression:
-				{
-					var parameters = methodInfo.GetParameters();
-					var arguments = parameters.Select(x => Expression.Parameter(x.ParameterType, x.Name)).ToList();
-					var methodCall = Expression.Call(methodInfo.IsStatic ? null : Expression.Parameter(typeof(object), "instance"), methodInfo, arguments);
-					var lambda = Expression.Lambda(Expression.Convert(methodCall, typeof(object)), arguments);
-					var d = lambda.Compile();
-					return methodInfo.IsStatic
-						? (Handler) ((t, p) => d.DynamicInvoke(p))
-						: (t, p) => d.DynamicInvoke(t, p);
-				}
-				case DelegateBuildStrategy.ObjectExecutor:
-				{
-					var executor = ObjectMethodExecutor.Create(methodInfo, type.GetTypeInfo());
-					return (t, p) => executor.Execute(t, p);
-				}
-				default:
-					throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
-			}
+			return methodInfo == null ? null : FromMethod(type, methodInfo, strategy);
 		}
 
 		public MethodInfo BuildCSharpHandlerDirect(string assemblyName, HandlerInfo info,
@@ -172,5 +147,96 @@ function(callback) {
 
 			return assemblies;
 		}
+
+		#region Method Handler Factory
+
+		private readonly IDictionary<MethodAndStrategy, Handler> _handlers =
+			new ConcurrentDictionary<MethodAndStrategy, Handler>();
+
+		private struct MethodAndStrategy : IEquatable<MethodAndStrategy>
+		{
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					return ((_methodInfo != null ? _methodInfo.GetHashCode() : 0) * 397) ^ (int) _strategy;
+				}
+			}
+
+			public MethodAndStrategy(MethodInfo methodInfo, DelegateBuildStrategy strategy)
+			{
+				_methodInfo = methodInfo;
+				_strategy = strategy;
+			}
+
+			private readonly MethodInfo _methodInfo;
+			private readonly DelegateBuildStrategy _strategy;
+
+			public override bool Equals(object obj)
+			{
+				return obj is MethodAndStrategy strategy && Equals(strategy);
+			}
+
+			public bool Equals(MethodAndStrategy other)
+			{
+				return EqualityComparer<MethodInfo>.Default.Equals(_methodInfo, other._methodInfo) &&
+				       _strategy == other._strategy;
+			}
+
+			public static bool operator ==(MethodAndStrategy left, MethodAndStrategy right)
+			{
+				return left.Equals(right);
+			}
+
+			public static bool operator !=(MethodAndStrategy left, MethodAndStrategy right)
+			{
+				return !(left == right);
+			}
+		}
+
+		public Handler GetOrCacheHandlerFromMethod(Type type, MethodInfo methodInfo, DelegateBuildStrategy strategy)
+		{
+			// method->handler
+			var key = new MethodAndStrategy(methodInfo, strategy);
+			if (!_handlers.TryGetValue(key, out var handler))
+				_handlers[key] = handler = FromMethod(type, methodInfo, strategy);
+			return handler;
+		}
+
+		public static Handler FromMethod(Type type, MethodInfo methodInfo, DelegateBuildStrategy strategy)
+		{
+			Contract.Assert(methodInfo != null);
+			Contract.Assert(type != null);
+
+			switch (strategy)
+			{
+				case DelegateBuildStrategy.MethodInfo:
+				{
+					return methodInfo.Invoke;
+				}
+				case DelegateBuildStrategy.Expression:
+				{
+					var parameters = methodInfo.GetParameters();
+					var arguments = parameters.Select(x => Expression.Parameter(x.ParameterType, x.Name)).ToList();
+					var methodCall =
+						Expression.Call(methodInfo.IsStatic ? null : Expression.Parameter(typeof(object), "instance"),
+							methodInfo, arguments);
+					var lambda = Expression.Lambda(Expression.Convert(methodCall, typeof(object)), arguments);
+					var d = lambda.Compile();
+					return methodInfo.IsStatic
+						? (Handler) ((t, p) => d.DynamicInvoke(p))
+						: (t, p) => d.DynamicInvoke(t, p);
+				}
+				case DelegateBuildStrategy.ObjectExecutor:
+				{
+					var executor = ObjectMethodExecutor.Create(methodInfo, type.GetTypeInfo());
+					return (t, p) => executor.Execute(t, p);
+				}
+				default:
+					throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
+			}
+		}
+
+		#endregion
 	}
 }

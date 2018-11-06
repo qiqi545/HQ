@@ -25,6 +25,8 @@ namespace HQ.Remix.Tests
 
 		public HandlerFactory Factory { get; }
 
-		public void Dispose() { }
+		public void Dispose()
+		{
+		}
 	}
 }

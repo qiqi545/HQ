@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using HQ.Common.Extensions;
 
 namespace HQ.Remix
 {
@@ -18,7 +19,7 @@ namespace HQ.Remix
 
 		public delegate object ParameterlessObjectActivator();
 
-		public static InstanceFactory Instance = new InstanceFactory();
+		public static InstanceFactory Default = new InstanceFactory();
 
 		private readonly IDictionary<Type, ObjectActivator> _activators =
 			new ConcurrentDictionary<Type, ObjectActivator>();
@@ -50,29 +51,38 @@ namespace HQ.Remix
 		}
 
 		/// <summary> Create an instance of a type assuming a parameterless constructor. </summary>
-		public object CreateInstance(Type implementationType)
+		public object CreateInstance(Type type)
 		{
+			Contract.Assert(!type.IsAbstract && !type.IsInterface,
+				"Cannot create instances of static, abstract, or interface types.");
+
 			// activator 
-			if (_emptyActivators.TryGetValue(implementationType, out var activator))
+			if (_emptyActivators.TryGetValue(type, out var activator))
 				return activator();
-			var ctor = implementationType.GetConstructor(Type.EmptyTypes);
-			_emptyActivators[implementationType] = activator = DynamicMethodFactory.Build(implementationType, ctor);
+			var ctor = type.GetConstructor(Type.EmptyTypes);
+			_emptyActivators[type] = activator = DynamicMethodFactory.Build(type, ctor);
 			return activator();
 		}
 
 		/// <summary> Create an instance of a type assuming a set of parameters. </summary>
-		public object CreateInstance(Type implementationType, object[] args)
+		public object CreateInstance(Type type, object[] args)
 		{
 			if (args == null || args.Length == 0)
-				return CreateInstance(implementationType);
+				return CreateInstance(type);
 
 			// activator 
-			if (!_activators.TryGetValue(implementationType, out var activator))
-			{
-				_activators[implementationType] = activator = CompiledExpressionFactory.Build(GetOrCacheConstructorForType(implementationType));
-			}
+			if (!_activators.TryGetValue(type, out var activator))
+				_activators[type] = activator = CompiledExpressionFactory.Build(GetOrCacheConstructorForType(type));
 
 			return activator(args);
+		}
+
+		public ConstructorInfo GetOrCacheConstructorForType(Type type)
+		{
+			// type->constructor
+			if (!_constructors.TryGetValue(type, out var ctor))
+				_constructors[type] = ctor = type.GetWidestConstructor();
+			return ctor;
 		}
 
 		public ParameterInfo[] GetOrCacheParametersForConstructor(ConstructorInfo ctor)
@@ -83,21 +93,6 @@ namespace HQ.Remix
 			return parameters;
 		}
 
-		public ConstructorInfo GetOrCacheConstructorForType(Type implementationType)
-		{
-			// type->constructor
-			if (!_constructors.TryGetValue(implementationType, out var ctor))
-				_constructors[implementationType] = ctor = GetWidestConstructor(implementationType);
-			return ctor;
-		}
-
-		private static ConstructorInfo GetWidestConstructor(Type implementationType)
-		{
-			var ctors = implementationType.GetConstructors();
-			var ctor = ctors.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-			return ctor ?? implementationType.GetConstructor(Type.EmptyTypes);
-		}
-
 		internal static class CompiledExpressionFactory
 		{
 			public static ObjectActivator Build(ConstructorInfo ctor)
@@ -106,12 +101,10 @@ namespace HQ.Remix
 				var parameter = Expression.Parameter(typeof(object[]), "args");
 				var arguments = new Expression[parameters.Length];
 				for (var i = 0; i < parameters.Length; i++)
-				{
 					arguments[i] = Expression.Convert(Expression.ArrayIndex(parameter, Expression.Constant(i)),
 						parameters[i].ParameterType);
-				}
 				var lambda = Expression.Lambda(typeof(ObjectActivator), Expression.New(ctor, arguments), parameter);
-				var compiled = (ObjectActivator)lambda.Compile();
+				var compiled = (ObjectActivator) lambda.Compile();
 				return compiled;
 			}
 		}
@@ -120,12 +113,14 @@ namespace HQ.Remix
 		{
 			public static ParameterlessObjectActivator Build(Type implementationType, ConstructorInfo ctor)
 			{
-				var dynamicMethod = new DynamicMethod($"{implementationType.FullName}.0ctor", implementationType, Type.EmptyTypes, true);
+				var dynamicMethod = new DynamicMethod($"{implementationType.FullName}.0ctor", implementationType,
+					Type.EmptyTypes, true);
 				var il = dynamicMethod.GetILGenerator();
 				il.Emit(OpCodes.Nop);
 				il.Emit(OpCodes.Newobj, ctor);
 				il.Emit(OpCodes.Ret);
-				return (ParameterlessObjectActivator) dynamicMethod.CreateDelegate(typeof(ParameterlessObjectActivator));
+				return (ParameterlessObjectActivator) dynamicMethod.CreateDelegate(
+					typeof(ParameterlessObjectActivator));
 			}
 		}
 	}
