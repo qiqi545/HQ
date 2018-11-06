@@ -30,7 +30,7 @@ namespace HQ.Cohort.Extensions
 			return new IdentityError
 			{
 				Code = nameof(MustHaveEmailPhoneOrUsername),
-				Description = ErrorStrings.MustHaveEmailPhoneOrUsername
+				Description = "Must have an email address, phone number, or email address to register." ?? ErrorStrings.MustHaveEmailPhoneOrUsername
 			};
 		}
 	}

@@ -50,7 +50,7 @@ namespace HQ.Cohort.Validators
 			await ValidatePhoneNumberAsync(manager, user, errors);
 			await ValidateUserName(manager, user, errors);
 
-			if (_options.Value.User.RequireEmailPhoneNumberOrUsernameOnRegister)
+			if (_options.Value.User.RequireEmailPhoneNumberOrUsername)
 				if (string.IsNullOrWhiteSpace(await manager.GetEmailAsync(user)) &&
 				    string.IsNullOrWhiteSpace(await manager.GetPhoneNumberAsync(user)) &&
 				    string.IsNullOrWhiteSpace(await manager.GetUserNameAsync(user)))

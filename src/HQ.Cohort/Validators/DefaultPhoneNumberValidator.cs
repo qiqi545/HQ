@@ -30,12 +30,10 @@ namespace HQ.Cohort.Validators
 		{
 			var phoneNumber = await manager.GetPhoneNumberAsync(user);
 
-			if (await CanRegisterWithoutPhoneNumber(manager, user, phoneNumber))
+			if (!_options.Value.User.RequirePhoneNumber && string.IsNullOrWhiteSpace(phoneNumber))
 				return;
 
-			if (string.IsNullOrWhiteSpace(phoneNumber) ||
-			    ContainsDeniedPhoneNumberCharacters(phoneNumber) ||
-			    !PhoneAttribute.IsValid(phoneNumber))
+			if (string.IsNullOrWhiteSpace(phoneNumber) || ContainsDeniedPhoneNumberCharacters(phoneNumber) || !PhoneAttribute.IsValid(phoneNumber))
 			{
 				errors.Add(_describer.InvalidPhoneNumber(phoneNumber));
 				return;
@@ -56,14 +54,6 @@ namespace HQ.Cohort.Validators
 		{
 			return !string.IsNullOrEmpty(_options.Value.User.AllowedPhoneNumberCharacters) &&
 			       userName.Any(x => !_options.Value.User.AllowedPhoneNumberCharacters.Contains(x));
-		}
-
-		private async Task<bool> CanRegisterWithoutPhoneNumber(UserManager<TUser> manager, TUser user,
-			string phoneNumber)
-		{
-			return !_options.Value.User.RequirePhoneNumberOnRegister &&
-			       string.IsNullOrWhiteSpace(phoneNumber) &&
-			       await manager.GetUserIdAsync(user) == null;
 		}
 	}
 }

@@ -2,6 +2,8 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Security;
 using HQ.Cohort.Validators;
@@ -29,6 +31,7 @@ namespace HQ.Cohort
 		public static IdentityBuilder AddIdentityCoreExtended<TUser>(this IServiceCollection services,
 			IConfiguration configuration) where TUser : class
 		{
+			services.Configure<IdentityOptions>(configuration);
 			services.Configure<IdentityOptionsExtended>(configuration);
 
 			return AddIdentityCoreExtended<TUser>(services, configuration.Bind);
@@ -64,6 +67,10 @@ namespace HQ.Cohort
 			services.AddScoped<IEmailValidator<TUser>, DefaultEmailValidator<TUser>>();
 			services.AddScoped<IPhoneNumberValidator<TUser>, DefaultPhoneNumberValidator<TUser>>();
 			services.AddScoped<IUsernameValidator<TUser>, DefaultUsernameValidator<TUser>>();
+
+			var validator = services.SingleOrDefault(x => x.ServiceType == typeof(IUserValidator<TUser>));
+			Debug.Assert(validator != null);
+			Debug.Assert(services.Remove(validator));
 
 			services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
 

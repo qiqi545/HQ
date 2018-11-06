@@ -31,7 +31,7 @@ namespace HQ.Cohort.Validators
 		{
 			var username = await manager.GetUserNameAsync(user);
 
-			if (await CanRegisterWithoutUsername(manager, user, username))
+			if (!_options.Value.User.RequireUsername && string.IsNullOrWhiteSpace(username))
 				return;
 
 			if (string.IsNullOrWhiteSpace(username) || ContainsDeniedUserNameCharacters(manager, username))
@@ -55,13 +55,6 @@ namespace HQ.Cohort.Validators
 		{
 			return !string.IsNullOrEmpty(manager.Options.User.AllowedUserNameCharacters) &&
 			       userName.Any(x => !manager.Options.User.AllowedUserNameCharacters.Contains(x));
-		}
-
-		private async Task<bool> CanRegisterWithoutUsername(UserManager<TUser> manager, TUser user, string username)
-		{
-			return !_options.Value.User.RequireUsernameOnRegister &&
-			       string.IsNullOrWhiteSpace(username) &&
-			       await manager.GetUserIdAsync(user) == null;
 		}
 	}
 }

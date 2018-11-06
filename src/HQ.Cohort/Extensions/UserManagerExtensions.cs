@@ -26,7 +26,7 @@ namespace HQ.Cohort.Extensions
 				return extended.FindByPhoneNumberAsync(phoneNumber, extended.CancellationToken);
 			return null;
 		}
-
+		
 		public static IUserStore<TUser> GetStore<TUser>(this UserManager<TUser> userManager) where TUser : class
 		{
 			var accessor = TypeAccessor.Create(typeof(UserManager<TUser>), true);

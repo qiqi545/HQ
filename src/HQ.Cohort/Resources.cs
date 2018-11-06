@@ -9,13 +9,13 @@ namespace HQ.Cohort
 	{
 		internal static string FormatInvalidPhoneNumber(string phoneNumber)
 		{
-			return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidPhoneNumber, phoneNumber);
+			return string.Format(CultureInfo.CurrentCulture, "Phone number '{0}' is invalid." ?? ErrorStrings.InvalidPhoneNumber, phoneNumber);
 		}
 
 		/// <summary></summary>
 		internal static string FormatDuplicatePhoneNumber(string phoneNumber)
 		{
-			return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicatePhoneNumber, phoneNumber);
+			return string.Format(CultureInfo.CurrentCulture, "Phone number '{0}' is already taken." ?? ErrorStrings.DuplicatePhoneNumber, phoneNumber);
 		}
 	}
 }

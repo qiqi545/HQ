@@ -34,7 +34,7 @@ namespace HQ.Cohort.Validators
 		{
 			var email = await manager.GetEmailAsync(user);
 
-			if (await CanRegisterWithoutEmail(manager, user, email))
+			if (!_options.Value.User.RequireEmail && string.IsNullOrWhiteSpace(email))
 				return;
 
 			if (string.IsNullOrWhiteSpace(email) || !EmailAddressAttribute.IsValid(email))
@@ -47,16 +47,8 @@ namespace HQ.Cohort.Validators
 			if (exists == null)
 				return;
 
-			if (manager.Options.User.RequireUniqueEmail &&
-			    !string.Equals(await manager.GetUserIdAsync(exists), await manager.GetUserIdAsync(user)))
+			if (manager.Options.User.RequireUniqueEmail && !string.Equals(await manager.GetUserIdAsync(exists), await manager.GetUserIdAsync(user)))
 				errors.Add(_describer.DuplicateEmail(email));
-		}
-
-		private async Task<bool> CanRegisterWithoutEmail(UserManager<TUser> manager, TUser user, string email)
-		{
-			return !_options.Value.User.RequireEmailOnRegister &&
-			       string.IsNullOrWhiteSpace(email) &&
-			       await manager.GetUserIdAsync(user) == null;
 		}
 	}
 }

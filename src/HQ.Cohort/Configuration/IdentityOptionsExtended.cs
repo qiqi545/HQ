@@ -7,12 +7,17 @@ namespace HQ.Cohort.Configuration
 {
 	public class IdentityOptionsExtended : IdentityOptions
 	{
-		public IdentityOptionsExtended()
-		{
-		}
+		public IdentityOptionsExtended() { }
 
 		public IdentityOptionsExtended(IdentityOptions inner)
 		{
+			Password = inner.Password;
+			Lockout = inner.Lockout;
+			Stores = inner.Stores;
+			Tokens = inner.Tokens;
+			SignIn = inner.SignIn;
+			ClaimsIdentity = inner.ClaimsIdentity;
+
 			User = new UserOptionsExtended(inner.User);
 		}
 

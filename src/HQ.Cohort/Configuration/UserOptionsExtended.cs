@@ -7,9 +7,7 @@ namespace HQ.Cohort.Configuration
 {
 	public class UserOptionsExtended : UserOptions
 	{
-		public UserOptionsExtended()
-		{
-		}
+		public UserOptionsExtended() { }
 
 		public UserOptionsExtended(UserOptions inner)
 		{
@@ -22,9 +20,9 @@ namespace HQ.Cohort.Configuration
 
 		public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
 
-		public bool RequireEmailOnRegister { get; set; } = true;
-		public bool RequirePhoneNumberOnRegister { get; set; } = false;
-		public bool RequireUsernameOnRegister { get; set; } = true;
-		public bool RequireEmailPhoneNumberOrUsernameOnRegister { get; set; } = false;
+		public bool RequireEmail { get; set; } = true;
+		public bool RequirePhoneNumber { get; set; } = false;
+		public bool RequireUsername { get; set; } = true;
+		public bool RequireEmailPhoneNumberOrUsername { get; set; } = false;
 	}
 }
