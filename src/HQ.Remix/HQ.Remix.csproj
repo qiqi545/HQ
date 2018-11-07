@@ -1,7 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
+  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+
   <PropertyGroup>
      <TargetFramework>netstandard2.0</TargetFramework>
+     <Configurations>Debug;Release;PackageSources;PackageSources</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Code execution power tools for .NET.</Description>
+    <PackageTags>roslyn compiler csharp javascript nodejs hq-stack</PackageTags>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
