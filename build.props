@@ -50,10 +50,6 @@
   <Target Name="Compile" Condition="'$(Configuration)'=='PackageSources'" />
   <Target Name="CopyFilesToOutputDirectory" Condition="'$(Configuration)'=='PackageSources'" />
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'!='PackageSources'">
-    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- tokenize $(ProjectDir)" />
-  </Target>
-
   <Target Name="PostBuild" AfterTargets="Pack" Condition="'$(Configuration)'=='PackageSources'">
     <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- nuspec $(ProjectDir)bin\$(Configuration)" />
   </Target>
@@ -65,5 +61,11 @@
   <Target Name="PublishReleaseToNuGet" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package -ss https://nuget.smbsrc.net" />
   </Target>
-  
+
+  <PropertyGroup>
+    <PreBuildEvent>
+      dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- tokenize $(MSBuildProjectDirectory)
+    </PreBuildEvent>
+  </PropertyGroup>
+
 </Project>

@@ -26,6 +26,10 @@ namespace PostBuild
 	{
 		static void Main(string[] args)
 		{
+			Console.WriteLine("PostBuild");
+			Console.WriteLine("---------");
+			Console.WriteLine(string.Join(' ', args));
+
 			void ReplaceFileInArchive(ZipArchive archive, ZipArchiveEntry entry, FileInfo file, string content)
 			{
 				using (var stream = entry.Open())
