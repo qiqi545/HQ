@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PostBuild": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\src\\HQ\\HQ.Common\\src"
+    }
+  }
+}
