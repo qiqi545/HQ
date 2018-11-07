@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
-    <None Remove="*.pp" />
+    <None Remove="**\*.pp" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
