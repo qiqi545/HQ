@@ -51,7 +51,7 @@
   <Target Name="CopyFilesToOutputDirectory" Condition="'$(Configuration)'=='PackageSources'" />
 
   <Target Name="PostBuild" AfterTargets="Pack" Condition="'$(Configuration)'=='PackageSources'">
-    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- nuspec $(ProjectDir)bin\$(Configuration)" />
+    <Exec Command="dotnet run --project &quot;D:\Src\HQ\HQ.Common\src\PostBuild\PostBuild.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration)" />
   </Target>
 
   <Target Name="PublishSourcesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)' == 'PackageSources'">
@@ -64,7 +64,7 @@
 
   <PropertyGroup>
     <PreBuildEvent>
-      dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- tokenize $(MSBuildProjectDirectory)
+      dotnet run --project &quot;D:\Src\HQ\HQ.Common\src\PostBuild\PostBuild.csproj&quot; -- tokenize $(MSBuildProjectDirectory)
     </PreBuildEvent>
   </PropertyGroup>
 
