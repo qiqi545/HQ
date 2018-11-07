@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Full stack build for HQ.</Description>
+    <PackageTags>hq-stack</PackageTags>
+  </PropertyGroup>
+
+</Project>

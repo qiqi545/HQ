@@ -1,0 +1,14 @@
+
+<Project>
+  <PropertyGroup>
+    <Company>HQ.IO Corporation</Company>
+    <Authors>HQ.IO Corporation</Authors>
+    <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>    
+    <PackageIconUrl>https://avatars1.githubusercontent.com/u/12820522?s=200&amp;v=4</PackageIconUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageLicenseUrl>https://github.com/hq-io/$(MSBuildProjectName)/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://docs.hq.io/$(MSBuildProjectName)</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
+  </PropertyGroup>
+ </Project>

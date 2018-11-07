@@ -1,0 +1,59 @@
+
+<Project>
+  
+  <PropertyGroup>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'!='Debug'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <PackageId>$(MSBuildProjectName).Sources</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+    <None Remove="**\*.pp" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
+    <Content Include="**\*.pp" />
+    <Compile Remove="**\*.cs" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>contentFiles</ContentTargetFolders>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <NoWarn>CS8021</NoWarn>
+    <NoBuild>true</NoBuild>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
+    <Content Update="@(Content)">
+      <Pack>true</Pack>
+      <PackagePath>$(ContentTargetFolders)\cs\netstandard2.0\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+    </Content>
+    <EmbeddedResource Update="@(EmbeddedResource)">
+      <Pack>true</Pack>
+      <PackagePath>$(ContentTargetFolders)\any\any\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
+    <PackageReference Remove="@(PackageReference)" />
+  </ItemGroup>
+
+  <Target Name="Compile" Condition="'$(Configuration)'=='PackageSources'" />
+  <Target Name="CopyFilesToOutputDirectory" Condition="'$(Configuration)'=='PackageSources'" />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'!='PackageSources'">
+    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- $(SolutionDir)" />
+  </Target>
+  
+ </Project>
