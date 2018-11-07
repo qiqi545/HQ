@@ -26,12 +26,21 @@ namespace PostBuild
 	{
 		static void Main(string[] args)
 		{
-			string ReadFile(ZipArchiveEntry entry)
+			void ReplaceFileInArchive(ZipArchive archive, ZipArchiveEntry entry, FileInfo file, string content)
+			{
+				using (var stream = entry.Open())
+				{
+					stream.SetLength(content.Length);
+					using (var sw = new StreamWriter(stream))
+						sw.Write(content);
+				}
+			}
+
+			string ReadFileInArchive(ZipArchiveEntry entry)
 			{
 				using (var sr = new StreamReader(entry.Open()))
 				{
-					return sr.ReadToEnd()
-						.Replace("buildAction=\"Content\"", string.Empty);
+					return sr.ReadToEnd();
 				}
 			}
 
@@ -39,9 +48,10 @@ namespace PostBuild
 
 			if (command.Equals("tokenize", StringComparison.OrdinalIgnoreCase))
 			{
-				Console.WriteLine("Tokenizing sources...");
-
 				var path = args[1];
+
+				Console.WriteLine("Tokenizing sources...");
+				Console.WriteLine("Path: " + path);
 
 				foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
 					File.Delete(file);
@@ -58,12 +68,15 @@ namespace PostBuild
 
 			if (command.Equals("nuspec"))
 			{
-				Console.WriteLine("Correcting nuspecs...");
-
 				var path = args[1];
+
+				Console.WriteLine("Correcting nuspecs...");
+				Console.WriteLine("Path: " + path);
 
 				foreach (var package in Directory.GetFiles(path, "*.nupkg", SearchOption.AllDirectories))
 				{
+					Console.WriteLine("Found package: " + package);
+
 					using (var archive = ZipFile.Open(package, ZipArchiveMode.Update))
 					{
 						for (int i = archive.Entries.Count - 1; i >= 0; i--)
@@ -72,13 +85,29 @@ namespace PostBuild
 							var file = new FileInfo(entry.FullName);
 							if (file.Extension == ".nuspec")
 							{
-								var replace = ReadFile(entry);
+								var before = ReadFileInArchive(entry);
 
-								entry.Delete();
+								Console.Write("Found .nuspec: " + file.Name + "...");
 
-								using (var sw = new StreamWriter(archive.CreateEntry(file.Name).Open()))
+								var updated = before.Replace("buildAction=\"Content\"", string.Empty);
+
+								if (before == updated)
 								{
-									sw.Write(replace);
+									Console.WriteLine(" not modified.");
+								}
+								else
+								{
+									Console.WriteLine();
+									Console.WriteLine(updated);
+								}
+
+								ReplaceFileInArchive(archive, entry, file, updated);
+
+								var after = ReadFileInArchive(entry);
+
+								if (after != updated)
+								{
+									throw new FileLoadException("The update process did change the .nuspec.");
 								}
 							}
 						}

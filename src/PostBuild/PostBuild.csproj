@@ -6,4 +6,11 @@
     <Configurations>Debug;Release;PackageSources</Configurations>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NuGet.CommandLine" Version="4.7.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>
