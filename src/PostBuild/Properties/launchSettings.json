@@ -2,7 +2,7 @@
   "profiles": {
     "PostBuild": {
       "commandName": "Project",
-      "commandLineArgs": "D:\\src\\HQ\\HQ.Common\\src"
+      "commandLineArgs": "nuspec D:\\src\\HQ\\HQ.Common\\src"
     }
   }
 }

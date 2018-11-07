@@ -1,6 +1,6 @@
 
 <Project>
-  
+
   <PropertyGroup>
     <Configurations>Debug;Release;PackageSources</Configurations>
     <LangVersion>latest</LangVersion>
@@ -15,15 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
-    <None Remove="**\*.pp" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Content Include="**\*.pp" />
-    <Compile Remove="**\*.cs" />
+    <None Remove="*.pp" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <MinClientVersion>3.3</MinClientVersion>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>contentFiles</ContentTargetFolders>
@@ -35,7 +31,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Content Update="@(Content)">
+    <Compile Remove="**\*.cs" />
+    <Content Include="**\*.pp">
       <Pack>true</Pack>
       <PackagePath>$(ContentTargetFolders)\cs\netstandard2.0\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </Content>
@@ -43,9 +40,6 @@
       <Pack>true</Pack>
       <PackagePath>$(ContentTargetFolders)\any\any\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
     <PackageReference Remove="@(PackageReference)" />
   </ItemGroup>
 
@@ -53,7 +47,10 @@
   <Target Name="CopyFilesToOutputDirectory" Condition="'$(Configuration)'=='PackageSources'" />
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'!='PackageSources'">
-    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- $(SolutionDir)" />
+    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- tokenize $(ProjectDir)" />
+  </Target>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(Configuration)'=='PackageSources'">
+    <Exec Command="dotnet run --project $(SolutionDir)PostBuild\PostBuild.csproj -- nuspec $(ProjectDir)" />
   </Target>
   
  </Project>

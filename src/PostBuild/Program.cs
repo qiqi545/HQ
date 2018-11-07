@@ -15,7 +15,9 @@
 
 #endregion
 
+using System;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 
 namespace PostBuild
@@ -24,18 +26,64 @@ namespace PostBuild
 	{
 		static void Main(string[] args)
 		{
-			var path = args[0];
-
-			foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
-				File.Delete(file);
-
-			foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
+			string ReadFile(ZipArchiveEntry entry)
 			{
-				var text = File.ReadAllText(file, Encoding.UTF8);
+				using (var sr = new StreamReader(entry.Open()))
+				{
+					return sr.ReadToEnd()
+						.Replace("buildAction=\"Content\"", string.Empty);
+				}
+			}
 
-				text = text.Replace($"HQ.", $"$RootNamespace$.");
+			var command = args[0];
 
-				File.WriteAllText(file + ".pp", text, Encoding.UTF8);
+			if (command.Equals("tokenize", StringComparison.OrdinalIgnoreCase))
+			{
+				Console.WriteLine("Tokenizing sources...");
+
+				var path = args[1];
+
+				foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
+					File.Delete(file);
+
+				foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
+				{
+					var text = File.ReadAllText(file, Encoding.UTF8);
+
+					text = text.Replace("HQ.", "$RootNamespace$.");
+
+					File.WriteAllText(file + ".pp", text, Encoding.UTF8);
+				}
+			}
+
+			if (command.Equals("nuspec"))
+			{
+				Console.WriteLine("Correcting nuspecs...");
+
+				var path = args[1];
+
+				foreach (var package in Directory.GetFiles(path, "*.nupkg", SearchOption.AllDirectories))
+				{
+					using (var archive = ZipFile.Open(package, ZipArchiveMode.Update))
+					{
+						for (int i = archive.Entries.Count - 1; i >= 0; i--)
+						{
+							var entry = archive.Entries[i];
+							var file = new FileInfo(entry.FullName);
+							if (file.Extension == ".nuspec")
+							{
+								var replace = ReadFile(entry);
+
+								entry.Delete();
+
+								using (var sw = new StreamWriter(archive.CreateEntry(file.Name).Open()))
+								{
+									sw.Write(replace);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
 	}

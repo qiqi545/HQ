@@ -9,6 +9,7 @@
 
   <PropertyGroup>
     <Description>Shared infrastructure for HQ stack components.</Description>
+    <Version>1.0.1</Version>
     <PackageTags>hq-stack</PackageTags>
   </PropertyGroup>
 
