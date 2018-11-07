@@ -36,7 +36,7 @@
 
   <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
     <Compile Remove="**\*.cs" />
-    <Content Include="**\*.pp">
+    <Content Include="**\*.pp" Exclude="obj\**">
       <Pack>true</Pack>
       <PackagePath>$(ContentTargetFolders)\cs\netstandard2.0\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </Content>
