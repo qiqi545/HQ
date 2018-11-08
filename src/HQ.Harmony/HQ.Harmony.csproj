@@ -1,20 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
+  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>High performance, low ceremony DI/IoC container for .NET.</Description>
+    <PackageTags>ioc-container dependency-injection dotnet-standard hq-stack</PackageTags>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HQ.Remix" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
   </ItemGroup>
 
 </Project>
