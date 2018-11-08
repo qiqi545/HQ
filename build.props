@@ -23,7 +23,6 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <MinClientVersion>3.3</MinClientVersion>
-    <DevelopmentDependency>true</DevelopmentDependency>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>contentFiles</ContentTargetFolders>
@@ -33,6 +32,13 @@
     <NoWarn>CS8021</NoWarn>
     <NoBuild>true</NoBuild>
   </PropertyGroup>
+
+  <!-- Without this, referencing Source-Only packages inside other Source-Only packages fails
+       whenever the platform implementation differs (for example, System.Data.Common or 
+       System.Collections.NonGeneric -->
+  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+  </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
     <None Remove="**\*.pp" />
