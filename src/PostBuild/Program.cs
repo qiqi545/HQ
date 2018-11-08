@@ -97,7 +97,8 @@ namespace PostBuild
 
 								Console.Write("Found .nuspec: " + file.Name + "...");
 
-								var updated = before.Replace("buildAction=\"Content\"", string.Empty);
+								var updated = before.Replace("buildAction=\"Content\"", string.Empty)
+									.Replace("exclude=\"Build,Analyzers\"", string.Empty);
 
 								if (before == updated)
 								{

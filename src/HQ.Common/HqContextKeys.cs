@@ -20,6 +20,6 @@ namespace HQ.Common
 	internal static class HqContextKeys
 	{
 		public const string DynamicViewLocation = "DynamicViewLocation";
-		public const string JsonMultiCase = "JsonMulticase";
+		public const string JsonMultiCase = "JsonMultiCase";
 	}
 }

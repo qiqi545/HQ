@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PostBuild": {
-      "commandName": "Project",
-      "commandLineArgs": "tokenize D:\\src\\HQ\\HQ.Common\\src"
-    }
-  }
-}
