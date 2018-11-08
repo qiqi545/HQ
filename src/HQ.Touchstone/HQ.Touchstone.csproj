@@ -11,13 +11,13 @@
   <PropertyGroup>
     <Description>Power tools for API testing in .NET.</Description>
     <PackageTags>hq-stack dotnet-standard unit-tests interaction-tests integration-tests</PackageTags>
-    <Version>1.0.0</Version>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="4.9.1" />
-    <PackageReference Include="HQ.Harmony" Version="1.0.1" />
-    <PackageReference Include="HQ.Harmony.AspNetCore" Version="1.0.1" />
+    <PackageReference Include="HQ.Harmony" Version="1.0.20" />
+    <PackageReference Include="HQ.Harmony.AspNetCore" Version="1.0.20" />
     <PackageReference Include="HQ.Remix" Version="1.0.20" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
