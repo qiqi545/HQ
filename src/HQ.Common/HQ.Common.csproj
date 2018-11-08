@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <!--<Import Project="$(SolutionDir)..\package.props" />
-  <Import Project="$(SolutionDir)..\build.props" />-->
+  <Import Project="$(SolutionDir)..\package.props" />
+  <Import Project="$(SolutionDir)..\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,9 +11,9 @@
   <PropertyGroup>
     <Description>Shared infrastructure for HQ stack components.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <FileVersion>1.0.3.0</FileVersion>
-    <Version>1.0.3</Version>
+    <AssemblyVersion>1.0.4.0</AssemblyVersion>
+    <FileVersion>1.0.4.0</FileVersion>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
