@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Net.Http;
-using HQ.Touchstone.Common;
+using HQ.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
