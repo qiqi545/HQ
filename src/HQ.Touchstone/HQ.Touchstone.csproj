@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
-  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+  <Import Project="$(SolutionDir)..\package.props" />
+  <Import Project="$(SolutionDir)..\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -16,9 +16,6 @@
 
   <ItemGroup>
     <PackageReference Include="FakeItEasy" Version="4.9.1" />
-    <PackageReference Include="HQ.Harmony" Version="1.0.20" />
-    <PackageReference Include="HQ.Harmony.AspNetCore" Version="1.0.20" />
-    <PackageReference Include="HQ.Remix" Version="1.0.20" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
@@ -26,7 +23,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="HQ.Common" Version="1.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Harmony\src\HQ.Harmony\HQ.Harmony.csproj" />
   </ItemGroup>
 
 </Project>

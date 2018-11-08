@@ -1,15 +1,28 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using HQ.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
 
 namespace HQ.Touchstone
 {
 	public abstract class SystemUnderTest<T> : IDisposable where T : class
 	{
 		private readonly Lazy<WebHostFixture<T>> _systemUnderTest;
+		private ILogger<SystemUnderTest<T>> _logger;
+
+		protected SystemUnderTest(ITestOutputHelper output)
+		{
+			var loggerFactory = new LoggerFactory();
+			loggerFactory.AddProvider(new ActionLoggerProvider(output.WriteLine));
+			_logger = loggerFactory.CreateLogger<SystemUnderTest<T>>();
+
+			Trace.Listeners.Add(new ActionTraceListener(output.WriteLine));
+		}
 
 		public virtual void Configuration(IConfiguration config) { }
 
