@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\package.props" />
-  <Import Project="$(SolutionDir)..\build.props" />
+  <!--<Import Project="$(SolutionDir)..\package.props" />
+  <Import Project="$(SolutionDir)..\build.props" />-->
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>

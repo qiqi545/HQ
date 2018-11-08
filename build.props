@@ -2,7 +2,6 @@
 <Project>
 
   <PropertyGroup>
-    <Configurations>Debug;Release;PackageSources</Configurations>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
@@ -19,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+    <None Remove="*.pp" />
     <None Remove="**\*.pp" />
   </ItemGroup>
 
@@ -54,8 +54,12 @@
     <Exec Command="dotnet run --project &quot;D:\Src\HQ\HQ.Common\src\PostBuild\PostBuild.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration)" />
   </Target>
 
-  <Target Name="PublishToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'!='Debug'">
+  <!--<Target Name="PublishToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'!='Debug'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
+  </Target>-->
+
+  <Target Name="PublishSymbolsToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Release'">
+    <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).symbols.nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
 
   <PropertyGroup>
