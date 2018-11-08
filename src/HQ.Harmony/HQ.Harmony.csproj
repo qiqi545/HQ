@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <PackageReference Include="HQ.Common" Version="1.0.20" />
-    <PackageReference Include="HQ.Remix" Version="1.0.2" />
+    <PackageReference Include="HQ.Remix" Version="1.0.20" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
