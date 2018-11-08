@@ -17,7 +17,7 @@
 
 using System;
 using System.Reflection;
-using HQ.Harmony.Remix;
+using HQ.Remix;
 
 namespace HQ.Harmony
 {

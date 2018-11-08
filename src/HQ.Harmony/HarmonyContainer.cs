@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using HQ.Harmony.Remix;
+using HQ.Remix;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Harmony
