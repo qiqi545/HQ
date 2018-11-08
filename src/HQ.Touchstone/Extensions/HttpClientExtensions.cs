@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Common;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
