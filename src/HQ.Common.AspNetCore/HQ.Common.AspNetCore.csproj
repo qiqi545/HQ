@@ -6,12 +6,13 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources</Configurations>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Shared infrastructure for HQ stack components.</Description>
+    <Description>Shared infrastructure for HQ stack components. This package provides additional features for ASP.NET Core.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
   </PropertyGroup>
 
   <ItemGroup>
