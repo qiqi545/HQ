@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using HQ.Harmony.Remix;
 using Microsoft.Extensions.DependencyInjection;
-using HQ.Remix;
 
 namespace HQ.Harmony
 {

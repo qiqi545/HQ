@@ -11,11 +11,12 @@
   <PropertyGroup>
     <Description>High performance, low ceremony DI/IoC container for .NET.</Description>
     <PackageTags>ioc-container dependency-injection dotnet-standard hq-stack</PackageTags>
-    <Version>1.0.1</Version>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Remix" Version="1.0.0" />
+    <PackageReference Include="HQ.Common" Version="1.0.20" />
+    <PackageReference Include="HQ.Remix" Version="1.0.20" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
