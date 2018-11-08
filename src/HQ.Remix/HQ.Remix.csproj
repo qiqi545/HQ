@@ -3,10 +3,6 @@
   <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
   <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
 
-  <ItemGroup>
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources</Configurations>
@@ -15,7 +11,7 @@
  <PropertyGroup>
     <Description>Code execution power tools for .NET.</Description>
     <PackageTags>roslyn compiler csharp javascript nodejs hq-stack</PackageTags>
-    <Version>1.0.3</Version>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -28,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="HQ.Common" Version="1.0.20" />
   </ItemGroup>
 
 </Project>
