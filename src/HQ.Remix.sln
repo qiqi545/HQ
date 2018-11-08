@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix.Tests", "..\test\H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "HQ.Remix\HQ.Remix.csproj", "{5C7215BC-04DF-442C-9820-CF09E75BFC68}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,12 +35,6 @@ Global
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BBDE9EB-D07A-44B3-A486-33FBB02D7F64}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
