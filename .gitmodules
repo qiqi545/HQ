@@ -13,3 +13,15 @@
 [submodule "src/Stack/HQ.Touchstone"]
 	path = src/Stack/HQ.Touchstone
 	url = https://github.com/hq-io/HQ.Touchstone
+[submodule "src/Stack/HQ.Cadence"]
+	path = src/Stack/HQ.Cadence
+	url = https://github.com/hq-io/HQ.Cadence
+[submodule "src/Stack/HQ.Domicile"]
+	path = src/Stack/HQ.Domicile
+	url = https://github.com/hq-io/HQ.Domicile
+[submodule "src/Stack/HQ.MissionControl"]
+	path = src/Stack/HQ.MissionControl
+	url = https://github.com/hq-io/HQ.MissionControl
+[submodule "src/Stack/HQ.Rosetta"]
+	path = src/Stack/HQ.Rosetta
+	url = https://github.com/hq-io/HQ.Rosetta
