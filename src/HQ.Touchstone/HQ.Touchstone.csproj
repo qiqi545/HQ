@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
+  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Power tools for API testing in .NET.</Description>
+    <PackageTags>hq-stack dotnet-standard unit-tests interaction-tests integration-tests</PackageTags>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FakeItEasy" Version="4.9.1" />
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.6" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="HQ.Common.Sources" Version="1.0.11" />
+    <PackageReference Include="HQ.Harmony.Sources" Version="1.0.1" />
+    <PackageReference Include="HQ.Harmony.AspNetCore.Sources" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>
