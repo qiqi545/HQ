@@ -33,13 +33,6 @@
     <NoBuild>true</NoBuild>
   </PropertyGroup>
 
-  <!-- Without this, referencing Source-Only packages inside other Source-Only packages fails
-       whenever the platform implementation differs (for example, System.Data.Common or 
-       System.Collections.NonGeneric -->
-  <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
-    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
-  </ItemGroup>
-
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
     <None Remove="**\*.pp" />
   </ItemGroup>
