@@ -21,7 +21,7 @@ using System.Reflection;
 
 namespace HQ.Common.Extensions
 {
-	internal static class TypeExtensions
+	public static class TypeExtensions
 	{
 		public static ConstructorInfo GetWidestConstructor(this Type type)
 		{
