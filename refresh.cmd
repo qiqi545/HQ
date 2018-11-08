@@ -1,5 +1,3 @@
-@ECHO OFF
-
 REM update all submodules to use tips of master branches
 git submodule foreach git pull origin master
 

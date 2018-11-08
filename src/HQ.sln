@@ -5,11 +5,12 @@ VisualStudioVersion = 15.0.28010.2050
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E5A6C044-2BB1-4E7A-B7F3-0A7D4E537E52}"
 	ProjectSection(SolutionItems) = preProject
-		..\..\HQ.Common\build.props = ..\..\HQ.Common\build.props
+		..\build.props = ..\build.props
 		..\LICENSE.md = ..\LICENSE.md
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
-		..\..\HQ.Common\package.props = ..\..\HQ.Common\package.props
+		..\package.props = ..\package.props
 		..\README.md = ..\README.md
+		..\refresh.cmd = ..\refresh.cmd
 		..\THIRD_PARTY_LICENSES.md = ..\THIRD_PARTY_LICENSES.md
 		..\update.cmd = ..\update.cmd
 	EndProjectSection
