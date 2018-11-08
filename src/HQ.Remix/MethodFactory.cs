@@ -19,7 +19,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using HQ.Remix.Common.Extensions;
+using HQ.Common.Extensions;
 
 namespace HQ.Remix
 {

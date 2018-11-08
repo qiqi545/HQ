@@ -22,7 +22,6 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using HQ.Remix.Common.Extensions;
 
 namespace HQ.Remix
 {
