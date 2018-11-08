@@ -12,9 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\THIRD_PARTY_LICENSES.md = ..\THIRD_PARTY_LICENSES.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "HQ.Remix\HQ.Remix.csproj", "{2632361E-1741-4D7F-9E4C-DA16D21738BC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix.Tests", "..\test\HQ.Remix.Tests\HQ.Remix.Tests.csproj", "{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "HQ.Remix\HQ.Remix.csproj", "{5C7215BC-04DF-442C-9820-CF09E75BFC68}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,18 +23,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2632361E-1741-4D7F-9E4C-DA16D21738BC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
