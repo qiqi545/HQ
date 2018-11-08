@@ -17,7 +17,7 @@
 
 namespace HQ.Common
 {
-	internal static class HttpHeaders
+	public static class HttpHeaders
 	{
 		public const string ContentType = "Content-Type";
 		public const string ETag = "ETag";

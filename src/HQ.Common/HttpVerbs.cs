@@ -17,7 +17,7 @@
 
 namespace HQ.Common
 {
-	internal static class HttpVerbs
+	public static class HttpVerbs
 	{
 		public const string Trace = "TRACE";
 		public const string Options = "OPTIONS";

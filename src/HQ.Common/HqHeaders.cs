@@ -17,7 +17,7 @@
 
 namespace HQ.Common
 {
-	internal static class HqHeaders
+	public static class HqHeaders
 	{
 		/// <summary>
 		///     See: https://www.w3.org/TR/server-timing/

@@ -17,7 +17,7 @@
 
 namespace HQ.Common
 {
-	internal static class HqLoggers
+	public static class HqLoggers
 	{
 		public const string Formatters = "hq.formatters";
 	}
