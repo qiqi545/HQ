@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Dynamic;
 
-namespace FastMember
+namespace HQ.Common.FastMember
 {
     /// <summary>
     /// Represents an individual object, allowing access to members by-name

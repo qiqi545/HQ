@@ -3,7 +3,7 @@ using System.Collections;
 using System.Runtime.CompilerServices;
 using Microsoft.CSharp.RuntimeBinder;
 
-namespace FastMember
+namespace HQ.Common.FastMember
 {
 	internal static class CallSiteCache
 	{

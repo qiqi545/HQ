@@ -16,8 +16,8 @@
 #endregion
 
 using System.Linq;
-using FastMember;
 using HQ.Common.Configuration;
+using HQ.Common.FastMember;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 

@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
-namespace FastMember
+namespace HQ.Common.FastMember
 {
 	/// <summary>
 	/// Provides by-name member-access to objects of a given type

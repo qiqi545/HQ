@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace FastMember
+namespace HQ.Common.FastMember
 {
     /// <summary>
     /// Represents an abstracted view of the members defined for a type

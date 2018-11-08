@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
-namespace FastMember
+namespace HQ.Common.FastMember
 {
     /// <summary>
     /// Provides a means of reading a sequence of objects as a data-reader, for example
