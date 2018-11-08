@@ -11,7 +11,7 @@
   <PropertyGroup>
     <Description>Shared infrastructure for HQ stack components.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.9</Version>
+    <Version>1.0.10</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,7 +22,5 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
-
   
-
 </Project>

@@ -23,6 +23,7 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <MinClientVersion>3.3</MinClientVersion>
+    <DevelopmentDependency>true</DevelopmentDependency>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>contentFiles</ContentTargetFolders>
