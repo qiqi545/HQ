@@ -23,9 +23,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
-    <PackageReference Include="HQ.Common.Sources" Version="1.0.11" />
-    <PackageReference Include="HQ.Harmony.Sources" Version="1.0.1" />
-    <PackageReference Include="HQ.Harmony.AspNetCore.Sources" Version="1.0.1" />
+    <PackageReference Include="HQ.Common" Version="1.0.20" />
+    <PackageReference Include="HQ.Harmony" Version="1.0.20" />
+    <PackageReference Include="HQ.Harmony.AspNetCore" Version="1.0.20" />
   </ItemGroup>
 
 </Project>
