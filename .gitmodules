@@ -1,0 +1,9 @@
+[submodule "src/Stack/HQ.Common"]
+	path = src/Stack/HQ.Common
+	url = https://github.com/hq-io/HQ.Common
+[submodule "src/Stack/HQ.Remix"]
+	path = src/Stack/HQ.Remix
+	url = https://github.com/hq-io/HQ.Remix
+[submodule "src/Stack/HQ.Harmony"]
+	path = src/Stack/HQ.Harmony
+	url = https://github.com/hq-io/HQ.Harmony

@@ -15,6 +15,10 @@
 
 #endregion
 
+using System.Runtime.CompilerServices;
+
+[assembly:InternalsVisibleTo("HQ.Tests")]
+
 namespace HQ
 {
 	class InternalsVisibleTo { }

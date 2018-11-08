@@ -1,0 +1,76 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
+  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+
+  <PropertyGroup>
+    <Description>This package contains the full-stack build for HQ.IO.</Description>
+    <PackageTags>hq-stack</PackageTags>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+.IO
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Full stack build for HQ.</Description>
+    <PackageTags>hq-stack</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Bootstrap.cs" Link="Common\Bootstrap.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Configuration\FeatureToggle.cs" Link="Common\Configuration\FeatureToggle.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Extensions\HttpContextExtensions.cs" Link="Common\Extensions\HttpContextExtensions.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Extensions\TypeExtensions.cs" Link="Common\Extensions\TypeExtensions.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\FastMember\CallSiteCache.cs" Link="Common\FastMember\CallSiteCache.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\FastMember\MemberSet.cs" Link="Common\FastMember\MemberSet.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\FastMember\ObjectAccessor.cs" Link="Common\FastMember\ObjectAccessor.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\FastMember\ObjectReader.cs" Link="Common\FastMember\ObjectReader.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\FastMember\TypeAccessor.cs" Link="Common\FastMember\TypeAccessor.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Helpers\StopwatchPool.cs" Link="Common\Helpers\StopwatchPool.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Helpers\StringBuilderPool.cs" Link="Common\Helpers\StringBuilderPool.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HqContextKeys.cs" Link="Common\HqContextKeys.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HqHeaders.cs" Link="Common\HqHeaders.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HqLoggers.cs" Link="Common\HqLoggers.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HqQueryStrings.cs" Link="Common\HqQueryStrings.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HqRoutes.cs" Link="Common\HqRoutes.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HttpHeaders.cs" Link="Common\HttpHeaders.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\HttpVerbs.cs" Link="Common\HttpVerbs.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\InternalsVisibleTo.cs" Link="Common\InternalsVisibleTo.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\MediaTypes.cs" Link="Common\MediaTypes.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Models\IServerTimestampService.cs" Link="Common\Models\IServerTimestampService.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Models\ITypeRegistry.cs" Link="Common\Models\ITypeRegistry.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Models\LocalServerTimestampService.cs" Link="Common\Models\LocalServerTimestampService.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Models\TypeRegistry.cs" Link="Common\Models\TypeRegistry.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Pooling\ObjectPool`1.cs" Link="Common\Pooling\ObjectPool`1.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Pooling\PooledDictionary.cs" Link="Common\Pooling\PooledDictionary.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Pooling\PooledHashSet.cs" Link="Common\Pooling\PooledHashSet.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Pooling\PooledStopwatch.cs" Link="Common\Pooling\PooledStopwatch.cs" />
+    <Compile Include="..\..\..\HQ.Common\src\HQ.Common\Pooling\PooledStringBuilder.cs" Link="Common\Pooling\PooledStringBuilder.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\Configuration\" />
+    <Folder Include="Common\Extensions\" />
+    <Folder Include="Common\FastMember\" />
+    <Folder Include="Common\Helpers\" />
+    <Folder Include="Common\Models\" />
+    <Folder Include="Common\Pooling\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="1.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.3.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    
+  </ItemGroup>
+
+</Project>

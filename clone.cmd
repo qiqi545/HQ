@@ -1,1 +1,0 @@
-git clone --recursive git://github.com/hq-io/HQ.Common.git
