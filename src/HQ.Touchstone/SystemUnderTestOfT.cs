@@ -1,7 +1,25 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Diagnostics;
 using System.Net.Http;
 using HQ.Remix;
+using HQ.Touchstone.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,19 +28,27 @@ using Microsoft.Extensions.Logging.TraceSource;
 
 namespace HQ.Touchstone
 {
-    public abstract class SystemUnderTest<T> : TestBase, ILogger<T>, IDisposable where T : class
+    public abstract class SystemUnderTest<T> : TestScope, ILogger<T>, IDisposable where T : class
     {
         private readonly WebHostFixture<T> _systemUnderTest;
+        private ILogger<SystemUnderTest<T>> _logger;
 
         private IServiceProvider _serviceProvider;
-        private ILogger<SystemUnderTest<T>> _logger;
 
         protected SystemUnderTest()
         {
             _systemUnderTest = new WebHostFixture<T>(this);
         }
 
-        public virtual void Configuration(IConfiguration config) { }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Configuration(IConfiguration config)
+        {
+        }
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
@@ -77,7 +103,8 @@ namespace HQ.Touchstone
 
         #region ILogger<T>
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+            Func<TState, Exception, string> formatter)
         {
             var logger = GetLogger();
             logger?.Log(logLevel, eventId, state, exception, formatter);
@@ -102,11 +129,5 @@ namespace HQ.Touchstone
         }
 
         #endregion
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

@@ -89,7 +89,8 @@ namespace HQ.Touchstone
                     var appSettingsDefaultPath = Path.GetFullPath(Path.Combine(appSettingsPath,
                         string.Concat(appSettingsFileName, appSettingsFileExtension)));
                     var appSettingsEnvPath = Path.GetFullPath(Path.Combine(appSettingsPath,
-                        string.Concat(appSettingsFileName, ".", testSettings.EnvironmentName, appSettingsFileExtension)));
+                        string.Concat(appSettingsFileName, ".", testSettings.EnvironmentName,
+                            appSettingsFileExtension)));
 
                     c.AddJsonFile(appSettingsDefaultPath, false, true);
                     c.AddJsonFile(appSettingsEnvPath, true);

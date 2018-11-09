@@ -17,12 +17,13 @@
 
 using System;
 using System.Diagnostics;
+using HQ.Touchstone.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Touchstone
 {
-    public abstract class SystemUnderTest : TestBase, ILogger, IDisposable
+    public abstract class SystemUnderTest : TestScope, ILogger, IDisposable
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -43,6 +44,12 @@ namespace HQ.Touchstone
             }));
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         private void TryInstallLogging(IServiceProvider serviceProvider)
         {
             var loggerFactory = serviceProvider?.GetService<ILoggerFactory>();
@@ -51,9 +58,17 @@ namespace HQ.Touchstone
             _logger = loggerFactory.CreateLogger<SystemUnderTest>();
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+            }
+        }
+
         #region ILogger
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+            Func<TState, Exception, string> formatter)
         {
             var logger = GetLogger();
             logger?.Log(logLevel, eventId, state, exception, formatter);
@@ -64,7 +79,7 @@ namespace HQ.Touchstone
             var logger = GetLogger();
             return logger != null && logger.IsEnabled(logLevel);
         }
-        
+
         public IDisposable BeginScope<TState>(TState state)
         {
             var logger = GetLogger();
@@ -78,16 +93,5 @@ namespace HQ.Touchstone
         }
 
         #endregion
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing) { }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

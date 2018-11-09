@@ -21,7 +21,7 @@ using HQ.Common.Helpers;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Logging
 {
     internal sealed class ActionLogger : ILogger
     {
@@ -36,6 +36,20 @@ namespace HQ.Touchstone
             _writeLine = writeLine;
             _formatter = DefaultFormatter;
             _categoryName = categoryName;
+        }
+
+        public IDisposable BeginScope<TState>(TState state) => this.ActLike<IDisposable>();
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
+            Func<TState, Exception, string> formatter)
+        {
+            _writeLine?.Invoke(_formatter?.Invoke(new object[]
+                {logLevel, _categoryName, eventId, formatter(state, exception)}));
+
+            if (exception != null)
+                _writeLine?.Invoke(exception.ToString());
         }
 
         private static string DefaultFormatter(object[] args)
@@ -88,19 +102,8 @@ namespace HQ.Touchstone
             return logLevelString;
         }
 
-        public IDisposable BeginScope<TState>(TState state) => this.ActLike<IDisposable>();
-
-        public bool IsEnabled(LogLevel logLevel) => true;
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
-            Func<TState, Exception, string> formatter)
+        public void Dispose()
         {
-            _writeLine?.Invoke(_formatter?.Invoke(new object[] {logLevel, _categoryName, eventId, formatter(state, exception)}));
-
-            if (exception != null)
-                _writeLine?.Invoke(exception.ToString());
         }
-
-        public void Dispose() { }
     }
 }

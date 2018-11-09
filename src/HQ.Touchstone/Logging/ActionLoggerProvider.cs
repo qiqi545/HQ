@@ -18,7 +18,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Logging
 {
     public sealed class ActionLoggerProvider : ILoggerProvider
     {
@@ -32,6 +32,8 @@ namespace HQ.Touchstone
         public ILogger CreateLogger(string categoryName)
             => new ActionLogger(categoryName, _writeLine);
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+        }
     }
 }

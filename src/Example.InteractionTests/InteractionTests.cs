@@ -9,7 +9,7 @@ namespace Example.InteractionTests
     public class InteractionTests : SystemUnderTest<Startup>
     {
         [Test]
-        public async Task PassingTest()
+        public async Task FailingTest()
         {
             Trace.WriteLine("This is a trace");
 

@@ -18,7 +18,7 @@
 using System;
 using System.Diagnostics;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Logging
 {
     public class ActionTraceListener : TraceListener
     {
