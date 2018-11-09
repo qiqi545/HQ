@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
-  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+  <Import Project="$(ProjectDir)..\..\package.props" />
+  <Import Project="$(ProjectDir)..\..\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Configurations>Debug;Release;PackageSources</Configurations>
+    <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
  <PropertyGroup>
@@ -24,7 +24,10 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="HQ.Common" Version="1.0.20" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
 
 </Project>
