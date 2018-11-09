@@ -12,7 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\README.md = ..\README.md
 		..\refresh.cmd = ..\refresh.cmd
 		..\THIRD_PARTY_LICENSES.md = ..\THIRD_PARTY_LICENSES.md
-		..\update.cmd = ..\update.cmd
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ", "HQ\HQ.csproj", "{1EA761A7-0D88-4000-ADEC-B7D1F294093D}"

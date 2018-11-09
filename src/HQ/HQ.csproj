@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
-  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+  <Import Project="$(SolutionDir)..\package.props" />
+  <Import Project="$(SolutionDir)..\build.props" />
 
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -26,6 +26,7 @@
     <Content Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta\bin\**" Link="Rosetta\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Domicile\src\HQ.Domicile\**\*.cs" Exclude="..\Stack\HQ.Domicile\src\HQ.Domicile\obj\**;..\Stack\HQ.Domicile\src\HQ.Domicile\bin\**" Link="Domicile\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

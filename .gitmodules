@@ -25,3 +25,6 @@
 [submodule "src/Stack/HQ.Rosetta"]
 	path = src/Stack/HQ.Rosetta
 	url = https://github.com/hq-io/HQ.Rosetta
+[submodule "src/Stack/HQ.Flow"]
+	path = src/Stack/HQ.Flow
+	url = https://github.com/hq-io/HQ.Flow
