@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -34,11 +34,15 @@ namespace HQ.Common.FastMember
 		/// </summary>
 		public virtual MemberSet GetMembers() { throw new NotSupportedException(); }
 
-		/// <summary>
-		/// Provides a type-specific accessor, allowing by-name access for all objects of that type
-		/// </summary>
-		/// <remarks>The accessor is cached internally; a pre-existing accessor may be returned</remarks>
-		public static TypeAccessor Create(Type type)
+	    public virtual PropertyInfo[] CachedProperties { get; private set; }
+
+	    public virtual FieldInfo[] CachedFields { get; private set; }
+
+	    /// <summary>
+        /// Provides a type-specific accessor, allowing by-name access for all objects of that type
+        /// </summary>
+        /// <remarks>The accessor is cached internally; a pre-existing accessor may be returned</remarks>
+        public static TypeAccessor Create(Type type)
 		{
 			return Create(type, false);
 		}
@@ -266,9 +270,10 @@ namespace HQ.Common.FastMember
 				? BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
 				: BindingFlags.Public | BindingFlags.Instance;
 
-			PropertyInfo[] props = type.GetProperties(flags);
+            PropertyInfo[] props = type.GetProperties(flags);
 			FieldInfo[] fields = type.GetFields(flags);
-			Dictionary<string, int> map = new Dictionary<string, int>();
+
+		    Dictionary<string, int> map = new Dictionary<string, int>();
 			List<MemberInfo> members = new List<MemberInfo>(props.Length + fields.Length);
 			int i = 0;
 			foreach (var prop in props)
@@ -368,7 +373,9 @@ namespace HQ.Common.FastMember
 			tb.DefineMethodOverride(body, baseMethod);
 
 			var accessor = (TypeAccessor)Activator.CreateInstance(tb.CreateTypeInfo().AsType(), map);
-			return accessor;
+		    accessor.CachedProperties = props;
+		    accessor.CachedFields = fields;
+            return accessor;
 		}
 
 		private static void Cast(ILGenerator il, Type type, bool valueAsPointer)
