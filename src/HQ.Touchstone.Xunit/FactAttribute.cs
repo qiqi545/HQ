@@ -21,7 +21,13 @@ using Xunit.Sdk;
 namespace HQ.Touchstone
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Touchstone.Extensions.TestCaseDiscoverer", "HQ.Touchstone.Xunit")]
+    [XunitTestCaseDiscoverer("HQ.Touchstone.Extensions.TestCaseDiscoverer",
+#if PLATFORM
+        "HQ.Platform"
+#else
+        "HQ.Touchstone.Xunit"
+#endif
+    )]
     public class FactAttribute : Xunit.FactAttribute
     {
     }
