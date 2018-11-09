@@ -6,22 +6,22 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Flow.Bus
 {
-	internal class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
-	{
-		private ReferenceEqualityComparer()
-		{
-		}
+    internal class ReferenceEqualityComparer<T> : IEqualityComparer<T> where T : class
+    {
+        private ReferenceEqualityComparer()
+        {
+        }
 
-		public static ReferenceEqualityComparer<T> Instance { get; } = new ReferenceEqualityComparer<T>();
+        public static ReferenceEqualityComparer<T> Instance { get; } = new ReferenceEqualityComparer<T>();
 
-		public bool Equals(T x, T y)
-		{
-			return ReferenceEquals(x, y);
-		}
+        public bool Equals(T x, T y)
+        {
+            return ReferenceEquals(x, y);
+        }
 
-		public int GetHashCode(T obj)
-		{
-			return RuntimeHelpers.GetHashCode(obj);
-		}
-	}
+        public int GetHashCode(T obj)
+        {
+            return RuntimeHelpers.GetHashCode(obj);
+        }
+    }
 }

@@ -5,8 +5,8 @@ using System;
 
 namespace HQ.Flow.Bus
 {
-	[Serializable]
-	public class DuplicateSubscriptionException : Exception
-	{
-	}
+    [Serializable]
+    public class DuplicateSubscriptionException : Exception
+    {
+    }
 }

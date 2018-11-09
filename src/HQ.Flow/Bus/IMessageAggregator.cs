@@ -5,12 +5,12 @@ using System;
 
 namespace HQ.Flow.Bus
 {
-	public interface IMessageAggregator
-	{
-		void Subscribe(object handler, Action<object, Exception> onError = null);
-		void Subscribe<T>(IMessageHandler<T> handler, Action<T, Exception> onError = null) where T : class;
-		void Subscribe<T>(Action<T> handler, Action<T, Exception> onError = null) where T : class;
-		void Unsubscribe<T>() where T : class;
-		bool Handle(Type subscriptionType, object message);
-	}
+    public interface IMessageAggregator
+    {
+        void Subscribe(object handler, Action<object, Exception> onError = null);
+        void Subscribe<T>(IMessageHandler<T> handler, Action<T, Exception> onError = null) where T : class;
+        void Subscribe<T>(Action<T> handler, Action<T, Exception> onError = null) where T : class;
+        void Unsubscribe<T>() where T : class;
+        bool Handle(Type subscriptionType, object message);
+    }
 }

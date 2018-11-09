@@ -5,8 +5,8 @@ using System;
 
 namespace HQ.Flow
 {
-	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class AlwaysNullCheckedAttribute : Attribute
-	{
-	}
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class AlwaysNullCheckedAttribute : Attribute
+    {
+    }
 }

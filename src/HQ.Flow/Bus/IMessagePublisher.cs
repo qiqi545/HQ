@@ -3,8 +3,8 @@
 
 namespace HQ.Flow.Bus
 {
-	public interface IMessagePublisher
-	{
-		bool Publish(object message);
-	}
+    public interface IMessagePublisher
+    {
+        bool Publish(object message);
+    }
 }
