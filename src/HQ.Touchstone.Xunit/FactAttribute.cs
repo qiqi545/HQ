@@ -28,7 +28,7 @@ namespace HQ.Touchstone
         "HQ.Touchstone.Xunit"
 #endif
     )]
-    public class FactAttribute : Xunit.FactAttribute
-    {
-    }
+    public class FactAttribute : Xunit.FactAttribute { }
+
+    public class TestAttribute : FactAttribute { }
 }
