@@ -28,3 +28,6 @@
 [submodule "src/Stack/HQ.Flow"]
 	path = src/Stack/HQ.Flow
 	url = https://github.com/hq-io/HQ.Flow
+[submodule "src/Stack/HQ.Cohort"]
+	path = src/Stack/HQ.Cohort
+	url = https://github.com/hq-io/HQ.Cohort
