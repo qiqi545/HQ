@@ -2,7 +2,7 @@
 // Licensed under the Reciprocal Public License, Version 1.5. See LICENSE.md in the project root for license terms.
 
 using System;
-using FastMember;
+using HQ.Common.FastMember;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Extensions

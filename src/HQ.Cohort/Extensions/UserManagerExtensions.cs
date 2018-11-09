@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using FastMember;
+using HQ.Common.FastMember;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Extensions
