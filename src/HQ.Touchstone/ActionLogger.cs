@@ -41,12 +41,14 @@ namespace HQ.Touchstone
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                var categoryName = args[0];
-                var eventId = args[1];
-                var message = args[2];
+                var logLevel = args[0];
+                var categoryName = args[1];
+                var eventId = args[2];
+                var message = args[3];
 
-                sb.Append(categoryName?.ToString()?.ToLowerInvariant()).Append(':').Append(message).Append('[')
-                    .Append(eventId).AppendLine("]");
+                sb.Append(logLevel?.ToString()?.ToLowerInvariant()).Append(':')
+                    .Append(categoryName).Append('[').Append(eventId).AppendLine("]")
+                    .Append(message);
             });
         }
 
@@ -57,7 +59,7 @@ namespace HQ.Touchstone
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
             Func<TState, Exception, string> formatter)
         {
-            _writeLine?.Invoke(_formatter?.Invoke(new object[] {_categoryName, eventId, formatter(state, exception)}));
+            _writeLine?.Invoke(_formatter?.Invoke(new object[] {logLevel, _categoryName, eventId, formatter(state, exception)}));
 
             if (exception != null)
                 _writeLine?.Invoke(exception.ToString());
