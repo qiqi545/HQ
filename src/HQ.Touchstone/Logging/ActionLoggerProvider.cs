@@ -20,7 +20,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Touchstone
 {
-    internal sealed class ActionLoggerProvider : ILoggerProvider
+    public sealed class ActionLoggerProvider : ILoggerProvider
     {
         private readonly Action<string> _writeLine;
 

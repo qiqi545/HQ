@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using HQ.Common.Helpers;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
@@ -53,7 +54,7 @@ namespace HQ.Touchstone
             });
         }
 
-        private static string GetLogLevelShorthand(object[] args)
+        private static string GetLogLevelShorthand(IReadOnlyList<object> args)
         {
             var logLevel = (LogLevel) args[0];
             string logLevelString;

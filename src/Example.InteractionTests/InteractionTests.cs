@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 
 namespace Example.InteractionTests
 {
-    public class TestClass : SystemUnderTest<Startup>
+    public class InteractionTests : SystemUnderTest<Startup>
     {
-        [Fact]
+        [Test]
         public async Task PassingTest()
         {
             Trace.WriteLine("This is a trace");
