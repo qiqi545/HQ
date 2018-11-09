@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\package.props" />
   <Import Project="$(SolutionDir)..\build.props" />
@@ -6,13 +6,25 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.6</Version>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;PLATFORM</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;PLATFORM</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PackageSources|AnyCPU'">
+    <DefineConstants>TRACE;PLATFORM</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
