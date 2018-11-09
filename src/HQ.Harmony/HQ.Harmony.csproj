@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\..\HQ.Common\package.props" />
-  <Import Project="$(SolutionDir)..\..\HQ.Common\build.props" />
+  <Import Project="$(ProjectDir)..\..\package.props" />
+  <Import Project="$(ProjectDir)..\..\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -15,10 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Common" Version="1.0.20" />
-    <PackageReference Include="HQ.Remix" Version="1.0.20" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
   </ItemGroup>
 
 </Project>

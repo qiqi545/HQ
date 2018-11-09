@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -27,26 +27,32 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Harmony
 {
-	public sealed class HarmonyContainer : IContainer, IMethodResolver
+    public sealed class HarmonyContainer : IContainer, IMethodResolver, IMethodInvoker
 	{
-		private readonly List<IResolverExtension> _extensions;
+	    private readonly List<IResolverExtension> _extensions;
 		private readonly IEnumerable<Assembly> _fallbackAssemblies;
+        private readonly IServiceProvider _fallbackProvider;
 
-		private readonly IServiceProvider _fallbackProvider;
+	    private readonly IMethodResolver _methodResolver;
+	    private readonly IMethodInvoker _methodInvoker;
 
-		public HarmonyContainer(IServiceProvider fallbackProvider = null,
-			IEnumerable<Assembly> fallbackAssemblies = null)
+        public HarmonyContainer(
+		    IServiceProvider fallbackProvider = null,
+		    IEnumerable<Assembly> fallbackAssemblies = null,
+		    IMethodResolver methodResolver = null,
+		    IMethodInvoker methodInvoker = null)
 		{
-			_fallbackProvider = fallbackProvider;
-			_fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
-			_extensions = new List<IResolverExtension>();
+		    _extensions = new List<IResolverExtension>();
+
+            _fallbackProvider = fallbackProvider;
+		    _fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
+            _methodResolver = methodResolver ?? new HarmonyMethodResolver(this);
+		    _methodInvoker = methodInvoker ?? new HarmonyMethodInvoker(this);
 		}
 
 		public bool ThrowIfCantResolve { get; set; }
 
-		public void Dispose()
-		{
-		}
+		public void Dispose()  {}
 
 		internal bool AddExtension<T>(T extension) where T : IResolverExtension
 		{
@@ -56,75 +62,38 @@ namespace HQ.Harmony
 			return true;
 		}
 
-		#region Method Resolution
+        #region Method Resolution
 
-		private const DelegateBuildStrategy HandlerBuildStrategy = DelegateBuildStrategy.ObjectExecutor;
+	    public MethodInfo ResolveMethod(Type serviceType, string name)
+	    {
+	        return _methodResolver?.ResolveMethod(serviceType, name);
+	    }
 
-		public MethodInfo ResolveMethod(Type serviceType, string name)
-		{
-			var implementation = Resolve(serviceType);
-			if (implementation == null)
-				return null;
+	    public MethodInfo ResolveMethod<T>(string name) where T : class
+	    {
+	        return _methodResolver?.ResolveMethod<T>(name);
+	    }
 
-			// type(name)->method
-			return MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
-		}
+	    public MethodInfo ResolveMethod(string serviceTypeName, string name)
+	    {
+	        return _methodResolver?.ResolveMethod(serviceTypeName, name);
+	    }
 
-		public MethodInfo ResolveMethod<T>(string name) where T : class
-		{
-			return ResolveMethod(typeof(T), name);
-		}
+	    public object InvokeMethod(Type serviceType, string name)
+	    {
+	        return _methodInvoker.InvokeMethod(serviceType, name);
+	    }
 
-		public object InvokeMethod(Type serviceType, string name)
-		{
-			var implementation = Resolve(serviceType);
-			if (implementation == null)
-				return null;
+	    public object InvokeMethod<T>(string name) where T : class
+	    {
+	        return _methodInvoker.InvokeMethod<T>(name);
+	    }
 
-			// type(name)->method
-			var method = MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
+        #endregion
 
-			// method->parameters
-			var parameters = MethodFactory.Default.GetOrCacheParametersForMethod(method);
+        #region Register
 
-			// auto-resolve widest method
-			var args = new object[parameters.Length];
-			for (var i = 0; i < parameters.Length; i++)
-			{
-				var arg = AutoResolve(parameters[i].ParameterType);
-				if (arg == null)
-					return null;
-				args[i] = arg;
-			}
-
-			var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method, HandlerBuildStrategy);
-
-			return handler?.Invoke(implementation, args);
-		}
-
-		public object InvokeMethod<T>(string name) where T : class
-		{
-			return InvokeMethod(typeof(T), name);
-		}
-
-		public Handler ResolveHandler(Type serviceType, string name)
-		{
-			var method = ResolveMethod(serviceType, name);
-			return method == null
-				? null
-				: HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method, HandlerBuildStrategy);
-		}
-
-		public Handler ResolveHandler<T>(string name) where T : class
-		{
-			return ResolveHandler(typeof(T), name);
-		}
-
-		#endregion
-
-		#region Register
-
-		private readonly IDictionary<Type, Func<object>>
+        private readonly IDictionary<Type, Func<object>>
 			_registrations = new ConcurrentDictionary<Type, Func<object>>();
 
 		private readonly IDictionary<NameAndType, Func<object>> _namedRegistrations =
@@ -133,7 +102,7 @@ namespace HQ.Harmony
 		private readonly IDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
-		public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+        public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
 		{
 			var next = WrapLifecycle(builder, lifetime);
 			if (_registrations.ContainsKey(type))
