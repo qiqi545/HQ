@@ -49,7 +49,7 @@ namespace HQ.Touchstone
 
                 sb.Append(logLevelString).Append(':')
                     .Append(categoryName).Append('[').Append(eventId).AppendLine("]")
-                    .Append(message);
+                    .Append('\t').Append(message);
             });
         }
 
