@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,10 +19,13 @@
     <Content Include="..\Stack\HQ.Common\src\HQ.Common\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common\obj\**;..\Stack\HQ.Common\src\HQ.Common\bin\**" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\obj\**;..\Stack\HQ.Common\src\HQ.Common.AspNetCore\bin\**" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence\bin\**" Link="Cadence\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\bin\**" Link="Cadence.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\bin\**" Link="Cadence.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Remix\src\HQ.Remix\**\*.cs" Exclude="..\Stack\HQ.Remix\src\HQ.Remix\obj\**;..\Stack\HQ.Remix\src\HQ.Remix\bin\**" Link="Remix\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Harmony\src\HQ.Harmony\**\*.cs" Exclude="..\Stack\HQ.Harmony\src\HQ.Harmony\obj\**;..\Stack\HQ.Harmony\src\HQ.Harmony\bin\**" Link="Harmony\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\obj\**;..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\bin\**" Link="Harmony.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone\bin\**" Link="Touchstone\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\bin\**" Link="Touchstone.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta\bin\**" Link="Rosetta\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Domicile\src\HQ.Domicile\**\*.cs" Exclude="..\Stack\HQ.Domicile\src\HQ.Domicile\obj\**;..\Stack\HQ.Domicile\src\HQ.Domicile\bin\**" Link="Domicile\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
