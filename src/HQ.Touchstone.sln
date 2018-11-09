@@ -23,6 +23,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{23
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.AspNetCore", "..\..\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj", "{01FD0F21-BE11-4CCE-AA11-F0FBC13D06BC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "Example\Example.csproj", "{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.InteractionTests", "Example.InteractionTests\Example.InteractionTests.csproj", "{E276A924-4017-4216-9EE2-42852EFB4853}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Touchstone.Xunit", "HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj", "{C9734DB4-DEBB-407D-B21E-5F2A662EB926}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,8 +56,8 @@ Global
 		{05B81ECC-AE6B-4C0A-9300-34AB3E447077}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
-		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
+		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.PackageSources|Any CPU.ActiveCfg = Package|Any CPU
+		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.PackageSources|Any CPU.Build.0 = Package|Any CPU
 		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29ACF1F3-8E32-4BD0-81F1-8504EAF53DD8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{01FD0F21-BE11-4CCE-AA11-F0FBC13D06BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -60,6 +66,24 @@ Global
 		{01FD0F21-BE11-4CCE-AA11-F0FBC13D06BC}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
 		{01FD0F21-BE11-4CCE-AA11-F0FBC13D06BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01FD0F21-BE11-4CCE-AA11-F0FBC13D06BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.PackageSources|Any CPU.ActiveCfg = Debug|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.PackageSources|Any CPU.Build.0 = Debug|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05D61C95-72BA-4EBB-8B02-F7BB9289A4F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.PackageSources|Any CPU.ActiveCfg = Debug|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.PackageSources|Any CPU.Build.0 = Debug|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E276A924-4017-4216-9EE2-42852EFB4853}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.PackageSources|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.PackageSources|Any CPU.Build.0 = Debug|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9734DB4-DEBB-407D-B21E-5F2A662EB926}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -15,23 +15,27 @@
 
 #endregion
 
-using System;
-using Microsoft.Extensions.Logging;
+using System.Collections;
+using HQ.Touchstone.Assertions;
+using Xunit;
 
 namespace HQ.Touchstone
 {
-    internal sealed class ActionLoggerProvider : ILoggerProvider
+    public sealed class XunitAssert : IAssert
     {
-        private readonly Action<string> _writeLine;
-
-        public ActionLoggerProvider(Action<string> writeLine)
+        public void NotNull(object instance)
         {
-            _writeLine = writeLine;
+            Assert.NotNull(instance);
         }
 
-        public ILogger CreateLogger(string categoryName)
-            => new ActionLogger(categoryName, _writeLine);
+        public void NotEmpty(IEnumerable enumerable)
+        {
+            Assert.NotEmpty(enumerable);
+        }
 
-        public void Dispose() { }
+        public void True(bool condition)
+        {
+            Assert.True(condition);
+        }
     }
 }

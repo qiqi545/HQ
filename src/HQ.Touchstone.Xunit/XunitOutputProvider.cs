@@ -15,23 +15,29 @@
 
 #endregion
 
-using System;
-using Microsoft.Extensions.Logging;
+using Xunit.Sdk;
 
 namespace HQ.Touchstone
 {
-    internal sealed class ActionLoggerProvider : ILoggerProvider
+    public sealed class XunitOutputProvider : IOutputProvider
     {
-        private readonly Action<string> _writeLine;
+        internal TestOutputHelper inner;
 
-        public ActionLoggerProvider(Action<string> writeLine)
+        public XunitOutputProvider()
         {
-            _writeLine = writeLine;
+            inner = new TestOutputHelper();
         }
 
-        public ILogger CreateLogger(string categoryName)
-            => new ActionLogger(categoryName, _writeLine);
+        public bool IsAvailable => inner != null;
 
-        public void Dispose() { }
+        public void WriteLine(string message)
+        {
+            inner.WriteLine(message);
+        }
+
+        public void WriteLine(string format, params object[] args)
+        {
+            inner.WriteLine(format, args);
+        }
     }
 }

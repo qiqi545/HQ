@@ -16,22 +16,13 @@
 #endregion
 
 using System;
-using Microsoft.Extensions.Logging;
+using Xunit.Sdk;
 
 namespace HQ.Touchstone
 {
-    internal sealed class ActionLoggerProvider : ILoggerProvider
+    [AttributeUsage(AttributeTargets.Method)]
+    [XunitTestCaseDiscoverer("HQ.Touchstone.Extensions.TestCaseDiscoverer", "HQ.Touchstone.Xunit")]
+    public class FactAttribute : Xunit.FactAttribute
     {
-        private readonly Action<string> _writeLine;
-
-        public ActionLoggerProvider(Action<string> writeLine)
-        {
-            _writeLine = writeLine;
-        }
-
-        public ILogger CreateLogger(string categoryName)
-            => new ActionLogger(categoryName, _writeLine);
-
-        public void Dispose() { }
     }
 }

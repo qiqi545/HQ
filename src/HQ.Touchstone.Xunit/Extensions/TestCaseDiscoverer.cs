@@ -15,23 +15,26 @@
 
 #endregion
 
-using System;
-using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Extensions
 {
-    internal sealed class ActionLoggerProvider : ILoggerProvider
+    public class TestCaseDiscoverer : IXunitTestCaseDiscoverer
     {
-        private readonly Action<string> _writeLine;
+        private readonly IMessageSink _diagnosticMessageSink;
 
-        public ActionLoggerProvider(Action<string> writeLine)
+        public TestCaseDiscoverer(IMessageSink diagnosticMessageSink)
         {
-            _writeLine = writeLine;
+            _diagnosticMessageSink = diagnosticMessageSink;
         }
 
-        public ILogger CreateLogger(string categoryName)
-            => new ActionLogger(categoryName, _writeLine);
-
-        public void Dispose() { }
+        public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions,
+            ITestMethod testMethod, IAttributeInfo factAttribute)
+        {
+            yield return new TestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
+                discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod);
+        }
     }
 }
