@@ -41,15 +41,50 @@ namespace HQ.Touchstone
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                var logLevel = args[0];
+                var logLevelString = GetLogLevelShorthand(args);
+
                 var categoryName = args[1];
                 var eventId = args[2];
                 var message = args[3];
 
-                sb.Append(logLevel?.ToString()?.ToLowerInvariant()).Append(':')
+                sb.Append(logLevelString).Append(':')
                     .Append(categoryName).Append('[').Append(eventId).AppendLine("]")
                     .Append(message);
             });
+        }
+
+        private static string GetLogLevelShorthand(object[] args)
+        {
+            var logLevel = (LogLevel) args[0];
+            string logLevelString;
+            switch (logLevel)
+            {
+                case LogLevel.Trace:
+                    logLevelString = "trace";
+                    break;
+                case LogLevel.Debug:
+                    logLevelString = "dbug";
+                    break;
+                case LogLevel.Information:
+                    logLevelString = "info";
+                    break;
+                case LogLevel.Warning:
+                    logLevelString = "warn";
+                    break;
+                case LogLevel.Error:
+                    logLevelString = "error";
+                    break;
+                case LogLevel.Critical:
+                    logLevelString = "crit";
+                    break;
+                case LogLevel.None:
+                    logLevelString = "";
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return logLevelString;
         }
 
         public IDisposable BeginScope<TState>(TState state) => this.ActLike<IDisposable>();
