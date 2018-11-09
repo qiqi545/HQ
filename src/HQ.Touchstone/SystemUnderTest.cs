@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.TraceSource;
 
 namespace HQ.Touchstone
 {
@@ -57,6 +58,11 @@ namespace HQ.Touchstone
         {
             _serviceProvider = app.ApplicationServices;
 
+            TryInstallLogging();
+
+            if (_serviceProvider.GetService<TraceSourceLoggerProvider>() != null)
+                return; // already capturing traces by way of a log provider
+            
             Trace.Listeners.Add(new ActionTraceListener(message =>
             {
                 var outputProvider = AmbientContext.OutputProvider;
@@ -64,8 +70,6 @@ namespace HQ.Touchstone
                     return;
                 outputProvider.WriteLine(message);
             }));
-
-            TryInstallLogging();
         }
 
         public HttpClient CreateClient()
