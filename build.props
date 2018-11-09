@@ -60,7 +60,11 @@
     <Exec Command="dotnet run --project &quot;D:\Src\HQ\HQ.Common\src\PostBuild\PostBuild.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration)" />
   </Target>
 
-  <Target Name="PublishToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'!='Debug'">
+  <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
+    <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
+  </Target>
+
+  <Target Name="PublishSourcesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='PackageSources'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
 

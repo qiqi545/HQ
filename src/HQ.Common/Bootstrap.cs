@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,6 +15,8 @@
 
 #endregion
 
+using System;
+using System.Diagnostics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -23,32 +25,35 @@ namespace HQ.Common
 {
 	public class Bootstrap
 	{
-		static Bootstrap()
-		{
-			JsonConvert.DefaultSettings = () =>
-			{
-				var settings = new JsonSerializerSettings
-				{
-					Formatting = Formatting.None,
-					TypeNameHandling = TypeNameHandling.None,
-					NullValueHandling = NullValueHandling.Ignore,
-					DefaultValueHandling = DefaultValueHandling.Ignore,
-					ContractResolver = new CamelCasePropertyNamesContractResolver(),
-
-					DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-					DateParseHandling = DateParseHandling.DateTimeOffset,
-					DateFormatHandling = DateFormatHandling.IsoDateFormat,
-					DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
-				};
-
-				settings.Converters.Add(new StringEnumConverter());
-
-				return settings;
-			};
-		}
-
 		public static void EnsureInitialized()
 		{
+		    try
+		    {
+		        JsonConvert.DefaultSettings = () =>
+		        {
+		            var settings = new JsonSerializerSettings
+		            {
+		                Formatting = Formatting.None,
+		                TypeNameHandling = TypeNameHandling.None,
+		                NullValueHandling = NullValueHandling.Ignore,
+		                DefaultValueHandling = DefaultValueHandling.Ignore,
+		                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+
+		                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+		                DateParseHandling = DateParseHandling.DateTimeOffset,
+		                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+		                DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
+		            };
+
+		            settings.Converters.Add(new StringEnumConverter());
+
+		            return settings;
+		        };
+		    }
+		    catch (Exception e)
+		    {
+		        Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
+		    }
 		}
 	}
 }
