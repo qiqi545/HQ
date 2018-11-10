@@ -15,12 +15,20 @@
 
 #endregion
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Configuration
 {
     public class TestSettings
     {
         public string[] SystemsUnderTest { get; set; }
         public string EnvironmentName { get; set; } = "InteractionTests";
         public string AppSettingsPath { get; set; } = null;
+        public InteractionMethodOptions InteractionMethods { get; set; } = new InteractionMethodOptions();
+
+        public class InteractionMethodOptions
+        {
+            public string[] Configuration { get; set; } = {"Startup", "SystemUnderTest"};
+            public string[] ConfigureServices { get; set; } = {"Startup", "SystemUnderTest"};
+            public string[] Configure { get; set; } = {"Startup", "SystemUnderTest"};
+        }
     }
 }

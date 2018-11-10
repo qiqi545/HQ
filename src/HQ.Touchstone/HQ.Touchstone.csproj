@@ -31,10 +31,4 @@
     <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="xunit.core">
-      <HintPath>C:\Users\User\.nuget\packages\xunit.extensibility.core\2.4.1\lib\netstandard1.1\xunit.core.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

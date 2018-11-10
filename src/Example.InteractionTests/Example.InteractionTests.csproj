@@ -20,4 +20,10 @@
     <ProjectReference Include="..\HQ.Touchstone\HQ.Touchstone.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="System">
+      <HintPath>System</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

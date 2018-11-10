@@ -1,0 +1,10 @@
+{
+  "SystemsUnderTest": [ "ObjectService" ],
+  "EnvironmentName": "InteractionTests",
+  "AppSettingsPath": "..\\Example",
+  "InteractionMethods": {
+    "Configuration": [ "Startup", "SystemUnderTest" ],
+    "ConfigureServices": [ "Startup", "SystemUnderTest" ],
+    "Configure": [ "Startup", "SystemUnderTest" ]
+  } 
+}

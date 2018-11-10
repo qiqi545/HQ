@@ -17,23 +17,78 @@
 
 using System;
 using System.Diagnostics;
+using System.Net.Http;
+using HQ.Remix;
 using HQ.Touchstone.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.TraceSource;
 
 namespace HQ.Touchstone
 {
-    public abstract class SystemUnderTest : TestScope, ILogger, IDisposable
+    public abstract class SystemUnderTest<T> : TestScope, ILogger<T>, IDisposable where T : class
     {
-        private readonly IServiceProvider _serviceProvider;
+        private readonly WebHostFixture<T> _systemUnderTest;
+        private ILogger<SystemUnderTest<T>> _logger;
 
-        private ILogger<SystemUnderTest> _logger;
-
-        protected SystemUnderTest(IServiceProvider serviceProvider = null)
+        protected SystemUnderTest()
         {
-            _serviceProvider = serviceProvider;
+            _systemUnderTest = new WebHostFixture<T>(this);
+        }
 
-            TryInstallLogging(serviceProvider);
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public virtual void Configuration(IConfiguration config)
+        {
+        }
+
+        public virtual void ConfigureServices(IServiceCollection services)
+        {
+            using (var resolver = new TypeResolver())
+            {
+                TryInstallShouldAssertions(resolver);
+            }
+        }
+
+        public virtual void Configure(IApplicationBuilder app)
+        {
+            serviceProvider = app.ApplicationServices;
+
+            TryInstallLogging();
+
+            TryInstallTracing();
+        }
+
+        public HttpClient CreateClient()
+        {
+            return _systemUnderTest.CreateClient();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+                _systemUnderTest?.Dispose();
+        }
+
+        private void TryInstallLogging()
+        {
+            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+            loggerFactory = loggerFactory ?? defaultLoggerFactory;
+            loggerFactory.AddProvider(CreateLoggerProvider());
+
+            _logger = loggerFactory.CreateLogger<SystemUnderTest<T>>();
+        }
+
+        private void TryInstallTracing()
+        {
+            if (serviceProvider.GetService<TraceSourceLoggerProvider>() != null)
+                return;
 
             Trace.Listeners.Add(new ActionTraceListener(message =>
             {
@@ -44,54 +99,9 @@ namespace HQ.Touchstone
             }));
         }
 
-        public void Dispose()
+        public override ILogger GetLogger()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            return serviceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? _logger;
         }
-
-        private void TryInstallLogging(IServiceProvider serviceProvider)
-        {
-            var loggerFactory = serviceProvider?.GetService<ILoggerFactory>();
-            loggerFactory = loggerFactory ?? defaultLoggerFactory;
-            loggerFactory.AddProvider(CreateLoggerProvider());
-            _logger = loggerFactory.CreateLogger<SystemUnderTest>();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-            }
-        }
-
-        #region ILogger
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
-            Func<TState, Exception, string> formatter)
-        {
-            var logger = GetLogger();
-            logger?.Log(logLevel, eventId, state, exception, formatter);
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            var logger = GetLogger();
-            return logger != null && logger.IsEnabled(logLevel);
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            var logger = GetLogger();
-            return logger?.BeginScope(state);
-        }
-
-        private ILogger<SystemUnderTest> GetLogger()
-        {
-            var logger = _serviceProvider?.GetService<ILogger<SystemUnderTest>>() ?? _logger;
-            return logger;
-        }
-
-        #endregion
     }
 }

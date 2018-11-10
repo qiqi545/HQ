@@ -22,6 +22,7 @@ using System.IO;
 using System.Net.Http;
 using HQ.Harmony;
 using HQ.Harmony.AspNetCore;
+using HQ.Touchstone.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
