@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\package.props" />
-  <Import Project="$(SolutionDir)..\build.props" />
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
 
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>

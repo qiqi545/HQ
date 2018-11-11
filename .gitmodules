@@ -1,0 +1,39 @@
+[submodule "src/Stack/HQ.Common"]
+	path = src/Stack/HQ.Common
+	url = https://github.com/hq-io/HQ.Common
+
+[submodule "src/Stack/HQ.Remix"]
+	path = src/Stack/HQ.Remix
+	url = https://github.com/hq-io/HQ.Remix
+
+[submodule "src/Stack/HQ.Harmony"]
+	path = src/Stack/HQ.Harmony
+	url = https://github.com/hq-io/HQ.Harmony
+	
+[submodule "src/Stack/HQ.Touchstone"]
+	path = src/Stack/HQ.Touchstone
+	url = https://github.com/hq-io/HQ.Touchstone
+	
+[submodule "src/Stack/HQ.Cadence"]
+	path = src/Stack/HQ.Cadence
+	url = https://github.com/hq-io/HQ.Cadence
+	
+[submodule "src/Stack/HQ.Domicile"]
+	path = src/Stack/HQ.Domicile
+	url = https://github.com/hq-io/HQ.Domicile
+	
+[submodule "src/Stack/HQ.MissionControl"]
+	path = src/Stack/HQ.MissionControl
+	url = https://github.com/hq-io/HQ.MissionControl
+	
+[submodule "src/Stack/HQ.Rosetta"]
+	path = src/Stack/HQ.Rosetta
+	url = https://github.com/hq-io/HQ.Rosetta
+	
+[submodule "src/Stack/HQ.Flow"]
+	path = src/Stack/HQ.Flow
+	url = https://github.com/hq-io/HQ.Flow
+	
+[submodule "src/Stack/HQ.Cohort"]
+	path = src/Stack/HQ.Cohort
+	url = https://github.com/hq-io/HQ.Cohort
