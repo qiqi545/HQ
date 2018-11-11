@@ -1,10 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>HQ.Touchstone.Xunit</AssemblyName>
-    <RootNamespace>HQ.Touchstone</RootNamespace>
     <Configurations>Debug;Release;Package</Configurations>
+    <RootNamespace>HQ.Touchstone</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Power tools for API testing in .NET. This package provides integration with the XUnit test framework.</Description>
+    <PackageTags>hq-stack dotnet-standard unit-tests interaction-tests integration-tests</PackageTags>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>

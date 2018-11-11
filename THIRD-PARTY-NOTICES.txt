@@ -1,5 +1,15 @@
-HQ.Touchstone uses modified internals and the full implementation of ImpromptuInterface from source at commit `1d766013d16f580e57534b44dc760b11444f4ffe`
-at https://github.com/ekonbenefits/impromptu-interface
+##################################################################
+
+HQ.IO uses third-party libraries and other materials, distributed 
+under different licenses than HQ.IO licensed components.
+
+If we have omitted a notice here, please let us know by submitting
+an issue on GitHub, or by emailing support@hq.io
+
+##################################################################+
+
+HQ.Touchstone uses modified internals and the full implementation of ImpromptuInterface from source 
+at commit `1d766013d16f580e57534b44dc760b11444f4ffe` at https://github.com/ekonbenefits/impromptu-interface
 
 Apache License, Version 2.0
 Apache License
