@@ -19,16 +19,22 @@ using System;
 
 namespace HQ.Harmony
 {
-	public interface IDependencyRegistrar : IDisposable
-	{
-		IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew);
-		IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
-        IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
-        IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
-        IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+    public interface IDependencyRegistrar : IDisposable
+    {
+        IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew);
+        IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 
-	    IDependencyRegistrar Register<T>(T instance);
-	    IDependencyRegistrar Register(object instance);
+        IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+            where T : class;
+
+        IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
+            where T : class;
+
+        IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder,
+            Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+
+        IDependencyRegistrar Register<T>(T instance);
+        IDependencyRegistrar Register(object instance);
         bool TryRegister<T>(T instance);
-	}
+    }
 }

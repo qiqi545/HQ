@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -21,47 +21,47 @@ using Xunit;
 
 namespace HQ.Harmony.Tests
 {
-	public class RegisterTests : IClassFixture<HarmonyContainerFixture>
-	{
-		public RegisterTests(HarmonyContainerFixture fixture)
-		{
-			_fixture = fixture;
-		}
+    public class RegisterTests : IClassFixture<HarmonyContainerFixture>
+    {
+        public RegisterTests(HarmonyContainerFixture fixture)
+        {
+            _fixture = fixture;
+        }
 
-		private readonly HarmonyContainerFixture _fixture;
+        private readonly HarmonyContainerFixture _fixture;
 
-		public interface IFoo
-		{
-		}
+        public interface IFoo
+        {
+        }
 
-		public class Foo : IFoo
-		{
-		}
+        public class Foo : IFoo
+        {
+        }
 
-		public class OtherFoo : IFoo
-		{
-		}
+        public class OtherFoo : IFoo
+        {
+        }
 
-		[Fact]
-		public void Can_register_twice_and_get_back_a_collection()
-		{
-			_fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
-			_fixture.C.Register<IFoo>(() => new OtherFoo(), Lifetime.Permanent);
+        [Fact]
+        public void Can_register_twice_and_get_back_a_collection()
+        {
+            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
+            _fixture.C.Register<IFoo>(() => new OtherFoo(), Lifetime.Permanent);
 
-			// strong-typed
-			var strong = _fixture.C.ResolveAll<IFoo>();
-			Assert.NotNull(strong);
-			Assert.Equal(2, strong.Count());
+            // strong-typed
+            var strong = _fixture.C.ResolveAll<IFoo>();
+            Assert.NotNull(strong);
+            Assert.Equal(2, strong.Count());
 
-			// weak-typed
-			var weak = _fixture.C.ResolveAll(typeof(IFoo)).Cast<IFoo>();
-			Assert.NotNull(weak);
-			Assert.Equal(2, weak.Count());
+            // weak-typed
+            var weak = _fixture.C.ResolveAll(typeof(IFoo)).Cast<IFoo>();
+            Assert.NotNull(weak);
+            Assert.Equal(2, weak.Count());
 
-			// implied
-			var implied = _fixture.C.Resolve<IEnumerable<IFoo>>();
-			Assert.NotNull(implied);
-			Assert.Equal(2, implied.Count());
-		}
-	}
+            // implied
+            var implied = _fixture.C.Resolve<IEnumerable<IFoo>>();
+            Assert.NotNull(implied);
+            Assert.Equal(2, implied.Count());
+        }
+    }
 }

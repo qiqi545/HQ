@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -21,13 +21,13 @@ using System.Collections.Generic;
 
 namespace HQ.Harmony
 {
-	public interface IDependencyResolver : IDisposable
-	{
-		T Resolve<T>() where T : class;
-		object Resolve(Type serviceType);
-		IEnumerable<T> ResolveAll<T>() where T : class;
-		IEnumerable ResolveAll(Type serviceType);
-		T Resolve<T>(string name) where T : class;
-		object Resolve(string name, Type serviceType);
-	}
+    public interface IDependencyResolver : IDisposable
+    {
+        T Resolve<T>() where T : class;
+        object Resolve(Type serviceType);
+        IEnumerable<T> ResolveAll<T>() where T : class;
+        IEnumerable ResolveAll(Type serviceType);
+        T Resolve<T>(string name) where T : class;
+        object Resolve(string name, Type serviceType);
+    }
 }

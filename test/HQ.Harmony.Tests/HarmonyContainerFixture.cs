@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,18 +19,18 @@ using System;
 
 namespace HQ.Harmony.Tests
 {
-	public class HarmonyContainerFixture : IDisposable
-	{
-		public HarmonyContainerFixture()
-		{
-			C = new HarmonyContainer();
-		}
+    public class HarmonyContainerFixture : IDisposable
+    {
+        public HarmonyContainerFixture()
+        {
+            C = new HarmonyContainer();
+        }
 
-		public IContainer C { get; }
+        public IContainer C { get; }
 
-		public void Dispose()
-		{
-			C.Dispose();
-		}
-	}
+        public void Dispose()
+        {
+            C.Dispose();
+        }
+    }
 }

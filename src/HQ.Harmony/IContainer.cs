@@ -17,5 +17,7 @@
 
 namespace HQ.Harmony
 {
-	public interface IContainer : IDependencyResolver, IDependencyRegistrar { }
+    public interface IContainer : IDependencyResolver, IDependencyRegistrar
+    {
+    }
 }
