@@ -21,15 +21,15 @@ using Microsoft.CodeAnalysis.PooledObjects;
 
 namespace HQ.Common.Helpers
 {
-	public static class StopwatchPool
-	{
-		public static TimeSpan Scoped(Action<Stopwatch> closure)
-		{
-			var sw = PooledStopwatch.StartInstance();
-			closure(sw);
-			var elapsed = sw.Elapsed;
-			sw.Free();
-			return elapsed;
-		}
-	}
+    public static class StopwatchPool
+    {
+        public static TimeSpan Scoped(Action<Stopwatch> closure)
+        {
+            var sw = PooledStopwatch.StartInstance();
+            closure(sw);
+            var elapsed = sw.Elapsed;
+            sw.Free();
+            return elapsed;
+        }
+    }
 }

@@ -1,4 +1,21 @@
-﻿using System;
+﻿#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -7,29 +24,22 @@ using System.Data.Common;
 namespace HQ.Common.FastMember
 {
     /// <summary>
-    /// Provides a means of reading a sequence of objects as a data-reader, for example
-    /// for use with SqlBulkCopy or other data-base oriented code
+    ///     Provides a means of reading a sequence of objects as a data-reader, for example
+    ///     for use with SqlBulkCopy or other data-base oriented code
     /// </summary>
     public class ObjectReader : DbDataReader
     {
-        private IEnumerator source;
         private readonly TypeAccessor accessor;
-        private readonly string[] memberNames;
-        private readonly Type[] effectiveTypes;
         private readonly BitArray allowNull;
+        private readonly Type[] effectiveTypes;
+        private readonly string[] memberNames;
+        private bool active = true;
+
+        private object current;
+        private IEnumerator source;
 
         /// <summary>
-        /// Creates a new ObjectReader instance for reading the supplied data
-        /// </summary>
-        /// <param name="source">The sequence of objects to represent</param>
-        /// <param name="members">The members that should be exposed to the reader</param>
-        public static ObjectReader Create<T>(IEnumerable<T> source, params string[] members)
-        {
-            return new ObjectReader(typeof(T), source, members);
-        }
-
-        /// <summary>
-        /// Creates a new ObjectReader instance for reading the supplied data
+        ///     Creates a new ObjectReader instance for reading the supplied data
         /// </summary>
         /// <param name="type">The expected Type of the information to be read</param>
         /// <param name="source">The sequence of objects to represent</param>
@@ -38,9 +48,8 @@ namespace HQ.Common.FastMember
         {
             if (source == null) throw new ArgumentOutOfRangeException("source");
 
-            
 
-            bool allMembers = members == null || members.Length == 0;
+            var allMembers = members == null || members.Length == 0;
 
             accessor = TypeAccessor.Create(type);
             if (accessor.GetMembersSupported)
@@ -50,21 +59,17 @@ namespace HQ.Common.FastMember
                 if (allMembers)
                 {
                     members = new string[typeMembers.Count];
-                    for (int i = 0; i < members.Length; i++)
-                    {
-                        members[i] = typeMembers[i].Name;
-                    }
+                    for (var i = 0; i < members.Length; i++) members[i] = typeMembers[i].Name;
                 }
 
                 this.allowNull = new BitArray(members.Length);
                 effectiveTypes = new Type[members.Length];
-                for (int i = 0; i < members.Length; i++)
+                for (var i = 0; i < members.Length; i++)
                 {
                     Type memberType = null;
-                    bool allowNull = true;
-                    string hunt = members[i];
+                    var allowNull = true;
+                    var hunt = members[i];
                     foreach (var member in typeMembers)
-                    {
                         if (member.Name == hunt)
                         {
                             if (memberType == null)
@@ -82,23 +87,22 @@ namespace HQ.Common.FastMember
                                 break;
                             }
                         }
-                    }
+
                     this.allowNull[i] = allowNull;
                     effectiveTypes[i] = memberType ?? typeof(object);
                 }
             }
             else if (allMembers)
             {
-                throw new InvalidOperationException("Member information is not available for this type; the required members must be specified explicitly");
+                throw new InvalidOperationException(
+                    "Member information is not available for this type; the required members must be specified explicitly");
             }
 
             current = null;
-            memberNames = (string[])members.Clone();
+            memberNames = (string[]) members.Clone();
 
             this.source = source.GetEnumerator();
         }
-
-        object current;
 
 
         public override int Depth
@@ -106,10 +110,53 @@ namespace HQ.Common.FastMember
             get { return 0; }
         }
 
+        public override bool HasRows
+        {
+            get { return active; }
+        }
+
+        public override int RecordsAffected
+        {
+            get { return 0; }
+        }
+
+        public override int FieldCount
+        {
+            get { return memberNames.Length; }
+        }
+
+        public override bool IsClosed
+        {
+            get { return source == null; }
+        }
+
+        public override object this[string name]
+        {
+            get { return accessor[current, name] ?? DBNull.Value; }
+        }
+
+        /// <summary>
+        ///     Gets the value of the current object in the member specified
+        /// </summary>
+        public override object this[int i]
+        {
+            get { return accessor[current, memberNames[i]] ?? DBNull.Value; }
+        }
+
+        /// <summary>
+        ///     Creates a new ObjectReader instance for reading the supplied data
+        /// </summary>
+        /// <param name="source">The sequence of objects to represent</param>
+        /// <param name="members">The members that should be exposed to the reader</param>
+        public static ObjectReader Create<T>(IEnumerable<T> source, params string[] members)
+        {
+            return new ObjectReader(typeof(T), source, members);
+        }
+
         public override DataTable GetSchemaTable()
         {
             // these are the columns used by DataTable load
-            DataTable table = new DataTable
+            var table = new DataTable
             {
                 Columns =
                 {
@@ -120,8 +167,8 @@ namespace HQ.Common.FastMember
                     {"AllowDBNull", typeof(bool)}
                 }
             };
-            object[] rowData = new object[5];
-            for (int i = 0; i < memberNames.Length; i++)
+            var rowData = new object[5];
+            for (var i = 0; i < memberNames.Length; i++)
             {
                 rowData[0] = i;
                 rowData[1] = memberNames[i];
@@ -130,26 +177,21 @@ namespace HQ.Common.FastMember
                 rowData[4] = allowNull == null ? true : allowNull[i];
                 table.Rows.Add(rowData);
             }
+
             return table;
         }
+
         public override void Close()
         {
             Shutdown();
         }
 
-        public override bool HasRows
-        {
-            get
-            {
-                return active;
-            }
-        }
-        private bool active = true;
         public override bool NextResult()
         {
             active = false;
             return false;
         }
+
         public override bool Read()
         {
             if (active)
@@ -160,18 +202,12 @@ namespace HQ.Common.FastMember
                     current = tmp.Current;
                     return true;
                 }
-                else
-                {
-                    active = false;
-                }
+
+                active = false;
             }
+
             current = null;
             return false;
-        }
-
-        public override int RecordsAffected
-        {
-            get { return 0; }
         }
 
         protected override void Dispose(bool disposing)
@@ -179,6 +215,7 @@ namespace HQ.Common.FastMember
             base.Dispose(disposing);
             if (disposing) Shutdown();
         }
+
         private void Shutdown()
         {
             active = false;
@@ -188,52 +225,40 @@ namespace HQ.Common.FastMember
             if (tmp != null) tmp.Dispose();
         }
 
-        public override int FieldCount
-        {
-            get { return memberNames.Length; }
-        }
-        public override bool IsClosed
-        {
-            get
-            {
-                return source == null;
-            }
-        }
-
         public override bool GetBoolean(int i)
         {
-            return (bool)this[i];
+            return (bool) this[i];
         }
 
         public override byte GetByte(int i)
         {
-            return (byte)this[i];
+            return (byte) this[i];
         }
 
         public override long GetBytes(int i, long fieldOffset, byte[] buffer, int bufferoffset, int length)
         {
-            byte[] s = (byte[])this[i];
-            int available = s.Length - (int)fieldOffset;
+            var s = (byte[]) this[i];
+            var available = s.Length - (int) fieldOffset;
             if (available <= 0) return 0;
 
-            int count = Math.Min(length, available);
-            Buffer.BlockCopy(s, (int)fieldOffset, buffer, bufferoffset, count);
+            var count = Math.Min(length, available);
+            Buffer.BlockCopy(s, (int) fieldOffset, buffer, bufferoffset, count);
             return count;
         }
 
         public override char GetChar(int i)
         {
-            return (char)this[i];
+            return (char) this[i];
         }
 
         public override long GetChars(int i, long fieldoffset, char[] buffer, int bufferoffset, int length)
         {
-            string s = (string)this[i];
-            int available = s.Length - (int)fieldoffset;
+            var s = (string) this[i];
+            var available = s.Length - (int) fieldoffset;
             if (available <= 0) return 0;
 
-            int count = Math.Min(length, available);
-            s.CopyTo((int)fieldoffset, buffer, bufferoffset, count);
+            var count = Math.Min(length, available);
+            s.CopyTo((int) fieldoffset, buffer, bufferoffset, count);
             return count;
         }
 
@@ -249,17 +274,17 @@ namespace HQ.Common.FastMember
 
         public override DateTime GetDateTime(int i)
         {
-            return (DateTime)this[i];
+            return (DateTime) this[i];
         }
 
         public override decimal GetDecimal(int i)
         {
-            return (decimal)this[i];
+            return (decimal) this[i];
         }
 
         public override double GetDouble(int i)
         {
-            return (double)this[i];
+            return (double) this[i];
         }
 
         public override Type GetFieldType(int i)
@@ -269,27 +294,27 @@ namespace HQ.Common.FastMember
 
         public override float GetFloat(int i)
         {
-            return (float)this[i];
+            return (float) this[i];
         }
 
         public override Guid GetGuid(int i)
         {
-            return (Guid)this[i];
+            return (Guid) this[i];
         }
 
         public override short GetInt16(int i)
         {
-            return (short)this[i];
+            return (short) this[i];
         }
 
         public override int GetInt32(int i)
         {
-            return (int)this[i];
+            return (int) this[i];
         }
 
         public override long GetInt64(int i)
         {
-            return (long)this[i];
+            return (long) this[i];
         }
 
         public override string GetName(int i)
@@ -304,7 +329,7 @@ namespace HQ.Common.FastMember
 
         public override string GetString(int i)
         {
-            return (string)this[i];
+            return (string) this[i];
         }
 
         public override object GetValue(int i)
@@ -321,27 +346,14 @@ namespace HQ.Common.FastMember
             var current = this.current;
             var accessor = this.accessor;
 
-            int count = Math.Min(values.Length, members.Length);
-            for (int i = 0; i < count; i++) values[i] = accessor[current, members[i]] ?? DBNull.Value;
+            var count = Math.Min(values.Length, members.Length);
+            for (var i = 0; i < count; i++) values[i] = accessor[current, members[i]] ?? DBNull.Value;
             return count;
         }
 
         public override bool IsDBNull(int i)
         {
             return this[i] is DBNull;
-        }
-
-        public override object this[string name]
-        {
-            get { return accessor[current, name] ?? DBNull.Value; }
-
-        }
-        /// <summary>
-        /// Gets the value of the current object in the member specified
-        /// </summary>
-        public override object this[int i]
-        {
-            get { return accessor[current, memberNames[i]] ?? DBNull.Value; }
         }
     }
 }

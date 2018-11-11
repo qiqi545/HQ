@@ -19,10 +19,10 @@ using System;
 
 namespace HQ.Common.Models
 {
-	public interface ITypeRegistry
-	{
-		bool Register(Type type);
-		bool RegisterIfNotRegistered(Type type);
-		bool TryGetType(string name, out Type type);
-	}
+    public interface ITypeRegistry
+    {
+        bool Register(Type type);
+        bool RegisterIfNotRegistered(Type type);
+        bool TryGetType(string name, out Type type);
+    }
 }

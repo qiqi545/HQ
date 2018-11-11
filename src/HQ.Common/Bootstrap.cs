@@ -23,37 +23,37 @@ using Newtonsoft.Json.Serialization;
 
 namespace HQ.Common
 {
-	public class Bootstrap
-	{
-		public static void EnsureInitialized()
-		{
-		    try
-		    {
-		        JsonConvert.DefaultSettings = () =>
-		        {
-		            var settings = new JsonSerializerSettings
-		            {
-		                Formatting = Formatting.None,
-		                TypeNameHandling = TypeNameHandling.None,
-		                NullValueHandling = NullValueHandling.Ignore,
-		                DefaultValueHandling = DefaultValueHandling.Ignore,
-		                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+    public class Bootstrap
+    {
+        public static void EnsureInitialized()
+        {
+            try
+            {
+                JsonConvert.DefaultSettings = () =>
+                {
+                    var settings = new JsonSerializerSettings
+                    {
+                        Formatting = Formatting.None,
+                        TypeNameHandling = TypeNameHandling.None,
+                        NullValueHandling = NullValueHandling.Ignore,
+                        DefaultValueHandling = DefaultValueHandling.Ignore,
+                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
 
-		                DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-		                DateParseHandling = DateParseHandling.DateTimeOffset,
-		                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-		                DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
-		            };
+                        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                        DateParseHandling = DateParseHandling.DateTimeOffset,
+                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                        DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
+                    };
 
-		            settings.Converters.Add(new StringEnumConverter());
+                    settings.Converters.Add(new StringEnumConverter());
 
-		            return settings;
-		        };
-		    }
-		    catch (Exception e)
-		    {
-		        Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
-		    }
-		}
-	}
+                    return settings;
+                };
+            }
+            catch (Exception e)
+            {
+                Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
+            }
+        }
+    }
 }

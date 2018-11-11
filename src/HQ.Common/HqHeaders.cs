@@ -17,11 +17,11 @@
 
 namespace HQ.Common
 {
-	public static class HqHeaders
-	{
-		/// <summary>
-		///     See: https://www.w3.org/TR/server-timing/
-		/// </summary>
-		public const string ServiceTiming = "Server-Timing";
-	}
+    public static class HqHeaders
+    {
+        /// <summary>
+        ///     See: https://www.w3.org/TR/server-timing/
+        /// </summary>
+        public const string ServiceTiming = "Server-Timing";
+    }
 }

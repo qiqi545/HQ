@@ -17,8 +17,8 @@
 
 namespace HQ.Common
 {
-	public static class HqRoutes
-	{
-		public const string RouteDebug = "hq_route_debug";
-	}
+    public static class HqRoutes
+    {
+        public const string RouteDebug = "hq_route_debug";
+    }
 }

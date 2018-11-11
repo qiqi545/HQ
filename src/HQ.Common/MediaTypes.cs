@@ -17,10 +17,10 @@
 
 namespace HQ.Common
 {
-	public static class MediaTypes
-	{
-		public const string Json = "application/json";
-		public const string JsonPatch = "application/json-patch+json";
-		public const string JsonMergePatch = "application/merge-patch+json";
-	}
+    public static class MediaTypes
+    {
+        public const string Json = "application/json";
+        public const string JsonPatch = "application/json-patch+json";
+        public const string JsonMergePatch = "application/merge-patch+json";
+    }
 }

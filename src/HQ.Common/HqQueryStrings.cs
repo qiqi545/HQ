@@ -17,8 +17,8 @@
 
 namespace HQ.Common
 {
-	public static class HqQueryStrings
-	{
-		public const string MultiCase = "case";
-	}
+    public static class HqQueryStrings
+    {
+        public const string MultiCase = "case";
+    }
 }
