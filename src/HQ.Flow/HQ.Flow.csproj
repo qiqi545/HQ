@@ -1,11 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\package.props" />
-  <Import Project="$(ProjectDir)..\..\build.props" />
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>7.1</LangVersion>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>High-performance Enterprise Service Bus (ESB) and messaging state machine (MSM) for .NET.</Description>
+    <PackageTags>esb service-bus messaging dotnet-standard hq-stack</PackageTags>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
