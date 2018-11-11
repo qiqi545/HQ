@@ -19,7 +19,7 @@ using System.Collections;
 using HQ.Touchstone.Assertions;
 using Xunit;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Xunit
 {
     public sealed class XunitAssert : IAssert
     {

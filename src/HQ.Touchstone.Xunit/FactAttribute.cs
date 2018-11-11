@@ -18,7 +18,7 @@
 using System;
 using Xunit.Sdk;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Xunit
 {
     [AttributeUsage(AttributeTargets.Method)]
     [XunitTestCaseDiscoverer("HQ.Touchstone.Extensions.TestCaseDiscoverer",
@@ -28,7 +28,7 @@ namespace HQ.Touchstone
         "HQ.Touchstone.Xunit"
 #endif
     )]
-    public class FactAttribute : Xunit.FactAttribute { }
+    public class FactAttribute : global::Xunit.FactAttribute { }
 
     public class TestAttribute : FactAttribute { }
 }

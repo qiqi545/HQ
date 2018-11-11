@@ -17,7 +17,7 @@
 
 using Xunit.Sdk;
 
-namespace HQ.Touchstone
+namespace HQ.Touchstone.Xunit
 {
     public sealed class XunitOutputProvider : IOutputProvider
     {

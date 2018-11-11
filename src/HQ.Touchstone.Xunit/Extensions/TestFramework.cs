@@ -19,7 +19,7 @@ using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace HQ.Touchstone.Extensions
+namespace HQ.Touchstone.Xunit.Extensions
 {
     public class TestFramework : XunitTestFramework
     {

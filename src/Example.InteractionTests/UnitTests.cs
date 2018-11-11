@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
-using Dynamitey;
 using HQ.Touchstone;
+using HQ.Touchstone.Xunit;
 using Xunit;
 
 namespace Example.InteractionTests

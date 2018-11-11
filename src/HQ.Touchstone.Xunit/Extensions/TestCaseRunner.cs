@@ -19,7 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Sdk;
 
-namespace HQ.Touchstone.Extensions
+namespace HQ.Touchstone.Xunit.Extensions
 {
     public class TestCaseRunner : XunitTestCaseRunner
     {

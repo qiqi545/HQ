@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Touchstone;
 using HQ.Touchstone.Assertions;
+using HQ.Touchstone.Xunit;
 
 namespace Example.InteractionTests
 {

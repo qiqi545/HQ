@@ -18,9 +18,9 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace HQ.Touchstone.Extensions
+namespace HQ.Touchstone.Xunit.Extensions
 {
-    public class TestFrameworkDiscoverer : Xunit.Sdk.TestFrameworkDiscoverer
+    public class TestFrameworkDiscoverer : global::Xunit.Sdk.TestFrameworkDiscoverer
     {
         private readonly IMessageSink _diagnosticMessageSink;
         private readonly CollectionPerClassTestCollectionFactory _testCollectionFactory;

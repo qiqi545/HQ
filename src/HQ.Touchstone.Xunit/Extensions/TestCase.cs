@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace HQ.Touchstone.Extensions
+namespace HQ.Touchstone.Xunit.Extensions
 {
     public class TestCase : XunitTestCase
     {
