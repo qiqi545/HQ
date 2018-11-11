@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.7</Version>
+    <Version>1.0.10</Version>
   </PropertyGroup>
 
   <PropertyGroup>

@@ -7,3 +7,8 @@ If we have omitted a notice here, please let us know by submitting
 an issue on GitHub, or by emailing support@hq.io
 
 ##################################################################
+
+This packge is an aggregate of all stable HQ.IO components.
+
+Please see each individual component's git repository for
+licensing information.
