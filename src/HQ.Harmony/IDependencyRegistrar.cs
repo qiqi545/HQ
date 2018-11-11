@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -23,17 +23,12 @@ namespace HQ.Harmony
 	{
 		IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew);
 		IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+        IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+        IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+        IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 
-		IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class;
-
-		IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class;
-
-		IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder,
-			Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class;
-
-		IDependencyRegistrar Register<T>(T instance);
+	    IDependencyRegistrar Register<T>(T instance);
+	    IDependencyRegistrar Register(object instance);
+        bool TryRegister<T>(T instance);
 	}
 }

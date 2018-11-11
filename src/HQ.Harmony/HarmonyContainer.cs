@@ -158,16 +158,15 @@ namespace HQ.Harmony
 			where T : class
 		{
 			var type = typeof(T);
-			Func<object> next = () => WrapLifecycle(builder, lifetime)(this);
 			if (_registrations.ContainsKey(type))
 			{
 				var previous = _registrations[type];
-				_registrations[type] = next;
+				_registrations[type] = () => WrapLifecycle(builder, lifetime)(this);
 				RegisterManyUnnamed(type, previous);
 			}
 			else
 			{
-				_registrations[type] = next;
+				_registrations[type] = () => WrapLifecycle(builder, lifetime)(this);
 			}
 
 			return this;
@@ -175,23 +174,50 @@ namespace HQ.Harmony
 
 		public IDependencyRegistrar Register<T>(T instance)
 		{
-			var type = typeof(T);
-			Func<object> next = () => instance;
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
+		    return Register(typeof(T), instance);
+        }
 
-			return this;
-		}
+	    public IDependencyRegistrar Register(object instance)
+	    {
+	        var type = instance.GetType();
+	        return Register(type, instance);
+	    }
 
-		private void RegisterManyUnnamed(Type type, Func<object> previous)
+	    private IDependencyRegistrar Register(Type type, object instance)
+	    {
+	        if (_registrations.ContainsKey(type))
+	        {
+	            var previous = _registrations[type];
+	            _registrations[type] = () => instance;
+	            RegisterManyUnnamed(type, previous);
+	        }
+	        else
+	        {
+	            _registrations[type] = () => instance;
+	        }
+
+	        return this;
+	    }
+
+	    public bool TryRegister<T>(T instance)
+	    {
+	        var type = typeof(T);
+            if (_registrations.ContainsKey(type))
+                return false;
+            _registrations[type] = () => instance;
+	        return true;
+	    }
+
+	    public bool TryRegister(object instance)
+	    {
+	        var type = instance.GetType();
+	        if (_registrations.ContainsKey(type))
+	            return false;
+	        _registrations[type] = () => instance;
+	        return true;
+	    }
+
+        private void RegisterManyUnnamed(Type type, Func<object> previous)
 		{
 			if (!_collectionRegistrations.TryGetValue(type, out var collectionBuilder))
 			{
