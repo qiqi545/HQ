@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>This package contains the full-stack build for HQ.IO for the SQL Server backend.</Description>
+    <PackageTags>hq-stack</PackageTags>
+    <Version>1.0.10</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+    <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\bin\**" Link="Connect.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+</Project>

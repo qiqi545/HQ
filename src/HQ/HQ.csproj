@@ -13,21 +13,6 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;PLATFORM</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;PLATFORM</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|AnyCPU'">
-    <DefineConstants>TRACE;PLATFORM</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='PackageSources|AnyCPU'">
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
   </PropertyGroup>
 
@@ -47,7 +32,9 @@
     <Content Include="..\Stack\HQ.Domicile\src\HQ.Domicile\**\*.cs" Exclude="..\Stack\HQ.Domicile\src\HQ.Domicile\obj\**;..\Stack\HQ.Domicile\src\HQ.Domicile\bin\**" Link="Domicile\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens\bin\**" Link="Tokens\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort\bin\**" Link="Cohort\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Connect\src\HQ.Connect\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect\obj\**;..\Stack\HQ.Connect\src\HQ.Connect\bin\**" Link="Connect\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

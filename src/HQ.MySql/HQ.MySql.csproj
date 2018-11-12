@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
+
+  <PropertyGroup>
+    <Description>This package contains the full-stack build for HQ.IO for the MySQL backend.</Description>
+    <PackageTags>hq-stack</PackageTags>
+    <Version>1.0.10</Version>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+    <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.MySql\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.MySql\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.MySql\bin\**" Link="Connect.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -18,6 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.DocumentDb\HQ.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Sqlite\HQ.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\HQ.SqlServer\HQ.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ\HQ.csproj" />
   </ItemGroup>
 
