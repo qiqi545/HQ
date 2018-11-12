@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -12,6 +15,10 @@
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
     <ProjectReference Include="..\HQ.Lingo\HQ.Lingo.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

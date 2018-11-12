@@ -18,9 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using HQ.Common;
 using HQ.Common.Helpers;
-using HQ.Lingo.Builders.Extensions;
 using HQ.Lingo.Dialects;
+using HQ.Lingo.Extensions;
 using HQ.Rosetta;
 using Humanizer;
 
@@ -48,7 +49,7 @@ namespace HQ.Lingo.Builders
 
             for (var i = 0; i < columns.Count; i++)
             {
-                sb.Append(FilterBuilder.ParentAlias).Append('.');
+                sb.Append(Constants.Sql.ParentAlias).Append('.');
                 sb.AppendName(d, columns[i]);
                 if (i < columns.Count - 1)
                     sb.Append(", ");
@@ -57,11 +58,11 @@ namespace HQ.Lingo.Builders
             var joins = 0;
             foreach (var _ in projections)
             {
-                sb.Append(", ").Append(FilterBuilder.ParentAlias).Append(joins).Append(".*");
+                sb.Append(", ").Append(Constants.Sql.ParentAlias).Append(joins).Append(".*");
                 joins++;
             }
 
-            sb.Append(" FROM ").AppendTable(d, table, schema).Append(' ').Append(FilterBuilder.ParentAlias).Append(' ');
+            sb.Append(" FROM ").AppendTable(d, table, schema).Append(' ').Append(Constants.Sql.ParentAlias).Append(' ');
 
             joins = 0;
             for (var i = 0; i < filters.Count; i++)
@@ -74,9 +75,9 @@ namespace HQ.Lingo.Builders
 
                 sb.Append("LEFT JOIN ")
                     .AppendName(d, title)
-                    .Append(FilterBuilder.ChildAlias).Append(joins).Append(" ON ")
-                    .Append(FilterBuilder.ChildAlias).Append(joins).Append('.').Append(table).Append("Id").Append(" = ")
-                    .Append(FilterBuilder.ParentAlias).Append('.').AppendName(d, "Id");
+                    .Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
+                    .Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(table).Append("Id").Append(" = ")
+                    .Append(Constants.Sql.ParentAlias).Append('.').AppendName(d, "Id");
 
                 if (i < projections.Count - 1)
                     sb.Append(' ');
@@ -99,10 +100,10 @@ namespace HQ.Lingo.Builders
                     case ProjectionType.OneToOne:
 
                         sb.Append("LEFT JOIN ").AppendName(d, title).Append(' ')
-                            .Append(FilterBuilder.ParentAlias).Append(joins).Append(" ON ")
-                            .Append(FilterBuilder.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
+                            .Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
+                            .Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
                             .Append(" = ")
-                            .Append(FilterBuilder.ParentAlias).Append('.')
+                            .Append(Constants.Sql.ParentAlias).Append('.')
                             .Append(d.StartIdentifier).Append(title).Append("Id").Append(d.EndIdentifier);
 
                         break;
@@ -114,19 +115,19 @@ namespace HQ.Lingo.Builders
                         sb.Append("LEFT JOIN ").Append(d.StartIdentifier).Append(table).Append(name)
                             .Append(d.EndIdentifier)
                             .Append(' ')
-                            .Append(FilterBuilder.ChildAlias).Append(joins).Append(" ON ")
-                            .Append(FilterBuilder.ChildAlias).Append(joins).Append('.').Append(d.StartIdentifier)
+                            .Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
+                            .Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(d.StartIdentifier)
                             .Append(table)
-                            .Append("Id").Append(d.EndIdentifier).Append(" = ").Append(FilterBuilder.ParentAlias)
+                            .Append("Id").Append(d.EndIdentifier).Append(" = ").Append(Constants.Sql.ParentAlias)
                             .Append('.')
                             .AppendName(d, "Id")
                             .Append(' ');
 
                         sb.Append("LEFT JOIN ").AppendName(d, name).Append(' ')
-                            .Append(FilterBuilder.ParentAlias).Append(joins).Append(" ON ")
-                            .Append(FilterBuilder.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
+                            .Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
+                            .Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
                             .Append(" = ")
-                            .Append(FilterBuilder.ChildAlias).Append(joins).Append('.')
+                            .Append(Constants.Sql.ChildAlias).Append(joins).Append('.')
                             .Append(d.StartIdentifier).Append(name).Append("Id").Append(d.EndIdentifier);
 
                         break;

@@ -18,9 +18,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using HQ.Common.Helpers;
-using HQ.Lingo.Builders.Extensions;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
+using HQ.Lingo.Extensions;
 
 namespace HQ.Lingo.Builders
 {

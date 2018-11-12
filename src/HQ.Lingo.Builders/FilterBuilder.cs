@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Text;
 using HQ.Common;
 using HQ.Common.Helpers;
-using HQ.Lingo.Builders.Extensions;
 using HQ.Lingo.Dialects;
+using HQ.Lingo.Extensions;
 using HQ.Rosetta;
 
 namespace HQ.Lingo.Builders
