@@ -16,32 +16,34 @@
 #endregion
 
 using System;
-using System.Data.Common;
+using System.Data;
 
 namespace HQ.Connect
 {
     public class DataContext : IDisposable
     {
         private static readonly object Sync = new object();
-        private readonly IConnectionFactory _connectionFactory;
-        private volatile DbConnection _connection;
 
-        public DataContext(IConnectionFactory connectionFactory)
+        private readonly IConnectionFactory _connectionFactory;
+        private readonly Action<IDbConnection> _onConnection;
+
+        private volatile IDbConnection _connection;
+
+        public DataContext(IConnectionFactory connectionFactory, Action<IDbConnection> onConnection)
         {
             _connectionFactory = connectionFactory;
+            _onConnection = onConnection;
         }
 
-        public bool IsActive => _connection != null;
-        public DbConnection Connection => GetConnection();
+        public IDbConnection Connection => GetConnection();
 
         public void Dispose()
         {
-            if (_connection == null) return;
-            _connection.Dispose();
+            _connection?.Dispose();
             _connection = null;
         }
 
-        private DbConnection GetConnection()
+        private IDbConnection GetConnection()
         {
             PrimeConnection();
             return _connection;
@@ -54,6 +56,7 @@ namespace HQ.Connect
             {
                 if (_connection != null) return;
                 var connection = _connectionFactory.CreateConnection();
+                _onConnection?.Invoke(connection);
                 connection.Open();
                 _connection = connection;
             }

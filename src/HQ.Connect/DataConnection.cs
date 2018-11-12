@@ -15,19 +15,38 @@
 
 #endregion
 
+using System;
 using System.Data;
+using System.Data.Common;
 
 namespace HQ.Connect
 {
     public class DataConnection : IDataConnection
     {
         private readonly DataContext _current;
+        private readonly Action<IDbCommand, Type> _onCommand;
+        private Type _type;
 
-        public DataConnection(DataContext current)
+        public DataConnection(DataContext current, Action<IDbCommand, Type> onCommand)
         {
             _current = current;
+            _onCommand = onCommand;
         }
 
-        public IDbConnection Current => _current.Connection;
+        public void SetTypeInfo(Type type)
+        {
+            _type = type;
+        }
+
+        public IDbConnection Current
+        {
+            get
+            {
+                if (_onCommand != null && _current.Connection is DbConnection connection)
+                    return new WrapDbConnection(connection, _onCommand, _type);
+
+                return _current.Connection;
+            }
+        }
     }
 }

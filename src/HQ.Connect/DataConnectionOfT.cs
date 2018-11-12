@@ -15,11 +15,14 @@
 
 #endregion
 
+using System;
+using System.Data;
+
 namespace HQ.Connect
 {
     public class DataConnection<T> : DataConnection, IDataConnection<T>
     {
-        public DataConnection(DataContext current) : base(current)
+        public DataConnection(DataContext current, Action<IDbCommand, Type> onCommand) : base(current, onCommand)
         {
         }
     }

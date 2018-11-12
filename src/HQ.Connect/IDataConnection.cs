@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Data;
 
 namespace HQ.Connect
@@ -22,9 +23,6 @@ namespace HQ.Connect
     public interface IDataConnection
     {
         IDbConnection Current { get; }
-    }
-
-    public interface IDataConnection<T> : IDataConnection
-    {
+        void SetTypeInfo(Type type);
     }
 }
