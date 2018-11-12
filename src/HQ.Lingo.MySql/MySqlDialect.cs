@@ -15,33 +15,47 @@
 
 #endregion
 
+using System.Text;
+using HQ.Lingo.Dialects;
+using HQ.Lingo.Helpers;
+
 namespace HQ.Lingo.MySql
 {
-    public class MySqlDialect : IDialect
+    public class MySqlDialect : SqlDialect
     {
-        public char StartIdentifier
+        public override char? StartIdentifier => '`';
+        public override char? EndIdentifier => '`';
+        public override char? Separator => '.';
+        public override char? Parameter => '@';
+        public override char? Quote => '\'';
+
+        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
-            get { return '`'; }
+            switch (location)
+            {
+                case FetchInsertedKeyLocation.AfterStatement:
+                    sql = "SELECT LAST_INSERT_ID() AS `Id`";
+                    return true;
+                default:
+                    sql = null;
+                    return false;
+            }
         }
 
-        public char EndIdentifier
+        public override void Page(string sql, StringBuilder sb)
         {
-            get { return '`'; }
-        }
+            // TODO: similar efficiency considerations for large LIMITs as SQLite
+            // https://stackoverflow.com/questions/3799193/mysql-data-best-way-to-implement-paging
 
-        public char Separator
-        {
-            get { return '.'; }
-        }
+            PagingHelper.SplitSql(sql, out var parts);
 
-        public int ParametersPerQuery
-        {
-            get { return 1000; }
-        }
+            var orderBy = parts.SqlOrderBy ?? " ";
 
-        public string Identity
-        {
-            get { return "SELECT LAST_INSERT_ID() AS `Id`"; }
+            var selectClause = parts.SqlOrderBy == null
+                ? parts.SqlSelectRemoved
+                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+
+            sb.Append("SELECT ").Append(selectClause).Append(orderBy).Append(" LIMIT @PerPage OFFSET @Page");
         }
     }
 }

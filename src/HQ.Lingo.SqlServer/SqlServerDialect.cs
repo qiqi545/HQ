@@ -15,33 +15,58 @@
 
 #endregion
 
+using System.Text;
+using HQ.Common;
+using HQ.Lingo.Dialects;
+using HQ.Lingo.Helpers;
+
 namespace HQ.Lingo.SqlServer
 {
-    public class SqlServerDialect : IDialect
+    public class SqlServerDialect : SqlDialect
     {
-        public char StartIdentifier
+        public override char? StartIdentifier => '[';
+        public override char? EndIdentifier => ']';
+        public override char? Separator => '.';
+        public override char? Parameter => '@';
+        public override char? Quote => '\'';
+
+        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
-            get { return '['; }
+            switch (location)
+            {
+                case FetchInsertedKeyLocation.BeforeValues:
+                    sql = "OUTPUT Inserted.Id";
+                    return true;
+                default:
+                    sql = null;
+                    return false;
+            }
         }
 
-        public char EndIdentifier
+        public override void Page(string sql, StringBuilder sb)
         {
-            get { return ']'; }
-        }
+            // choosing performance strategy based on:
+            // https://sqlperformance.com/2015/01/t-sql-queries/pagination-with-offset-fetch
 
-        public char Separator
-        {
-            get { return '.'; }
-        }
+            PagingHelper.SplitSql(sql, out var parts);
 
-        public int ParametersPerQuery
-        {
-            get { return 500; }
-        }
+            var orderBy = parts.SqlOrderBy ?? "";
 
-        public string Identity
-        {
-            get { return "SELECT CAST(SCOPE_IDENTITY() AS INT) AS [Id]"; }
+            var selectClause = parts.SqlOrderBy == null
+                ? parts.SqlSelectRemoved
+                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+
+            sb.Append(@";WITH pages AS ( SELECT Id FROM ")
+                .Append(parts.SqlFrom)
+                .Append(" ORDER BY ")
+                .Append(StartIdentifier).Append("Id").Append(EndIdentifier)
+                .Append(" OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) ");
+
+            sb.Append("SELECT ").Append(selectClause).Append(' ')
+                .Append(parts.SqlSelectRemoved.Contains("WHERE") ? "AND" : "WHERE")
+                .Append(" EXISTS (SELECT 1 FROM pages WHERE pages.Id = ").Append(Constants.Sql.ParentAlias).Append('.')
+                .Append("Id").Append(")")
+                .Append(orderBy);
         }
     }
 }

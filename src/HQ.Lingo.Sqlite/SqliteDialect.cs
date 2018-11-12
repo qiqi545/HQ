@@ -15,33 +15,110 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using HQ.Lingo.Descriptor;
+using HQ.Lingo.Dialects;
+using HQ.Lingo.Helpers;
+
 namespace HQ.Lingo.Sqlite
 {
-    public class SqliteDialect : IDialect
+    public class SqliteDialect : SqlDialect
     {
-        public char StartIdentifier
+        public override char? StartIdentifier => '\"';
+        public override char? EndIdentifier => '\"';
+        public override char? Separator => '.';
+        public override char? Parameter => ':';
+        public override char? Quote => '\'';
+
+        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
-            get { return '\"'; }
+            switch (location)
+            {
+                case FetchInsertedKeyLocation.AfterStatement:
+                    sql = "SELECT LAST_INSERT_ROWID() AS \"Id\"";
+                    return true;
+                default:
+                    sql = null;
+                    return false;
+            }
         }
 
-        public char EndIdentifier
+        public override void Page(string sql, StringBuilder sb)
         {
-            get { return '\"'; }
+            PagingHelper.SplitSql(sql, out var parts);
+
+            var orderBy = parts.SqlOrderBy ?? " ";
+
+            var selectClause = parts.SqlOrderBy == null
+                ? parts.SqlSelectRemoved
+                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+
+            sb.Append("SELECT ").Append(selectClause);
+
+            if (parts.SqlOrderByFields.Length == 0)
+            {
+                // LIMIT OFFSET is grossly inefficient in SQLite:
+                // https://stackoverflow.com/questions/14468586/efficient-paging-in-sqlite-with-millions-of-records
+                // http://www.sqlite.org/cvstrac/wiki?p=ScrollingCursor
+
+                sb.Append(orderBy)
+                    .Append(" LIMIT :PerPage OFFSET :Page");
+
+                return;
+            }
+
+            sb.Append(parts.SqlSelectRemoved.Contains("WHERE") ? "AND" : "WHERE");
+
+            if (parts.SqlOrderByFields.Length == 1)
+            {
+                sb.Append(' ').Append(parts.SqlOrderByFields[0]).Append(" > ")
+                    .Append(Parameter).Append("Last").Append(parts.SqlOrderByFields[0])
+                    .Append(' ').Append(orderBy).Append(" LIMIT :PerPage");
+
+                return;
+            }
+
+            sb.Append("(");
+            for (var i = 0; i < parts.SqlOrderByFields.Length; i++)
+            {
+                sb.Append(parts.SqlOrderByFields[i]);
+                if (i < parts.SqlOrderByFields.Length - 1)
+                    sb.Append(", ");
+            }
+
+            sb.Append(") > ");
+            for (var i = 0; i < parts.SqlOrderByFields.Length; i++)
+            {
+                sb.Append(Parameter).Append("Last").Append(parts.SqlOrderByFields[i]);
+                if (i < parts.SqlOrderByFields.Length - 1)
+                    sb.Append(", ");
+            }
+
+            sb.Append(' ').Append(orderBy).Append(" LIMIT :PerPage");
         }
 
-        public char Separator
+        public new string ResolveTableName(IDataDescriptor descriptor)
         {
-            get { return '.'; }
+            return descriptor.Table;
         }
 
-        public int ParametersPerQuery
+        public new IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor,
+            ColumnScope scope = ColumnScope.All)
         {
-            get { return 999; }
-        }
-
-        public string Identity
-        {
-            get { return "SELECT LAST_INSERT_ROWID() AS \"Id\""; }
+            switch (scope)
+            {
+                case ColumnScope.All:
+                    return descriptor.All.Select(c => c.ColumnName);
+                case ColumnScope.Inserted:
+                    return descriptor.Inserted.Select(c => c.ColumnName);
+                case ColumnScope.Updated:
+                    return descriptor.Updated.Select(c => c.ColumnName);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
+            }
         }
     }
 }
