@@ -15,12 +15,15 @@
 
 #endregion
 
+using System;
+using System.Data;
+
 namespace HQ.Connect.Sqlite
 {
     public class SqliteDataContext : DataContext
     {
-        public SqliteDataContext(string connectionString) : base(new SqliteConnectionFactory
-            {ConnectionString = connectionString})
+        public SqliteDataContext(string connectionString, Action<IDbConnection> onConnection = null) :
+            base(new SqliteConnectionFactory {ConnectionString = connectionString}, onConnection)
         {
         }
     }

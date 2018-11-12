@@ -15,14 +15,14 @@
 
 #endregion
 
-using System.Data.Common;
+using System.Data;
 using Microsoft.Data.Sqlite;
 
 namespace HQ.Connect.Sqlite
 {
     public class SqliteConnectionFactory : ConnectionFactory
     {
-        public override DbConnection CreateConnection()
+        public override IDbConnection CreateConnection()
         {
             return new SqliteConnection(ConnectionString);
         }

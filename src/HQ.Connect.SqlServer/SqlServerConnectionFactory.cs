@@ -15,14 +15,14 @@
 
 #endregion
 
-using System.Data.Common;
+using System.Data;
 using System.Data.SqlClient;
 
 namespace HQ.Connect.SqlServer
 {
     public class SqlServerConnectionFactory : ConnectionFactory
     {
-        public override DbConnection CreateConnection()
+        public override IDbConnection CreateConnection()
         {
             return new SqlConnection(ConnectionString);
         }

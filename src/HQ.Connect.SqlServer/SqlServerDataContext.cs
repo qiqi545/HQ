@@ -15,12 +15,15 @@
 
 #endregion
 
+using System;
+using System.Data;
+
 namespace HQ.Connect.SqlServer
 {
     public class SqlServerDataContext : DataContext
     {
-        public SqlServerDataContext(string connectionString) : base(new SqlServerConnectionFactory
-            {ConnectionString = connectionString})
+        public SqlServerDataContext(string connectionString, Action<IDbConnection> onConnection = null) :
+            base(new SqlServerConnectionFactory {ConnectionString = connectionString}, onConnection)
         {
         }
     }
