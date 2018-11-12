@@ -15,11 +15,15 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using System.Threading;
+using Microsoft.AspNetCore.Identity;
 
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Models
 {
-    internal sealed class InternalsVisibleTo { }
+    public interface IUserStoreExtended<TUser> : IUserStore<TUser> where TUser : class
+    {
+        CancellationToken CancellationToken { get; }
+
+        bool SupportsSuperUser { get; }
+    }
 }

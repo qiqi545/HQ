@@ -15,11 +15,11 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Identity;
 
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Models
 {
-    internal sealed class InternalsVisibleTo { }
+    public interface IRoleService<TRole> where TRole : IdentityRole
+    {
+    }
 }

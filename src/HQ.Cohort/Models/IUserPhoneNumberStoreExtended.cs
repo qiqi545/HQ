@@ -15,11 +15,16 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Models
 {
-    internal sealed class InternalsVisibleTo { }
+    public interface IUserPhoneNumberStoreExtended<TUser> :
+        IUserStoreExtended<TUser>,
+        IUserPhoneNumberStore<TUser> where TUser : class
+    {
+        Task<TUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
+    }
 }

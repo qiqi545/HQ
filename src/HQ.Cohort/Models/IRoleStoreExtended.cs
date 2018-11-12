@@ -15,11 +15,13 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using System.Threading;
+using Microsoft.AspNetCore.Identity;
 
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Models
 {
-    internal sealed class InternalsVisibleTo { }
+    public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
+    {
+        CancellationToken CancellationToken { get; }
+    }
 }
