@@ -35,12 +35,12 @@ namespace HQ.Lingo
             var parameters = UpdateSetClause(setClause, descriptor, out sql);
 
             Dictionary<string, object> keys;
-            if (descriptor.Identity != null)
-                keys = new Dictionary<string, object>
-                {
-                    {descriptor.Identity.ColumnName, descriptor.Identity.Property.Get(entity)}
-                };
-            else
+            //if (descriptor.Identity != null)
+            //    keys = new Dictionary<string, object>
+            //    {
+            //        {descriptor.Identity.ColumnName, descriptor.Identity.Property.Get(entity)}
+            //    };
+            //else
                 keys = descriptor.Keys.ToDictionary(id => id.ColumnName, id => id.Property.Get(entity));
             var whereClause = WhereClauseByExample(descriptor, keys);
 

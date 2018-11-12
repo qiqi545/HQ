@@ -32,7 +32,7 @@ namespace HQ.Lingo
 
         private static readonly IDictionary<Type, List<string>> TypeMembers = new Dictionary<Type, List<string>>();
 
-        static Tuxedo()
+        static SqlBuilder()
         {
             Dialect = new NoDialect();
         }
