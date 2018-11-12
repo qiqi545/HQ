@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Dapper;
-using table_descriptor;
+using TableDescriptor;
+using logging;
 
 namespace tuxedo.Dapper
 {
+    // Map back all computed columns
+    
     public static partial class TuxedoExtensions
     {
-        private static void MapBackId<T>(IDescriptor descriptor, T entity, object id) where T : class
+        private static ILog _logger = LogManager.GetLogger("tuxedo");
+
+        private static void MapBackId<T>(Descriptor descriptor, T entity, object id) where T : class
         {
             if (descriptor.Identity == null) return;
             if (descriptor.Identity.Property.Type != typeof(int) || id is int)

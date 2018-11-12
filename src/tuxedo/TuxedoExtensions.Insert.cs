@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+﻿using System.Data;
 using System.Linq;
 using Dapper;
 
@@ -6,7 +6,7 @@ namespace tuxedo.Dapper
 {
     partial class TuxedoExtensions
     {
-        public static T Insert<T>(this DbConnection connection, T entity, DbTransaction transaction = null, int? commandTimeout = null) where T : class
+        public static T Insert<T>(this IDbConnection connection, T entity, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var descriptor = Tuxedo.GetDescriptor<T>();
             var insert = Tuxedo.Insert(entity);
