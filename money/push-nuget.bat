@@ -1,1 +1,0 @@
-".nuget\NuGet.exe" push Money.1.0.1.nupkg

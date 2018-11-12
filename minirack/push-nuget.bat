@@ -1,1 +1,0 @@
-".nuget\NuGet.exe" push MiniRack.0.0.2.nupkg
