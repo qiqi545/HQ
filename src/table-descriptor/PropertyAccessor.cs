@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using fastmember;
 using System.Linq;
 using System.Reflection;
+using HQ.Common.FastMember;
 
 namespace table_descriptor
 {
@@ -25,11 +25,11 @@ namespace table_descriptor
 
         private void ScanAttributes(TypeAccessor accessor, string name)
         {
-            var pi = accessor.PropertyInfos.SingleOrDefault(p => p.Name == name);
+            var pi = accessor.CachedProperties.SingleOrDefault(p => p.Name == name);
             if (pi == null)
                 return;
             PropertyInfo = pi;
-            Attributes = pi.GetCustomAttributes(true);
+            Attributes = pi.GetCustomAttributes(true).Cast<Attribute>();
         }
 
         public object Get(dynamic example)
