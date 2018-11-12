@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
@@ -61,6 +62,8 @@ namespace HQ.Common.FastMember
         public virtual PropertyInfo[] CachedProperties { get; private set; }
 
         public virtual FieldInfo[] CachedFields { get; private set; }
+
+        public virtual MemberInfo[] CachedMembers { get; private set; }
 
         /// <summary>
         ///     Get or set the value of a named member on the target instance
@@ -353,8 +356,11 @@ namespace HQ.Common.FastMember
             tb.DefineMethodOverride(body, baseMethod);
 
             var accessor = (TypeAccessor) Activator.CreateInstance(tb.CreateTypeInfo().AsType(), map);
+
             accessor.CachedProperties = props;
             accessor.CachedFields = fields;
+            accessor.CachedMembers = accessor.CachedProperties.Cast<MemberInfo>().Concat(accessor.CachedFields).ToArray();
+
             return accessor;
         }
 
