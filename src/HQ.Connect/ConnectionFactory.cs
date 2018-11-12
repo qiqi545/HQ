@@ -15,34 +15,13 @@
 
 #endregion
 
-using System.Data.Common;
+using System.Data;
 
 namespace HQ.Connect
 {
     public abstract class ConnectionFactory : IConnectionFactory
     {
-        public abstract DbConnection CreateConnection();
-
-        public DbConnection GetUnitOfWorkScopedConnection()
-        {
-            var context = GetContext();
-            return context?.Connection;
-        }
-
-        public void Reset()
-        {
-            var context = GetContext();
-            context.Dispose();
-        }
-
-        public bool IsActive => GetContext().IsActive;
-
+        public abstract IDbConnection CreateConnection();
         public string ConnectionString { get; set; }
-
-        private static DataContext GetContext()
-        {
-            var context = Database.Container.Resolve<DataContext>();
-            return context;
-        }
     }
 }

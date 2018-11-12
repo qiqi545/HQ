@@ -15,16 +15,13 @@
 
 #endregion
 
-using System.Data.Common;
+using System.Data;
 
 namespace HQ.Connect
 {
     public interface IConnectionFactory
     {
         string ConnectionString { get; set; }
-        bool IsActive { get; }
-        DbConnection CreateConnection();
-        DbConnection GetUnitOfWorkScopedConnection();
-        void Reset();
+        IDbConnection CreateConnection();
     }
 }

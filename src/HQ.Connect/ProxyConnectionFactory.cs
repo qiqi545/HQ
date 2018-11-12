@@ -16,18 +16,17 @@
 #endregion
 
 using System;
-using System.Data.Common;
+using System.Data;
 
 namespace HQ.Connect
 {
     public class ProxyConnectionFactory : ConnectionFactory
     {
-        public Func<string, DbConnection> Proxy { get; set; }
+        public Func<string, IDbConnection> Proxy { get; set; }
 
-        public override DbConnection CreateConnection()
+        public override IDbConnection CreateConnection()
         {
-            var connection = Proxy(ConnectionString);
-            return connection;
+            return Proxy(ConnectionString);
         }
     }
 }
