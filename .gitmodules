@@ -37,7 +37,15 @@
 [submodule "src/Stack/HQ.Cohort"]
 	path = src/Stack/HQ.Cohort
 	url = https://github.com/hq-io/HQ.Cohort
-
-[submodule "src/Stack/HQ.Flow"]
-	path = src/Stack/HQ.Flow
-	url = https://github.com/hq-io/HQ.Flow
+	
+[submodule "src/Stack/HQ.Connect"]
+	path = src/Stack/HQ.Connect
+	url = https://github.com/hq-io/HQ.Connect
+	
+[submodule "src/Stack/HQ.Tokens"]
+	path = src/Stack/HQ.Tokens
+	url = https://github.com/hq-io/HQ.Tokens
+	
+[submodule "src/Stack/HQ.Zero"]
+	path = src/Stack/HQ.Zero
+	url = https://github.com/hq-io/HQ.Zero
