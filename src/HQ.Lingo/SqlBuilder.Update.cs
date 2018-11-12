@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,10 +17,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Lingo.Descriptor;
 
 namespace HQ.Lingo
 {
-    partial class Tuxedo
+    partial class SqlBuilder
     {
         public const string SetSuffix = "_set";
 
@@ -47,11 +48,11 @@ namespace HQ.Lingo
             return new Query(sql, parameters.AddRange(whereClause.Parameters));
         }
 
-        private static Dictionary<string, object> BuildSafeSetClause(Descriptor.TableDescriptor.Descriptor descriptor,
+        private static Dictionary<string, object> BuildSafeSetClause(IDataDescriptor descriptor,
             IDictionary<string, object> hash)
         {
             var setClause = new Dictionary<string, object>();
-            foreach (var insertable in descriptor.Insertable)
+            foreach (var insertable in descriptor.Inserted)
             {
                 object value;
                 if (hash.TryGetValue(insertable.ColumnName, out value)) setClause.Add(insertable.ColumnName, value);
@@ -76,7 +77,7 @@ namespace HQ.Lingo
         }
 
         private static IDictionary<string, object> UpdateSetClause(IDictionary<string, object> setClause,
-            Descriptor.TableDescriptor.Descriptor descriptor, out string sql)
+            IDataDescriptor descriptor, out string sql)
         {
             var parameters = ParametersFromHash(setClause, suffix: SetSuffix);
             var setColumns = ColumnsFromHash(descriptor, setClause);

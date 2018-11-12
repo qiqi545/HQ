@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,9 +15,11 @@
 
 #endregion
 
+using HQ.Lingo.Descriptor;
+
 namespace HQ.Lingo
 {
-    partial class Tuxedo
+    partial class SqlBuilder
     {
         public static Query DeleteAll<T>()
         {
@@ -33,7 +35,7 @@ namespace HQ.Lingo
             return new Query(sql, whereClause.Parameters);
         }
 
-        private static string DeleteFrom(Descriptor.TableDescriptor.Descriptor descriptor)
+        private static string DeleteFrom(IDataDescriptor descriptor)
         {
             return string.Concat("DELETE FROM ", TableName(descriptor));
         }

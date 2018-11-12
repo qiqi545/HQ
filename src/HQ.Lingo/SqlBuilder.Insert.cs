@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,28 +16,28 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Lingo.Descriptor.TableDescriptor;
+using HQ.Lingo.Descriptor;
 
 namespace HQ.Lingo
 {
-    partial class Tuxedo
+    partial class SqlBuilder
     {
         public static Query Insert<T>(T entity)
         {
             var descriptor = GetDescriptor<T>();
-            var columnsToInsert = descriptor.Insertable;
+            var columnsToInsert = descriptor.Inserted;
             return Insert(entity, descriptor, columnsToInsert);
         }
 
-        private static Query Insert<T>(T entity, Descriptor.TableDescriptor.Descriptor descriptor,
+        private static Query Insert<T>(T entity, IDataDescriptor descriptor,
             IList<PropertyToColumn> columnsToInsert)
         {
             var sql = InsertSql(descriptor, columnsToInsert);
-            var parameters = ParametersFromInstance(entity, descriptor.Insertable);
+            var parameters = ParametersFromInstance(entity, descriptor.Inserted);
             return new Query(sql, parameters);
         }
 
-        private static string InsertSql(Descriptor.TableDescriptor.Descriptor descriptor,
+        private static string InsertSql(IDataDescriptor descriptor,
             IList<PropertyToColumn> columnsToInsert)
         {
             var sql = string.Concat(

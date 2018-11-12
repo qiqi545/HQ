@@ -20,36 +20,31 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using HQ.Common.FastMember;
-using HQ.Lingo.Descriptor.TableDescriptor;
+using HQ.Lingo.Descriptor;
+using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo
 {
-    public partial class Tuxedo
+    public partial class SqlBuilder
     {
-        public static Func<Type, Descriptor.TableDescriptor.Descriptor> DescriptorFunction =
-            type => SimpleDescriptor.Create(type);
+        public static Func<Type, IDataDescriptor> DescriptorFunction =
+            SimpleDataDescriptor.Create;
 
         private static readonly IDictionary<Type, List<string>> TypeMembers = new Dictionary<Type, List<string>>();
 
         static Tuxedo()
         {
-            Dialect = new SqlServerDialect();
+            Dialect = new NoDialect();
         }
 
-        public static IDialect Dialect { get; set; }
+        public static ISqlDialect Dialect { get; set; }
 
-        public static Descriptor.TableDescriptor.Descriptor GetDescriptor<T>()
+        public static IDataDescriptor GetDescriptor<T>()
         {
             return DescriptorFunction(typeof(T));
         }
 
-        public static Query Identity()
-        {
-            var identity = Dialect.Identity;
-            return new Query(identity);
-        }
-
-        private static IEnumerable<PropertyToColumn> ColumnsFromHash(Descriptor.TableDescriptor.Descriptor descriptor,
+        private static IEnumerable<PropertyToColumn> ColumnsFromHash(IDataDescriptor descriptor,
             IDictionary<string, object> hash)
         {
             return descriptor.All.Where(c => hash.ContainsKey(c.ColumnName));
@@ -84,10 +79,10 @@ namespace HQ.Lingo
             return columns.Select(column => string.Concat("@", column.ColumnName, suffix));
         }
 
-        public static string TableName(Descriptor.TableDescriptor.Descriptor descriptor)
+        public static string TableName(IDataDescriptor descriptor)
         {
             return new[] {descriptor.Schema, descriptor.Table}.ConcatQualified(Dialect,
-                new string(Dialect.Separator, 1));
+                new string(Dialect.Separator.GetValueOrDefault(), 1));
         }
 
         public static string Column(PropertyToColumn column)
@@ -127,7 +122,7 @@ namespace HQ.Lingo
             return members.ToDictionary(member => member, member => accessor[example, member]);
         }
 
-        private static Query WhereClauseByExample(Descriptor.TableDescriptor.Descriptor descriptor, dynamic where)
+        private static Query WhereClauseByExample(IDataDescriptor descriptor, dynamic where)
         {
             var hash = (IDictionary<string, object>) DynamicToHash(where);
             var exampleColumns = ColumnsFromHash(descriptor, hash);
