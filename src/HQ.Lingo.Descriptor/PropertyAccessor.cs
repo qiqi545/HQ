@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using HQ.Common.FastMember;
@@ -26,27 +25,46 @@ namespace HQ.Lingo.Descriptor
     public class PropertyAccessor
     {
         private readonly TypeAccessor _accessor;
+        private readonly Member _member;
+        private readonly Type _parent;
 
-        public PropertyAccessor(TypeAccessor accessor, Type type, string name)
+        public PropertyAccessor(Type parent, TypeAccessor accessor, Type type, string name)
         {
             Type = type;
+            _parent = parent;
             _accessor = accessor;
+
             Name = name;
-            ScanAttributes(accessor, name);
+            Info = accessor.CachedMembers.SingleOrDefault(m => m.Name == name);
+
+            var member = accessor.GetMembers().SingleOrDefault(p => p.Name == name);
+            if (member == null) return;
+            _member = member;
         }
 
         public string Name { get; set; }
         public Type Type { get; set; }
-        public IEnumerable<Attribute> Attributes { get; set; }
-        public PropertyInfo PropertyInfo { get; private set; }
+        public MemberInfo Info { get; set; }
 
-        private void ScanAttributes(TypeAccessor accessor, string name)
+        public bool HasAttribute<T>() where T : Attribute
         {
-            var pi = accessor.CachedProperties.SingleOrDefault(p => p.Name == name);
-            if (pi == null)
-                return;
-            PropertyInfo = pi;
-            Attributes = pi.GetCustomAttributes(true).Cast<Attribute>();
+            return _member.IsDefined(typeof(T));
+        }
+
+        public bool TryGetAttribute<T>(out T attribute) where T : Attribute
+        {
+            // This is a kluge until this is fixed.
+            // See: https://github.com/mgravell/fast-member/issues/55
+
+            var property = _parent.GetProperty(Name);
+            if (property == null)
+            {
+                attribute = null;
+                return false;
+            }
+
+            attribute = Attribute.GetCustomAttribute(property, typeof(T)) as T;
+            return attribute != null;
         }
 
         public object Get(dynamic example)

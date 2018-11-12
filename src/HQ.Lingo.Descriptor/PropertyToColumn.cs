@@ -23,14 +23,13 @@ namespace HQ.Lingo.Descriptor
         {
             Property = typedPropertyDescriptor;
             ColumnName = Property.Name;
-            Property.Name = Property.Name;
+            Property.Name = Property.Name; // TODO allow for this to differ
         }
 
-        public PropertyAccessor Property { get; }
-        public string ColumnName { get; set; }
+        public PropertyAccessor Property { get; private set; }
+        public string ColumnName { get; private set; }
         public bool IsComputed { get; set; }
-        public bool IsKey { get; set; }
         public bool IsIdentity { get; set; }
-        public bool IsSearchKey { get; set; }
+        public bool IsKey { get; set; }
     }
 }

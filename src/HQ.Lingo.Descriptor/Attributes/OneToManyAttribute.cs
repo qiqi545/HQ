@@ -17,15 +17,10 @@
 
 using System;
 
-namespace HQ.Lingo.Descriptor
+namespace HQ.Lingo.Descriptor.Attributes
 {
-    public class ColumnNameAttribute : Attribute
+    [AttributeUsage(AttributeTargets.Property)]
+    public class OneToManyAttribute : Attribute
     {
-        public ColumnNameAttribute(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; private set; }
     }
 }

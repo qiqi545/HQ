@@ -16,18 +16,25 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace HQ.Lingo.Descriptor
 {
-    /// <summary>
-    ///     The database generates this column, so don't try to insert it.
-    ///     <remarks>
-    ///         Use it for database columns with a system-generated default (newid(), newsequentialid(), getdate(), etc.) and
-    ///         for columns designated read-only.
-    ///     </remarks>
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ComputedAttribute : Attribute
+    // TODO cache the property names for each bucket (lazy)
+
+    public interface IDataDescriptor
     {
+        IList<Type> Types { get; }
+        Type Type { get; }
+
+        string Schema { get; }
+        string Table { get; }
+
+        PropertyToColumn Id { get; }
+        IList<PropertyToColumn> All { get; }
+        IList<PropertyToColumn> Keys { get; }
+        IList<PropertyToColumn> Inserted { get; }
+        IList<PropertyToColumn> Updated { get; }
+        IList<PropertyToColumn> Computed { get; }
     }
 }
