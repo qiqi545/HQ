@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
     <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.Builders\HQ.Lingo.Builders.csproj" />
     <ProjectReference Include="..\..\src\HQ.Lingo.Dapper\HQ.Lingo.Dapper.csproj" />
     <ProjectReference Include="..\..\src\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj" />
     <ProjectReference Include="..\..\src\HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj" />

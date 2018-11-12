@@ -15,18 +15,19 @@
 
 #endregion
 
-using System;
-using HQ.Lingo.Builders;
-using HQ.Lingo.Dialects;
+using HQ.Lingo.Dapper;
+using HQ.Lingo.Queries;
+using HQ.Lingo.Tests.Fakes;
+using HQ.Lingo.Tests.Models;
 using HQ.Rosetta;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Lingo.Tests.Builders
+namespace HQ.Lingo.Tests.Dapper
 {
-    public class QueryBuilderTests
+    public class JoinTests
     {
-        public QueryBuilderTests(ITestOutputHelper console)
+        public JoinTests(ITestOutputHelper console)
         {
             _console = console;
         }
@@ -34,12 +35,12 @@ namespace HQ.Lingo.Tests.Builders
         private readonly ITestOutputHelper _console;
 
         [Fact]
-        public void Get_by_id_with_projections()
+        public void Get_by_id()
         {
-            var d = NoDialect.Default;
-            var sql = d.Query("User", "dbo",
-                new[] {"Id", "Username", "CreatedAt"},
-                new[]
+            var db = new FakeDbConnection();
+
+            db.Query<User, Account, Role, int>(p => p.Id, (p, c) => p.Account = c, p => p.Roles, data: new {Id = 2},
+                filters: new[]
                 {
                     new Filter
                     {
@@ -48,7 +49,8 @@ namespace HQ.Lingo.Tests.Builders
                         Operator = FilterOperator.Equal,
                         Value = "@Id"
                     }
-                }, new[]
+                }
+                , projections: new[]
                 {
                     new Projection
                     {
@@ -60,17 +62,10 @@ namespace HQ.Lingo.Tests.Builders
                         Type = ProjectionType.OneToMany,
                         Field = "Roles"
                     }
-                }, new[] {new Tuple<string, string, bool>(null, "CreatedAt", true)});
+                }, orderBy: x => x.CreatedAt.Desc());
 
-            _console.WriteLine(sql);
-
-            Assert.Equal("SELECT p.Id, p.Username, p.CreatedAt, p0.*, p1.* " +
-                         "FROM dbo.User p " +
-                         "LEFT JOIN Account p0 ON p0.Id = p.AccountId " +
-                         "LEFT JOIN UserRole c1 ON c1.UserId = p.Id " +
-                         "LEFT JOIN Role p1 ON p1.Id = c1.RoleId " +
-                         "WHERE p.Id = @Id " +
-                         "ORDER BY CreatedAt DESC", sql);
+            var query = db.GetLastQuery();
+            _console.WriteLine(query.Sql);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,11 +15,53 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+
 namespace HQ.Lingo.Tests.Models
 {
-    public class User
+    [Table("User")]
+    public class User : EmailEntity, IUser
     {
+        [IgnoreDataMember] public Account Account { get; set; }
+
+        [IgnoreDataMember] public List<Role> Roles { get; set; }
+
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTimeOffset CreatedAt { get; set; }
+
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+    }
+
+    public class Account
+    {
+    }
+
+    public class Role
+    {
+    }
+
+    public abstract class EmailEntity : IHasEmail
+    {
         public string Email { get; set; }
+    }
+
+    public interface IHasIdKey
+    {
+        int Id { get; }
+    }
+
+    public interface IHasEmail
+    {
+        string Email { get; }
+    }
+
+    public interface IUser : IHasIdKey, IHasEmail
+    {
     }
 }

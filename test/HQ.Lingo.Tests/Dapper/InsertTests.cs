@@ -15,11 +15,34 @@
 
 #endregion
 
-namespace HQ.Lingo.Tests.Descriptor.Models
+using HQ.Lingo.Dapper;
+using HQ.Lingo.Tests.Fakes;
+using HQ.Lingo.Tests.Models;
+using Xunit;
+using Xunit.Abstractions;
+
+namespace HQ.Lingo.Tests.Dapper
 {
-    public class ThroughTable
+    public class InsertTests
     {
-        public int FirstId { get; set; }
-        public int SecondId { get; set; }
+        public InsertTests(ITestOutputHelper console)
+        {
+            _console = console;
+        }
+
+        private readonly ITestOutputHelper _console;
+
+        [Fact]
+        public void Insert_one()
+        {
+            var db = new FakeDbConnection();
+            db.Insert(new User {Email = "good@email.com"});
+            var query = db.GetLastQuery();
+
+            Assert.Equal("INSERT INTO User (Email) VALUES (@Email)", query.Sql);
+            Assert.Equal(1, query.Parameters.Count);
+            Assert.Equal("good@email.com", query.Parameters["@Email"]);
+            _console.WriteLine(query.Sql);
+        }
     }
 }

@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
 using Xunit;

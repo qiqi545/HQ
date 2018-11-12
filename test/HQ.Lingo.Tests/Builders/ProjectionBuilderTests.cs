@@ -16,7 +16,9 @@
 #endregion
 
 using System.Collections.Generic;
+using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
+using HQ.Rosetta;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -41,10 +43,10 @@ namespace HQ.Lingo.Tests.Builders
             var sql = d.Select("Customer", "dbo", new[] {"Id", "Email"}, projections, filters);
 
             _console.WriteLine(sql);
-            Assert.Equal((string) ("SELECT p.Id, p.Email, p0.* " +
-                                   "FROM dbo.Customer p " +
-                                   "LEFT JOIN CustomerOrder c0 ON c0.CustomerId = p.Id " +
-                                   "LEFT JOIN Order p0 ON p0.Id = c0.OrderId"), (string) sql);
+            Assert.Equal("SELECT p.Id, p.Email, p0.* " +
+                         "FROM dbo.Customer p " +
+                         "LEFT JOIN CustomerOrder c0 ON c0.CustomerId = p.Id " +
+                         "LEFT JOIN Order p0 ON p0.Id = c0.OrderId", sql);
         }
 
         [Fact]
@@ -57,9 +59,9 @@ namespace HQ.Lingo.Tests.Builders
             var sql = d.Select("Customer", "dbo", new[] {"Id", "Email"}, projections, filters);
 
             _console.WriteLine(sql);
-            Assert.Equal((string) ("SELECT p.Id, p.Email, p0.* " +
-                                   "FROM dbo.Customer p " +
-                                   "LEFT JOIN Address p0 ON p0.Id = p.AddressId"), (string) sql);
+            Assert.Equal("SELECT p.Id, p.Email, p0.* " +
+                         "FROM dbo.Customer p " +
+                         "LEFT JOIN Address p0 ON p0.Id = p.AddressId", sql);
         }
     }
 }
