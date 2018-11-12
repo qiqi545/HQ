@@ -16,6 +16,8 @@
 #endregion
 
 using System.Text;
+using HQ.Lingo.Extensions;
+using HQ.PetaPoco.Utilities;
 
 namespace HQ.Lingo.Dialects
 {

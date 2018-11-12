@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
-using HQ.Lingo.Helpers;
+using HQ.PetaPoco.Utilities;
 
 namespace HQ.Lingo.Sqlite
 {

@@ -8,7 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
     <ProjectReference Include="..\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Queries\" />
   </ItemGroup>
 
 </Project>
