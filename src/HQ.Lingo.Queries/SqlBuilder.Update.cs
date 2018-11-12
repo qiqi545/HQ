@@ -18,9 +18,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using HQ.DotLiquid;
-using HQ.Lingo.Attributes;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Descriptor;
+using HQ.Lingo.Descriptor.Attributes;
 using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo.Queries

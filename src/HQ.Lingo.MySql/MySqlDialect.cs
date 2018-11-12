@@ -17,7 +17,7 @@
 
 using System.Text;
 using HQ.Lingo.Dialects;
-using HQ.Lingo.Helpers;
+using HQ.PetaPoco.Utilities;
 
 namespace HQ.Lingo.MySql
 {
