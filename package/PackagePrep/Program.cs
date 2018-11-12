@@ -47,7 +47,6 @@ namespace PackagePrep
 
                 Console.WriteLine("Tokenizing sources...");
                 Console.WriteLine("Path: " + path);
-                Console.WriteLine("Root Namespace: " + rootNamespace);
 
                 foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
                     File.Delete(file);
