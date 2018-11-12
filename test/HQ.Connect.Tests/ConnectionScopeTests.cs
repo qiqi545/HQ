@@ -53,7 +53,7 @@ namespace HQ.Connect.Tests
 
         private static DataContext Scope(IConnectionFactory connectionFactory)
         {
-            return _foreverContext ?? (_foreverContext = new DataContext(connectionFactory));
+            return _foreverContext ?? (_foreverContext = new DataContext(connectionFactory, null));
         }
 
         [Fact]
