@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Lingo.SqlServer", "HQ.Li
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Lingo.DocumentDb", "HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj", "{9721FCD8-50CF-4C69-9017-615D6692CA25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Lingo.Dapper", "HQ.Lingo.Dapper\HQ.Lingo.Dapper.csproj", "{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,12 @@ Global
 		{9721FCD8-50CF-4C69-9017-615D6692CA25}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{9721FCD8-50CF-4C69-9017-615D6692CA25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9721FCD8-50CF-4C69-9017-615D6692CA25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7109C9-88F4-4FC6-B65D-BFCCFF97CFDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
