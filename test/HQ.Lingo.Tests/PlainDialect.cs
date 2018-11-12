@@ -1,6 +1,6 @@
 namespace tuxedo.Tests
 {
-    public class PlainDialect : Dialect
+    public class PlainDialect : IDialect
     {
         public char StartIdentifier { get { return ' '; } }
         public char EndIdentifier { get { return ' '; } }

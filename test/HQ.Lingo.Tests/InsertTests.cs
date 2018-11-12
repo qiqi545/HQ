@@ -1,10 +1,10 @@
-﻿using System;
-using NUnit.Framework;
-using tuxedo.Tests.Models;
+using System;
+using HQ.Touchstone.Xunit;
+using tuxedo.Dapper.Tests.Models;
+using Xunit;
 
 namespace tuxedo.Tests
 {
-    [TestFixture]
     public class InsertTests : TuxedoTests
     {
         [Test]

@@ -1,6 +1,6 @@
 namespace tuxedo.Dialects
 {
-    public class SqliteDialect : Dialect
+    public class SqliteDialect : IDialect
     {
         public char StartIdentifier { get { return '\"'; } }
         public char EndIdentifier { get { return '\"'; } }

@@ -1,6 +1,6 @@
 namespace tuxedo.Dialects
 {
-    public class MySqlDialect : Dialect
+    public class MySqlDialect : IDialect
     {
         public char StartIdentifier { get { return '`'; } }
         public char EndIdentifier { get { return '`'; } }

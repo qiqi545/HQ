@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using table_descriptor;
+using TableDescriptor;
+using tuxedo.Extensions;
 
 namespace tuxedo
 {
@@ -35,7 +36,7 @@ namespace tuxedo
             return new Query(sql, parameters.AddRange(whereClause.Parameters));
         }
 
-        private static Dictionary<string, object> BuildSafeSetClause(IDescriptor descriptor, IDictionary<string, object> hash)
+        private static Dictionary<string, object> BuildSafeSetClause(Descriptor descriptor, IDictionary<string, object> hash)
         {
             var setClause = new Dictionary<string, object>();
             foreach (var insertable in descriptor.Insertable)
@@ -67,7 +68,7 @@ namespace tuxedo
             return new Query(sql, parameters.AddRange(whereClause.Parameters));
         }
 
-        private static IDictionary<string, object> UpdateSetClause(IDictionary<string, object> setClause, IDescriptor descriptor, out string sql)
+        private static IDictionary<string, object> UpdateSetClause(IDictionary<string, object> setClause, Descriptor descriptor, out string sql)
         {
             var parameters = ParametersFromHash(setClause, suffix: SetSuffix);
             var setColumns = ColumnsFromHash(descriptor, setClause);

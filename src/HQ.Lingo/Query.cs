@@ -4,11 +4,13 @@ namespace tuxedo
 {
     public class Query
     {
-        public string Sql { get; }
+        public string Sql { get; set; }
+        public IDictionary<string, object> Parameters { get; set; }
 
-        public IDictionary<string, object> Parameters { get; private set; }
-
-        public Query(string sql) : this(sql, new Dictionary<string, object>()) { }
+        public Query(string sql) : this(sql, new Dictionary<string, object>())
+        {
+            
+        }
 
         public Query(string sql, IDictionary<string, object> parameters)
         {

@@ -1,4 +1,4 @@
-﻿using table_descriptor;
+﻿using TableDescriptor;
 
 namespace tuxedo
 {
@@ -18,7 +18,7 @@ namespace tuxedo
             return new Query(sql, whereClause.Parameters);
         }
 
-        private static string DeleteFrom(IDescriptor descriptor)
+        private static string DeleteFrom(Descriptor descriptor)
         {
             return string.Concat("DELETE FROM ", TableName(descriptor));
         }

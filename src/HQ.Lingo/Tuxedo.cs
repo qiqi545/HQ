@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using fastmember;
-using table_descriptor;
+using HQ.Common.FastMember;
+using TableDescriptor;
+using tuxedo.Extensions;
 
 namespace tuxedo
 {
     public partial class Tuxedo
     {
         public static IDialect Dialect { get; set; }
-        public static readonly Func<Type, IDescriptor> DescriptorFunction = type => SimpleDescriptor.Create(type);
+        public static Func<Type, Descriptor> DescriptorFunction = type => SimpleDescriptor.Create(type);
 
-        internal static IDescriptor GetDescriptor<T>()
+        public static Descriptor GetDescriptor<T>()
         {
             return DescriptorFunction(typeof(T));
         }
@@ -28,7 +29,7 @@ namespace tuxedo
             return new Query(identity);
         }
         
-        private static IEnumerable<PropertyToColumn> ColumnsFromHash(IDescriptor descriptor, IDictionary<string, object> hash)
+        private static IEnumerable<PropertyToColumn> ColumnsFromHash(Descriptor descriptor, IDictionary<string, object> hash)
         {
             return descriptor.All.Where(c => hash.ContainsKey(c.ColumnName));
         }
@@ -61,7 +62,7 @@ namespace tuxedo
             return columns.Select(column => string.Concat("@", column.ColumnName, suffix));
         }
 
-        public static string TableName(IDescriptor descriptor)
+        public static string TableName(Descriptor descriptor)
         {
             return new[] {descriptor.Schema, descriptor.Table}.ConcatQualified(Dialect, new string(Dialect.Separator, 1));
         }
@@ -94,19 +95,18 @@ namespace tuxedo
         {
             var accessor = TypeAccessor.Create(example.GetType());
             var type = example.GetType();
-            if (example is IDictionary<string, object>)
-                return (IDictionary<string, object>)example;
+            if (example.Implements<IDictionary<string, object>>()) return (IDictionary<string, object>)example;
             List<string> members;
             if (!TypeMembers.TryGetValue(type, out members))
             {
-                members = accessor.PropertyInfos.Select(p => p.Name).ToList();
-                members.AddRange(accessor.FieldInfos.Select(f => f.Name));
+                members = accessor.CachedProperties.Select(p => p.Name).ToList();
+                members.AddRange(accessor.CachedFields.Select(f => f.Name));
                 TypeMembers.Add(type, members);
             }
             return members.ToDictionary(member => member, member => accessor[example, member]);
         }
 
-        private static Query WhereClauseByExample(IDescriptor descriptor, dynamic @where)
+        private static Query WhereClauseByExample(Descriptor descriptor, dynamic @where)
         {
             var hash = (IDictionary<string, object>)DynamicToHash(@where);
             var exampleColumns = ColumnsFromHash(descriptor, hash);

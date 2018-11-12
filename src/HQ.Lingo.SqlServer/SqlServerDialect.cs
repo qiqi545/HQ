@@ -1,6 +1,6 @@
 namespace tuxedo.Dialects
 {
-    public class SqlServerDialect : Dialect
+    public class SqlServerDialect : IDialect
     {
         public char StartIdentifier { get { return '['; } }
         public char EndIdentifier { get { return ']'; } }

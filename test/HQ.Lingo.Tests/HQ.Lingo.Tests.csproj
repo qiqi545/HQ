@@ -17,6 +17,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.Dapper\HQ.Lingo.Dapper.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.MySql\HQ.Lingo.MySql.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.Sqlite\HQ.Lingo.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo.SqlServer\HQ.Lingo.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Lingo\HQ.Lingo.csproj" />
   </ItemGroup>
 
 </Project>

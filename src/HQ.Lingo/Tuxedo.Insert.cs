@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using table_descriptor;
+using TableDescriptor;
+using tuxedo.Extensions;
 
 namespace tuxedo
 {
@@ -12,14 +13,14 @@ namespace tuxedo
             return Insert(entity, descriptor, columnsToInsert);
         }
 
-        private static Query Insert<T>(T entity, IDescriptor descriptor, IList<PropertyToColumn> columnsToInsert)
+        private static Query Insert<T>(T entity, Descriptor descriptor, IList<PropertyToColumn> columnsToInsert)
         {
             var sql = InsertSql(descriptor, columnsToInsert);
             var parameters = ParametersFromInstance(entity, descriptor.Insertable);
             return new Query(sql, parameters);
         }
 
-        private static string InsertSql(IDescriptor descriptor, IList<PropertyToColumn> columnsToInsert)
+        private static string InsertSql(Descriptor descriptor, IList<PropertyToColumn> columnsToInsert)
         {
             var sql = string.Concat(
                 "INSERT INTO ", TableName(descriptor),

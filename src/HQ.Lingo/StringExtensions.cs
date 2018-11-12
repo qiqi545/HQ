@@ -18,12 +18,12 @@ namespace tuxedo.Extensions
             return Concat(list.Cast<object>(), separator);
         }
 
-        public static string Qualify(this string value, Dialect dialect)
+        public static string Qualify(this string value, IDialect dialect)
         {
             return string.IsNullOrWhiteSpace(value) ? value : string.Concat(dialect.StartIdentifier, value, dialect.EndIdentifier).Trim();
         }
 
-        public static string ConcatQualified(this IEnumerable<string> list, Dialect dialect, string separator = DefaultSeparator)
+        public static string ConcatQualified(this IEnumerable<string> list, IDialect dialect, string separator = DefaultSeparator)
         {
             var qualified = list.Where(i => !string.IsNullOrWhiteSpace(i)).Select(i => i.Qualify(dialect));
             return string.Join(separator, qualified);

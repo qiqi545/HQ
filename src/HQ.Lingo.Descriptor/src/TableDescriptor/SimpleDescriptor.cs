@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using HQ.Common.FastMember;
 using TableDescriptor.Extensions;
 
 namespace TableDescriptor

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using fastmember;
+using HQ.Common.FastMember;
 using table_descriptor.Extensions;
 
 namespace table_descriptor
@@ -170,7 +170,7 @@ namespace table_descriptor
         private IEnumerable<PropertyAccessor> ProjectFromTypeAccessor()
         {
             var accessor = TypeAccessor.Create(Type);
-            var properties = accessor.PropertyInfos;
+            var properties = accessor.CachedProperties;
             var accessors = properties.Select(property => new PropertyAccessor(accessor, property.PropertyType, property.Name));
             return accessors;
         }
