@@ -15,19 +15,13 @@
 
 #endregion
 
-using System;
-
-namespace HQ.Connect.Tests
+namespace HQ.Connect.SqlServer
 {
-    public class DatabaseFixture : IDisposable
+    public class SqlServerDataContext : DataContext
     {
-        public void Dispose()
+        public SqlServerDataContext(string connectionString) : base(new SqlServerConnectionFactory
+            {ConnectionString = connectionString})
         {
-        }
-
-        public string CreateConnectionString()
-        {
-            return $"Data Source={Guid.NewGuid()}.sqdb;Mode=ReadWriteCreate;";
         }
     }
 }

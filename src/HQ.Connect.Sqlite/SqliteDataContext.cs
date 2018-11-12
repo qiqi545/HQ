@@ -15,19 +15,13 @@
 
 #endregion
 
-using System;
-
-namespace HQ.Connect.Tests
+namespace HQ.Connect.Sqlite
 {
-    public class DatabaseFixture : IDisposable
+    public class SqliteDataContext : DataContext
     {
-        public void Dispose()
+        public SqliteDataContext(string connectionString) : base(new SqliteConnectionFactory
+            {ConnectionString = connectionString})
         {
-        }
-
-        public string CreateConnectionString()
-        {
-            return $"Data Source={Guid.NewGuid()}.sqdb;Mode=ReadWriteCreate;";
         }
     }
 }
