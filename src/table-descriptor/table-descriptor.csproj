@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone\HQ.Touchstone.csproj" />
   </ItemGroup>
 
 </Project>

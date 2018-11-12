@@ -1,6 +1,8 @@
 using System;
 using NUnit.Framework;
+using tuxedo.Dapper.Tests.Models;
 using tuxedo.Tests.Models;
+using Xunit;
 
 namespace tuxedo.Tests
 {
@@ -11,9 +13,9 @@ namespace tuxedo.Tests
         public void Update_with_no_where()
         {
             var query = Tuxedo.Update<User>(new { Email = "good@domain.com" });
-            Assert.AreEqual("UPDATE User SET Email = @Email_set", query.Sql);
-            Assert.AreEqual(1, query.Parameters.Count);
-            Assert.AreEqual("good@domain.com", query.Parameters["@Email_set"]);
+            Assert.Equal("UPDATE User SET Email = @Email_set", query.Sql);
+            Assert.Equal(1, query.Parameters.Count);
+            Assert.Equal("good@domain.com", query.Parameters["@Email_set"]);
             Console.WriteLine(query);
         }
 
@@ -21,10 +23,10 @@ namespace tuxedo.Tests
         public void Update_with_explicit_where()
         {
             var query = Tuxedo.Update<User>(new { Email = "good@domain.com" }, new { Email = "bad@domain.com" });
-            Assert.AreEqual("UPDATE User SET Email = @Email_set WHERE Email = @Email", query.Sql);
-            Assert.AreEqual(2, query.Parameters.Count);
-            Assert.AreEqual("bad@domain.com", query.Parameters["@Email"]);
-            Assert.AreEqual("good@domain.com", query.Parameters["@Email_set"]);
+            Assert.Equal("UPDATE User SET Email = @Email_set WHERE Email = @Email", query.Sql);
+            Assert.Equal(2, query.Parameters.Count);
+            Assert.Equal("bad@domain.com", query.Parameters["@Email"]);
+            Assert.Equal("good@domain.com", query.Parameters["@Email_set"]);
             Console.WriteLine(query);
         }
 
