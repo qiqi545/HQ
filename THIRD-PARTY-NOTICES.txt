@@ -7,3 +7,21 @@ If we have omitted a notice here, please let us know by submitting
 an issue on GitHub, or by emailing support@hq.io
 
 ##################################################################
+
+HQ.Common uses a modified paging helper from PetaPoco from repository (https://github.com/CollaboratingPlatypus/PetaPoco)
+as at commit `cabb39eb219fbe0efd9b19119057b103f5262fd0`, on May 10, 2017:
+
+Copyright (C) 2011-2011 Topten Software (contact@toptensoftware.com)
+All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this product except in compliance with the License.
+You may obtain a copy of the License at
+
+<http://www.apache.org/licenses/LICENSE-2.0>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
