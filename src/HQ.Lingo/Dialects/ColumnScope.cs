@@ -15,14 +15,12 @@
 
 #endregion
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Dialects
 {
-    public class SqlServerDialect : IDialect
+    public enum ColumnScope
     {
-        public char StartIdentifier => '[';
-        public char EndIdentifier => ']';
-        public char Separator => '.';
-        public int ParametersPerQuery => 500;
-        public string Identity => "SELECT CAST(SCOPE_IDENTITY() AS INT) AS [Id]";
+        All,
+        Inserted,
+        Updated
     }
 }

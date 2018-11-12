@@ -15,33 +15,29 @@
 
 #endregion
 
-namespace HQ.Lingo.Tests
+using System.Collections.Generic;
+using System.Text;
+using HQ.Lingo.Descriptor;
+
+namespace HQ.Lingo.Dialects
 {
-    public class PlainDialect : IDialect
+    public interface ISqlDialect
     {
-        public char StartIdentifier
-        {
-            get { return ' '; }
-        }
+        char? StartIdentifier { get; }
+        char? EndIdentifier { get; }
+        char? Separator { get; }
+        char? Parameter { get; }
+        char? Quote { get; }
 
-        public char EndIdentifier
-        {
-            get { return ' '; }
-        }
+        string SetSuffix { get; }
+        bool SelectStar { get; }
 
-        public char Separator
-        {
-            get { return ' '; }
-        }
+        bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
+        void Page(string sql, StringBuilder sb);
 
-        public int ParametersPerQuery
-        {
-            get { return 10; }
-        }
-
-        public string Identity
-        {
-            get { return "IDENTITY"; }
-        }
+        string ResolveTableName(IDataDescriptor descriptor);
+        string ResolveColumnName(IDataDescriptor descriptor, string columnName);
+        IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor);
+        IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All);
     }
 }

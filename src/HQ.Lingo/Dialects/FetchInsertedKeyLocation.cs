@@ -15,14 +15,11 @@
 
 #endregion
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Dialects
 {
-    public interface IDialect
+    public enum FetchInsertedKeyLocation
     {
-        char StartIdentifier { get; }
-        char EndIdentifier { get; }
-        char Separator { get; }
-        int ParametersPerQuery { get; }
-        string Identity { get; }
+        BeforeValues,
+        AfterStatement
     }
 }
