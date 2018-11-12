@@ -1,1 +1,0 @@
-"..\.nuget\NuGet.exe" push logging.0.9.1.nupkg
