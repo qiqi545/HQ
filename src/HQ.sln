@@ -21,24 +21,31 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Package|Any CPU = Package|Any CPU
 		PackageSources|Any CPU = PackageSources|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Package|Any CPU.Build.0 = Package|Any CPU
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EA761A7-0D88-4000-ADEC-B7D1F294093D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Package|Any CPU.ActiveCfg = Release|Any CPU
+		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Package|Any CPU.Build.0 = Release|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.PackageSources|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.PackageSources|Any CPU.Build.0 = Debug|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E8081D8-F0AB-4FB8-9EE3-E5C250B65F70}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.Package|Any CPU.ActiveCfg = Release|Any CPU
+		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.Package|Any CPU.Build.0 = Release|Any CPU
 		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.PackageSources|Any CPU.ActiveCfg = Debug|Any CPU
 		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.PackageSources|Any CPU.Build.0 = Debug|Any CPU
 		{F58553C5-3F22-4FCC-B187-A7E4C0B08421}.Release|Any CPU.ActiveCfg = Release|Any CPU
