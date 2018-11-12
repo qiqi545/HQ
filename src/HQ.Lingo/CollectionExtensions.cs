@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace tuxedo
+namespace tuxedo.Extensions
 {
     internal static class CollectionExtensions
     {
