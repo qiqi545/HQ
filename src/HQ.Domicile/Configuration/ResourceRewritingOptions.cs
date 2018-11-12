@@ -15,13 +15,13 @@
 
 #endregion
 
+using HQ.Common;
+using HQ.Common.Configuration;
+
 namespace HQ.Domicile.Configuration
 {
-    public class PublicApiOptions
+    public class ResourceRewritingOptions : FeatureToggle<PublicApiOptions>
     {
-        public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
-        public JsonMultiCaseOptions JsonMultiCase { get; set; } = new JsonMultiCaseOptions();
-        public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
-        public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
+        public string ActionHeader { get; set; } = HttpHeaders.Action;
     }
 }

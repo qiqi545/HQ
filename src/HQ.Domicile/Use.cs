@@ -47,7 +47,7 @@ namespace HQ.Domicile
         {
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<PublicApiOptions.MethodOverrideOptions, PublicApiOptions>(out var feature))
+                if (context.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var feature))
                     if (context.Request.Method.Equals(HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
                         context.Request.Headers.TryGetValue(feature.MethodOverrideHeader, out var header))
                     {
@@ -64,8 +64,7 @@ namespace HQ.Domicile
         {
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<PublicApiOptions.ResourceRewritingOptions, PublicApiOptions>(out var feature)
-                )
+                if (context.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var feature))
                 {
                     // Use X-Action to disambiguate one vs. many resources in a write call
                     // See: http://restlet.com/blog/2015/05/18/implementing-bulk-updates-within-restful-services/
@@ -96,7 +95,7 @@ namespace HQ.Domicile
         {
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<PublicApiOptions.RequestLimitOptions, PublicApiOptions>(out var feature))
+                if (context.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var feature))
                 {
                     var bodySize = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
                     if (bodySize != null && !bodySize.IsReadOnly)
@@ -111,7 +110,7 @@ namespace HQ.Domicile
         {
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<PublicApiOptions.JsonMultiCaseOptions, PublicApiOptions>(out var feature))
+                if (context.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var feature))
                 {
                     var qs = context.Request.Query;
                     qs.TryGetValue(feature.QueryStringParameter, out var values);
