@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -6,6 +6,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>An SQL generator multi-tool for .NET. This package adds support for low-level SQL string generation.</Description>
+    <PackageTags>sql generator dotnet-standard hq-stack</PackageTags>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +22,6 @@
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
     <ProjectReference Include="..\HQ.Lingo\HQ.Lingo.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Extensions\" />
   </ItemGroup>
 
 </Project>

@@ -8,6 +8,12 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <Description>An SQL generator multi-tool for .NET. This package adds support for data mapping metadata.</Description>
+    <PackageTags>sql generator dotnet-standard hq-stack</PackageTags>
+    <Version>1.0.20</Version>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>

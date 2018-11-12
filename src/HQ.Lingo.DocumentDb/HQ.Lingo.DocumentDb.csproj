@@ -1,8 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>An SQL generator multi-tool for .NET. This package adds dialect support for DocumentDb.</Description>
+    <PackageTags>sql generator dotnet-standard documentdb hq-stack</PackageTags>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
