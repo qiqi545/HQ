@@ -16,119 +16,41 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using HQ.Common.FastMember;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Queries
 {
-    public partial class SqlBuilder
+    // todo kill all static access and use DI
+
+    public static partial class SqlBuilder
     {
-        public static Func<Type, IDataDescriptor> DescriptorFunction =
-            SimpleDataDescriptor.Create;
-
-        private static readonly IDictionary<Type, List<string>> TypeMembers = new Dictionary<Type, List<string>>();
-
         static SqlBuilder()
         {
-            Dialect = new NoDialect();
+            Dialect = NoDialect.Default;
         }
 
         public static ISqlDialect Dialect { get; set; }
+        public static Func<Type, IDataDescriptor> DescriptorFunction { get; set; } = SimpleDataDescriptor.Create;
 
-        public static IDataDescriptor GetDescriptor<T>()
+        internal static IDataDescriptor GetDescriptor<T>()
         {
             return DescriptorFunction(typeof(T));
         }
 
-        private static IEnumerable<PropertyToColumn> ColumnsFromHash(IDataDescriptor descriptor,
-            IDictionary<string, object> hash)
+        internal static IDataDescriptor GetDescriptor(Type type)
         {
-            return descriptor.All.Where(c => hash.ContainsKey(c.ColumnName));
+            return DescriptorFunction(type);
         }
 
-        private static IDictionary<string, object> ParametersFromHash(IEnumerable<KeyValuePair<string, object>> hash,
-            IDictionary<string, object> parent = null, string suffix = "")
+        public static object Asc(this object clause)
         {
-            var parameters = parent ?? new Dictionary<string, object>();
-            foreach (var entry in hash) parameters.Add(string.Concat("@", entry.Key, suffix), entry.Value);
-            return parameters;
+            return clause;
         }
 
-        private static IDictionary<string, object> ParametersFromInstance(dynamic entity,
-            IEnumerable<PropertyToColumn> columns)
+        public static object Desc(this object clause)
         {
-            var hash = (IDictionary<string, object>) DynamicToHash(entity);
-            var keys = columns.Select(c => c.ColumnName).Intersect(hash.Keys).ToList();
-            var result = keys.ToDictionary(key => string.Concat("@", key), key => hash[key]);
-            return result;
-        }
-
-        private static IEnumerable<string> ColumnParameterClauses(IEnumerable<PropertyToColumn> columns,
-            string suffix = "")
-        {
-            return columns.Select(column =>
-                string.Concat(column.ColumnName.Qualify(Dialect), " = @", column.ColumnName, suffix));
-        }
-
-        private static IEnumerable<string> ColumnParameters(IEnumerable<PropertyToColumn> columns, string suffix = "")
-        {
-            return columns.Select(column => string.Concat("@", column.ColumnName, suffix));
-        }
-
-        public static string TableName(IDataDescriptor descriptor)
-        {
-            return new[] {descriptor.Schema, descriptor.Table}.ConcatQualified(Dialect,
-                new string(Dialect.Separator.GetValueOrDefault(), 1));
-        }
-
-        public static string Column(PropertyToColumn column)
-        {
-            return column.ColumnName.Qualify(Dialect);
-        }
-
-        public static string ColumnList(IEnumerable<PropertyToColumn> columns)
-        {
-            return columns.Select(p => p.ColumnName).ConcatQualified(Dialect);
-        }
-
-        private static IDictionary<string, object> DynamicToHash(dynamic example)
-        {
-            if (example is IDynamicMetaObjectProvider)
-            {
-                var hash = example as ExpandoObject;
-                if (hash != null) return (IDictionary<string, object>) example;
-            }
-
-            return StaticToHash(example);
-        }
-
-        private static IDictionary<string, object> StaticToHash(object example)
-        {
-            var accessor = TypeAccessor.Create(example.GetType());
-            var type = example.GetType();
-            if (example.Implements<IDictionary<string, object>>()) return (IDictionary<string, object>) example;
-            List<string> members;
-            if (!TypeMembers.TryGetValue(type, out members))
-            {
-                members = accessor.CachedProperties.Select(p => p.Name).ToList();
-                members.AddRange(accessor.CachedFields.Select(f => f.Name));
-                TypeMembers.Add(type, members);
-            }
-
-            return members.ToDictionary(member => member, member => accessor[example, member]);
-        }
-
-        private static Query WhereClauseByExample(IDataDescriptor descriptor, dynamic where)
-        {
-            var hash = (IDictionary<string, object>) DynamicToHash(where);
-            var exampleColumns = ColumnsFromHash(descriptor, hash);
-            var parameters = ParametersFromHash(hash);
-            var whereClause = ColumnParameterClauses(exampleColumns).Concat(" AND ");
-            return new Query(whereClause, parameters);
+            return clause;
         }
     }
 }

@@ -18,6 +18,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo
 {
@@ -35,14 +36,14 @@ namespace HQ.Lingo
             return Concat(list.Cast<object>(), separator);
         }
 
-        public static string Qualify(this string value, IDialect dialect)
+        public static string Qualify(this string value, ISqlDialect dialect)
         {
             return string.IsNullOrWhiteSpace(value)
                 ? value
                 : string.Concat(dialect.StartIdentifier, value, dialect.EndIdentifier).Trim();
         }
 
-        public static string ConcatQualified(this IEnumerable<string> list, IDialect dialect,
+        public static string ConcatQualified(this IEnumerable<string> list, ISqlDialect dialect,
             string separator = DefaultSeparator)
         {
             var qualified = list.Where(i => !string.IsNullOrWhiteSpace(i)).Select(i => i.Qualify(dialect));

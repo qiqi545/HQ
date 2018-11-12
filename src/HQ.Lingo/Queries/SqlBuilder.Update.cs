@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,73 +17,113 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Lingo.Attributes;
 using HQ.Lingo.Descriptor;
+using HQ.Lingo.Dialects;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Queries
 {
+    // TODO no ToList/ToArray via StringBank
+    // TODO remove hashKeysRewrite
+
     partial class SqlBuilder
     {
-        public const string SetSuffix = "_set";
-
-        public static Query Update<T>(T entity)
+        public static Query Update<T>(T instance, dynamic where = null)
         {
             var descriptor = GetDescriptor<T>();
-            var hash = DynamicToHash(entity);
-            var setClause = BuildSafeSetClause(descriptor, hash);
 
-            string sql;
-            var parameters = UpdateSetClause(setClause, descriptor, out sql);
+            var set = Dialect.ResolveColumnNames(descriptor, ColumnScope.Updated).ToList();
 
-            Dictionary<string, object> keys;
-            //if (descriptor.Identity != null)
-            //    keys = new Dictionary<string, object>
-            //    {
-            //        {descriptor.Identity.ColumnName, descriptor.Identity.Property.Get(entity)}
-            //    };
-            //else
-                keys = descriptor.Keys.ToDictionary(id => id.ColumnName, id => id.Property.Get(entity));
-            var whereClause = WhereClauseByExample(descriptor, keys);
+            IDictionary<string, object> hash = Hash.FromAnonymousObject(instance, true);
+            var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
-            sql = string.Concat(sql, " WHERE ", whereClause.Sql);
-            return new Query(sql, parameters.AddRange(whereClause.Parameters));
-        }
-
-        private static Dictionary<string, object> BuildSafeSetClause(IDataDescriptor descriptor,
-            IDictionary<string, object> hash)
-        {
-            var setClause = new Dictionary<string, object>();
-            foreach (var insertable in descriptor.Inserted)
+            IDictionary<string, object> whereHash;
+            string[] whereFilter;
+            if (where == null)
             {
-                object value;
-                if (hash.TryGetValue(insertable.ColumnName, out value)) setClause.Add(insertable.ColumnName, value);
+                // WHERE is derived from the instance's primary key
+                var keys = Dialect.ResolveKeyNames(descriptor);
+                whereFilter = keys.Intersect(hashKeysRewrite.Keys).ToArray();
+                whereHash = hash;
+            }
+            else
+            {
+                // WHERE is explicitly provided 
+                whereHash = Hash.FromAnonymousObject(where, true);
+                var whereHashKeysRewrite =
+                    whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+                whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToArray();
             }
 
-            return setClause;
+            // TODO: rewrite this...
+            foreach (var computed in descriptor.Computed.Where(x => hash.ContainsKey(x.Property.Name)))
+                if (computed.Property.HasAttribute<ExternalSurrogateKey>())
+                {
+                    var reverseKey = hashKeysRewrite.Single(x => x.Value == computed.Property.Name);
+                    set.Remove(reverseKey.Key);
+
+                    whereHash.Add(computed.Property.Name, computed.Property.Get(instance));
+                    whereFilter = whereFilter
+                        .Concat(new[] {Dialect.ResolveColumnName(descriptor, computed.Property.Name)}).ToArray();
+                }
+
+            var setFilter = set.Intersect(hashKeysRewrite.Keys).ToArray();
+            return Update(descriptor, setFilter, whereFilter, hash, whereHash);
         }
 
         public static Query Update<T>(dynamic set, dynamic where = null)
         {
-            var descriptor = GetDescriptor<T>();
-            var setClause = (IDictionary<string, object>) BuildSafeSetClause(descriptor, DynamicToHash(set));
-
-            string sql;
-            var parameters = UpdateSetClause(setClause, descriptor, out sql);
-
-            if (where == null) return new Query(sql, parameters);
-
-            Query whereClause = WhereClauseByExample(descriptor, where);
-            sql = string.Concat(sql, " WHERE ", whereClause.Sql);
-            return new Query(sql, parameters.AddRange(whereClause.Parameters));
+            return Update(GetDescriptor<T>(), set, where);
         }
 
-        private static IDictionary<string, object> UpdateSetClause(IDictionary<string, object> setClause,
-            IDataDescriptor descriptor, out string sql)
+        public static Query Update(object instance)
         {
-            var parameters = ParametersFromHash(setClause, suffix: SetSuffix);
-            var setColumns = ColumnsFromHash(descriptor, setClause);
-            sql = string.Concat("UPDATE ", TableName(descriptor), " SET ",
-                ColumnParameterClauses(setColumns, SetSuffix).Concat());
-            return parameters;
+            return Update(GetDescriptor(instance.GetType()), instance);
+        }
+
+        public static Query Update(IDataDescriptor descriptor, object instance)
+        {
+            IDictionary<string, object> hash = Hash.FromAnonymousObject(instance, true);
+            var setFilter = descriptor.Updated.Select(c => c.ColumnName).Intersect(hash.Keys).ToArray();
+            var whereFilter = descriptor.Keys.Select(c => c.ColumnName).Intersect(hash.Keys).ToArray();
+
+            return Update(descriptor, setFilter, whereFilter, hash, hash);
+        }
+
+        public static Query Update(IDataDescriptor descriptor, dynamic set, dynamic where = null)
+        {
+            IDictionary<string, object> setHash = Hash.FromAnonymousObject(set, true);
+            var setFilter = descriptor.Updated.Select(c => c.ColumnName).Intersect(setHash.Keys).ToArray();
+
+            IDictionary<string, object> whereHash = Hash.FromAnonymousObject(where, true);
+            var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToArray();
+
+            return Update(descriptor, setFilter, whereFilter, setHash, whereHash);
+        }
+
+        private static Query Update(IDataDescriptor descriptor, IList<string> setFilter, IList<string> whereFilter,
+            IDictionary<string, object> setHash, IDictionary<string, object> whereHash)
+        {
+            var setHashKeyRewrite = setHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+            var whereHashKeyRewrite = setHash == whereHash
+                ? setHashKeyRewrite
+                : whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+
+            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
+                key => whereHash[whereHashKeyRewrite[key]]);
+            var setParams = setFilter.ToDictionary(key => $"{setHashKeyRewrite[key]}{Dialect.SetSuffix}",
+                key => setHash[setHashKeyRewrite[key]]);
+
+            var setParameters = setParams.Keys.ToArray();
+            var whereParameters = whereParams.Keys.ToArray();
+
+            var sql = Dialect.Update(Dialect.ResolveTableName(descriptor), descriptor.Schema, setFilter, whereFilter,
+                setParameters, whereParameters, Dialect.SetSuffix);
+
+            var @params = Hash.FromDictionary(whereParams);
+            @params.Merge(setParams);
+
+            return new Query(sql, @params);
         }
     }
 }

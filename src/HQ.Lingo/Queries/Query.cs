@@ -17,7 +17,7 @@
 
 using System.Collections.Generic;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Queries
 {
     public class Query
     {

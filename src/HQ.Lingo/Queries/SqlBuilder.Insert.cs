@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,37 +15,52 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Linq;
+using HQ.Lingo.Attributes;
 using HQ.Lingo.Descriptor;
+using HQ.Lingo.Dialects;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Queries
 {
+    // TODO no ToList via StringBank
+    // TODO remove hashKeysRewrite
+
     partial class SqlBuilder
     {
         public static Query Insert<T>(T entity)
         {
-            var descriptor = GetDescriptor<T>();
-            var columnsToInsert = descriptor.Inserted;
-            return Insert(entity, descriptor, columnsToInsert);
+            return Insert(entity, GetDescriptor<T>());
         }
 
-        private static Query Insert<T>(T entity, IDataDescriptor descriptor,
-            IList<PropertyToColumn> columnsToInsert)
+        public static Query Insert(object instance)
         {
-            var sql = InsertSql(descriptor, columnsToInsert);
-            var parameters = ParametersFromInstance(entity, descriptor.Inserted);
+            return Insert(instance, GetDescriptor(instance.GetType()));
+        }
+
+        public static Query Insert<T>(T instance, IDataDescriptor descriptor)
+        {
+            return Insert(instance as object, descriptor);
+        }
+
+        public static Query Insert(object instance, IDataDescriptor descriptor)
+        {
+            var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
+            var sql = Dialect.InsertInto(Dialect.ResolveTableName(descriptor), descriptor.Schema, columns, false);
+            var hash = Hash.FromAnonymousObject(instance, true);
+            var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+            var keys = columns.Intersect(hashKeysRewrite.Keys);
+
+            var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[hashKeysRewrite[key]]);
+
+            // TODO: rewrite this...
+            foreach (var computed in descriptor.Computed.Where(x => hash.ContainsKey(x.Property.Name)))
+                if (computed.Property.HasAttribute<ExternalSurrogateKey>())
+                {
+                    var reverseKey = hashKeysRewrite.Single(x => x.Value == computed.Property.Name);
+                    parameters.Remove($"{Dialect.Parameter}{reverseKey.Key}");
+                }
+
             return new Query(sql, parameters);
-        }
-
-        private static string InsertSql(IDataDescriptor descriptor,
-            IList<PropertyToColumn> columnsToInsert)
-        {
-            var sql = string.Concat(
-                "INSERT INTO ", TableName(descriptor),
-                " (", ColumnList(columnsToInsert), ") VALUES (",
-                ColumnParameters(columnsToInsert).Concat(),
-                ")");
-            return sql;
         }
     }
 }

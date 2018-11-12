@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,27 +17,23 @@
 
 using HQ.Lingo.Descriptor;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Queries
 {
     partial class SqlBuilder
     {
-        public static Query DeleteAll<T>()
-        {
-            return new Query(DeleteFrom(GetDescriptor<T>()));
-        }
-
-        public static Query Delete<T>(dynamic where)
+        public static Query Delete<T>(dynamic where = null)
         {
             var descriptor = GetDescriptor<T>();
-            var deleteFrom = DeleteFrom(descriptor);
-            Query whereClause = WhereClauseByExample(descriptor, where);
-            var sql = string.Concat(deleteFrom, " WHERE ", whereClause);
-            return new Query(sql, whereClause.Parameters);
+            return Delete(descriptor, where);
         }
 
-        private static string DeleteFrom(IDataDescriptor descriptor)
+        public static Query Delete(IDataDescriptor descriptor, object where)
         {
-            return string.Concat("DELETE FROM ", TableName(descriptor));
+            var hash = Hash.FromAnonymousObject(where);
+            var keys = hash.Keys.Intersect(Dialect.ResolveColumnNames(descriptor)).ToArray();
+            var sql = Dialect.DeleteFrom(descriptor.Table, descriptor.Schema, keys);
+            var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[key]);
+            return new Query(sql, parameters);
         }
     }
 }
