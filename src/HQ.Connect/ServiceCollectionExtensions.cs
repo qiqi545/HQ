@@ -16,87 +16,105 @@
 #endregion
 
 using System;
+using System.Data;
 using HQ.Harmony;
+using HQ.Harmony.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Connect
 {
     public static class ServiceCollectionExtensions
     {
-        private static readonly IContainer Container = new HarmonyContainer();
+        private static HarmonyContainer _container;
 
         public static IServiceCollection AddDatabaseConnection<T>(this IServiceCollection services,
             string connectionString, ConnectionScope scope) where T : class, IConnectionFactory, new()
         {
+            _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
+            _container.AddAspNetCore();
+
             return AddDatabaseConnection<T>(services, connectionString, scope, "Default");
         }
 
-        public static IServiceCollection AddDatabaseConnection<T>(this IServiceCollection services,
-            string connectionString, ConnectionScope scope, string slot) where T : class, IConnectionFactory, new()
+        public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(
+            this IServiceCollection services, string connectionString, ConnectionScope scope,
+            Action<IDbConnection> onConnection = null, Action<IDbCommand, Type> onCommand = null)
+            where TConnectionFactory : class, IConnectionFactory, new()
         {
-            Container.Register(slot, r => new T {ConnectionString = connectionString}, Lifetime.Permanent);
+            services.AddTransient(r => _container.Resolve<IDataConnection<TScope>>());
+
+            _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
+            _container.AddAspNetCore();
+
+            var slot = $"{typeof(TScope).FullName}";
+
+            AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, onConnection, onCommand);
 
             switch (scope)
             {
                 case ConnectionScope.AlwaysNew:
-                    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)));
-                    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)));
+                    _container.Register<IDataConnection<TScope>>(r =>
+                        new DataConnection<TScope>(r.Resolve<DataContext>(slot), onCommand));
                     break;
                 case ConnectionScope.ByRequest:
-                    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Request);
-                    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)),
-                        Lifetime.Request);
+                    _container.Register<IDataConnection<TScope>>(
+                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot), onCommand), Lifetime.Request);
                     break;
                 case ConnectionScope.ByThread:
-                    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Thread);
-                    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)),
-                        Lifetime.Thread);
+                    _container.Register<IDataConnection<TScope>>(
+                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot), onCommand), Lifetime.Thread);
                     break;
                 case ConnectionScope.KeepAlive:
-                    Container.Register(slot, r => new DataContext(r.Resolve<T>(slot)), Lifetime.Permanent);
-                    Container.Register<IDataConnection>(slot, r => new DataConnection(r.Resolve<DataContext>(slot)),
-                        Lifetime.Permanent);
+                    _container.Register<IDataConnection<TScope>>(
+                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot), onCommand), Lifetime.Permanent);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
 
-            services.AddTransient(r => Container.Resolve<DataContext>(slot));
-            services.AddTransient(r => Container.Resolve<IDataConnection>(slot));
             return services;
         }
 
-        public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(
-            this IServiceCollection services, string connectionString, ConnectionScope scope)
-            where TConnectionFactory : class, IConnectionFactory, new()
+        public static IServiceCollection AddDatabaseConnection<T>(this IServiceCollection services,
+            string connectionString, ConnectionScope scope, string slot, Action<IDbConnection> onConnection = null,
+            Action<IDbCommand, Type> onCommand = null) where T : class, IConnectionFactory, new()
         {
-            var slot = $"{typeof(TScope).FullName}";
+            var factory = new T {ConnectionString = connectionString};
 
-            AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot);
+            services.AddTransient(r => _container.Resolve<T>(slot));
+            services.AddTransient(r => _container.Resolve<DataContext>(slot));
+            services.AddTransient(delegate { return _container.Resolve<IDataConnection>(slot); });
+
+            _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
+            _container.AddAspNetCore();
+            _container.Register(slot, r => factory, Lifetime.Permanent);
 
             switch (scope)
             {
                 case ConnectionScope.AlwaysNew:
-                    Container.Register<IDataConnection<TScope>>(r =>
-                        new DataConnection<TScope>(r.Resolve<DataContext>(slot)));
+                    _container.Register(slot, r => new DataContext(r.Resolve<T>(slot), onConnection));
+                    _container.Register<IDataConnection>(slot,
+                        r => new DataConnection(r.Resolve<DataContext>(slot), onCommand));
                     break;
                 case ConnectionScope.ByRequest:
-                    Container.Register<IDataConnection<TScope>>(
-                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot)), Lifetime.Request);
+                    _container.Register(slot, r => new DataContext(r.Resolve<T>(slot), onConnection), Lifetime.Request);
+                    _container.Register<IDataConnection>(slot,
+                        r => new DataConnection(r.Resolve<DataContext>(slot), onCommand), Lifetime.Request);
                     break;
                 case ConnectionScope.ByThread:
-                    Container.Register<IDataConnection<TScope>>(
-                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot)), Lifetime.Thread);
+                    _container.Register(slot, r => new DataContext(r.Resolve<T>(slot), onConnection), Lifetime.Thread);
+                    _container.Register<IDataConnection>(slot,
+                        r => new DataConnection(r.Resolve<DataContext>(slot), onCommand), Lifetime.Thread);
                     break;
                 case ConnectionScope.KeepAlive:
-                    Container.Register<IDataConnection<TScope>>(
-                        r => new DataConnection<TScope>(r.Resolve<DataContext>(slot)), Lifetime.Permanent);
+                    _container.Register(slot, r => new DataContext(r.Resolve<T>(slot), onConnection),
+                        Lifetime.Permanent);
+                    _container.Register<IDataConnection>(slot,
+                        r => new DataConnection(r.Resolve<DataContext>(slot), onCommand), Lifetime.Permanent);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
-
-            services.AddTransient(r => Container.Resolve<IDataConnection<TScope>>());
 
             return services;
         }
@@ -105,6 +123,9 @@ namespace HQ.Connect
             string connectionString, Func<IConnectionFactory, DataContext> scope)
             where T : class, IConnectionFactory, new()
         {
+            _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
+            _container.AddAspNetCore();
+
             return AddDatabaseConnection<T>(services, connectionString, scope, "Default");
         }
 
@@ -112,9 +133,16 @@ namespace HQ.Connect
             Func<IConnectionFactory, DataContext> scope, string slot)
             where T : class, IConnectionFactory, new()
         {
-            Container.Register(slot, r => new T {ConnectionString = connectionString}, Lifetime.Permanent);
-            Container.Register(slot, r => scope(r.Resolve<IConnectionFactory>()));
-            services.AddTransient(r => Container.Resolve<DataContext>(slot));
+            var factory = new T {ConnectionString = connectionString};
+
+            services.AddTransient(r => _container.Resolve<T>(slot));
+            services.AddTransient(r => _container.Resolve<DataContext>(slot));
+
+            _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
+            _container.AddAspNetCore();
+            _container.Register(slot, r => factory, Lifetime.Permanent);
+            _container.Register(slot, r => scope(r.Resolve<IConnectionFactory>()));
+
             return services;
         }
     }
