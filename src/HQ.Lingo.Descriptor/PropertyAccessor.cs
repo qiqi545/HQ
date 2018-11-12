@@ -35,7 +35,7 @@ namespace HQ.Lingo.Descriptor
             _accessor = accessor;
 
             Name = name;
-            Info = accessor.CachedMembers.SingleOrDefault(m => m.Name == name);
+            Info = accessor.CachedMembers.SingleOrDefault(m => m.Name == name) as PropertyInfo;
 
             var member = accessor.GetMembers().SingleOrDefault(p => p.Name == name);
             if (member == null) return;
@@ -44,7 +44,7 @@ namespace HQ.Lingo.Descriptor
 
         public string Name { get; set; }
         public Type Type { get; set; }
-        public MemberInfo Info { get; set; }
+        public PropertyInfo Info { get; set; }
 
         public bool HasAttribute<T>() where T : Attribute
         {
