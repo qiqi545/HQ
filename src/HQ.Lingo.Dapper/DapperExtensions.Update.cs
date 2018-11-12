@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,23 +19,27 @@ using System;
 using System.Data;
 using System.Linq.Expressions;
 using Dapper;
+using HQ.Lingo.Queries;
 
 namespace HQ.Lingo.Dapper
 {
-    partial class TuxedoExtensions
+    partial class DapperExtensions
     {
-        public static int DeleteAll<T>(this IDbConnection connection, IDbTransaction transaction = null,
+        public static int Update<T>(this IDbConnection connection, T instance, IDbTransaction transaction = null,
             int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn) where T : class
         {
-            var query = Tuxedo.DeleteAll<T>();
-            return connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+            var query = SqlBuilder.Update(instance);
+            var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+            return result;
         }
 
-        public static int Delete<T>(this IDbConnection connection, dynamic where, IDbTransaction transaction = null,
-            int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn) where T : class
+        public static int Update<T>(this IDbConnection connection, dynamic set, dynamic where = null,
+            IDbTransaction transaction = null, int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn)
+            where T : class
         {
-            Query query = Tuxedo.Delete<T>(where);
-            return connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+            Query query = SqlBuilder.Update<T>(set, where);
+            var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+            return result;
         }
     }
 }

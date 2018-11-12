@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Lingo\HQ.Lingo.csproj" />
+    <ProjectReference Include="..\HQ.Lingo.Queries\HQ.Lingo.Queries.csproj" />
   </ItemGroup>
 
 </Project>

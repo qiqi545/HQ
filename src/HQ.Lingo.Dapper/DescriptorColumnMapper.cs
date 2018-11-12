@@ -23,7 +23,6 @@ using HQ.Lingo.Descriptor;
 
 namespace HQ.Lingo.Dapper
 {
-    /// <summary> Intercept the DB's column name in a result set and give it back to the real C# property </summary>
     public class DescriptorColumnMapper : SqlMapper.ITypeMap
     {
         private readonly IDictionary<string, PropertyToColumnMemberMap> _memberMap;
@@ -39,48 +38,30 @@ namespace HQ.Lingo.Dapper
 
         public SqlMapper.IMemberMap GetMember(string columnName)
         {
-            PropertyToColumnMemberMap value;
-            _memberMap.TryGetValue(columnName.ToLower(), out value);
+            _memberMap.TryGetValue(columnName.ToLower(), out var value);
             return value;
         }
 
         private class PropertyToColumnMemberMap : SqlMapper.IMemberMap
         {
-            private readonly string _columnName;
             private readonly PropertyInfo _underlyingProperty;
 
             public PropertyToColumnMemberMap(PropertyToColumn propertyToColumn)
             {
-                _underlyingProperty = propertyToColumn.Property.PropertyInfo;
-                _columnName = propertyToColumn.ColumnName;
+                _underlyingProperty = propertyToColumn.Property.Info;
             }
 
-            PropertyInfo SqlMapper.IMemberMap.Property
-            {
-                get { return _underlyingProperty; }
-            }
+            PropertyInfo SqlMapper.IMemberMap.Property => _underlyingProperty;
 
-            Type SqlMapper.IMemberMap.MemberType
-            {
-                get { return _underlyingProperty.PropertyType; }
-            }
+            Type SqlMapper.IMemberMap.MemberType => _underlyingProperty.PropertyType;
 
             #region Unused
 
-            string SqlMapper.IMemberMap.ColumnName
-            {
-                get { return _columnName; }
-            }
+            public string ColumnName => null;
 
-            FieldInfo SqlMapper.IMemberMap.Field
-            {
-                get { return null; }
-            }
+            FieldInfo SqlMapper.IMemberMap.Field => null;
 
-            ParameterInfo SqlMapper.IMemberMap.Parameter
-            {
-                get { return null; }
-            }
+            ParameterInfo SqlMapper.IMemberMap.Parameter => null;
 
             #endregion
         }

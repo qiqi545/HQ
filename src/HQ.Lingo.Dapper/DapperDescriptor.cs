@@ -21,13 +21,9 @@ using HQ.Lingo.Descriptor;
 
 namespace HQ.Lingo.Dapper
 {
-    public class DapperDescriptor : SimpleDescriptor
+    public class DapperDescriptor : SimpleDataDescriptor
     {
         protected DapperDescriptor(Type type) : base(type)
-        {
-        }
-
-        public override void OnDescribed()
         {
             SqlMapper.SetTypeMap(Type, new DescriptorColumnMapper(Type, All));
         }
