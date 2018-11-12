@@ -1,8 +1,26 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using HQ.Lingo.Descriptor.TableDescriptor;
+using HQ.Lingo.Tests.Descriptor.Models;
 using HQ.Touchstone.Xunit;
-using TableDescriptor.Tests.Models;
 using Xunit;
 
-namespace TableDescriptor.Tests
+namespace HQ.Lingo.Tests.Descriptor
 {
     public class DescriptorTests
     {
@@ -35,14 +53,14 @@ namespace TableDescriptor.Tests
             Assert.Equal(1, descriptor.All.Count);
             Assert.Equal(0, descriptor.Insertable.Count);
         }
-        
+
         [Test]
         public void Through_tables_are_given_two_assigned_keys_rather_than_an_identity()
         {
             var descriptor = SimpleDescriptor.Create<ThroughTable>();
             Assert.NotNull(descriptor);
             Assert.Null(descriptor.Identity);
-            
+
             Assert.Equal(2, descriptor.All.Count);
             Assert.Equal(2, descriptor.Insertable.Count);
             Assert.Equal(0, descriptor.Computed.Count);
@@ -79,8 +97,8 @@ namespace TableDescriptor.Tests
             Assert.NotNull(descriptor.Identity);
             Assert.Equal(2, descriptor.Keys.Count);
         }
-        
-        private static void AssertIdentityIsPresent(Descriptor descriptor)
+
+        private static void AssertIdentityIsPresent(Lingo.Descriptor.TableDescriptor.Descriptor descriptor)
         {
             Assert.NotNull(descriptor.Identity);
             Assert.Equal(1, descriptor.Computed.Count);

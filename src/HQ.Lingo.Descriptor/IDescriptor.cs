@@ -17,9 +17,9 @@
 
 using System.Collections.Generic;
 
-namespace HQ.Lingo.Descriptor.TableDescriptor
+namespace HQ.Lingo.Descriptor
 {
-    public interface Descriptor
+    public interface IDescriptor
     {
         string Schema { get; set; }
         string Table { get; }

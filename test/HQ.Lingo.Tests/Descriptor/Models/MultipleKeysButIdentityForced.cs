@@ -15,11 +15,14 @@
 
 #endregion
 
+using HQ.Lingo.Descriptor.TableDescriptor;
+
 namespace HQ.Lingo.Tests.Descriptor.Models
 {
-    public class ThroughTable
+    public class MultipleKeysButIdentityForced
     {
-        public int FirstId { get; set; }
-        public int SecondId { get; set; }
+        [Identity] public int ThisId { get; set; }
+
+        public int ThatId { get; set; }
     }
 }
