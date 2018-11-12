@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HQ.Lingo.Dialects;
 
-namespace HQ.Lingo
+namespace HQ.Lingo.Extensions
 {
     internal static class StringExtensions
     {
