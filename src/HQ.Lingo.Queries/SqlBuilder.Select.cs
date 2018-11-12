@@ -21,6 +21,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using HQ.Common.Helpers;
+using HQ.DotLiquid;
+using HQ.Lingo.Builders;
 using HQ.Lingo.Descriptor;
 
 namespace HQ.Lingo.Queries

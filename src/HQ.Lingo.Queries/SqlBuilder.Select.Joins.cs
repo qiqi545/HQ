@@ -19,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using HQ.DotLiquid;
+using HQ.Lingo.Builders;
 using HQ.Lingo.Descriptor;
 using HQ.Rosetta;
 
