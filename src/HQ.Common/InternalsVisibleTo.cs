@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -18,6 +18,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Cohort")]
+[assembly: InternalsVisibleTo("HQ.Cohort.AspNetCore.Mvc")]
 [assembly: InternalsVisibleTo("HQ.Common.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Cadence")]
 [assembly: InternalsVisibleTo("HQ.Cadence.AspNetCore")]
