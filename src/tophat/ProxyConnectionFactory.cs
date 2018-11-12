@@ -1,15 +1,16 @@
 using System;
-using System.Data;
+using System.Data.Common;
 
 namespace tophat
 {
     public class ProxyConnectionFactory : ConnectionFactory
     {
-        public Func<string, IDbConnection> Proxy { get; set; }
+        public Func<string, DbConnection> Proxy { get; set; }
 
-        public override IDbConnection CreateConnection()
+        public override DbConnection CreateConnection()
         {
-            return Proxy(ConnectionString);
+            var connection = Proxy(ConnectionString);
+            return connection;
         }
     }
 }

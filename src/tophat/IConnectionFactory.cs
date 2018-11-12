@@ -1,10 +1,13 @@
-using System.Data;
+﻿using System.Data.Common;
 
 namespace tophat
 {
     public interface IConnectionFactory
     {
         string ConnectionString { get; set; }
-        IDbConnection CreateConnection();
+        DbConnection CreateConnection();
+        DbConnection GetUnitOfWorkScopedConnection();
+        bool IsActive { get; }
+        void Reset();
     }
 }

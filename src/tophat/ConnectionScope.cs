@@ -1,9 +1,9 @@
-namespace tophat
+﻿namespace tophat
 {
     public enum ConnectionScope
     {
         /// <summary>
-        /// One connection is opened on every request
+        /// One connection is opened on every request for a unit of work
         /// </summary>
         AlwaysNew,
         /// <summary>
@@ -15,7 +15,7 @@ namespace tophat
         /// </summary>
         ByThread,
         /// <summary>
-        /// One connection is opened on first use
+        /// One connection is opened for the life of the registration
         /// </summary>
         KeepAlive
     }

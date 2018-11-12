@@ -1,20 +1,20 @@
-using System;
-using System.Data;
+﻿using System;
+using System.Data.Common;
 
 namespace tophat
 {
     public class DataContext : IDisposable
     {
         private static readonly object Sync = new object();
-        private volatile IDbConnection _connection;
+        private volatile DbConnection _connection;
         private readonly IConnectionFactory _connectionFactory;
         public DataContext(IConnectionFactory connectionFactory)
         {
             _connectionFactory = connectionFactory;
         }
-        public IDbConnection Connection => GetConnection();
-
-	    private IDbConnection GetConnection()
+        public bool IsActive => _connection != null;
+        public DbConnection Connection => GetConnection();
+        private DbConnection GetConnection()
         {
             PrimeConnection();
             return _connection;
@@ -32,7 +32,11 @@ namespace tophat
         }
         public void Dispose()
         {
-            _connection?.Dispose();
+            if (_connection == null)
+            {
+                return;
+            }
+            _connection.Dispose();
             _connection = null;
         }
     }
