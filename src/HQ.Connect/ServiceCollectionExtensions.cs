@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using HQ.Common;
 using HQ.Harmony;
 using HQ.Harmony.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,7 @@ namespace HQ.Connect
             _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
             _container.AddAspNetCore();
 
-            return AddDatabaseConnection<T>(services, connectionString, scope, "Default");
+            return AddDatabaseConnection<T>(services, connectionString, scope, Constants.ConnectionSlots.Default);
         }
 
         public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(
@@ -133,7 +134,7 @@ namespace HQ.Connect
             _container = _container ?? new HarmonyContainer(services.BuildServiceProvider());
             _container.AddAspNetCore();
 
-            return AddDatabaseConnection<T>(services, connectionString, scope, "Default");
+            return AddDatabaseConnection<T>(services, connectionString, scope, Constants.ConnectionSlots.Default);
         }
 
         public static IServiceCollection AddDatabaseConnection<T>(IServiceCollection services, string connectionString,
