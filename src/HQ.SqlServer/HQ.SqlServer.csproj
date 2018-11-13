@@ -1,5 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -7,7 +10,7 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO for the SQL Server backend.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.10</Version>
+    <Version>1.0.11</Version>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
