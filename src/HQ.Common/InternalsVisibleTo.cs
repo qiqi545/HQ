@@ -32,7 +32,5 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Common
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+    internal sealed class InternalsVisibleTo { }
 }

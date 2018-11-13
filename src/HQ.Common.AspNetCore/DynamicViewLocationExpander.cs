@@ -22,7 +22,7 @@ namespace HQ.Common.AspNetCore
 {
 	public class DynamicViewLocationExpander<T> : IViewLocationExpander
 	{
-		private const string ContextKey = HqContextKeys.DynamicViewLocation;
+		private const string ContextKey = Constants.ContextKeys.DynamicViewLocation;
 		private readonly string _value;
 
 		public DynamicViewLocationExpander()
