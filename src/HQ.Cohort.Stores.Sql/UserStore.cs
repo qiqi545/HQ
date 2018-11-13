@@ -74,6 +74,12 @@ namespace HQ.Cohort.Stores.Sql
             _security = security;
         }
 
+        public IQueryable<TUser> Users => MaybeQueryable();
+
+        public CancellationToken CancellationToken { get; }
+
+        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
+
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -199,12 +205,6 @@ namespace HQ.Cohort.Stores.Sql
         public void Dispose()
         {
         }
-
-        public IQueryable<TUser> Users => MaybeQueryable();
-
-        public CancellationToken CancellationToken { get; }
-
-        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
 
         private IQueryable<TUser> MaybeQueryable()
         {

@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using HQ.Common;
 using HQ.Connect;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,10 +26,14 @@ namespace HQ.Cohort.Stores.Sql
 {
     public static class Add
     {
-        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole>(
-            this IdentityBuilder identityBuilder, string connectionString, ConnectionScope scope,
-            Action<IdentityOptions> setupAction = null, Action<IDbCommand, Type> onCommand = null,
-            Action<IDbConnection> onConnection = null)
+        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole>
+        (
+            this IdentityBuilder identityBuilder,
+            string connectionString,
+            ConnectionScope scope,
+            Action<IDbCommand, Type, IServiceProvider> onCommand = null,
+            Action<IDbConnection, IServiceProvider> onConnection = null
+        )
             where TDatabase : class, IConnectionFactory, new()
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
@@ -39,7 +44,8 @@ namespace HQ.Cohort.Stores.Sql
             if (scope == ConnectionScope.ByRequest)
                 services.AddHttpContextAccessor();
 
-            services.AddDatabaseConnection<TDatabase>(connectionString, scope, "Identity", onConnection, onCommand);
+            services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
+                onConnection, onCommand);
 
             services.AddTransient<IUserStore<TUser>, UserStore<TUser, TKey, TRole>>();
             services.AddTransient<IRoleStore<TRole>, RoleStore<TKey, TRole>>();

@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Connect\src\HQ.Connect.MySql\HQ.Connect.MySql.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.MySql\HQ.Lingo.MySql.csproj" />
     <ProjectReference Include="..\HQ.Cohort.Stores.Sql\HQ.Cohort.Stores.Sql.csproj" />
   </ItemGroup>
 </Project>

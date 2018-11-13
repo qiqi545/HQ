@@ -16,94 +16,112 @@
 #endregion
 
 using System;
+using System.Data;
 using System.Data.SqlClient;
-using System.IO;
-using FluentMigrator.Runner;
+using System.Threading;
+using HQ.Cohort.Configuration;
+using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.SqlServer;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Cohort.Stores.Sql.SqlServer
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqlServerIdentityStores<TUser, TRole>(this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptions> setupAction = null)
+        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
-            MigrateToLatest<string>(connectionString);
-
-            identityBuilder.Services.AddSingleton<ISqlDialect>(new SqlServerDialect());
-
-            return identityBuilder.AddSqlStores<SqlServerConnectionFactory, string, TUser, TRole>(connectionString,
-                scope);
+            return AddSqlServerIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStores<TKey, TUser, TRole>(
-            this IdentityBuilder identityBuilder, string connectionString,
-            ConnectionScope scope = ConnectionScope.ByRequest, Action<IdentityOptions> setupAction = null)
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(
+            this IdentityBuilder identityBuilder, IConfiguration config, string connectionString,
+            ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
             where TRole : IdentityRole<TKey>
         {
-            MigrateToLatest<TKey>(connectionString);
-
-            identityBuilder.Services.AddSingleton<ISqlDialect>(new SqlServerDialect());
-
-            return identityBuilder
-                .AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole>(connectionString, scope);
+            return AddSqlServerIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString) where TKey : IEquatable<TKey>
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope,
+            IConfiguration identityConfig, IConfiguration SqlServerConfig)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
         {
-            //
-            // Create database if it doesn't exist:
-            var csb = new SqlConnectionStringBuilder(connectionString);
-            if (csb.DataSource.Equals("(localdb)\\mssqllocaldb", StringComparison.OrdinalIgnoreCase))
+            identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
+            identityBuilder.Services.Configure<SqlServerOptions>(SqlServerConfig);
+
+            return AddSqlServerIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope,
+                identityConfig.Bind, SqlServerConfig.Bind);
+        }
+
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(
+            this IdentityBuilder identityBuilder, string connectionString,
+            ConnectionScope scope = ConnectionScope.ByRequest,
+            Action<IdentityOptionsExtended> configureIdentity = null,
+            Action<SqlServerOptions> configureSqlServer = null)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
+        {
+            identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
+
+            var dialect = new SqlServerDialect();
+
+            var identityOptions = new IdentityOptionsExtended();
+            configureIdentity?.Invoke(identityOptions);
+
+            var SqlServerOptions = new SqlServerOptions();
+            configureSqlServer?.Invoke(SqlServerOptions);
+
+            MigrateToLatest<TKey>(connectionString, identityOptions, SqlServerOptions);
+
+            identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
+                OnCommand<TKey>(), OnConnection);
+
+            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+
+            return identityBuilder;
+        }
+
+        private static void OnConnection(IDbConnection c, IServiceProvider r)
+        {
+            if (c is SqlConnection connection)
             {
-                var dbFilePath = $"%USERPROFILE%\\{csb.InitialCatalog}.mdf";
-                var filePath = Environment.ExpandEnvironmentVariables(dbFilePath);
-                if (!File.Exists(filePath))
-                    using (var connection =
-                        new SqlConnection(
-                            @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=master;Integrated Security=True"))
-                    {
-                        connection.Open();
-                        {
-                            var command = connection.CreateCommand();
-                            command.CommandText =
-                                $"IF EXISTS (SELECT name FROM sys.databases WHERE name = N'{csb.InitialCatalog}') EXEC SP_DETACH_DB N'{csb.InitialCatalog}'";
-                            command.ExecuteNonQuery();
-                        }
-
-                        {
-                            var command = connection.CreateCommand();
-                            command.CommandText =
-                                $"CREATE DATABASE [{csb.InitialCatalog}] ON (NAME = N'{csb.InitialCatalog}', FILENAME = '{filePath}')";
-                            command.ExecuteNonQuery();
-                        }
-                    }
             }
+        }
 
-            //
-            // Run migration:
-            var container = new ServiceCollection()
-                .AddSingleton(new ZeroMigrationContext {Database = SupportedDatabases.SqlServer})
-                .AddFluentMigratorCore()
-                .ConfigureRunner(
-                    builder => builder
-                        .AddSqlServer()
-                        .WithGlobalConnectionString(connectionString)
-                        .ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
-                .BuildServiceProvider();
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
+            where TKey : IEquatable<TKey>
+        {
+            return (c, t, r) =>
+            {
+                if (c is SqlCommand command)
+                {
+                }
+            };
+        }
 
-            var runner = container.GetRequiredService<IMigrationRunner>();
-            runner.MigrateUp();
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
+            SqlServerOptions options) where TKey : IEquatable<TKey>
+        {
+            var runner = new MigrationRunner(connectionString, options);
+
+            if (identityOptions.Stores.CreateIfNotExists)
+                runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+
+            if (identityOptions.Stores.MigrateOnStartup)
+                runner.MigrateUp(CancellationToken.None);
         }
     }
 }

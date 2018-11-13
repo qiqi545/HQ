@@ -15,13 +15,9 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Stores.Sql.SqlServer
 {
-    internal sealed class InternalsVisibleTo
+    public class SqlServerOptions
     {
     }
 }

@@ -20,28 +20,9 @@ using FluentMigrator;
 
 namespace HQ.Cohort.Stores.Sql.SqlServer
 {
-    public enum SupportedDatabases
-    {
-        SqlServer,
-        Sqlite,
-        MySql
-    }
-
-    public class ZeroMigrationContext
-    {
-        public SupportedDatabases Database { get; set; }
-    }
-
     [Migration(0)]
     public class CreateIdentitySchema : Migration
     {
-        private readonly ZeroMigrationContext _context;
-
-        public CreateIdentitySchema(ZeroMigrationContext context)
-        {
-            _context = context;
-        }
-
         public override void Up()
         {
             /*
@@ -278,18 +259,10 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
             */
-            switch (_context.Database)
-            {
-                case SupportedDatabases.SqlServer:
-                    Execute.Sql(@"
+            Execute.Sql(@"
 CREATE UNIQUE INDEX [RoleNameIndex]
     ON [dbo].[AspNetRoles]([NormalizedName])
 WHERE [NormalizedName] IS NOT NULL;");
-                    break;
-                default:
-                    Create.Index("RoleNameIndex").OnTable("AspNetRoles").OnColumn("NormalizedName").Unique();
-                    break;
-            }
 
             /*
             migrationBuilder.CreateIndex(
@@ -331,18 +304,10 @@ WHERE [NormalizedName] IS NOT NULL;");
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
              */
-            switch (_context.Database)
-            {
-                case SupportedDatabases.SqlServer:
-                    Execute.Sql(@"
+            Execute.Sql(@"
 CREATE UNIQUE INDEX [UserNameIndex]
     ON [dbo].[AspNetUsers]([NormalizedUserName])
 WHERE [NormalizedUserName] IS NOT NULL;");
-                    break;
-                default:
-                    Create.Index("UserNameIndex").OnTable("AspNetUsers").OnColumn("NormalizedUserName").Unique();
-                    break;
-            }
         }
 
         public override void Down()

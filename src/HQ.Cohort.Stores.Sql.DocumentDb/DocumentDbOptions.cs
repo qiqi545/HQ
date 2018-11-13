@@ -15,13 +15,11 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("HQ.Cohort.Tests")]
-
-namespace HQ.Cohort
+namespace HQ.Cohort.Stores.Sql.DocumentDb
 {
-    internal sealed class InternalsVisibleTo
+    public class DocumentDbOptions
     {
+        public string CollectionId { get; set; } = "AspNetIdentity";
+        public int? OfferThroughput { get; set; } = 400;
     }
 }

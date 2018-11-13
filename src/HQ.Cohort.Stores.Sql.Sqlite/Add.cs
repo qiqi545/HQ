@@ -16,53 +16,109 @@
 #endregion
 
 using System;
-using FluentMigrator.Runner;
+using System.Data;
+using System.Threading;
+using HQ.Cohort.Configuration;
+using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.Sqlite;
+using HQ.Lingo.Dialects;
+using HQ.Lingo.Sqlite;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Cohort.Stores.Sql.Sqlite
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqliteIdentityStores<TUser, TRole>(this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptions> setupAction = null)
+        public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
-            MigrateToLatest<string>(connectionString);
-
-            return identityBuilder.AddSqlStores<SqliteConnectionFactory, string, TUser, TRole>(connectionString, scope);
+            return AddSqliteIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
         }
 
-        public static IdentityBuilder AddSqliteIdentityStores<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptions> setupAction = null)
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
+            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
             where TRole : IdentityRole<TKey>
         {
-            MigrateToLatest<string>(connectionString);
-
-            return identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope);
+            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString) where TKey : IEquatable<TKey>
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope,
+            IConfiguration identityConfig, IConfiguration SqliteConfig)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
         {
-            var container = new ServiceCollection()
-                .AddSingleton(new ZeroMigrationContext {Database = SupportedDatabases.Sqlite})
-                .AddFluentMigratorCore()
-                .ConfigureRunner(
-                    builder => builder
-                        .AddSQLite()
-                        .WithGlobalConnectionString(connectionString)
-                        .ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
-                .BuildServiceProvider();
+            identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
+            identityBuilder.Services.Configure<SqliteOptions>(SqliteConfig);
 
-            var runner = container.GetRequiredService<IMigrationRunner>();
-            runner.MigrateUp();
+            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope,
+                identityConfig.Bind, SqliteConfig.Bind);
+        }
+
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            Action<IdentityOptionsExtended> configureIdentity = null, Action<SqliteOptions> configureSqlite = null)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
+        {
+            identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
+
+            var dialect = new SqliteDialect();
+
+            var identityOptions = new IdentityOptionsExtended();
+            configureIdentity?.Invoke(identityOptions);
+
+            var SqliteOptions = new SqliteOptions();
+            configureSqlite?.Invoke(SqliteOptions);
+
+            MigrateToLatest<TKey>(connectionString, identityOptions, SqliteOptions);
+
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
+                OnCommand<TKey>(), OnConnection);
+
+            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+
+            return identityBuilder;
+        }
+
+        private static void OnConnection(IDbConnection c, IServiceProvider r)
+        {
+            if (c is SqliteConnection connection)
+            {
+            }
+        }
+
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
+            where TKey : IEquatable<TKey>
+        {
+            return (c, t, r) =>
+            {
+                if (c is SqliteCommand command)
+                {
+                }
+            };
+        }
+
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
+            SqliteOptions options) where TKey : IEquatable<TKey>
+        {
+            var runner = new MigrationRunner(connectionString, options);
+
+            if (identityOptions.Stores.CreateIfNotExists)
+                runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+
+            if (identityOptions.Stores.MigrateOnStartup)
+                runner.MigrateUp(CancellationToken.None);
         }
     }
 }

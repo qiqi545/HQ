@@ -17,6 +17,7 @@
 
 using System.Data.DocumentDb;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -27,14 +28,16 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
     {
         private readonly DocumentDbConnectionStringBuilder _builder;
         private readonly DocumentClient _client;
+        private readonly DocumentDbOptions _options;
 
-        public MigrationRunner(string connectionString)
+        public MigrationRunner(string connectionString, DocumentDbOptions options)
         {
+            _options = options;
             _builder = new DocumentDbConnectionStringBuilder(connectionString);
             _client = _builder.Build();
         }
 
-        private async Task CreateDatabaseIfNotExistsAsync()
+        public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
         {
             try
             {
@@ -49,11 +52,9 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             }
         }
 
-        public void MigrateUp()
+        public void MigrateUp(CancellationToken cancellationToken)
         {
-            CreateDatabaseIfNotExistsAsync().Wait();
-
-            new CreateIdentitySchema(_client, _builder.Database).Up().Wait();
+            new CreateIdentitySchema(_client, _builder.Database, _options).Up().Wait(cancellationToken);
         }
     }
 }

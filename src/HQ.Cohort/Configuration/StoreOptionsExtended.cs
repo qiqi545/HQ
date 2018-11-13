@@ -19,26 +19,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Configuration
 {
-    public class IdentityOptionsExtended : IdentityOptions
+    public class StoreOptionsExtended : StoreOptions
     {
-        public IdentityOptionsExtended()
+        public StoreOptionsExtended()
         {
         }
 
-        public IdentityOptionsExtended(IdentityOptions inner)
+        public StoreOptionsExtended(StoreOptions inner)
         {
-            User = new UserOptionsExtended(inner.User);
-            Password = new PasswordOptionsExtended(inner.Password);
-            Stores = new StoreOptionsExtended(inner.Stores);
-
-            Lockout = inner.Lockout;
-            Tokens = inner.Tokens;
-            SignIn = inner.SignIn;
-            ClaimsIdentity = inner.ClaimsIdentity;
+            MaxLengthForKeys = inner.MaxLengthForKeys;
+            ProtectPersonalData = inner.ProtectPersonalData;
         }
 
-        public new UserOptionsExtended User { get; set; } = new UserOptionsExtended();
-        public new PasswordOptionsExtended Password { get; set; } = new PasswordOptionsExtended();
-        public new StoreOptionsExtended Stores { get; set; } = new StoreOptionsExtended();
+        public bool CreateIfNotExists { get; set; }
+        public bool MigrateOnStartup { get; set; }
     }
 }
