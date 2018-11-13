@@ -49,7 +49,7 @@ namespace HQ.Cadence.AspNetCore.Internal
                 var cancel = new CancellationTokenSource(_options.Timeout);
 
                 context.Response.StatusCode = 200;
-                context.Response.Headers.Add(HttpHeaders.ContentType, MediaTypes.Json);
+                context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
                 await context.Response.WriteAsync(JsonSerializer.Serialize(samples), cancel.Token);
             }
             else
