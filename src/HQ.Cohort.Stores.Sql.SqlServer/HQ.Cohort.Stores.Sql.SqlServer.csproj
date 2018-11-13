@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>A powerful extension to ASP.NET Core Identity. This package adds datastore integration for SQL Server.</Description>
+    <PackageTags>aspnetcore-identity sql-server hq-stack</PackageTags>
+    <Version>1.0.20</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Connect\src\HQ.Connect.SqlServer\HQ.Connect.SqlServer.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.SqlServer\HQ.Lingo.SqlServer.csproj" />
+    <ProjectReference Include="..\HQ.Cohort.Stores.Sql\HQ.Cohort.Stores.Sql.csproj" />
+  </ItemGroup>
+
+</Project>
