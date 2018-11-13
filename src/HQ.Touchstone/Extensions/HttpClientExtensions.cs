@@ -52,7 +52,7 @@ namespace HQ.Touchstone.Extensions
         {
             var requestUri = pathString.ToUriComponent();
             var request = new HttpRequestMessage(new HttpMethod(method), requestUri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, MediaTypes.Json);
+            request.Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, Constants.MediaTypes.Json);
             return await client.SendAsync(request);
         }
 
