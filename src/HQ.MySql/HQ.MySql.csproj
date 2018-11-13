@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -11,7 +11,11 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO for the MySQL backend.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.11</Version>
+    <Version>1.0.13</Version>
+    <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ/master/assets/320x320.png</PackageIconUrl>
+    <PackageLicenseUrl>https://github.com/hq-io/HQ/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://docs.hq.io</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hq-io/HQ</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
