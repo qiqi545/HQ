@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.11</Version>
+    <Version>1.0.12</Version>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -33,17 +33,22 @@
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens\bin\**" Link="Tokens\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\bin\**" Link="Tokens.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort\bin\**" Link="Cohort\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\bin\**" Link="Cohort.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\bin\**" Link="Cohort.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect\obj\**;..\Stack\HQ.Connect\src\HQ.Connect\bin\**" Link="Connect\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo\bin\**" Link="Lingo\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\bin\**" Link="Lingo.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\bin\**" Link="Lingo.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\bin\**" Link="Lingo.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\bin\**" Link="Lingo.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Zero\src\HQ.Zero\**\*.cs" Exclude="..\Stack\HQ.Zero\src\HQ.Zero\obj\**;..\Stack\HQ.Zero\src\HQ.Zero\bin\**" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="DotLiquid" Version="2.0.298" />
     <PackageReference Include="Humanizer" Version="2.5.1" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.2" />
