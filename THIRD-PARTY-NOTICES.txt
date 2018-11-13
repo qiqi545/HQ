@@ -8,7 +8,8 @@ an issue on GitHub, or by emailing support@hq.io
 
 ##################################################################
 
-Initial project was licensed under MIT as at March 18th, 2018, commit `1c99c1bc5bf99d38724f0d340a3079cc9c688530` in this source history.
+Initial project was licensed under MIT as at March 18th, 2018, commit `1c99c1bc5bf99d38724f0d340a3079cc9c688530` in this source history:
+--------------------------------------------------------------------------------------------------------
 
 Tophat (https://github.com/danielcrenna/vault/tree/master/tophat)
 --------------------------------------
