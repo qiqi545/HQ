@@ -22,8 +22,6 @@ namespace HQ.Connect
 {
     public class DataConnection<T> : DataConnection, IDataConnection<T>
     {
-        public DataConnection(DataContext current, Action<IDbCommand, Type> onCommand) : base(current, onCommand)
-        {
-        }
+        public DataConnection(DataContext current, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand) : base(current, serviceProvider, onCommand) { }
     }
 }

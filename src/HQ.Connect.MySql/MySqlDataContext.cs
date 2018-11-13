@@ -22,8 +22,8 @@ namespace HQ.Connect.MySql
 {
     public class MySqlDataContext : DataContext
     {
-        public MySqlDataContext(string connectionString, Action<IDbConnection> onConnection = null) :
-            base(new MySqlConnectionFactory {ConnectionString = connectionString}, onConnection)
+        public MySqlDataContext(string connectionString, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null) :
+            base(new MySqlConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
         {
         }
     }

@@ -24,12 +24,14 @@ namespace HQ.Connect
     public class DataConnection : IDataConnection
     {
         private readonly DataContext _current;
-        private readonly Action<IDbCommand, Type> _onCommand;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
         private Type _type;
 
-        public DataConnection(DataContext current, Action<IDbCommand, Type> onCommand)
+        public DataConnection(DataContext current, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand)
         {
             _current = current;
+            _serviceProvider = serviceProvider;
             _onCommand = onCommand;
         }
 
@@ -43,7 +45,7 @@ namespace HQ.Connect
             get
             {
                 if (_onCommand != null && _current.Connection is DbConnection connection)
-                    return new WrapDbConnection(connection, _onCommand, _type);
+                    return new WrapDbConnection(connection, _serviceProvider, _onCommand, _type);
 
                 return _current.Connection;
             }

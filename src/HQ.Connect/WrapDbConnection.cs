@@ -23,12 +23,14 @@ namespace HQ.Connect
 {
     public class WrapDbConnection : DbConnection
     {
-        private readonly Action<IDbCommand, Type> _onCommand;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
         private readonly Type _type;
 
-        public WrapDbConnection(DbConnection inner, Action<IDbCommand, Type> onCommand, Type type)
+        public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
         {
             Inner = inner;
+            _serviceProvider = serviceProvider;
             _onCommand = onCommand;
             _type = type;
         }
@@ -64,7 +66,7 @@ namespace HQ.Connect
         protected override DbCommand CreateDbCommand()
         {
             var command = Inner.CreateCommand();
-            _onCommand?.Invoke(command, _type);
+            _onCommand?.Invoke(command, _type, _serviceProvider);
             return new WrapDbCommand(command);
         }
 
