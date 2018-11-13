@@ -5,8 +5,13 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>7.1</LangVersion>
     <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>A powerful extension to ASP.NET Core Identity.</Description>
+    <PackageTags>aspnetcore-identity hq-stack</PackageTags>
+    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>

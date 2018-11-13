@@ -8,6 +8,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <Description>A powerful extension to ASP.NET Core Identity. This package adds RESTful API support.</Description>
+    <PackageTags>aspnetcore-identity aspnetcore-mvc hq-stack</PackageTags>
+    <Version>1.0.20</Version>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
