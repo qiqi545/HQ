@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using Xunit;
 using Xunit.Sdk;
 
 namespace HQ.Touchstone.Xunit
@@ -28,7 +29,5 @@ namespace HQ.Touchstone.Xunit
         "HQ.Touchstone.Xunit"
 #endif
     )]
-    public class FactAttribute : global::Xunit.FactAttribute { }
-
     public class TestAttribute : FactAttribute { }
 }
