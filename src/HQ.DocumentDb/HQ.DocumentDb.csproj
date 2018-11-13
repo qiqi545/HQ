@@ -15,6 +15,8 @@
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\bin\**" Link="Connect.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\bin\**" Link="Lingo.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\System.Data.DocumentDb\src\System.Data.DocumentDb\**\*.cs" Exclude="..\Stack\System.Data.DocumentDb\src\System.Data.DocumentDb\obj\**;..\Stack\System.Data.DocumentDb\src\System.Data.DocumentDb\bin\**" Link="System.Data.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

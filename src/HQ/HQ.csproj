@@ -35,6 +35,11 @@
     <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens\bin\**" Link="Tokens\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort\bin\**" Link="Cohort\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect\obj\**;..\Stack\HQ.Connect\src\HQ.Connect\bin\**" Link="Connect\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo\bin\**" Link="Lingo\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\bin\**" Link="Lingo.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\bin\**" Link="Lingo.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\bin\**" Link="Lingo.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\bin\**" Link="Lingo.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

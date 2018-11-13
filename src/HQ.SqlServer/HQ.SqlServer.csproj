@@ -12,6 +12,7 @@
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\bin\**" Link="Connect.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\bin\**" Link="Lingo.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

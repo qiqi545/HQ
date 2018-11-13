@@ -61,3 +61,6 @@
 	path = src/Stack/HQ.Connect
 	url = https://github.com/hq-io/HQ.Connect
 
+[submodule "src/Stack/System.Data.DocumentDb"]
+	path = src/Stack/System.Data.DocumentDb
+	url = https://github.com/hq-io/System.Data.DocumentDb
