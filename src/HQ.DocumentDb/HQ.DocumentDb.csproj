@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources;Package</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DocumentDbProvider" Version="1.0.0-pre" />
     <PackageReference Include="FastMember" Version="1.4.1" />
     <PackageReference Include="LiteGuard" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.3" />

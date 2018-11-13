@@ -5,6 +5,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources;Package</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,6 +17,10 @@
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.Sqlite\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.Sqlite\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.Sqlite\bin\**" Link="Connect.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Sqlite\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Sqlite\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Sqlite\bin\**" Link="Lingo.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>

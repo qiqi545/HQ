@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,6 +17,10 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("HQ.DocumentDb")]
+[assembly: InternalsVisibleTo("HQ.MySql")]
+[assembly: InternalsVisibleTo("HQ.Sqlite")]
+[assembly: InternalsVisibleTo("HQ.SqlServer")]
 [assembly:InternalsVisibleTo("HQ.Tests")]
 
 namespace HQ
