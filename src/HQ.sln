@@ -8,6 +8,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\build\build.props = ..\build\build.props
 		..\LICENSE.txt = ..\LICENSE.txt
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
+		..\build\package.props = ..\build\package.props
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
 	EndProjectSection
@@ -18,11 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Tests", "..\test\HQ.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePrep", "..\package\PackagePrep\PackagePrep.csproj", "{F58553C5-3F22-4FCC-B187-A7E4C0B08421}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.SqlServer", "HQ.SqlServer\HQ.SqlServer.csproj", "{6AE08F9A-A2AD-4EEF-8979-DEAE437C0EF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.SqlServer", "HQ.SqlServer\HQ.SqlServer.csproj", "{6AE08F9A-A2AD-4EEF-8979-DEAE437C0EF8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Sqlite", "HQ.Sqlite\HQ.Sqlite.csproj", "{9AA286DC-478C-469C-A483-AA1F523B6B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Sqlite", "HQ.Sqlite\HQ.Sqlite.csproj", "{9AA286DC-478C-469C-A483-AA1F523B6B71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.DocumentDb", "HQ.DocumentDb\HQ.DocumentDb.csproj", "{275E450C-F7BA-431E-9C15-CC3DFBC0888B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.DocumentDb", "HQ.DocumentDb\HQ.DocumentDb.csproj", "{275E450C-F7BA-431E-9C15-CC3DFBC0888B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.MySql", "HQ.MySql\HQ.MySql.csproj", "{D7EBE3F3-21A8-43F6-8A29-93F1B1C3FFA8}"
 EndProject
