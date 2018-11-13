@@ -38,23 +38,16 @@
 	path = src/Stack/HQ.Cohort
 	url = https://github.com/hq-io/HQ.Cohort
 
-
 [submodule "src/Stack/HQ.Tokens"]
-
-	path = src/Stack/HQ.Tokens
-	
+	path = src/Stack/HQ.Tokens	
 	url = https://github.com/hq-io/HQ.Tokens
-
 
 [submodule "src/Stack/HQ.Zero"]
 	path = src/Stack/HQ.Zero
-
 	url = https://github.com/hq-io/HQ.Zero
-
 
 [submodule "src/Stack/HQ.Lingo"]
 	path = src/Stack/HQ.Lingo
-
 	url = https://github.com/hq-io/HQ.Lingo
 
 [submodule "src/Stack/HQ.Connect"]
