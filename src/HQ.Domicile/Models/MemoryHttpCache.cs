@@ -33,7 +33,7 @@ namespace HQ.Domicile.Models
 
         public bool TryGetETag(string key, out string etag)
         {
-            if (!_cache.TryGetValue($"{key}_{HttpHeaders.LastModified}", out etag))
+            if (!_cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out etag))
                 return true;
             etag = default;
             return false;
@@ -41,7 +41,7 @@ namespace HQ.Domicile.Models
 
         public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
         {
-            if (!_cache.TryGetValue($"{key}_{HttpHeaders.LastModified}", out lastModified))
+            if (!_cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out lastModified))
                 return true;
             lastModified = default;
             return false;
@@ -49,12 +49,13 @@ namespace HQ.Domicile.Models
 
         public void Save(string key, string etag)
         {
-            _cache.Set($"{key}_{HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
+            _cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
         }
 
         public void Save(string key, DateTimeOffset lastModified)
         {
-            _cache.Set($"{key}_{HttpHeaders.LastModified}", Encoding.UTF8.GetBytes(lastModified.ToString("d")));
+            _cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
+                Encoding.UTF8.GetBytes(lastModified.ToString("d")));
         }
     }
 }

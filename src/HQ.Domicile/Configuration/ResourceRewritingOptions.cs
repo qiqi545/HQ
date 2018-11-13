@@ -22,6 +22,6 @@ namespace HQ.Domicile.Configuration
 {
     public class ResourceRewritingOptions : FeatureToggle<PublicApiOptions>
     {
-        public string ActionHeader { get; set; } = HttpHeaders.Action;
+        public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
     }
 }

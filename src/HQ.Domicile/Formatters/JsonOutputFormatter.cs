@@ -45,7 +45,7 @@ namespace HQ.Domicile.Formatters
 
         private void EnsureSerializer(OutputFormatterCanWriteContext context)
         {
-            if (context.HttpContext.Items[HqContextKeys.JsonMultiCase] is ITextTransform transform)
+            if (context.HttpContext.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
             {
                 if (!_resolvers.TryGetValue(transform, out var resolver))
                 {

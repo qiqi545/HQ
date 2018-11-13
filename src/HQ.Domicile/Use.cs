@@ -48,7 +48,7 @@ namespace HQ.Domicile
             return app.Use(async (context, next) =>
             {
                 if (context.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var feature))
-                    if (context.Request.Method.Equals(HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
+                    if (context.Request.Method.Equals(Constants.HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
                         context.Request.Headers.TryGetValue(feature.MethodOverrideHeader, out var header))
                     {
                         var value = header.ToString();
@@ -78,8 +78,8 @@ namespace HQ.Domicile
 
                     // Use 'application/merge-patch+json' header to disambiguate JSON patch strategy:
                     // See: https://tools.ietf.org/html/rfc7386
-                    var contentType = context.Request.Headers[HttpHeaders.ContentType];
-                    if (contentType.Count > 0 && contentType.Contains(MediaTypes.JsonMergePatch))
+                    var contentType = context.Request.Headers[Constants.HttpHeaders.ContentType];
+                    if (contentType.Count > 0 && contentType.Contains(Constants.MediaTypes.JsonMergePatch))
                     {
                         var path = context.Request.Path.ToUriComponent();
                         path = $"{path}/merge";
@@ -120,7 +120,7 @@ namespace HQ.Domicile
                     {
                         if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
                             continue;
-                        context.Items[HqContextKeys.JsonMultiCase] = entry;
+                        context.Items[Constants.ContextKeys.JsonMultiCase] = entry;
                         break;
                     }
 

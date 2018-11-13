@@ -22,7 +22,9 @@ namespace HQ.Domicile.Configuration
 {
     public class MethodOverrideOptions : FeatureToggle<PublicApiOptions>
     {
-        public string MethodOverrideHeader { get; set; } = HttpHeaders.MethodOverride;
-        public string[] AllowedMethodOverrides { get; set; } = {HttpVerbs.Delete, HttpVerbs.Head, HttpVerbs.Put};
+        public string MethodOverrideHeader { get; set; } = Constants.HttpHeaders.MethodOverride;
+
+        public string[] AllowedMethodOverrides { get; set; } =
+            {Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put};
     }
 }

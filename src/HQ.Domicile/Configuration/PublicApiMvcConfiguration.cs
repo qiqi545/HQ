@@ -51,7 +51,7 @@ namespace HQ.Domicile.Configuration
 
         public void Configure(MvcOptions options)
         {
-            var logger = _loggerFactory.CreateLogger(HqLoggers.Formatters);
+            var logger = _loggerFactory.CreateLogger(Constants.Loggers.Formatters);
             var jsonOptions = new MvcJsonOptions();
             jsonOptions.Apply(_settings);
 

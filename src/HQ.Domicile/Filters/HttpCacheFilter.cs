@@ -45,7 +45,7 @@ namespace HQ.Domicile.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var request = context.HttpContext.Request;
-            if (request.Method == HttpVerbs.Get)
+            if (request.Method == Constants.HttpVerbs.Get)
                 HandleSafeRequests(context, request);
             else
                 HandleUnsafeRequests(context, request);
@@ -83,14 +83,15 @@ namespace HQ.Domicile.Filters
             var json = JsonConvert.SerializeObject(result.Value, _settings);
             var etag = _generator.GenerateFromBuffer(Encoding.UTF8.GetBytes(json));
 
-            context.HttpContext.Response.Headers.Add(HttpHeaders.ETag, new[] {etag});
+            context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.ETag, new[] {etag});
             _cache.Save(cacheKey, etag);
 
             // HQ.Rosetta: auto-enrich results with Last-Modified.
             if (result.Value is IObject resource)
             {
                 var lastModifiedDate = resource.CreatedAt;
-                context.HttpContext.Response.Headers.Add(HttpHeaders.LastModified, lastModifiedDate.ToString("R"));
+                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified,
+                    lastModifiedDate.ToString("R"));
                 _cache.Save(cacheKey, lastModifiedDate);
             }
         }
@@ -99,26 +100,26 @@ namespace HQ.Domicile.Filters
 
         private bool NoneMatch(HttpRequest request, string key)
         {
-            return request.Headers.TryGetValue(HttpHeaders.IfNoneMatch, out var ifNoneMatch) &&
+            return request.Headers.TryGetValue(Constants.HttpHeaders.IfNoneMatch, out var ifNoneMatch) &&
                    _cache.TryGetETag(key, out var etag) && ifNoneMatch == etag;
         }
 
         private bool IfMatchFailed(HttpRequest request, string key)
         {
-            return request.Headers.TryGetValue(HttpHeaders.IfMatch, out var ifMatch) &&
+            return request.Headers.TryGetValue(Constants.HttpHeaders.IfMatch, out var ifMatch) &&
                    _cache.TryGetETag(key, out var etag) && ifMatch != etag;
         }
 
         private bool UnmodifiedSinceFailed(HttpRequest request, string key)
         {
-            return request.Headers.TryGetValue(HttpHeaders.IfUnmodifiedSince, out var ifUnmodifiedSince) &&
+            return request.Headers.TryGetValue(Constants.HttpHeaders.IfUnmodifiedSince, out var ifUnmodifiedSince) &&
                    DateTimeOffset.TryParse(ifUnmodifiedSince, out var ifUnmodifiedSinceDate) &&
                    _cache.TryGetLastModified(key, out var lastModifiedDate) && lastModifiedDate > ifUnmodifiedSinceDate;
         }
 
         private bool NotModifiedSince(HttpRequest request, string key)
         {
-            return request.Headers.TryGetValue(HttpHeaders.IfModifiedSince, out var ifModifiedSince) &&
+            return request.Headers.TryGetValue(Constants.HttpHeaders.IfModifiedSince, out var ifModifiedSince) &&
                    DateTimeOffset.TryParse(ifModifiedSince, out var ifModifiedSinceDate)
                    && _cache.TryGetLastModified(key, out var lastModifiedDate) &&
                    lastModifiedDate <= ifModifiedSinceDate;

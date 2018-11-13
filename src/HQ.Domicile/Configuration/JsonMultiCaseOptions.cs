@@ -22,6 +22,6 @@ namespace HQ.Domicile.Configuration
 {
     public class JsonMultiCaseOptions : FeatureToggle<PublicApiOptions>
     {
-        public string QueryStringParameter { get; set; } = HqQueryStrings.MultiCase;
+        public string QueryStringParameter { get; set; } = Constants.QueryStrings.MultiCase;
     }
 }
