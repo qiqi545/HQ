@@ -24,10 +24,18 @@ namespace HQ.Harmony
     public interface IDependencyResolver : IDisposable
     {
         T Resolve<T>() where T : class;
+        T MustResolve<T>() where T : class;
+
         object Resolve(Type serviceType);
+        object MustResolve(Type serviceType);
+
+        T Resolve<T>(string name) where T : class;
+        T MustResolve<T>(string name) where T : class;
+
+        object Resolve(string name, Type serviceType);
+        object MustResolve(string name, Type serviceType);
+
         IEnumerable<T> ResolveAll<T>() where T : class;
         IEnumerable ResolveAll(Type serviceType);
-        T Resolve<T>(string name) where T : class;
-        object Resolve(string name, Type serviceType);
     }
 }

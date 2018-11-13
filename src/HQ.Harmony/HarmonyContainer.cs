@@ -246,14 +246,101 @@ namespace HQ.Harmony
 
         public T Resolve<T>() where T : class
         {
+            return ResolveTyped<T>(ThrowIfCantResolve);
+        }
+
+        public T MustResolve<T>() where T : class
+        {
+            return ResolveTyped<T>(true);
+        }
+
+        private T ResolveTyped<T>(bool throwIfCantResolve) where T : class
+        {
             var serviceType = typeof(T);
             if (!_registrations.TryGetValue(serviceType, out var builder))
-                return AutoResolve(serviceType) as T;
-            if (builder() is T resolved)
-                return resolved;
-            if (ThrowIfCantResolve)
-                throw new InvalidOperationException($"No registration for {serviceType}");
+                return AutoResolve(serviceType, throwIfCantResolve) as T;
+            return TryTypedResolve<T>(throwIfCantResolve, builder);
+        }
+        
+        public object Resolve(Type serviceType)
+        {
+            return ResolveUntyped(serviceType, ThrowIfCantResolve);
+        }
+
+        public object MustResolve(Type serviceType)
+        {
+            return ResolveUntyped(serviceType, true);
+        }
+
+        private object ResolveUntyped(Type serviceType, bool throwIfCantResolve)
+        {
+            return !_registrations.TryGetValue(serviceType, out var builder)
+                ? AutoResolve(serviceType, throwIfCantResolve)
+                : TryUntypedResolve(serviceType, throwIfCantResolve, builder);
+        }
+
+        public T Resolve<T>(string name) where T : class
+        {
+            return ResolveNamedTyped<T>(name, ThrowIfCantResolve);
+        }
+
+        public T MustResolve<T>(string name) where T : class
+        {
+            return ResolveNamedTyped<T>(name, true);
+        }
+
+        private T ResolveNamedTyped<T>(string name, bool throwIfCantResolve) where T : class
+        {
+            if (_namedRegistrations.TryGetValue(new NameAndType(name, typeof(T)), out var builder))
+                return TryTypedResolve<T>(throwIfCantResolve, builder);
+            if (throwIfCantResolve)
+                throw new InvalidOperationException($"No registration for {typeof(T)} named {name}");
             return null;
+        }
+
+        public object Resolve(string name, Type serviceType)
+        {
+            return ResolveNamedUntyped(name, serviceType, ThrowIfCantResolve);
+        }
+
+        public object MustResolve(string name, Type serviceType)
+        {
+            return ResolveNamedUntyped(name, serviceType, true);
+        }
+
+        private object ResolveNamedUntyped(string name, Type serviceType, bool throwIfCantResolve)
+        {
+            if (_namedRegistrations.TryGetValue(new NameAndType(name, serviceType), out var builder))
+                return TryUntypedResolve(serviceType, throwIfCantResolve, builder);
+            if (throwIfCantResolve)
+                throw new InvalidOperationException($"No registration for {serviceType} named {name}");
+            return null;
+        }
+
+        private static T TryTypedResolve<T>(bool throwIfCantResolve, Func<object> builder) where T : class
+        {
+            switch (builder())
+            {
+                case T resolved:
+                    return resolved;
+                case null when throwIfCantResolve:
+                    throw new InvalidOperationException($"No registration for {typeof(T)}");
+                default:
+                    return null;
+            }
+        }
+
+        private static object TryUntypedResolve(Type serviceType, bool throwIfCantResolve, Func<object> builder)
+        {
+            switch (builder())
+            {
+                case object resolved:
+                    return resolved;
+                case null when throwIfCantResolve:
+                    throw new InvalidOperationException($"No registration for {serviceType}");
+                default:
+                    return null;
+            }
         }
 
         public IEnumerable<T> ResolveAll<T>() where T : class
@@ -269,18 +356,6 @@ namespace HQ.Harmony
             return collectionBuilder.Select(builder => builder() as T);
         }
 
-        public object Resolve(Type serviceType)
-        {
-            if (!_registrations.TryGetValue(serviceType, out var builder))
-                return AutoResolve(serviceType);
-            var resolved = builder();
-            if (resolved != null)
-                return resolved;
-            if (ThrowIfCantResolve)
-                throw new InvalidOperationException($"No registration for {serviceType}");
-            return null;
-        }
-
         public IEnumerable ResolveAll(Type serviceType)
         {
             return _collectionRegistrations.TryGetValue(serviceType, out var collectionBuilder)
@@ -293,29 +368,11 @@ namespace HQ.Harmony
             return collectionBuilder.Select(builder => builder());
         }
 
-        public T Resolve<T>(string name) where T : class
-        {
-            if (_namedRegistrations.TryGetValue(new NameAndType(name, typeof(T)), out var builder))
-                return builder() as T;
-            if (ThrowIfCantResolve)
-                throw new InvalidOperationException($"No registration for {typeof(T)} named {name}");
-            return null;
-        }
-
-        public object Resolve(string name, Type serviceType)
-        {
-            if (_namedRegistrations.TryGetValue(new NameAndType(name, serviceType), out var builder))
-                return builder();
-            if (ThrowIfCantResolve)
-                throw new InvalidOperationException($"No registration for {serviceType} named {name}");
-            return null;
-        }
-
         #endregion
 
         #region Auto-Resolve w/ Fallback
 
-        private object AutoResolve(Type serviceType)
+        private object AutoResolve(Type serviceType, bool throwIfCantResolve)
         {
             while (true)
             {
@@ -335,9 +392,10 @@ namespace HQ.Harmony
 
                 var type = _fallbackAssemblies.SelectMany(s => s.GetTypes())
                     .FirstOrDefault(i => serviceType.IsAssignableFrom(i) && !i.GetTypeInfo().IsInterface);
+
                 if (type == null)
                 {
-                    if (ThrowIfCantResolve)
+                    if (throwIfCantResolve)
                         throw new InvalidOperationException($"No registration for {serviceType}");
                     return null;
                 }
@@ -361,7 +419,7 @@ namespace HQ.Harmony
             // auto-resolve widest ctor
             var args = new object[parameters.Length];
             for (var i = 0; i < parameters.Length; i++)
-                args[i] = AutoResolve(parameters[i].ParameterType);
+                args[i] = AutoResolve(parameters[i].ParameterType, ThrowIfCantResolve);
 
             return InstanceFactory.Default.CreateInstance(implementationType, args);
         }
