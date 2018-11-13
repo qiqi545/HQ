@@ -1,34 +1,51 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System.Data;
 using FluentMigrator;
 
 namespace HQ.Cohort.Stores.Sql.SqlServer
 {
-	public enum SupportedDatabases
-	{
-		SqlServer,
-		Sqlite,
-		MySql
-	}
-
-	public class ZeroMigrationContext
-	{
-		public SupportedDatabases Database { get; set; }
-	}
-
-	[Migration(0)]
-	public class CreateIdentitySchema : Migration
+    public enum SupportedDatabases
     {
-	    private readonly ZeroMigrationContext _context;
+        SqlServer,
+        Sqlite,
+        MySql
+    }
 
-	    public CreateIdentitySchema(ZeroMigrationContext context)
-	    {
-		    _context = context;
-	    }
+    public class ZeroMigrationContext
+    {
+        public SupportedDatabases Database { get; set; }
+    }
 
-	    public override void Up()
-	    {
-			/*
-		      migrationBuilder.CreateTable(
+    [Migration(0)]
+    public class CreateIdentitySchema : Migration
+    {
+        private readonly ZeroMigrationContext _context;
+
+        public CreateIdentitySchema(ZeroMigrationContext context)
+        {
+            _context = context;
+        }
+
+        public override void Up()
+        {
+            /*
+              migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -41,15 +58,15 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                 {
                     table.PrimaryKey("PK_AspNetRoles", x => x.Id);
                 });
-			*/
-		    Create.Table("AspNetRoles")
-			    .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
-			    .WithColumn("Name").AsString(256).Nullable()
-			    .WithColumn("NormalizedName").AsString(256).Nullable()
-			    .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
-			    ;
+            */
+            Create.Table("AspNetRoles")
+                .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
+                .WithColumn("Name").AsString(256).Nullable()
+                .WithColumn("NormalizedName").AsString(256).Nullable()
+                .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateTable(
                 name: "AspNetUsers",
                 columns: table => new
@@ -74,26 +91,26 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                 });
-			*/
-			Create.Table("AspNetUsers")
-			    .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetUsers")
-			    .WithColumn("UserName").AsString(256).Nullable()
-			    .WithColumn("NormalizedUserName").AsString(256).Nullable()
-			    .WithColumn("Email").AsString(256).Nullable()
-			    .WithColumn("NormalizedEmail").AsString(256).Nullable()
-			    .WithColumn("EmailConfirmed").AsBoolean().NotNullable()
-			    .WithColumn("PasswordHash").AsString(int.MaxValue).Nullable()
-			    .WithColumn("SecurityStamp").AsString(int.MaxValue).Nullable()
-			    .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
-			    .WithColumn("PhoneNumber").AsString(int.MaxValue).Nullable()
-			    .WithColumn("PhoneNumberConfirmed").AsBoolean().NotNullable()
-			    .WithColumn("TwoFactorEnabled").AsBoolean().NotNullable()
-			    .WithColumn("LockoutEnd").AsDateTimeOffset().Nullable()
-			    .WithColumn("LockoutEnabled").AsBoolean().NotNullable()
-			    .WithColumn("AccessFailedCount").AsInt32().NotNullable()
-				;
+            */
+            Create.Table("AspNetUsers")
+                .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetUsers")
+                .WithColumn("UserName").AsString(256).Nullable()
+                .WithColumn("NormalizedUserName").AsString(256).Nullable()
+                .WithColumn("Email").AsString(256).Nullable()
+                .WithColumn("NormalizedEmail").AsString(256).Nullable()
+                .WithColumn("EmailConfirmed").AsBoolean().NotNullable()
+                .WithColumn("PasswordHash").AsString(int.MaxValue).Nullable()
+                .WithColumn("SecurityStamp").AsString(int.MaxValue).Nullable()
+                .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
+                .WithColumn("PhoneNumber").AsString(int.MaxValue).Nullable()
+                .WithColumn("PhoneNumberConfirmed").AsBoolean().NotNullable()
+                .WithColumn("TwoFactorEnabled").AsBoolean().NotNullable()
+                .WithColumn("LockoutEnd").AsDateTimeOffset().Nullable()
+                .WithColumn("LockoutEnabled").AsBoolean().NotNullable()
+                .WithColumn("AccessFailedCount").AsInt32().NotNullable()
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
@@ -114,44 +131,46 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-			*/
-		    Create.Table("AspNetRoleClaims")
-			    .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
-			    .WithColumn("RoleId").AsString(450).NotNullable().ForeignKey("FK_AspNetRoleClaims_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
-			    .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
-			    .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
-			    ;
+            */
+            Create.Table("AspNetRoleClaims")
+                .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
+                .WithColumn("RoleId").AsString(450).NotNullable()
+                .ForeignKey("FK_AspNetRoleClaims_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
+                .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
+                .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
+                ;
 
-		   /*
-		   migrationBuilder.CreateTable(
-			   name: "AspNetUserClaims",
-			   columns: table => new
-			   {
-				   Id = table.Column<int>(nullable: false)
-					   .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-				   UserId = table.Column<string>(nullable: false),
-				   ClaimType = table.Column<string>(nullable: true),
-				   ClaimValue = table.Column<string>(nullable: true)
-			   },
-			   constraints: table =>
-			   {
-				   table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
-				   table.ForeignKey(
-					   name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-					   column: x => x.UserId,
-					   principalTable: "AspNetUsers",
-					   principalColumn: "Id",
-					   onDelete: ReferentialAction.Cascade);
-			   });
-		   */
-		   Create.Table("AspNetUserClaims")
-			    .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetUserClaims")
-			    .WithColumn("UserId").AsString(450).NotNullable().ForeignKey("FK_AspNetUserClaims_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
-			    .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
-			    .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
-			    ;
+            /*
+            migrationBuilder.CreateTable(
+                name: "AspNetUserClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<string>(nullable: false),
+                    ClaimType = table.Column<string>(nullable: true),
+                    ClaimValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+            */
+            Create.Table("AspNetUserClaims")
+                .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetUserClaims")
+                .WithColumn("UserId").AsString(450).NotNullable()
+                .ForeignKey("FK_AspNetUserClaims_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
+                .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateTable(
                 name: "AspNetUserLogins",
                 columns: table => new
@@ -171,15 +190,16 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-			*/
-		    Create.Table("AspNetUserLogins")
-			    .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
-			    .WithColumn("ProviderKey").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
-			    .WithColumn("ProviderDisplayName").AsString(int.MaxValue).Nullable()
-			    .WithColumn("UserId").AsString(450).NotNullable().ForeignKey("FK_AspNetUserLogins_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
-			    ;
+            */
+            Create.Table("AspNetUserLogins")
+                .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
+                .WithColumn("ProviderKey").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
+                .WithColumn("ProviderDisplayName").AsString(int.MaxValue).Nullable()
+                .WithColumn("UserId").AsString(450).NotNullable()
+                .ForeignKey("FK_AspNetUserLogins_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateTable(
                 name: "AspNetUserRoles",
                 columns: table => new
@@ -203,17 +223,17 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-			*/
-		    Create.Table("AspNetUserRoles")
-			    .WithColumn("UserId").AsString(450).NotNullable()
-				    .PrimaryKey("PK_AspNetUserRoles")
-				    .ForeignKey("FK_AspNetUserRoles_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
-			    .WithColumn("RoleId").AsString(450).NotNullable()
-				    .PrimaryKey("PK_AspNetUserRoles")
-				    .ForeignKey("FK_AspNetUserRoles_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
-			    ;
+            */
+            Create.Table("AspNetUserRoles")
+                .WithColumn("UserId").AsString(450).NotNullable()
+                .PrimaryKey("PK_AspNetUserRoles")
+                .ForeignKey("FK_AspNetUserRoles_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
+                .WithColumn("RoleId").AsString(450).NotNullable()
+                .PrimaryKey("PK_AspNetUserRoles")
+                .ForeignKey("FK_AspNetUserRoles_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateTable(
                 name: "AspNetUserTokens",
                 columns: table => new
@@ -233,76 +253,77 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-			*/
-		    Create.Table("AspNetUserTokens")
-			    .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserTokens").ForeignKey("FK_AspNetUserTokens_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
-			    .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
-			    .WithColumn("Name").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
-			    .WithColumn("Value").AsString(int.MaxValue).Nullable()
-				;
+            */
+            Create.Table("AspNetUserTokens")
+                .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserTokens")
+                .ForeignKey("FK_AspNetUserTokens_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
+                .WithColumn("Name").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
+                .WithColumn("Value").AsString(int.MaxValue).Nullable()
+                ;
 
-			/*
+            /*
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
-		    */
-			Create.Index("IX_AspNetRoleClaims_RoleId").OnTable("AspNetRoleClaims").OnColumn("RoleId");
+            */
+            Create.Index("IX_AspNetRoleClaims_RoleId").OnTable("AspNetRoleClaims").OnColumn("RoleId");
 
-			/*
+            /*
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "AspNetRoles",
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
-			*/
-			switch (_context.Database)
-	        {
-		        case SupportedDatabases.SqlServer:
-			        Execute.Sql(@"
+            */
+            switch (_context.Database)
+            {
+                case SupportedDatabases.SqlServer:
+                    Execute.Sql(@"
 CREATE UNIQUE INDEX [RoleNameIndex]
     ON [dbo].[AspNetRoles]([NormalizedName])
 WHERE [NormalizedName] IS NOT NULL;");
-				    break;
-		        default:
-				    Create.Index("RoleNameIndex").OnTable("AspNetRoles").OnColumn("NormalizedName").Unique();
-			        break;
-		    }
+                    break;
+                default:
+                    Create.Index("RoleNameIndex").OnTable("AspNetRoles").OnColumn("NormalizedName").Unique();
+                    break;
+            }
 
-			/*
-			migrationBuilder.CreateIndex(
+            /*
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserClaims_UserId",
                 table: "AspNetUserClaims",
                 column: "UserId");
-			*/
-		    Create.Index("IX_AspNetUserClaims_UserId").OnTable("AspNetUserClaims").OnColumn("UserId");
+            */
+            Create.Index("IX_AspNetUserClaims_UserId").OnTable("AspNetUserClaims").OnColumn("UserId");
 
-			/*
-		    migrationBuilder.CreateIndex(
+            /*
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserLogins_UserId",
                 table: "AspNetUserLogins",
                 column: "UserId");
-			*/
-		    Create.Index("IX_AspNetUserLogins_UserId").OnTable("AspNetUserLogins").OnColumn("UserId");
+            */
+            Create.Index("IX_AspNetUserLogins_UserId").OnTable("AspNetUserLogins").OnColumn("UserId");
 
-			/*
-		    migrationBuilder.CreateIndex(
+            /*
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUserRoles_RoleId",
                 table: "AspNetUserRoles",
                 column: "RoleId");
-			*/
-		    Create.Index("IX_AspNetUserRoles_RoleId").OnTable("AspNetUserRoles").OnColumn("RoleId");
+            */
+            Create.Index("IX_AspNetUserRoles_RoleId").OnTable("AspNetUserRoles").OnColumn("RoleId");
 
-			/*
+            /*
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 table: "AspNetUsers",
                 column: "NormalizedEmail");
-			*/
-		    Create.Index("EmailIndex").OnTable("AspNetUsers").OnColumn("NormalizedEmail");
+            */
+            Create.Index("EmailIndex").OnTable("AspNetUsers").OnColumn("NormalizedEmail");
 
-			/*
+            /*
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
@@ -310,29 +331,29 @@ WHERE [NormalizedName] IS NOT NULL;");
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
              */
-		    switch (_context.Database)
-		    {
-			    case SupportedDatabases.SqlServer:
-				    Execute.Sql(@"
+            switch (_context.Database)
+            {
+                case SupportedDatabases.SqlServer:
+                    Execute.Sql(@"
 CREATE UNIQUE INDEX [UserNameIndex]
     ON [dbo].[AspNetUsers]([NormalizedUserName])
 WHERE [NormalizedUserName] IS NOT NULL;");
-				    break;
-			    default:
-				    Create.Index("UserNameIndex").OnTable("AspNetUsers").OnColumn("NormalizedUserName").Unique();
-				    break;
-		    }
-		}
+                    break;
+                default:
+                    Create.Index("UserNameIndex").OnTable("AspNetUsers").OnColumn("NormalizedUserName").Unique();
+                    break;
+            }
+        }
 
-		public override void Down()
-		{
-			Delete.Table("AspNetRoleClaims");
-			Delete.Table("AspNetUserClaims");
-			Delete.Table("AspNetUserLogins");
-			Delete.Table("AspNetUserRoles");
-			Delete.Table("AspNetUserTokens");
-			Delete.Table("AspNetRoles");
-			Delete.Table("AspNetUsers");
-		}
+        public override void Down()
+        {
+            Delete.Table("AspNetRoleClaims");
+            Delete.Table("AspNetUserClaims");
+            Delete.Table("AspNetUserLogins");
+            Delete.Table("AspNetUserRoles");
+            Delete.Table("AspNetUserTokens");
+            Delete.Table("AspNetRoles");
+            Delete.Table("AspNetUsers");
+        }
     }
 }

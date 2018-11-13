@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Data;
 using System.Data.DocumentDb;
@@ -13,74 +30,79 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Cohort.Stores.Sql.DocumentDb
 {
-	public static class Add
+    public static class Add
     {
-	    internal const string CollectionId = "AspNetIdentity";
+        internal const string CollectionId = "AspNetIdentity";
 
-	    public static IdentityBuilder AddCosmosDbIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest, Action<IdentityOptions> setupAction = null)
-			where TUser : IdentityUser<string>
-		    where TRole : IdentityRole<string>
-	    {
-		    return AddCosmosDbIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope, setupAction);
-	    }
+        public static IdentityBuilder AddCosmosDbIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            Action<IdentityOptions> setupAction = null)
+            where TUser : IdentityUser<string>
+            where TRole : IdentityRole<string>
+        {
+            return AddCosmosDbIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope,
+                setupAction);
+        }
 
-		internal static IdentityBuilder AddCosmosDbIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest, Action<IdentityOptions> setupAction = null)
-		    where TKey : IEquatable<TKey>
-		    where TUser : IdentityUser<TKey>
-		    where TRole : IdentityRole<TKey>
-	    {
-		    return InstallStores<TKey, TUser, TRole>(identityBuilder, connectionString, scope, setupAction);
-	    }
+        internal static IdentityBuilder AddCosmosDbIdentityStore<TKey, TUser, TRole>(
+            this IdentityBuilder identityBuilder, string connectionString,
+            ConnectionScope scope = ConnectionScope.ByRequest, Action<IdentityOptions> setupAction = null)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
+        {
+            return InstallStores<TKey, TUser, TRole>(identityBuilder, connectionString, scope, setupAction);
+        }
 
-		private static IdentityBuilder InstallStores<TKey, TUser, TRole>(IdentityBuilder identityBuilder, string connectionString, ConnectionScope scope, Action<IdentityOptions> setupAction)
-			where TKey : IEquatable<TKey>
-		    where TUser : IdentityUser<TKey>
-		    where TRole : IdentityRole<TKey>
-	    {
-		    var typeRegistry = new TypeRegistry();
-			var dialect = new DocumentDbDialect();
+        private static IdentityBuilder InstallStores<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope, Action<IdentityOptions> setupAction)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
+        {
+            var typeRegistry = new TypeRegistry();
+            var dialect = new DocumentDbDialect();
 
-			MigrateToLatest<TKey>(connectionString);
-            
-	        Cohort.Stores.Sql.Add.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(identityBuilder,
-			    connectionString, scope, setupAction, OnCommand<TKey>(typeRegistry), OnConnection);
+            MigrateToLatest<TKey>(connectionString);
 
-		    identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
-		    identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
-		    identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
+            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
+                setupAction, OnCommand<TKey>(typeRegistry), OnConnection);
 
-		    return identityBuilder;
+            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
 
-	    }
+            return identityBuilder;
+        }
 
-		private static void OnConnection(IDbConnection c)
-	    {
-		    if (c is DocumentDbConnection connection)
-		    {
-				
-		    }
-		}
+        private static void OnConnection(IDbConnection c)
+        {
+            if (c is DocumentDbConnection connection)
+            {
+            }
+        }
 
-	    private static Action<IDbCommand, Type> OnCommand<TKey>(ITypeRegistry typeRegistry) where TKey : IEquatable<TKey>
-	    {
-		    return (c, t) =>
-		    {
-			    if (c is DocumentDbCommand command)
-			    {
-				    var descriptor = SimpleDataDescriptor.Create(t);
-				    typeRegistry.RegisterIfNotRegistered(t);
+        private static Action<IDbCommand, Type> OnCommand<TKey>(ITypeRegistry typeRegistry)
+            where TKey : IEquatable<TKey>
+        {
+            return (c, t) =>
+            {
+                if (c is DocumentDbCommand command)
+                {
+                    var descriptor = SimpleDataDescriptor.Create(t);
+                    typeRegistry.RegisterIfNotRegistered(t);
 
-					command.Id = descriptor.Id?.Property?.Name;
-				    command.Type = t;
-				    command.Collection = CollectionId;
-			    }
-		    };
-	    }
+                    command.Id = descriptor.Id?.Property?.Name;
+                    command.Type = t;
+                    command.Collection = CollectionId;
+                }
+            };
+        }
 
-	    private static void MigrateToLatest<TKey>(string connectionString) where TKey : IEquatable<TKey>
-	    {
-		    var runner = new MigrationRunner(connectionString);
-		    runner.MigrateUp();
-	    }
-	}
+        private static void MigrateToLatest<TKey>(string connectionString) where TKey : IEquatable<TKey>
+        {
+            var runner = new MigrationRunner(connectionString);
+            runner.MigrateUp();
+        }
+    }
 }
