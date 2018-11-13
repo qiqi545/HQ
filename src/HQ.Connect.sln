@@ -47,6 +47,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Descriptor", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Data.DocumentDb", "..\..\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj", "{EE82C8F0-A963-4246-9D8D-EF5FA2004FD6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence", "..\..\HQ.Cadence\src\HQ.Cadence\HQ.Cadence.csproj", "{4360347A-3940-4B45-A221-6C4C61B45E6D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,12 @@ Global
 		{EE82C8F0-A963-4246-9D8D-EF5FA2004FD6}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{EE82C8F0-A963-4246-9D8D-EF5FA2004FD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE82C8F0-A963-4246-9D8D-EF5FA2004FD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Package|Any CPU.Build.0 = Package|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4360347A-3940-4B45-A221-6C4C61B45E6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -162,6 +170,7 @@ Global
 		{166505A1-E705-4961-AD7E-2ED18ECCC3B4} = {F22AF667-413F-4D9D-823A-AC32756EE56D}
 		{5544EBF3-E5D6-48B8-A6C1-50850334CA28} = {F22AF667-413F-4D9D-823A-AC32756EE56D}
 		{EE82C8F0-A963-4246-9D8D-EF5FA2004FD6} = {6A47D559-7CB3-4D4C-8AFC-3EF0340861B0}
+		{4360347A-3940-4B45-A221-6C4C61B45E6D} = {F22AF667-413F-4D9D-823A-AC32756EE56D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21616B0E-9998-4952-AA9F-6F7930A6F76C}
