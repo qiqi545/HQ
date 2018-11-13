@@ -30,7 +30,7 @@ namespace HQ.Connect
 
         private volatile IDbConnection _connection;
 
-        public DataContext(IConnectionFactory connectionFactory, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection)
+        public DataContext(IConnectionFactory connectionFactory, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null)
         {
             _connectionFactory = connectionFactory;
             _serviceProvider = serviceProvider;

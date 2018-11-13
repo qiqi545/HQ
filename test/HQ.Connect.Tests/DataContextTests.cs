@@ -33,7 +33,7 @@ namespace HQ.Connect.Tests
         public void Data_context_instantiates()
         {
             var cs = _fixture.CreateConnectionString();
-            using (var db = new SqliteDataContext(cs))
+            using (var db = new SqliteDataContext(cs, null, null))
             {
                 Assert.NotNull(db);
             }
