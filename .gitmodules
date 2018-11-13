@@ -50,3 +50,14 @@
 	path = src/Stack/HQ.Zero
 
 	url = https://github.com/hq-io/HQ.Zero
+
+
+[submodule "src/Stack/HQ.Lingo"]
+	path = src/Stack/HQ.Lingo
+
+	url = https://github.com/hq-io/HQ.Lingo
+
+[submodule "src/Stack/HQ.Connect"]
+	path = src/Stack/HQ.Connect
+	url = https://github.com/hq-io/HQ.Connect
+
