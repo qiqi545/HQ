@@ -11,7 +11,7 @@ However, by design, source packages that are consumed as `PackageReferences` hav
 
 To be clear, these are features: transformed, transparent, source code, distributed through the package system.
 
-However, we can make things better, especially for library developer and their customers.
+However, we can make things better, especially for library developer and their consumers.
 
 #### For Library Developers:
 
