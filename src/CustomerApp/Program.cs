@@ -4,7 +4,7 @@
 	{
 		static void Main(string[] args)
 		{
-			var widget = new CustomerApp.ExpensiveSprocketsWidget();
+			var widget = new Widgets.ExpensiveSprocketsWidget();
 			widget.Execute();
 		}
 	}
