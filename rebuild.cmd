@@ -1,5 +1,8 @@
 @ECHO OFF
 
+REM first time use
+git submodule update --init --recursive
+
 REM use .gitconfig for this repository
 git config --local include.path /.gitconfig
 

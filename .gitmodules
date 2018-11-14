@@ -31,14 +31,11 @@
 [submodule "src/Stack/HQ.Tokens"]
 	path = src/Stack/HQ.Tokens	
 	url = https://github.com/hq-io/HQ.Tokens
-
 [submodule "src/Stack/HQ.Zero"]
 	path = src/Stack/HQ.Zero
 	url = https://github.com/hq-io/HQ.Zero
-
 [submodule "src/Stack/System.Data.DocumentDb"]
 	path = src/Stack/System.Data.DocumentDb
-
 	url = https://github.com/hq-io/System.Data.DocumentDb
 [submodule "src/Stack/HQ.Lingo"]
 	path = src/Stack/HQ.Lingo
