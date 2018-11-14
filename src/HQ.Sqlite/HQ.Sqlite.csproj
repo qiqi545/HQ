@@ -12,7 +12,6 @@
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.IO for the SQLite backend.</Description>
     <PackageTags>hq-stack</PackageTags>
-    <Version>1.0.16</Version>
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ/master/assets/320x320.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/hq-io/HQ/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://docs.hq.io</PackageProjectUrl>
