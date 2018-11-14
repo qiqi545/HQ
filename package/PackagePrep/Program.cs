@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PackagePrep
 {
@@ -11,10 +12,10 @@ namespace PackagePrep
         {
             if (args.Length == 0 || args.Length > 3 ||
                 args[0].Equals("tokenize", StringComparison.OrdinalIgnoreCase) && args.Length != 3 ||
-                args[0].Equals("nuspec", StringComparison.OrdinalIgnoreCase) && args.Length != 2)
+                args[0].Equals("nuspec", StringComparison.OrdinalIgnoreCase) && args.Length != 3)
             {
-                Console.WriteLine("PackagePrep [tokenize|nuspec] [project-directory] (rootNamespace)");
-                return;
+                Console.WriteLine("Usage: PackagePrep [tokenize|nuspec] [project-directory] [rootNamespace|devDependency]");
+                Environment.Exit(1);
             }
 
             Console.WriteLine($"PackagePrep {string.Join(' ', args)}");
@@ -68,9 +69,11 @@ namespace PackagePrep
             if (command.Equals("nuspec"))
             {
                 var path = args[1];
+                var dependencies = !bool.Parse(args[2]);
 
                 Console.WriteLine("Correcting nuspecs...");
-                Console.WriteLine("Path: " + path);
+                Console.WriteLine($"Path: {path}");
+                Console.WriteLine($"Package without dependencies: {dependencies.ToString().ToLowerInvariant()}");
 
                 foreach (var package in Directory.GetFiles(path, "*.nupkg", SearchOption.AllDirectories))
                 {
@@ -85,14 +88,23 @@ namespace PackagePrep
                             if (file.Extension == ".nuspec")
                             {
                                 var before = ReadFileInArchive(entry);
-
-                                Console.Write("Found .nuspec: " + file.Name + "...");
-
+                                
                                 var updated = before
                                     .Replace("exclude=\"Build,Analyzers\"", string.Empty)   // fix PackageReferences
                                     .Replace("buildAction=\"Content\"", string.Empty);      // fix file tags
 
+                                if (!dependencies)
+                                {
+                                    var hasDependencies = Regex.Match(updated, "<dependencies>([\\s\\S]*?)</dependencies>");
+                                    if (hasDependencies.Success)
+                                    {
+                                        Console.WriteLine("Removing dependencies...");
+                                        Console.WriteLine(hasDependencies.Value);
+                                        updated = updated.Replace(hasDependencies.Value, "<!-- dependencies were elided -->");
+                                    }
+                                }
 
+                                Console.Write("Found .nuspec: " + file.Name + "...");
                                 if (before == updated)
                                 {
                                     Console.WriteLine(" not modified.");
