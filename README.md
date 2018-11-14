@@ -7,7 +7,7 @@ However, by design, source packages that are consumed as `PackageReferences` hav
 
 - They are _invisible_ to their consumers. You can't browse the code normally unless you know a class or method name in advance, or you run into a bug.
 - They are _read-only_. Any changes saved to the resulting files is immediately replaced on each build, during the `CollectionPackageReferences` target.
-- They can't be _versioned_. Other than the package version itself, you cannot see how the code changed in your own source system.
+- They _can't be versioned_. Other than the package version itself, you cannot see how the code changed in your own source system.
 
 To be clear, these are features: transformed, transparent, source code, distributed through the package system.
 
