@@ -1,10 +1,6 @@
 <!-- Some content based on: https://gist.github.com/attilah/fd3e71f03fd258c496179e0200c57b0b -->
 <Project>
 
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
   <!-- Suppress build outputs -->
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <MinClientVersion>3.3</MinClientVersion>
