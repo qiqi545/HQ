@@ -44,7 +44,7 @@
 
   <!-- Fix the .nuspec file -->
   <Target Name="PostBuild" AfterTargets="Pack" Condition="'$(Configuration)'=='PackageSources'">
-    <Exec Command="dotnet run --project &quot;$(SolutionDir)..\package\PackagePrep\PackagePrep.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration)" />
+    <Exec Command="dotnet run --project &quot;$(SolutionDir)..\package\PackagePrep\PackagePrep.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration) $(DevelopmentDependency)" />
   </Target>
 
   <!-- Push PackageId.Version.nupkg -->
