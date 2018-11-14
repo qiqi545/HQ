@@ -1,0 +1,24 @@
+﻿<Project>
+
+  <!-- Explicit top import -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <!-- Define the source package to manage by name and version-->
+  <PropertyGroup>
+    <SourceName>SquireExampleLibrary</SourceName>
+    <SourceVersion>1.0.0</SourceVersion>
+  </PropertyGroup>
+
+  <!-- Explicit bottom import -->
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- Enable source package management -->
+  <Import Project="$(SolutionDir)..\build\squire.props" />
+
+</Project>
