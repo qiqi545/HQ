@@ -22,6 +22,7 @@
   <!-- Add .Sources suffix to package to support dual releases -->
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <PackageId>$(MSBuildProjectName).Sources</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
   
   <!-- Include symbols when publishing package binaries -->
