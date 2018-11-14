@@ -9,6 +9,10 @@
     <PackageTags>hq-stack</PackageTags>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <Description>This package contains the full-stack sources for HQ.IO.</Description>
+  </PropertyGroup>
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources;Package</Configurations>

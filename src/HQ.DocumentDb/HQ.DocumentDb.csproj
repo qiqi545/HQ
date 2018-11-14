@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -16,6 +16,10 @@
     <PackageLicenseUrl>https://github.com/hq-io/HQ/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://docs.hq.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hq-io/HQ</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <Description>This package contains the full-stack sources for HQ.IO for the DocumentDb backend.</Description>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
