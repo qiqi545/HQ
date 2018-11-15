@@ -57,8 +57,9 @@ namespace PackagePrep
 
                 foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
                 {
-                    var text = File.ReadAllText(file, Encoding.UTF8);
+                    rootNamespace = rootNamespace.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries)[0];
 
+                    var text = File.ReadAllText(file, Encoding.UTF8);
                     text = text.Replace($"{rootNamespace}.", "$RootNamespace$.");
 
                     var sb = new StringBuilder();
