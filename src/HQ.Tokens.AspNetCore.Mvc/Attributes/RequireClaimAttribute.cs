@@ -22,9 +22,9 @@ namespace HQ.Tokens.AspNetCore.Mvc.Attributes
 {
     public class RequireClaimAttribute : TypeFilterAttribute
     {
-        public RequireClaimAttribute(string type, params string[] values) : base(typeof(RequireClaimActionFilter))
+        public RequireClaimAttribute(string type, params string[] oneOf) : base(typeof(RequireClaimActionFilter))
         {
-            Arguments = new object[] {type, values};
+            Arguments = new object[] {type, oneOf };
         }
     }
 }

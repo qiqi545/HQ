@@ -15,7 +15,10 @@
 
 #endregion
 
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -27,24 +30,30 @@ namespace HQ.Tokens.AspNetCore.Mvc.Filters
     {
         private readonly IOptions<SecurityOptions> _options;
         private readonly string _type;
-        private readonly string _value;
+        private readonly string[] _oneOf;
 
-        public RequireClaimActionFilter(string type, string value, IOptions<SecurityOptions> options)
+        public RequireClaimActionFilter(string type, string[] oneOf, IOptions<SecurityOptions> options)
         {
             _type = type;
-            _value = value;
+            _oneOf = oneOf;
             _options = options;
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            if ((_options.Value.SuperUser?.Enabled ?? false) &&
-                context.HttpContext.User.HasClaim(ClaimTypes.Role, ClaimValues.SuperUser))
+            if (SupportsSuperUser && IsSuperUser(context))
                 await next();
-            else if (!context.HttpContext.User.HasClaim(_type, _value))
+            else if (!context.HttpContext.User.HasClaim(c => _type == c.Type && _oneOf.Contains(c.Value, StringComparer.OrdinalIgnoreCase)))
                 context.Result = new ForbidResult();
             else
                 await next();
         }
+
+        private static bool IsSuperUser(ActionContext context)
+        {
+            return context.HttpContext.User.HasClaim(Constants.ClaimTypes.Role, Constants.ClaimValues.SuperUser);
+        }
+
+        private bool SupportsSuperUser => _options.Value.SuperUser?.Enabled ?? false;
     }
 }
