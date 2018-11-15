@@ -15,10 +15,14 @@ namespace HQ.Common.Extensions
         {
             return new FuncEnumerable<T, TResult>(inner, func);
         }
-        
+
+        public static PredicateEnumerable<T> Enumerate<T>(this List<T> inner, Predicate<T> predicate)
+        {
+            return new PredicateEnumerable<T>(inner, predicate);
+        }
+
         /// <summary> Kahn's algorithm: https://en.wikipedia.org/wiki/Topological_sorting</summary>
-        public static List<T> TopologicalSort<T>(this IEnumerable<T> nodes, ICollection<Tuple<T, T>> edges)
-            where T : IEquatable<T>
+        public static List<T> TopologicalSort<T>(this List<T> nodes, List<Tuple<T, T>> edges) where T : IEquatable<T>
         {
             /*
                 L ← Empty list that will contain the sorted elements
@@ -36,31 +40,54 @@ namespace HQ.Common.Extensions
                     return L   (a topologically sorted order)
              */
 
-            var sorted = new List<T>();
-            var collection = nodes.Where(n => edges.All(e => !e.Item2.Equals(n)));
-            var set = new HashSet<T>(collection);
-            
-            while (set.Any())
+            var sorted = new List<T>(nodes.Count);
+            var set = new HashSet<T>();
+
+            foreach (var node in nodes.Enumerate<T>(n => All(edges, n)))
+                set.Add(node);
+
+            while (set.Count > 0)
             {
-                var node = set.First();
+                var node = set.ElementAt(0);
                 set.Remove(node);
                 sorted.Add(node);
 
-                var list = edges.Where(e => e.Item1.Equals(node)).ToList();
-
-                for (var i = 0; i < list.Count; i++)
+                foreach (var e in edges.Enumerate<Tuple<T, T>>(e => e.Item1.Equals(node)))
                 {
-                    var e = list[i];
                     var m = e.Item2;
                     edges.Remove(e);
-                    if (edges.All(me => me.Item2.Equals(m) == false))
+
+                    var all = true;
+                    foreach (var me in edges)
+                    {
+                        if (!me.Item2.Equals(m))
+                            continue;
+                        all = false;
+                        break;
+                    }
+
+                    if (all)
                     {
                         set.Add(m);
                     }
                 }
             }
 
-            return edges.Any() ? null : sorted;
+            return edges.Count > 0 ? null : sorted;
+        }
+
+        // ReSharper disable once ParameterTypeCanBeEnumerable.Local
+        private static bool All<T>(List<Tuple<T, T>> edges, T n) where T : IEquatable<T>
+        {
+            var all = true;
+            foreach (var e in edges)
+            {
+                if (!e.Item2.Equals(n))
+                    continue;
+                all = false;
+                break;
+            }
+            return all;
         }
     }
 }
