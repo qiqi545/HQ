@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -54,13 +54,13 @@ namespace HQ.Cadence
 
             services.AddOptions();
 
-            var store = new InMemoryMetricsStore();
-            var host = new MetricsHost(store);
-            var registry = new InMemoryMetricsRegistry {host};
+            var store = new Lazy<InMemoryMetricsStore>(() => new InMemoryMetricsStore());
+            var host = new Lazy<MetricsHost>(() => new MetricsHost(store.Value));
+            var registry = new Lazy<InMemoryMetricsRegistry>(() => new InMemoryMetricsRegistry { host.Value });
 
-            services.TryAdd(ServiceDescriptor.Singleton<IMetricsRegistry>(r => registry));
-            services.TryAdd(ServiceDescriptor.Singleton<IMetricsStore, InMemoryMetricsStore>(r => store));
-            services.TryAdd(ServiceDescriptor.Singleton<IMetricsHost, MetricsHost>(r => host));
+            services.TryAdd(ServiceDescriptor.Singleton<IMetricsStore, InMemoryMetricsStore>(r => store.Value));
+            services.TryAdd(ServiceDescriptor.Singleton<IMetricsHost, MetricsHost>(r => host.Value));
+            services.TryAdd(ServiceDescriptor.Singleton<IMetricsRegistry>(r => registry.Value));
             services.TryAdd(ServiceDescriptor.Singleton(typeof(IMetricsHost<>), typeof(MetricsHost<>)));
 
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<MetricsOptions>>(
