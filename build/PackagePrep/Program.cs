@@ -5,19 +5,20 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PackagePrep
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length == 0 || args.Length > 3 ||
                 args[0].Equals("tokenize", StringComparison.OrdinalIgnoreCase) && args.Length != 3 ||
-                args[0].Equals("nuspec", StringComparison.OrdinalIgnoreCase) && args.Length != 2)
+                args[0].Equals("nuspec", StringComparison.OrdinalIgnoreCase) && args.Length != 3)
             {
-                Console.WriteLine("PackagePrep [tokenize|nuspec] [project-directory] (rootNamespace)");
-                return;
+                Console.WriteLine("Usage: PackagePrep [tokenize|nuspec] [project-directory] [rootNamespace|devDependency]");
+                Environment.Exit(1);
             }
 
             Console.WriteLine($"PackagePrep {string.Join(' ', args)}");
@@ -50,14 +51,14 @@ namespace PackagePrep
 
                 Console.WriteLine("Tokenizing sources...");
                 Console.WriteLine("Path: " + path);
-	            Console.WriteLine("Namespace: " + rootNamespace);
+                Console.WriteLine("Namespace: " + rootNamespace);
 
-				foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
+                foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
                     File.Delete(file);
 
                 foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
                 {
-                    rootNamespace = rootNamespace.Split(new[] {'.'}, StringSplitOptions.RemoveEmptyEntries)[0];
+                    rootNamespace = rootNamespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                     var text = File.ReadAllText(file, Encoding.UTF8);
                     text = text.Replace($"{rootNamespace}.", "$RootNamespace$.");
@@ -73,9 +74,11 @@ namespace PackagePrep
             if (command.Equals("nuspec"))
             {
                 var path = args[1];
+                var dependencies = !bool.Parse(args[2]);
 
                 Console.WriteLine("Correcting nuspecs...");
-                Console.WriteLine("Path: " + path);
+                Console.WriteLine($"Path: {path}");
+                Console.WriteLine($"Package without dependencies: {dependencies.ToString().ToLowerInvariant()}");
 
                 foreach (var package in Directory.GetFiles(path, "*.nupkg", SearchOption.AllDirectories))
                 {
@@ -97,6 +100,16 @@ namespace PackagePrep
                                     .Replace("exclude=\"Build,Analyzers\"", string.Empty)   // fix PackageReferences
                                     .Replace("buildAction=\"Content\"", string.Empty);      // fix file tags
 
+                                if (!dependencies)
+                                {
+                                    var hasDependencies = Regex.Match(updated, "<dependencies>([\\s\\S]*?)</dependencies>");
+                                    if (hasDependencies.Success)
+                                    {
+                                        Console.WriteLine("Removing dependencies...");
+                                        Console.WriteLine(hasDependencies.Value);
+                                        updated = updated.Replace(hasDependencies.Value, "<!-- dependencies were elided -->");
+                                    }
+                                }
 
                                 if (before == updated)
                                 {
