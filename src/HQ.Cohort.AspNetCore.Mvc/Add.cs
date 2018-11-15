@@ -34,7 +34,7 @@ namespace HQ.Cohort.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddZeroMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
+        public static IMvcBuilder AddDynamicMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
         {
             // See: https://github.com/aspnet/Mvc/issues/5992
             var controllerAssembly = Assembly.GetCallingAssembly();
