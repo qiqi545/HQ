@@ -18,8 +18,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
+using HQ.Common;
 using HQ.Common.AspNetCore;
-using HQ.Tokens;
 using HQ.Tokens.AspNetCore.Mvc.Attributes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +29,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [Route("users")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [RequireClaim(ClaimTypes.Permission, ClaimValues.ManageUsers)]
+    [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageUsers)]
     public class UserController<TUser> : Controller where TUser : IdentityUser
     {
         private readonly IUserService<TUser> _userService;

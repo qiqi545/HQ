@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -23,10 +23,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Stores.Sql.Models;
+using HQ.Common;
 using HQ.Lingo.Queries;
-using HQ.Tokens;
 using Microsoft.AspNetCore.Identity;
-using ClaimTypes = System.Security.Claims.ClaimTypes;
 
 namespace HQ.Cohort.Stores.Sql
 {
@@ -35,7 +34,7 @@ namespace HQ.Cohort.Stores.Sql
         // ReSharper disable once StaticMemberInGenericType
         private static readonly List<Claim> SuperUserClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.Role, ClaimValues.SuperUser)
+            new Claim(Constants.ClaimTypes.Role, Constants.ClaimValues.SuperUser)
         };
 
         public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)

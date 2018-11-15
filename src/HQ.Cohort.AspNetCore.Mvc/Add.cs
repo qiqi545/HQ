@@ -45,7 +45,7 @@ namespace HQ.Cohort.AspNetCore.Mvc
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public static IServiceCollection AddIdentityApi<TUser, TKey, TRole>(this IMvcBuilder mvc, IConfiguration config,
+        public static IServiceCollection AddIdentityApi<TUser, TRole>(this IMvcBuilder mvc, IConfiguration config,
             Action<MvcOptions> setupAction = null)
             where TUser : IdentityUser
             where TRole : IdentityRole

@@ -21,15 +21,14 @@ using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
+using HQ.Common;
 using HQ.Common.AspNetCore;
-using HQ.Tokens;
 using HQ.Tokens.AspNetCore.Mvc.Attributes;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using ClaimTypes = HQ.Tokens.ClaimTypes;
 
 namespace HQ.Cohort.AspNetCore.Mvc.Controllers
 {
@@ -37,7 +36,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
-    [RequireClaim(ClaimTypes.Permission, ClaimValues.ManageRoles)]
+    [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageRoles)]
     public class RoleController<TRole> : Controller where TRole : IdentityRole
     {
         private readonly RoleManager<TRole> _roleManager;

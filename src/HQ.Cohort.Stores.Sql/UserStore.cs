@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Extensions;
+using HQ.Common;
 using HQ.Connect;
 using HQ.Lingo.Queries;
 using HQ.Rosetta.Queryable;
@@ -47,7 +48,7 @@ namespace HQ.Cohort.Stores.Sql
         private const int SuperUserNumberId = int.MaxValue;
 
         // ReSharper disable once StaticMemberInGenericType
-        private static readonly List<string> SuperUserRoles = new List<string> { ClaimValues.SuperUser };
+        private static readonly List<string> SuperUserRoles = new List<string> { Constants.ClaimValues.SuperUser };
 
         private readonly IDataConnection _connection;
         private readonly IOptions<IdentityOptionsExtended> _identity;
