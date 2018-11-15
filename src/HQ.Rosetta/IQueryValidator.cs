@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,11 +17,12 @@
 
 using System;
 using System.Collections.Generic;
+using HQ.Rosetta.Configuration;
 
 namespace HQ.Rosetta
 {
-	public interface IQueryValidator
-	{
-		bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors);
-	}
+    public interface IQueryValidator
+    {
+        bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors);
+    }
 }

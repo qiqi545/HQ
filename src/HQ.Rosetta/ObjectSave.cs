@@ -17,10 +17,10 @@
 
 namespace HQ.Rosetta
 {
-	public enum ObjectSave
-	{
-		NoChanges,
-		Created,
-		Updated
-	}
+    public enum ObjectSave
+    {
+        NoChanges,
+        Created,
+        Updated
+    }
 }

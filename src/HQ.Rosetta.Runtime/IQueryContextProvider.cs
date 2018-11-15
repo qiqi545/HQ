@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,12 +15,14 @@
 
 #endregion
 
-namespace HQ.Rosetta
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
+
+namespace HQ.Rosetta.Runtime
 {
-    public enum ProjectionType
+    public interface IQueryContextProvider
     {
-        Scalar,
-        OneToOne,
-        OneToMany
+        IEnumerable<QueryContext> Parse(HttpRequest source);
+        IEnumerable<QueryContext> Parse(string source);
     }
 }

@@ -17,10 +17,10 @@
 
 namespace HQ.Rosetta
 {
-	public enum ObjectDelete
-	{
-		NotFound,
-		Deleted,
-		Gone
-	}
+    public enum ObjectDelete
+    {
+        NotFound,
+        Deleted,
+        Gone
+    }
 }

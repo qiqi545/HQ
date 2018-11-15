@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,12 +15,12 @@
 
 #endregion
 
-namespace HQ.Rosetta
+using System;
+
+namespace HQ.Rosetta.AspNetCore.Mvc
 {
-    public enum ProjectionType
+    public interface IObjectController
     {
-        Scalar,
-        OneToOne,
-        OneToMany
+        Type ObjectType { get; }
     }
 }

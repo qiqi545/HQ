@@ -19,17 +19,17 @@ using System.Collections.Generic;
 
 namespace HQ.Rosetta
 {
-	public sealed class Operation<T> : Operation
-	{
-		public Operation(T data) : this(data, null)
-		{
-		}
+    public sealed class Operation<T> : Operation
+    {
+        public Operation(T data) : this(data, null)
+        {
+        }
 
-		public Operation(T data, IEnumerable<Error> errors) : base(errors)
-		{
-			Data = data;
-		}
+        public Operation(T data, IEnumerable<Error> errors) : base(errors)
+        {
+            Data = data;
+        }
 
-		public T Data { get; set; }
-	}
+        public T Data { get; set; }
+    }
 }

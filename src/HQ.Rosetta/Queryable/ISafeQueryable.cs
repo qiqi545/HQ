@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -22,16 +22,16 @@ using System.Threading.Tasks;
 
 namespace HQ.Rosetta.Queryable
 {
-	/// <summary>
-	///     Provides implementation-safe expression predicates when <see cref="IQueryable" /> access is undesirable or
-	///     unstable.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public interface ISafeQueryable<T>
-	{
-		Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
-		T SingleOrDefault(Expression<Func<T, bool>> predicate);
-		Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-		T FirstOrDefault(Expression<Func<T, bool>> predicate);
-	}
+    /// <summary>
+    ///     Provides implementation-safe expression predicates when <see cref="IQueryable" /> access is undesirable or
+    ///     unstable.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface ISafeQueryable<T>
+    {
+        Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
+        T SingleOrDefault(Expression<Func<T, bool>> predicate);
+        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+        T FirstOrDefault(Expression<Func<T, bool>> predicate);
+    }
 }

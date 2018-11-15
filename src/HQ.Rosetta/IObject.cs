@@ -20,9 +20,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Rosetta
 {
-	public interface IObject
-	{
-		[Key] long Id { get; }
-		DateTimeOffset CreatedAt { get; }
-	}
+    public interface IObject
+    {
+        [Key] long Id { get; }
+        DateTimeOffset CreatedAt { get; }
+    }
 }

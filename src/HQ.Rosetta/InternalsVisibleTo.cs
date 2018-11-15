@@ -22,7 +22,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Rosetta
 {
-	internal class InternalsVisibleTo
-	{
-	}
+    internal class InternalsVisibleTo
+    {
+    }
 }

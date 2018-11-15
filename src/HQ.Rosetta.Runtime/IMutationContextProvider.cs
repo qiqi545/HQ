@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,29 +15,14 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Reflection;
+using Microsoft.AspNetCore.Http;
 
-namespace HQ.Rosetta
+namespace HQ.Rosetta.Runtime
 {
-	public class QueryContext
-	{
-		public Type Type { get; set; }
-		public MethodInfo Handle { get; set; }
-		public ICollection<Error> Errors { get; } = new List<Error>();
-
-		public FieldOptions Fields { get; set; }
-		public SortOptions Sorting { get; set; }
-		public PageOptions Paging { get; set; }
-		public FilterOptions Filters { get; set; }
-		public ProjectionOptions Projections { get; set; }
-
-		public object Execute(IObjectRepository repository)
-		{
-			var parameters = new object[] {Sorting, Paging, Fields, Filters, Projections};
-
-			return Handle?.Invoke(repository, parameters);
-		}
-	}
+    public interface IMutationContextProvider
+    {
+        IEnumerable<MutationContext> Parse(HttpRequest source);
+        IEnumerable<MutationContext> Parse(string source);
+    }
 }

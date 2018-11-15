@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -18,30 +18,57 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using HQ.Common.Extensions;
 using HQ.Common.FastMember;
 
 namespace HQ.Rosetta
 {
-	public static class FieldValidations
-	{
-		public static List<Error> MustExistOnType(Type type, IEnumerable<string> fields)
-		{
-			var accessor = TypeAccessor.Create(type);
-			var members = accessor.GetMembers();
+    internal static class FieldValidations
+    {
+        public static List<Error> MustExistOnType<T>(SelfEnumerable<string> fields)
+        {
+            return MustExistOnType(typeof(T), fields);
+        }
 
-			var list = new List<Error>();
-			foreach (var field in fields)
-			{
-				var valid = false;
-				foreach (var member in members)
-					if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-						valid = true;
-				if (!valid)
-					list.Add(new Error(string.Format(ErrorStrings.FieldToTypeFieldNameMismatch, field, type.Name),
-						HttpStatusCode.BadRequest));
-			}
+        public static List<Error> MustExistOnType(Type type, SelfEnumerable<string> fields)
+        {
+            var accessor = TypeAccessor.Create(type);
+            var members = accessor.GetMembers();
 
-			return list;
-		}
-	}
+            var list = new List<Error>();
+            foreach (var field in fields)
+            {
+                var valid = false;
+                foreach (var member in members)
+                    if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+                        valid = true;
+                if (!valid)
+                    list.Add(new Error(string.Format(ErrorStrings.FieldToTypeFieldNameMismatch, field, type.Name),
+                        HttpStatusCode.BadRequest));
+            }
+
+            return list;
+        }
+
+        public static List<Error> MustExistOnType<T>(FuncEnumerable<T, string> fields)
+        {
+            var type = typeof(T);
+            var accessor = TypeAccessor.Create(type);
+            var members = accessor.GetMembers();
+
+            var list = new List<Error>();
+            foreach (var field in fields)
+            {
+                var valid = false;
+                foreach (var member in members)
+                    if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+                        valid = true;
+                if (!valid)
+                    list.Add(new Error(string.Format(ErrorStrings.FieldToTypeFieldNameMismatch, field, type.Name),
+                        HttpStatusCode.BadRequest));
+            }
+
+            return list;
+        }
+    }
 }

@@ -20,26 +20,26 @@ using System.Net;
 
 namespace HQ.Rosetta
 {
-	public class Error
-	{
-		public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
-			params Error[] errors)
-		{
-			Message = message;
-			StatusCode = statusCode;
-			Errors = errors;
-		}
+    public class Error
+    {
+        public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
+            params Error[] errors)
+        {
+            Message = message;
+            StatusCode = statusCode;
+            Errors = errors;
+        }
 
-		public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
-			IEnumerable<Error> errors = null)
-		{
-			Message = message;
-			StatusCode = statusCode;
-			Errors = errors;
-		}
+        public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
+            IEnumerable<Error> errors = null)
+        {
+            Message = message;
+            StatusCode = statusCode;
+            Errors = errors;
+        }
 
-		public string Message { get; internal set; }
-		public HttpStatusCode StatusCode { get; }
-		public IEnumerable<Error> Errors { get; }
-	}
+        public string Message { get; internal set; }
+        public HttpStatusCode StatusCode { get; }
+        public IEnumerable<Error> Errors { get; }
+    }
 }

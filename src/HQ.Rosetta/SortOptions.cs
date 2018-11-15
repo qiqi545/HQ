@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -18,32 +18,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using HQ.Common.Extensions;
+using HQ.Rosetta.Configuration;
 
 namespace HQ.Rosetta
 {
-	public class SortOptions : IQueryValidator, IEnumerable<KeyValuePair<string, bool>>
-	{
-		public static readonly SortOptions Empty = new SortOptions();
+    public class SortOptions : IQueryValidator, IEnumerable<KeyValuePair<string, bool>>
+    {
+        public static readonly SortOptions Empty = new SortOptions();
 
-		public List<Sort> Fields { get; } = new List<Sort>();
+        public List<Sort> Fields { get; } = new List<Sort>();
 
-		public IEnumerator<KeyValuePair<string, bool>> GetEnumerator()
-		{
-			foreach (var field in Fields)
-				yield return new KeyValuePair<string, bool>(field.Field, field.Descending);
-		}
+        public IEnumerator<KeyValuePair<string, bool>> GetEnumerator()
+        {
+            foreach (var field in Fields)
+                yield return new KeyValuePair<string, bool>(field.Field, field.Descending);
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-		public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
-		{
-			var list = FieldValidations.MustExistOnType(type, Fields.Select(x => x.Field));
-			errors = list;
-			return list.Count == 0;
-		}
-	}
+        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        {
+            var list = FieldValidations.MustExistOnType(Fields.Enumerate(x => x.Field));
+            errors = list;
+            return list.Count == 0;
+        }
+    }
 }

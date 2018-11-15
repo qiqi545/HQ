@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -18,23 +18,24 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using HQ.Rosetta.Configuration;
 
 namespace HQ.Rosetta
 {
-	public class PageOptions : IQueryValidator
-	{
-		public long Page { get; set; }
-		public long PerPage { get; set; }
+    public class PageOptions : IQueryValidator
+    {
+        public long Page { get; set; }
+        public long PerPage { get; set; }
 
-		public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
-		{
-			var list = new List<Error>();
-			if (Page < 1) list.Add(new Error(ErrorStrings.PageRangeInvalid, HttpStatusCode.BadRequest));
-			if (PerPage > options.PerPageMax)
-				list.Add(new Error(ErrorStrings.PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
+        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        {
+            var list = new List<Error>();
+            if (Page < 1) list.Add(new Error(ErrorStrings.PageRangeInvalid, HttpStatusCode.BadRequest));
+            if (PerPage > options.PerPageMax)
+                list.Add(new Error(ErrorStrings.PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
 
-			errors = list;
-			return list.Count == 0;
-		}
-	}
+            errors = list;
+            return list.Count == 0;
+        }
+    }
 }

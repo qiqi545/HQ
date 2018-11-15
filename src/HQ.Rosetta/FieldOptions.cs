@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,18 +17,20 @@
 
 using System;
 using System.Collections.Generic;
+using HQ.Common.Extensions;
+using HQ.Rosetta.Configuration;
 
 namespace HQ.Rosetta
 {
-	public class FieldOptions : IQueryValidator
-	{
-		public List<string> Fields { get; } = new List<string>();
+    public class FieldOptions : IQueryValidator
+    {
+        public List<string> Fields { get; } = new List<string>();
 
-		public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
-		{
-			var list = FieldValidations.MustExistOnType(type, Fields);
-			errors = list;
-			return list.Count == 0;
-		}
-	}
+        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        {
+            var list = FieldValidations.MustExistOnType(type, Fields.SelfEnumerate());
+            errors = list;
+            return list.Count == 0;
+        }
+    }
 }

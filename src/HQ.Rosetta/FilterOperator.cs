@@ -17,9 +17,9 @@
 
 namespace HQ.Rosetta
 {
-	public enum FilterOperator
-	{
-		Equal,
-		NotEqual
-	}
+    public enum FilterOperator
+    {
+        Equal,
+        NotEqual
+    }
 }

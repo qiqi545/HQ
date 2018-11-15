@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,18 +15,18 @@
 
 #endregion
 
-namespace HQ.Rosetta
+namespace HQ.Rosetta.Configuration
 {
-	public class QueryOptions
-	{
-		public long PerPageDefault { get; set; } = 10;
-		public long PerPageMax { get; set; } = 100;
+    public class QueryOptions
+    {
+        public long PerPageDefault { get; set; } = 10;
+        public long PerPageMax { get; set; } = 100;
 
-		public string SortOperator { get; set; } = "sort";
-		public string PageOperator { get; set; } = "page";
-		public string PerPageOperator { get; set; } = "perPage";
-		public string FieldsOperator { get; set; } = "fields";
-		public string FilterOperator { get; set; } = "filter";
-		public string ProjectionOperator { get; set; } = "project";
-	}
+        public string SortOperator { get; set; } = "sort";
+        public string PageOperator { get; set; } = "page";
+        public string PerPageOperator { get; set; } = "perPage";
+        public string FieldsOperator { get; set; } = "fields";
+        public string FilterOperator { get; set; } = "filter";
+        public string ProjectionOperator { get; set; } = "project";
+    }
 }

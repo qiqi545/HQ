@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,20 +19,20 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace HQ.Rosetta
+namespace HQ.Rosetta.Runtime
 {
-	public class MutationContext
-	{
-		public Type Type { get; set; }
-		public MethodInfo Handle { get; set; }
-		public ICollection<Error> Errors { get; } = new List<Error>();
-		public dynamic Body { get; set; }
+    public class MutationContext
+    {
+        public Type Type { get; set; }
+        public MethodInfo Handle { get; set; }
+        public ICollection<Error> Errors { get; } = new List<Error>();
+        public dynamic Body { get; set; }
 
-		public object Execute(IObjectRepository repository)
-		{
-			var parameters = new object[] {Body};
+        public object Execute(IObjectRepository repository)
+        {
+            var parameters = new object[] {Body};
 
-			return Handle?.Invoke(repository, parameters);
-		}
-	}
+            return Handle?.Invoke(repository, parameters);
+        }
+    }
 }

@@ -17,9 +17,9 @@
 
 namespace HQ.Rosetta
 {
-	public enum FilterType
-	{
-		Scalar,
-		Join
-	}
+    public enum FilterType
+    {
+        Scalar,
+        Join
+    }
 }

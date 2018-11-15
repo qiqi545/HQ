@@ -17,11 +17,11 @@
 
 namespace HQ.Rosetta
 {
-	public enum OperationResult : byte
-	{
-		Refused,
-		Error,
-		Succeeded,
-		SucceededWithErrors
-	}
+    public enum OperationResult : byte
+    {
+        Refused,
+        Error,
+        Succeeded,
+        SucceededWithErrors
+    }
 }

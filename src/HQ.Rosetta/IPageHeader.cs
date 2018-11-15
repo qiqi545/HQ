@@ -17,14 +17,14 @@
 
 namespace HQ.Rosetta
 {
-	public interface IPageHeader
-	{
-		long Index { get; }
-		long Size { get; }
-		long Count { get; }
-		long TotalCount { get; }
-		long TotalPages { get; }
-		bool HasPreviousPage { get; }
-		bool HasNextPage { get; }
-	}
+    public interface IPageHeader
+    {
+        long Index { get; }
+        long Size { get; }
+        long Count { get; }
+        long TotalCount { get; }
+        long TotalPages { get; }
+        bool HasPreviousPage { get; }
+        bool HasNextPage { get; }
+    }
 }

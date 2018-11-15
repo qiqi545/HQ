@@ -19,12 +19,12 @@ using System.Diagnostics;
 
 namespace HQ.Rosetta
 {
-	[DebuggerDisplay("{Type} {Field} {Operator} {Value}")]
-	public class Filter
-	{
-		public FilterType Type { get; set; }
-		public string Field { get; set; }
-		public FilterOperator Operator { get; set; }
-		public object Value { get; set; }
-	}
+    [DebuggerDisplay("{Type} {Field} {Operator} {Value}")]
+    public class Filter
+    {
+        public FilterType Type { get; set; }
+        public string Field { get; set; }
+        public FilterOperator Operator { get; set; }
+        public object Value { get; set; }
+    }
 }

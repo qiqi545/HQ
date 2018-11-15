@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,12 +15,29 @@
 
 #endregion
 
-namespace HQ.Rosetta
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+namespace HQ.Rosetta.Runtime
 {
-    public enum ProjectionType
+    public class QueryContext
     {
-        Scalar,
-        OneToOne,
-        OneToMany
+        public Type Type { get; set; }
+        public MethodInfo Handle { get; set; }
+        public ICollection<Error> Errors { get; } = new List<Error>();
+
+        public FieldOptions Fields { get; set; }
+        public SortOptions Sorting { get; set; }
+        public PageOptions Paging { get; set; }
+        public FilterOptions Filters { get; set; }
+        public ProjectionOptions Projections { get; set; }
+
+        public object Execute(IObjectRepository repository)
+        {
+            var parameters = new object[] {Sorting, Paging, Fields, Filters, Projections};
+
+            return Handle?.Invoke(repository, parameters);
+        }
     }
 }
