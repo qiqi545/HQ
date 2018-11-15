@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -83,8 +83,9 @@ namespace HQ.Cohort
             services.AddScoped<IUsernameValidator<TUser>, DefaultUsernameValidator<TUser>>();
 
             var validator = services.SingleOrDefault(x => x.ServiceType == typeof(IUserValidator<TUser>));
+            var removed = services.Remove(validator);
             Debug.Assert(validator != null);
-            Debug.Assert(services.Remove(validator));
+            Debug.Assert(removed);
 
             services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
 
