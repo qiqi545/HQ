@@ -19,6 +19,7 @@ using System;
 using System.Data;
 using System.Data.DocumentDb;
 using System.Threading;
+using HQ.Cadence;
 using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
@@ -93,6 +94,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
+            identityBuilder.Services.AddMetrics();
             SqlBuilder.Dialect = dialect;
             identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
