@@ -1,3 +1,6 @@
+// Copyright (c) HQ.IO. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -8,7 +11,7 @@ namespace PackagePrep
 {
     class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             if (args.Length == 0 || args.Length > 3 ||
                 args[0].Equals("tokenize", StringComparison.OrdinalIgnoreCase) && args.Length != 3 ||
@@ -48,14 +51,16 @@ namespace PackagePrep
 
                 Console.WriteLine("Tokenizing sources...");
                 Console.WriteLine("Path: " + path);
+                Console.WriteLine("Namespace: " + rootNamespace);
 
                 foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
                     File.Delete(file);
 
                 foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
                 {
-                    var text = File.ReadAllText(file, Encoding.UTF8);
+                    rootNamespace = rootNamespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
+                    var text = File.ReadAllText(file, Encoding.UTF8);
                     text = text.Replace($"{rootNamespace}.", "$RootNamespace$.");
 
                     var sb = new StringBuilder();
@@ -88,7 +93,9 @@ namespace PackagePrep
                             if (file.Extension == ".nuspec")
                             {
                                 var before = ReadFileInArchive(entry);
-                                
+
+                                Console.Write("Found .nuspec: " + file.Name + "...");
+
                                 var updated = before
                                     .Replace("exclude=\"Build,Analyzers\"", string.Empty)   // fix PackageReferences
                                     .Replace("buildAction=\"Content\"", string.Empty);      // fix file tags
@@ -104,7 +111,6 @@ namespace PackagePrep
                                     }
                                 }
 
-                                Console.Write("Found .nuspec: " + file.Name + "...");
                                 if (before == updated)
                                 {
                                     Console.WriteLine(" not modified.");
