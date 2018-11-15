@@ -16,7 +16,7 @@ namespace System.Data.DocumentDb
 
         public DocumentDbConnectionStringBuilder()
         {
-            _settings = new Dictionary<string, string>();
+            _settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
         public DocumentDbConnectionStringBuilder(string connectionString) : this()
