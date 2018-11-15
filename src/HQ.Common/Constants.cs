@@ -95,5 +95,24 @@ namespace HQ.Common
             public const string JsonPatch = "application/json-patch+json";
             public const string JsonMergePatch = "application/merge-patch+json";
         }
+
+        public static class ClaimTypes
+        {
+            public const string AccountId = "app.account_id";
+            public const string AccountName = "app.account_name";
+            public const string ApplicationId = "app.app_id";
+            public const string ApplicationName = "app.app_name";
+            public const string UserId = "app.user_id";
+            public const string UserName = "app.user_name";
+            public const string Role = "app.role";
+            public const string Permission = "app.permission";
+        }
+
+        public static class ClaimValues
+        {
+            public const string SuperUser = "superuser";
+            public const string ManageUsers = "manage_users";
+            public const string ManageRoles = "manage_roles";
+        }
     }
 }
