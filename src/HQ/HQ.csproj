@@ -21,7 +21,7 @@
     <PackageReleaseNotes />
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
     <Content Include="..\Stack\HQ.Common\src\HQ.Common\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common\obj\**;..\Stack\HQ.Common\src\HQ.Common\bin\**" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\obj\**;..\Stack\HQ.Common\src\HQ.Common.AspNetCore\bin\**" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence\bin\**" Link="Cadence\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -51,6 +51,42 @@
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\bin\**" Link="Lingo.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\bin\**" Link="Lingo.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Zero\src\HQ.Zero\**\*.cs" Exclude="..\Stack\HQ.Zero\src\HQ.Zero\obj\**;..\Stack\HQ.Zero\src\HQ.Zero\bin\**" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Package'">
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Package'">
+    <Compile Include="..\Stack\HQ.Common\src\HQ.Common\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common\obj\**;..\Stack\HQ.Common\src\HQ.Common\bin\**" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\obj\**;..\Stack\HQ.Common\src\HQ.Common.AspNetCore\bin\**" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cadence\src\HQ.Cadence\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence\bin\**" Link="Cadence\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\bin\**" Link="Cadence.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\bin\**" Link="Cadence.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cadence\src\HQ.Cadence\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence\bin\**" Link="Cadence\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Remix\src\HQ.Remix\**\*.cs" Exclude="..\Stack\HQ.Remix\src\HQ.Remix\obj\**;..\Stack\HQ.Remix\src\HQ.Remix\bin\**" Link="Remix\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Harmony\src\HQ.Harmony\**\*.cs" Exclude="..\Stack\HQ.Harmony\src\HQ.Harmony\obj\**;..\Stack\HQ.Harmony\src\HQ.Harmony\bin\**" Link="Harmony\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\obj\**;..\Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\bin\**" Link="Harmony.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone\bin\**" Link="Touchstone\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\bin\**" Link="Touchstone.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta\bin\**" Link="Rosetta\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\bin\**" Link="Rosetta.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\bin\**" Link="Rosetta.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Domicile\src\HQ.Domicile\**\*.cs" Exclude="..\Stack\HQ.Domicile\src\HQ.Domicile\obj\**;..\Stack\HQ.Domicile\src\HQ.Domicile\bin\**" Link="Domicile\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Tokens\src\HQ.Tokens\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens\bin\**" Link="Tokens\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\bin\**" Link="Tokens.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort\bin\**" Link="Cohort\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\bin\**" Link="Cohort.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\bin\**" Link="Cohort.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Connect\src\HQ.Connect\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect\obj\**;..\Stack\HQ.Connect\src\HQ.Connect\bin\**" Link="Connect\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo\bin\**" Link="Lingo\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Builders\bin\**" Link="Lingo.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\bin\**" Link="Lingo.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\bin\**" Link="Lingo.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\bin\**" Link="Lingo.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Zero\src\HQ.Zero\**\*.cs" Exclude="..\Stack\HQ.Zero\src\HQ.Zero\obj\**;..\Stack\HQ.Zero\src\HQ.Zero\bin\**" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

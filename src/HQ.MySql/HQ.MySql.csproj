@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -26,6 +26,16 @@
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.MySql\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.MySql\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.MySql\bin\**" Link="Connect.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\bin\**" Link="Lingo.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\bin\**" Link="Cohort.Stores.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Package'">
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'=='Package'">
+    <Compile Include="..\Stack\HQ.Connect\src\HQ.Connect.MySql\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.MySql\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.MySql\bin\**" Link="Connect.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\bin\**" Link="Lingo.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\bin\**" Link="Cohort.Stores.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
