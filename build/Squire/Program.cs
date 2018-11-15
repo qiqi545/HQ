@@ -31,8 +31,6 @@ namespace Squire
             var sourceName = args[3];
             var sourceVersion = args[4];
 
-            WL($"Managing {sourceName}.{sourceVersion}...");
-
             // $(ProjectDir)obj\$(Configuration)\$(TargetFramework)\NuGet\
             var locations = new HashSet<string>();
             var startIn = Path.Combine(projectDir, "obj", configuration, targetFramework, "NuGet");
@@ -57,21 +55,18 @@ namespace Squire
             if (locations.Count == 0)
             {
                 WL("No contentFiles found. You must add <IncludeAssets>contentFiles</IncludeAssets> to your <PackageReference> tag, or you have no <contentFiles/> to manage.");
-                return;
-            }
-
-            WL("Found the following source locations:");
-            foreach(var path in locations)
-                WL(path);
-            
-            if (locations.Count > 1)
-            {
-                WL("Source was resolved in multiple locations. Please clean your /obj/ folder and try again.");
                 Environment.Exit(2);
             }
 
-            WL("Shadow copying changed source files...");
+            if (locations.Count > 1)
+            {
+                WL("Source was resolved in multiple locations. Please clean your /obj/ folder and try again.");
+                Environment.Exit(3);
+            }
 
+            W($"Managing {sourceName}.{sourceVersion}...");
+
+            var statement = false;
             var sourceDir = locations.Single();
             foreach (var sourceFile in Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories))
             {
@@ -92,6 +87,13 @@ namespace Squire
                     if (sourceHash.Length != destinationHash.Length)
                     {
                         FilesDiffer(destinationInfo, sourceInfo, destinationFile, sourceFile, hashFile, sourceHash, sourcePath);
+
+                        if (!statement)
+                        {
+                            WriteStartWork(locations);
+                            statement = true;
+                        }
+
                         continue;
                     }
 
@@ -107,6 +109,12 @@ namespace Squire
                     if (filesDiffer)
                     {
                         FilesDiffer(destinationInfo, sourceInfo, destinationFile, sourceFile, hashFile, sourceHash, sourcePath);
+
+                        if (!statement)
+                        {
+                            WriteStartWork(locations);
+                            statement = true;
+                        }
                     }
                 }
                 else
@@ -125,7 +133,19 @@ namespace Squire
                 }
             }
 
-            WL("done.");
+            if(!statement)
+                W(" no changes detected.");
+            else
+                WL("done.");
+        }
+
+        private static void WriteStartWork(IEnumerable<string> locations)
+        {
+            WL();
+            WL("Found the following source locations:");
+            foreach (var path in locations)
+                WL(path);
+            WL("Shadow copying changed source files...");
         }
 
         private static void FilesDiffer(FileSystemInfo destinationInfo, FileSystemInfo sourceInfo, string destinationFile, string sourceFile, string hashFile, byte[] sourceHash, string sourcePath)
