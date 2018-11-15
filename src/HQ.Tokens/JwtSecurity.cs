@@ -40,7 +40,12 @@ namespace HQ.Tokens
             TokenValidationParameters = TokenValidationParameters ?? BuildTokenValidationParameters(options);
 
             services
-                .AddAuthentication(x => { x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
+                .AddAuthentication(x =>
+                {
+                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
                 .AddJwtBearer(x =>
                 {
                     x.TokenValidationParameters = TokenValidationParameters;
@@ -51,7 +56,8 @@ namespace HQ.Tokens
 					x.IncludeErrorDetails = false;
 					x.RequireHttpsMetadata = true;
 #endif
-                });
+                })
+                .AddCookie(cfg => cfg.SlidingExpiration = true);
         }
 
         public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions options)

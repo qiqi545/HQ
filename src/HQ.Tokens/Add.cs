@@ -34,7 +34,8 @@ namespace HQ.Tokens
             // for later
             services.Configure<SecurityOptions>(config);
 
-            if (options.Tokens.Enabled) services.AddAuthentication(options);
+            if (options.Tokens.Enabled)
+                services.AddAuthentication(options);
 
             services.AddAuthorization(x =>
             {
