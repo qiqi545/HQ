@@ -23,9 +23,9 @@ namespace System.Data.DocumentDb
         {
             Guard.AgainstNullArgument(nameof(connectionString), connectionString);
 
-            _settings = connectionString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries)
-                .Select(part => part.Split('='))
-                .ToDictionary(split => split[0], split => split[1]);
+            var entries = connectionString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = entries.Select(part => part.Split(new [] {'='}, 2));
+            _settings = tokens.ToDictionary(split => split[0], split => split[1], StringComparer.OrdinalIgnoreCase);
 
             ConnectionString = ToString();
         }
@@ -71,8 +71,8 @@ namespace System.Data.DocumentDb
         public override bool IsFixedSize => false;
         public override object this[string keyword]
         {
-            get => _settings[keyword];
-            set => _settings[keyword] = value?.ToString();
+            get => _settings[keyword?.ToLowerInvariant()];
+            set => _settings[keyword?.ToLowerInvariant()] = value?.ToString();
         }
 
         public override ICollection Keys => (ICollection) _settings.Keys;

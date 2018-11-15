@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -19,7 +19,7 @@
     <Description>An ADO.NET provider for DocumentDb.</Description>
     <PackageTags>azure cosmosdb documentdb sdk ado-net</PackageTags>
     <PackageId>DocumentDbProvider</PackageId>
-    <Version>1.0.0-pre</Version>
+    <Version>1.0.0-pre3</Version>
   </PropertyGroup>
 
   <ItemGroup>
