@@ -1,10 +1,6 @@
 <!-- Some content based on: https://gist.github.com/attilah/fd3e71f03fd258c496179e0200c57b0b -->
 <Project>
 
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
   <!-- Suppress build outputs -->
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <MinClientVersion>3.3</MinClientVersion>
@@ -33,11 +29,11 @@
   <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
     <Content Include="**\*.pp" Exclude="obj\**">
       <Pack>true</Pack>
-      <PackagePath>$(ContentTargetFolders)\cs\netstandard2.0\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackagePath>$(ContentTargetFolders)\cs\$(TargetFramework)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </Content>
     <EmbeddedResource Update="@(EmbeddedResource)">
       <Pack>true</Pack>
-      <PackagePath>$(ContentTargetFolders)\any\any\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackagePath>$(ContentTargetFolders)\any\any\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </EmbeddedResource>
     <PackageReference Remove="@(PackageReference)" />
   </ItemGroup>
@@ -48,7 +44,7 @@
 
   <!-- Fix the .nuspec file -->
   <Target Name="PostBuild" AfterTargets="Pack" Condition="'$(Configuration)'=='PackageSources'">
-    <Exec Command="dotnet run --project &quot;$(SolutionDir)..\package\PackagePrep\PackagePrep.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration)" />
+    <Exec Command="dotnet run --project &quot;$(SolutionDir)..\package\PackagePrep\PackagePrep.csproj&quot; -- nuspec $(ProjectDir)bin\$(Configuration) $(DevelopmentDependency)" />
   </Target>
 
   <!-- Push PackageId.Version.nupkg -->

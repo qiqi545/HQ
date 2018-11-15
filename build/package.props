@@ -1,6 +1,8 @@
 <Project>
+
   <!-- Boilerplate/conventional package identifiers -->
   <PropertyGroup>
+    <LangVersion>7.1</LangVersion>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>    
@@ -14,11 +16,13 @@
    
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-  </PropertyGroup>  
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
   
   <!-- Add .Sources suffix to package to support dual releases -->
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <PackageId>$(MSBuildProjectName).Sources</PackageId>
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
   
   <!-- Include symbols when publishing package binaries -->
