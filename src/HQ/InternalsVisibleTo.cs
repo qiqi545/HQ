@@ -27,7 +27,7 @@ using System.Runtime.CompilerServices;
 #endif
 
 // ReSharper disable once CheckNamespace
-namespace _
+namespace Internals
 {
 	class InternalsVisibleTo { }
 }
