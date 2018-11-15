@@ -26,6 +26,7 @@ using HQ.Connect.DocumentDb;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.DocumentDb;
+using HQ.Lingo.Queries;
 using HQ.Rosetta.Queryable;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -92,6 +93,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
+            SqlBuilder.Dialect = dialect;
             identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
