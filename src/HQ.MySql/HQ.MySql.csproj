@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -18,24 +18,14 @@
     <RepositoryUrl>https://github.com/hq-io/HQ</RepositoryUrl>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='PackageSources' AND '$(Configuration)'!='Package'">
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
     <Description>This package contains the full-stack sources for HQ.IO for the MySQL backend.</Description>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
     <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.MySql\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.MySql\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.MySql\bin\**" Link="Connect.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\bin\**" Link="Lingo.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\bin\**" Link="Cohort.Stores.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Package'">
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='Package'">
-    <Compile Include="..\Stack\HQ.Connect\src\HQ.Connect.MySql\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.MySql\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.MySql\bin\**" Link="Connect.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.MySql\bin\**" Link="Lingo.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.MySql\bin\**" Link="Cohort.Stores.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,7 +38,7 @@
     <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
-  <Target Name="MergeLinkedSource" BeforeTargets="Build">
+  <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">
     <Copy SourceFiles="%(Content.Identity)" DestinationFiles="%(Content.Link)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Content.Link)' != ''" />
   </Target>
 

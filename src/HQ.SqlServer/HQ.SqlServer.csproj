@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -28,16 +28,6 @@
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\bin\**" Link="Cohort.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Package'">
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='Package'">
-    <Compile Include="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.SqlServer\bin\**" Link="Connect.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\bin\**" Link="Lingo.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.SqlServer\bin\**" Link="Cohort.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
@@ -47,7 +37,7 @@
     <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
-  <Target Name="MergeLinkedSource" BeforeTargets="Build">
+  <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">
     <Copy SourceFiles="%(Content.Identity)" DestinationFiles="%(Content.Link)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Content.Link)' != ''" />
   </Target>
 

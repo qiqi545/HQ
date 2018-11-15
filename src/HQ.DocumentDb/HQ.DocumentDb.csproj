@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -28,16 +28,6 @@
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\bin\**" Link="Cohort.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Package'">
-    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-  </PropertyGroup>
-
-  <ItemGroup Condition="'$(Configuration)'=='Package'">
-    <Compile Include="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\bin\**" Link="Connect.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\bin\**" Link="Lingo.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\bin\**" Link="Cohort.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="DocumentDbProvider" Version="1.0.0-pre" />
     <PackageReference Include="FastMember" Version="1.4.1" />
@@ -48,7 +38,7 @@
     <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
-  <Target Name="MergeLinkedSource" BeforeTargets="Build">
+  <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">
     <Copy SourceFiles="%(Content.Identity)" DestinationFiles="%(Content.Link)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Content.Link)' != ''" />
   </Target>
 
