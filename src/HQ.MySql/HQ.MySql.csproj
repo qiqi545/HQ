@@ -18,7 +18,7 @@
     <RepositoryUrl>https://github.com/hq-io/HQ</RepositoryUrl>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources' AND '$(Configuration)'!='Package'">
     <Description>This package contains the full-stack sources for HQ.IO for the MySQL backend.</Description>
   </PropertyGroup>
 
