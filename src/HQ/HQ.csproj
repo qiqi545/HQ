@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -18,6 +18,7 @@
     <Configurations>Debug;Release;PackageSources;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
+    <PackageReleaseNotes />
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources'">
@@ -33,6 +34,8 @@
     <Content Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone\bin\**" Link="Touchstone\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\**\*.cs" Exclude="..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\obj\**;..\Stack\HQ.Touchstone\src\HQ.Touchstone.Xunit\bin\**" Link="Touchstone.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta\bin\**" Link="Rosetta\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\bin\**" Link="Rosetta.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\obj\**;..\Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\bin\**" Link="Rosetta.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Domicile\src\HQ.Domicile\**\*.cs" Exclude="..\Stack\HQ.Domicile\src\HQ.Domicile\obj\**;..\Stack\HQ.Domicile\src\HQ.Domicile\bin\**" Link="Domicile\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -70,6 +73,7 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.1.6" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
+    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta04" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="Sodium.Core" Version="1.2.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
