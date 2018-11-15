@@ -29,11 +29,11 @@
   <ItemGroup Condition="'$(Configuration)'=='PackageSources'">
     <Content Include="**\*.pp" Exclude="obj\**">
       <Pack>true</Pack>
-      <PackagePath>$(ContentTargetFolders)\cs\$(TargetFramework)\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackagePath>$(ContentTargetFolders)\cs\$(TargetFramework)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </Content>
     <EmbeddedResource Update="@(EmbeddedResource)">
       <Pack>true</Pack>
-      <PackagePath>$(ContentTargetFolders)\any\any\$(ProjectName)\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
+      <PackagePath>$(ContentTargetFolders)\any\any\%(RecursiveDir)%(Filename)%(Extension)</PackagePath>
     </EmbeddedResource>
     <PackageReference Remove="@(PackageReference)" />
   </ItemGroup>
