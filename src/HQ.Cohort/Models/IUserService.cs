@@ -28,7 +28,10 @@ namespace HQ.Cohort.Models
     public interface IUserService<TUser> where TUser : IdentityUser
     {
         IQueryable<TUser> Users { get; }
+
         Task<Operation<TUser>> CreateAsync(CreateUserModel model);
+        Task<Operation> DeleteAsync(string id);
+
         Task<Operation<TUser>> FindByIdAsync(string id);
         Task<Operation<TUser>> FindByEmailAsync(string email);
         Task<Operation<TUser>> FindByNameAsync(string username);

@@ -62,6 +62,15 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!this.TryValidateModelState(out var error))
+                return error;
+            var result = await _userService.DeleteAsync(id);
+            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+        }
+
         [HttpGet("{id}/roles")]
         public async Task<IActionResult> GetRoles([FromRoute] string id)
         {

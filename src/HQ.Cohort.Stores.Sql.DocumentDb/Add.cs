@@ -24,6 +24,7 @@ using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.DocumentDb;
+using HQ.Connect.DocumentDb.Configuration;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.DocumentDb;

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using HQ.Cohort.Extensions;
@@ -54,6 +55,16 @@ namespace HQ.Cohort.Services
 
             var result = await _userManager.CreateAsync(user, model.Password);
             return result.ToOperation(user);
+        }
+        
+        public async Task<Operation> DeleteAsync(string id)
+        {
+            var user = await FindByIdAsync(id);
+            if (user == null)
+                return new Operation<TUser>(new Error("User not found.", HttpStatusCode.NotFound));
+
+            var deleted = await _userManager.DeleteAsync(user.Data);
+            return deleted.ToOperation();
         }
 
         #region Find

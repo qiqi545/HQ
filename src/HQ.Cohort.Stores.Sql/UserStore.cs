@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -47,7 +47,7 @@ namespace HQ.Cohort.Stores.Sql
         private const int SuperUserNumberId = int.MaxValue;
 
         // ReSharper disable once StaticMemberInGenericType
-        private static readonly List<string> SuperUserRoles = new List<string> { Constants.ClaimValues.SuperUser };
+        private static readonly List<string> SuperUserRoles = new List<string> {Constants.ClaimValues.SuperUser};
 
         private readonly IDataConnection _connection;
         private readonly IOptions<IdentityOptionsExtended> _identity;
@@ -77,10 +77,6 @@ namespace HQ.Cohort.Stores.Sql
         }
 
         public IQueryable<TUser> Users => MaybeQueryable();
-
-        public CancellationToken CancellationToken { get; }
-
-        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
 
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
@@ -208,9 +204,19 @@ namespace HQ.Cohort.Stores.Sql
         {
         }
 
+        public CancellationToken CancellationToken { get; }
+
+        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
+
         private IQueryable<TUser> MaybeQueryable()
         {
-            return _queryable.Queryable ?? Task.Run(GetAllUsersAsync, CancellationToken).Result.AsQueryable();
+            if (_queryable.IsSafe)
+                return _queryable.Queryable;
+
+            if (_queryable.SupportsUnsafe)
+                return _queryable.UnsafeQueryable;
+
+            return Task.Run(GetAllUsersAsync, CancellationToken).Result.AsQueryable();
         }
 
         private Task<IEnumerable<TUser>> GetAllUsersAsync()

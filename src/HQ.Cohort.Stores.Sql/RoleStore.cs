@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -167,7 +167,13 @@ namespace HQ.Cohort.Stores.Sql
 
         private IQueryable<TRole> MaybeQueryable()
         {
-            return _queryable.Queryable ?? Task.Run(GetAllRolesAsync, CancellationToken).Result.AsQueryable();
+            if (_queryable.IsSafe)
+                return _queryable.Queryable;
+
+            if (_queryable.SupportsUnsafe)
+                return _queryable.UnsafeQueryable;
+
+            return Task.Run(GetAllRolesAsync, CancellationToken).Result.AsQueryable();
         }
 
         private async Task<IEnumerable<TRole>> GetAllRolesAsync()
