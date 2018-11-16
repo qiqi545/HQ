@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -28,9 +28,10 @@ namespace HQ.Rosetta.Queryable
         ///     unpredictable, or, if none is available, may materialize the entire underlying collection in order to
         ///     perform a query.
         /// </summary>
-        bool ThrowOnQueryableAccess { get; }
-
+        bool IsSafe { get; }
+        bool SupportsUnsafe { get; }
         IQueryable<T> Queryable { get; }
+        IQueryable<T> UnsafeQueryable { get; }
         ISafeQueryable<T> SafeQueryable { get; }
     }
 }

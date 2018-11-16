@@ -16,14 +16,22 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace HQ.Rosetta
 {
     public sealed class Operation<T> : Operation
     {
-        public Operation(T data) : this(data, null)
+        public Operation(IEnumerable<Error> errors) : base(errors)
         {
+            Result = OperationResult.SucceededWithErrors;
         }
+
+        public Operation(params Error[] errors) : this(errors.AsEnumerable()) { }
+
+        public Operation(T data) : this(data, null) { }
+
+        public Operation(T data, params Error[] errors) : this (data, errors.AsEnumerable()) { }
 
         public Operation(T data, IEnumerable<Error> errors) : base(errors)
         {
