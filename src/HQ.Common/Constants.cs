@@ -32,6 +32,11 @@ namespace HQ.Common
             public const string SetSuffix = "_set";
         }
 
+        public static class DocumentDb
+        {
+            public const string DefaultCollection = "Default";
+        }
+
         public static class ContextKeys
         {
             public const string DynamicViewLocation = "DynamicViewLocation";
