@@ -56,7 +56,7 @@ namespace HQ.Cohort.Services
             var result = await _userManager.CreateAsync(user, model.Password);
             return result.ToOperation(user);
         }
-        
+
         public async Task<Operation> DeleteAsync(string id)
         {
             var user = await FindByIdAsync(id);
