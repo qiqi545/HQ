@@ -68,5 +68,10 @@ namespace HQ.Lingo.Dialects
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
         }
+
+        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
     }
 }

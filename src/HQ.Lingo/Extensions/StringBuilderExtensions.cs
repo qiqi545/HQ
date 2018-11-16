@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Text;
+using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo.Extensions
@@ -70,6 +71,22 @@ namespace HQ.Lingo.Extensions
                     sb.AppendName(d, key).Append(" = ").AppendParameter(d, parameters[i]);
                 }
 
+            return sb;
+        }
+
+        public static StringBuilder AppendWhereClause(this StringBuilder sb, IDataDescriptor descriptor, ISqlDialect d, IList<string> keys,
+            IList<string> parameters)
+        {
+            if (!d.BeforeWhere(descriptor, sb, keys, parameters))
+                return sb;
+            if (keys != null)
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    sb.Append(i == 0 ? " WHERE " : " AND ");
+                    sb.AppendName(d, keys[i]).Append(" = ").AppendParameter(d, parameters[i]);
+                }
+            if (keys?.Count > 0)
+                d.AfterWhere(descriptor, sb, keys, parameters);
             return sb;
         }
     }

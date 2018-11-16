@@ -39,5 +39,10 @@ namespace HQ.Lingo.Dialects
         string ResolveColumnName(IDataDescriptor descriptor, string columnName);
         IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor);
         IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All);
+
+        bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb);
+        bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+        bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
+        bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
     }
 }

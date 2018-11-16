@@ -27,8 +27,8 @@ namespace HQ.Lingo.Dapper
     partial class DapperExtensions
     {
         public static IEnumerable<T> Query<T>(this IDbConnection connection, IDbTransaction transaction = null,
-            bool buffered = true, int? commandTimeout = null, CommandType? commandType = null,
-            params Expression<Func<T, object>>[] orderBy) where T : class
+           bool buffered = true, int? commandTimeout = null, CommandType? commandType = null,
+           params Expression<Func<T, object>>[] orderBy) where T : class
         {
             var query = SqlBuilder.Select(orderBy);
             var result = connection.Query<T>(query.Sql, transaction, buffered, commandTimeout, commandType);
@@ -64,7 +64,7 @@ namespace HQ.Lingo.Dapper
             return result;
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, IList<string> columns,
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, List<string> columns,
             IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<T, object>>[] orderBy) where T : class
         {
@@ -73,7 +73,7 @@ namespace HQ.Lingo.Dapper
             return result;
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, IList<string> columns, int page,
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, List<string> columns, int page,
             int perPage, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<T, object>>[] orderBy) where T : class
         {
@@ -82,7 +82,7 @@ namespace HQ.Lingo.Dapper
             return result;
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, IList<string> columns, dynamic where,
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, List<string> columns, dynamic where,
             IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<T, object>>[] orderBy) where T : class
         {
@@ -92,7 +92,7 @@ namespace HQ.Lingo.Dapper
             return result;
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, IList<string> columns, dynamic where,
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, List<string> columns, dynamic where,
             int page, int perPage, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<T, object>>[] orderBy) where T : class
         {

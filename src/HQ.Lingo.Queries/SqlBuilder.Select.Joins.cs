@@ -28,7 +28,7 @@ namespace HQ.Lingo.Queries
 {
     partial class SqlBuilder
     {
-        public static Query Select<T>(dynamic data, IList<Filter> filters, IList<Projection> projections,
+        public static Query Select<T>(dynamic data, List<Filter> filters, List<Projection> projections,
             params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
@@ -38,14 +38,14 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        private static Query Select<T>(IDataDescriptor descriptor, dynamic data, IList<string> columnFilter,
-            IList<Filter> filters, IList<Projection> projections, Expression<Func<T, object>>[] orderBy)
+        private static Query Select<T>(IDataDescriptor descriptor, dynamic data, List<string> columnFilter,
+            List<Filter> filters, List<Projection> projections, Expression<Func<T, object>>[] orderBy)
         {
-            var columns = columnFilter ?? Dialect.ResolveColumnNames(descriptor).ToArray();
+            var columns = columnFilter ?? Dialect.ResolveColumnNames(descriptor).ToList();
             var sql = Dialect.Query(descriptor.Table, descriptor.Schema, columns, filters, projections, orderBy);
 
             IDictionary<string, object> whereHash = Hash.FromAnonymousObject(data);
-            var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToArray();
+            var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToList();
             var parameters = whereFilter.ToDictionary(key => $"{Dialect.Parameter}{key}", key => whereHash[key]);
 
             return new Query(sql, parameters);

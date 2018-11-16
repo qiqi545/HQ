@@ -32,23 +32,14 @@ namespace HQ.Lingo.Queries
 
     partial class SqlBuilder
     {
-        private static readonly string[] SelectStar = {"*"};
-
         public static Query Select<T>(params Expression<Func<T, object>>[] orderBy)
         {
-            var descriptor = GetDescriptor<T>();
-            var query = Select(descriptor, null, where: null);
-
-            if (orderBy?.Length > 0)
-                query.Sql = Dialect.OrderBy(query.Sql, orderBy);
-
-            return query;
+            return Select(GetDescriptor<T>(), null, orderBy);
         }
 
         public static Query Select<T>(int page, int perPage, params Expression<Func<T, object>>[] orderBy)
         {
-            var descriptor = GetDescriptor<T>();
-            return Select(descriptor, null, null, page, perPage, orderBy);
+            return Select(GetDescriptor<T>(), null, null, page, perPage, orderBy);
         }
 
         public static Query Select<T>(dynamic where, params Expression<Func<T, object>>[] orderBy)
@@ -62,16 +53,15 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(dynamic where, int page, int perPage,
-            params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
         {
             return Select(GetDescriptor<T>(), null, where, page, perPage, orderBy);
         }
 
-        public static Query Select<T>(IList<string> columns, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(List<string> columns, params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
-            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToArray();
+            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToList();
 
             var query = Select(descriptor, columnFilter, where: null);
             if (orderBy?.Length > 0)
@@ -80,11 +70,10 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(IList<string> columns, int page, int perPage,
-            params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(List<string> columns, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
-            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToArray();
+            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToList();
 
             return Select(descriptor, columnFilter, null, page, perPage, orderBy);
         }
@@ -93,7 +82,7 @@ namespace HQ.Lingo.Queries
             params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
-            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToArray();
+            var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToList();
 
             Query query = Select(descriptor, columnFilter, where);
             if (orderBy?.Length > 0)
@@ -144,8 +133,7 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(T example, dynamic where, int page, int perPage,
-            params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(T example, dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
         {
             var type = example.GetType();
             var descriptor = GetDescriptor(type); // not always T, because T can be a contract for shaping!
@@ -155,14 +143,14 @@ namespace HQ.Lingo.Queries
                 orderBy: orderBy);
         }
 
-        private static IList<string> GetColumnShape<T>(Type type, IDataDescriptor descriptor)
+        private static List<string> GetColumnShape<T>(Type type, IDataDescriptor descriptor)
         {
-            IList<string> columns;
+            List<string> columns;
             var columnNames = Dialect.ResolveColumnNames(descriptor);
             if (typeof(T) == type)
             {
                 // concrete example, we can assume the columns match the descriptor
-                columns = columnNames.ToArray();
+                columns = columnNames.ToList();
             }
             else
             {
@@ -173,30 +161,30 @@ namespace HQ.Lingo.Queries
                         .GetProperties(BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Instance)
                         .Select(x => x.Name);
 
-                    columns = contract.Intersect(columnNames).OrderBy(x => x).ToArray();
+                    columns = contract.Intersect(columnNames).OrderBy(x => x).ToList();
                 }
                 else
                 {
                     // no such thing as interface inheritance, which means we can get a flat union easily
-                    var contract = new[] {typeof(T)}.Concat(typeof(T).GetInterfaces())
+                    var contract = new[] { typeof(T) }.Concat(typeof(T).GetInterfaces())
                         .SelectMany(i => i.GetProperties())
                         .Select(x => x.Name);
 
-                    columns = contract.Intersect(columnNames).OrderBy(x => x).ToArray();
+                    columns = contract.Intersect(columnNames).OrderBy(x => x).ToList();
                 }
             }
 
             return columns;
         }
 
-        private static Query Select(IDataDescriptor descriptor, IList<string> columnFilter, dynamic where)
+        private static Query Select(IDataDescriptor descriptor, List<string> columnFilter, dynamic where)
         {
             QueryAndParameters qp = BuildSelectQueryAndParameters(descriptor, columnFilter, where);
 
             return new Query(qp.sql, qp.parameters);
         }
 
-        private static Query Select<T>(IDataDescriptor descriptor, IList<string> columnFilter, dynamic where, int page,
+        private static Query Select<T>(IDataDescriptor descriptor, List<string> columnFilter, dynamic where, int page,
             int perPage, params Expression<Func<T, object>>[] orderBy)
         {
             QueryAndParameters qp = BuildSelectQueryAndParameters(descriptor, columnFilter, where);
@@ -212,22 +200,22 @@ namespace HQ.Lingo.Queries
             return new Query(pageSql, qp.parameters);
         }
 
-        private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
-            IList<string> columnFilter, dynamic where)
+        private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor, List<string> columnFilter, dynamic where)
         {
             IDictionary<string, object> whereHash = Hash.FromAnonymousObject(where);
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
             var tableName = Dialect.ResolveTableName(descriptor);
-            var columnNames = Dialect.ResolveColumnNames(descriptor).ToArray();
+            var columnNames = Dialect.ResolveColumnNames(descriptor).ToList();
 
-            var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToArray();
-            var parameters =
-                whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
+            var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToList();
+            var parameters = whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
+            var parameterKeys = parameters.Keys.ToList();
 
-            var parameterKeys = parameters.Keys.ToArray();
-            var sql = Dialect.Select(tableName, descriptor.Schema,
-                columnFilter ?? (Dialect.SelectStar ? SelectStar : columnNames), whereFilter, parameterKeys);
+            var columns = (Dialect.SelectStar ? new List<string> { "*" } : columnNames);
+            var sql = Dialect.Select(descriptor, tableName, descriptor.Schema,
+                columnFilter ?? columns, whereFilter,
+                parameterKeys);
 
             return new QueryAndParameters(sql, parameters);
         }

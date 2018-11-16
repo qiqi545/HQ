@@ -33,7 +33,9 @@ namespace HQ.Lingo.DocumentDb
         public char? Quote => '\'';
 
         public string SetSuffix => string.Empty;
-        public bool SelectStar => true;
+        public bool SelectStar => false;
+
+        protected internal const string Discriminator = "DocumentType";
 
         public bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
@@ -74,5 +76,20 @@ namespace HQ.Lingo.DocumentDb
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
         }
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters)
+        {
+            Guard.AgainstNullArgument(nameof(keys), keys);
+            Guard.AgainstNullArgument(nameof(parameters), parameters);
+            if (parameters.Contains(Discriminator))
+                return true;
+            keys.Add(ResolveColumnName(descriptor, Discriminator));
+            parameters.Add(Discriminator);
+            return true;
+        }
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
+        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
     }
 }

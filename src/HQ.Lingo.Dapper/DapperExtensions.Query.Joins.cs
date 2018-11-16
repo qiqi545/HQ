@@ -31,8 +31,8 @@ namespace HQ.Lingo.Dapper
     {
         public static IEnumerable<TParent> Query<TParent, TChild1, TChild2, TParentKey>(this IDbConnection connection,
             Func<TParent, TParentKey> parentKeySelector, Action<TParent, TChild1> child1Setter,
-            Func<TParent, IList<TChild2>> child2Selector,
-            dynamic data, IList<Filter> filters, IList<Projection> projections,
+            Func<TParent, List<TChild2>> child2Selector,
+            dynamic data, List<Filter> filters, List<Projection> projections,
             IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<TParent, object>>[] orderBy) where TParent : class
         {
