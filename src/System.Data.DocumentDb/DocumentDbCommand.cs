@@ -112,12 +112,35 @@ namespace System.Data.DocumentDb
         private Dictionary<string, object> CommandToDocument(string preamble)
         {
             var document = StartDocumentDefinition();
-            foreach (DocumentDbParameter parameter in _parameters)
-            {
-                document.Add(parameter.ParameterName, parameter.Value);
 
-                if (parameter.ParameterName == Id)
-                    document[Constants.IdKey] = parameter.Value;
+            switch (preamble)
+            {
+                case Constants.Insert:
+                {
+                    var commandBase = CommandText.Substring(Constants.Insert.Length);
+                    var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
+                    var qualifier = collectionName + ".";
+
+                    foreach (DocumentDbParameter parameter in _parameters)
+                    {
+                        var parameterName = parameter.ParameterName.Substring(qualifier.Length);
+                        document.Add(parameterName, parameter.Value);
+
+                        if (parameterName == Id)
+                            document.Add(Constants.IdKey, parameter.Value);
+                    }
+                    break;
+                }
+                default:
+                {
+                    foreach (DocumentDbParameter parameter in _parameters)
+                    {
+                        document.Add(parameter.ParameterName, parameter.Value);
+                        if (parameter.ParameterName == Id)
+                            document[Constants.IdKey] = parameter.Value;
+                    }
+                    break;
+                }
             }
 
             return document;
