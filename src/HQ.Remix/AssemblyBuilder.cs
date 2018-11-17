@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,14 +30,20 @@ using Newtonsoft.Json;
 
 namespace HQ.Remix
 {
-	public class DefaultAssemblyBuilder : IAssemblyBuilder
+	public class AssemblyBuilder : IAssemblyBuilder
 	{
+	    public static Lazy<IAssemblyBuilder> Default = new Lazy<IAssemblyBuilder>(() =>
+	    {
+	        var loadContextProvider = new DefaultAssemblyLoadContextProvider();
+	        var metadataReferenceResolver = new DefaultMetadataReferenceResolver();
+	        return new AssemblyBuilder(loadContextProvider, new[] {metadataReferenceResolver});
+	    });
+
 		private readonly AssemblyLoadContext _context;
-		private readonly ILogger<DefaultAssemblyBuilder> _logger;
+		private readonly ILogger<AssemblyBuilder> _logger;
 		private readonly IEnumerable<IMetadataReferenceResolver> _resolvers;
 
-		public DefaultAssemblyBuilder(IAssemblyLoadContextProvider provider,
-			IEnumerable<IMetadataReferenceResolver> resolvers, ILogger<DefaultAssemblyBuilder> logger = null)
+		public AssemblyBuilder(IAssemblyLoadContextProvider provider, IEnumerable<IMetadataReferenceResolver> resolvers, ILogger<AssemblyBuilder> logger = null)
 		{
 			_resolvers = resolvers;
 			_logger = logger;
@@ -79,8 +86,7 @@ namespace HQ.Remix
 			}
 		}
 
-		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
-			params Assembly[] dependencies)
+		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params Assembly[] dependencies)
 		{
 			var compilation = CreateCompilation(assemblyName, code, dependencies);
 
@@ -91,8 +97,7 @@ namespace HQ.Remix
 			return assembly;
 		}
 
-		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
-			params string[] dependencyLocations)
+		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params string[] dependencyLocations)
 		{
 			var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
 
@@ -108,20 +113,18 @@ namespace HQ.Remix
 			var warnings = result.Diagnostics.Where(diagnostic =>
 				!diagnostic.IsSuppressed && !diagnostic.IsWarningAsError &&
 				diagnostic.Severity == DiagnosticSeverity.Warning);
-			foreach (var warning in warnings)
-				if (_logger != null && _logger.IsEnabled(LogLevel.Warning))
-					_logger.LogWarning(JsonConvert.SerializeObject(warning));
 
-			var errors = result.Diagnostics.Where(diagnostic =>
-				!diagnostic.IsSuppressed && diagnostic.IsWarningAsError ||
-				diagnostic.Severity == DiagnosticSeverity.Error);
-			foreach (var error in errors)
-				if (_logger != null && _logger.IsEnabled(LogLevel.Error))
+			foreach (var warning in warnings)
+				if (_logger?.IsEnabled(LogLevel.Warning) == true)
+					_logger?.LogWarning(JsonConvert.SerializeObject(warning));
+
+			var errors = result.Diagnostics.Where(diagnostic => !diagnostic.IsSuppressed && diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+            foreach (var error in errors)
+				if (_logger?.IsEnabled(LogLevel.Error) == true)
 					_logger?.LogError(JsonConvert.SerializeObject(error));
 		}
 
-		private CSharpCompilation CreateCompilation(string assemblyName, string code,
-			IEnumerable<Assembly> dependencies)
+		private CSharpCompilation CreateCompilation(string assemblyName, string code, IEnumerable<Assembly> dependencies)
 		{
 			var references = ResolveReferences(dependencies);
 			var syntaxTree = CSharpSyntaxTree.ParseText(code);
@@ -134,8 +137,7 @@ namespace HQ.Remix
 			return compilation;
 		}
 
-		private CSharpCompilation CreateCompilation(string assemblyName, string code,
-			IEnumerable<string> dependencyLocations)
+		private CSharpCompilation CreateCompilation(string assemblyName, string code, IEnumerable<string> dependencyLocations)
 		{
 			var references = ResolveReferences(dependencyLocations);
 			var syntaxTree = CSharpSyntaxTree.ParseText(code);
@@ -145,6 +147,7 @@ namespace HQ.Remix
 				new[] {syntaxTree},
 				references,
 				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+
 			return compilation;
 		}
 

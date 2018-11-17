@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -58,28 +58,16 @@ function(callback) {
 		private readonly IEnumerable<Assembly> _defaultDependencies;
 		private readonly INodeServices _nodeServices;
 
-		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices,
-			IEnumerable<Assembly> defaultDependencies)
+		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices, IEnumerable<Assembly> defaultDependencies)
 		{
 			_builder = builder;
 			_nodeServices = nodeServices;
 			_defaultDependencies = defaultDependencies ?? GetRuntimeAssemblies();
 		}
 
-		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices,
-			params Assembly[] defaultDependencies)
-		{
-			_builder = builder;
-			_nodeServices = nodeServices;
-			_defaultDependencies = defaultDependencies ?? GetRuntimeAssemblies();
-		}
-
-		public HandlerFactory() : this(
-			new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(),
-				new IMetadataReferenceResolver[] {new DefaultMetadataReferenceResolver()}),
-			NodeServicesFactory.CreateNodeServices(DefaultNodeServicesOptions()))
-		{
-		}
+		public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices, params Assembly[] defaultDependencies) : this(builder, nodeServices, defaultDependencies.AsEnumerable()) { }
+		
+        public HandlerFactory() : this(AssemblyBuilder.Default.Value, NodeServicesFactory.CreateNodeServices(DefaultNodeServicesOptions())) { }
 
 		private static NodeServicesOptions DefaultNodeServicesOptions()
 		{
@@ -133,7 +121,7 @@ function(callback) {
 			return method;
 		}
 
-		public Handler BuildJavaScriptHandler<T>(HandlerInfo info)
+	    public Handler BuildJavaScriptHandler<T>(HandlerInfo info)
 		{
 			var @namespace = info.Namespace ?? "module";
 			var entrypoint = info.Entrypoint ?? "exports";
@@ -164,8 +152,7 @@ function(callback) {
 
 		#region Method Handler Factory
 
-		private readonly IDictionary<MethodAndStrategy, Handler> _handlers =
-			new ConcurrentDictionary<MethodAndStrategy, Handler>();
+		private readonly IDictionary<MethodAndStrategy, Handler> _handlers = new ConcurrentDictionary<MethodAndStrategy, Handler>();
 
 		private struct MethodAndStrategy : IEquatable<MethodAndStrategy>
 		{
@@ -210,7 +197,6 @@ function(callback) {
 
 		public Handler GetOrCacheHandlerFromMethod(Type type, MethodInfo methodInfo, DelegateBuildStrategy strategy)
 		{
-			// method->handler
 			var key = new MethodAndStrategy(methodInfo, strategy);
 			if (!_handlers.TryGetValue(key, out var handler))
 				_handlers[key] = handler = FromMethod(type, methodInfo, strategy);
