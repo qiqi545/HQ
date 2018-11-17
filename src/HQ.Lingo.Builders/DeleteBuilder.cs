@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using HQ.Common.Helpers;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
@@ -25,7 +26,7 @@ namespace HQ.Lingo.Builders
 {
     public static class DeleteBuilder
     {
-        public static string DeleteFrom(this ISqlDialect d, string table, string schema)
+        public static string Delete(this ISqlDialect d, string table, string schema)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -34,35 +35,82 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string DeleteFrom(this ISqlDialect d, string table, string schema, IList<string> keys)
+        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema)
         {
             return StringBuilderPool.Scoped(sb =>
             {
+                if (!d.BeforeDelete(descriptor, sb))
+                    return;
+
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);
-                if (keys != null)
-                    for (var i = 0; i < keys.Count; i++)
-                    {
-                        sb.Append(i == 0 ? " WHERE " : " AND ");
-                        var key = keys[i];
-                        sb.AppendName(d, key).Append(" = ").AppendParameter(d, key);
-                    }
             });
         }
 
-        internal static string DeleteFrom(this ISqlDialect d, string table, string schema, IList<PropertyToColumn> keys)
+        public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys)
         {
             return StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);
-                if (keys != null)
-                    for (var i = 0; i < keys.Count; i++)
-                    {
-                        sb.Append(i == 0 ? " WHERE " : " AND ");
-                        var key = keys[i];
-                        sb.AppendName(d, key.ColumnName).Append(" = ").AppendParameter(d, key.ColumnName);
-                    }
+                sb.AppendWhereClause(d, keys);
+            });
+        }
+
+        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> keys)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                if (!d.BeforeDelete(descriptor, sb))
+                    return;
+
+                sb.Append("DELETE FROM ");
+                sb.AppendTable(d, table, schema);
+
+                if (!d.BeforeWhere(descriptor, sb, keys))
+                    return;
+
+                sb.AppendWhereClause(descriptor, d, keys);
+            });
+        }
+
+        public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys,
+            List<string> parameters)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                sb.Append("DELETE FROM ");
+                sb.AppendTable(d, table, schema);
+                sb.AppendWhereClause(d, keys, parameters);
+            });
+        }
+
+        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> keys, List<string> parameters)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                if (!d.BeforeDelete(descriptor, sb))
+                    return;
+
+                sb.Append("DELETE FROM ");
+                sb.AppendTable(d, table, schema);
+
+                if (!d.BeforeWhere(descriptor, sb, keys, parameters))
+                    return;
+
+                sb.AppendWhereClause(descriptor, d, keys, parameters);
+            });
+        }
+
+        public static string Delete(this ISqlDialect d, string table, string schema, List<PropertyToColumn> keys)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                sb.Append("DELETE FROM ");
+                sb.AppendTable(d, table, schema);
+                sb.AppendWhereClause(d, keys.Select(x => x.ColumnName).ToList());
             });
         }
     }

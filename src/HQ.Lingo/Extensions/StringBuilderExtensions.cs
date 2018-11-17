@@ -47,7 +47,7 @@ namespace HQ.Lingo.Extensions
             return sb;
         }
 
-        public static StringBuilder AppendWhereClause(this StringBuilder sb, ISqlDialect d, IList<string> keys)
+        public static StringBuilder AppendWhereClause(this StringBuilder sb, ISqlDialect d, List<string> keys)
         {
             if (keys != null)
                 for (var i = 0; i < keys.Count; i++)
@@ -60,33 +60,57 @@ namespace HQ.Lingo.Extensions
             return sb;
         }
 
-        public static StringBuilder AppendWhereClause(this StringBuilder sb, ISqlDialect d, IList<string> keys,
-            IList<string> parameters)
+        public static StringBuilder AppendWhereClause(this StringBuilder sb, IDataDescriptor descriptor, ISqlDialect d,
+            List<string> keys)
         {
             if (keys != null)
+            {
+                if (!d.BeforeWhere(descriptor, sb, keys))
+                    return sb;
+
                 for (var i = 0; i < keys.Count; i++)
                 {
                     sb.Append(i == 0 ? " WHERE " : " AND ");
                     var key = keys[i];
-                    sb.AppendName(d, key).Append(" = ").AppendParameter(d, parameters[i]);
+                    sb.AppendName(d, key).Append(" = ").AppendParameter(d, key);
                 }
+
+                if (keys.Count > 0)
+                    d.AfterWhere(descriptor, sb, keys);
+            }
 
             return sb;
         }
 
-        public static StringBuilder AppendWhereClause(this StringBuilder sb, IDataDescriptor descriptor, ISqlDialect d, IList<string> keys,
-            IList<string> parameters)
+        public static StringBuilder AppendWhereClause(this StringBuilder sb, ISqlDialect d, IList<string> keys,
+            List<string> parameters)
         {
-            if (!d.BeforeWhere(descriptor, sb, keys, parameters))
-                return sb;
             if (keys != null)
                 for (var i = 0; i < keys.Count; i++)
                 {
                     sb.Append(i == 0 ? " WHERE " : " AND ");
                     sb.AppendName(d, keys[i]).Append(" = ").AppendParameter(d, parameters[i]);
                 }
+
+            return sb;
+        }
+
+        public static StringBuilder AppendWhereClause(this StringBuilder sb, IDataDescriptor descriptor, ISqlDialect d,
+            List<string> keys, List<string> parameters)
+        {
+            if (!d.BeforeWhere(descriptor, sb, keys, parameters))
+                return sb;
+
+            if (keys != null)
+                for (var i = 0; i < keys.Count; i++)
+                {
+                    sb.Append(i == 0 ? " WHERE " : " AND ");
+                    sb.AppendName(d, keys[i]).Append(" = ").AppendParameter(d, parameters[i]);
+                }
+
             if (keys?.Count > 0)
                 d.AfterWhere(descriptor, sb, keys, parameters);
+
             return sb;
         }
     }

@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using HQ.Common.Helpers;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
@@ -28,13 +29,14 @@ namespace HQ.Lingo.Builders
     {
         public const string SetSuffix = "_set";
 
-        public static string Update(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<string> keys, string setSuffix = SetSuffix)
+        public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
+            List<string> keys, string setSuffix = SetSuffix)
         {
             return StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("UPDATE ");
                 sb.AppendTable(d, table, schema).Append(" SET ");
+
                 for (var i = 0; i < columns.Count; i++)
                 {
                     var column = columns[i];
@@ -47,9 +49,39 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string Update(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<string> keys, IList<string> setParameters, IList<string> whereParameters,
-            string setSuffix = SetSuffix)
+        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> columns, List<string> keys, string setSuffix = SetSuffix)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                if (!d.BeforeUpdate(descriptor, sb))
+                    return;
+
+                sb.Append("UPDATE ");
+                sb.AppendTable(d, table, schema).Append(" SET ");
+
+                if (!d.BeforeUpdateColumns(descriptor, sb, columns))
+                    return;
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    var column = columns[i];
+                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, column).Append(setSuffix);
+                    if (i < columns.Count - 1)
+                        sb.Append(", ");
+                }
+
+                if (!d.BeforeWhere(descriptor, sb, keys))
+                    return;
+
+                sb.AppendWhereClause(descriptor, d, keys);
+
+                d.AfterWhere(descriptor, sb, keys);
+            });
+        }
+
+        public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
+            List<string> keys, List<string> setParameters, List<string> whereParameters, string setSuffix = SetSuffix)
         {
             Debug.Assert(columns != null);
             Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
@@ -58,6 +90,7 @@ namespace HQ.Lingo.Builders
             {
                 sb.Append("UPDATE ");
                 sb.AppendTable(d, table, schema).Append(" SET ");
+
                 for (var i = 0; i < columns.Count; i++)
                 {
                     var column = columns[i];
@@ -70,8 +103,43 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string Update(this ISqlDialect d, string table, string schema, IList<PropertyToColumn> columns,
-            IList<string> keys, string setSuffix = SetSuffix)
+        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> columns, List<string> keys, List<string> setParameters, List<string> whereParameters,
+            string setSuffix = SetSuffix)
+        {
+            Debug.Assert(columns != null);
+            Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
+
+            return StringBuilderPool.Scoped(sb =>
+            {
+                if (!d.BeforeUpdate(descriptor, sb))
+                    return;
+
+                sb.Append("UPDATE ");
+                sb.AppendTable(d, table, schema).Append(" SET ");
+
+                if (!d.BeforeUpdateColumns(descriptor, sb, columns))
+                    return;
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    var column = columns[i];
+                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, setParameters[i]).Append(setSuffix);
+                    if (i < columns.Count - 1)
+                        sb.Append(", ");
+                }
+
+                if (!d.BeforeWhere(descriptor, sb, keys, whereParameters))
+                    return;
+
+                sb.AppendWhereClause(d, keys, whereParameters);
+
+                d.AfterWhere(descriptor, sb, keys);
+            });
+        }
+
+        public static string Update(this ISqlDialect d, string table, string schema, List<PropertyToColumn> columns,
+            List<string> keys, string setSuffix = SetSuffix)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -89,6 +157,40 @@ namespace HQ.Lingo.Builders
                 }
 
                 sb.AppendWhereClause(d, keys);
+            });
+        }
+
+        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<PropertyToColumn> columns, List<string> keys, string setSuffix = SetSuffix)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                if (!d.BeforeUpdate(descriptor, sb))
+                    return;
+
+                sb.Append("UPDATE ");
+                sb.AppendTable(d, table, schema).Append(" SET ");
+
+                if (!d.BeforeUpdateColumns(descriptor, sb, columns.Select(x => x.ColumnName).ToList()))
+                    return;
+
+                for (var i = 0; i < columns.Count; i++)
+                {
+                    var column = columns[i];
+                    sb.AppendName(d, column.ColumnName).Append(" = ")
+                        .AppendParameter(d, column.ColumnName)
+                        .Append(setSuffix);
+
+                    if (i < columns.Count - 1)
+                        sb.Append(", ");
+                }
+
+                if (!d.BeforeWhere(descriptor, sb, keys))
+                    return;
+
+                sb.AppendWhereClause(d, keys);
+
+                d.AfterWhere(descriptor, sb, keys);
             });
         }
     }

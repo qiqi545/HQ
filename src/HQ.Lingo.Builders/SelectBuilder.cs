@@ -39,7 +39,7 @@ namespace HQ.Lingo.Builders
         }
 
         public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
-            IList<string> keys)
+            List<string> keys)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -56,7 +56,8 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string Select(this ISqlDialect d, string table, string schema, List<string> columns, List<string> keys, List<string> parameters)
+        public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
+            List<string> keys, List<string> parameters)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -75,11 +76,12 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string Select(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema, List<string> columns, List<string> keys, List<string> parameters)
+        public static string Select(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> columns, List<string> keys, List<string> parameters)
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                if (!d.BeforeSelect(descriptor, sb))
+                if (descriptor != null && !d.BeforeSelect(descriptor, sb))
                     return;
 
                 sb.Append("SELECT ");
@@ -96,7 +98,7 @@ namespace HQ.Lingo.Builders
 
                 sb.Append(" FROM ").AppendTable(d, table, schema);
 
-                sb.AppendWhereClause(d, keys, parameters);
+                sb.AppendWhereClause(descriptor, d, keys, parameters);
             });
         }
     }
