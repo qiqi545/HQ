@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace HQ.Rosetta.Queryable
@@ -29,9 +30,11 @@ namespace HQ.Rosetta.Queryable
         ///     perform a query.
         /// </summary>
         bool IsSafe { get; }
+
         bool SupportsUnsafe { get; }
         IQueryable<T> Queryable { get; }
         IQueryable<T> UnsafeQueryable { get; }
         ISafeQueryable<T> SafeQueryable { get; }
+        IEnumerable<T> SafeAll { get; }
     }
 }
