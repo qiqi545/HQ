@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Cadence\src\HQ.Cadence\HQ.Cadence.csproj" />
     <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.Queries\HQ.Lingo.Queries.csproj" />
     <ProjectReference Include="..\..\..\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Connect\HQ.Connect.csproj" />
   </ItemGroup>

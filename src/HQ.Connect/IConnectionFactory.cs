@@ -25,3 +25,4 @@ namespace HQ.Connect
         IDbConnection CreateConnection();
     }
 }
+

@@ -25,3 +25,4 @@ namespace HQ.Connect
         public DataConnection(DataContext current, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand) : base(current, serviceProvider, onCommand) { }
     }
 }
+

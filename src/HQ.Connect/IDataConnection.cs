@@ -26,3 +26,4 @@ namespace HQ.Connect
         void SetTypeInfo(Type type);
     }
 }
+

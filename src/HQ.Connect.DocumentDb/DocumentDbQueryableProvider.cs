@@ -16,13 +16,15 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data.DocumentDb;
 using System.Linq;
 using HQ.Cadence;
-using HQ.Connect.DocumentDb.Configuration;
 using HQ.Rosetta.Queryable;
 using Microsoft.Azure.Documents.Client;
+using HQ.Connect.DocumentDb.Configuration;
 using Microsoft.Extensions.Options;
+using HQ.Lingo.Queries;
 
 namespace HQ.Connect.DocumentDb
 {
@@ -32,7 +34,8 @@ namespace HQ.Connect.DocumentDb
         private readonly DocumentDbConnectionFactory _factory;
         private readonly IMetricsHost<DocumentClient> _metrics;
 
-        public DocumentDbQueryableProvider(IOptions<DocumentDbOptions> options, DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics)
+        public DocumentDbQueryableProvider(DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
+            IOptions<DocumentDbOptions> options)
         {
             _options = options;
             _factory = factory;
@@ -48,7 +51,7 @@ namespace HQ.Connect.DocumentDb
         /// </summary>
         public IQueryable<T> Queryable => IsSafe
             ? throw new NotSupportedException("Direct IQueryable access is not supported for DocumentDb. Use Queries instead.")
-            : (IQueryable<T>)null;
+            : (IQueryable<T>) null;
 
         public IQueryable<T> UnsafeQueryable
         {
@@ -64,10 +67,34 @@ namespace HQ.Connect.DocumentDb
         {
             get
             {
-                var connection = (DocumentDbConnection)_factory.CreateConnection();
+                var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
             }
         }
+
+        public IEnumerable<T> SafeAll
+        {
+            get
+            {
+                var connection = (DocumentDbConnection)_factory.CreateConnection();
+                var command = connection.CreateCommand();
+
+                var select = SqlBuilder.Select<T>();
+                command.CommandText = select.Sql;
+
+                var query = command.ToQuerySpec();
+
+                if (command is DocumentDbCommand docDbCommand)
+                {
+                    docDbCommand.Type = typeof(T);
+                    docDbCommand.MaybeTypeDiscriminate(query);
+                }
+
+                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
+            }
+        }
     }
 }
+

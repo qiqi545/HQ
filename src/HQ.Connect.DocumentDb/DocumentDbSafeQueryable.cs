@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -51,5 +52,16 @@ namespace HQ.Connect.DocumentDb
         {
             return FindByPredicate(predicate).FirstOrDefault();
         }
+
+        public IEnumerable<TUser> Where(Expression<Func<TUser, bool>> predicate)
+        {
+            return FindByPredicate(predicate);
+        }
+
+        public async Task<IEnumerable<TUser>> WhereAsync(Expression<Func<TUser, bool>> predicate)
+        {
+            return await FindByPredicateAsync(predicate);
+        }
     }
 }
+

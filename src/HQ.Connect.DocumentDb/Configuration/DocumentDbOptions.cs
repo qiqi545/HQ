@@ -21,7 +21,7 @@ namespace HQ.Connect.DocumentDb.Configuration
 {
     public class DocumentDbOptions
     {
-        public string CollectionId { get; set; } = Constants.DocumentDb.DefaultCollection;
+        public string CollectionId { get; set; }
         public int? OfferThroughput { get; set; } = 400;
     }
 }
