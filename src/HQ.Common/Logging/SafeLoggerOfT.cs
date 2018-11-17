@@ -15,23 +15,17 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.Logging
 {
-    public static class Use
+    public class SafeLogger<TCategoryName> : SafeLogger, ISafeLogger<TCategoryName>
     {
-        public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes)
-        {
-            return app.UseMvc(routes =>
-            {
-                configureRoutes?.Invoke(routes);
+        private readonly ILogger<TCategoryName> _inner;
 
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
+        public SafeLogger(ILogger<TCategoryName> inner) : base(inner)
+        {
+            _inner = inner;
         }
     }
 }

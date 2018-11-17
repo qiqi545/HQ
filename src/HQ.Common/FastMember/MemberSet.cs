@@ -26,14 +26,15 @@ namespace HQ.Common.FastMember
     /// <summary>
     ///     Represents an abstracted view of the members defined for a type
     /// </summary>
-    public sealed class MemberSet : IEnumerable<Member>, IList<Member>
+    public sealed class MemberSet : IList<Member>
     {
         private readonly Member[] members;
 
         internal MemberSet(Type type)
         {
             const BindingFlags PublicInstance = BindingFlags.Public | BindingFlags.Instance;
-            members = type.GetProperties(PublicInstance).Cast<MemberInfo>().Concat(type.GetFields(PublicInstance).Cast<MemberInfo>()).OrderBy(x => x.Name)
+            members = type.GetProperties(PublicInstance).Cast<MemberInfo>().Concat(type.GetFields(PublicInstance))
+                .OrderBy(x => x.Name)
                 .Select(member => new Member(member)).ToArray();
         }
 

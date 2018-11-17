@@ -16,22 +16,29 @@
 #endregion
 
 using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.Logging
 {
-    public static class Use
+    /// <inheritdoc />
+    public interface ISafeLogger : ILogger
     {
-        public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes)
-        {
-            return app.UseMvc(routes =>
-            {
-                configureRoutes?.Invoke(routes);
+        void Trace(Func<string> message);
+        void Trace(Func<string> message, Exception exception);
 
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
+        void Debug(Func<string> message);
+        void Debug(Func<string> message, Exception exception);
+
+        void Info(Func<string> message);
+        void Info(Func<string> message, Exception exception);
+
+        void Warn(Func<string> message);
+        void Warn(Func<string> message, Exception exception);
+
+        void Error(Func<string> message);
+        void Error(Func<string> message, Exception exception);
+
+        void Critical(Func<string> message);
+        void Critical(Func<string> message, Exception exception);
     }
 }

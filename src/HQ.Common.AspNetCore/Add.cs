@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,23 +15,20 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using HQ.Common.Logging;
+using HQ.Common.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Common.AspNetCore
 {
-    public static class Use
+    public static class Add
     {
-        public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes)
+        public static IServiceCollection AddSafeLogging(this IServiceCollection services)
         {
-            return app.UseMvc(routes =>
-            {
-                configureRoutes?.Invoke(routes);
-
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
+            services.TryAddScoped<ISafeLogger>();
+            services.TryAddScoped(typeof(ISafeLogger<>), typeof(SafeLogger<>));
+            return services;
         }
     }
 }

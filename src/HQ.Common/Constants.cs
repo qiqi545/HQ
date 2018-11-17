@@ -32,11 +32,6 @@ namespace HQ.Common
             public const string SetSuffix = "_set";
         }
 
-        public static class DocumentDb
-        {
-            public const string DefaultCollection = "Default";
-        }
-
         public static class ContextKeys
         {
             public const string DynamicViewLocation = "DynamicViewLocation";
@@ -48,9 +43,14 @@ namespace HQ.Common
             public const string RouteDebug = "route_debug";
         }
 
-        public static class PlatformHeaders
+        public static class EnvironmentVariables
         {
+            public const string Name = "ASPNETCORE_ENVIRONMENT";
+        }
 
+        public static class Identity
+        {
+            public const string DefaultCollection = "AspNetIdentity";
         }
 
         public static class QueryStrings
@@ -99,6 +99,7 @@ namespace HQ.Common
             public const string Json = "application/json";
             public const string JsonPatch = "application/json-patch+json";
             public const string JsonMergePatch = "application/merge-patch+json";
+            public const string JsonSchema = "application/schema+json";
         }
 
         public static class ClaimTypes

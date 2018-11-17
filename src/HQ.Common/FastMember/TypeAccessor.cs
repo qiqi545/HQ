@@ -359,7 +359,8 @@ namespace HQ.Common.FastMember
 
             accessor.CachedProperties = props;
             accessor.CachedFields = fields;
-            accessor.CachedMembers = accessor.CachedProperties.Cast<MemberInfo>().Concat(accessor.CachedFields).ToArray();
+            accessor.CachedMembers =
+                accessor.CachedProperties.Cast<MemberInfo>().Concat(accessor.CachedFields).ToArray();
 
             return accessor;
         }
