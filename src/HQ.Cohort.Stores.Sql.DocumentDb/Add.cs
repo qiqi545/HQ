@@ -95,8 +95,8 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
-            identityBuilder.Services.AddMetrics();
             SqlBuilder.Dialect = dialect;
+            identityBuilder.Services.AddMetrics();
             identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
@@ -106,9 +106,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
 
         private static void OnConnection(IDbConnection c, IServiceProvider r)
         {
-            if (c is DocumentDbConnection connection)
-            {
-            }
+            if (c is DocumentDbConnection connection) { }
         }
 
         private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()

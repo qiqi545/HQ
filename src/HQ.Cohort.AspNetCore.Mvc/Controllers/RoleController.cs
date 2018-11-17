@@ -37,7 +37,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
     [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageRoles)]
-    public class RoleController<TRole> : Controller where TRole : IdentityRole
+    public class RoleController<TRole> : ControllerExtended where TRole : IdentityRole
     {
         private readonly RoleManager<TRole> _roleManager;
         private readonly IOptions<SecurityOptions> _securityOptions;

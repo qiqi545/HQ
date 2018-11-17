@@ -30,7 +30,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageUsers)]
-    public class UserController<TUser> : Controller where TUser : IdentityUser
+    public class UserController<TUser> : ControllerExtended where TUser : IdentityUser
     {
         private readonly IUserService<TUser> _userService;
 

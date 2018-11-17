@@ -38,7 +38,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [Route("tokens")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class TokenController<TUser> : Controller where TUser : IdentityUser
+    public class TokenController<TUser> : ControllerExtended where TUser : IdentityUser
     {
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
