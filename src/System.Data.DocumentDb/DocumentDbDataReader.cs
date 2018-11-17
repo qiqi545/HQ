@@ -7,6 +7,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using FastMember;
+using LiteGuard;
 
 namespace System.Data.DocumentDb
 {
@@ -37,7 +38,10 @@ namespace System.Data.DocumentDb
             }
         }
 
-        public override void Close() => _closed = true;
+        public override void Close()
+        {
+            _closed = true;
+        }
 
         public override bool Read()
         {

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
@@ -77,15 +78,7 @@ namespace System.Data.DocumentDb
         private int UpdateImpl()
         {
             var options = new RequestOptions();
-
-            var document = StartDocumentDefinition();
-            foreach (DocumentDbParameter parameter in _parameters)
-            {
-                document.Add(parameter.ParameterName, parameter.Value);
-
-                if (parameter.ParameterName == Id)
-                    document[Constants.IdKey] = parameter.Value;
-            }
+            var document = CommandToDocument(Constants.Update);
 
             const bool disableAutomaticIdGeneration = true;
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
@@ -97,20 +90,7 @@ namespace System.Data.DocumentDb
         private int InsertImpl()
         {
             var options = new RequestOptions();
-
-            var commandBase = CommandText.Substring(Constants.Insert.Length);
-            var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
-            var qualifier = collectionName + ".";
-
-            var document = StartDocumentDefinition();
-            foreach (DocumentDbParameter parameter in _parameters)
-            {
-                var parameterName = parameter.ParameterName.Substring(qualifier.Length);
-                document.Add(parameterName, parameter.Value);
-
-                if (parameterName == Id)
-                    document.Add(Constants.IdKey, parameter.Value);
-            }
+            var document = CommandToDocument(Constants.Insert);
 
             var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
@@ -122,7 +102,15 @@ namespace System.Data.DocumentDb
         private int DeleteImpl()
         {
             var options = new RequestOptions();
+            var document = CommandToDocument(Constants.Delete);
 
+            var uri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{document[Constants.IdKey]}");
+            var response = _connection.Client.DeleteDocumentAsync(uri, options).Result;
+            return response.StatusCode == HttpStatusCode.NoContent ? 1 : 0;
+        }
+
+        private Dictionary<string, object> CommandToDocument(string preamble)
+        {
             var document = StartDocumentDefinition();
             foreach (DocumentDbParameter parameter in _parameters)
             {
@@ -132,9 +120,7 @@ namespace System.Data.DocumentDb
                     document[Constants.IdKey] = parameter.Value;
             }
 
-            var uri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{document[Constants.IdKey]}");
-            var response = _connection.Client.DeleteDocumentAsync(uri, options).Result;
-            return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+            return document;
         }
 
         private Dictionary<string, object> StartDocumentDefinition()
@@ -159,8 +145,7 @@ namespace System.Data.DocumentDb
             var options = new FeedOptions();
             var query = this.ToQuerySpec();
 
-            if (UseTypeDiscrimination)
-                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
+            MaybeTypeDiscriminate(query);
 
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
             var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
@@ -169,6 +154,12 @@ namespace System.Data.DocumentDb
             resultSet.AddRange(result);
 
             return resultSet;
+        }
+
+        public void MaybeTypeDiscriminate(SqlQuerySpec query)
+        {
+            if (UseTypeDiscrimination)
+                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
         }
 
         #region Custom Properties

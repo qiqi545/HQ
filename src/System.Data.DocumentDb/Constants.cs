@@ -15,5 +15,6 @@ namespace System.Data.DocumentDb
         public const string AccountEndpointKey = "AccountEndpoint";
         public const string AccountKeyKey = "AccountKey";
         public const string DatabaseKey = "Database";
+        public const string DefaultCollectionKey = "DefaultCollection";
     }
 }

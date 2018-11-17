@@ -4,6 +4,7 @@
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using LiteGuard;
 using Microsoft.Azure.Documents.Client;
 
 namespace System.Data.DocumentDb
@@ -17,6 +18,11 @@ namespace System.Data.DocumentDb
         public DocumentDbConnection()
         {
             _builder = new DocumentDbConnectionStringBuilder();
+        }
+
+        public DocumentDbConnection(DocumentClient client) : this()
+        {
+            Client = client;
         }
 
         public DocumentDbConnection(string connectionString)
