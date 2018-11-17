@@ -22,12 +22,21 @@ using Xunit.Sdk;
 namespace HQ.Touchstone.Xunit
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Touchstone.Extensions.TestCaseDiscoverer",
+    [XunitTestCaseDiscoverer("HQ.Touchstone.Xunit.Extensions.TestCaseDiscoverer",
 #if PLATFORM
         "HQ.Platform"
 #else
         "HQ.Touchstone.Xunit"
 #endif
     )]
-    public class TestAttribute : FactAttribute { }
+    public class TestAttribute : FactAttribute
+    {
+        public string[] Environments { get; set; }
+
+        public string Environment
+        {
+            get => Environments?.Length != 1 ? null : Environments[0];
+            set => Environments = new[] {value};
+        }
+    }
 }
