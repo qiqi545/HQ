@@ -26,16 +26,15 @@ namespace HQ.Lingo.DocumentDb
 {
     public class DocumentDbDialect : ISqlDialect
     {
+        protected internal const string Discriminator = "DocumentType";
         public char? StartIdentifier => null;
         public char? EndIdentifier => null;
         public char? Separator => '.';
         public char? Parameter => '@';
         public char? Quote => '\'';
-
         public string SetSuffix => string.Empty;
-        public bool SelectStar => false;
 
-        protected internal const string Discriminator = "DocumentType";
+        public bool SupportsSelectStar => true;
 
         public bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
@@ -77,7 +76,32 @@ namespace HQ.Lingo.DocumentDb
             }
         }
 
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters)
+
+        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+
+        public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb) => true;
+
+        public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+        {
+            columns.Remove(ResolveColumnName(descriptor, "id"));
+            return true;
+        }
+
+        public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb) => true;
+
+        public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+        {
+            columns.Remove(ResolveColumnName(descriptor, "id"));
+            return true;
+        }
+
+        public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb) => true;
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+            IList<string> parameters)
         {
             Guard.AgainstNullArgument(nameof(keys), keys);
             Guard.AgainstNullArgument(nameof(parameters), parameters);
@@ -88,8 +112,9 @@ namespace HQ.Lingo.DocumentDb
             return true;
         }
 
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
-        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
-        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+            IList<string> parameters) => true;
     }
 }

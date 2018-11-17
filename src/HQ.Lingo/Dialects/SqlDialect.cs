@@ -34,7 +34,7 @@ namespace HQ.Lingo.Dialects
         public abstract char? Quote { get; }
 
         public string SetSuffix => DefaultSetSuffix;
-        public bool SelectStar => false;
+        public bool SupportsSelectStar => false;
 
         public abstract bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
         public abstract void Page(string sql, StringBuilder sb);
@@ -71,7 +71,23 @@ namespace HQ.Lingo.Dialects
 
         public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
         public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
+
+        public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+
+        public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+
+        public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb) => true;
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+            IList<string> parameters) => true;
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+            IList<string> parameters) => true;
     }
 }

@@ -30,7 +30,7 @@ namespace HQ.Lingo.Dialects
         char? Quote { get; }
 
         string SetSuffix { get; }
-        bool SelectStar { get; }
+        bool SupportsSelectStar { get; }
 
         bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
         void Page(string sql, StringBuilder sb);
@@ -42,7 +42,18 @@ namespace HQ.Lingo.Dialects
 
         bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb);
         bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+
+        bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb);
+        bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+
+        bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb);
+        bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+
+        bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb);
+
+        bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
         bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
+        bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
         bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
     }
 }
