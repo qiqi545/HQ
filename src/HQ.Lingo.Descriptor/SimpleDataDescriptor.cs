@@ -66,8 +66,7 @@ namespace HQ.Lingo.Descriptor
                 if (property.HasAttribute<KeyAttribute>())
                     Keys.Add(column);
 
-                if (property.TryGetAttribute<ExternalSurrogateKey>(out _) ||
-                    property.TryGetAttribute<OneToManyAttribute>(out _))
+                if (property.TryGetAttribute<OneToManyAttribute>(out _))
                     Computed.Add(column);
 
                 if (property.TryGetAttribute<DatabaseGeneratedAttribute>(out var generated))

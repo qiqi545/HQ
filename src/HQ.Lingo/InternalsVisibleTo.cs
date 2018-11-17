@@ -25,5 +25,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Lingo
 {
-    internal sealed class InternalsVisibleTo { }
+    internal sealed class InternalsVisibleTo
+    {
+    }
 }

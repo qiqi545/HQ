@@ -19,7 +19,6 @@ using System.Linq;
 using HQ.DotLiquid;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Descriptor;
-using HQ.Lingo.Descriptor.Attributes;
 using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo.Queries
@@ -51,16 +50,7 @@ namespace HQ.Lingo.Queries
             var hash = Hash.FromAnonymousObject(instance, true);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var keys = columns.Intersect(hashKeysRewrite.Keys);
-
             var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[hashKeysRewrite[key]]);
-
-            // TODO: rewrite this...
-            foreach (var computed in descriptor.Computed.Where(x => hash.ContainsKey(x.Property.Name)))
-                if (computed.Property.HasAttribute<ExternalSurrogateKey>())
-                {
-                    var reverseKey = hashKeysRewrite.Single(x => x.Value == computed.Property.Name);
-                    parameters.Remove($"{Dialect.Parameter}{reverseKey.Key}");
-                }
 
             return new Query(sql, parameters);
         }

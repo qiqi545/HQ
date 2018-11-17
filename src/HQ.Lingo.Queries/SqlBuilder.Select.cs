@@ -53,7 +53,8 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(dynamic where, int page, int perPage,
+            params Expression<Func<T, object>>[] orderBy)
         {
             return Select(GetDescriptor<T>(), null, where, page, perPage, orderBy);
         }
@@ -70,7 +71,8 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(List<string> columns, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(List<string> columns, int page, int perPage,
+            params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
             var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToList();
@@ -133,7 +135,8 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(T example, dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(T example, dynamic where, int page, int perPage,
+            params Expression<Func<T, object>>[] orderBy)
         {
             var type = example.GetType();
             var descriptor = GetDescriptor(type); // not always T, because T can be a contract for shaping!
@@ -166,7 +169,7 @@ namespace HQ.Lingo.Queries
                 else
                 {
                     // no such thing as interface inheritance, which means we can get a flat union easily
-                    var contract = new[] { typeof(T) }.Concat(typeof(T).GetInterfaces())
+                    var contract = new[] {typeof(T)}.Concat(typeof(T).GetInterfaces())
                         .SelectMany(i => i.GetProperties())
                         .Select(x => x.Name);
 
@@ -200,7 +203,8 @@ namespace HQ.Lingo.Queries
             return new Query(pageSql, qp.parameters);
         }
 
-        private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor, List<string> columnFilter, dynamic where)
+        private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
+            List<string> columnFilter, dynamic where)
         {
             IDictionary<string, object> whereHash = Hash.FromAnonymousObject(where);
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
@@ -209,10 +213,11 @@ namespace HQ.Lingo.Queries
             var columnNames = Dialect.ResolveColumnNames(descriptor).ToList();
 
             var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToList();
-            var parameters = whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
+            var parameters =
+                whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
             var parameterKeys = parameters.Keys.ToList();
 
-            var columns = (Dialect.SelectStar ? new List<string> { "*" } : columnNames);
+            var columns = Dialect.SupportsSelectStar ? new List<string> {"*"} : columnNames;
             var sql = Dialect.Select(descriptor, tableName, descriptor.Schema,
                 columnFilter ?? columns, whereFilter,
                 parameterKeys);
