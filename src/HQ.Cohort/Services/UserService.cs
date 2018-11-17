@@ -43,6 +43,12 @@ namespace HQ.Cohort.Services
 
         public IQueryable<TUser> Users => _userManager.Users;
 
+        public Task<Operation<IEnumerable<TUser>>> GetAsync()
+        {
+            var all = _queryableProvider.SafeAll;
+            return Task.FromResult(new Operation<IEnumerable<TUser>>(all));
+        }
+
         public async Task<Operation<TUser>> CreateAsync(CreateUserModel model)
         {
             var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
@@ -59,11 +65,11 @@ namespace HQ.Cohort.Services
 
         public async Task<Operation> DeleteAsync(string id)
         {
-            var user = await FindByIdAsync(id);
-            if (user == null)
-                return new Operation<TUser>(new Error("User not found.", HttpStatusCode.NotFound));
+            var operation = await FindByIdAsync(id);
+            if (!operation.Succeeded)
+                return operation;
 
-            var deleted = await _userManager.DeleteAsync(user.Data);
+            var deleted = await _userManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
         }
 
@@ -71,7 +77,10 @@ namespace HQ.Cohort.Services
 
         public async Task<Operation<TUser>> FindByIdAsync(string id)
         {
-            return new Operation<TUser>(await _userManager.FindByIdAsync(id));
+            var user = await _userManager.FindByIdAsync(id);
+            return user == null
+                ? new Operation<TUser>(new Error("User not found.", HttpStatusCode.NotFound))
+                : new Operation<TUser>(user);
         }
 
         public async Task<Operation<TUser>> FindByEmailAsync(string email)
@@ -179,7 +188,6 @@ namespace HQ.Cohort.Services
             var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
             return result.ToOperation();
         }
-
 
         public async Task<Operation> UpdateAsync(TUser user)
         {

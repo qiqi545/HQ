@@ -42,3 +42,4 @@ namespace HQ.Cohort.Configuration
         public new StoreOptionsExtended Stores { get; set; } = new StoreOptionsExtended();
     }
 }
+

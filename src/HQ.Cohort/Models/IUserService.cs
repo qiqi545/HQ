@@ -29,6 +29,7 @@ namespace HQ.Cohort.Models
     {
         IQueryable<TUser> Users { get; }
 
+        Task<Operation<IEnumerable<TUser>>> GetAsync();
         Task<Operation<TUser>> CreateAsync(CreateUserModel model);
         Task<Operation> DeleteAsync(string id);
 
