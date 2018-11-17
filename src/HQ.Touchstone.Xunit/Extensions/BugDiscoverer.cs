@@ -15,20 +15,18 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using HQ.Common;
+using System.Diagnostics;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace HQ.Touchstone.Xunit.Extensions
 {
-    public class TestCaseDiscoverer : IXunitTestCaseDiscoverer
+    public class BugDiscoverer : IXunitTestCaseDiscoverer
     {
         private readonly IMessageSink _diagnosticMessageSink;
 
-        public TestCaseDiscoverer(IMessageSink diagnosticMessageSink)
+        public BugDiscoverer(IMessageSink diagnosticMessageSink)
         {
             _diagnosticMessageSink = diagnosticMessageSink;
         }
@@ -36,17 +34,15 @@ namespace HQ.Touchstone.Xunit.Extensions
         public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions,
             ITestMethod testMethod, IAttributeInfo factAttribute)
         {
-            var scopes = factAttribute.GetNamedArgument<string[]>("Environments");
-            if (scopes?.Length > 0)
+            if (!Debugger.IsAttached)
             {
-                var env = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name);
-                if (env != null && !scopes.Contains(env, StringComparer.OrdinalIgnoreCase))
-                {
-                    yield return new SkipTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
-                        discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod,
-                        $"This test does not apply in '{env}' environment, skipping.");
-                    yield break;
-                }
+                var @case = factAttribute.GetNamedArgument<string>("Case");
+                var message = string.IsNullOrWhiteSpace(@case) ? string.Empty : $" for case {@case}";
+
+                yield return new SkipTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
+                    discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod,
+                    $"Skipping bug reproduction{message}.");
+                yield break;
             }
 
             yield return new TestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),

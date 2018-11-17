@@ -18,7 +18,6 @@
 using System;
 using System.Diagnostics;
 using System.Net.Http;
-using HQ.Remix;
 using HQ.Touchstone.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -50,10 +49,6 @@ namespace HQ.Touchstone
 
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            using (var resolver = new TypeResolver())
-            {
-                TryInstallShouldAssertions(resolver);
-            }
         }
 
         public virtual void Configure(IApplicationBuilder app)

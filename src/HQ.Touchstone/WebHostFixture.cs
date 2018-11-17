@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using HQ.Common;
 using HQ.Harmony;
 using HQ.Harmony.AspNetCore;
 using HQ.Touchstone.Configuration;
@@ -33,8 +34,6 @@ namespace HQ.Touchstone
 {
     public sealed class WebHostFixture<T> : IDisposable where T : class
     {
-        internal const string EnvironmentNameVariable = "ASPNETCORE_ENVIRONMENT";
-
         internal const string DefaultAppSettingsFileName = "appsettings";
         internal const string DefaultAppSettingsFileExtension = ".json";
         internal const string DefaultAppSettingsFilePath = DefaultAppSettingsFileName + DefaultAppSettingsFileExtension;
@@ -200,7 +199,7 @@ namespace HQ.Touchstone
 
             var testSettings = new TestSettings();
             testConfig.Bind(testSettings);
-            testSettings.EnvironmentName = Environment.GetEnvironmentVariable(EnvironmentNameVariable) ??
+            testSettings.EnvironmentName = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name) ??
                                            testSettings.EnvironmentName;
             return testSettings;
         }

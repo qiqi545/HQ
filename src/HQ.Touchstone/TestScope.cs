@@ -25,7 +25,6 @@ using Dynamitey;
 using Dynamitey.DynamicObjects;
 using HQ.Common.FastMember;
 using HQ.Remix;
-using HQ.Touchstone.Assertions;
 using HQ.Touchstone.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
@@ -37,21 +36,6 @@ namespace HQ.Touchstone
     {
         protected readonly ILoggerFactory defaultLoggerFactory = new LoggerFactory();
         protected IServiceProvider serviceProvider;
-
-        protected static void TryInstallShouldAssertions(ITypeResolver resolver)
-        {
-            var assert = resolver.ResolveByExample<IAssert>().FirstOrDefault();
-            if (assert != null)
-            {
-                var instance = Activator.CreateInstance(assert);
-
-                Should.Assert = instance.ActLike<IAssert>();
-            }
-            else
-            {
-                throw new InvalidOperationException("No testing framework implementation was found!");
-            }
-        }
 
         protected static ActionLoggerProvider CreateLoggerProvider()
         {

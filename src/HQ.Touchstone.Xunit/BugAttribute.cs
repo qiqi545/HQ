@@ -15,29 +15,31 @@
 
 #endregion
 
+using System;
+using Xunit;
 using Xunit.Sdk;
 
 namespace HQ.Touchstone.Xunit
 {
-    public sealed class XunitOutputProvider : IOutputProvider
+    [AttributeUsage(AttributeTargets.Method)]
+    [XunitTestCaseDiscoverer("HQ.Touchstone.Xunit.Extensions.BugDiscoverer",
+#if PLATFORM
+        "HQ.Platform"
+#else
+        "HQ.Touchstone.Xunit"
+#endif
+    )]
+    public class BugAttribute : FactAttribute
     {
-        internal TestOutputHelper Inner;
+        public string Case { get; }
 
-        public XunitOutputProvider()
+        public BugAttribute(string @case)
         {
-            Inner = new TestOutputHelper();
+            Case = @case;
         }
 
-        public bool IsAvailable => Inner != null;
-
-        public void WriteLine(string message)
+        public BugAttribute(int @case) : this($"{@case}")
         {
-            Inner.WriteLine(message);
-        }
-
-        public void WriteLine(string format, params object[] args)
-        {
-            Inner.WriteLine(format, args);
         }
     }
 }
