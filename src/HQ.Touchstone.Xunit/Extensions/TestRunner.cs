@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using HQ.Touchstone.Assertions;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -41,14 +42,16 @@ namespace HQ.Touchstone.Xunit.Extensions
             var xunitOutputProvider = new XunitOutputProvider();
             AmbientContext.OutputProvider = xunitOutputProvider;
 
-            var testOutputHelper = xunitOutputProvider.inner;
+            Should.Assert = new XunitAssert();
+
+            var testOutputHelper = xunitOutputProvider.Inner;
             testOutputHelper.Initialize(MessageBus, Test);
 
             var time = await InvokeTestMethodAsync(aggregator);
 
             var buffer = testOutputHelper.Output;
             testOutputHelper.Uninitialize();
-            xunitOutputProvider.inner = null;
+            xunitOutputProvider.Inner = null;
 
             return Tuple.Create(time, buffer);
         }
