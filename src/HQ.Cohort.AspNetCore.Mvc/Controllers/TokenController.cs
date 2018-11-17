@@ -73,7 +73,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!TryValidateModelState(out var error))
                 return error;
 
             TUser user;

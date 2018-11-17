@@ -15,7 +15,6 @@
 
 #endregion
 
-using System.Linq;
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
 using HQ.Common;
@@ -39,20 +38,19 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        public IActionResult GetUsers()
+        [HttpGet("")]
+        public async Task<IActionResult> Get()
         {
-            var users = _userService.Users;
-            // ReSharper disable once UseMethodAny.2 
-            if (users.Count() == 0)
+            var users = await _userService.GetAsync();
+            if (users?.Data == null)
                 return NotFound();
-            return Ok(users);
+            return Ok(users.Data);
         }
 
         [HttpPost("")]
         public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!TryValidateModelState(out var error))
                 return error;
 
             var result = await _userService.CreateAsync(model);
@@ -65,20 +63,29 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!TryValidateModelState(out var error))
                 return error;
             var result = await _userService.DeleteAsync(id);
+            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromBody] TUser user)
+        {
+            if (!TryValidateModelState(out var error))
+                return error;
+            var result = await _userService.UpdateAsync(user);
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpGet("{id}/roles")]
         public async Task<IActionResult> GetRoles([FromRoute] string id)
         {
-            var user = await FindById(id);
-            if (user == null)
+            var user = await _userService.FindByIdAsync(id);
+            if (user?.Data == null)
                 return NotFound();
 
-            var result = await _userService.GetRolesAsync(user);
+            var result = await _userService.GetRolesAsync(user.Data);
             if (result.Data == null || result.Data.Count == 0)
                 return NotFound();
 
@@ -88,25 +95,25 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpPost("{id}/roles/{role}")]
         public async Task<IActionResult> AddToRole([FromRoute] string id, [FromRoute] string role)
         {
-            var user = await FindById(id);
+            var user = await _userService.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
-            var result = await _userService.AddToRoleAsync(user, role);
+            var result = await _userService.AddToRoleAsync(user.Data, role);
 
             return result.Succeeded
-                ? Created($"/api/users/{user.Id}/roles", user)
+                ? Created($"/api/users/{user.Data}/roles", user)
                 : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}/roles/{role}")]
         public async Task<IActionResult> RemoveFromRole([FromRoute] string id, [FromRoute] string role)
         {
-            var user = await FindById(id);
+            var user = await _userService.FindByIdAsync(id);
             if (user == null)
                 return NotFound();
 
-            var result = await _userService.RemoveFromRoleAsync(user, role);
+            var result = await _userService.RemoveFromRoleAsync(user.Data, role);
 
             return result.Succeeded
                 ? Ok()
@@ -114,24 +121,36 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<TUser> FindById([FromRoute] string id)
+        public async Task<IActionResult> FindById([FromRoute] string id)
         {
-            var user = await _userService.FindByIdAsync(id);
-            return user.Data;
+            var result = await _userService.FindByIdAsync(id);
+            if (result == null)
+                return NotFound();
+            return result.Succeeded
+                ? Ok(result.Data)
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpGet("{id}/email")]
-        public async Task<TUser> FindByEmail([FromRoute] string email)
+        public async Task<IActionResult> FindByEmail([FromRoute] string email)
         {
-            var user = await _userService.FindByEmailAsync(email);
-            return user.Data;
+            var result = await _userService.FindByEmailAsync(email);
+            if (result == null)
+                return NotFound();
+            return result.Succeeded
+                ? Ok(result.Data)
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpGet("{id}/username")]
-        public async Task<TUser> FindByUsername([FromRoute] string username)
+        public async Task<IActionResult> FindByUsername([FromRoute] string username)
         {
-            var user = await _userService.FindByNameAsync(username);
-            return user.Data;
+            var result = await _userService.FindByNameAsync(username);
+            if (result == null)
+                return NotFound();
+            return result.Succeeded
+                ? Ok(result.Data)
+                : (IActionResult) BadRequest(result.Errors);
         }
     }
 }

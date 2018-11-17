@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using HQ.Cohort.AspNetCore.Mvc.Configuration;
 using HQ.Cohort.AspNetCore.Mvc.Controllers;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Models;
@@ -50,6 +51,8 @@ namespace HQ.Cohort.AspNetCore.Mvc
             where TUser : IdentityUser
             where TRole : IdentityRole
         {
+            mvc.Services.Configure<IdentityApiOptions>(config);
+
             mvc.Services.Configure<RazorViewEngineOptions>(x =>
             {
                 x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());

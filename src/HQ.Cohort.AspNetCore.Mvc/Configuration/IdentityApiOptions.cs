@@ -23,6 +23,6 @@ namespace HQ.Cohort.AspNetCore.Mvc.Configuration
     {
         public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
         public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
-        public string RootPath { get; set; }
+        public string RootPath { get; set; } = "api";
     }
 }
