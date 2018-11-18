@@ -72,9 +72,12 @@ namespace HQ.Common
             public const string LastModified = "Last-Modified";
             public const string IfModifiedSince = "If-Modified-Since";
             public const string IfUnmodifiedSince = "If-Unmodified-Since";
+            public const string Link = "Link";
 
             public const string MethodOverride = "X-HTTP-Method-Override";
             public const string Action = "X-Action";
+            public const string TotalCount = "X-Total-Count";
+            public const string TotalPages = "X-Total-Pages";
 
             /// <summary>
             ///     See: https://www.w3.org/TR/server-timing/

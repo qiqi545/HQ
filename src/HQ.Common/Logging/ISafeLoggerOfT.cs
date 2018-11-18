@@ -19,7 +19,5 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Common.Logging
 {
-    public interface ISafeLogger<out TCategoryName> : ISafeLogger, ILogger<TCategoryName>
-    {
-    }
+    public interface ISafeLogger<out TCategoryName> : ILogger<TCategoryName>, ISafeLogger { }
 }

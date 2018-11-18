@@ -17,6 +17,7 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("HQ.Adapt")]
 [assembly: InternalsVisibleTo("HQ.Cohort")]
 [assembly: InternalsVisibleTo("HQ.Cohort.AspNetCore.Mvc")]
 [assembly: InternalsVisibleTo("HQ.Common.AspNetCore")]
@@ -25,6 +26,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("HQ.Domicile")]
 [assembly: InternalsVisibleTo("HQ.InteractionTests")]
 [assembly: InternalsVisibleTo("HQ.Lingo")]
+[assembly: InternalsVisibleTo("HQ.Lingo.Queries")]
 [assembly: InternalsVisibleTo("HQ.MissionControl")]
 [assembly: InternalsVisibleTo("HQ.Remix")]
 [assembly: InternalsVisibleTo("HQ.Rosetta")]
