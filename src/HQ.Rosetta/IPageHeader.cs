@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,12 +19,17 @@ namespace HQ.Rosetta
 {
     public interface IPageHeader
     {
-        long Index { get; }
-        long Size { get; }
-        long Count { get; }
+        int Index { get; }
+        int Size { get; }
+        int Count { get; }
+
         long TotalCount { get; }
         long TotalPages { get; }
+
         bool HasPreviousPage { get; }
         bool HasNextPage { get; }
+
+        int Start { get; }
+        int End { get; }
     }
 }

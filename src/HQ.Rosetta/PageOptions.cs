@@ -19,20 +19,21 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using HQ.Rosetta.Configuration;
+using HQ.Strings;
 
 namespace HQ.Rosetta
 {
     public class PageOptions : IQueryValidator
     {
-        public long Page { get; set; }
-        public long PerPage { get; set; }
+        public int Page { get; set; }
+        public int PerPage { get; set; }
 
-        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = new List<Error>();
-            if (Page < 1) list.Add(new Error(ErrorStrings.PageRangeInvalid, HttpStatusCode.BadRequest));
+            if (Page < 1) list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PageRangeInvalid, HttpStatusCode.BadRequest));
             if (PerPage > options.PerPageMax)
-                list.Add(new Error(ErrorStrings.PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
+                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
 
             errors = list;
             return list.Count == 0;

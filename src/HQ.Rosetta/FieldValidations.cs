@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Net;
 using HQ.Common.Extensions;
 using HQ.Common.FastMember;
+using HQ.Strings;
 
 namespace HQ.Rosetta
 {
@@ -43,7 +44,7 @@ namespace HQ.Rosetta
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)
-                    list.Add(new Error(string.Format(ErrorStrings.FieldToTypeFieldNameMismatch, field, type.Name),
+                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch, string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 
@@ -64,7 +65,7 @@ namespace HQ.Rosetta
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)
-                    list.Add(new Error(string.Format(ErrorStrings.FieldToTypeFieldNameMismatch, field, type.Name),
+                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch, string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 

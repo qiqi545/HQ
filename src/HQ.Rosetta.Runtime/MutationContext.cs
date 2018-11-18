@@ -28,7 +28,7 @@ namespace HQ.Rosetta.Runtime
         public ICollection<Error> Errors { get; } = new List<Error>();
         public dynamic Body { get; set; }
 
-        public object Execute(IObjectRepository repository)
+        public object Execute(IObjectSaveRepository repository)
         {
             var parameters = new object[] {Body};
 

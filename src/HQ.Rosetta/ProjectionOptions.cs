@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using HQ.Common.Extensions;
 using HQ.Rosetta.Configuration;
 
@@ -24,11 +25,17 @@ namespace HQ.Rosetta
 {
     public class ProjectionOptions : IQueryValidator
     {
+        public static readonly ProjectionOptions Empty = new ProjectionOptions();
+
         public List<Projection> Fields { get; } = new List<Projection>();
 
-        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = FieldValidations.MustExistOnType(Fields.Enumerate(x => x.Field));
+
+            if (Fields?.Count > options.ProjectionMaxFields)
+                list.Add(new Error(ErrorEvents.RequestEntityTooLarge, $"You may only specify up to {0} {options.ProjectionMaxFields} fields.", HttpStatusCode.RequestEntityTooLarge));
+
             errors = list;
             return list.Count == 0;
         }

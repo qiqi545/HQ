@@ -17,12 +17,11 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
 [assembly: InternalsVisibleTo("HQ.Adapt")]
+[assembly: InternalsVisibleTo("HQ.Rosetta.AspNetCore.Mvc")]
+[assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
 
 namespace HQ.Rosetta
 {
-    internal class InternalsVisibleTo
-    {
-    }
+    internal class InternalsVisibleTo { }
 }

@@ -26,7 +26,7 @@ namespace HQ.Rosetta
     {
         public List<string> Fields { get; } = new List<string>();
 
-        public bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors)
+        public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = FieldValidations.MustExistOnType(type, Fields.SelfEnumerate());
             errors = list;

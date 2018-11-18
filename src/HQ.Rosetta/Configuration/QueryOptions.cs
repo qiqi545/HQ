@@ -15,12 +15,15 @@
 
 #endregion
 
+using HQ.Common;
+
 namespace HQ.Rosetta.Configuration
 {
     public class QueryOptions
     {
-        public long PerPageDefault { get; set; } = 10;
-        public long PerPageMax { get; set; } = 100;
+        public int PerPageDefault { get; set; } = 10;
+        public int PerPageMax { get; set; } = 100;
+        public int ProjectionMaxFields { get; set; } = 6;
 
         public string SortOperator { get; set; } = "sort";
         public string PageOperator { get; set; } = "page";
@@ -28,5 +31,9 @@ namespace HQ.Rosetta.Configuration
         public string FieldsOperator { get; set; } = "fields";
         public string FilterOperator { get; set; } = "filter";
         public string ProjectionOperator { get; set; } = "project";
+        public string EnvelopeOperator { get; set; } = "envelope";
+
+        public string TotalCountHeader { get; set; } = Constants.HttpHeaders.TotalCount;
+        public string TotalPagesHeader { get; set; } = Constants.HttpHeaders.TotalPages;
     }
 }

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -24,5 +24,6 @@ namespace HQ.Rosetta
     {
         [Key] long Id { get; }
         DateTimeOffset CreatedAt { get; }
+        DateTimeOffset? DeletedAt { get; }
     }
 }

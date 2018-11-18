@@ -22,24 +22,26 @@ namespace HQ.Rosetta
 {
     public class Error
     {
-        public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
-            params Error[] errors)
+        public Error(long eventId, string message, HttpStatusCode statusCode, IList<Error> errors = null) : this(eventId, message, (short)statusCode, errors) { }
+
+        public Error(long eventId, string message, short statusCode = (short) HttpStatusCode.InternalServerError, params Error[] errors) : this(eventId, message, statusCode, (IList<Error>) errors)
         {
             Message = message;
             StatusCode = statusCode;
             Errors = errors;
         }
 
-        public Error(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError,
-            IEnumerable<Error> errors = null)
+        public Error(long eventId, string message, short statusCode = (short)HttpStatusCode.InternalServerError, IList<Error> errors = null)
         {
-            Message = message;
-            StatusCode = statusCode;
+            EventId = eventId;
             Errors = errors;
+            StatusCode = statusCode;
+            Message = message;
         }
 
-        public string Message { get; internal set; }
-        public HttpStatusCode StatusCode { get; }
-        public IEnumerable<Error> Errors { get; }
+        public short StatusCode { get; }
+        public string Message { get; set; }
+        public long EventId { get; }
+        public IList<Error> Errors { get; }
     }
 }

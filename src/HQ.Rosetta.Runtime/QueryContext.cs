@@ -25,7 +25,7 @@ namespace HQ.Rosetta.Runtime
     {
         public Type Type { get; set; }
         public MethodInfo Handle { get; set; }
-        public ICollection<Error> Errors { get; } = new List<Error>();
+        public List<Error> Errors { get; } = new List<Error>();
 
         public FieldOptions Fields { get; set; }
         public SortOptions Sorting { get; set; }
@@ -33,7 +33,7 @@ namespace HQ.Rosetta.Runtime
         public FilterOptions Filters { get; set; }
         public ProjectionOptions Projections { get; set; }
 
-        public object Execute(IObjectRepository repository)
+        public object Execute(IObjectSaveRepository repository)
         {
             var parameters = new object[] {Sorting, Paging, Fields, Filters, Projections};
 

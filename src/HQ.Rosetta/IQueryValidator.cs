@@ -23,6 +23,6 @@ namespace HQ.Rosetta
 {
     public interface IQueryValidator
     {
-        bool Validate(Type type, QueryOptions options, out IEnumerable<Error> errors);
+        bool Validate(Type type, QueryOptions options, out IList<Error> errors);
     }
 }
