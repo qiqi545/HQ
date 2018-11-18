@@ -33,7 +33,7 @@ namespace HQ.Lingo.SqlServer
             return settings;
         }
 
-        public virtual async Task ExecuteAsync<T>(IDbConnection connection, IDataDescriptor descriptor, IEnumerable<T> objects, long? startingAt, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null)
+        public virtual async Task ExecuteAsync<T>(IDbConnection connection, IDataDescriptor descriptor, IEnumerable<T> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             descriptor = descriptor ?? SimpleDataDescriptor.Create<T>();
             commandTimeout = commandTimeout ?? 0;
@@ -66,7 +66,7 @@ namespace HQ.Lingo.SqlServer
             }
         }
 
-        public virtual void Execute<T>(IDbConnection connection, IDataDescriptor descriptor, IEnumerable<T> objects, long? startingAt, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null)
+        public virtual void Execute<T>(IDbConnection connection, IDataDescriptor descriptor, IEnumerable<T> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             descriptor = descriptor ?? SimpleDataDescriptor.Create<T>();
             commandTimeout = commandTimeout ?? 0;
