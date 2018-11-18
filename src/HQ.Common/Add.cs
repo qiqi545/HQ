@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,11 +16,10 @@
 #endregion
 
 using HQ.Common.Logging;
-using HQ.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common
 {
     public static class Add
     {

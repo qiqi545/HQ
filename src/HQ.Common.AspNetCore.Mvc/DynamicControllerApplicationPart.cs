@@ -15,23 +15,20 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
+using System.Collections.Generic;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.AspNetCore.Mvc
 {
-    public static class Use
+    public class DynamicControllerApplicationPart : ApplicationPart, IApplicationPartTypeProvider
     {
-        public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes)
+        public DynamicControllerApplicationPart(IEnumerable<TypeInfo> types)
         {
-            return app.UseMvc(routes =>
-            {
-                configureRoutes?.Invoke(routes);
-
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
+            Types = types;
         }
+
+        public override string Name => nameof(DynamicControllerApplicationPart);
+        public IEnumerable<TypeInfo> Types { get; }
     }
 }

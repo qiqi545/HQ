@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Razor;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.AspNetCore.Mvc
 {
     public class DynamicViewLocationExpander<T> : IViewLocationExpander
     {

@@ -20,7 +20,7 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.AspNetCore.Mvc
 {
     /// <summary>
     ///     An <see cref="ObjectResult" /> that when executed will produce an Internal Server Error (500) response.

@@ -16,57 +16,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.AspNetCore.Mvc
 {
     public class ControllerExtended : Controller
     {
-        #region Validation
-
-        public bool TryValidateModelState(out IActionResult errorResult)
-        {
-            if (!ModelState.IsValid)
-            {
-                errorResult = BadRequestWithErrors();
-                return false;
-            }
-
-            errorResult = null;
-            return true;
-        }
-
-        #endregion
-
-        private IEnumerable<string> ProjectErrors()
-        {
-            return ModelState.Values
-                .SelectMany(e => e.Errors)
-                .Select(e => e.ErrorMessage);
-        }
-
         #region Additional IActionResult Helpers
 
         public IActionResult UnsupportedMediaType(object value = null)
         {
             return StatusCode((int) HttpStatusCode.UnsupportedMediaType, value);
-        }
-
-        public BadRequestObjectResult BadRequestWithErrors()
-        {
-            return BadRequest(
-                ProjectErrors());
-        }
-
-        public InternalServerErrorObjectResult InternalServerError()
-        {
-            return new InternalServerErrorObjectResult(ModelState.Values
-                .SelectMany(e => e.Errors)
-                .Select(e => e.ErrorMessage));
         }
 
         #endregion

@@ -19,7 +19,7 @@ using System;
 using System.Diagnostics.Contracts;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common.AspNetCore.Mvc
 {
     public class DynamicControllerAttribute : Attribute, IControllerModelConvention
     {
