@@ -29,13 +29,13 @@ using Newtonsoft.Json;
 
 namespace HQ.Domicile.Filters
 {
-    public class HttpCacheFilter : ActionFilterAttribute
+    public class HttpCacheFilterAttribute : ActionFilterAttribute
     {
         private readonly IHttpCache _cache;
         private readonly IETagGenerator _generator;
         private readonly JsonSerializerSettings _settings;
 
-        public HttpCacheFilter(IETagGenerator generator, IHttpCache cache, JsonSerializerSettings settings)
+        public HttpCacheFilterAttribute(IETagGenerator generator, IHttpCache cache, JsonSerializerSettings settings)
         {
             _generator = generator;
             _cache = cache;
@@ -82,7 +82,6 @@ namespace HQ.Domicile.Filters
             var cacheKey = context.HttpContext.Request.GetDisplayUrl();
             var json = JsonConvert.SerializeObject(result.Value, _settings);
             var etag = _generator.GenerateFromBuffer(Encoding.UTF8.GetBytes(json));
-
             context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.ETag, new[] {etag});
             _cache.Save(cacheKey, etag);
 
@@ -90,8 +89,7 @@ namespace HQ.Domicile.Filters
             if (result.Value is IObject resource)
             {
                 var lastModifiedDate = resource.CreatedAt;
-                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified,
-                    lastModifiedDate.ToString("R"));
+                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified, lastModifiedDate.ToString("R"));
                 _cache.Save(cacheKey, lastModifiedDate);
             }
         }

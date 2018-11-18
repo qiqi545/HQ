@@ -67,7 +67,7 @@ namespace HQ.Domicile
         {
             services.AddSingleton<IHttpCache>(r => new MemoryHttpCache(r.GetRequiredService<IMemoryCache>()));
             services.AddSingleton<IETagGenerator, WeakETagGenerator>();
-            services.AddScoped(r => new HttpCacheFilter(r.GetRequiredService<IETagGenerator>(),
+            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(),
                 r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
             return services;
         }

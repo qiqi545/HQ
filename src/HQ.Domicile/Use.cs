@@ -42,7 +42,7 @@ namespace HQ.Domicile
 
             return app;
         }
-
+        
         private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app)
         {
             return app.Use(async (context, next) =>
