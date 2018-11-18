@@ -19,19 +19,4 @@
     <ProjectReference Include="..\HQ.Connect\HQ.Connect.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="ErrorStrings.Designer.cs">
-      <DependentUpon>ErrorStrings.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="ErrorStrings.resx">
-      <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-
 </Project>
