@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Rosetta\HQ.Rosetta.csproj" />
   </ItemGroup>
 

@@ -25,29 +25,35 @@ using Morcatko.AspNetCore.JsonMergePatch;
 
 namespace HQ.Rosetta.AspNetCore.Mvc
 {
-    public interface IObjectController<T> : IObjectController, IActionFilter, IDisposable where T : class, IObject
+    public interface IObjectDeleteController<T> : IObjectController, IActionFilter, IDisposable where T : class, IObject
     {
-        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter,
-            ProjectionOptions projections);
-
-        Task<IActionResult> GetAsync([FromQuery] string query, SortOptions sort, PageOptions page, FieldOptions fields,
-            FilterOptions filter, ProjectionOptions projections);
-
-        Task<IActionResult> GetAsync([FromQuery] IList<long> ids, SortOptions sort, PageOptions page,
-            FieldOptions fields, FilterOptions filter, ProjectionOptions projections);
-
-        Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
-
-        Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
-        Task<IActionResult> PutAsync([FromBody] IList<T> objects);
-
-        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
-        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
-
-        Task<IActionResult> PostAsync([FromBody] T @object);
-        Task<IActionResult> PostAsync([FromBody] IList<T> objects);
-
         Task<IActionResult> DeleteAsync([FromRoute] long id);
         Task<IActionResult> DeleteAsync([FromBody] IList<long> ids);
+    }
+
+    public interface IObjectGetController<T> : IObjectController, IActionFilter where T : class, IObject
+    {
+        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
+        Task<IActionResult> GetAsync([FromQuery] string query, SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
+        Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
+        Task<IActionResult> GetAsync([FromQuery] IList<long> ids, SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
+    }
+
+    public interface IObjectPutController<T> : IObjectController, IActionFilter where T : class, IObject
+    {
+        Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
+        Task<IActionResult> PutAsync([FromBody] IList<T> objects);
+    }
+
+    public interface IObjectPatchController<T> : IObjectController, IActionFilter where T : class, IObject
+    {
+        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
+        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
+    }
+
+    public interface IObjectPostController<T> : IObjectController, IActionFilter where T : class, IObject
+    {
+        Task<IActionResult> PostAsync([FromBody] T @object);
+        Task<IActionResult> PostAsync([FromBody] IList<T> objects);
     }
 }
