@@ -22,7 +22,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
 using HQ.Common;
-using HQ.Common.AspNetCore;
+using HQ.Common.AspNetCore.Mvc;
+using HQ.Rosetta;
+using HQ.Rosetta.AspNetCore.Mvc;
 using HQ.Tokens.AspNetCore.Mvc.Attributes;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +39,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
     [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageRoles)]
-    public class RoleController<TRole> : ControllerExtended where TRole : IdentityRole
+    public class RoleController<TRole> : DataController where TRole : IdentityRole
     {
         private readonly RoleManager<TRole> _roleManager;
         private readonly IOptions<SecurityOptions> _securityOptions;
@@ -61,7 +63,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpPost("")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleModel model)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!Valid(model, out var error))
                 return error;
 
             var role = (TRole) FormatterServices.GetUninitializedObject(typeof(TRole));
@@ -94,7 +96,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpPost("{id}/claims")]
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!Valid(model, out var error))
                 return error;
 
             var role = await _roleManager.FindByIdAsync(id);
@@ -113,7 +115,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpDelete("{id}/claims")]
         public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromQuery] DeleteClaimModel model)
         {
-            if (!this.TryValidateModelState(out var error))
+            if (!Valid(model, out var error))
                 return error;
 
             var role = await _roleManager.FindByIdAsync(id);

@@ -18,7 +18,8 @@
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
 using HQ.Common;
-using HQ.Common.AspNetCore;
+using HQ.Common.AspNetCore.Mvc;
+using HQ.Rosetta.AspNetCore.Mvc;
 using HQ.Tokens.AspNetCore.Mvc.Attributes;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageUsers)]
-    public class UserController<TUser> : ControllerExtended where TUser : IdentityUser
+    public class UserController<TUser> : DataController where TUser : IdentityUser
     {
         private readonly IUserService<TUser> _userService;
 
@@ -50,8 +51,11 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpPost("")]
         public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
-            if (!TryValidateModelState(out var error))
-                return error;
+            if (!TryValidateModel(model))
+            {
+                var validationError = this.ConvertModelStateToError();
+                return new ErrorResult(validationError);
+            }
 
             var result = await _userService.CreateAsync(model);
 
@@ -63,18 +67,16 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
-            if (!TryValidateModelState(out var error))
-                return error;
             var result = await _userService.DeleteAsync(id);
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromBody] TUser user)
+        public async Task<IActionResult> Update([FromBody] TUser model)
         {
-            if (!TryValidateModelState(out var error))
+            if (!Valid(model, out var error))
                 return error;
-            var result = await _userService.UpdateAsync(user);
+            var result = await _userService.UpdateAsync(model);
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 

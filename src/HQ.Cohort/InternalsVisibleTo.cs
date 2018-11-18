@@ -21,7 +21,5 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Cohort
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+    internal sealed class InternalsVisibleTo { }
 }

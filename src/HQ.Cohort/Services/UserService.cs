@@ -26,6 +26,7 @@ using HQ.Cohort.Extensions;
 using HQ.Cohort.Models;
 using HQ.Rosetta;
 using HQ.Rosetta.Queryable;
+using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Services
@@ -79,7 +80,7 @@ namespace HQ.Cohort.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             return user == null
-                ? new Operation<TUser>(new Error("User not found.", HttpStatusCode.NotFound))
+                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_UserNotFound, HttpStatusCode.NotFound))
                 : new Operation<TUser>(user);
         }
 

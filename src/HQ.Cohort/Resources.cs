@@ -16,6 +16,7 @@
 #endregion
 
 using System.Globalization;
+using HQ.Strings;
 
 namespace HQ.Cohort
 {
@@ -23,15 +24,13 @@ namespace HQ.Cohort
     {
         internal static string FormatInvalidPhoneNumber(string phoneNumber)
         {
-            return string.Format(CultureInfo.CurrentCulture,
-                "Phone number '{0}' is invalid." ?? ErrorStrings.InvalidPhoneNumber, phoneNumber);
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.Cohort_InvalidPhoneNumber, phoneNumber);
         }
 
         /// <summary></summary>
         internal static string FormatDuplicatePhoneNumber(string phoneNumber)
         {
-            return string.Format(CultureInfo.CurrentCulture,
-                "Phone number '{0}' is already taken." ?? ErrorStrings.DuplicatePhoneNumber, phoneNumber);
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.Cohort_DuplicatePhoneNumber, phoneNumber);
         }
     }
 }

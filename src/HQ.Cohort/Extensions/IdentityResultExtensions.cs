@@ -25,7 +25,7 @@ namespace HQ.Cohort.Extensions
     {
         public static Operation ToOperation(this IdentityResult result)
         {
-            var errors = result.Errors.Select(x => new Error($"{x.Code} - {x.Description}"));
+            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}"));
             var operation = new Operation(errors.ToList());
             if (result.Succeeded)
                 operation.Result =
@@ -37,7 +37,7 @@ namespace HQ.Cohort.Extensions
 
         public static Operation<T> ToOperation<T>(this IdentityResult result, T data)
         {
-            var errors = result.Errors.Select(x => new Error($"{x.Code} - {x.Description}")).ToList();
+            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}")).ToList();
             var operation = new Operation<T>(data, errors);
             if (result.Succeeded)
                 operation.Result =

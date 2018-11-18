@@ -23,7 +23,7 @@ using HQ.Cohort.AspNetCore.Mvc.Controllers;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Models;
 using HQ.Cohort.Services;
-using HQ.Common.AspNetCore;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

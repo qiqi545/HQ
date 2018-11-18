@@ -20,8 +20,9 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Cohort.AspNetCore.Mvc.Models;
 using HQ.Cohort.Extensions;
-using HQ.Common.AspNetCore;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
+using HQ.Rosetta.AspNetCore.Mvc;
 using HQ.Rosetta.Queryable;
 using HQ.Tokens;
 using HQ.Tokens.Configuration;
@@ -38,7 +39,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [Route("tokens")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class TokenController<TUser> : ControllerExtended where TUser : IdentityUser
+    public class TokenController<TUser> : DataController where TUser : IdentityUser
     {
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
@@ -56,8 +57,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             _securityOptions = securityOptions;
         }
 
-        [Authorize]
-        [HttpPut]
+        [Authorize, HttpPut]
         public IActionResult VerifyToken()
         {
             if (User.Identity == null)
@@ -69,11 +69,10 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             return Unauthorized();
         }
 
-        [AllowAnonymous]
-        [HttpPost]
+        [AllowAnonymous, HttpPost]
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
-            if (!TryValidateModelState(out var error))
+            if (!Valid(model, out var error))
                 return error;
 
             TUser user;

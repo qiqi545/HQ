@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Extensions
@@ -44,8 +45,7 @@ namespace HQ.Cohort.Extensions
             return new IdentityError
             {
                 Code = nameof(MustHaveEmailPhoneOrUsername),
-                Description = "Must have an email address, phone number, or email address to register." ??
-                              ErrorStrings.MustHaveEmailPhoneOrUsername
+                Description = ErrorStrings.Cohort_MustHaveEmailPhoneOrUsername
             };
         }
     }
