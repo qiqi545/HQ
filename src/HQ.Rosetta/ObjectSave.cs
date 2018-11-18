@@ -19,8 +19,9 @@ namespace HQ.Rosetta
 {
     public enum ObjectSave
     {
+        NotFound,
         NoChanges,
         Created,
-        Updated
+        Updated,
     }
 }

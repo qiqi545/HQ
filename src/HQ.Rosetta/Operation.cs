@@ -38,12 +38,12 @@ namespace HQ.Rosetta
         public bool HasErrors => Errors?.Count() > 0;
         public IList<Error> Errors { get; set; }
 
-        public static Operation FromResult<T>(T data)
+        public static Operation<T> FromResult<T>(T data)
         {
             return new Operation<T>(data);
         }
 
-        public static Operation FromResult<T>(T data, IList<Error> errors)
+        public static Operation<T> FromResult<T>(T data, IList<Error> errors)
         {
             return new Operation<T>(data, errors);
         }

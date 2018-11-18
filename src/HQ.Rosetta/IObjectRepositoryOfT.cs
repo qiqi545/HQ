@@ -9,6 +9,7 @@ namespace HQ.Rosetta
         Task<Operation<IPage<T>>> GetAsync(SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
         Task<Operation<T>> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
         Task<Operation<IPage<T>>> GetAsync(string query, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<Operation<IPage<T>>> GetAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 
     public interface IObjectSaveRepository<in T> where T : IObject
