@@ -123,5 +123,15 @@ namespace HQ.Lingo.Builders
             var startsWith = (f.Value as string)?.StartsWith($"{d.Parameter}");
             return startsWith.GetValueOrDefault();
         }
+
+        public static object EqualTo(this object clause)
+        {
+            return clause;
+        }
+
+        public static object NotEqualTo(this object clause)
+        {
+            return clause;
+        }
     }
 }
