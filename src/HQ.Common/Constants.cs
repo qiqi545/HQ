@@ -115,12 +115,5 @@ namespace HQ.Common
             public const string JsonMergePatch = "application/merge-patch+json";
             public const string JsonSchema = "application/schema+json";
         }
-
-        public static class ClaimValues
-        {
-            public const string SuperUser = "superuser";
-            public const string ManageUsers = "manage_users";
-            public const string ManageRoles = "manage_roles";
-        }
     }
 }

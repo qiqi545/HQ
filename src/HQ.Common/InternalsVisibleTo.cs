@@ -17,17 +17,21 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("HQ.Adapt")]
 [assembly: InternalsVisibleTo("HQ.Cohort")]
 [assembly: InternalsVisibleTo("HQ.Cohort.AspNetCore.Mvc")]
+[assembly: InternalsVisibleTo("HQ.Cohort.Stores.Sql")]
 [assembly: InternalsVisibleTo("HQ.Common.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Cadence")]
 [assembly: InternalsVisibleTo("HQ.Cadence.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Domicile")]
 [assembly: InternalsVisibleTo("HQ.InteractionTests")]
 [assembly: InternalsVisibleTo("HQ.Lingo")]
+[assembly: InternalsVisibleTo("HQ.Lingo.Queries")]
 [assembly: InternalsVisibleTo("HQ.MissionControl")]
 [assembly: InternalsVisibleTo("HQ.Remix")]
 [assembly: InternalsVisibleTo("HQ.Rosetta")]
+[assembly: InternalsVisibleTo("HQ.Tokens")]
 [assembly: InternalsVisibleTo("HQ.Zero")]
 
 namespace HQ.Common
