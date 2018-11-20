@@ -26,9 +26,31 @@ namespace HQ.Common.AspNetCore.Mvc
     {
         #region Additional IActionResult Helpers
 
+        public IActionResult NotModified()
+        {
+            return StatusCode((int) HttpStatusCode.NotModified);
+        }
+
+        public IActionResult Gone()
+        {
+            return StatusCode((int) HttpStatusCode.Gone);
+        }
+
         public IActionResult UnsupportedMediaType(object value = null)
         {
             return StatusCode((int) HttpStatusCode.UnsupportedMediaType, value);
+        }
+
+        public IActionResult SeeOther(string location)
+        {
+            Response.Headers[Constants.HttpHeaders.Location] = location;
+            return StatusCode((int)HttpStatusCode.SeeOther);
+        }
+
+        public IActionResult Created(string location)
+        {
+            Response.Headers[Constants.HttpHeaders.Location] = location;
+            return StatusCode((int)HttpStatusCode.Created);
         }
 
         #endregion
