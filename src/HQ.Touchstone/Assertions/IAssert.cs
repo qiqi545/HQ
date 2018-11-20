@@ -21,8 +21,8 @@ namespace HQ.Touchstone.Assertions
 {
     public interface IAssert
     {
-        void NotNull(object instance);
-        void NotEmpty(IEnumerable enumerable);
-        void True(bool condition);
+        void NotNull(object instance, string userMessage = null, params object[] userMessageArgs);
+        void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs);
+        void True(bool condition, string userMessage = null, params object[] userMessageArgs);
     }
 }

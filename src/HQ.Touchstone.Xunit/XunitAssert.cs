@@ -18,24 +18,55 @@
 using System.Collections;
 using HQ.Touchstone.Assertions;
 using Xunit;
+using Xunit.Sdk;
 
 namespace HQ.Touchstone.Xunit
 {
     public sealed class XunitAssert : IAssert
     {
-        public void NotNull(object instance)
+        public void NotNull(object instance, string userMessage = null, params object[] userMessageArgs)
         {
-            Assert.NotNull(instance);
+            try
+            {
+                Assert.NotNull(instance);
+            }
+            catch (NotNullException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
         }
 
-        public void NotEmpty(IEnumerable enumerable)
+        public void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs)
         {
-            Assert.NotEmpty(enumerable);
+            try
+            {
+                Assert.NotEmpty(enumerable);
+            }
+            catch (NotEmptyException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
         }
 
-        public void True(bool condition)
+        public void True(bool condition, string userMessage = null, params object[] userMessageArgs)
         {
-            Assert.True(condition);
+            try
+            {
+                Assert.True(condition);
+            }
+            catch (TrueException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        private static void TryLogUserMessage(string userMessage, object[] userMessageArgs)
+        {
+            if (!string.IsNullOrWhiteSpace(userMessage))
+                AmbientContext.OutputProvider.WriteLine(userMessage, userMessageArgs);
         }
     }
 }
