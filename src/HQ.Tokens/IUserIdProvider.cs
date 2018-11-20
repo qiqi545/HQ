@@ -15,16 +15,10 @@
 
 #endregion
 
-using HQ.Tokens.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc;
-
-namespace HQ.Tokens.AspNetCore.Mvc.Attributes
+namespace HQ.Tokens
 {
-    public class RequireClaimAttribute : TypeFilterAttribute
+    public interface IUserIdProvider
     {
-        public RequireClaimAttribute(string type, params string[] oneOf) : base(typeof(RequireClaimActionFilter))
-        {
-            Arguments = new object[] {type, oneOf };
-        }
+        string Id { get; }
     }
 }

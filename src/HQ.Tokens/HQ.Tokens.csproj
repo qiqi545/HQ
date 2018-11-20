@@ -15,6 +15,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Cadence\src\HQ.Cadence\HQ.Cadence.csproj" />
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Domicile\src\HQ.Domicile\HQ.Domicile.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="LiteGuard">
+      <HintPath>C:\Users\User\.nuget\packages\liteguard\2.2.0\lib\netstandard2.0\LiteGuard.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

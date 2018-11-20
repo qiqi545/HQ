@@ -15,7 +15,9 @@
 
 #endregion
 
+using HQ.Common;
 using HQ.Tokens.Configuration;
+using HQ.Tokens.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
@@ -39,11 +41,14 @@ namespace HQ.Tokens
 
             services.AddAuthorization(x =>
             {
-                var builder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
-                builder.RequireAuthenticatedUser();
-                x.DefaultPolicy = builder.Build();
-            });
+                x.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                    .RequireAuthenticatedUserExtended(services, options)
+                    .Build();
 
+                if (options.SuperUser.Enabled)
+                    x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
+                        builder => { builder.RequireRoleExtended(services, options, ClaimValues.SuperUser); });
+            });
             return services;
         }
     }

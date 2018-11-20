@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using HQ.Common.Extensions;
+using HQ.Domicile.Configuration;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,28 +62,29 @@ namespace HQ.Tokens
                 .AddCookie(cfg => cfg.SlidingExpiration = true);
         }
 
-        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions options)
-            where TUser : IUserNameProvider
+        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security,
+            PublicApiOptions api)
+            where TUser : IUserIdProvider
         {
-            var now = DateTimeOffset.UtcNow;
-            var expires = now.AddSeconds(options.Tokens.TimeToLiveSeconds);
+            var now = DateTimeOffset.Now;
+            var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
 
             /*
-            See: https://tools.ietf.org/html/rfc7519#section-4.1
-            All claims are optional, but since our JSON conventions elide null values,
-            We need to ensure any optional claims are emitted as empty strings.
+                See: https://tools.ietf.org/html/rfc7519#section-4.1
+                All claims are optional, but since our JSON conventions elide null values,
+                We need to ensure any optional claims are emitted as empty strings.
             */
 
             // JWT.io claims:
-            var sub = user.UserName ?? string.Empty;
+            var sub = user.Id ?? string.Empty;
             var jti = $"{Guid.NewGuid()}";
             var iat = now.ToUnixTimeSeconds().ToString();
             var exp = expires.ToUnixTimeSeconds().ToString();
             var nbf = now.ToUnixTimeSeconds().ToString();
-            var iss = options.Tokens?.Issuer ?? string.Empty;
-            var aud = options.Tokens?.Audience ?? string.Empty;
+            var iss = security.Tokens?.Issuer ?? string.Empty;
+            var aud = security.Tokens?.Audience ?? string.Empty;
 
-            var jwtClaims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, sub, ClaimValueTypes.String),
                 new Claim(JwtRegisteredClaimNames.Jti, jti, ClaimValueTypes.String),
@@ -90,12 +93,17 @@ namespace HQ.Tokens
                 new Claim(JwtRegisteredClaimNames.Exp, exp, ClaimValueTypes.Integer64)
             };
 
-            jwtClaims.AddRange(userClaims);
+            claims.AddRange(userClaims);
 
-            _credentials = _credentials ?? BuildSigningCredentials(options);
+            claims.TryAddClaim(security.Claims.TenantIdClaim, api.TenantId);
+            claims.TryAddClaim(security.Claims.TenantNameClaim, api.TenantName);
+            claims.TryAddClaim(security.Claims.ApplicationIdClaim, api.ApiVersion);
+            claims.TryAddClaim(security.Claims.ApplicationNameClaim, api.ApiName);
+
+            _credentials = _credentials ?? BuildSigningCredentials(security);
 
             var handler = new JwtSecurityTokenHandler();
-            var jwt = new JwtSecurityToken(iss, aud, jwtClaims, now.UtcDateTime, expires.UtcDateTime, _credentials);
+            var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _credentials);
 
             return handler.WriteToken(jwt);
         }
@@ -108,7 +116,7 @@ namespace HQ.Tokens
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)
         {
-            return new TokenValidationParameters
+            var parameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = options.Tokens.Issuer,
@@ -119,6 +127,11 @@ namespace HQ.Tokens
                 IssuerSigningKey = _credentials.Key,
                 ClockSkew = TimeSpan.FromMinutes(5)
             };
+
+            parameters.RoleClaimType = options.Claims.RoleClaim;
+            parameters.NameClaimType = options.Claims.UserNameClaim;
+
+            return parameters;
         }
     }
 }

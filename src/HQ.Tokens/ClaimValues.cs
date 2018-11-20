@@ -15,18 +15,12 @@
 
 #endregion
 
-namespace HQ.Tokens.Configuration
+namespace HQ.Tokens
 {
-    public class ClaimOptions
+    public static class ClaimValues
     {
-        public string TenantIdClaim { get; set; } = "tenantId";
-        public string TenantNameClaim { get; set; } = "tenantName";
-        public string ApplicationIdClaim { get; set; } = "applicationId";
-        public string ApplicationNameClaim { get; set; } = "applicationName";
-        public string UserIdClaim { get; set; } = "userId";
-        public string UserNameClaim { get; set; } = "userName";
-        public string RoleClaim { get; set; } = "role";
-        public string EmailClaim { get; set; } = "email";
-        public string PermissionClaim { get; set; } = "permission";
+        public const string SuperUser = "superuser";
+        public const string ManageUsers = "manage_users";
+        public const string ManageRoles = "manage_roles";
     }
 }
