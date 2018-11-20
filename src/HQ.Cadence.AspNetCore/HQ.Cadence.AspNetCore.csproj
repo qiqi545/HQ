@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
 
-  <Import Project="$(SolutionDir)..\build\package.props" />
-  <Import Project="$(SolutionDir)..\build\build.props" />
-  <Import Project="$(SolutionDir)..\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>

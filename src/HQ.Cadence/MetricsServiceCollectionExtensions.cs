@@ -56,7 +56,7 @@ namespace HQ.Cadence
 
             var store = new Lazy<InMemoryMetricsStore>(() => new InMemoryMetricsStore());
             var host = new Lazy<MetricsHost>(() => new MetricsHost(store.Value));
-            var registry = new Lazy<InMemoryMetricsRegistry>(() => new InMemoryMetricsRegistry { host.Value });
+            var registry = new Lazy<InMemoryMetricsRegistry>(() => new InMemoryMetricsRegistry {host.Value});
 
             services.TryAdd(ServiceDescriptor.Singleton<IMetricsStore, InMemoryMetricsStore>(r => store.Value));
             services.TryAdd(ServiceDescriptor.Singleton<IMetricsHost, MetricsHost>(r => host.Value));
