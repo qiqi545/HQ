@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -188,10 +188,6 @@ namespace HQ.Cohort.Stores.Sql
 
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            if (!_identity.Value.User.RequireUsername)
-            {
-            }
-
             var query = SqlBuilder.Update(user);
             _connection.SetTypeInfo(typeof(TUser));
 
@@ -200,9 +196,7 @@ namespace HQ.Cohort.Stores.Sql
             return IdentityResult.Success;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public CancellationToken CancellationToken { get; }
 
@@ -222,8 +216,6 @@ namespace HQ.Cohort.Stores.Sql
         private Task<IEnumerable<TUser>> GetAllUsersAsync()
         {
             var query = SqlBuilder.Select<TUser>();
-            query.Sql += $" WHERE {typeof(TUser).Name}.DocumentType = @DocumentType";
-
             _connection.SetTypeInfo(typeof(TUser));
             var users = _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
             return users;
