@@ -26,7 +26,8 @@ namespace HQ.Lingo.Builders
 {
     public static class InsertBuilder
     {
-        public static string InsertInto(this ISqlDialect d, string table, string schema, List<string> columns, bool returnKeys)
+        public static string InsertInto(this ISqlDialect d, string table, string schema, List<string> columns,
+            bool returnKeys)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -64,7 +65,8 @@ namespace HQ.Lingo.Builders
             });
         }
 
-        public static string InsertInto(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema, List<string> columns, bool returnKeys)
+        public static string InsertInto(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+            List<string> columns, bool returnKeys)
         {
             return StringBuilderPool.Scoped(sb =>
             {

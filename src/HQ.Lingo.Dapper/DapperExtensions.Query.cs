@@ -27,8 +27,8 @@ namespace HQ.Lingo.Dapper
     partial class DapperExtensions
     {
         public static IEnumerable<T> Query<T>(this IDbConnection connection, IDbTransaction transaction = null,
-           bool buffered = true, int? commandTimeout = null, CommandType? commandType = null,
-           params Expression<Func<T, object>>[] orderBy) where T : class
+            bool buffered = true, int? commandTimeout = null, CommandType? commandType = null,
+            params Expression<Func<T, object>>[] orderBy) where T : class
         {
             var query = SqlBuilder.Select(orderBy);
             var result = connection.Query<T>(query.Sql, transaction, buffered, commandTimeout, commandType);

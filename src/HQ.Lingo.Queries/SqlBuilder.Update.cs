@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using HQ.Common.FastMember;
 using HQ.DotLiquid;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Descriptor;
@@ -53,7 +52,8 @@ namespace HQ.Lingo.Queries
             {
                 // WHERE is explicitly provided 
                 whereHash = Hash.FromAnonymousObject(where, true);
-                var whereHashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+                var whereHashKeysRewrite =
+                    whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
                 whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToList();
             }
 
@@ -109,18 +109,24 @@ namespace HQ.Lingo.Queries
             return Update(set);
         }
 
-        private static Query Update(IDataDescriptor descriptor, List<string> setFilter, List<string> whereFilter, IDictionary<string, object> setHash, IDictionary<string, object> whereHash)
+        private static Query Update(IDataDescriptor descriptor, List<string> setFilter, List<string> whereFilter,
+            IDictionary<string, object> setHash, IDictionary<string, object> whereHash)
         {
             var setHashKeyRewrite = setHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
-            var whereHashKeyRewrite = RuntimeHelpers.Equals(setHash, whereHash) ? setHashKeyRewrite : whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+            var whereHashKeyRewrite = RuntimeHelpers.Equals(setHash, whereHash)
+                ? setHashKeyRewrite
+                : whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
-            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}", key => whereHash[whereHashKeyRewrite[key]]);
-            var setParams = setFilter.ToDictionary(key => $"{setHashKeyRewrite[key]}{Dialect.SetSuffix}", key => setHash[setHashKeyRewrite[key]]);
+            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
+                key => whereHash[whereHashKeyRewrite[key]]);
+            var setParams = setFilter.ToDictionary(key => $"{setHashKeyRewrite[key]}{Dialect.SetSuffix}",
+                key => setHash[setHashKeyRewrite[key]]);
 
             var setParameters = setParams.Keys.ToList();
             var whereParameters = whereParams.Keys.ToList();
 
-            var sql = Dialect.Update(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, setFilter, whereFilter, setParameters, whereParameters, Dialect.SetSuffix);
+            var sql = Dialect.Update(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, setFilter,
+                whereFilter, setParameters, whereParameters, Dialect.SetSuffix);
 
             var @params = Hash.FromDictionary(whereParams);
             @params.Merge(setParams);

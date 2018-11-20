@@ -38,7 +38,8 @@ namespace HQ.Lingo.Builders
             return StringBuilderPool.Scoped(sb => { AppendOrderBy(sb, dialect, columns); });
         }
 
-        public static string OrderBy<T>(this ISqlDialect dialect, string sql, params Expression<Func<T, object>>[] orderBy)
+        public static string OrderBy<T>(this ISqlDialect dialect, string sql,
+            params Expression<Func<T, object>>[] orderBy)
         {
             return StringBuilderPool.Scoped(sb =>
             {
@@ -76,7 +77,8 @@ namespace HQ.Lingo.Builders
             }
         }
 
-        internal static void AppendOrderBy<T>(StringBuilder sb, ISqlDialect dialect, Expression<Func<T, object>>[] orderBy)
+        internal static void AppendOrderBy<T>(StringBuilder sb, ISqlDialect dialect,
+            Expression<Func<T, object>>[] orderBy)
         {
             sb.Append(" ORDER BY ");
 
