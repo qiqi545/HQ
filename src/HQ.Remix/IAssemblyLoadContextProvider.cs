@@ -19,8 +19,8 @@ using System.Runtime.Loader;
 
 namespace HQ.Remix
 {
-	public interface IAssemblyLoadContextProvider
-	{
-		AssemblyLoadContext Get();
-	}
+    public interface IAssemblyLoadContextProvider
+    {
+        AssemblyLoadContext Get();
+    }
 }

@@ -23,32 +23,32 @@ using HQ.Common.Extensions;
 
 namespace HQ.Remix
 {
-	public class MethodFactory
-	{
-		public static MethodFactory Default = new MethodFactory();
+    public class MethodFactory
+    {
+        public static MethodFactory Default = new MethodFactory();
 
-		private readonly IDictionary<MethodInfo, ParameterInfo[]> _methodInfoParameters =
-			new ConcurrentDictionary<MethodInfo, ParameterInfo[]>();
+        private readonly IDictionary<MethodInfo, ParameterInfo[]> _methodInfoParameters =
+            new ConcurrentDictionary<MethodInfo, ParameterInfo[]>();
 
-		private readonly IDictionary<NameAndType, MethodInfo> _methods =
-			new ConcurrentDictionary<NameAndType, MethodInfo>();
+        private readonly IDictionary<NameAndType, MethodInfo> _methods =
+            new ConcurrentDictionary<NameAndType, MethodInfo>();
 
-		public MethodInfo GetOrCacheMethodForTypeAndName(Type type, string name,
-			StringComparison comparison = StringComparison.OrdinalIgnoreCase)
-		{
-			// type(name)->method
-			var key = new NameAndType(name, type);
-			if (!_methods.TryGetValue(key, out var method))
-				_methods[key] = method = type.GetWidestMethod(name, comparison);
-			return method;
-		}
+        public MethodInfo GetOrCacheMethodForTypeAndName(Type type, string name,
+            StringComparison comparison = StringComparison.OrdinalIgnoreCase)
+        {
+            // type(name)->method
+            var key = new NameAndType(name, type);
+            if (!_methods.TryGetValue(key, out var method))
+                _methods[key] = method = type.GetWidestMethod(name, comparison);
+            return method;
+        }
 
-		public ParameterInfo[] GetOrCacheParametersForMethod(MethodInfo method)
-		{
-			// method->parameters
-			if (!_methodInfoParameters.TryGetValue(method, out var parameters))
-				_methodInfoParameters[method] = parameters = method.GetParameters();
-			return parameters;
-		}
-	}
+        public ParameterInfo[] GetOrCacheParametersForMethod(MethodInfo method)
+        {
+            // method->parameters
+            if (!_methodInfoParameters.TryGetValue(method, out var parameters))
+                _methodInfoParameters[method] = parameters = method.GetParameters();
+            return parameters;
+        }
+    }
 }

@@ -20,9 +20,9 @@ using Microsoft.CodeAnalysis;
 
 namespace HQ.Remix
 {
-	public interface IMetadataReferenceResolver
-	{
-		MetadataReference Resolve(Assembly assembly);
-		MetadataReference Resolve(string location);
-	}
+    public interface IMetadataReferenceResolver
+    {
+        MetadataReference Resolve(Assembly assembly);
+        MetadataReference Resolve(string location);
+    }
 }

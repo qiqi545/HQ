@@ -17,11 +17,11 @@
 
 namespace HQ.Remix
 {
-	public struct HandlerInfo
-	{
-		public string Code;
-		public string Namespace;
-		public string Entrypoint;
-		public string Function;
-	}
+    public struct HandlerInfo
+    {
+        public string Code;
+        public string Namespace;
+        public string Entrypoint;
+        public string Function;
+    }
 }

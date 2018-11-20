@@ -17,10 +17,10 @@
 
 namespace HQ.Remix
 {
-	public enum DelegateBuildStrategy
-	{
-		MethodInfo,
-		Expression,
-		ObjectExecutor
-	}
+    public enum DelegateBuildStrategy
+    {
+        MethodInfo,
+        Expression,
+        ObjectExecutor
+    }
 }

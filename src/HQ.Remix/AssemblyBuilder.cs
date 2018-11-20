@@ -30,165 +30,172 @@ using Newtonsoft.Json;
 
 namespace HQ.Remix
 {
-	public class AssemblyBuilder : IAssemblyBuilder
-	{
-	    public static Lazy<IAssemblyBuilder> Default = new Lazy<IAssemblyBuilder>(() =>
-	    {
-	        var loadContextProvider = new DefaultAssemblyLoadContextProvider();
-	        var metadataReferenceResolver = new DefaultMetadataReferenceResolver();
-	        return new AssemblyBuilder(loadContextProvider, new[] {metadataReferenceResolver});
-	    });
+    public class AssemblyBuilder : IAssemblyBuilder
+    {
+        public static Lazy<IAssemblyBuilder> Default = new Lazy<IAssemblyBuilder>(() =>
+        {
+            var loadContextProvider = new DefaultAssemblyLoadContextProvider();
+            var metadataReferenceResolver = new DefaultMetadataReferenceResolver();
+            return new AssemblyBuilder(loadContextProvider, new[] {metadataReferenceResolver});
+        });
 
-		private readonly AssemblyLoadContext _context;
-		private readonly ILogger<AssemblyBuilder> _logger;
-		private readonly IEnumerable<IMetadataReferenceResolver> _resolvers;
+        private readonly AssemblyLoadContext _context;
+        private readonly ILogger<AssemblyBuilder> _logger;
+        private readonly IEnumerable<IMetadataReferenceResolver> _resolvers;
 
-		public AssemblyBuilder(IAssemblyLoadContextProvider provider, IEnumerable<IMetadataReferenceResolver> resolvers, ILogger<AssemblyBuilder> logger = null)
-		{
-			_resolvers = resolvers;
-			_logger = logger;
-			_context = provider.Get();
-		}
+        public AssemblyBuilder(IAssemblyLoadContextProvider provider, IEnumerable<IMetadataReferenceResolver> resolvers,
+            ILogger<AssemblyBuilder> logger = null)
+        {
+            _resolvers = resolvers;
+            _logger = logger;
+            _context = provider.Get();
+        }
 
-		public Assembly CreateInMemory(string assemblyName, string code, params Assembly[] dependencies)
-		{
-			var compilation = CreateCompilation(assemblyName, code, dependencies);
+        public Assembly CreateInMemory(string assemblyName, string code, params Assembly[] dependencies)
+        {
+            var compilation = CreateCompilation(assemblyName, code, dependencies);
 
-			using (var peStream = new MemoryStream())
-			{
-				using (var pdbStream = new MemoryStream())
-				{
-					var result = compilation.Emit(peStream, pdbStream);
-					MaybeLogWarningsAndErrors(result);
+            using (var peStream = new MemoryStream())
+            {
+                using (var pdbStream = new MemoryStream())
+                {
+                    var result = compilation.Emit(peStream, pdbStream);
+                    MaybeLogWarningsAndErrors(result);
 
-					peStream.Seek(0, SeekOrigin.Begin);
-					var assembly = _context.LoadFromStream(peStream, pdbStream);
-					return assembly;
-				}
-			}
-		}
+                    peStream.Seek(0, SeekOrigin.Begin);
+                    var assembly = _context.LoadFromStream(peStream, pdbStream);
+                    return assembly;
+                }
+            }
+        }
 
-		public Assembly CreateInMemory(string assemblyName, string code, params string[] dependencyLocations)
-		{
-			var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
+        public Assembly CreateInMemory(string assemblyName, string code, params string[] dependencyLocations)
+        {
+            var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
 
-			using (var peStream = new MemoryStream())
-			{
-				using (var pdbStream = new MemoryStream())
-				{
-					var result = compilation.Emit(peStream, pdbStream);
-					MaybeLogWarningsAndErrors(result);
+            using (var peStream = new MemoryStream())
+            {
+                using (var pdbStream = new MemoryStream())
+                {
+                    var result = compilation.Emit(peStream, pdbStream);
+                    MaybeLogWarningsAndErrors(result);
 
-					peStream.Seek(0, SeekOrigin.Begin);
-					var assembly = _context.LoadFromStream(peStream, pdbStream);
-					return assembly;
-				}
-			}
-		}
+                    peStream.Seek(0, SeekOrigin.Begin);
+                    var assembly = _context.LoadFromStream(peStream, pdbStream);
+                    return assembly;
+                }
+            }
+        }
 
-		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params Assembly[] dependencies)
-		{
-			var compilation = CreateCompilation(assemblyName, code, dependencies);
+        public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
+            params Assembly[] dependencies)
+        {
+            var compilation = CreateCompilation(assemblyName, code, dependencies);
 
-			var result = compilation.Emit(outputPath, pdbPath);
-			MaybeLogWarningsAndErrors(result);
+            var result = compilation.Emit(outputPath, pdbPath);
+            MaybeLogWarningsAndErrors(result);
 
-			var assembly = Assembly.LoadFile(outputPath);
-			return assembly;
-		}
+            var assembly = Assembly.LoadFile(outputPath);
+            return assembly;
+        }
 
-		public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null, params string[] dependencyLocations)
-		{
-			var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
+        public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
+            params string[] dependencyLocations)
+        {
+            var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
 
-			var result = compilation.Emit(outputPath, pdbPath);
-			MaybeLogWarningsAndErrors(result);
+            var result = compilation.Emit(outputPath, pdbPath);
+            MaybeLogWarningsAndErrors(result);
 
-			var assembly = Assembly.LoadFile(outputPath);
-			return assembly;
-		}
+            var assembly = Assembly.LoadFile(outputPath);
+            return assembly;
+        }
 
-		private void MaybeLogWarningsAndErrors(EmitResult result)
-		{
-			var warnings = result.Diagnostics.Where(diagnostic =>
-				!diagnostic.IsSuppressed && !diagnostic.IsWarningAsError &&
-				diagnostic.Severity == DiagnosticSeverity.Warning);
+        private void MaybeLogWarningsAndErrors(EmitResult result)
+        {
+            var warnings = result.Diagnostics.Where(diagnostic =>
+                !diagnostic.IsSuppressed && !diagnostic.IsWarningAsError &&
+                diagnostic.Severity == DiagnosticSeverity.Warning);
 
-			foreach (var warning in warnings)
-				if (_logger?.IsEnabled(LogLevel.Warning) == true)
-					_logger?.LogWarning(JsonConvert.SerializeObject(warning));
+            foreach (var warning in warnings)
+                if (_logger?.IsEnabled(LogLevel.Warning) == true)
+                    _logger?.LogWarning(JsonConvert.SerializeObject(warning));
 
-			var errors = result.Diagnostics.Where(diagnostic => !diagnostic.IsSuppressed && diagnostic.IsWarningAsError || diagnostic.Severity == DiagnosticSeverity.Error);
+            var errors = result.Diagnostics.Where(diagnostic =>
+                !diagnostic.IsSuppressed && diagnostic.IsWarningAsError ||
+                diagnostic.Severity == DiagnosticSeverity.Error);
             foreach (var error in errors)
-				if (_logger?.IsEnabled(LogLevel.Error) == true)
-					_logger?.LogError(JsonConvert.SerializeObject(error));
-		}
+                if (_logger?.IsEnabled(LogLevel.Error) == true)
+                    _logger?.LogError(JsonConvert.SerializeObject(error));
+        }
 
-		private CSharpCompilation CreateCompilation(string assemblyName, string code, IEnumerable<Assembly> dependencies)
-		{
-			var references = ResolveReferences(dependencies);
-			var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        private CSharpCompilation CreateCompilation(string assemblyName, string code,
+            IEnumerable<Assembly> dependencies)
+        {
+            var references = ResolveReferences(dependencies);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-			var compilation = CSharpCompilation.Create(
-				assemblyName,
-				new[] {syntaxTree},
-				references,
-				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
-			return compilation;
-		}
+            var compilation = CSharpCompilation.Create(
+                assemblyName,
+                new[] {syntaxTree},
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            return compilation;
+        }
 
-		private CSharpCompilation CreateCompilation(string assemblyName, string code, IEnumerable<string> dependencyLocations)
-		{
-			var references = ResolveReferences(dependencyLocations);
-			var syntaxTree = CSharpSyntaxTree.ParseText(code);
+        private CSharpCompilation CreateCompilation(string assemblyName, string code,
+            IEnumerable<string> dependencyLocations)
+        {
+            var references = ResolveReferences(dependencyLocations);
+            var syntaxTree = CSharpSyntaxTree.ParseText(code);
 
-			var compilation = CSharpCompilation.Create(
-				assemblyName,
-				new[] {syntaxTree},
-				references,
-				new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
+            var compilation = CSharpCompilation.Create(
+                assemblyName,
+                new[] {syntaxTree},
+                references,
+                new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
 
-			return compilation;
-		}
+            return compilation;
+        }
 
-		private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
-		{
-			var compiled = GetCompileTimeReferences();
-			var references = new HashSet<MetadataReference>(compiled);
-			foreach (var dependency in dependencies)
-			foreach (var resolver in _resolvers)
-			{
-				var reference = resolver.Resolve(dependency);
-				if (reference != null)
-					references.Add(reference);
-			}
+        private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<Assembly> dependencies)
+        {
+            var compiled = GetCompileTimeReferences();
+            var references = new HashSet<MetadataReference>(compiled);
+            foreach (var dependency in dependencies)
+            foreach (var resolver in _resolvers)
+            {
+                var reference = resolver.Resolve(dependency);
+                if (reference != null)
+                    references.Add(reference);
+            }
 
-			return references;
-		}
+            return references;
+        }
 
-		private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<string> assemblyLocations)
-		{
-			var compiled = GetCompileTimeReferences();
-			var references = new HashSet<MetadataReference>(compiled);
-			foreach (var dependency in assemblyLocations)
-			foreach (var resolver in _resolvers)
-			{
-				var reference = resolver.Resolve(dependency);
-				if (reference != null)
-					references.Add(reference);
-			}
+        private IEnumerable<MetadataReference> ResolveReferences(IEnumerable<string> assemblyLocations)
+        {
+            var compiled = GetCompileTimeReferences();
+            var references = new HashSet<MetadataReference>(compiled);
+            foreach (var dependency in assemblyLocations)
+            foreach (var resolver in _resolvers)
+            {
+                var reference = resolver.Resolve(dependency);
+                if (reference != null)
+                    references.Add(reference);
+            }
 
-			return references;
-		}
+            return references;
+        }
 
-		private static IEnumerable<MetadataReference> GetCompileTimeReferences()
-		{
-			return
-				from library in DependencyContext.Default.CompileLibraries
-				from path in library.ResolveReferencePaths()
-				select AssemblyMetadata.CreateFromFile(path)
-				into assembly
-				select assembly.GetReference();
-		}
-	}
+        private static IEnumerable<MetadataReference> GetCompileTimeReferences()
+        {
+            return
+                from library in DependencyContext.Default.CompileLibraries
+                from path in library.ResolveReferencePaths()
+                select AssemblyMetadata.CreateFromFile(path)
+                into assembly
+                select assembly.GetReference();
+        }
+    }
 }
