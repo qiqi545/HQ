@@ -23,8 +23,12 @@ using HQ.Cohort.AspNetCore.Mvc.Controllers;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Models;
 using HQ.Cohort.Services;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
+using HQ.Tokens;
+using HQ.Tokens.Configuration;
+using HQ.Tokens.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -40,30 +44,46 @@ namespace HQ.Cohort.AspNetCore.Mvc
             // See: https://github.com/aspnet/Mvc/issues/5992
             var controllerAssembly = Assembly.GetCallingAssembly();
 
-            return services
-                .AddMvc(o => { setupAction?.Invoke(o); })
+            return services.AddMvc(o => { setupAction?.Invoke(o); })
                 .AddApplicationPart(controllerAssembly)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public static IServiceCollection AddIdentityApi<TUser, TRole>(this IMvcBuilder mvc, IConfiguration config,
-            Action<MvcOptions> setupAction = null)
+        public static IServiceCollection AddIdentityApi<TUser, TRole>(this IMvcBuilder mvc,
+            IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
             where TUser : IdentityUser
             where TRole : IdentityRole
         {
-            mvc.Services.Configure<IdentityApiOptions>(config);
+            var services = mvc.Services;
 
-            mvc.Services.Configure<RazorViewEngineOptions>(x =>
+            var options = new SecurityOptions();
+            securityConfig.Bind(options);
+
+            services.AddAuthorization(x =>
             {
-                x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
+                x.AddPolicy(Constants.Security.Policies.ManageUsers,
+                    b =>
+                    {
+                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                            ClaimValues.ManageUsers);
+                    });
+                x.AddPolicy(Constants.Security.Policies.ManageRoles,
+                    b =>
+                    {
+                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                            ClaimValues.ManageRoles);
+                    });
             });
+
+            services.Configure<IdentityApiOptions>(identityConfig);
+            services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
 
             mvc.AddControllers<TUser, TRole>();
 
-            mvc.Services.AddScoped<IUserService<TUser>, UserService<TUser>>();
-            mvc.Services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
+            services.AddScoped<IUserService<TUser>, UserService<TUser>>();
+            services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
-            return mvc.Services;
+            return services;
         }
 
         public static IdentityBuilder AddIdentity<TUser>(this IServiceCollection services, IConfiguration configuration)
@@ -85,7 +105,7 @@ namespace HQ.Cohort.AspNetCore.Mvc
 
         private static void AddIdentityPreamble<TUser>(IServiceCollection services) where TUser : class
         {
-            var authBuilder = services.AddAuthentication(o =>
+            var authBuilder = AuthenticationServiceCollectionExtensions.AddAuthentication(services, o =>
             {
                 o.DefaultScheme = IdentityConstants.ApplicationScheme;
                 o.DefaultSignInScheme = IdentityConstants.ExternalScheme;

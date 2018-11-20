@@ -22,7 +22,6 @@ using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.Sqlite;
-using HQ.Lingo.Dialects;
 using HQ.Lingo.Sqlite;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
@@ -86,7 +85,7 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
-            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+            identityBuilder.Services.AddSingleton(dialect);
 
             return identityBuilder;
         }

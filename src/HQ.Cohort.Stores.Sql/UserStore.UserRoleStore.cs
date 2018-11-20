@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -22,7 +22,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Stores.Sql.Models;
+using HQ.Common;
 using HQ.Lingo.Queries;
+using HQ.Tokens;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Stores.Sql
@@ -65,6 +67,8 @@ namespace HQ.Cohort.Stores.Sql
             }
         }
 
+        private static readonly List<string> SuperUserRoles = new List<string> { ClaimValues.SuperUser };
+
         public async Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -78,17 +82,16 @@ namespace HQ.Cohort.Stores.Sql
             });
 
             // Mapping:
-            mappingQuery.Sql += " AND AspNetUserRoles.DocumentType = @DocumentType";
             _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
             var roleMapping =
                 (await _connection.Current.QueryAsync<AspNetUserRoles<TKey>>(mappingQuery.Sql, mappingQuery.Parameters))
                 .AsList();
 
             // Roles:
-            var roleQuery = SqlBuilder.Select<TRole>();
             if (roleMapping.Any())
             {
-                roleQuery.Sql += $" WHERE {typeof(TRole).Name}.Id IN @RoleIds";
+                var roleQuery = SqlBuilder.Select<TRole>();
+                roleQuery.Sql += $" AND {typeof(TRole).Name}.Id IN @RoleIds";
                 roleQuery.Parameters.Add("@RoleIds", roleMapping.Select(x => x.RoleId));
                 _connection.SetTypeInfo(typeof(TRole));
 

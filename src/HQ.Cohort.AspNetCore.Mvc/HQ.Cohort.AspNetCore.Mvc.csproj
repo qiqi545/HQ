@@ -17,8 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Domicile\src\HQ.Domicile\HQ.Domicile.csproj" />
     <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\HQ.Rosetta.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\HQ.Tokens.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\..\HQ.Tokens\src\HQ.Tokens\HQ.Tokens.csproj" />
     <ProjectReference Include="..\HQ.Cohort\HQ.Cohort.csproj" />
   </ItemGroup>

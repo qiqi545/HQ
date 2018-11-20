@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -23,39 +23,47 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Stores.Sql.Models;
-using HQ.Common;
+using HQ.Common.Extensions;
 using HQ.Lingo.Queries;
+using HQ.Tokens;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Stores.Sql
 {
     partial class UserStore<TUser, TKey, TRole> : IUserClaimStore<TUser>
     {
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly List<Claim> SuperUserClaims = new List<Claim>
-        {
-            new Claim(Constants.ClaimTypes.Role, Constants.ClaimValues.SuperUser)
-        };
-
         public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && user.NormalizedUserName?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username.ToUpperInvariant())
-                return SuperUserClaims;
+            var claims = new List<Claim>();
 
-            var claims = await GetUserClaimsAsync(user);
+            if (SupportsSuperUser && user.NormalizedUserName?.ToUpperInvariant() ==
+                _security.Value.SuperUser?.Username.ToUpperInvariant())
+            {
+                var superUser = CreateSuperUserInstance();
+                claims.TryAddClaim(_security.Value.Claims.UserIdClaim, $"{superUser.Id}");
+                claims.TryAddClaim(_security.Value.Claims.UserNameClaim, superUser.UserName);
+                claims.TryAddClaim(_security.Value.Claims.EmailClaim, superUser.Email, ClaimValueTypes.Email);
+                claims.TryAddClaim(_security.Value.Claims.RoleClaim, ClaimValues.SuperUser, ClaimValueTypes.Email);
+                return claims;
+            }
+
+            var id = user.Id == null ? string.Empty : $"{user.Id}";
+            claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
+            claims.TryAddClaim(_security.Value.Claims.UserNameClaim, user.UserName);
+            claims.TryAddClaim(_security.Value.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
+            claims.AddRange(await GetUserClaimsAsync(user));
 
             var roleNames = await GetRolesAsync(user, cancellationToken);
 
             foreach (var roleName in roleNames)
             {
-                claims.Add(new Claim(ClaimTypes.Role, roleName));
-
                 var role = await _roles.FindByNameAsync(roleName);
                 if (role == null)
                     continue;
+
+                claims.Add(new Claim(_security.Value.Claims.RoleClaim, roleName));
 
                 var roleClaims = await _roles.GetClaimsAsync(role);
                 if (!roleClaims.Any())
@@ -117,8 +125,7 @@ namespace HQ.Cohort.Stores.Sql
                 var query = SqlBuilder.Delete<AspNetUserClaims<TKey>>(new
                     {UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value});
 
-                _connection.SetTypeInfo(typeof(TUser));
-
+                _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
                 var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
                 Debug.Assert(deleted == 1);
             }

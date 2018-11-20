@@ -49,6 +49,8 @@ namespace HQ.Cohort.Stores.Sql
             _queryable = queryable;
         }
 
+        public CancellationToken CancellationToken { get; }
+
         public IQueryable<TRole> Roles => MaybeQueryable();
 
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
@@ -163,8 +165,6 @@ namespace HQ.Cohort.Stores.Sql
         {
         }
 
-        public CancellationToken CancellationToken { get; }
-
         private IQueryable<TRole> MaybeQueryable()
         {
             if (_queryable.IsSafe)
@@ -179,8 +179,6 @@ namespace HQ.Cohort.Stores.Sql
         private async Task<IEnumerable<TRole>> GetAllRolesAsync()
         {
             var query = SqlBuilder.Select<TRole>();
-            query.Sql += $" WHERE {typeof(TRole).Name}.DocumentType = @DocumentType";
-
             _connection.SetTypeInfo(typeof(TRole));
             var roles = await _connection.Current.QueryAsync<TRole>(query.Sql);
             return roles;

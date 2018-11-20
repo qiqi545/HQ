@@ -15,10 +15,11 @@
 
 #endregion
 
-namespace HQ.Cohort.AspNetCore.Mvc.Configuration
+namespace HQ.Cohort.Stores.Sql.DocumentDb
 {
-    public class IdentityApiOptions
+    public class DocumentDbOptions
     {
-        public string RootPath { get; set; } = "api";
+        public string CollectionId { get; set; }
+        public int? OfferThroughput { get; set; } = 400;
     }
 }

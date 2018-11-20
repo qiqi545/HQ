@@ -23,7 +23,6 @@ using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.SqlServer;
-using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -89,7 +88,7 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
             identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
-            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+            identityBuilder.Services.AddSingleton(dialect);
 
             return identityBuilder;
         }

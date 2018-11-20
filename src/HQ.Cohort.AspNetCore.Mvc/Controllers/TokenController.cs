@@ -22,6 +22,7 @@ using HQ.Cohort.AspNetCore.Mvc.Models;
 using HQ.Cohort.Extensions;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
+using HQ.Domicile.Configuration;
 using HQ.Rosetta.AspNetCore.Mvc;
 using HQ.Rosetta.Queryable;
 using HQ.Tokens;
@@ -41,6 +42,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class TokenController<TUser> : DataController where TUser : IdentityUser
     {
+        private readonly IOptions<PublicApiOptions> _apiOptions;
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
         private readonly UserManager<TUser> _userManager;
@@ -49,15 +51,18 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             UserManager<TUser> userManager,
             IServerTimestampService timestamps,
             IOptions<SecurityOptions> securityOptions,
+            IOptions<PublicApiOptions> apiOptions,
             IQueryableProvider<TUser> queryable,
             ILogger<TokenController<TUser>> logger)
         {
             _userManager = userManager;
             _timestamps = timestamps;
             _securityOptions = securityOptions;
+            _apiOptions = apiOptions;
         }
 
-        [Authorize, HttpPut]
+        [Authorize]
+        [HttpPut]
         public IActionResult VerifyToken()
         {
             if (User.Identity == null)
@@ -69,10 +74,11 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             return Unauthorized();
         }
 
-        [AllowAnonymous, HttpPost]
+        [AllowAnonymous]
+        [HttpPost]
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
-            if (!Valid(model, out var error))
+            if (!ValidModelState(out var error))
                 return error;
 
             TUser user;
@@ -103,12 +109,18 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
 
             if (await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                Debug.Assert(nameof(IUserNameProvider.UserName) == nameof(IdentityUser.UserName));
+                Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
+
+                var claims = await _userManager.GetClaimsAsync(user);
+                var provider = user.ActLike<IUserIdProvider>();
+                var security = _securityOptions.Value;
+                var api = _apiOptions.Value;
+
+                var token = JwtSecurity.CreateToken(provider, claims, security, api);
 
                 return Ok(new
                 {
-                    AccessToken = JwtSecurity.CreateToken(user.ActLike<IUserNameProvider>(),
-                        await _userManager.GetClaimsAsync(user), _securityOptions.Value)
+                    AccessToken = token
                 });
             }
 

@@ -24,9 +24,7 @@ using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.DocumentDb;
-using HQ.Connect.DocumentDb.Configuration;
 using HQ.Lingo.Descriptor;
-using HQ.Lingo.Dialects;
 using HQ.Lingo.DocumentDb;
 using HQ.Lingo.Queries;
 using HQ.Rosetta.Queryable;
@@ -40,39 +38,45 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
     public static class Add
     {
         public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
-            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
-            return AddDocumentDbIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, null, scope);
         }
 
-        public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole>(
-            this IdentityBuilder identityBuilder, IConfiguration config, string connectionString,
+        public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+            string connectionString,
+            IConfiguration documentDbConfig,
             ConnectionScope scope = ConnectionScope.ByRequest)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUser<string>
+            where TRole : IdentityRole<string>
         {
-            return AddDocumentDbIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
-        }
-
-        public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope,
-            IConfiguration identityConfig, IConfiguration documentDbConfig)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
-        {
-            identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
-            identityBuilder.Services.Configure<DocumentDbOptions>(documentDbConfig);
-
-            return AddDocumentDbIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope,
-                identityConfig.Bind, documentDbConfig.Bind);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, documentDbConfig,
+                scope);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole>(
-            this IdentityBuilder identityBuilder, string connectionString,
+            this IdentityBuilder identityBuilder,
+            string connectionString,
+            IConfiguration documentDbConfig,
+            ConnectionScope scope)
+            where TKey : IEquatable<TKey>
+            where TUser : IdentityUser<TKey>
+            where TRole : IdentityRole<TKey>
+        {
+            if (documentDbConfig != null) identityBuilder.Services.Configure<DocumentDbOptions>(documentDbConfig);
+
+            var configureDocumentDb =
+                documentDbConfig != null ? documentDbConfig.Bind : (Action<DocumentDbOptions>) null;
+
+            return AddDocumentDbIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope, null,
+                configureDocumentDb);
+        }
+
+        public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole>(
+            this IdentityBuilder identityBuilder,
+            string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest,
             Action<IdentityOptionsExtended> configureIdentity = null,
             Action<DocumentDbOptions> configureDocumentDb = null)
@@ -82,13 +86,21 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            var dialect = new DocumentDbDialect();
+            // this makes more sense in a Configure extension
+            var serviceProvider = identityBuilder.Services.BuildServiceProvider();
 
-            var identityOptions = new IdentityOptionsExtended();
+            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ??
+                                  new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
             var documentDbOptions = new DocumentDbOptions();
             configureDocumentDb?.Invoke(documentDbOptions);
+
+            var dialect = new DocumentDbDialect();
+            var builder = new DocumentDbConnectionStringBuilder(connectionString);
+
+            documentDbOptions.CollectionId = documentDbOptions.CollectionId ??
+                                             builder.DefaultCollection ?? Common.Constants.Identity.DefaultCollection;
 
             MigrateToLatest<TKey>(connectionString, identityOptions, documentDbOptions);
 
@@ -96,8 +108,9 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
                 OnCommand<TKey>(), OnConnection);
 
             SqlBuilder.Dialect = dialect;
+
             identityBuilder.Services.AddMetrics();
-            identityBuilder.Services.AddSingleton<ISqlDialect>(dialect);
+            identityBuilder.Services.AddSingleton(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
 
@@ -106,7 +119,9 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
 
         private static void OnConnection(IDbConnection c, IServiceProvider r)
         {
-            if (c is DocumentDbConnection connection) { }
+            if (c is DocumentDbConnection connection)
+            {
+            }
         }
 
         private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()

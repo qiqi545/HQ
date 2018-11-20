@@ -23,9 +23,7 @@ using System.Threading.Tasks;
 using HQ.Cohort.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Rosetta;
 using HQ.Rosetta.AspNetCore.Mvc;
-using HQ.Tokens.AspNetCore.Mvc.Attributes;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,8 +35,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [Route("roles")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    [Authorize]
-    [RequireClaim(Constants.ClaimTypes.Permission, Constants.ClaimValues.ManageRoles)]
+    [Authorize(Constants.Security.Policies.ManageUsers)]
     public class RoleController<TRole> : DataController where TRole : IdentityRole
     {
         private readonly RoleManager<TRole> _roleManager;
@@ -115,7 +112,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
         [HttpDelete("{id}/claims")]
         public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromQuery] DeleteClaimModel model)
         {
-            if (!Valid(model, out var error))
+            if (!ValidModelState(out var error))
                 return error;
 
             var role = await _roleManager.FindByIdAsync(id);
