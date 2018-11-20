@@ -19,12 +19,10 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Tests")]
 
-#if !PLATFORM
 [assembly: InternalsVisibleTo("HQ.DocumentDb")]
 [assembly: InternalsVisibleTo("HQ.MySql")]
 [assembly: InternalsVisibleTo("HQ.Sqlite")]
 [assembly: InternalsVisibleTo("HQ.SqlServer")]
-#endif
 
 // ReSharper disable once CheckNamespace
 namespace Internals

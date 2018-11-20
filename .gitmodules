@@ -43,3 +43,6 @@
 [submodule "src/Stack/HQ.Connect"]
 	path = src/Stack/HQ.Connect
 	url = https://github.com/hq-io/HQ.Connect
+[submodule "src/Stack/HQ.Strings"]
+	path = src/Stack/HQ.Strings
+	url = https://github.com/hq-io/HQ.Strings

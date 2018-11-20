@@ -22,8 +22,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\Stack\HQ.Strings\src\HQ.Strings\**\*.cs" Exclude="..\Stack\HQ.Strings\src\HQ.Strings\obj\**;..\Stack\HQ.Strings\src\HQ.Strings\bin\**" Link="Strings\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Common\src\HQ.Common\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common\obj\**;..\Stack\HQ.Common\src\HQ.Common\bin\**" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common.AspNetCore\obj\**;..\Stack\HQ.Common\src\HQ.Common.AspNetCore\bin\**" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Common\src\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Common\src\HQ.Common.AspNetCore.Mvc\obj\**;..\Stack\HQ.Common\src\HQ.Common.AspNetCore.Mvc\bin\**" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence\bin\**" Link="Cadence\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\bin\**" Link="Cadence.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\**\*.cs" Exclude="..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\obj\**;..\Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\bin\**" Link="Cadence.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -40,7 +41,6 @@
     <Content Include="..\Stack\HQ.MissionControl\src\HQ.MissionControl\**\*.cs" Exclude="..\Stack\HQ.MissionControl\src\HQ.MissionControl\obj\**;..\Stack\HQ.MissionControl\src\HQ.MissionControl\bin\**" Link="MissionControl\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Flow\src\HQ.Flow\**\*.cs" Exclude="..\Stack\HQ.Flow\src\HQ.Flow\obj\**;..\Stack\HQ.Flow\src\HQ.Flow\bin\**" Link="Flow\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens\bin\**" Link="Tokens\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\obj\**;..\Stack\HQ.Tokens\src\HQ.Tokens.AspNetCore.Mvc\bin\**" Link="Tokens.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort\bin\**" Link="Cohort\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\bin\**" Link="Cohort.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\bin\**" Link="Cohort.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -50,6 +50,7 @@
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Dapper\bin\**" Link="Lingo.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Queries\bin\**" Link="Lingo.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\bin\**" Link="Lingo.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.Batching\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.Batching\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.Batching\bin\**" Link="Lingo.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\Stack\HQ.Zero\src\HQ.Zero\**\*.cs" Exclude="..\Stack\HQ.Zero\src\HQ.Zero\obj\**;..\Stack\HQ.Zero\src\HQ.Zero\bin\**" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
@@ -58,6 +59,7 @@
     <PackageReference Include="DotLiquid" Version="2.0.298" />
     <PackageReference Include="Humanizer" Version="2.5.1" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="LiteGuard" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.6" />
@@ -65,7 +67,7 @@
     <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.9.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.1.1" />
