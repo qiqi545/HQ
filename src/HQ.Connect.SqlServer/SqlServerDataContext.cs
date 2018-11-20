@@ -22,7 +22,8 @@ namespace HQ.Connect.SqlServer
 {
     public class SqlServerDataContext : DataContext
     {
-        public SqlServerDataContext(string connectionString, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null) :
+        public SqlServerDataContext(string connectionString, IServiceProvider serviceProvider,
+            Action<IDbConnection, IServiceProvider> onConnection = null) :
             base(new SqlServerConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
         {
         }

@@ -24,11 +24,12 @@ namespace HQ.Connect
     public class DataConnection : IDataConnection
     {
         private readonly DataContext _current;
-        private readonly IServiceProvider _serviceProvider;
         private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
+        private readonly IServiceProvider _serviceProvider;
         private Type _type;
 
-        public DataConnection(DataContext current, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand)
+        public DataConnection(DataContext current, IServiceProvider serviceProvider,
+            Action<IDbCommand, Type, IServiceProvider> onCommand)
         {
             _current = current;
             _serviceProvider = serviceProvider;
@@ -52,4 +53,3 @@ namespace HQ.Connect
         }
     }
 }
-

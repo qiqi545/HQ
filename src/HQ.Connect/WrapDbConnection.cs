@@ -23,11 +23,12 @@ namespace HQ.Connect
 {
     public class WrapDbConnection : DbConnection
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
+        private readonly IServiceProvider _serviceProvider;
         private readonly Type _type;
 
-        public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
+        public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider,
+            Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
         {
             Inner = inner;
             _serviceProvider = serviceProvider;
@@ -76,4 +77,3 @@ namespace HQ.Connect
         }
     }
 }
-

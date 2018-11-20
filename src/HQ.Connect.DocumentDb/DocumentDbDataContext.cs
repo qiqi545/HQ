@@ -22,10 +22,10 @@ namespace HQ.Connect.DocumentDb
 {
     public class DocumentDbDataContext : DataContext
     {
-        public DocumentDbDataContext(string connectionString, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null) :
+        public DocumentDbDataContext(string connectionString, IServiceProvider serviceProvider,
+            Action<IDbConnection, IServiceProvider> onConnection = null) :
             base(new DocumentDbConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
         {
         }
     }
 }
-

@@ -22,7 +22,8 @@ namespace HQ.Connect.Sqlite
 {
     public class SqliteDataContext : DataContext
     {
-        public SqliteDataContext(string connectionString, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null) :
+        public SqliteDataContext(string connectionString, IServiceProvider serviceProvider,
+            Action<IDbConnection, IServiceProvider> onConnection = null) :
             base(new SqliteConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
         {
         }

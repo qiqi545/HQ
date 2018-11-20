@@ -15,8 +15,6 @@
 
 #endregion
 
-using HQ.Common;
-
 namespace HQ.Connect.DocumentDb.Configuration
 {
     public class DocumentDbOptions

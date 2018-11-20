@@ -28,4 +28,3 @@ namespace HQ.Connect.DocumentDb
         }
     }
 }
-

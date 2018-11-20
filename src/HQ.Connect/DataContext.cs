@@ -25,12 +25,13 @@ namespace HQ.Connect
         private static readonly object Sync = new object();
 
         private readonly IConnectionFactory _connectionFactory;
-        private readonly IServiceProvider _serviceProvider;
         private readonly Action<IDbConnection, IServiceProvider> _onConnection;
+        private readonly IServiceProvider _serviceProvider;
 
         private volatile IDbConnection _connection;
 
-        public DataContext(IConnectionFactory connectionFactory, IServiceProvider serviceProvider, Action<IDbConnection, IServiceProvider> onConnection = null)
+        public DataContext(IConnectionFactory connectionFactory, IServiceProvider serviceProvider,
+            Action<IDbConnection, IServiceProvider> onConnection = null)
         {
             _connectionFactory = connectionFactory;
             _serviceProvider = serviceProvider;
@@ -65,4 +66,3 @@ namespace HQ.Connect
         }
     }
 }
-
