@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
+  <Import Project="$(SolutionDir)..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -12,7 +13,6 @@
   <PropertyGroup>
     <Description>Real-time business metrics for .NET.</Description>
     <PackageTags>metrics dotnet-standard dotnet-core hq-stack</PackageTags>
-    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
