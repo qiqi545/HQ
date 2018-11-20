@@ -19,5 +19,7 @@ using System.Collections.Generic;
 
 namespace HQ.Rosetta
 {
-    public interface IPage<out T> : IPageHeader, IEnumerable<T> { }
+    public interface IPage<out T> : IPageHeader, IEnumerable<T>
+    {
+    }
 }

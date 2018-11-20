@@ -72,46 +72,36 @@ namespace HQ.Rosetta
                 // explicit case: user typed Field.Asc() or Field.Desc()
                 if (entry.Body is MethodCallExpression call && call.Arguments.Count == 1 &&
                     call.Arguments[0] is MemberExpression callMember)
-                {
                     options.Fields.Add(new Sort
                     {
                         Field = callMember.Member.Name,
                         Descending = call.Method.Name == "Desc"
                     });
-                }
                 // implicit case: user typed Field and omitted Asc() or Desc()
                 else if (entry.Body is MemberExpression member)
-                {
                     options.Fields.Add(new Sort
                     {
                         Field = member.Member.Name
                     });
-                }
                 // special case: user performed the explicit case, but we have multiple params in C# 7.2, which thunks with conversion operations
                 else if (entry.Body is MethodCallExpression callConvert &&
                          callConvert.Arguments.Count == 1 &&
                          callConvert.Arguments[0] is UnaryExpression unary &&
                          unary.Operand is MemberExpression convertMember)
-                {
                     options.Fields.Add(new Sort
                     {
                         Field = convertMember.Member.Name,
                         Descending = callConvert.Method.Name == "Desc"
                     });
-                }
                 // special case: user performed the implicit case, but we have multiple params in C# 7.2, which thunks with conversion operations
                 else if (entry.Body is UnaryExpression callConvertUnary &&
                          callConvertUnary.Operand is MemberExpression convertMemberOmitted)
-                {
                     options.Fields.Add(new Sort
                     {
                         Field = convertMemberOmitted.Member.Name
                     });
-                }
                 else
-                {
                     throw new NotSupportedException("Ordering by an expression has a strict set of outcomes");
-                }
             }
 
             return options;

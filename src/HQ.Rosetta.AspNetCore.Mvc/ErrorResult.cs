@@ -3,35 +3,35 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Rosetta.AspNetCore.Mvc
 {
-	public class ErrorResult : ObjectResult
-	{
-		private readonly Error _error;
-		private readonly object[] _args;
+    public class ErrorResult : ObjectResult
+    {
+        protected readonly Error Error;
+        protected readonly object[] Arguments;
 
-		public ErrorResult(Error error, params object[] args) : base(error)
-		{
-			_error = error;
-			_args = args;
-		}
+        public ErrorResult(Error error, params object[] args) : base(error)
+        {
+            Error = error;
+            Arguments = args;
+        }
 
-		public override async Task ExecuteResultAsync(ActionContext context)
-		{
-			FormatError();
-			await base.ExecuteResultAsync(context);
-		}
+        public override async Task ExecuteResultAsync(ActionContext context)
+        {
+            FormatError();
+            await base.ExecuteResultAsync(context);
+        }
 
-		public override void ExecuteResult(ActionContext context)
-		{
-			FormatError();
-			base.ExecuteResult(context);
-		}
+        public override void ExecuteResult(ActionContext context)
+        {
+            FormatError();
+            base.ExecuteResult(context);
+        }
 
-		private void FormatError()
-		{
-			if (_args.Length > 0)
-				_error.Message = string.Format(_error.Message, _args);
-			Value = _error;
-			StatusCode = _error.StatusCode;
-		}
-	}
+        protected virtual void FormatError()
+        {
+            if (Arguments.Length > 0)
+                Error.Message = string.Format(Error.Message, Arguments);
+            Value = Error;
+            StatusCode = Error.StatusCode;
+        }
+    }
 }

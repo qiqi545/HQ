@@ -15,15 +15,19 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("HQ.Adapt")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.AspNetCore.Mvc")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
+using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
-    internal class InternalsVisibleTo
+    public interface IObjectSaveService
     {
+        Task<ObjectSave> SaveAsync(Type type, IObject @object);
+        Task<ObjectSave> SaveAsync(Type type, IObject @object, DynamicObject partial);
+
+        Task<IEnumerable<ObjectSave>> SaveAsync(Type type, IEnumerable<IObject> objects, int startingAt = 0,
+            int? count = null);
     }
 }

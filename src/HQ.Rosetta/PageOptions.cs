@@ -25,15 +25,20 @@ namespace HQ.Rosetta
 {
     public class PageOptions : IQueryValidator
     {
+        public static readonly PageOptions Empty = new PageOptions();
+
         public int Page { get; set; }
         public int PerPage { get; set; }
 
         public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = new List<Error>();
-            if (Page < 1) list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PageRangeInvalid, HttpStatusCode.BadRequest));
+            if (Page < 1)
+                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PageRangeInvalid,
+                    HttpStatusCode.BadRequest));
             if (PerPage > options.PerPageMax)
-                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PerPageTooHigh, HttpStatusCode.RequestEntityTooLarge));
+                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PerPageTooHigh,
+                    HttpStatusCode.RequestEntityTooLarge));
 
             errors = list;
             return list.Count == 0;

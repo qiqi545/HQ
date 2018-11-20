@@ -15,15 +15,19 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("HQ.Adapt")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.AspNetCore.Mvc")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
+using System;
+using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
-    internal class InternalsVisibleTo
+    public interface IObjectGetService
     {
+        Task<IPage<IObject>> GetAsync(Type type, SortOptions sort = null, PageOptions page = null,
+            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+
+        Task<IObject> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null);
+
+        Task<IPage<IObject>> GetAsync(Type type, string query, SortOptions sort = null, PageOptions page = null,
+            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 }

@@ -24,6 +24,8 @@ namespace HQ.Rosetta
 {
     public class FieldOptions : IQueryValidator
     {
+        public static readonly FieldOptions Empty = new FieldOptions();
+
         public List<string> Fields { get; } = new List<string>();
 
         public bool Validate(Type type, QueryOptions options, out IList<Error> errors)

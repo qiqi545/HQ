@@ -33,6 +33,8 @@ namespace HQ.Rosetta
             Errors = errors;
         }
 
+        public static Operation CompletedWithoutErrors => new Operation();
+
         public OperationResult Result { get; set; }
         public bool Succeeded => Result == OperationResult.Succeeded || Result == OperationResult.SucceededWithErrors;
         public bool HasErrors => Errors?.Count() > 0;

@@ -44,7 +44,8 @@ namespace HQ.Rosetta
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)
-                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch, string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
+                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
+                        string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 
@@ -65,7 +66,8 @@ namespace HQ.Rosetta
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)
-                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch, string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
+                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
+                        string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 

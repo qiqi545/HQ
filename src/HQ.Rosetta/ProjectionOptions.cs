@@ -34,7 +34,9 @@ namespace HQ.Rosetta
             var list = FieldValidations.MustExistOnType(Fields.Enumerate(x => x.Field));
 
             if (Fields?.Count > options.ProjectionMaxFields)
-                list.Add(new Error(ErrorEvents.RequestEntityTooLarge, $"You may only specify up to {0} {options.ProjectionMaxFields} fields.", HttpStatusCode.RequestEntityTooLarge));
+                list.Add(new Error(ErrorEvents.RequestEntityTooLarge,
+                    $"You may only specify up to {0} {options.ProjectionMaxFields} fields.",
+                    HttpStatusCode.RequestEntityTooLarge));
 
             errors = list;
             return list.Count == 0;

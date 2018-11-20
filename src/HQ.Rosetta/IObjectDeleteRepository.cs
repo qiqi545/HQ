@@ -17,24 +17,27 @@
 
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
-    public interface IObjectSaveRepository<in T> where T : IObject
+    public interface IObjectDeleteRepository
     {
-        Task<Operation<ObjectSave>> SaveAsync(T @object);
-        Task<Operation<ObjectSave>> SaveAsync(T @object, List<string> fields);
-        Task<Operation> SaveAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null);
+        Task<Operation<ObjectDelete>> DeleteAsync(Type type, long id);
+        Task<Operation<ObjectDelete>> DeleteAsync(Type type, IObject @object);
+
+        Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0,
+            int? count = null);
+
+        Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects,
+            long startingAt = 0, int? count = null);
     }
 
-    public interface IObjectSaveRepository
+    public interface IObjectDeleteRepository<in T> where T : IObject
     {
-        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object);
-        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object, DynamicObject partial);
-
-        Task<Operation<IEnumerable<ObjectSave>>> SaveAsync(Type type, IEnumerable<IObject> objects, int startingAt = 0,
-            int? count = null);
+        Task<Operation<ObjectDelete>> DeleteAsync(long id);
+        Task<Operation<ObjectDelete>> DeleteAsync(T @object);
+        Task<Operation> DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null);
+        Task<Operation> DeleteAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null);
     }
 }

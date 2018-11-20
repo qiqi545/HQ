@@ -15,15 +15,21 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("HQ.Adapt")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.AspNetCore.Mvc")]
-[assembly: InternalsVisibleTo("HQ.Rosetta.Tests")]
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
-    internal class InternalsVisibleTo
+    public interface IObjectDeleteService
     {
+        Task<ObjectDelete> DeleteAsync(Type type, long id);
+        Task<ObjectDelete> DeleteAsync(Type type, IObject @object);
+
+        Task<IEnumerable<ObjectDelete>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0,
+            int? count = null);
+
+        Task<IEnumerable<ObjectDelete>> DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0,
+            int? count = null);
     }
 }

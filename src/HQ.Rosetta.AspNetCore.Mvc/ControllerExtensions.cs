@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Strings;
 
 namespace HQ.Rosetta.AspNetCore.Mvc
 {
@@ -18,7 +19,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
                     errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
                 }
             }
-            var validationError = new Error(ErrorEvents.ValidationFailed, "Validation Failed", 422, errors);
+            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.Rosetta_ValidationFailed, 422, errors);
             return validationError;
         }
 

@@ -25,18 +25,20 @@ namespace HQ.Rosetta
 {
     public class FilterOptions : IQueryValidator
     {
-        public List<Filter> Fields { get; set; } = new List<Filter>();
+        public static readonly FilterOptions Empty = new FilterOptions();
 
-        private static FilterOperator BuildOperator(string member)
-        {
-            return member == "EqualTo" ? FilterOperator.Equal : FilterOperator.NotEqual;
-        }
+        public List<Filter> Fields { get; set; } = new List<Filter>();
 
         public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = FieldValidations.MustExistOnType(Fields.Enumerate(x => x.Field));
             errors = list;
             return list.Count == 0;
+        }
+
+        private static FilterOperator BuildOperator(string member)
+        {
+            return member == "EqualTo" ? FilterOperator.Equal : FilterOperator.NotEqual;
         }
 
         public static FilterOptions FromType<T>(params Expression<Func<T, object>>[] filterBy)
@@ -63,46 +65,36 @@ namespace HQ.Rosetta
                 // explicit case: user typed Field.EqualTo() or Field.NotEqualTo
                 if (entry.Body is MethodCallExpression call && call.Arguments.Count == 1 &&
                     call.Arguments[0] is MemberExpression callMember)
-                {
                     options.Fields.Add(new Filter
                     {
                         Field = callMember.Member.Name,
                         Operator = BuildOperator(call.Method.Name)
                     });
-                }
                 // implicit case: user typed Field and omitted EqualTo() or NotEqualTo()
                 else if (entry.Body is MemberExpression member)
-                {
                     options.Fields.Add(new Filter
                     {
-                        Field = member.Member.Name,
+                        Field = member.Member.Name
                     });
-                }
                 // special case: user performed the explicit case, but we have multiple params in C# 7.2, which thunks with conversion operations
                 else if (entry.Body is MethodCallExpression callConvert &&
                          callConvert.Arguments.Count == 1 &&
                          callConvert.Arguments[0] is UnaryExpression unary &&
                          unary.Operand is MemberExpression convertMember)
-                {
                     options.Fields.Add(new Filter
                     {
                         Field = convertMember.Member.Name,
                         Operator = BuildOperator(convertMember.Member.Name)
                     });
-                }
                 // special case: user performed the implicit case, but we have multiple params in C# 7.2, which thunks with conversion operations
                 else if (entry.Body is UnaryExpression callConvertUnary &&
                          callConvertUnary.Operand is MemberExpression convertMemberOmitted)
-                {
                     options.Fields.Add(new Filter
                     {
                         Field = convertMemberOmitted.Member.Name
                     });
-                }
                 else
-                {
                     throw new NotSupportedException("Ordering by an expression has a strict set of outcomes");
-                }
             }
 
             return options;

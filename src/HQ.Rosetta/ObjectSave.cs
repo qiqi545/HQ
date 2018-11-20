@@ -22,6 +22,6 @@ namespace HQ.Rosetta
         NotFound,
         NoChanges,
         Created,
-        Updated,
+        Updated
     }
 }
