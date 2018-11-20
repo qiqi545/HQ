@@ -21,6 +21,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Runtime.Serialization;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Cohort.Extensions;
 using HQ.Cohort.Models;
@@ -127,6 +128,43 @@ namespace HQ.Cohort.Services
         public async Task<Operation> RemoveFromRoleAsync(TUser user, string role)
         {
             var result = await _userManager.RemoveFromRoleAsync(user, role);
+            return result.ToOperation();
+        }
+
+        #endregion
+
+        #region Claims Assignment
+
+        public async Task<Operation<IList<Claim>>> GetClaimsAsync(TUser user)
+        {
+            return new Operation<IList<Claim>>(await _userManager.GetClaimsAsync(user));
+        }
+
+        public async Task<Operation> AddClaimAsync(TUser user, Claim claim)
+        {
+            var result = await _userManager.AddClaimAsync(user, claim);
+
+            return result.ToOperation();
+        }
+
+        public async Task<Operation> RemoveClaimAsync(TUser user, Claim claim)
+        {
+            var result = await _userManager.RemoveClaimAsync(user, claim);
+
+            return result.ToOperation();
+        }
+
+        public async Task<Operation> AddClaimsAsync(TUser user, IEnumerable<Claim> claims)
+        {
+            var result = await _userManager.AddClaimsAsync(user, claims);
+
+            return result.ToOperation();
+        }
+
+        public async Task<Operation> RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims)
+        {
+            var result = await _userManager.RemoveClaimsAsync(user, claims);
+
             return result.ToOperation();
         }
 

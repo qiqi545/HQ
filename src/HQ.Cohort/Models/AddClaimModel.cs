@@ -15,9 +15,16 @@
 
 #endregion
 
-namespace HQ.Cohort
+using System.ComponentModel.DataAnnotations;
+
+namespace HQ.Cohort.Models
 {
-    internal static class Errors
+    public class AddClaimModel
     {
+        [Required] public string Type { get; set; }
+
+        [Required] public string Value { get; set; }
+
+        public string ValueType { get; set; }
     }
 }

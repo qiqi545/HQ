@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Rosetta;
 using Microsoft.AspNetCore.Identity;
@@ -43,6 +44,12 @@ namespace HQ.Cohort.Models
         Task<Operation<IList<string>>> GetRolesAsync(TUser user);
         Task<Operation> AddToRoleAsync(TUser user, string role);
         Task<Operation> RemoveFromRoleAsync(TUser user, string role);
+
+        Task<Operation<IList<Claim>>> GetClaimsAsync(TUser user);
+        Task<Operation> AddClaimAsync(TUser user, Claim claim);
+        Task<Operation> RemoveClaimAsync(TUser user, Claim claim);
+        Task<Operation> AddClaimsAsync(TUser user, IEnumerable<Claim> claims);
+        Task<Operation> RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims);
 
         Task<Operation<string>> GenerateChangePhoneNumberTokenAsync(TUser user, string phoneNumber);
         Task<Operation<string>> GenerateChangeEmailTokenAsync(TUser user, string newEmail);
