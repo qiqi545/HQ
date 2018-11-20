@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System.Net;
 using System.Text;
 using HQ.Common;
@@ -9,7 +26,8 @@ namespace HQ.Domicile.Extensions
 {
     public static class EnvelopingExtensions
     {
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, QueryOptions options, object data, out object body)
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, QueryOptions options,
+            object data, out object body)
         {
             if (UseEnvelope(request, options))
             {
@@ -20,7 +38,7 @@ namespace HQ.Domicile.Extensions
                     headers = response.Headers
                 };
 
-                response.StatusCode = (int)HttpStatusCode.OK;
+                response.StatusCode = (int) HttpStatusCode.OK;
             }
             else
             {
@@ -28,7 +46,8 @@ namespace HQ.Domicile.Extensions
             }
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, QueryOptions options, IPageHeader header, out object body)
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, QueryOptions options,
+            IPageHeader header, out object body)
         {
             if (UseEnvelope(request, options))
             {
@@ -47,7 +66,7 @@ namespace HQ.Domicile.Extensions
                     }
                 };
 
-                response.StatusCode = (int)HttpStatusCode.OK;
+                response.StatusCode = (int) HttpStatusCode.OK;
             }
             else
             {
@@ -57,20 +76,20 @@ namespace HQ.Domicile.Extensions
                     var nextPage = $"<{GetNextPage(request, header, options)}>; rel=\"next\"";
                     sb.Append(nextPage);
                 }
+
                 if (header.HasPreviousPage)
                 {
                     var previousPage = $"<{GetPreviousPage(request, header, options)}>; rel=\"previous\"";
                     sb.Append(previousPage);
                 }
+
                 if (header.TotalPages > 1)
                 {
                     var lastPage = $"<{GetLastPage(request, header, options)}>; rel=\"last\"";
                     sb.Append(lastPage);
                 }
-                if (sb.Length > 0)
-                {
-                    response.Headers.Add(Constants.HttpHeaders.Link, sb.ToString());
-                }
+
+                if (sb.Length > 0) response.Headers.Add(Constants.HttpHeaders.Link, sb.ToString());
                 response.Headers.Add(options.TotalCountHeader, header.TotalCount.ToString());
                 response.Headers.Add(options.TotalPagesHeader, header.TotalPages.ToString());
                 body = header;
@@ -91,21 +110,24 @@ namespace HQ.Domicile.Extensions
         {
             if (!header.HasPreviousPage)
                 return null;
-            return $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
+            return
+                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetNextPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
             if (!header.HasNextPage)
                 return null;
-            return $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
+            return
+                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetLastPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
             if (header.TotalPages < 2)
                 return null;
-            return $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
+            return
+                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
         }
     }
 }

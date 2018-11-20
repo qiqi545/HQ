@@ -89,7 +89,8 @@ namespace HQ.Domicile.Filters
             if (result.Value is IObject resource)
             {
                 var lastModifiedDate = resource.CreatedAt;
-                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified, lastModifiedDate.ToString("R"));
+                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified,
+                    lastModifiedDate.ToString("R"));
                 _cache.Save(cacheKey, lastModifiedDate);
             }
         }

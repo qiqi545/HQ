@@ -15,10 +15,17 @@
 
 #endregion
 
+using System.Reflection;
+
 namespace HQ.Domicile.Configuration
 {
     public class PublicApiOptions
     {
+        public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
+        public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+        public string TenantId { get; set; }
+        public string TenantName { get; set; }
+
         public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
         public JsonMultiCaseOptions JsonMultiCase { get; set; } = new JsonMultiCaseOptions();
         public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
