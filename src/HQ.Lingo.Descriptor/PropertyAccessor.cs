@@ -67,10 +67,9 @@ namespace HQ.Lingo.Descriptor
             return attribute != null;
         }
 
-        public object Get(dynamic example)
+        public object Get(object instance)
         {
-            var result = _accessor[example, Name];
-            return result;
+            return _accessor[instance, Name];
         }
 
         public void Set(object instance, object value)

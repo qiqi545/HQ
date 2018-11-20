@@ -33,14 +33,14 @@ namespace HQ.Lingo.Queries
             return Insert(entity, GetDescriptor<T>());
         }
 
-        public static Query Insert(object instance)
-        {
-            return Insert(instance, GetDescriptor(instance.GetType()));
-        }
-
         public static Query Insert<T>(T instance, IDataDescriptor descriptor)
         {
             return Insert(instance as object, descriptor);
+        }
+
+        public static Query Insert(object instance)
+        {
+            return Insert(instance, GetDescriptor(instance.GetType()));
         }
 
         public static Query Insert(object instance, IDataDescriptor descriptor)
