@@ -38,10 +38,7 @@ namespace System.Data.DocumentDb
             }
         }
 
-        public override void Close()
-        {
-            _closed = true;
-        }
+        public override void Close() => _closed = true;
 
         public override bool Read()
         {

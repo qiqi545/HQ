@@ -24,8 +24,8 @@ namespace System.Data.DocumentDb
         {
             Guard.AgainstNullArgument(nameof(connectionString), connectionString);
 
-            var entries = connectionString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-            var tokens = entries.Select(part => part.Split(new[] {'='}, 2));
+            var entries = connectionString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            var tokens = entries.Select(part => part.Split(new [] { '=' }, 2));
             _settings = tokens.ToDictionary(split => split[0], split => split[1], StringComparer.OrdinalIgnoreCase);
 
             ConnectionString = ToString();
@@ -75,12 +75,11 @@ namespace System.Data.DocumentDb
         {
             return new DocumentClient(AccountEndpoint, AccountKey, Defaults.JsonSettings);
         }
-
+        
         #region DbConnectionStringBuilder
 
         public override int Count => _settings.Count;
         public override bool IsFixedSize => false;
-
         public override object this[string keyword]
         {
             get => _settings[keyword];

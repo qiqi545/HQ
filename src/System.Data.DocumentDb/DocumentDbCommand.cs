@@ -82,8 +82,7 @@ namespace System.Data.DocumentDb
 
             const bool disableAutomaticIdGeneration = true;
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-            var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
-                .Result;
+            var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
             return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
         }
 
@@ -116,31 +115,31 @@ namespace System.Data.DocumentDb
             switch (preamble)
             {
                 case Constants.Insert:
-                {
-                    var commandBase = CommandText.Substring(Constants.Insert.Length);
-                    var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
-                    var qualifier = collectionName + ".";
-
-                    foreach (DocumentDbParameter parameter in _parameters)
                     {
-                        var parameterName = parameter.ParameterName.Substring(qualifier.Length);
-                        document.Add(parameterName, parameter.Value);
+                        var commandBase = CommandText.Substring(Constants.Insert.Length);
+                        var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
+                        var qualifier = collectionName + ".";
 
-                        if (parameterName == Id)
-                            document.Add(Constants.IdKey, parameter.Value);
+                        foreach (DocumentDbParameter parameter in _parameters)
+                        {
+                            var parameterName = parameter.ParameterName.Substring(qualifier.Length);
+                            document.Add(parameterName, parameter.Value);
+
+                            if (parameterName == Id)
+                                document.Add(Constants.IdKey, parameter.Value);
+                        }
+                        break;
                     }
-                    break;
-                }
                 default:
-                {
-                    foreach (DocumentDbParameter parameter in _parameters)
                     {
-                        document.Add(parameter.ParameterName, parameter.Value);
-                        if (parameter.ParameterName == Id)
-                            document[Constants.IdKey] = parameter.Value;
+                        foreach (DocumentDbParameter parameter in _parameters)
+                        {
+                            document.Add(parameter.ParameterName, parameter.Value);
+                            if (parameter.ParameterName == Id)
+                                document[Constants.IdKey] = parameter.Value;
+                        }
+                        break;
                     }
-                    break;
-                }
             }
 
             return document;
