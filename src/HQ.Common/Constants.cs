@@ -53,6 +53,16 @@ namespace HQ.Common
             public const string DefaultCollection = "AspNetIdentity";
         }
 
+        public static class Security
+        {
+            public static class Policies
+            {
+                public const string SuperUserOnly = "SuperUserOnly";
+                public const string ManageUsers = "ManageUsers";
+                public const string ManageRoles = "ManageRoles";
+            }
+        }
+
         public static class QueryStrings
         {
             public const string MultiCase = "case";
@@ -104,18 +114,6 @@ namespace HQ.Common
             public const string JsonPatch = "application/json-patch+json";
             public const string JsonMergePatch = "application/merge-patch+json";
             public const string JsonSchema = "application/schema+json";
-        }
-
-        public static class ClaimTypes
-        {
-            public const string AccountId = "app.account_id";
-            public const string AccountName = "app.account_name";
-            public const string ApplicationId = "app.app_id";
-            public const string ApplicationName = "app.app_name";
-            public const string UserId = "app.user_id";
-            public const string UserName = "app.user_name";
-            public const string Role = "app.role";
-            public const string Permission = "app.permission";
         }
 
         public static class ClaimValues

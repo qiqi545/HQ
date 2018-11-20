@@ -16,13 +16,19 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
-namespace HQ.Common.Models
+namespace HQ.Common.Extensions
 {
-    public interface ITypeRegistry
+    internal static class ClaimsExtensions
     {
-        bool Register(Type type);
-        bool RegisterIfNotRegistered(Type type);
-        bool TryGetType(string name, out Type type);
+        public static void TryAddClaim(this List<Claim> claims, string type, string value,
+            string typeValue = ClaimValueTypes.String)
+        {
+            if (!string.IsNullOrWhiteSpace(type) && !string.IsNullOrWhiteSpace(value) &&
+                !claims.Exists(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
+                claims.Add(new Claim(type, value, typeValue));
+        }
     }
 }
