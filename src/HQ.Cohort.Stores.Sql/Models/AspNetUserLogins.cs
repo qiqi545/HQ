@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,7 +17,7 @@
 
 namespace HQ.Cohort.Stores.Sql.Models
 {
-    public class AspNetUserLogins<TKey> : AspNetIdentity
+    public class AspNetUserLogins<TKey>
     {
         public TKey UserId { get; set; }
         public string LoginProvider { get; set; }
