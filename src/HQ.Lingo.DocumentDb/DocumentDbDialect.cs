@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
+using LiteGuard;
 
 namespace HQ.Lingo.DocumentDb
 {
