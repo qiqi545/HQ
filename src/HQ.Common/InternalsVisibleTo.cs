@@ -18,6 +18,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Adapt")]
+[assembly: InternalsVisibleTo("HQ.Archivist")]
 [assembly: InternalsVisibleTo("HQ.Cohort")]
 [assembly: InternalsVisibleTo("HQ.Cohort.AspNetCore.Mvc")]
 [assembly: InternalsVisibleTo("HQ.Cohort.Stores.Sql")]

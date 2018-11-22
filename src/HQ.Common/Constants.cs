@@ -53,6 +53,11 @@ namespace HQ.Common
             public const string DefaultCollection = "AspNetIdentity";
         }
 
+        public static class Schema
+        {
+            public const string DefaultNamespace = "MyNamespace";
+        }
+
         public static class Security
         {
             public static class Policies
@@ -114,6 +119,9 @@ namespace HQ.Common
             public const string JsonPatch = "application/json-patch+json";
             public const string JsonMergePatch = "application/merge-patch+json";
             public const string JsonSchema = "application/schema+json";
+            public const string OpenApiJson = "application/vnd.oai.openapi+json";
+            public const string JsonApi = "application/vnd.api+json";
+            public const string Archivist = "application/vnd.hq.archivist+json";
         }
     }
 }
