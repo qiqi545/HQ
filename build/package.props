@@ -24,7 +24,7 @@
     <PackageId>$(MSBuildProjectName).Sources</PackageId>
     <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
-  
+
   <!-- Include symbols when publishing package binaries -->
   <PropertyGroup Condition="'$(Configuration)'=='Package'">
     <IncludeSymbols>true</IncludeSymbols>
