@@ -17,11 +17,13 @@
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Extensions;
 using HQ.Domicile.Configuration;
 using HQ.Domicile.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,104 +31,170 @@ namespace HQ.Domicile
 {
     public static class Use
     {
-        public static IApplicationBuilder UsePublicApi(this IApplicationBuilder app)
+        public static IApplicationBuilder UsePublicApi(this IApplicationBuilder app, bool snapshot = true)
         {
             Bootstrap.EnsureInitialized();
 
             app.UseCors();
             app.UseResponseCompression();
-            app.UseMethodOverrides();
-            app.UseResourceRewriting();
-            app.UseRequestLimiting();
-            app.UseJsonMultiCase();
+
+            app.UseMethodOverrides(snapshot);
+            app.UseResourceRewriting(snapshot);
+            app.UseRequestLimiting(snapshot);
+            app.UseJsonMultiCase(snapshot);
 
             return app;
         }
         
-        private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app)
+        private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app, bool snapshot)
         {
-            return app.Use(async (context, next) =>
+            if (snapshot)
             {
-                if (context.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var feature))
-                    if (context.Request.Method.Equals(Constants.HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
-                        context.Request.Headers.TryGetValue(feature.MethodOverrideHeader, out var header))
-                    {
-                        var value = header.ToString();
-                        if (feature.AllowedMethodOverrides.Contains(value, StringComparer.OrdinalIgnoreCase))
-                            context.Request.Method = value;
-                    }
-
-                await next();
-            });
-        }
-
-        private static IApplicationBuilder UseResourceRewriting(this IApplicationBuilder app)
-        {
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var feature))
+                if (app.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options))
                 {
-                    // Use X-Action to disambiguate one vs. many resources in a write call
-                    // See: http://restlet.com/blog/2015/05/18/implementing-bulk-updates-within-restful-services/
-                    var action = context.Request.Headers[feature.ActionHeader];
-                    if (action.Count > 0)
+                    return app.Use(async (context, next) =>
                     {
-                        var path = context.Request.Path.ToUriComponent();
-                        path = $"{path}/{action}";
-                        context.Request.Path = path;
-                    }
-
-                    // Use 'application/merge-patch+json' header to disambiguate JSON patch strategy:
-                    // See: https://tools.ietf.org/html/rfc7386
-                    var contentType = context.Request.Headers[Constants.HttpHeaders.ContentType];
-                    if (contentType.Count > 0 && contentType.Contains(Constants.MediaTypes.JsonMergePatch))
-                    {
-                        var path = context.Request.Path.ToUriComponent();
-                        path = $"{path}/merge";
-                        context.Request.Path = path;
-                    }
+                        await ExecuteFeature(context, options, next);
+                    });
                 }
+                return app;
+            }
 
-                await next();
-            });
-        }
-
-        private static IApplicationBuilder UseRequestLimiting(this IApplicationBuilder app)
-        {
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var feature))
+                if (context.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options))
                 {
-                    var bodySize = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
-                    if (bodySize != null && !bodySize.IsReadOnly)
-                        bodySize.MaxRequestBodySize = feature.MaxRequestSizeBytes;
-                }
-
-                await next();
-            });
-        }
-
-        private static IApplicationBuilder UseJsonMultiCase(this IApplicationBuilder app)
-        {
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var feature))
-                {
-                    var qs = context.Request.Query;
-                    qs.TryGetValue(feature.QueryStringParameter, out var values);
-
-                    foreach (var value in values)
-                    foreach (var entry in context.RequestServices.GetServices<ITextTransform>())
-                    {
-                        if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
-                            continue;
-                        context.Items[Constants.ContextKeys.JsonMultiCase] = entry;
-                        break;
-                    }
-
-                    await next();
+                    await ExecuteFeature(context, options, next);
                 }
             });
+
+            async Task ExecuteFeature(HttpContext c, MethodOverrideOptions o, Func<Task> next)
+            {
+                if (c.Request.Method.Equals(Constants.HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
+                    c.Request.Headers.TryGetValue(o.MethodOverrideHeader, out var header))
+                {
+                    var value = header.ToString();
+                    if (o.AllowedMethodOverrides.Contains(value, StringComparer.OrdinalIgnoreCase))
+                        c.Request.Method = value;
+                }
+                await next();
+            }
+        }
+
+        private static IApplicationBuilder UseResourceRewriting(this IApplicationBuilder app, bool snapshot)
+        {
+            if (snapshot)
+            {
+                if (app.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options))
+                {
+                    return app.Use(async (context, next) =>
+                    {
+                        await ExecuteFeature(context, options, next);
+                    });
+                }
+                return app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, ResourceRewritingOptions o, Func<Task> next)
+            {
+                // Use X-Action to disambiguate one vs. many resources in a write call
+                // See: http://restlet.com/blog/2015/05/18/implementing-bulk-updates-within-restful-services/
+                var action = c.Request.Headers[o.ActionHeader];
+                if (action.Count > 0)
+                {
+                    var path = c.Request.Path.ToUriComponent();
+                    path = $"{path}/{action}";
+                    c.Request.Path = path;
+                }
+
+                // Use 'application/merge-patch+json' header to disambiguate JSON patch strategy:
+                // See: https://tools.ietf.org/html/rfc7386
+                var contentType = c.Request.Headers[Constants.HttpHeaders.ContentType];
+                if (contentType.Count > 0 && contentType.Contains(Constants.MediaTypes.JsonMergePatch))
+                {
+                    var path = c.Request.Path.ToUriComponent();
+                    path = $"{path}/merge";
+                    c.Request.Path = path;
+                }
+                await next();
+            }
+        }
+
+        private static IApplicationBuilder UseRequestLimiting(this IApplicationBuilder app, bool snapshot)
+        {
+            if (snapshot)
+            {
+                if (app.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options))
+                {
+                    return app.Use(async (context, next) =>
+                    {
+                        await ExecuteFeature(context, options, next);
+                    });
+                }
+                return app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, RequestLimitOptions o, Func<Task> next)
+            {
+                var bodySize = c.Features.Get<IHttpMaxRequestBodySizeFeature>();
+                if (bodySize != null && !bodySize.IsReadOnly)
+                    bodySize.MaxRequestBodySize = o.MaxRequestSizeBytes;
+                await next();
+            }
+        }
+
+        private static IApplicationBuilder UseJsonMultiCase(this IApplicationBuilder app, bool snapshot)
+        {
+            if (snapshot)
+            {
+                if (app.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var options))
+                {
+                    return app.Use(async (context, next) =>
+                    {
+                        await ExecuteFeature(context, options, next);
+                    });
+                }
+                return app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, JsonMultiCaseOptions o, Func<Task> next)
+            {
+                var qs = c.Request.Query;
+                qs.TryGetValue(o.QueryStringParameter, out var values);
+                foreach (var value in values)
+                foreach (var entry in c.RequestServices.GetServices<ITextTransform>())
+                {
+                    if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    c.Items[Constants.ContextKeys.JsonMultiCase] = entry;
+                    break;
+                }
+                await next();
+            }
         }
     }
 }

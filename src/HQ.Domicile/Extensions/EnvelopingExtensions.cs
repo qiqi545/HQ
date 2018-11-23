@@ -108,26 +108,17 @@ namespace HQ.Domicile.Extensions
 
         internal static string GetPreviousPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            if (!header.HasPreviousPage)
-                return null;
-            return
-                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
+            return !header.HasPreviousPage ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetNextPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            if (!header.HasNextPage)
-                return null;
-            return
-                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
+            return !header.HasNextPage ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetLastPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            if (header.TotalPages < 2)
-                return null;
-            return
-                $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
+            return header.TotalPages < 2 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
         }
     }
 }

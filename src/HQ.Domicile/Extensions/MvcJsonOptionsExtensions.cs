@@ -22,37 +22,37 @@ namespace HQ.Domicile.Extensions
 {
     public static class MvcJsonOptionsExtensions
     {
-        public static void Apply(this MvcJsonOptions options, JsonSerializerSettings right)
+        public static void Apply(this MvcJsonOptions options, JsonSerializerSettings settings)
         {
-            options.SerializerSettings.CheckAdditionalContent = right.CheckAdditionalContent;
-            options.SerializerSettings.ConstructorHandling = right.ConstructorHandling;
-            options.SerializerSettings.Context = right.Context;
-            options.SerializerSettings.ContractResolver = right.ContractResolver;
-            options.SerializerSettings.Converters = right.Converters;
-            options.SerializerSettings.Culture = right.Culture;
-            options.SerializerSettings.DateFormatHandling = right.DateFormatHandling;
-            options.SerializerSettings.DateFormatString = right.DateFormatString;
-            options.SerializerSettings.DateParseHandling = right.DateParseHandling;
-            options.SerializerSettings.DateTimeZoneHandling = right.DateTimeZoneHandling;
-            options.SerializerSettings.DefaultValueHandling = right.DefaultValueHandling;
-            options.SerializerSettings.EqualityComparer = right.EqualityComparer;
-            options.SerializerSettings.Error = right.Error;
-            options.SerializerSettings.FloatFormatHandling = right.FloatFormatHandling;
-            options.SerializerSettings.FloatParseHandling = right.FloatParseHandling;
-            options.SerializerSettings.Formatting = right.Formatting;
-            options.SerializerSettings.MaxDepth = right.MaxDepth;
-            options.SerializerSettings.MetadataPropertyHandling = right.MetadataPropertyHandling;
-            options.SerializerSettings.MissingMemberHandling = right.MissingMemberHandling;
-            options.SerializerSettings.NullValueHandling = right.NullValueHandling;
-            options.SerializerSettings.ObjectCreationHandling = right.ObjectCreationHandling;
-            options.SerializerSettings.PreserveReferencesHandling = right.PreserveReferencesHandling;
-            options.SerializerSettings.ReferenceLoopHandling = right.ReferenceLoopHandling;
-            options.SerializerSettings.ReferenceResolverProvider = right.ReferenceResolverProvider;
-            options.SerializerSettings.SerializationBinder = right.SerializationBinder;
-            options.SerializerSettings.StringEscapeHandling = right.StringEscapeHandling;
-            options.SerializerSettings.TraceWriter = right.TraceWriter;
-            options.SerializerSettings.TypeNameAssemblyFormatHandling = right.TypeNameAssemblyFormatHandling;
-            options.SerializerSettings.TypeNameHandling = right.TypeNameHandling;
+            options.SerializerSettings.CheckAdditionalContent = settings.CheckAdditionalContent;
+            options.SerializerSettings.ConstructorHandling = settings.ConstructorHandling;
+            options.SerializerSettings.Context = settings.Context;
+            options.SerializerSettings.ContractResolver = settings.ContractResolver;
+            options.SerializerSettings.Converters = settings.Converters;
+            options.SerializerSettings.Culture = settings.Culture;
+            options.SerializerSettings.DateFormatHandling = settings.DateFormatHandling;
+            options.SerializerSettings.DateFormatString = settings.DateFormatString;
+            options.SerializerSettings.DateParseHandling = settings.DateParseHandling;
+            options.SerializerSettings.DateTimeZoneHandling = settings.DateTimeZoneHandling;
+            options.SerializerSettings.DefaultValueHandling = settings.DefaultValueHandling;
+            options.SerializerSettings.EqualityComparer = settings.EqualityComparer;
+            options.SerializerSettings.Error = settings.Error;
+            options.SerializerSettings.FloatFormatHandling = settings.FloatFormatHandling;
+            options.SerializerSettings.FloatParseHandling = settings.FloatParseHandling;
+            options.SerializerSettings.Formatting = settings.Formatting;
+            options.SerializerSettings.MaxDepth = settings.MaxDepth;
+            options.SerializerSettings.MetadataPropertyHandling = settings.MetadataPropertyHandling;
+            options.SerializerSettings.MissingMemberHandling = settings.MissingMemberHandling;
+            options.SerializerSettings.NullValueHandling = settings.NullValueHandling;
+            options.SerializerSettings.ObjectCreationHandling = settings.ObjectCreationHandling;
+            options.SerializerSettings.PreserveReferencesHandling = settings.PreserveReferencesHandling;
+            options.SerializerSettings.ReferenceLoopHandling = settings.ReferenceLoopHandling;
+            options.SerializerSettings.ReferenceResolverProvider = settings.ReferenceResolverProvider;
+            options.SerializerSettings.SerializationBinder = settings.SerializationBinder;
+            options.SerializerSettings.StringEscapeHandling = settings.StringEscapeHandling;
+            options.SerializerSettings.TraceWriter = settings.TraceWriter;
+            options.SerializerSettings.TypeNameAssemblyFormatHandling = settings.TypeNameAssemblyFormatHandling;
+            options.SerializerSettings.TypeNameHandling = settings.TypeNameHandling;
         }
     }
 }

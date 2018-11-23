@@ -41,11 +41,9 @@ namespace HQ.Domicile
             services.AddHttpCaching();
             services.AddGzipCompression();
 
-            services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[]
-                {new CamelCase(), new SnakeCase(), new PascalCase()});
-            services.AddSingleton(r => JsonConvert.DefaultSettings());
+            services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
             services.AddSingleton<IConfigureOptions<MvcOptions>, PublicApiMvcConfiguration>();
-
+            services.AddSingleton(r => JsonConvert.DefaultSettings());
             return services;
         }
 
@@ -67,8 +65,7 @@ namespace HQ.Domicile
         {
             services.AddSingleton<IHttpCache>(r => new MemoryHttpCache(r.GetRequiredService<IMemoryCache>()));
             services.AddSingleton<IETagGenerator, WeakETagGenerator>();
-            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(),
-                r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
+            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(), r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
             return services;
         }
 
