@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore.NodeServices;
@@ -28,13 +27,10 @@ namespace HQ.Remix.Tests
 	{
 		public HandlerFactoryFixture()
 		{
-			var resolvers = new List<IMetadataReferenceResolver> {new DefaultMetadataReferenceResolver()};
-			var builder = new DefaultAssemblyBuilder(new DefaultAssemblyLoadContextProvider(), resolvers);
-
 			var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider())
 				{ProjectPath = Directory.GetCurrentDirectory()};
 			var nodeServices = NodeServicesFactory.CreateNodeServices(options);
-			Factory = new HandlerFactory(builder, nodeServices, typeof(string).GetTypeInfo().Assembly); // mscorlib
+			Factory = new HandlerFactory(nodeServices, typeof(string).GetTypeInfo().Assembly); // mscorlib
 		}
 
 		public HandlerFactory Factory { get; }
