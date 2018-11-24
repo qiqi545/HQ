@@ -155,16 +155,6 @@ namespace HQ.Extensions.Caching
             return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, slidingExpiration, dependency)));
         }
 
-        public object Get(string key)
-        {
-            return _cache.Get(key);
-        }
-
-        public T Get<T>(string key)
-        {
-            return _cache.Get(key) is T typed ? typed : default;
-        }
-
         public void Remove(string key)
         {
             _cache.Remove(key);
@@ -224,9 +214,9 @@ namespace HQ.Extensions.Caching
             return policy;
         }
 
-        public object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null)
+        public object Get(string key, Func<object> add = null, TimeSpan? timeout = null)
         {
-            var item = Get(key);
+            var item = _cache.Get(key);
             if (item != null)
                 return item;
 
@@ -248,11 +238,11 @@ namespace HQ.Extensions.Caching
             }
         }
 
-        public T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
+        public T Get<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
         {
-            var item = Get(key);
+            var item = _cache.Get(key) is T typed ? typed : default;
             if (item != null)
-                return (T)item;
+                return item;
 
             if (add == null)
                 return default;

@@ -16,6 +16,8 @@
 #endregion
 
 using HQ.Extensions.Caching;
+using HQ.Extensions.Caching.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Tests.Caching
 {
@@ -23,7 +25,7 @@ namespace HQ.Extensions.Tests.Caching
     {
         public InMemoryCacheTests()
         {
-            cache = new InProcessCache();
+            cache = new InProcessCache(Options.Create(new CacheOptions()));
         }
     }
 }
