@@ -29,7 +29,7 @@ namespace HQ.Extensions.Financial
     ///     the thread viewing the money, unless an explicit currency is provided.
     /// </summary>
     [Serializable]
-    public partial struct Money : IComparable<Money>, IEquatable<Money>, IFormattable
+    public struct Money : IComparable<Money>, IEquatable<Money>, IFormattable
     {
         private double? _override;
         private long _places;

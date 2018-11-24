@@ -31,10 +31,10 @@ namespace HQ.Extensions.Financial
     ///     <see cref="DisplayCulture" />, or <see cref="RegionInfo" />.
     /// </summary>
     [Serializable]
-    [DebuggerDisplay("{Code}")]
-    public partial class CurrencyInfo
+    [DebuggerDisplay("{" + nameof(Code) + "}")]
+    public class CurrencyInfo
     {
-        private static readonly IDictionary<string, CultureInfo> _cultures;
+        private static readonly IDictionary<string, CultureInfo> Cultures;
 
         static CurrencyInfo()
         {
@@ -42,10 +42,10 @@ namespace HQ.Extensions.Financial
                 .Where(c => !c.IsNeutralCulture &&
                             !c.ThreeLetterISOLanguageName.Equals("IVL", StringComparison.InvariantCultureIgnoreCase));
 
-            _cultures = new Dictionary<string, CultureInfo>(0);
+            Cultures = new Dictionary<string, CultureInfo>(0);
             foreach (var culture in cultures)
             {
-                _cultures.Add(culture.Name, culture);
+                Cultures.Add(culture.Name, culture);
             }
         }
 
@@ -214,7 +214,7 @@ namespace HQ.Extensions.Financial
             var currencySymbol = currencyCode.ToString("G");
 
             // Get all regions with the given currency (pivot on language to avoid losing precision)
-            var locales = from c in _cultures.Values
+            var locales = from c in Cultures.Values
                 let r = new RegionInfo(c.LCID)
                 where r.ISOCurrencySymbol.Equals(currencySymbol)
                 select new {Region = r, Culture = c};
@@ -232,7 +232,7 @@ namespace HQ.Extensions.Financial
             {
                 // There was no logical match for this currency in the current culture;
                 // choose the most used equivalent for the native country as a fallback
-                locale = locales.LastOrDefault();
+                locale = locales.FirstOrDefault();
                 fallbackCulture = locale.Culture;
             }
 
@@ -248,7 +248,7 @@ namespace HQ.Extensions.Financial
             var nativeRegion = GetNativeRegionFromCurrencyCodeAndUserCulture(currencyCode, out fallbackCulture);
 
             var cultureName = string.Format("{0}-{1}", languageCode, nativeRegion);
-            var cultureInfo = _cultures.ContainsKey(cultureName)
+            var cultureInfo = Cultures.ContainsKey(cultureName)
                 ? new CultureInfo(cultureName)
                 : new CultureInfo(languageCode);
 

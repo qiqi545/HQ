@@ -74,7 +74,7 @@ namespace HQ.Extensions.Tests.Financial
             currencyInfo = Currency.CAD;
             Assert.Equal(new CultureInfo("en-CA"), currencyInfo.DisplayCulture);
 
-            // ... and it should not display as if it were in de currency!
+            // ... and it should not display as if it were in DE currency!
             Money money = new Money(Currency.CAD, 1000);
             Assert.Equal("$1,000.00", money.DisplayNative());
 
