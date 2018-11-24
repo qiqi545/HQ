@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Dates
 {
     /// <summary>
     ///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
@@ -134,7 +134,7 @@ namespace HQ.Extensions.Types
                     sum += span.Seconds;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("interval");
+                    throw new ArgumentOutOfRangeException(nameof(interval));
             }
 
             return sum;
@@ -324,7 +324,6 @@ namespace HQ.Extensions.Types
                 }
             }
         }
-
         private void CalculateYears(DateTime start, DateTime end)
         {
             Years = end.Year - start.Year;

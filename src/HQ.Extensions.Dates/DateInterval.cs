@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Dates
 {
     /// <summary>
     ///     Used when calculating the difference between two <see cref="DateTime" /> instances

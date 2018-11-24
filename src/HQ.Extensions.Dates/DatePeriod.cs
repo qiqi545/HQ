@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Dates
 {
     /// <summary>
     ///     A period of time used in date calculations.
@@ -50,58 +50,37 @@ namespace HQ.Extensions.Types
         /// <summary>
         ///     A period of time occurring every day
         /// </summary>
-        public static DatePeriod Daily
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Days, 1); }
-        }
+        public static DatePeriod Daily => new DatePeriod(DatePeriodFrequency.Days, 1);
 
         /// <summary>
         ///     A period of time occurring every month
         /// </summary>
-        public static DatePeriod Monthly
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Months, 1); }
-        }
+        public static DatePeriod Monthly => new DatePeriod(DatePeriodFrequency.Months, 1);
 
         /// <summary>
         ///     A period of time occurring every other month
         /// </summary>
-        public static DatePeriod BiMonthly
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Months, 2); }
-        }
+        public static DatePeriod BiMonthly => new DatePeriod(DatePeriodFrequency.Months, 2);
 
         /// <summary>
         ///     A period of time occurring every week
         /// </summary>
-        public static DatePeriod Weekly
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Weeks, 1); }
-        }
+        public static DatePeriod Weekly => new DatePeriod(DatePeriodFrequency.Weeks, 1);
 
         /// <summary>
         ///     A period of time occurring every other week
         /// </summary>
-        public static DatePeriod BiWeekly
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Weeks, 2); }
-        }
+        public static DatePeriod BiWeekly => new DatePeriod(DatePeriodFrequency.Weeks, 2);
 
         /// <summary>
         ///     A period of time occurring every year
         /// </summary>
-        public static DatePeriod Annually
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Years, 1); }
-        }
+        public static DatePeriod Annually => new DatePeriod(DatePeriodFrequency.Years, 1);
 
         /// <summary>
         ///     A period of time occurring every other year
         /// </summary>
-        public static DatePeriod BiAnnually
-        {
-            get { return new DatePeriod(DatePeriodFrequency.Years, 2); }
-        }
+        public static DatePeriod BiAnnually => new DatePeriod(DatePeriodFrequency.Years, 2);
 
         /// <summary>
         ///     Gets the date occurrences in this period, between a start and end date.

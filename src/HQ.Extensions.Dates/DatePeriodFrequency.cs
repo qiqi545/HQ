@@ -15,62 +15,31 @@
 
 #endregion
 
-using System;
-
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Dates
 {
     /// <summary>
-    ///     Represents world currency by numeric and alphabetic values, as per ISO 4217:
-    ///     http://www.iso.org/iso/currency_codes_list-1. This enum is implicitly converted
-    ///     to <see cref="CurrencyInfo" /> instances internally, so you only need to reference this
-    ///     enum to work with rich currency objects.
+    ///     The frequency interval between occurrences in a <see cref="DatePeriod" />.
     /// </summary>
-    [Serializable]
-    public enum Currency : ushort
+    public enum DatePeriodFrequency
     {
         /// <summary>
-        ///     USD
+        ///     Days
         /// </summary>
-        USD = 840,
+        Days,
 
         /// <summary>
-        ///     CAD
+        ///     Weeks
         /// </summary>
-        CAD = 124,
+        Weeks,
 
         /// <summary>
-        ///     EUR
+        ///     Months
         /// </summary>
-        EUR = 978,
+        Months,
 
         /// <summary>
-        ///     AUD
+        ///     Years
         /// </summary>
-        AUD = 036,
-
-        /// <summary>
-        ///     GBP
-        /// </summary>
-        GBP = 826,
-
-        /// <summary>
-        ///     INR
-        /// </summary>
-        INR = 356,
-
-        /// <summary>
-        ///     JPY
-        /// </summary>
-        JPY = 392,
-
-        /// <summary>
-        ///     CHF
-        /// </summary>
-        CHF = 756,
-
-        /// <summary>
-        ///     NZD
-        /// </summary>
-        NZD = 554
+        Years
     }
 }

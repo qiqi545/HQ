@@ -20,12 +20,12 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Money
 {
     /// <summary>
-    ///     Money is immutable and coupled to the <see cref="CurrencyInfo" /> it belongs
+    ///     Money is immutable and coupled to the <see cref="P:HQ.Extensions.Money.Money.CurrencyInfo" /> it belongs
     ///     to at all times. In most cases, the code will attempt to determine
-    ///     the correct <see cref="CurrencyInfo" /> on its own based on the culture of
+    ///     the correct <see cref="P:HQ.Extensions.Money.Money.CurrencyInfo" /> on its own based on the culture of
     ///     the thread viewing the money, unless an explicit currency is provided.
     /// </summary>
     [Serializable]
@@ -282,7 +282,7 @@ namespace HQ.Extensions.Types
 
         private static int CountDecimalPlaces(double input)
         {
-            var value = input.ToString();
+            var value = input.ToString(CultureInfo.CurrentCulture);
 
             var places = value.Substring(value.IndexOf('.') + 1).Length;
 
@@ -291,11 +291,137 @@ namespace HQ.Extensions.Types
 
         private static int CountDecimalPlaces(decimal input)
         {
-            var value = input.ToString();
+            var value = input.ToString(CultureInfo.CurrentCulture);
 
             var places = value.Substring(value.IndexOf('.') + 1).Length;
 
             return places;
         }
+
+        #region Operators
+
+        public static bool operator <=(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            return left._units <= right._units;
+        }
+
+        public static bool operator >=(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            return left._units >= right._units;
+        }
+
+        public static bool operator >(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            return left._units > right._units;
+        }
+
+        public static bool operator <(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            return left._units < right._units;
+        }
+
+        public static bool operator ==(Money left, Money right)
+        {
+            return left._units == right._units &&
+                   left._places == right._places &&
+                   left.CurrencyInfo == right.CurrencyInfo;
+        }
+
+        public static bool operator !=(Money left, Money right)
+        {
+            return !(left == right);
+        }
+
+        public static Money operator +(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            HarmonizeDecimalPlaces(ref left, ref right);
+
+            left._units += right._units;
+
+            return left;
+        }
+
+        public static Money operator -(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            HarmonizeDecimalPlaces(ref left, ref right);
+
+            left._units -= right._units;
+
+            return left;
+        }
+
+        public static Money operator *(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            HarmonizeDecimalPlaces(ref left, ref right);
+
+            var product = Convert.ToDouble(left._units) * Convert.ToDouble(right._units);
+
+            var factor = Math.Pow(10, left._places * 2);
+
+            product /= factor;
+
+            var result = new Money(left.CurrencyInfo, product);
+
+            return result;
+        }
+
+        public static Money operator /(Money left, Money right)
+        {
+            EnsureSameCurrency(left, right);
+
+            HarmonizeDecimalPlaces(ref left, ref right);
+
+            var quotient = Convert.ToDouble(left._units) / Convert.ToDouble(right._units);
+
+            var result = new Money(left.CurrencyInfo, quotient);
+
+            return result;
+        }
+
+        public static implicit operator Money(long value)
+        {
+            return new Money(value);
+        }
+
+        public static implicit operator Money(double value)
+        {
+            return new Money(CultureInfo.CurrentCulture, value);
+        }
+
+        public static implicit operator Money(decimal value)
+        {
+            return new Money(CultureInfo.CurrentCulture, value);
+        }
+
+        public static implicit operator long(Money value)
+        {
+            return (long)value.ScaleDownToDouble();
+        }
+
+        public static implicit operator double(Money value)
+        {
+            return value.ScaleDownToDouble();
+        }
+
+        public static implicit operator decimal(Money value)
+        {
+            return value.ScaleDownToDecimal();
+        }
+
+        #endregion
     }
 }
