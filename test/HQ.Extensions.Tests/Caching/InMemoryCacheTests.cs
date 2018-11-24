@@ -23,7 +23,7 @@ namespace HQ.Extensions.Tests.Caching
     {
         public InMemoryCacheTests()
         {
-            cache = new InMemoryCache();
+            cache = new InProcessCache();
         }
     }
 }

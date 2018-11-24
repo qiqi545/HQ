@@ -43,7 +43,11 @@ namespace HQ.Extensions.Caching
         bool Replace(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
         object Get(string key);
+        object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null);
+
         T Get<T>(string key);
+        T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null);
+
         void Remove(string key);
     }
 }

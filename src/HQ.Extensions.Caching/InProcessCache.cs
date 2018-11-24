@@ -16,15 +16,21 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using HQ.Common;
+using HQ.Extensions.Caching.Configuration;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching
 {
-    public class InMemoryCache : ICache
+    public class InProcessCache : ICache
     {
         private readonly IMemoryCache _cache;
+        private readonly IOptions<CacheOptions> _options;
 
-        public InMemoryCache()
+        public InProcessCache(IOptions<CacheOptions> options)
         {
             _cache = new MemoryCache(new MemoryCacheOptions
             {
@@ -32,6 +38,13 @@ namespace HQ.Extensions.Caching
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
                 SizeLimit = null
             });
+            _options = options;
+        }
+
+        public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> options)
+        {
+            _cache = cache;
+            _options = options;
         }
 
         public bool Set(string key, object value)
@@ -209,6 +222,80 @@ namespace HQ.Extensions.Caching
                 policy.AddExpirationToken(dependency.GetChangeToken());
 
             return policy;
+        }
+
+        public object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null)
+        {
+            var item = Get(key);
+            if (item != null)
+                return item;
+
+            if (add == null)
+                return null;
+
+            if (!_options.Value.ContentionTimeout.HasValue)
+                return Add();
+
+            using (TimedLock.Lock(CacheLockScope.AcquireLock<object>(key), timeout ?? _options.Value.ContentionTimeout.Value))
+                return Add();
+
+            object Add()
+            {
+                var itemToAdd = add();
+                if (itemToAdd != null)
+                    this.Add(key, itemToAdd);
+                return itemToAdd;
+            }
+        }
+
+        public T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
+        {
+            var item = Get(key);
+            if (item != null)
+                return (T)item;
+
+            if (add == null)
+                return default;
+
+            if (!_options.Value.ContentionTimeout.HasValue)
+                return Add();
+
+            using (TimedLock.Lock(CacheLockScope.AcquireLock<T>(key), timeout ?? _options.Value.ContentionTimeout.Value))
+                return Add();
+
+            T Add()
+            {
+                var itemToAdd = add();
+                if (itemToAdd != null)
+                {
+                    this.Add(key, itemToAdd);
+                }
+                return itemToAdd;
+            }
+        }
+
+        private static class CacheLockScope
+        {
+            private static readonly ConcurrentDictionary<Type, IDictionary<string, object>> Locks;
+            static CacheLockScope()
+            {
+                Locks = new ConcurrentDictionary<Type, IDictionary<string, object>>();
+            }
+            public static object AcquireLock<T>(string key)
+            {
+                if (!Locks.TryGetValue(typeof(T), out var hash))
+                {
+                    hash = new Dictionary<string, object>();
+                    Locks.TryAdd(typeof(T), hash);
+                }
+
+                if (hash.TryGetValue(key, out var @lock))
+                    return @lock;
+
+                @lock = new object();
+                hash.Add(key, @lock);
+                return @lock;
+            }
         }
     }
 }

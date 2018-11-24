@@ -10,4 +10,8 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+  </ItemGroup>
+
 </Project>
