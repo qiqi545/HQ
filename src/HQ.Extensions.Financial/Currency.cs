@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Money
+namespace HQ.Extensions.Financial
 {
     /// <summary>
     ///     Represents world currency by numeric and alphabetic values, as per ISO 4217:

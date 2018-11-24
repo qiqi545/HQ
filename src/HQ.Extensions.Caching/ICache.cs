@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Caching
 {
     public interface ICache
     {

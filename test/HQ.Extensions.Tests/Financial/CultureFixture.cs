@@ -16,13 +16,23 @@
 #endregion
 
 using System;
+using System.Globalization;
+using System.Threading;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Tests.Financial
 {
-    public interface ICacheDependency : IDisposable
+    public class CultureFixture : IDisposable
     {
-        string Id { get; }
-        bool ShouldInvalidate { get; }
-        DateTime LastModified { get; }
+        private readonly CultureInfo _culture;
+
+        public CultureFixture()
+        {
+            _culture = Thread.CurrentThread.CurrentCulture;
+        }
+
+        public void Dispose()
+        {
+            Thread.CurrentThread.CurrentCulture = _culture;
+        }
     }
 }

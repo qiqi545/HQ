@@ -15,7 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Money\HQ.Extensions.Money.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Extensions.Financial\HQ.Extensions.Financial.csproj" />
   </ItemGroup>
 
 </Project>

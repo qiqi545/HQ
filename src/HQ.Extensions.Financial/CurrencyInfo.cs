@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
-namespace HQ.Extensions.Money
+namespace HQ.Extensions.Financial
 {
     /// <summary>
     ///     A seamless currency class for working with money.

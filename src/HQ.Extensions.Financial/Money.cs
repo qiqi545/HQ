@@ -20,12 +20,12 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 
-namespace HQ.Extensions.Money
+namespace HQ.Extensions.Financial
 {
     /// <summary>
-    ///     Money is immutable and coupled to the <see cref="P:HQ.Extensions.Money.Money.CurrencyInfo" /> it belongs
+    ///     Money is immutable and coupled to the <see cref="P:HQ.Extensions.Financial.Money.CurrencyInfo" /> it belongs
     ///     to at all times. In most cases, the code will attempt to determine
-    ///     the correct <see cref="P:HQ.Extensions.Money.Money.CurrencyInfo" /> on its own based on the culture of
+    ///     the correct <see cref="P:HQ.Extensions.Financial.Money.CurrencyInfo" /> on its own based on the culture of
     ///     the thread viewing the money, unless an explicit currency is provided.
     /// </summary>
     [Serializable]

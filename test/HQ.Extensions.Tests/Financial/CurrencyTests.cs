@@ -1,95 +1,99 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Globalization;
 using System.Threading;
+using HQ.Extensions.Financial;
+using Xunit;
 
-namespace HQ.Extensions.Types
+namespace HQ.Extensions.Tests.Financial
 {
-    [TestFixture]
-    public class CurrencyTests
+    public class CurrencyTests : IClassFixture<CultureFixture>
     {
-        private CultureInfo _culture;
-
-        [SetUp]
-        public void SetUp()
-        {
-            _culture = Thread.CurrentThread.CurrentCulture;
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            Thread.CurrentThread.CurrentCulture = _culture;
-        }
-        
-        [Test]
+        [Fact]
         public void Can_create_currency_using_culture_info()
         {
             CurrencyInfo currencyInfo = new CultureInfo("fr-FR");
-            Assert.IsNotNull(currencyInfo);
+            Assert.NotNull(currencyInfo);
         }
 
-        [Test]
+        [Fact]
         public void Can_create_currency_using_currency_code()
         {
             CurrencyInfo currencyInfo = Currency.NZD;
-            Assert.IsNotNull(currencyInfo);
+            Assert.NotNull(currencyInfo);
         }
 
-        [Test]
+        [Fact]
         public void Can_create_currency_using_current_culture()
         {
             CurrencyInfo currencyInfo = CultureInfo.CurrentCulture;
-            Assert.IsNotNull(currencyInfo);
+            Assert.NotNull(currencyInfo);
         }
 
-        [Test]
+        [Fact]
         public void Can_create_currency_using_region_info()
         {
             CurrencyInfo currencyInfo = new RegionInfo("CA");
-            Assert.IsNotNull(currencyInfo);
+            Assert.NotNull(currencyInfo);
         }
 
-        [Test]
+        [Fact]
         public void Currency_creation_creates_meaningful_display_cultures()
         {
             // If I'm from France, and I reference Canadian Dollars,
             // then the default culture for CAD should be fr-CA
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             CurrencyInfo currencyInfo = Currency.CAD;
-            Assert.AreEqual(currencyInfo.DisplayCulture, new CultureInfo("fr-CA"));
+            Assert.Equal(currencyInfo.DisplayCulture, new CultureInfo("fr-CA"));
 
             // If I'm from England, and I reference Canadian Dollars,
             // then the default culture for CAD should be en-CA
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
             currencyInfo = Currency.CAD;
-            Assert.AreEqual(currencyInfo.DisplayCulture, new CultureInfo("en-CA"));
+            Assert.Equal(currencyInfo.DisplayCulture, new CultureInfo("en-CA"));
 
             // If I'm from Germany, and I reference Canadian Dollars,
             // then the default culture for CAD should be Canadian
             Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
             currencyInfo = Currency.CAD;
-            Assert.AreEqual(new CultureInfo("en-CA"), currencyInfo.DisplayCulture);
+            Assert.Equal(new CultureInfo("en-CA"), currencyInfo.DisplayCulture);
 
             // ... and it should not display as if it were in de currency!
-            HQ.Extensions.Types.Money money = new HQ.Extensions.Types.Money(Currency.CAD, 1000);
-            Assert.AreEqual("$1,000.00", money.DisplayNative());
+            Money money = new Money(Currency.CAD, 1000);
+            Assert.Equal("$1,000.00", money.DisplayNative());
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
-		    money = new HQ.Extensions.Types.Money(1000);
-		    var german = new CultureInfo("de-DE");
-            Console.WriteLine(money.DisplayIn(german));  // Output: $1,000.00
+            money = new Money(1000);
+            var german = new CultureInfo("de-DE");
+            Console.WriteLine(money.DisplayIn(german)); // Output: $1,000.00
         }
 
-        [Test]
+        [Fact]
         public void Currency_creation_creates_meaningful_native_regions()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             CurrencyInfo currencyInfo = Currency.EUR;
-            Assert.AreEqual(currencyInfo.NativeRegion, new RegionInfo("FR"));
+            Assert.Equal(currencyInfo.NativeRegion, new RegionInfo("FR"));
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
             currencyInfo = Currency.CAD;
-            Assert.AreEqual(currencyInfo.NativeRegion, new RegionInfo("CA"));
+            Assert.Equal(currencyInfo.NativeRegion, new RegionInfo("CA"));
         }
     }
 }
