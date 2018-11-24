@@ -15,13 +15,15 @@
 
 #endregion
 
-using System;
-using Microsoft.Extensions.Primitives;
+using HQ.Extensions.Caching;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Extensions.Tests.Caching
 {
-    public interface ICacheDependency : IDisposable
+    public class InMemoryCacheTests : CacheTestsBase
     {
-        IChangeToken GetChangeToken();
+        public InMemoryCacheTests()
+        {
+            cache = new InMemoryCache();
+        }
     }
 }
