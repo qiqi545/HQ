@@ -33,11 +33,12 @@ namespace HQ.Common
                 {
                     var settings = new JsonSerializerSettings
                     {
-                        Formatting = Formatting.None,
                         TypeNameHandling = TypeNameHandling.None,
-                        NullValueHandling = NullValueHandling.Ignore,
-                        DefaultValueHandling = DefaultValueHandling.Ignore,
+
                         ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                        Formatting = Formatting.Indented,
+                        NullValueHandling = NullValueHandling.Include,
+                        DefaultValueHandling = DefaultValueHandling.Include,
 
                         DateTimeZoneHandling = DateTimeZoneHandling.Utc,
                         DateParseHandling = DateParseHandling.DateTimeOffset,

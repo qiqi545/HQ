@@ -36,6 +36,8 @@ namespace HQ.Common
         {
             public const string DynamicViewLocation = "DynamicViewLocation";
             public const string JsonMultiCase = "JsonMultiCase";
+            public const string JsonTrim = "JsonTrim";
+            public const string JsonPrettyPrint = "JsonPrettyPrint";
         }
 
         public static class PlatformRoutes
@@ -71,6 +73,9 @@ namespace HQ.Common
         public static class QueryStrings
         {
             public const string MultiCase = "case";
+            public const string Envelope = "envelope";
+            public const string Trim = "trim";
+            public const string PrettyPrint = "prettyPrint";
         }
 
         public static class Loggers
