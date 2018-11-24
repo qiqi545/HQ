@@ -42,6 +42,7 @@ namespace HQ.Extensions.Caching
         bool Replace(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
         bool Replace(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
+        object Get(string key);
         T Get<T>(string key);
         void Remove(string key);
     }

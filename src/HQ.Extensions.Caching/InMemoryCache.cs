@@ -142,9 +142,14 @@ namespace HQ.Extensions.Caching
             return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, slidingExpiration, dependency)));
         }
 
+        public object Get(string key)
+        {
+            return _cache.Get(key);
+        }
+
         public T Get<T>(string key)
         {
-            return (T)_cache.Get(key);
+            return _cache.Get(key) is T typed ? typed : default;
         }
 
         public void Remove(string key)
