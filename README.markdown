@@ -1,130 +1,95 @@
-# Money
-## Painless currency management in .NET
+# Dates
+## The missing .NET date types
 
 ### Introduction
-Working with money is hard. You have to calculate it, for one, but more importantly you have to display it correctly,
-obeying strange cultural formatting rules. This library introduces three new types: Money, CurrencyInfo, and Currency.
-Similar to CultureInfo, the CurrencyInfo abstraction when coupled with the Money type makes it easy to
-create currency and display it in different cultures. Currency is an enum that hides the complexity of CurrencyInfo,
-so your code just has to reference one authoritative currency type to get the benefit.
+Working with dates and times can be frustrating. There's issues of universal vs. local time, leap years effecting 
+time estimates, local calendar differences, and more. On top of that, .NET doesn't provide default classes 
+for easily working with date relative time, something you almost always need to handle when building 
+applications that deal with payments, scheduling, repeating background events, etc.
+
+This library introduces two new date types: DateSpan, and DatePeriod.
+
+Similar to TimeSpan, the DateSpan abstraction is used to calculate time, expressed in a quantity of an interval (1 day, 4 months, etc.)
+passing between a start and end date. This is useful when building applications that need to be aware of the passage of relative time, 
+respective of leap years, weeks, months, and years. In addition, the DatePeriod type is used to calculate date occurrences with a range of 
+relative time. For example, you can use it to quickly determine which dates would fall into a bi-weekly schedule over the course of six 
+months, if it started tomorrow, and if dates occuring on a weekend were deferred to the following Monday.
 
 ### Features
 
-* Provides currency disambiguation and native region handling
-* Supports many major currencies (and it's easy to fork to add new ones)
-* Simple API that gets out of your way
-* Accurate currency rounding
+* Simple API with only a few key methods
+* Calculates the date relative time span between two dates
+* Generates DateTime occurrences within a date relative period of time
+* Smart handling of weekends, spanning weeks and months, leap years, localized calendars, UTC, etc.
 
 ### Usage
 
-#### Creating Money
+#### Calculating DateSpan between two dates
 
-When you create a Money instance, it is, at construction time, forever bound to a currency. If you don't
-specify the currency explicitly, it is set based on the current operation thread's culture properties.
+You can create a DateSpan instance using the default constructor that takes a start and end date.
 
-	// Let's create $1000 in cold, hard American cash
-	Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-	Money money = 1000;
+	DateTime start = new DateTime(2009, 9, 30);
+    DateTime end = new DateTime(2009, 10, 31);
+    DateSpan span = new DateSpan(start, end);
 
-The method above, when you don't specify it explicitly, will set the currency based on the current
-thread's culture. You can explicitly request a currency type using the Currency enum passed into 
-the constructor, or copy other currency types by passing in their CurrencyInfo instance.
+In the example above, the date span between September 30th, 2009 and October 31st, 2009, would
+be one month, and one day. 
 
-	Money fin = new Money(Currency.USD, 5.00);
-	Money fiddy = new Money(money.CurrencyInfo, 50.00);	
+	Console.WriteLine(span.Months);		// Outputs: 1
+    Console.WriteLine(span.Days);		// Outputs: 1
 
-Now that we have a money instance, we get access to all kinds of regional info:
+Notice that it's not 32 days. DateSpan is always date relative, so it knew that because
+you crossed the month threshold, based on how many days there are in September, you would
+need a different value.
 
-	Console.WriteLine(money.CurrencyInfo.Code);				// Outputs: USD
-    Console.WriteLine(money.CurrencyInfo.DisplayCulture);   // Outputs: en-US (it's a CultureInfo instance)
-    Console.WriteLine(money.CurrencyInfo.DisplayName);      // Outputs: US Dollar
-    Console.WriteLine(money.CurrencyInfo.NativeRegion);     // Outputs: US
+If you wanted to calculate a value for 32 days for the same dates, you can define your desired
+precision using the DateInterval enum along DateSpan's GetDifference method.
 
-#### Creating CurrencyInfo
+	var difference = DateSpan.GetDifference(DateInterval.Days, start, end);
+    Console.WriteLine(difference);		// Outputs: 32
 
-There are many ways to obtain a CurrencyInfo instance, from a Currency enum value,
-or even RegionInfo if you're unsure of the currency in an area.
+Were you expecting 31 days? By default, GetDifference includes the end date in its calculation. If you
+prefer to exclude it, you can pass in the excludeEndDate boolean value to the GetDifference method.
 
-	// The current culture of the running thread
-	CurrencyInfo currencyInfo = CultureInfo.CurrentCulture;
+	var difference = DateSpan.GetDifference(DateInterval.Days, start, end, true /* excludeEndDate */);
+    Console.WriteLine(difference);		// Outputs: 31
 
-	// From the Currency enumeration (New Zealand Dollars)
-	CurrencyInfo currencyInfo = Currency.NZD;
+Most people expect constructing a new DateSpan, however, to exclude the end date automatically, so 
+there's an overload for that, too.
 
-	// From a specific country using RegionInfo (Canadian Dollars)
-	CurrencyInfo currencyInfo = new RegionInfo("CA");
+	DateSpan span = new DateSpan(start, end, false /* excludeEndDate */);
+	Console.WriteLine(span.Months);		// Outputs: 1
+    Console.WriteLine(span.Days);		// Outputs: 2
 
-	// From a formal CultureInfo instance (French Francs)
-	CurrencyInfo currencyInfo = new CultureInfo("fr-FR");
+The GetDifference method has precision down to seconds, so it's possible to calculate more
+detailed differences.
 
-#### Displaying Money
-		
-Where Money really shines is when you need to display a currency from the
-viewpoint of a different culture, while preserving its native value and currency.
-You can do this either by calling ToString(), which will provide the currency
-value _as it should be displayed in the current culture_, or explicitly using
-the DisplayIn method.
+	var difference = DateSpan.GetDifference(DateInterval.Minutes, start, end);
+    Console.WriteLine(difference);		// Outputs: 46080
 
-	// Let's create $1000 in cold, hard American cash
-	Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-	Money money = 1000;
-	Console.WriteLine(money.ToString())		// Outputs: $1,000.00
+#### Getting the dates occurring in a given period
 
-	// Display the same money in a different culture thread
-	Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-	Console.WriteLine(money.ToString());	// Outputs: $1 000,00
+You can also calculate a range of dates based on a DateSpan or a DatePeriod. To create a DatePeriod,
+use the default constructor, or use one of the common static properties.
+ 
+	DatePeriod period = new DatePeriod(DatePeriodFrequency.Months, 2) // Bimonthly
+	DatePeriod period = DatePeriod.Monthly;						      
+	DatePeriod period = new DatePeriod(DatePeriodFrequency.Years, 1); // Annually
+	DatePeriod period = DatePeriod.BiAnnually;					      
 
-	// Display the same money using the DisplayIn method
-	var explicit = money.DisplayIn(new CultureInfo("en-CA"));
-	Console.WriteLine(explicit);			// Outputs: $1,000.00 USD
+To get a range of DateTime occurrences for a defined period, use the GetOccurrences method
+
+	DateTime start = new DateTime(2009, 09, 01);
+    DateTime end = new DateTime(2010, 09, 01);
+    DatePeriod period = DatePeriod.Weekly;
+    IEnumerable<DateTime> occurrences = period.GetOccurrences(start, end);
+
+By default, every occurrence using GetOccurrences skips weekend days, deferring them to the
+following Monday. If you want to avoid this behavior, use the overloaded method.
 	
-In the last example above, since the culture (Canadian English) also uses dollars
-for currency, the "USD" disambiguator is automatically added to give context to
-the currency amount. If this isn't desired, you can use the overload for DisplayIn
-that turns disambiguation off.
-
-#### Culture Awareness
-
-Because Money knows that Canada has a French equivalent, it elects to display
-the currency in the "fr-CA" display culture. 
-
-		// Your customer is using your application from Paris, France...
-		Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-
-		// But you want to display currency in Canadian Dollars
-		Money money = new Money(Currency.CAD, 1000);
-        Console.WriteLine(money.ToString());		// Output: 1 000,00 $
+	IEnumerable<DateTime> occurrences = period.GetOccurrences(start, end, false /* skipWeekends */);
 	
-The same thing happens if we want to display Canadian currency in Britain;
-Since Canada also has an English equivalent, we get the closest match for
-outputting in English.
 
-		Thread.CurrentThread.CurrentCulture = new CultureInfo("en-GB");
-        Money money = new Money(Currency.CAD, 1000);
-        Console.WriteLine(money.ToString());		// Output: $1,000.00 
+	
 
-There is no CAD equivalent in Germany, so currency display reverts to its
-home and native land.
 
-		Thread.CurrentThread.CurrentCulture = new CultureInfo("de-DE");
-		Money money = new Money(Currency.CAD, 1000);
-        Console.WriteLine(money.ToString());		// Output: $1,000.00 
-
-Note that this is _not_ the same as if we displayed 
-CAD in Germany; _origin matters!_
-
-		Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
-		Money money = new Money(1000);
-		var german = new CultureInfo("de-DE");
-        Console.WriteLine(money.DisplayIn(german));  // Output: $1.000,00
-
-#### Calculating Money
-
-The Money type supports currency with large numbers of decimal places, which is troublesome
-using native .NET types, particularly with rounding off. Money acts on Martin Fowler's 
-suggestion of using whole numbers, and internally scales decimal places up and down
-accordingly, so it should meet your needs for accurate rounding without headaches. All
-standard arithmetical operators are provided so you can work with the Money type like
-you normally work with .NET floating point types. In addition, for those working on 
-currency conversion operations, Money stores the time it was created in CreatedDate, so that 
-exchange rate precedence is established.
