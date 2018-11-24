@@ -46,3 +46,6 @@
 [submodule "src/Stack/HQ.Strings"]
 	path = src/Stack/HQ.Strings
 	url = https://github.com/hq-io/HQ.Strings
+[submodule "src/Stack/HQ.Extensions"]
+	path = src/Stack/HQ.Extensions
+	url = https://github.com/hq-io/HQ.Extensions
