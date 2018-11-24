@@ -20,8 +20,17 @@ using HQ.Common.Configuration;
 
 namespace HQ.Domicile.Configuration
 {
-    public class JsonMultiCaseOptions : FeatureToggle<PublicApiOptions>
+    public class JsonConversionOptions : FeatureToggle<PublicApiOptions>
     {
-        public string QueryStringParameter { get; set; } = Constants.QueryStrings.MultiCase;
+        public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
+        
+        public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
+        public bool EnvelopeEnabled { get; set; } = false;
+
+        public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;
+        public bool TrimEnabled { get; set; } = true;
+
+        public string PrettyPrintOperator { get; set; } = Constants.QueryStrings.PrettyPrint;
+        public bool PrettyPrintEnabled { get; set; } = true;
     }
 }

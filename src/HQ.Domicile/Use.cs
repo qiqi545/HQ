@@ -163,7 +163,7 @@ namespace HQ.Domicile
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var options))
+                if (app.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options))
                 {
                     return app.Use(async (context, next) =>
                     {
@@ -175,24 +175,27 @@ namespace HQ.Domicile
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<JsonMultiCaseOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
             });
 
-            async Task ExecuteFeature(HttpContext c, JsonMultiCaseOptions o, Func<Task> next)
+            async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
             {
                 var qs = c.Request.Query;
-                qs.TryGetValue(o.QueryStringParameter, out var values);
+                qs.TryGetValue(o.MultiCaseOperator, out var values);
                 foreach (var value in values)
-                foreach (var entry in c.RequestServices.GetServices<ITextTransform>())
                 {
-                    if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
-                        continue;
-                    c.Items[Constants.ContextKeys.JsonMultiCase] = entry;
-                    break;
+                    foreach (var entry in c.RequestServices.GetServices<ITextTransform>())
+                    {
+                        if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        c.Items[Constants.ContextKeys.JsonMultiCase] = entry;
+                        goto next;
+                    }
                 }
+                next:
                 await next();
             }
         }

@@ -18,6 +18,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using HQ.Common;
+using HQ.Domicile.Extensions;
 using HQ.Domicile.Models;
 using HQ.Domicile.Serialization;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -54,6 +55,20 @@ namespace HQ.Domicile.Formatters
                 }
 
                 _serializer.ContractResolver = resolver;
+            }
+
+            if (context.HttpContext.Items[Constants.ContextKeys.JsonPrettyPrint] is bool prettyPrint && !prettyPrint)
+            {
+                _serializer.Apply(s => s.Formatting = Formatting.None);
+            }
+
+            if (context.HttpContext.Items[Constants.ContextKeys.JsonTrim] is bool trim && trim)
+            {
+                _serializer.Apply(s =>
+                {
+                    s.NullValueHandling = NullValueHandling.Ignore;
+                    s.DefaultValueHandling = DefaultValueHandling.Ignore;
+                });
             }
         }
 

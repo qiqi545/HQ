@@ -31,7 +31,7 @@ namespace HQ.Domicile.Serialization
     {
         private readonly JsonProcessingDirection _direction;
         private readonly ITextTransform _transform;
-
+        
         public JsonContractResolver(ITextTransform transform, JsonProcessingDirection direction)
         {
             _transform = transform;

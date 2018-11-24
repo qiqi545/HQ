@@ -56,10 +56,8 @@ namespace HQ.Domicile.Configuration
             jsonOptions.Apply(_settings);
 
             options.InputFormatters.Clear();
-            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider,
-                options, jsonOptions));
-            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider,
-                options, jsonOptions));
+            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
 
             options.OutputFormatters.Clear();
             options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));

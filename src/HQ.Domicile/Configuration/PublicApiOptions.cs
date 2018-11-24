@@ -27,8 +27,9 @@ namespace HQ.Domicile.Configuration
         public string TenantName { get; set; }
 
         public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
-        public JsonMultiCaseOptions JsonMultiCase { get; set; } = new JsonMultiCaseOptions();
+        public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
         public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
         public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
+
     }
 }
