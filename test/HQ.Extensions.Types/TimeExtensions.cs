@@ -1,6 +1,6 @@
-﻿using System;
+using System;
 
-namespace Depot.Tests.Extensions
+namespace HQ.Extensions.Types
 {
     internal static class TimeExtensions
     {

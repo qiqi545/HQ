@@ -1,7 +1,6 @@
-﻿using Depot.AspNet;
-using NUnit.Framework;
+using Depot.AspNet;
 
-namespace Depot.Tests
+namespace HQ.Extensions.Types
 {
     [TestFixture]
     public class AspNetCacheTests : BasicCacheTests

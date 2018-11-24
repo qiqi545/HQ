@@ -1,14 +1,31 @@
-﻿using System;
+#region LICENSE
 
-namespace Dates
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using System;
+
+namespace HQ.Extensions.Types
 {
     /// <summary>
-    /// A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
-    /// but does so in a way that respects the number of actual days in the elapsed years and months.
+    ///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
+    ///     but does so in a way that respects the number of actual days in the elapsed years and months.
     /// </summary>
     [Serializable]
     public struct DateSpan
-    { 
+    {
         /// <param name="start">The start date</param>
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
@@ -33,49 +50,50 @@ namespace Dates
         }
 
         /// <summary>
-        /// The number of discrete years occurring in this span
+        ///     The number of discrete years occurring in this span
         /// </summary>
         public int Years { get; private set; }
 
         /// <summary>
-        /// The number of discrete months occurring in this span
+        ///     The number of discrete months occurring in this span
         /// </summary>
         public int Months { get; private set; }
 
         /// <summary>
-        /// The number of discrete weeks occurring in this span
+        ///     The number of discrete weeks occurring in this span
         /// </summary>
         public int Weeks { get; private set; }
 
         /// <summary>
-        /// The number of discrete days occurring in this span
+        ///     The number of discrete days occurring in this span
         /// </summary>
         public int Days { get; private set; }
 
         /// <summary>
-        /// The number of discrete hours occurring in this span
+        ///     The number of discrete hours occurring in this span
         /// </summary>
         public int Hours { get; private set; }
 
         /// <summary>
-        /// The number of discrete minutes occurring in this span
+        ///     The number of discrete minutes occurring in this span
         /// </summary>
         public int Minutes { get; private set; }
-        
+
         /// <summary>
-        /// The number of discrete seconds occurring in this span
+        ///     The number of discrete seconds occurring in this span
         /// </summary>
         public int Seconds { get; private set; }
 
         /// <summary>
-        /// Gets the scalar difference between two dates given a <see cref="DateInterval"/> value.
+        ///     Gets the scalar difference between two dates given a <see cref="DateInterval" /> value.
         /// </summary>
         /// <param name="interval">The interval to calculate</param>
         /// <param name="start">The start date</param>
         /// <param name="end">The end date</param>
         /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
         /// <returns></returns>
-        public static int GetDifference(DateInterval interval, DateTime start, DateTime end, bool excludeEndDate = false)
+        public static int GetDifference(DateInterval interval, DateTime start, DateTime end,
+            bool excludeEndDate = false)
         {
             var sum = 0;
             var span = new DateSpan(start, end);
@@ -90,6 +108,7 @@ namespace Dates
                     {
                         sum += span.Years * 12;
                     }
+
                     sum += span.Months;
                     sum += span.Weeks / 4; // Helps resolve lower resolution
                     break;
@@ -148,11 +167,11 @@ namespace Dates
                 }
             }
 
-            sum += span.Weeks*7;
+            sum += span.Weeks * 7;
 
             sum += span.Days;
-            
-            if(excludeEndDate)
+
+            if (excludeEndDate)
             {
                 sum--;
             }
@@ -253,11 +272,11 @@ namespace Dates
                 }
             }
 
-            Weeks = Days/7;
+            Weeks = Days / 7;
 
             Days = Days % 7;
 
-            if(!excludeEndDate)
+            if (!excludeEndDate)
             {
                 Days++;
             }
@@ -267,7 +286,7 @@ namespace Dates
         {
             Months = end.Month - start.Month;
 
-            if (end.Month < start.Month || (end.Month <= start.Month && Years > 1))
+            if (end.Month < start.Month || end.Month <= start.Month && Years > 1)
             {
                 Months = 12 - start.Month + end.Month;
             }

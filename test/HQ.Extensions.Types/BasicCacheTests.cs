@@ -1,7 +1,6 @@
-﻿using Depot.Tests.Extensions;
 using Xunit;
 
-namespace Depot.Tests
+namespace HQ.Extensions.Types
 {
     public abstract class BasicCacheTests
     {

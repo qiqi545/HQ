@@ -1,44 +1,56 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 
-namespace Money
+namespace HQ.Extensions.Types
 {
     /// <summary>
-    /// Money is immutable and coupled to the <see cref="CurrencyInfo" /> it belongs
-    /// to at all times. In most cases, the code will attempt to determine
-    /// the correct <see cref="CurrencyInfo" /> on its own based on the culture of
-    /// the thread viewing the money, unless an explicit currency is provided.
+    ///     Money is immutable and coupled to the <see cref="CurrencyInfo" /> it belongs
+    ///     to at all times. In most cases, the code will attempt to determine
+    ///     the correct <see cref="CurrencyInfo" /> on its own based on the culture of
+    ///     the thread viewing the money, unless an explicit currency is provided.
     /// </summary>
     [Serializable]
     public partial struct Money : IComparable<Money>, IEquatable<Money>, IFormattable
     {
-        private readonly DateTime _createdDate;
-        private readonly CurrencyInfo _currencyInfo;
         private double? _override;
         private long _places;
         private long _units;
-        
+
         public Money(long units) : this(CultureInfo.CurrentCulture, units)
         {
-
         }
 
         public Money(double value) : this(CultureInfo.CurrentCulture, value)
         {
-
         }
 
         public Money(decimal value) : this(CultureInfo.CurrentCulture, value)
         {
-
         }
 
         private Money(CurrencyInfo currencyInfo) : this()
         {
-            _createdDate = DateTime.UtcNow;
-            _currencyInfo = currencyInfo;
+            CreatedDate = DateTime.UtcNow;
+            CurrencyInfo = currencyInfo;
         }
 
         public Money(CurrencyInfo currencyInfo, long units) : this(currencyInfo)
@@ -56,15 +68,9 @@ namespace Money
             _units = ScaleUp(value);
         }
 
-        public DateTime CreatedDate
-        {
-            get { return _createdDate; }
-        }
+        public DateTime CreatedDate { get; }
 
-        public CurrencyInfo CurrencyInfo
-        {
-            get { return _currencyInfo; }
-        }
+        public CurrencyInfo CurrencyInfo { get; }
 
         public int CompareTo(Money other)
         {
@@ -100,7 +106,7 @@ namespace Money
                 return false;
             }
 
-            return other.GetType() == typeof (Money) &&
+            return other.GetType() == typeof(Money) &&
                    Equals((Money) other);
         }
 
@@ -116,11 +122,11 @@ namespace Money
                 return _override.Value;
             }
 
-            var numberFormat = _currencyInfo.DisplayCulture.NumberFormat;
+            var numberFormat = CurrencyInfo.DisplayCulture.NumberFormat;
 
             var scalingFactor = Math.Pow(10, _places);
 
-            var scaled = _units/scalingFactor;
+            var scaled = _units / scalingFactor;
 
             var rounded = Math.Round(scaled, numberFormat.CurrencyDecimalDigits);
 
@@ -129,7 +135,7 @@ namespace Money
 
         private decimal ScaleDownToDecimal()
         {
-            var numberFormat = _currencyInfo.DisplayCulture.NumberFormat;
+            var numberFormat = CurrencyInfo.DisplayCulture.NumberFormat;
 
             var scalingFactor = Convert.ToDecimal(Math.Pow(10, _places));
 
@@ -152,7 +158,7 @@ namespace Money
 
             var scalingFactor = Math.Pow(10, places);
 
-            var scaled = Convert.ToInt64(value*scalingFactor);
+            var scaled = Convert.ToInt64(value * scalingFactor);
 
             _places = places;
 
@@ -174,7 +180,7 @@ namespace Money
 
         private static void EnsureSameCurrency(Money left, Money right)
         {
-            if (left._currencyInfo != right._currencyInfo)
+            if (left.CurrencyInfo != right.CurrencyInfo)
             {
                 throw new ArithmeticException("The currency of both arguments must match to perform this operation.");
             }
@@ -202,10 +208,10 @@ namespace Money
         }
 
         /// <summary>
-        /// Returns a <see cref="System.String"/> that represents this instance.
+        ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
         /// <returns>
-        /// A <see cref="System.String"/> that represents this instance.
+        ///     A <see cref="System.String" /> that represents this instance.
         /// </returns>
         public override string ToString()
         {
@@ -214,17 +220,17 @@ namespace Money
         }
 
         /// <summary>
-        /// Displays the current instance as it would appear in the native culture,
-        /// no matter 'where' the context thread is running.
+        ///     Displays the current instance as it would appear in the native culture,
+        ///     no matter 'where' the context thread is running.
         /// </summary>
         /// <returns></returns>
         public string DisplayNative()
         {
-            return ToString("c", _currencyInfo.DisplayCulture.NumberFormat);
+            return ToString("c", CurrencyInfo.DisplayCulture.NumberFormat);
         }
 
         /// <summary>
-        /// Displays the current instance as it would appear in a specified culture.
+        ///     Displays the current instance as it would appear in a specified culture.
         /// </summary>
         /// <param name="displayCulture">The display culture.</param>
         /// <returns></returns>
@@ -234,12 +240,15 @@ namespace Money
         }
 
         /// <summary>
-        /// Displays the value of this instance in a non-native culture, preserving
-        /// the characteristics of the native <see cref="CurrencyInfo" /> but respecting 
-        /// target cultural formatting.
+        ///     Displays the value of this instance in a non-native culture, preserving
+        ///     the characteristics of the native <see cref="CurrencyInfo" /> but respecting
+        ///     target cultural formatting.
         /// </summary>
         /// <param name="displayCulture">The culture to display this money in</param>
-        /// <param name="disambiguateMatchingSymbol">If <code>true</code>, if the native culture uses the same currency symbol as the display culture, the ISO currency code is appended to the value to help differentiate the native currency.</param>
+        /// <param name="disambiguateMatchingSymbol">
+        ///     If <code>true</code>, if the native culture uses the same currency symbol as
+        ///     the display culture, the ISO currency code is appended to the value to help differentiate the native currency.
+        /// </param>
         /// <returns>A value representing this instance in another culture</returns>
         public string DisplayIn(CultureInfo displayCulture, bool disambiguateMatchingSymbol)
         {
@@ -261,7 +270,8 @@ namespace Money
             sb.Append(ToString("c", nativeNumberFormat));
 
             // If the currency symbol of the display culture matches this money, add the code
-            if (disambiguateMatchingSymbol && nativeNumberFormat.CurrencySymbol.Equals(displayNumberFormat.CurrencySymbol))
+            if (disambiguateMatchingSymbol &&
+                nativeNumberFormat.CurrencySymbol.Equals(displayNumberFormat.CurrencySymbol))
             {
                 var currencyCode = new RegionInfo(nativeCulture.LCID).ISOCurrencySymbol;
                 sb.Append(" ").Append(currencyCode);

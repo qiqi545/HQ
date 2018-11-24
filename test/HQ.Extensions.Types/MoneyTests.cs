@@ -1,9 +1,8 @@
 using System;
 using System.Globalization;
 using System.Threading;
-using NUnit.Framework;
 
-namespace Money.Tests
+namespace HQ.Extensions.Types
 {
     [TestFixture]
     public class MoneyTests
@@ -14,7 +13,7 @@ namespace Money.Tests
             const double left = 10.00;
             const double right = 20.00;
 
-            Money total = left + right;
+            HQ.Extensions.Types.Money total = left + right;
             Assert.AreEqual(30.00, (double) total);
         }
 
@@ -22,7 +21,7 @@ namespace Money.Tests
         public void Can_create_money_by_decimals()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            Money money = 10.00;
+            HQ.Extensions.Types.Money money = 10.00;
             Assert.AreEqual(10.00, (double) money);
         }
 
@@ -30,7 +29,7 @@ namespace Money.Tests
         public void Can_create_money_by_units()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            Money money = 1000;
+            HQ.Extensions.Types.Money money = 1000;
             Assert.AreEqual(1000.00, (double) money);
         }
 
@@ -51,7 +50,7 @@ namespace Money.Tests
         private static void Money_with_current_culture_has_correct_currency_code(string cultureName, Currency currency)
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureName);
-            Money money = 1000;
+            HQ.Extensions.Types.Money money = 1000;
             Assert.AreEqual(currency, money.CurrencyInfo.Code);
 
             Console.WriteLine(money.CurrencyInfo.Code);
@@ -63,8 +62,8 @@ namespace Money.Tests
         [Test]
         public void Can_determine_equality()
         {
-            Money left = 456;
-            Money right = 0.456;
+            HQ.Extensions.Types.Money left = 456;
+            HQ.Extensions.Types.Money right = 0.456;
 
             Assert.IsFalse(left == right);
             Assert.IsFalse(left.Equals(right));
@@ -77,7 +76,7 @@ namespace Money.Tests
         public void Can_display_currency_in_given_culture_preserving_native_culture_info()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-            Money expectedMoney = 1000;
+            HQ.Extensions.Types.Money expectedMoney = 1000;
             var expected = expectedMoney.ToString();
             Console.WriteLine(expected);
 
@@ -91,7 +90,7 @@ namespace Money.Tests
         public void Can_display_currency_in_given_culture_with_disambiguation()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            Money expectedMoney = 1000;
+            HQ.Extensions.Types.Money expectedMoney = 1000;
             var expected = expectedMoney.ToString();
             Console.WriteLine(expected);
 
@@ -105,7 +104,7 @@ namespace Money.Tests
         public void Can_display_proper_culture_when_created_in_different_culture()
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
-            var money = new Money(Currency.CAD, 1000);
+            var money = new HQ.Extensions.Types.Money(Currency.CAD, 1000);
             Assert.AreEqual(new CultureInfo("fr-CA"), money.CurrencyInfo.DisplayCulture);
             Console.WriteLine(money.ToString());
         }
@@ -116,7 +115,7 @@ namespace Money.Tests
             const double left = 20.00;
             const double right = 2.00;
 
-            Money total = left/right;
+            HQ.Extensions.Types.Money total = left/right;
             Assert.AreEqual(10.00, (double) total);
         }
 
@@ -126,15 +125,15 @@ namespace Money.Tests
             const decimal left = 20.00m;
             const decimal right = 2.00m;
 
-            Money total = left / right;
+            HQ.Extensions.Types.Money total = left / right;
             Assert.AreEqual(10.00m, total);
         }
 
         [Test]
         public void Can_divide_money_by_negative_identity()
         {
-            var left = new Money(1);
-            var right = new Money(-1);
+            var left = new HQ.Extensions.Types.Money(1);
+            var right = new HQ.Extensions.Types.Money(-1);
 
             var total = right/left;
             Assert.AreEqual(-1, total);
@@ -143,8 +142,8 @@ namespace Money.Tests
         [Test]
         public void Can_divide_money_by_negative_identity_with_decimals()
         {
-            var left = new Money(1m);
-            var right = new Money(-1m);
+            var left = new HQ.Extensions.Types.Money(1m);
+            var right = new HQ.Extensions.Types.Money(-1m);
 
             var total = right / left;
             Assert.AreEqual(-1m, total);
@@ -153,8 +152,8 @@ namespace Money.Tests
         [Test]
         public void Can_divide_money_by_positive_identity()
         {
-            var left = new Money(1);
-            var right = new Money(1);
+            var left = new HQ.Extensions.Types.Money(1);
+            var right = new HQ.Extensions.Types.Money(1);
 
             var total = right/left;
             Assert.AreEqual(1, total);
@@ -163,8 +162,8 @@ namespace Money.Tests
         [Test]
         public void Can_divide_money_by_positive_identity_with_decimals()
         {
-            var left = new Money(1m);
-            var right = new Money(1m);
+            var left = new HQ.Extensions.Types.Money(1m);
+            var right = new HQ.Extensions.Types.Money(1m);
 
             var total = right / left;
             Assert.AreEqual(1m, total);
@@ -173,8 +172,8 @@ namespace Money.Tests
         [Test]
         public void Can_handle_division_without_precision_loss()
         {
-            Money left = 45;
-            Money right = 13;
+            HQ.Extensions.Types.Money left = 45;
+            HQ.Extensions.Types.Money right = 13;
 
             var total = left/right; // 3.461538461538462
 
@@ -184,8 +183,8 @@ namespace Money.Tests
         [Test]
         public void Can_handle_division_without_precision_loss_with_decimals()
         {
-            Money left = 45m;
-            Money right = 13m;
+            HQ.Extensions.Types.Money left = 45m;
+            HQ.Extensions.Types.Money right = 13m;
 
             var total = left / right; // 3.461538461538462
 
@@ -195,22 +194,22 @@ namespace Money.Tests
         [Test]
         public void Can_handle_small_fractions()
         {
-            Money total = 0.1;
+            HQ.Extensions.Types.Money total = 0.1;
             Assert.AreEqual(0.10, (double) total);
         }
 
         [Test]
         public void Can_handle_small_fractions_with_decimals()
         {
-            Money total = 0.1m;
+            HQ.Extensions.Types.Money total = 0.1m;
             Assert.AreEqual(0.10m, total);
         }
 
         [Test]
         public void Can_multiply_identity_without_casting()
         {
-            var left = new Money(1.00);
-            var right = new Money(1.00);
+            var left = new HQ.Extensions.Types.Money(1.00);
+            var right = new HQ.Extensions.Types.Money(1.00);
 
             var total = right*left;
             Assert.AreEqual(1.00, (double) total);
@@ -219,8 +218,8 @@ namespace Money.Tests
         [Test]
         public void Can_multiply_identity_without_casting_with_decimals()
         {
-            var left = new Money(1.00m);
-            var right = new Money(1.00m);
+            var left = new HQ.Extensions.Types.Money(1.00m);
+            var right = new HQ.Extensions.Types.Money(1.00m);
 
             var total = right * left;
             Assert.AreEqual(1.00m, total);
@@ -229,8 +228,8 @@ namespace Money.Tests
         [Test]
         public void Can_multiply_money()
         {
-            var left = new Money(10.00);
-            var right = new Money(20.00);
+            var left = new HQ.Extensions.Types.Money(10.00);
+            var right = new HQ.Extensions.Types.Money(20.00);
 
             var total = right*left;
             Assert.AreEqual(200.00, (double) total);
@@ -239,8 +238,8 @@ namespace Money.Tests
         [Test]
         public void Can_multiply_money_with_decimals()
         {
-            var left = new Money(10.00m);
-            var right = new Money(20.00m);
+            var left = new HQ.Extensions.Types.Money(10.00m);
+            var right = new HQ.Extensions.Types.Money(20.00m);
 
             var total = right * left;
             Assert.AreEqual(200.00m, total);
@@ -252,7 +251,7 @@ namespace Money.Tests
             const double left = 1.00;
             const double right = -1;
 
-            Money total = right*left;
+            HQ.Extensions.Types.Money total = right*left;
             Assert.AreEqual(-1, (double) total);
         }
 
@@ -262,15 +261,15 @@ namespace Money.Tests
             const double left = 1.00;
             const double right = 1;
 
-            Money total = right*left;
+            HQ.Extensions.Types.Money total = right*left;
             Assert.AreEqual(1, (double) total);
         }
 
         [Test]
         public void Can_multiply_non_identity_without_casting()
         {
-            var left = new Money(4.00);
-            var right = new Money(4.00);
+            var left = new HQ.Extensions.Types.Money(4.00);
+            var right = new HQ.Extensions.Types.Money(4.00);
 
             var total = right*left;
             Assert.AreEqual(16.00, (double) total);
@@ -279,7 +278,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_precision()
         {
-            Money total = 0.335678*345; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678*345; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81, (double) total);
@@ -294,7 +293,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_precision_with_decimals()
         {
-            Money total = 0.335678m * 345m; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678m * 345m; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81m, total);
@@ -309,7 +308,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_rounding_against_larger_fractions()
         {
-            Money total = 0.335678*345; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678*345; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81, (double) total);
@@ -323,7 +322,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_rounding_against_larger_fractions_with_decimals()
         {
-            Money total = 0.335678m * 345m; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678m * 345m; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81m, total);
@@ -337,7 +336,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_rounding_against_smaller_fractions()
         {
-            Money total = 0.335678*345; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678*345; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81, (double) total);
@@ -351,7 +350,7 @@ namespace Money.Tests
         [Test]
         public void Can_preserve_internal_rounding_against_smaller_fractions_with_decimals()
         {
-            Money total = 0.335678m * 345m; // 115.80891
+            HQ.Extensions.Types.Money total = 0.335678m * 345m; // 115.80891
 
             // Loss of precision based on rounding rules
             Assert.AreEqual(115.81m, total);
@@ -368,15 +367,15 @@ namespace Money.Tests
             const double left = 10.00;
             const double right = 20.00;
 
-            Money total = right - left;
+            HQ.Extensions.Types.Money total = right - left;
             Assert.AreEqual(10.00, (double) total);
         }
 
         [Test]
         public void Cannot_add_different_currencies()
         {
-            var left = new Money(Currency.CAD, 10.00);
-            var right = new Money(Currency.USD, 20.00);
+            var left = new HQ.Extensions.Types.Money(Currency.CAD, 10.00);
+            var right = new HQ.Extensions.Types.Money(Currency.USD, 20.00);
             
             Assert.Throws(typeof (ArithmeticException), () =>
                                                             {

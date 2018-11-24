@@ -1,9 +1,8 @@
 using System;
 using System.Globalization;
 using System.Threading;
-using NUnit.Framework;
 
-namespace Money.Tests
+namespace HQ.Extensions.Types
 {
     [TestFixture]
     public class CurrencyTests
@@ -72,11 +71,11 @@ namespace Money.Tests
             Assert.AreEqual(new CultureInfo("en-CA"), currencyInfo.DisplayCulture);
 
             // ... and it should not display as if it were in de currency!
-            Money money = new Money(Currency.CAD, 1000);
+            HQ.Extensions.Types.Money money = new HQ.Extensions.Types.Money(Currency.CAD, 1000);
             Assert.AreEqual("$1,000.00", money.DisplayNative());
 
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
-		    money = new Money(1000);
+		    money = new HQ.Extensions.Types.Money(1000);
 		    var german = new CultureInfo("de-DE");
             Console.WriteLine(money.DisplayIn(german));  // Output: $1,000.00
         }

@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-using NUnit.Framework;
 
-namespace Dates.Tests
+namespace HQ.Extensions.Types
 {
     [TestFixture]
     public class PeriodTests

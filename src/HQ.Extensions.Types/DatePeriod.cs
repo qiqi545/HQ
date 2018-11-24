@@ -1,12 +1,29 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace Dates
+namespace HQ.Extensions.Types
 {
     /// <summary>
-    /// A period of time used in date calculations.
+    ///     A period of time used in date calculations.
     /// </summary>
     [Serializable]
     [DebuggerDisplay("{Frequency} x {Quantifier}")]
@@ -21,17 +38,17 @@ namespace Dates
         }
 
         /// <summary>
-        /// The period frequency, paired with <see cref="Quantifier" />
+        ///     The period frequency, paired with <see cref="Quantifier" />
         /// </summary>
         public DatePeriodFrequency Frequency { get; private set; }
 
         /// <summary>
-        /// The period quantifier, paired with <see cref="Frequency" />
+        ///     The period quantifier, paired with <see cref="Frequency" />
         /// </summary>
         public int Quantifier { get; private set; }
 
         /// <summary>
-        /// A period of time occurring every day
+        ///     A period of time occurring every day
         /// </summary>
         public static DatePeriod Daily
         {
@@ -39,7 +56,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every month
+        ///     A period of time occurring every month
         /// </summary>
         public static DatePeriod Monthly
         {
@@ -47,7 +64,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every other month
+        ///     A period of time occurring every other month
         /// </summary>
         public static DatePeriod BiMonthly
         {
@@ -55,7 +72,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every week
+        ///     A period of time occurring every week
         /// </summary>
         public static DatePeriod Weekly
         {
@@ -63,7 +80,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every other week
+        ///     A period of time occurring every other week
         /// </summary>
         public static DatePeriod BiWeekly
         {
@@ -71,7 +88,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every year
+        ///     A period of time occurring every year
         /// </summary>
         public static DatePeriod Annually
         {
@@ -79,7 +96,7 @@ namespace Dates
         }
 
         /// <summary>
-        /// A period of time occurring every other year
+        ///     A period of time occurring every other year
         /// </summary>
         public static DatePeriod BiAnnually
         {
@@ -87,9 +104,9 @@ namespace Dates
         }
 
         /// <summary>
-        /// Gets the date occurrences in this period, between a start and end date.
-        /// If an occurrence falls on a weekend, it is deferred to the start
-        /// of the next week.
+        ///     Gets the date occurrences in this period, between a start and end date.
+        ///     If an occurrence falls on a weekend, it is deferred to the start
+        ///     of the next week.
         /// </summary>
         /// <param name="start">The starting date.</param>
         /// <param name="end">The ending date.</param>
@@ -114,9 +131,10 @@ namespace Dates
             }
         }
 
-        private static IEnumerable<DateTime> GetOccurrences(DateInterval interval, DatePeriod period, Calendar calendar, DateTime start, DateTime end, bool skipWeekends = true)
+        private static IEnumerable<DateTime> GetOccurrences(DateInterval interval, DatePeriod period, Calendar calendar,
+            DateTime start, DateTime end, bool skipWeekends = true)
         {
-            var difference = DateSpan.GetDifference(interval, start, end)/period.Quantifier;
+            var difference = DateSpan.GetDifference(interval, start, end) / period.Quantifier;
 
             if (start.Kind == DateTimeKind.Utc)
             {
@@ -128,19 +146,19 @@ namespace Dates
                 switch (period.Frequency)
                 {
                     case DatePeriodFrequency.Days:
-                        var days = calendar.AddDays(start, period.Quantifier*i);
+                        var days = calendar.AddDays(start, period.Quantifier * i);
                         yield return DeferOccurrenceFallingOnWeekend(calendar, days, skipWeekends);
                         break;
                     case DatePeriodFrequency.Weeks:
-                        var weeks = calendar.AddWeeks(start, period.Quantifier*i);
+                        var weeks = calendar.AddWeeks(start, period.Quantifier * i);
                         yield return DeferOccurrenceFallingOnWeekend(calendar, weeks, skipWeekends);
                         break;
                     case DatePeriodFrequency.Months:
-                        var months = calendar.AddMonths(start, period.Quantifier*i);
+                        var months = calendar.AddMonths(start, period.Quantifier * i);
                         yield return DeferOccurrenceFallingOnWeekend(calendar, months, skipWeekends);
                         break;
                     case DatePeriodFrequency.Years:
-                        var years = calendar.AddYears(start, period.Quantifier*i);
+                        var years = calendar.AddYears(start, period.Quantifier * i);
                         yield return DeferOccurrenceFallingOnWeekend(calendar, years, skipWeekends);
                         break;
                     default:
@@ -149,20 +167,22 @@ namespace Dates
             }
         }
 
-        private static DateTime DeferOccurrenceFallingOnWeekend(Calendar calendar, DateTime occurrence, bool skipWeekends = true)
+        private static DateTime DeferOccurrenceFallingOnWeekend(Calendar calendar, DateTime occurrence,
+            bool skipWeekends = true)
         {
-            if(skipWeekends)
+            if (skipWeekends)
             {
                 if (occurrence.DayOfWeek == DayOfWeek.Saturday)
                 {
                     occurrence = calendar.AddDays(occurrence, 2);
                 }
+
                 if (occurrence.DayOfWeek == DayOfWeek.Sunday)
                 {
                     occurrence = calendar.AddDays(occurrence, 1);
-                }    
+                }
             }
-            
+
             return occurrence.ToUniversalTime();
         }
     }
