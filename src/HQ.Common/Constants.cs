@@ -38,6 +38,8 @@ namespace HQ.Common
             public const string JsonMultiCase = "JsonMultiCase";
             public const string JsonTrim = "JsonTrim";
             public const string JsonPrettyPrint = "JsonPrettyPrint";
+            public const string CacheArgument = "cache";
+            public const string CacheKeyArgument = "cacheKey";
         }
 
         public static class PlatformRoutes
