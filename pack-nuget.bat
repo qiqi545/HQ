@@ -1,2 +1,2 @@
 copy LICENSE bin
-..\NuGet.exe pack dates.nuspec -b bin -o bin
+..\NuGet.exe pack paging.nuspec -b bin -o bin
