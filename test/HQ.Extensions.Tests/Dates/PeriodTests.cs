@@ -19,11 +19,19 @@ using System;
 using System.Linq;
 using HQ.Extensions.Dates;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Extensions.Tests.Dates
 {
     public class PeriodTests
     {
+        private readonly ITestOutputHelper _console;
+
+        public PeriodTests(ITestOutputHelper console)
+        {
+            _console = console;
+        }
+
         [Fact]
         public void Can_get_occurrences()
         {
@@ -37,7 +45,7 @@ namespace HQ.Extensions.Tests.Dates
 
             foreach (var occurrence in occurrences)
             {
-                Console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
+                _console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
             }
 
             Assert.Equal(52, occurrences.Count());
@@ -56,7 +64,7 @@ namespace HQ.Extensions.Tests.Dates
 
             foreach (var occurrence in occurrences)
             {
-                Console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
+                _console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
             }
 
             Assert.Equal(52, occurrences.Count());

@@ -15,16 +15,23 @@
 
 #endregion
 
-using System;
 using System.Globalization;
 using System.Threading;
 using HQ.Extensions.Financial;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Extensions.Tests.Financial
 {
     public class CurrencyTests : IClassFixture<CultureFixture>
     {
+        private readonly ITestOutputHelper _console;
+
+        public CurrencyTests(ITestOutputHelper console)
+        {
+            _console = console;
+        }
+
         [Fact]
         public void Can_create_currency_using_culture_info()
         {
@@ -81,7 +88,7 @@ namespace HQ.Extensions.Tests.Financial
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-CA");
             money = new Money(1000);
             var german = new CultureInfo("de-DE");
-            Console.WriteLine(money.DisplayIn(german)); // Output: $1,000.00
+            _console.WriteLine(money.DisplayIn(german)); // Output: $1,000.00
         }
 
         [Fact]

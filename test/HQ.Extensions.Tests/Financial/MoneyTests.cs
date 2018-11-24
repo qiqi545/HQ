@@ -20,12 +20,21 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using HQ.Extensions.Financial;
+using HQ.Extensions.Tests.Extensions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Extensions.Tests.Financial
 {
     public class MoneyTests
     {
+        private readonly ITestOutputHelper _console;
+
+        public MoneyTests(ITestOutputHelper console)
+        {
+            _console = console;
+        }
+
         [Fact]
         public void Can_add_money()
         {
@@ -66,7 +75,7 @@ namespace HQ.Extensions.Tests.Financial
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
         }
 
-        private static void Money_with_current_culture_has_correct_currency_code(string cultureName, Currency currency)
+        private void Money_with_current_culture_has_correct_currency_code(string cultureName, Currency currency)
         {
             if (!Enum.IsDefined(typeof(Currency), currency))
                 throw new InvalidEnumArgumentException(nameof(currency), (int)currency, typeof(Currency));
@@ -75,10 +84,10 @@ namespace HQ.Extensions.Tests.Financial
             Money money = 1000;
             Assert.Equal(currency, money.CurrencyInfo.Code);
 
-            Console.WriteLine(money.CurrencyInfo.Code);
-            Console.WriteLine(money.CurrencyInfo.DisplayCulture);
-            Console.WriteLine(money.CurrencyInfo.DisplayName);
-            Console.WriteLine(money.CurrencyInfo.NativeRegion);
+            _console.WriteLine(money.CurrencyInfo.Code);
+            _console.WriteLine(money.CurrencyInfo.DisplayCulture);
+            _console.WriteLine(money.CurrencyInfo.DisplayName);
+            _console.WriteLine(money.CurrencyInfo.NativeRegion);
         }
 
         [Fact]
@@ -100,11 +109,11 @@ namespace HQ.Extensions.Tests.Financial
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             Money expectedMoney = 1000;
             var expected = expectedMoney.ToString();
-            Console.WriteLine(expected);
+            _console.WriteLine(expected);
 
             // Display the fr-FR money in en-CA format
             var actual = expectedMoney.DisplayIn(new CultureInfo("en-CA"));
-            Console.WriteLine(actual);
+            _console.WriteLine(actual);
             Assert.NotEqual(expected, actual);
         }
 
@@ -114,11 +123,11 @@ namespace HQ.Extensions.Tests.Financial
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
             Money expectedMoney = 1000;
             var expected = expectedMoney.ToString();
-            Console.WriteLine(expected);
+            _console.WriteLine(expected);
 
             // Display the en-US money in en-CA format with "USD" disambiguation
             var actual = expectedMoney.DisplayIn(new CultureInfo("en-CA"));
-            Console.WriteLine(actual);
+            _console.WriteLine(actual);
             Assert.NotEqual(expected, actual);
         }
 
@@ -128,7 +137,7 @@ namespace HQ.Extensions.Tests.Financial
             Thread.CurrentThread.CurrentCulture = new CultureInfo("fr-FR");
             var money = new Money(Currency.CAD, 1000);
             Assert.Equal(new CultureInfo("fr-CA"), money.CurrencyInfo.DisplayCulture);
-            Console.WriteLine(money.ToString());
+            _console.WriteLine(money.ToString());
         }
 
         [Fact]
@@ -402,7 +411,7 @@ namespace HQ.Extensions.Tests.Financial
             Assert.Throws<ArithmeticException>(() =>
             {
                 var total = left + right;
-                Console.WriteLine(total);
+                _console.WriteLine(total);
             });
         }
     }

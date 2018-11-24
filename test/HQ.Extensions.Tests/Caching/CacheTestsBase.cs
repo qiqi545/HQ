@@ -17,6 +17,7 @@
 
 using System.Threading;
 using HQ.Extensions.Caching;
+using HQ.Extensions.Tests.Extensions;
 using Xunit;
 
 namespace HQ.Extensions.Tests.Caching

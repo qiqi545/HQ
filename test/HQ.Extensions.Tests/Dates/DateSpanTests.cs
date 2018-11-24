@@ -17,12 +17,21 @@
 
 using System;
 using HQ.Extensions.Dates;
+using HQ.Extensions.Tests.Extensions;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Extensions.Tests.Dates
 {
     public class DateSpanTests
     {
+        private readonly ITestOutputHelper _console;
+
+        public DateSpanTests(ITestOutputHelper console)
+        {
+            _console = console;
+        }
+
         [Fact]
         public void Can_get_date_difference_in_days()
         {
@@ -76,11 +85,11 @@ namespace HQ.Extensions.Tests.Dates
             Assert.Equal(1, span.Months);
             Assert.Equal(1, span.Days);
 
-            Console.WriteLine(span.Months);
-            Console.WriteLine(span.Days);
+            _console.WriteLine(span.Months);
+            _console.WriteLine(span.Days);
 
             var difference = DateSpan.GetDifference(DateInterval.Days, start, end);
-            Console.WriteLine(difference);
+            _console.WriteLine(difference);
         }
     }
 }
