@@ -1,87 +1,96 @@
-#region LICENSE
-
-// Unless explicitly acquired and licensed from Licensor under another
-// license, the contents of this file are subject to the Reciprocal Public
-// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
-// and You may not copy or use this file in either source code or executable
-// form, except in compliance with the terms and conditions of the RPL.
-// 
-// All software distributed under the RPL is provided strictly on an "AS
-// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
-// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
-// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
-// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
-// language governing rights and limitations under the RPL.
-
-#endregion
-
 using System;
+using System.Collections.Concurrent;
+using System.Reflection;
+using System.Text;
 using HQ.Common;
 using HQ.Common.Models;
 using HQ.Extensions.Caching.Configuration;
+using HQ.Remix;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching
 {
-    public class InProcessCache : ICache
+    public class DistributedCache : ICache
     {
-        private readonly IMemoryCache _cache;
+        private readonly IDistributedCache _cache;
         private readonly IOptions<CacheOptions> _options;
+        private readonly ICacheSerializer _serializer;
 
-        public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> options)
+        public DistributedCache(IOptions<CacheOptions> options)
         {
-            _cache = cache;
-            _options = options;
-        }
-
-        public InProcessCache(IOptions<CacheOptions> options)
-        {
-            _cache = new MemoryCache(new MemoryCacheOptions
+            _serializer = new JsonCacheSerializer();
+            _cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions
             {
                 CompactionPercentage = 0.05,
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
                 SizeLimit = null,
                 Clock = new LocalServerTimestampService()
-            });
+            }));
             _options = options;
         }
 
         public bool Set(string key, object value)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry()));
+            return Try(() =>
+            {
+                var entry = CreateEntry();
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Set(string key, object value, DateTime absoluteExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration)));
+            return Try(() =>
+            {
+                var entry = CreateEntry(absoluteExpiration);
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Set(string key, object value, TimeSpan slidingExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration)));
+            return Try(() =>
+            {
+                var entry = CreateEntry(slidingExpiration: slidingExpiration);
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Set(string key, object value, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(dependency: dependency)));
+            return Try(() =>
+            {
+                var entry = CreateEntry();
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
+            return Try(() =>
+            {
+                var entry = CreateEntry(absoluteExpiration);
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Set(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
+            return Try(() =>
+            {
+                var entry = CreateEntry(slidingExpiration: slidingExpiration);
+                SetWithType(key, value, entry);
+            });
         }
 
         public bool Add(string key, object value)
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry());
+            var entry = CreateEntry();
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -89,7 +98,8 @@ namespace HQ.Extensions.Caching
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration));
+            var entry = CreateEntry(absoluteExpiration);
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -97,7 +107,8 @@ namespace HQ.Extensions.Caching
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            var entry = CreateEntry(slidingExpiration: slidingExpiration);
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -105,7 +116,8 @@ namespace HQ.Extensions.Caching
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(dependency: dependency));
+            var entry = CreateEntry();
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -113,7 +125,8 @@ namespace HQ.Extensions.Caching
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency));
+            var entry = CreateEntry(absoluteExpiration);
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -121,7 +134,8 @@ namespace HQ.Extensions.Caching
         {
             if (_cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            var entry = CreateEntry(slidingExpiration: slidingExpiration);
+            SetWithType(key, value, entry);
             return true;
         }
 
@@ -198,25 +212,64 @@ namespace HQ.Extensions.Caching
             }
         }
 
-        private static MemoryCacheEntryOptions CreateEntry(DateTimeOffset? absoluteExpiration = null, TimeSpan? slidingExpiration = null, long? size = null, ICacheDependency dependency = null)
+        private static readonly MethodInfo SerializeMethod = typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Serialize));
+        private static readonly ConcurrentDictionary<Type, MethodInfo> SerializeMethods = new ConcurrentDictionary<Type, MethodInfo>();
+        
+        private byte[] SerializeInternal(object value)
         {
-            var policy = new MemoryCacheEntryOptions
-            {
-                Priority = CacheItemPriority.Normal,
-                AbsoluteExpiration = absoluteExpiration,
-                SlidingExpiration = slidingExpiration,
-                Size = size
-            };
+            var method = SerializeMethods.GetOrAdd(value.GetType(), t => SerializeMethod.MakeGenericMethod(t));
+            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.Expression);
+            return (byte[]) handler.Invoke(_serializer, new object[] {value.GetType()});
+        }
 
-            if (dependency != null)
-                policy.AddExpirationToken(dependency.GetChangeToken());
+        private static readonly MethodInfo DeserializeMethod = typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Deserialize));
+        private static readonly ConcurrentDictionary<Type, MethodInfo> DeserializeMethods = new ConcurrentDictionary<Type, MethodInfo>();
+
+        private object DeserializeInternal(Type type, byte[] bytes)
+        {
+            var method = DeserializeMethods.GetOrAdd(type, t => DeserializeMethod.MakeGenericMethod(t));
+            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.Expression);
+            return handler.Invoke(_serializer, new object[] { (byte[]) bytes });
+        }
+
+        private T DeserializeInternal<T>(byte[] bytes)
+        {
+            return _serializer.Deserialize<T>(bytes);
+        }
+
+        private static readonly ConcurrentDictionary<Type, byte[]> TypeSignatures = new ConcurrentDictionary<Type, byte[]>();
+
+        private void SetWithType(string key, object value, DistributedCacheEntryOptions entry)
+        {
+            var type = value.GetType();
+            var typeSignature = TypeSignatures.GetOrAdd(type, t => Encoding.UTF8.GetBytes(t.AssemblyQualifiedName ?? throw new InvalidOperationException()));
+            _cache.Set($"{key}:type", typeSignature, entry);
+            _cache.Set(key, SerializeInternal(value), entry);
+        }
+
+        private static DistributedCacheEntryOptions CreateEntry(DateTimeOffset? absoluteExpiration = null, TimeSpan? slidingExpiration = null)
+        {
+            var policy = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = absoluteExpiration,
+                SlidingExpiration = slidingExpiration
+            };
 
             return policy;
         }
 
         public object Get(string key, Func<object> add = null, TimeSpan? timeout = null)
         {
-            var item = _cache.Get(key);
+            var typeBytes = _cache.Get($"{key}:type");
+            if (typeBytes == null)
+                return null;
+
+            var type = Type.GetType(Encoding.UTF8.GetString(typeBytes));
+            if (type == null)
+                return null;
+
+            var bytes = _cache.Get(key);
+            var item = DeserializeInternal(type, bytes);
             if (item != null)
                 return item;
 
@@ -240,7 +293,10 @@ namespace HQ.Extensions.Caching
 
         public T Get<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
         {
-            var item = _cache.Get(key) is T typed ? typed : default;
+            var bytes = _cache.Get(key);
+            var deserialized = DeserializeInternal<T>(bytes);
+
+            var item = deserialized is T typed ? typed : default;
             if (item != null)
                 return item;
 

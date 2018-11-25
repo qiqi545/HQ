@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Commo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Platform", "_Platform", "{F8D7C18C-59B3-49A2-8B91-5326A2CB8581}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{F5E3C911-A3E3-45A6-9F27-798B3513C42B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,12 @@ Global
 		{6631C48C-25E7-47DE-96DD-93F461E91022}.Package|Any CPU.Build.0 = Package|Any CPU
 		{6631C48C-25E7-47DE-96DD-93F461E91022}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6631C48C-25E7-47DE-96DD-93F461E91022}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Package|Any CPU.Build.0 = Package|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,6 +83,7 @@ Global
 		{7F95F547-F6FD-4919-BFE7-A32A054E6811} = {42CB0440-5F85-49A9-81FF-56BFF3D72693}
 		{A9172316-3663-407B-8CF2-6DA5E97D03D6} = {42CB0440-5F85-49A9-81FF-56BFF3D72693}
 		{6631C48C-25E7-47DE-96DD-93F461E91022} = {F8D7C18C-59B3-49A2-8B91-5326A2CB8581}
+		{F5E3C911-A3E3-45A6-9F27-798B3513C42B} = {F8D7C18C-59B3-49A2-8B91-5326A2CB8581}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CB490B66-455C-442C-8BA1-009B569BE8B1}
