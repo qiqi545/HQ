@@ -25,5 +25,7 @@ namespace HQ.Common.Models
         {
             return DateTimeOffset.Now;
         }
+
+        public DateTimeOffset UtcNow => DateTimeOffset.UtcNow;
     }
 }

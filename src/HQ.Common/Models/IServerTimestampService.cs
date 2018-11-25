@@ -16,10 +16,11 @@
 #endregion
 
 using System;
+using Microsoft.Extensions.Internal;
 
 namespace HQ.Common.Models
 {
-    public interface IServerTimestampService
+    public interface IServerTimestampService : ISystemClock 
     {
         DateTimeOffset GetCurrentTime();
     }
