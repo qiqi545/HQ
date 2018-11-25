@@ -215,11 +215,11 @@ namespace HQ.Extensions.Caching
         private static readonly MethodInfo SerializeMethod = typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Serialize));
         private static readonly ConcurrentDictionary<Type, MethodInfo> SerializeMethods = new ConcurrentDictionary<Type, MethodInfo>();
         
-        private byte[] SerializeInternal(object value)
+        private byte[] SerializeInternal(Type type, object value)
         {
-            var method = SerializeMethods.GetOrAdd(value.GetType(), t => SerializeMethod.MakeGenericMethod(t));
-            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.Expression);
-            return (byte[]) handler.Invoke(_serializer, new object[] {value.GetType()});
+            var method = SerializeMethods.GetOrAdd(type, t => SerializeMethod.MakeGenericMethod(t));
+            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.MethodInfo);
+            return (byte[]) handler.Invoke(_serializer, new[] { value });
         }
 
         private static readonly MethodInfo DeserializeMethod = typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Deserialize));
@@ -228,7 +228,7 @@ namespace HQ.Extensions.Caching
         private object DeserializeInternal(Type type, byte[] bytes)
         {
             var method = DeserializeMethods.GetOrAdd(type, t => DeserializeMethod.MakeGenericMethod(t));
-            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.Expression);
+            var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method, DelegateBuildStrategy.MethodInfo);
             return handler.Invoke(_serializer, new object[] { (byte[]) bytes });
         }
 
@@ -244,7 +244,7 @@ namespace HQ.Extensions.Caching
             var type = value.GetType();
             var typeSignature = TypeSignatures.GetOrAdd(type, t => Encoding.UTF8.GetBytes(t.AssemblyQualifiedName ?? throw new InvalidOperationException()));
             _cache.Set($"{key}:type", typeSignature, entry);
-            _cache.Set(key, SerializeInternal(value), entry);
+            _cache.Set(key, SerializeInternal(type, value), entry);
         }
 
         private static DistributedCacheEntryOptions CreateEntry(DateTimeOffset? absoluteExpiration = null, TimeSpan? slidingExpiration = null)
