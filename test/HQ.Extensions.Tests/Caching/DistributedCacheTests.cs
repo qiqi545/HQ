@@ -21,11 +21,11 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Tests.Caching
 {
-    public class InMemoryCacheTests : CacheTestsBase
+    public class DistributedCacheTests : CacheTestsBase
     {
-        public InMemoryCacheTests()
+        public DistributedCacheTests()
         {
-            cache = new InProcessCache(Options.Create(new CacheOptions()));
+            cache = new DistributedCache(Options.Create(new CacheOptions()));
         }
     }
 }

@@ -269,6 +269,9 @@ namespace HQ.Extensions.Caching
                 return null;
 
             var bytes = _cache.Get(key);
+            if (bytes == null)
+                return default;
+
             var item = DeserializeInternal(type, bytes);
             if (item != null)
                 return item;
@@ -294,6 +297,9 @@ namespace HQ.Extensions.Caching
         public T Get<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
         {
             var bytes = _cache.Get(key);
+            if (bytes == null)
+                return default;
+
             var deserialized = DeserializeInternal<T>(bytes);
 
             var item = deserialized is T typed ? typed : default;
