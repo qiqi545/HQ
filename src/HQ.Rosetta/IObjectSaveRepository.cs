@@ -22,19 +22,17 @@ using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
+    public interface IObjectSaveRepository
+    {
+        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object);
+        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object, DynamicObject partial);
+        Task<Operation> SaveAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
+    }
+
     public interface IObjectSaveRepository<in T> where T : IObject
     {
         Task<Operation<ObjectSave>> SaveAsync(T @object);
         Task<Operation<ObjectSave>> SaveAsync(T @object, List<string> fields);
         Task<Operation> SaveAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null);
-    }
-
-    public interface IObjectSaveRepository
-    {
-        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object);
-        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object, DynamicObject partial);
-
-        Task<Operation<IEnumerable<ObjectSave>>> SaveAsync(Type type, IEnumerable<IObject> objects, int startingAt = 0,
-            int? count = null);
     }
 }

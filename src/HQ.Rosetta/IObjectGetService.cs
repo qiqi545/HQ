@@ -30,4 +30,15 @@ namespace HQ.Rosetta
         Task<IPage<IObject>> GetAsync(Type type, string query, SortOptions sort = null, PageOptions page = null,
             FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
+
+    public interface IObjectGetService<T> where T : IObject
+    {
+        Task<IPage<T>> GetAsync(SortOptions sort = null, PageOptions page = null,
+            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+
+        Task<T> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
+
+        Task<IPage<T>> GetAsync(string query, SortOptions sort = null, PageOptions page = null,
+            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+    }
 }

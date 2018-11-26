@@ -26,8 +26,13 @@ namespace HQ.Rosetta
     {
         Task<ObjectSave> SaveAsync(Type type, IObject @object);
         Task<ObjectSave> SaveAsync(Type type, IObject @object, DynamicObject partial);
+        Task SaveAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
+    }
 
-        Task<IEnumerable<ObjectSave>> SaveAsync(Type type, IEnumerable<IObject> objects, int startingAt = 0,
-            int? count = null);
+    public interface IObjectSaveService<in T> where T : IObject
+    {
+        Task<ObjectSave> SaveAsync(T @object);
+        Task<ObjectSave> SaveAsync(T @object, DynamicObject partial);
+        Task SaveAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null);
     }
 }
