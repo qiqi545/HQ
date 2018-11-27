@@ -2,6 +2,6 @@
   <PropertyGroup>
     <!-- IMPORTANT: This value should be incremented after each full stack package release,
                     so that new versions of components don't imply they are part of the stack build! -->
-    <Version>1.0.27</Version>
+    <Version>1.0.28</Version>
   </PropertyGroup>
  </Project>
