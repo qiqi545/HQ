@@ -134,17 +134,22 @@ namespace Squire
                     WL();
                 }
             }
-
+			
             foreach(var destinationFile in Directory.GetFiles(projectDir, "*.cs", SearchOption.AllDirectories))
             {
                 var sourcePath = destinationFile.Replace(projectDir, sourceDir);
                 var sourceFile = Path.Combine(projectDir, sourcePath);
+	            if (File.Exists(sourceFile) || !Directory.Exists(Path.GetDirectoryName(sourceFile)))
+		            continue;
+				
+			    var normalized = destinationFile.Replace(projectDir, string.Empty);
+				var depth = normalized.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries).Length;
 
-                if (Directory.Exists(Path.GetDirectoryName(sourceFile)) && !File.Exists(sourceFile))
-                {
-                    WL($"DELETE: {destinationFile} ", ConsoleColor.Red);
-                    File.Delete(destinationFile);
-                }
+	            if (depth < 2)
+		            continue;;               
+
+	            WL($"DELETE: {destinationFile}", ConsoleColor.Red);
+	            File.Delete(destinationFile);
             }
 
             if(!statement)
