@@ -25,3 +25,29 @@ you simply add a `PackageSources` Configuration and build.
 update brings fresh files, those files win. This enables tight feedback between library consumer and developer, since consumers can make
 changes to address issues and ship their product, and developers can make library fixes that are redistributed back to consumers naturally.
 Everything is done using real files in the project system, so everything is trackable in source.
+
+```msbuild
+<Project>
+
+  <!-- Explicit top import -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <!-- Explicit bottom import -->
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- Define the source package(s) to manage by name and version-->
+  <ItemGroup>
+    <SyncSources Include="SquireExampleLibrary 1.0.0" />
+  </ItemGroup>
+
+  <!-- Enable source package management -->
+  <Import Project="$(SolutionDir)..\build\squire.props" />
+
+</Project>
+```

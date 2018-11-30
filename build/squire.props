@@ -7,8 +7,10 @@
     </PackageReference>
   </ItemGroup>
 
-  <!-- https://github.com/dotnet/sdk/blob/master/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.PackageDependencyResolution.targets-->
-  <Target Name="RunProduceContentAssets" DependsOnTargets="ResolvePackageAssets">
+ <!-- https://github.com/dotnet/sdk/blob/master/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.PackageDependencyResolution.targets-->
+  <Target Name="RunProduceContentAssets"
+          DependsOnTargets="ResolvePackageAssets"
+          Outputs="%(SyncSources.Identity)">
     <ProduceContentAssets
       ContentFileDependencies="@(_ContentFilesToPreprocess)"
       ContentPreprocessorValues="@(PreprocessorValue)"
@@ -19,7 +21,7 @@
       <Output TaskParameter="ProcessedContentItems" ItemName="_ProcessedContentItems" />
       <Output TaskParameter="FileWrites" ItemName="FileWrites" />
     </ProduceContentAssets>
-    <Exec Command="dotnet run -c Release -p &quot;$(SolutionDir)..\build\Squire\Squire.csproj&quot; -- $(MSBuildProjectDirectory) $(Configuration) $(TargetFramework) $(SourceName) $(SourceVersion)" />
+    <Exec Command="dotnet run -c Release -p &quot;$(SolutionDir)..\build\Squire\Squire.csproj&quot; -- $(MSBuildProjectDirectory) $(Configuration) $(TargetFramework) %(SyncSources.Identity)" />
   </Target>
 
 </Project>

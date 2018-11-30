@@ -22,6 +22,8 @@ namespace Squire
                 Environment.Exit(1);
             }
 
+            WL($"Squire.exe {string.Join(' ', args)}");
+
             var currentDir = Environment.CurrentDirectory;
             WL("Working directory: " + currentDir);
 
@@ -133,6 +135,18 @@ namespace Squire
                 }
             }
 
+            foreach(var destinationFile in Directory.GetFiles(projectDir, "*.cs", SearchOption.AllDirectories))
+            {
+                var sourcePath = destinationFile.Replace(projectDir, sourceDir);
+                var sourceFile = Path.Combine(projectDir, sourcePath);
+
+                if (Directory.Exists(Path.GetDirectoryName(sourceFile)) && !File.Exists(sourceFile))
+                {
+                    WL($"DELETE: {destinationFile} ", ConsoleColor.Red);
+                    File.Delete(destinationFile);
+                }
+            }
+
             if(!statement)
                 W(" no changes detected.");
             else
@@ -156,7 +170,10 @@ namespace Squire
             }
             else
             {
+                Directory.CreateDirectory(Path.GetDirectoryName(destinationFile));
                 File.Copy(sourceFile, destinationFile, true);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(hashFile));
                 File.WriteAllBytes(hashFile, sourceHash);
 
                 W($"UPDATE: {sourcePath} ", ConsoleColor.Cyan);
