@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
@@ -28,7 +29,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Update_no_dialect()
         {
             var d = NoDialect.Default;
-            var sql = d.Update("Foo", null, new[] {"CreatedAt"}, null);
+            var sql = d.Update("Foo", null, new List<string> { "CreatedAt"}, null);
             Assert.Equal(@"UPDATE Foo SET CreatedAt = @CreatedAt_set", sql);
         }
 
@@ -36,7 +37,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Update_SQL_Server()
         {
             var d = new SqlServerDialect();
-            var sql = d.Update("Foo", "dbo", new[] {"CreatedAt"}, new[] {"Id"});
+            var sql = d.Update("Foo", "dbo", new List<string> { "CreatedAt"}, new List<string> { "Id"});
             Assert.Equal(@"UPDATE [dbo].[Foo] SET [CreatedAt] = @CreatedAt_set WHERE [Id] = @Id", sql);
         }
     }
