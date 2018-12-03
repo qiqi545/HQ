@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Threading.Tasks;
 
 namespace HQ.Rosetta
@@ -25,7 +24,7 @@ namespace HQ.Rosetta
     public interface IObjectSaveRepository
     {
         Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object);
-        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object, DynamicObject partial);
+        Task<Operation<ObjectSave>> SaveAsync(Type type, IObject @object, List<string> fields);
         Task<Operation> SaveAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
     }
 
