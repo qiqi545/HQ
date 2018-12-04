@@ -10,7 +10,12 @@ namespace System.Data.DocumentDb
     {
         public static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
-            TypeNameHandling = TypeNameHandling.None
+            TypeNameHandling = TypeNameHandling.None,
+
+            DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+            DateParseHandling = DateParseHandling.DateTimeOffset,
+            DateFormatHandling = DateFormatHandling.IsoDateFormat,
+            DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
         };
 
         public static readonly Dictionary<string, Type> Metadata = new Dictionary<string, Type>

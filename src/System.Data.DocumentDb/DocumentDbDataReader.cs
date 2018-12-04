@@ -34,7 +34,9 @@ namespace System.Data.DocumentDb
                 if (_index == -1)
                     return default;
 
-                return _resultSet[_index];
+                var row = _resultSet[_index];
+
+                return row;
             }
         }
 

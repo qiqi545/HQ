@@ -222,11 +222,11 @@ namespace System.Data.DocumentDb
             query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
 
             var result = _connection.Client.CreateDocumentQuery<Sequence>(uri, query, options).AsDocumentQuery();
-            var count = result.ExecuteNextAsync<Sequence>().GetAwaiter().GetResult();
-            var nextSequence = count.Single();
+            var nextSequence = result.ExecuteNextAsync<Sequence>().GetAwaiter().GetResult().SingleOrDefault();
+            nextSequence.Current++;
 
             sequence["id"] = nextSequence.id;
-            sequence["Current"] = nextSequence.Current + 1;
+            sequence["Current"] = nextSequence.Current;
 
             var sequenceOptions = new RequestOptions();
             var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
@@ -316,21 +316,21 @@ namespace System.Data.DocumentDb
                     CommandText += $" {clause} r.id IN ('{string.Join("', '", pageIds)}')";
 
                     query = this.ToQuerySpec();
-                    MaybeTypeDiscriminate(query);
-                    var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
-                    var resultSet = new QueryResultSet();
-                    resultSet.AddRange(result);
-                    return resultSet;
+
+                    return FillResultSet(query, uri, options);
                 }
             }
-            else
-            {
-                MaybeTypeDiscriminate(query);
-                var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
-                var resultSet = new QueryResultSet();
-                resultSet.AddRange(result);
-                return resultSet;
-            }
+
+            return FillResultSet(query, uri, options);
+        }
+
+        private QueryResultSet FillResultSet(SqlQuerySpec query, Uri uri, FeedOptions options)
+        {
+            MaybeTypeDiscriminate(query);
+            var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
+            var resultSet = new QueryResultSet();
+            resultSet.AddRange(result);
+            return resultSet;
         }
 
         public void MaybeTypeDiscriminate(SqlQuerySpec query)
