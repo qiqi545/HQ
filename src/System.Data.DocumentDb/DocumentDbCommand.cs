@@ -10,6 +10,7 @@ using System.Net;
 using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
+using Microsoft.Azure.Documents.Linq;
 
 namespace System.Data.DocumentDb
 {
@@ -55,9 +56,21 @@ namespace System.Data.DocumentDb
 
         public override object ExecuteScalar()
         {
-            var resultSet = GetQueryResultSet();
+            if (CommandText.Contains("COUNT"))
+            {
+                var options = new FeedOptions { MaxItemCount = 1 };
+                var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+                var query = this.ToQuerySpec();
 
-            return resultSet?[0]?.ElementAt(0).Value;
+                var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
+                var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
+                return count.SingleOrDefault();
+            }
+            else
+            {
+                var resultSet = GetQueryResultSet();
+                return resultSet?[0]?.ElementAt(0).Value;
+            }
         }
 
         public override int ExecuteNonQuery()
@@ -165,17 +178,65 @@ namespace System.Data.DocumentDb
         private QueryResultSet GetQueryResultSet()
         {
             var options = new FeedOptions();
-            var query = this.ToQuerySpec();
-
-            MaybeTypeDiscriminate(query);
 
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-            var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
 
-            var resultSet = new QueryResultSet();
-            resultSet.AddRange(result);
+            var query = this.ToQuerySpec();
 
-            return resultSet;
+            if (query.Parameters.Any(x => x.Name == "@Page"))
+            {
+                var selectClause = CommandText.Substring(CommandText.IndexOf(":::", StringComparison.Ordinal) + 3);
+
+                CommandText = CommandText.Replace(selectClause, "r.id").Replace(":::r.id", string.Empty)
+                    .Replace("SELECT", "SELECT VALUE ");
+
+                if (UseTypeDiscrimination)
+                {
+                    var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
+                    CommandText += $" {clause} r.DocumentType = @DocumentType";
+                }
+
+                query = this.ToQuerySpec();
+                MaybeTypeDiscriminate(query);
+
+                var page = (int) query.Parameters.Single(x => x.Name == "@Page").Value;
+                var perPage = (int) query.Parameters.Single(x => x.Name == "@PerPage").Value;
+                options.MaxItemCount = page * perPage;
+                
+                var ids = new List<string>();
+                var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options).
+                    AsDocumentQuery();
+                while (projection.HasMoreResults)
+                {
+                    var next = projection.ExecuteNextAsync<List<string>>().GetAwaiter().GetResult();
+                    foreach(var id in next)
+                        ids.AddRange(id);
+                }
+
+                {
+                    var pageIds = ids.Skip(perPage * (page - 1));
+                    var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
+
+                    CommandText = CommandText.Replace("r.id", selectClause).Replace("SELECT VALUE", "SELECT");
+                    CommandText += $" {clause} r.id IN (@Ids)";
+
+                    query = this.ToQuerySpec();
+                    query.Parameters.Add(new SqlParameter("@Ids", pageIds));
+
+                    var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
+                    var resultSet = new QueryResultSet();
+                    resultSet.AddRange(result);
+                    return resultSet;
+                }
+            }
+            else
+            {
+                MaybeTypeDiscriminate(query);
+                var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
+                var resultSet = new QueryResultSet();
+                resultSet.AddRange(result);
+                return resultSet;
+            }
         }
 
         public void MaybeTypeDiscriminate(SqlQuerySpec query)
