@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using HQ.Lingo.Dapper;
 using HQ.Lingo.Queries;
 using HQ.Lingo.Tests.Fakes;
@@ -40,7 +41,7 @@ namespace HQ.Lingo.Tests.Dapper
             var db = new FakeDbConnection();
 
             db.Query<User, Account, Role, int>(p => p.Id, (p, c) => p.Account = c, p => p.Roles, data: new {Id = 2},
-                filters: new[]
+                filters: new List<Filter>
                 {
                     new Filter
                     {
@@ -49,8 +50,8 @@ namespace HQ.Lingo.Tests.Dapper
                         Operator = FilterOperator.Equal,
                         Value = "@Id"
                     }
-                }
-                , projections: new[]
+                },
+                projections: new List<Projection>
                 {
                     new Projection
                     {

@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
@@ -28,7 +29,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Delete_no_dialect()
         {
             var d = NoDialect.Default;
-            var sql = d.DeleteFrom("Foo", null, null);
+            var sql = d.Delete(table:"Foo", schema: null, keys: new List<string>());
             Assert.Equal("DELETE FROM Foo", sql);
         }
 
@@ -36,7 +37,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Delete_SQL_Server()
         {
             var d = new SqlServerDialect();
-            var sql = d.DeleteFrom("Foo", "dbo", new[] {"Id", "Key"});
+            var sql = d.Delete(table:"Foo", schema: "dbo", keys: new List<string> {"Id", "Key"});
             Assert.Equal("DELETE FROM [dbo].[Foo] WHERE [Id] = @Id AND [Key] = @Key", sql);
         }
     }

@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
 using Xunit;
@@ -26,14 +27,14 @@ namespace HQ.Lingo.Tests.Builders
         [Fact]
         public void Select_no_projection()
         {
-            var sql = NoDialect.Default.Select("Foo", null, new[] {"Id", "CreatedAt"}, keys: null);
+            var sql = NoDialect.Default.Select("Foo", null, new List<string> {"Id", "CreatedAt"}, keys: null);
             Assert.Equal(@"SELECT Id, CreatedAt FROM Foo", sql);
         }
 
         [Fact]
         public void Select_with_keys()
         {
-            var sql = NoDialect.Default.Select("Foo", null, new[] {"Id", "CreatedAt"}, new[] {"Id"});
+            var sql = NoDialect.Default.Select("Foo", null, new List<string> { "Id", "CreatedAt"}, new List<string> { "Id"});
             Assert.Equal(@"SELECT Id, CreatedAt FROM Foo WHERE Id = @Id", sql);
         }
     }

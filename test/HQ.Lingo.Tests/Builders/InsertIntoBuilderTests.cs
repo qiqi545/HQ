@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using HQ.Lingo.Builders;
 using HQ.Lingo.Dialects;
 using HQ.Lingo.SqlServer;
@@ -27,7 +28,7 @@ namespace HQ.Lingo.Tests.Builders
         [Fact]
         public void Insert_into_no_dialect()
         {
-            var sql = NoDialect.Default.InsertInto("Foo", null, new[] {"CreatedAt"}, false);
+            var sql = NoDialect.Default.InsertInto("Foo", null, new List<string> { "CreatedAt"}, false);
             Assert.Equal("INSERT INTO Foo (CreatedAt) VALUES (@CreatedAt)", sql);
         }
 
@@ -35,7 +36,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Insert_into_SQL_Server_with_return_keys()
         {
             var d = new SqlServerDialect();
-            var sql = d.InsertInto("Foo", "dbo", new[] {"CreatedAt"}, true);
+            var sql = d.InsertInto("Foo", "dbo", new List<string> { "CreatedAt" }, true);
             Assert.Equal("INSERT INTO [dbo].[Foo] ([CreatedAt]) OUTPUT Inserted.Id VALUES (@CreatedAt)", sql);
         }
     }

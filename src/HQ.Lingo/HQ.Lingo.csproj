@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\build\package.props" />
-  <Import Project="$(SolutionDir)..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,7 +11,6 @@
   <PropertyGroup>
     <Description>An SQL generator multi-tool for .NET.</Description>
     <PackageTags>sql generator dotnet-standard hq-stack</PackageTags>
-    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
