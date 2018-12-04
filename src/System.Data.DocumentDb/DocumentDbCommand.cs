@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -91,11 +92,45 @@ namespace System.Data.DocumentDb
 
         private int UpdateImpl()
         {
-            var options = new RequestOptions();
             var document = CommandToDocument(Constants.Update);
 
-            const bool disableAutomaticIdGeneration = true;
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+            if (!document.ContainsKey(Constants.IdKey))
+            {
+                var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.DocumentType = @DocumentType");
+                // query.Parameters.Add(new SqlParameter("@Id", $"{document[Id]}"));
+                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
+
+                var ids = new List<string>();
+                var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query).AsDocumentQuery();
+                while (projection.HasMoreResults)
+                {
+                    var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
+                    if (next.Count > 1)
+                    {
+                        foreach (var entry in next)
+                        {
+                            if (entry is JValue jv)
+                                ids.Add(jv.Value as string);
+                        }
+                    }
+                    else
+                    {
+                        if (next.SingleOrDefault() is JValue jv)
+                            ids.Add(jv.Value as string);
+                    }
+                }
+
+                var id = ids.SingleOrDefault();
+                if (!string.IsNullOrWhiteSpace(id))
+                    document[Constants.IdKey] = id;
+
+                if (!document.ContainsKey(Constants.IdKey))
+                    throw new ArgumentNullException();
+            }
+
+            const bool disableAutomaticIdGeneration = true;
+            var options = new RequestOptions();
             var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
             return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
         }
@@ -146,36 +181,7 @@ namespace System.Data.DocumentDb
                             var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) || parameterType == typeof(short);
                             if (parameterName == Id && isSequenceIdType)
                             {
-                                var options = new FeedOptions { MaxItemCount = 1 };
-                                var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-
-                                var sequence = new Dictionary<string, object>
-                                {
-                                    ["DocumentType"] = "Sequence",
-                                    ["SequenceType"] = DocumentType
-                                };
-
-                                var query = new SqlQuerySpec("SELECT VALUE COUNT(1) FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
-                                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
-                                query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
-
-                                var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
-                                var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
-                                var nextId = count.SingleOrDefault() + 1;
-                                sequence["Current"] = nextId;
-
-                                query = new SqlQuerySpec("INSERT INTO Sequence (Sequence.DocumentType, Sequence.SequenceType, Sequence.Current) VALUES (@DocumentType, @SequenceType, @Current)");
-                                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
-                                query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
-                                query.Parameters.Add(new SqlParameter("@Current", sequence["Current"]));
-                                
-                                var sequenceOptions = new RequestOptions();
-                                var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
-                                var response = _connection.Client.CreateDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
-                                Debug.Assert(response.Resource.GetPropertyValue<long>(Id) == nextId);
-
-                                document[Id] = nextId;
-                                _connection.LastSequence = nextId;
+                                GetNextValueForSequence(document);
                             }
                         }
                         break;
@@ -198,6 +204,35 @@ namespace System.Data.DocumentDb
             }
 
             return document;
+        }
+
+        private void GetNextValueForSequence(IDictionary<string, object> document)
+        {
+            var options = new FeedOptions {MaxItemCount = 1};
+            var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+
+            var sequence = new Dictionary<string, object>
+            {
+                ["DocumentType"] = "Sequence",
+                ["SequenceType"] = DocumentType
+            };
+
+            var query = new SqlQuerySpec("SELECT VALUE COUNT(1) FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
+            query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
+            query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
+
+            var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
+            var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
+            var nextId = count.SingleOrDefault() + 1;
+            sequence["Current"] = nextId;
+
+            var sequenceOptions = new RequestOptions();
+            var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
+            var response = _connection.Client.UpsertDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
+            Debug.Assert(response.Resource.GetPropertyValue<long>(Id) == nextId);
+
+            document[Id] = nextId;
+            _connection.LastSequence = nextId;
         }
 
         private Dictionary<string, object> StartDocumentDefinition()
@@ -251,7 +286,7 @@ namespace System.Data.DocumentDb
                 while (projection.HasMoreResults)
                 {
                     var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
-                    if (next is IEnumerable)
+                    if (next.Count > 1)
                     {
                         foreach (var id in next)
                         {

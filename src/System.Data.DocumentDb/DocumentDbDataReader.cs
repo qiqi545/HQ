@@ -79,6 +79,10 @@ namespace System.Data.DocumentDb
             if (member.Type == typeof(short) || member.Type == typeof(int))
                 return typeof(long);
 
+            // Unable to cast object of type 'System.DateTime' to type 'System.Nullable`1[System.DateTimeOffset]'.
+            if (member.Type == typeof(DateTimeOffset?) || member.Type == typeof(DateTime?))
+                return typeof(DateTime);
+
             return member.Type;
         }
 
