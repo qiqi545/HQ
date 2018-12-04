@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HQ.Lingo.Batching\HQ.Lingo.Batching.csproj" />
     <ProjectReference Include="..\HQ.Lingo\HQ.Lingo.csproj" />
   </ItemGroup>
 

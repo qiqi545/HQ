@@ -28,10 +28,11 @@ namespace HQ.Lingo.Dialects
         char? Separator { get; }
         char? Parameter { get; }
         char? Quote { get; }
+        string Count { get; }
 
         string SetSuffix { get; }
         bool SupportsSelectStar { get; }
-
+        
         bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
         void Page(string sql, StringBuilder sb);
 
@@ -55,5 +56,7 @@ namespace HQ.Lingo.Dialects
         bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
         bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
         bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
+
+        bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate);
     }
 }

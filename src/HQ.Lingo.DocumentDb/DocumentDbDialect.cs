@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
+using HQ.PetaPoco.Utilities;
 using LiteGuard;
 
 namespace HQ.Lingo.DocumentDb
@@ -33,6 +34,7 @@ namespace HQ.Lingo.DocumentDb
         public char? Separator => '.';
         public char? Parameter => '@';
         public char? Quote => '\'';
+        public string Count => "VALUE COUNT(1)";
         public string SetSuffix => string.Empty;
 
         public bool SupportsSelectStar => true;
@@ -44,7 +46,17 @@ namespace HQ.Lingo.DocumentDb
 
         public void Page(string sql, StringBuilder sb)
         {
-            throw new NotImplementedException();
+            PagingHelper.SplitSql(sql, out var parts);
+
+            var selectClause = parts.SqlOrderBy == null
+                ? parts.SqlSelectRemoved
+                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+
+            selectClause = selectClause
+                .Replace(" FROM ", string.Empty)
+                .Replace(parts.SqlFrom, string.Empty);
+
+            sb.Append(sql).Append($" :::{selectClause}");
         }
 
         public string ResolveTableName(IDataDescriptor descriptor)
@@ -101,8 +113,25 @@ namespace HQ.Lingo.DocumentDb
 
         public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
 
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters)
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters)
+        {
+            return ResolveDocumentType(descriptor, keys, parameters);
+        }
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters) => true;
+
+        public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate)
+        {
+            sb.Append(hasPredicate ? " AND " : " WHERE ");
+            sb.Append(ResolveColumnName(descriptor, Discriminator));
+            sb.Append(" = ");
+            sb.Append('@').Append(Discriminator).Append(' ');
+            return true;
+        }
+
+        private bool ResolveDocumentType(IDataDescriptor descriptor, IList<string> keys, IList<string> parameters)
         {
             Guard.AgainstNullArgument(nameof(keys), keys);
             Guard.AgainstNullArgument(nameof(parameters), parameters);
@@ -112,10 +141,5 @@ namespace HQ.Lingo.DocumentDb
             parameters.Add(Discriminator);
             return true;
         }
-
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
-
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters) => true;
     }
 }

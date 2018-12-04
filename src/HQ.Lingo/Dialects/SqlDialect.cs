@@ -32,6 +32,7 @@ namespace HQ.Lingo.Dialects
         public abstract char? Separator { get; }
         public abstract char? Parameter { get; }
         public abstract char? Quote { get; }
+        public virtual string Count => "COUNT(1)";
 
         public string SetSuffix => DefaultSetSuffix;
         public bool SupportsSelectStar => false;
@@ -89,5 +90,7 @@ namespace HQ.Lingo.Dialects
 
         public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
             IList<string> parameters) => true;
+
+        public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate) => true;
     }
 }
