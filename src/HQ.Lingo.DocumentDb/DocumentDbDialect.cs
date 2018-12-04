@@ -41,7 +41,8 @@ namespace HQ.Lingo.DocumentDb
 
         public bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
         {
-            throw new NotImplementedException();
+            sql = null;
+            return false;
         }
 
         public void Page(string sql, StringBuilder sb)
