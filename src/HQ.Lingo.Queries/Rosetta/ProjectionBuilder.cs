@@ -35,6 +35,9 @@ namespace HQ.Lingo.Queries.Rosetta
                 sb.Append($"SELECT {BuildFields<T>(dialect, fields, projections)} " +
                           $"FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier} r ");
 
+                if (projections?.Fields == null)
+                    return;
+
                 // INNER JOIN...
                 var joins = 0;
                 foreach (var projection in projections.Fields)
