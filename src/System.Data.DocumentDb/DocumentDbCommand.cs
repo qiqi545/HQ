@@ -232,7 +232,7 @@ namespace System.Data.DocumentDb
             var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
             var response = _connection.Client.UpsertDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
             
-            document[Id] = nextSequence.id;
+            document[Id] = nextSequence.Current;
             _connection.LastSequence = nextSequence.Current;
         }
 
