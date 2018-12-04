@@ -16,7 +16,9 @@
 #endregion
 
 using System.Buffers;
+using System.Collections.Generic;
 using HQ.Common;
+using HQ.Domicile.Conventions;
 using HQ.Domicile.Extensions;
 using HQ.Domicile.Formatters;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +35,7 @@ namespace HQ.Domicile.Configuration
         private readonly ILoggerFactory _loggerFactory;
         private readonly ObjectPoolProvider _objectPoolProvider;
         private readonly IOptions<PublicApiOptions> _options;
+        private readonly IEnumerable<IDynamicComponent> _components;
         private readonly JsonSerializerSettings _settings;
 
         public PublicApiMvcConfiguration(
@@ -40,13 +43,15 @@ namespace HQ.Domicile.Configuration
             ArrayPool<char> charPool,
             ObjectPoolProvider objectPoolProvider,
             JsonSerializerSettings settings,
-            IOptions<PublicApiOptions> options)
+            IOptions<PublicApiOptions> options,
+            IEnumerable<IDynamicComponent> components)
         {
             _loggerFactory = loggerFactory;
             _charPool = charPool;
             _objectPoolProvider = objectPoolProvider;
             _settings = settings;
             _options = options;
+            _components = components;
         }
 
         public void Configure(MvcOptions options)
@@ -61,6 +66,8 @@ namespace HQ.Domicile.Configuration
 
             options.OutputFormatters.Clear();
             options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
+
+            options.Conventions.Add(new DynamicComponentConvention(_components));
         }
     }
 }
