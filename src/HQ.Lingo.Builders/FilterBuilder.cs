@@ -33,7 +33,7 @@ namespace HQ.Lingo.Builders
         {
             var clauses = string.Join(" AND ", filterOptions.Fields.Select(f => dialect.Where(f)));
 
-            return $"WHERE {clauses}";
+            return clauses;
         }
 
         public static string Where(this ISqlDialect d, params Filter[] filters)
