@@ -54,7 +54,7 @@ namespace HQ.MissionControl
 
             var options = app.ApplicationServices.GetService<IOptions<DevOpsApiOptions>>();
             var enabled = options.Value.EnableRouteDebugging;
-            if (options?.Value != null && enabled)
+            if (options.Value != null && enabled)
             {
                 object Map(ActionDescriptor descriptor)
                 {
@@ -90,7 +90,7 @@ namespace HQ.MissionControl
                                         .ActionDescriptors.Items.Select(Map));
                             }
 
-                            routes.MapGet(options.Value.RouteDebuggingPath ?? "routes", GetRoutesHandler);
+                            routes.MapGet(options.Value.RouteDebuggingPath ?? "/routes", GetRoutesHandler);
                         }
 
                         configureRoutes?.Invoke(routes);
