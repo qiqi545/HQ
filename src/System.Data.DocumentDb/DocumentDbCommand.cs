@@ -97,8 +97,8 @@ namespace System.Data.DocumentDb
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
             if (!document.ContainsKey(Constants.IdKey))
             {
-                var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.DocumentType = @DocumentType");
-                // query.Parameters.Add(new SqlParameter("@Id", $"{document[Id]}"));
+                var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
+                query.Parameters.Add(new SqlParameter("@Id", document[Id]));
                 query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
 
                 var ids = new List<string>();
@@ -217,22 +217,29 @@ namespace System.Data.DocumentDb
                 ["SequenceType"] = DocumentType
             };
 
-            var query = new SqlQuerySpec("SELECT VALUE COUNT(1) FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
+            var query = new SqlQuerySpec("SELECT r.id, r.Current FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
             query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
             query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
 
-            var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
-            var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
-            var nextId = count.SingleOrDefault() + 1;
-            sequence["Current"] = nextId;
+            var result = _connection.Client.CreateDocumentQuery<Sequence>(uri, query, options).AsDocumentQuery();
+            var count = result.ExecuteNextAsync<Sequence>().GetAwaiter().GetResult();
+            var nextSequence = count.Single();
+
+            sequence["id"] = nextSequence.id;
+            sequence["Current"] = nextSequence.Current + 1;
 
             var sequenceOptions = new RequestOptions();
             var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
             var response = _connection.Client.UpsertDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
-            Debug.Assert(response.Resource.GetPropertyValue<long>(Id) == nextId);
+            
+            document[Id] = nextSequence.id;
+            _connection.LastSequence = nextSequence.Current;
+        }
 
-            document[Id] = nextId;
-            _connection.LastSequence = nextId;
+        private struct Sequence
+        {
+            public string id;
+            public long Current;
         }
 
         private Dictionary<string, object> StartDocumentDefinition()
