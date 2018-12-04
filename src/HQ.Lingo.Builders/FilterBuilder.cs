@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using HQ.Common;
 using HQ.Common.Helpers;
@@ -28,6 +29,13 @@ namespace HQ.Lingo.Builders
 {
     public static class FilterBuilder
     {
+        public static string Where(this ISqlDialect dialect, FilterOptions filterOptions)
+        {
+            var clauses = string.Join(" AND ", filterOptions.Fields.Select(f => dialect.Where(f)));
+
+            return $"WHERE {clauses}";
+        }
+
         public static string Where(this ISqlDialect d, params Filter[] filters)
         {
             return StringBuilderPool.Scoped(sb => { AppendWhere(sb, d, filters); });

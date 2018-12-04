@@ -16,6 +16,8 @@
 #endregion
 
 using HQ.Common.Helpers;
+using HQ.Lingo.Builders;
+using HQ.Lingo.Descriptor;
 using HQ.Lingo.Dialects;
 using HQ.Rosetta;
 
@@ -32,7 +34,7 @@ namespace HQ.Lingo.Queries.Rosetta
                 sb.Append(ProjectionBuilder.Select<T>(dialect, fields, projections));
 
                 // WHERE ...
-                if (filter?.Fields.Count > 0) sb.Append($" {FilteringBuilder.Where(dialect, filter)}");
+                if (filter?.Fields.Count > 0) sb.Append($" {dialect.Where(filter)}");
 
                 // ORDER BY ...
                 if (sort?.Fields.Count > 0)
@@ -48,7 +50,22 @@ namespace HQ.Lingo.Queries.Rosetta
                 sb.Append($"SELECT COUNT(1) FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
 
                 // WHERE ...
-                if (filter?.Fields.Count > 0) sb.Append($" {FilteringBuilder.Where(dialect, filter)}");
+                if (filter?.Fields.Count > 0) sb.Append($" {dialect.Where(filter)}");
+            });
+        }
+
+        public static string Count<T>(this ISqlDialect dialect, IDataDescriptor descriptor, FilterOptions filter = null)
+        {
+            return StringBuilderPool.Scoped(sb =>
+            {
+                // SELECT COUNT(1) FROM ...
+                sb.Append($"SELECT {dialect.Count} FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
+
+                // WHERE ...
+                if (filter?.Fields.Count > 0)
+                    sb.Append($" {dialect.Where(filter)}");
+
+                dialect.AfterCount(descriptor, sb, filter?.Fields.Count > 0);
             });
         }
     }
