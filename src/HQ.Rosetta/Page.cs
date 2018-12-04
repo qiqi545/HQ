@@ -40,11 +40,11 @@ namespace HQ.Rosetta
         public int Count { get; }
         public long TotalCount { get; }
 
-        public long TotalPages => (int) Math.Ceiling(TotalCount / (double) Size);
+        public long TotalPages => (int)Math.Ceiling(TotalCount / (double)Count);
         public bool HasPreviousPage => Index > 1;
-        public bool HasNextPage => Index < TotalPages;
-        public int Start => Size * Index - Size + 1;
-        public int End => Count == Size ? Start + Size - 1 : Start + Count - 1;
+        public bool HasNextPage => Index < TotalPages - 1;
+        public int Start => Count * Index - Count + 1;
+        public int End => Start + Count - 1;
 
         public IEnumerator<T> GetEnumerator()
         {
