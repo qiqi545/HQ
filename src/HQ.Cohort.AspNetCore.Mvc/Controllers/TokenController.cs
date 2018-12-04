@@ -37,7 +37,6 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Cohort.AspNetCore.Mvc.Controllers
 {
-    [Route("tokens")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class TokenController<TUser> : DataController where TUser : IdentityUser

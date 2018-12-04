@@ -26,6 +26,7 @@ using HQ.Cohort.Services;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
+using HQ.Domicile.Conventions;
 using HQ.Tokens;
 using HQ.Tokens.Configuration;
 using HQ.Tokens.Extensions;
@@ -34,6 +35,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Cohort.AspNetCore.Mvc
 {
@@ -79,6 +81,22 @@ namespace HQ.Cohort.AspNetCore.Mvc
             services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
 
             mvc.AddControllers<TUser, TRole>();
+            services.AddSingleton<IDynamicComponent>(r =>
+            {
+                var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
+                return new IdentityApiComponent
+                {
+                    Namespace = () => o.Value.RootPath ?? string.Empty
+                };
+            });
+            services.AddSingleton<IDynamicComponent>(r =>
+            {
+                var o = r.GetRequiredService<IOptions<SecurityOptions>>();
+                return new TokensComponent
+                {
+                    Namespace = () => o.Value.Tokens?.Path ?? string.Empty
+                };
+            });
 
             services.AddScoped<IUserService<TUser>, UserService<TUser>>();
             services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
@@ -105,7 +123,7 @@ namespace HQ.Cohort.AspNetCore.Mvc
 
         private static void AddIdentityPreamble<TUser>(IServiceCollection services) where TUser : class
         {
-            var authBuilder = AuthenticationServiceCollectionExtensions.AddAuthentication(services, o =>
+            var authBuilder = services.AddAuthentication(o =>
             {
                 o.DefaultScheme = IdentityConstants.ApplicationScheme;
                 o.DefaultSignInScheme = IdentityConstants.ExternalScheme;

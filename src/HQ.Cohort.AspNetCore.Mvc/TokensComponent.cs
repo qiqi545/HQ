@@ -15,18 +15,16 @@
 
 #endregion
 
-using HQ.Common;
-using Microsoft.AspNetCore.Builder;
+using System;
+using System.Collections.Generic;
+using HQ.Cohort.AspNetCore.Mvc.Controllers;
+using HQ.Domicile.Conventions;
 
 namespace HQ.Cohort.AspNetCore.Mvc
 {
-    public static class Use
+    public class TokensComponent : IDynamicComponent
     {
-        public static IApplicationBuilder UseIdentityApi(this IApplicationBuilder app)
-        {
-            Bootstrap.EnsureInitialized();
-            app.UseAuthentication();
-            return app;
-        }
+        public IEnumerable<Type> ControllerTypes => new[] { typeof(TokenController<>) };
+        public Func<string> Namespace { get; set; }
     }
 }
