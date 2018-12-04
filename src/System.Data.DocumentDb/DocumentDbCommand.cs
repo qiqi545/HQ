@@ -63,6 +63,7 @@ namespace System.Data.DocumentDb
                 var options = new FeedOptions { MaxItemCount = 1 };
                 var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
                 var query = this.ToQuerySpec();
+                MaybeTypeDiscriminate(query);
 
                 var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
                 var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
@@ -96,43 +97,46 @@ namespace System.Data.DocumentDb
 
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
             if (!document.ContainsKey(Constants.IdKey))
-            {
-                var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
-                query.Parameters.Add(new SqlParameter("@Id", document[Id]));
-                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
-
-                var ids = new List<string>();
-                var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query).AsDocumentQuery();
-                while (projection.HasMoreResults)
-                {
-                    var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
-                    if (next.Count > 1)
-                    {
-                        foreach (var entry in next)
-                        {
-                            if (entry is JValue jv)
-                                ids.Add(jv.Value as string);
-                        }
-                    }
-                    else
-                    {
-                        if (next.SingleOrDefault() is JValue jv)
-                            ids.Add(jv.Value as string);
-                    }
-                }
-
-                var id = ids.SingleOrDefault();
-                if (!string.IsNullOrWhiteSpace(id))
-                    document[Constants.IdKey] = id;
-
-                if (!document.ContainsKey(Constants.IdKey))
-                    throw new ArgumentNullException();
-            }
+                SetSurrogateKeyForUpdate(document, uri);
 
             const bool disableAutomaticIdGeneration = true;
             var options = new RequestOptions();
             var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
             return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+        }
+
+        private void SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
+        {
+            var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
+            query.Parameters.Add(new SqlParameter("@Id", document[Id]));
+            query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
+
+            var ids = new List<string>();
+            var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query).AsDocumentQuery();
+            while (projection.HasMoreResults)
+            {
+                var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
+                if (next.Count > 1)
+                {
+                    foreach (var entry in next)
+                    {
+                        if (entry is JValue jv)
+                            ids.Add(jv.Value as string);
+                    }
+                }
+                else
+                {
+                    if (next.SingleOrDefault() is JValue jv)
+                        ids.Add(jv.Value as string);
+                }
+            }
+
+            var id = ids.SingleOrDefault();
+            if (!string.IsNullOrWhiteSpace(id))
+                document[Constants.IdKey] = id;
+
+            if (!document.ContainsKey(Constants.IdKey))
+                throw new ArgumentNullException();
         }
 
         private int InsertImpl()
@@ -267,61 +271,62 @@ namespace System.Data.DocumentDb
 
             var query = this.ToQuerySpec();
 
-            if (query.Parameters.Any(x => x.Name == "@Page"))
+            return query.Parameters.Any(x => x.Name == "@Page")
+                ? FillResultSetPage(options, uri)
+                : FillResultSet(query, uri, options);
+        }
+
+        private QueryResultSet FillResultSetPage(FeedOptions options, Uri uri)
+        {
+            var selectClause = CommandText.Substring(CommandText.IndexOf(":::", StringComparison.Ordinal) + 3);
+
+            CommandText = CommandText.Replace(selectClause, "r.id").Replace(":::r.id", string.Empty)
+                .Replace("SELECT", "SELECT VALUE ");
+
+            if (UseTypeDiscrimination)
             {
-                var selectClause = CommandText.Substring(CommandText.IndexOf(":::", StringComparison.Ordinal) + 3);
+                var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
+                CommandText += $" {clause} r.DocumentType = @DocumentType";
+            }
 
-                CommandText = CommandText.Replace(selectClause, "r.id").Replace(":::r.id", string.Empty)
-                    .Replace("SELECT", "SELECT VALUE ");
+            var query = this.ToQuerySpec();
+            MaybeTypeDiscriminate(query);
 
-                if (UseTypeDiscrimination)
+            var page = (int) query.Parameters.Single(x => x.Name == "@Page").Value;
+            var perPage = (int) query.Parameters.Single(x => x.Name == "@PerPage").Value;
+            options.MaxItemCount = page * perPage;
+
+            var ids = new List<string>();
+            var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options).AsDocumentQuery();
+            while (projection.HasMoreResults)
+            {
+                var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
+                if (next.Count > 1)
                 {
-                    var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
-                    CommandText += $" {clause} r.DocumentType = @DocumentType";
-                }
-
-                query = this.ToQuerySpec();
-                MaybeTypeDiscriminate(query);
-
-                var page = (int) query.Parameters.Single(x => x.Name == "@Page").Value;
-                var perPage = (int) query.Parameters.Single(x => x.Name == "@PerPage").Value;
-                options.MaxItemCount = page * perPage;
-                
-                var ids = new List<string>();
-                var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options).
-                    AsDocumentQuery();
-                while (projection.HasMoreResults)
-                {
-                    var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
-                    if (next.Count > 1)
+                    foreach (var id in next)
                     {
-                        foreach (var id in next)
-                        {
-                            if (id is JValue jv)
-                                ids.Add(jv.Value as string);
-                        }
-                    }
-                    else
-                    {
-                        if (next.SingleOrDefault() is JValue jv)
+                        if (id is JValue jv)
                             ids.Add(jv.Value as string);
                     }
                 }
-
+                else
                 {
-                    var pageIds = ids.Skip(perPage * (page - 1));
-                    var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
-
-                    CommandText = CommandText.Replace("r.id", selectClause).Replace("SELECT VALUE", "SELECT");
-                    CommandText += $" {clause} r.id IN ('{string.Join("', '", pageIds)}')";
-
-                    query = this.ToQuerySpec();
-
-                    return FillResultSet(query, uri, options);
+                    if (next.SingleOrDefault() is JValue jv)
+                        ids.Add(jv.Value as string);
                 }
             }
 
-            return FillResultSet(query, uri, options);
+            {
+                var pageIds = ids.Skip(perPage * (page - 1)).Take(perPage);
+                var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
+
+                CommandText = CommandText.Replace("r.id", selectClause).Replace("SELECT VALUE", "SELECT");
+                CommandText += $" {clause} r.id IN ('{string.Join("', '", pageIds)}')";
+
+                query = this.ToQuerySpec();
+
+                return FillResultSet(query, uri, options);
+            }
         }
 
         private QueryResultSet FillResultSet(SqlQuerySpec query, Uri uri, FeedOptions options)
