@@ -27,7 +27,7 @@ namespace HQ.Common
 
         public static class Sql
         {
-            public const char ParentAlias = 'p';
+            public const char ParentAlias = 'r';
             public const char ChildAlias = 'c';
             public const string SetSuffix = "_set";
         }
