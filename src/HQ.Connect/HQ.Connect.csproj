@@ -22,8 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Src\HQ\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Src\HQ\HQ.Harmony\src\HQ.Harmony\HQ.Harmony.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Harmony\src\HQ.Harmony\HQ.Harmony.csproj" />
   </ItemGroup>
 
 </Project>
