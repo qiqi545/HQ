@@ -1,6 +1,7 @@
 // Copyright (c) HQ.IO. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace System.Data.DocumentDb
 {
@@ -44,8 +46,7 @@ namespace System.Data.DocumentDb
                 if (value is DocumentDbConnection connection)
                     _connection = connection;
                 else
-                    throw new InvalidCastException("The connection passed was not a " + nameof(DocumentDbConnection) +
-                                                   ".");
+                    throw new InvalidCastException("The connection passed was not a " + nameof(DocumentDbConnection) + ".");
             }
         }
 
@@ -106,8 +107,7 @@ namespace System.Data.DocumentDb
 
             var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
             var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-            var response = _connection.Client.CreateDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
-                .Result;
+            var response = _connection.Client.CreateDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
             return response.StatusCode == HttpStatusCode.Created ? 1 : 0;
         }
 
@@ -138,8 +138,45 @@ namespace System.Data.DocumentDb
                             var parameterName = parameter.ParameterName.Substring(qualifier.Length);
                             document.Add(parameterName, parameter.Value);
 
-                            if (parameterName == Id)
+                            var parameterType = parameter.Value.GetType();
+                            var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
+                            if (isValidIdType && parameterName == Id)
                                 document.Add(Constants.IdKey, parameter.Value);
+
+                            var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) || parameterType == typeof(short);
+                            if (parameterName == Id && isSequenceIdType)
+                            {
+                                var options = new FeedOptions { MaxItemCount = 1 };
+                                var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+
+                                var sequence = new Dictionary<string, object>
+                                {
+                                    ["DocumentType"] = "Sequence",
+                                    ["SequenceType"] = DocumentType
+                                };
+
+                                var query = new SqlQuerySpec("SELECT VALUE COUNT(1) FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
+                                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
+                                query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
+
+                                var result = _connection.Client.CreateDocumentQuery<long>(uri, query, options).AsDocumentQuery();
+                                var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
+                                var nextId = count.SingleOrDefault() + 1;
+                                sequence["Current"] = nextId;
+
+                                query = new SqlQuerySpec("INSERT INTO Sequence (Sequence.DocumentType, Sequence.SequenceType, Sequence.Current) VALUES (@DocumentType, @SequenceType, @Current)");
+                                query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
+                                query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
+                                query.Parameters.Add(new SqlParameter("@Current", sequence["Current"]));
+                                
+                                var sequenceOptions = new RequestOptions();
+                                var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
+                                var response = _connection.Client.CreateDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
+                                Debug.Assert(response.Resource.GetPropertyValue<long>(Id) == nextId);
+
+                                document[Id] = nextId;
+                                _connection.LastSequence = nextId;
+                            }
                         }
                         break;
                     }
@@ -148,8 +185,13 @@ namespace System.Data.DocumentDb
                         foreach (DocumentDbParameter parameter in _parameters)
                         {
                             document.Add(parameter.ParameterName, parameter.Value);
-                            if (parameter.ParameterName == Id)
-                                document[Constants.IdKey] = parameter.Value;
+
+                            var parameterName = parameter.ParameterName;
+
+                            var parameterType = parameter.Value.GetType();
+                            var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
+                            if (isValidIdType && parameterName == Id)
+                                document.Add(Constants.IdKey, parameter.Value);
                         }
                         break;
                     }
@@ -208,9 +250,20 @@ namespace System.Data.DocumentDb
                     AsDocumentQuery();
                 while (projection.HasMoreResults)
                 {
-                    var next = projection.ExecuteNextAsync<List<string>>().GetAwaiter().GetResult();
-                    foreach(var id in next)
-                        ids.AddRange(id);
+                    var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
+                    if (next is IEnumerable)
+                    {
+                        foreach (var id in next)
+                        {
+                            if (id is JValue jv)
+                                ids.Add(jv.Value as string);
+                        }
+                    }
+                    else
+                    {
+                        if (next.SingleOrDefault() is JValue jv)
+                            ids.Add(jv.Value as string);
+                    }
                 }
 
                 {
@@ -218,11 +271,10 @@ namespace System.Data.DocumentDb
                     var clause = CommandText.Contains("WHERE") ? "AND" : "WHERE";
 
                     CommandText = CommandText.Replace("r.id", selectClause).Replace("SELECT VALUE", "SELECT");
-                    CommandText += $" {clause} r.id IN (@Ids)";
+                    CommandText += $" {clause} r.id IN ('{string.Join("', '", pageIds)}')";
 
                     query = this.ToQuerySpec();
-                    query.Parameters.Add(new SqlParameter("@Ids", pageIds));
-
+                    MaybeTypeDiscriminate(query);
                     var result = _connection.Client.CreateDocumentQuery<ExpandoObject>(uri, query, options);
                     var resultSet = new QueryResultSet();
                     resultSet.AddRange(result);

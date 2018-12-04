@@ -53,6 +53,8 @@ namespace System.Data.DocumentDb
 
         public DocumentClient Client { get; }
 
+        public long? LastSequence { get; set; }
+
         public override void Open()
         {
             _isOpen = true;
