@@ -16,8 +16,8 @@
 #endregion
 
 using System.Net;
-using System.Text;
 using HQ.Common;
+using HQ.Common.Helpers;
 using HQ.Domicile.Configuration;
 using HQ.Rosetta;
 using HQ.Rosetta.Configuration;
@@ -43,26 +43,6 @@ namespace HQ.Domicile.Extensions
             }
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
-            object data, out object body)
-        {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
-            {
-                body = new
-                {
-                    response = data,
-                    status = response.StatusCode,
-                    headers = response.Headers
-                };
-
-                response.StatusCode = (int) HttpStatusCode.OK;
-            }
-            else
-            {
-                body = data;
-            }
-        }
-
         public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions, QueryOptions queryOptions,
             IPageHeader header, out object body)
         {
@@ -83,30 +63,44 @@ namespace HQ.Domicile.Extensions
                     }
                 };
 
-                response.StatusCode = (int) HttpStatusCode.OK;
+                response.StatusCode = (int)HttpStatusCode.OK;
             }
             else
             {
-                var sb = new StringBuilder();
-                if (header.HasNextPage)
+                var link = StringBuilderPool.Scoped(sb =>
                 {
-                    var nextPage = $"<{GetNextPage(request, header, queryOptions)}>; rel=\"next\"";
-                    sb.Append(nextPage);
-                }
+                    if (header.TotalPages > 1)
+                    {
+                        var firstPage = $"<{GetFirstPage(request, header, queryOptions)}>; rel=\"first\"";
+                        sb.Append(firstPage);
+                    }
 
-                if (header.HasPreviousPage)
-                {
-                    var previousPage = $"<{GetPreviousPage(request, header, queryOptions)}>; rel=\"previous\"";
-                    sb.Append(previousPage);
-                }
+                    if (header.HasNextPage)
+                    {
+                        var nextPage = $"<{GetNextPage(request, header, queryOptions)}>; rel=\"next\"";
+                        if (sb.Length > 0)
+                            sb.Append(", ");
+                        sb.Append(nextPage);
+                    }
 
-                if (header.TotalPages > 1)
-                {
-                    var lastPage = $"<{GetLastPage(request, header, queryOptions)}>; rel=\"last\"";
-                    sb.Append(lastPage);
-                }
+                    if (header.HasPreviousPage)
+                    {
+                        var previousPage = $"<{GetPreviousPage(request, header, queryOptions)}>; rel=\"previous\"";
+                        if (sb.Length > 0)
+                            sb.Append(", ");
+                        sb.Append(previousPage);
+                    }
 
-                if (sb.Length > 0) response.Headers.Add(Constants.HttpHeaders.Link, sb.ToString());
+                    if (header.TotalPages > 1)
+                    {
+                        var lastPage = $"<{GetLastPage(request, header, queryOptions)}>; rel=\"last\"";
+                        if (sb.Length > 0)
+                            sb.Append(", ");
+                        sb.Append(lastPage);
+                    }
+                });
+
+                if (link.Length > 0) response.Headers.Add(Constants.HttpHeaders.Link, link);
                 response.Headers.Add(queryOptions.TotalCountHeader, header.TotalCount.ToString());
                 response.Headers.Add(queryOptions.TotalPagesHeader, header.TotalPages.ToString());
                 body = header;
@@ -121,6 +115,11 @@ namespace HQ.Domicile.Extensions
         internal static string GetNextPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
             return !header.HasNextPage ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
+        }
+
+        internal static string GetFirstPage(HttpRequest request, IPageHeader header, QueryOptions options)
+        {
+            return header.TotalPages > 0 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}=1&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetLastPage(HttpRequest request, IPageHeader header, QueryOptions options)
