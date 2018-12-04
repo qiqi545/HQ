@@ -80,8 +80,11 @@ namespace HQ.Lingo.Queries.Rosetta
                 sb.Append(string.Join(", ",
                     source.Select(a => $"r.{dialect.StartIdentifier}{a}{dialect.EndIdentifier}")));
 
+                if (projections?.Fields == null)
+                    return;
+
                 var joins = 0;
-                foreach (var expansion in projections.Fields)
+                foreach (var projection in projections?.Fields)
                 {
                     sb.Append($", r{joins}.*");
                     joins++;
