@@ -15,11 +15,28 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using HQ.Rosetta;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Models
 {
     public interface IRoleService<TRole> where TRole : IdentityRole
     {
+        IQueryable<TRole> Roles { get; }
+
+        Task<Operation<IEnumerable<TRole>>> GetAsync();
+        Task<Operation<TRole>> CreateAsync(CreateRoleModel model);
+        Task<Operation> DeleteAsync(string id);
+
+        Task<Operation<TRole>> FindByIdAsync(string id);
+        Task<Operation<TRole>> FindByNameAsync(string roleName);
+
+        Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role);
+        Task<Operation> AddClaimAsync(TRole role, Claim claim);
+        Task<Operation> RemoveClaimAsync(TRole role, Claim claim);
     }
 }

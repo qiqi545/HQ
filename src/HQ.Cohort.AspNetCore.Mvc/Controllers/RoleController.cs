@@ -17,7 +17,7 @@
 
 using System;
 using System.Linq;
-using System.Runtime.Serialization;
+using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Cohort.Models;
@@ -38,53 +38,48 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [Authorize(Constants.Security.Policies.ManageUsers)]
     public class RoleController<TRole> : DataController where TRole : IdentityRole
     {
-        private readonly RoleManager<TRole> _roleManager;
-        private readonly IOptions<SecurityOptions> _securityOptions;
+        private readonly IRoleService<TRole> _roleService;
+        private readonly IOptions<SecurityOptions> _security;
 
-        public RoleController(RoleManager<TRole> roleManager, IOptions<SecurityOptions> tokenOptions)
+        public RoleController(IRoleService<TRole> roleService, IOptions<SecurityOptions> security)
         {
-            _roleManager = roleManager;
-            _securityOptions = tokenOptions;
+            _roleService = roleService;
+            _security = security;
         }
 
-        [HttpGet]
-        public IActionResult GetRoles()
+        [HttpGet("")]
+        public async Task<IActionResult> Get()
         {
-            var roles = _roleManager.Roles;
-            // ReSharper disable once UseMethodAny.2
-            if (roles.Count() == 0)
+            var roles = await _roleService.GetAsync();
+            if (roles?.Data == null)
                 return NotFound();
-            return Ok(roles);
+            return Ok(roles.Data);
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> CreateRole([FromBody] CreateRoleModel model)
+        public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
         {
-            if (!Valid(model, out var error))
+            if (!ValidModelState(out var error))
                 return error;
 
-            var role = (TRole) FormatterServices.GetUninitializedObject(typeof(TRole));
-            role.Name = model.Name;
-            role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
-
-            var result = await _roleManager.CreateAsync(role);
+            var result = await _roleService.CreateAsync(model);
 
             return result.Succeeded
-                ? Created("/api/roles/" + role.Id, role)
-                : (IActionResult) BadRequest(result.Errors);
+                ? Created("/api/roles/" + result.Data.Id, result.Data)
+                : (IActionResult)BadRequest(result.Errors);
         }
 
 
         [HttpGet("{id}/claims")]
         public async Task<IActionResult> GetClaims([FromRoute] string id)
         {
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
+            var role = await _roleService.FindByIdAsync(id);
+            if (role?.Data == null)
                 return NotFound();
 
-            var claims = await _roleManager.GetClaimsAsync(role);
+            var claims = await _roleService.GetClaimsAsync(role.Data);
 
-            if (claims == null || claims.Count == 0)
+            if (claims?.Data.Count == 0)
                 return NotFound();
 
             return Ok(claims);
@@ -96,44 +91,47 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
             if (!Valid(model, out var error))
                 return error;
 
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
+            var role = await _roleService.FindByIdAsync(id);
+            if (role?.Data == null)
                 return NotFound();
 
-            var issuer = _securityOptions.Value.Tokens.Issuer;
+            var issuer = _security.Value.Tokens.Issuer;
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
-            var result = await _roleManager.AddClaimAsync(role, claim);
+            var result = await _roleService.AddClaimAsync(role.Data, claim);
 
             return result.Succeeded
-                ? Created("/api/roles/" + role.Id + "/claims", claim)
-                : (IActionResult) BadRequest(result.Errors);
+                ? Created($"/api/roles/{role.Data.Id}/claims", claim)
+                : (IActionResult)BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}/claims")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromQuery] DeleteClaimModel model)
+        [HttpDelete("{id}/claims/{type}/{value}")]
+        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
         {
-            if (!ValidModelState(out var error))
-                return error;
-
-            var role = await _roleManager.FindByIdAsync(id);
-            if (role == null)
+            var user = await _roleService.FindByIdAsync(id);
+            if (user?.Data == null)
                 return NotFound();
 
-            var issuer = _securityOptions.Value.Tokens.Issuer;
-            var claim = new Claim(model.Type, model.Value, null, issuer);
-            var result = await _roleManager.RemoveClaimAsync(role, claim);
+            var claims = await _roleService.GetClaimsAsync(user.Data);
+
+            var claim = claims.Data.FirstOrDefault(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
+                                                        x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
+
+            if (claim == null)
+                return NotFound();
+
+            var result = await _roleService.RemoveClaimAsync(user.Data, claim);
 
             return result.Succeeded
-                ? Created("/api/roles/" + role.Id + "/claims", claim)
-                : (IActionResult) BadRequest(result.Errors);
+                ? StatusCode((int)HttpStatusCode.NoContent)
+                : (IActionResult)BadRequest(result.Errors);
         }
 
 
         [HttpGet("{id}")]
         public async Task<TRole> FindById([FromRoute] string id)
         {
-            var role = await _roleManager.FindByIdAsync(id);
-            return role;
+            var role = await _roleService.FindByIdAsync(id);
+            return role.Data;
         }
     }
 }

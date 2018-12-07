@@ -15,12 +15,102 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Runtime.Serialization;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using HQ.Cohort.Extensions;
 using HQ.Cohort.Models;
+using HQ.Rosetta;
+using HQ.Rosetta.Queryable;
+using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Services
 {
-    public class RoleService<TUser> : IRoleService<TUser> where TUser : IdentityRole
+    public class RoleService<TRole> : IRoleService<TRole> where TRole : IdentityRole
     {
+        private readonly IQueryableProvider<TRole> _queryableProvider;
+        private readonly RoleManager<TRole> _roleManager;
+
+        public RoleService(RoleManager<TRole> roleManager, IQueryableProvider<TRole> queryableProvider)
+        {
+            _roleManager = roleManager;
+            _queryableProvider = queryableProvider;
+        }
+
+        public IQueryable<TRole> Roles => _roleManager.Roles;
+
+        public Task<Operation<IEnumerable<TRole>>> GetAsync()
+        {
+            var all = _queryableProvider.SafeAll;
+            return Task.FromResult(new Operation<IEnumerable<TRole>>(all));
+        }
+
+        public async Task<Operation<TRole>> CreateAsync(CreateRoleModel model)
+        {
+            var role = (TRole)FormatterServices.GetUninitializedObject(typeof(TRole));
+            role.Name = model.Name;
+            role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+            role.NormalizedName = model.Name?.ToUpperInvariant();
+
+            var result = await _roleManager.CreateAsync(role);
+            return result.ToOperation(role);
+        }
+
+        public async Task<Operation> DeleteAsync(string id)
+        {
+            var operation = await FindByIdAsync(id);
+            if (!operation.Succeeded)
+                return operation;
+
+            var deleted = await _roleManager.DeleteAsync(operation.Data);
+            return deleted.ToOperation();
+        }
+
+        #region Find
+
+        public async Task<Operation<TRole>> FindByIdAsync(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            return role == null
+                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_RoleNotFound, HttpStatusCode.NotFound))
+                : new Operation<TRole>(role);
+        }
+
+        public async Task<Operation<TRole>> FindByNameAsync(string roleName)
+        {
+            var role = await _roleManager.FindByNameAsync(roleName);
+            return role == null
+                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_RoleNotFound, HttpStatusCode.NotFound))
+                : new Operation<TRole>(role);
+        }
+
+        #endregion
+
+        #region Claims
+
+        public async Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role)
+        {
+            var claims = await _roleManager.GetClaimsAsync(role);
+            return new Operation<IList<Claim>>(claims);
+        }
+
+        public async Task<Operation> AddClaimAsync(TRole role, Claim claim)
+        {
+            var result = await _roleManager.AddClaimAsync(role, claim);
+            return result.ToOperation();
+        }
+
+        public async Task<Operation> RemoveClaimAsync(TRole role, Claim claim)
+        {
+            var result = await _roleManager.RemoveClaimAsync(role, claim);
+            return result.ToOperation();
+        }
+
+        #endregion
     }
 }
