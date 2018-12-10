@@ -36,7 +36,7 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
 
         public Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return Task.CompletedTask;            
         }
 
         public void MigrateUp(CancellationToken cancellationToken)

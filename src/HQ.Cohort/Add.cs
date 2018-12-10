@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,8 +19,11 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Models;
 using HQ.Cohort.Security;
+using HQ.Cohort.Services;
 using HQ.Cohort.Validators;
+using HQ.Common.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,17 +45,51 @@ namespace HQ.Cohort
             };
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser>(this IServiceCollection services,
-            IConfiguration configuration) where TUser : class
+
+        public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, IConfiguration configuration)
+            where TUser : IdentityUser
+            where TRole : IdentityRole
+        {
+            AddIdentityPreamble(services);
+
+            return services.AddIdentityCoreExtended<TUser, TRole>(configuration);
+        }
+
+        public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, Action<IdentityOptionsExtended> setupAction = null)
+            where TUser : IdentityUser
+            where TRole : IdentityRole
+        {
+            AddIdentityPreamble(services);
+
+            return services.AddIdentityCoreExtended<TUser, TRole>(o => { setupAction?.Invoke(o); });
+        }
+
+        private static void AddIdentityPreamble(IServiceCollection services)
+        {
+            var authBuilder = services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = IdentityConstants.ApplicationScheme;
+                o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+            });
+
+            var cookiesBuilder = authBuilder.AddIdentityCookies(o => { });
+        }
+
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
+            IConfiguration configuration)
+            where TUser : IdentityUser
+            where TRole : IdentityRole
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
 
-            return AddIdentityCoreExtended<TUser>(services, configuration.Bind);
+            return services.AddIdentityCoreExtended<TUser, TRole>(configuration.Bind);
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser>(this IServiceCollection services,
-            Action<IdentityOptionsExtended> setupAction) where TUser : class
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
+            Action<IdentityOptionsExtended> setupAction = null)
+            where TUser : IdentityUser
+            where TRole : IdentityRole
         {
             /*
                 services.AddOptions().AddLogging();
@@ -71,8 +108,11 @@ namespace HQ.Cohort
             {
                 var extended = new IdentityOptionsExtended(o);
                 Defaults(extended);
-                setupAction.Invoke(extended);
+                setupAction?.Invoke(extended);
             });
+
+            if(setupAction != null)
+                services.Configure(setupAction);
 
             identityBuilder.AddDefaultTokenProviders();
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
@@ -88,6 +128,10 @@ namespace HQ.Cohort
             Debug.Assert(removed);
 
             services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
+
+            services.AddScoped<IUserService<TUser>, UserService<TUser>>();
+            services.AddScoped<IRoleService<TRole>, RoleService<TRole>>();
+            services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;
         }

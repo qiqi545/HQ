@@ -18,54 +18,65 @@
 using System;
 using System.Data;
 using System.Threading;
+using HQ.Cadence;
 using HQ.Cohort.Configuration;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.Sqlite;
+using HQ.Lingo.Descriptor;
+using HQ.Lingo.Queries;
 using HQ.Lingo.Sqlite;
+using HQ.Rosetta.Queryable;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Cohort.Stores.Sql.Sqlite
 {
     public static class Add
     {
         public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
-            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
-            return AddSqliteIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
+            return AddSqliteIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, null, scope);
         }
 
         public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
-            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+            string connectionString,
+            IConfiguration sqliteConfig,
+            ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
             where TRole : IdentityRole<TKey>
         {
-            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
+            if (sqliteConfig != null) identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
+            var configureSqlite = sqliteConfig != null ? sqliteConfig.Bind : (Action<SqliteOptions>) null;
+
+            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope, null, configureSqlite);
         }
-
+        
         public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope,
-            IConfiguration identityConfig, IConfiguration SqliteConfig)
+            string connectionString, ConnectionScope scope, 
+            IConfiguration identityConfig, IConfiguration sqliteConfig)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
             where TRole : IdentityRole<TKey>
         {
+            identityBuilder.Services.Configure<IdentityOptions>(identityConfig);
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
-            identityBuilder.Services.Configure<SqliteOptions>(SqliteConfig);
+            identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
 
-            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope,
-                identityConfig.Bind, SqliteConfig.Bind);
+            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope, identityConfig.Bind, sqliteConfig.Bind);
         }
 
         public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptionsExtended> configureIdentity = null, Action<SqliteOptions> configureSqlite = null)
+            Action<IdentityOptionsExtended> configureIdentity = null,
+            Action<SqliteOptions> configureSqlite = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUser<TKey>
             where TRole : IdentityRole<TKey>
@@ -74,18 +85,38 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
 
             var dialect = new SqliteDialect();
 
-            var identityOptions = new IdentityOptionsExtended();
+            var serviceProvider = identityBuilder.Services.BuildServiceProvider();
+
+            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ?? new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
-            var SqliteOptions = new SqliteOptions();
-            configureSqlite?.Invoke(SqliteOptions);
+            var sqliteOptions = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
+            configureSqlite?.Invoke(sqliteOptions);
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, SqliteOptions);
+            MigrateToLatest<TKey>(connectionString, identityOptions, sqliteOptions);
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
-                OnCommand<TKey>(), OnConnection);
-
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope, OnCommand<TKey>(), OnConnection);
             identityBuilder.Services.AddSingleton(dialect);
+
+            SqlBuilder.Dialect = dialect;
+
+            SimpleDataDescriptor.TableNameConvention = s =>
+            {
+                switch (s)
+                {
+                    case nameof(IdentityRole):
+                        return "AspNetRoles";
+                    case nameof(IdentityUser):
+                        return "AspNetUsers";
+                    default:
+                        return s;
+                }
+            };
+
+            identityBuilder.Services.AddMetrics();
+            identityBuilder.Services.AddSingleton(dialect);
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
 
             return identityBuilder;
         }
@@ -97,19 +128,18 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             }
         }
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
-            where TKey : IEquatable<TKey>
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>() where TKey : IEquatable<TKey>
         {
             return (c, t, r) =>
             {
                 if (c is SqliteCommand command)
                 {
+
                 }
             };
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
-            SqliteOptions options) where TKey : IEquatable<TKey>
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions, SqliteOptions options) where TKey : IEquatable<TKey>
         {
             var runner = new MigrationRunner(connectionString, options);
 

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -21,22 +21,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Lingo.Queries;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole>
-    {
-        public struct AspNetUserLogins
-        {
-            public TKey UserId { get; set; }
-            public string LoginProvider { get; set; }
-            public string ProviderKey { get; set; }
-            public string ProviderDisplayName { get; set; }
-        }
-    }
-
     partial class UserStore<TUser, TKey, TRole> : IUserLoginStore<TUser>
     {
         public async Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
@@ -82,14 +72,14 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetUserLogins>(new
+            var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
             {
                 UserId = user.Id
             });
 
-            _connection.SetTypeInfo(typeof(AspNetUserLogins));
+            _connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
-            var logins = await _connection.Current.QueryAsync<AspNetUserLogins>(query.Sql, query.Parameters);
+            var logins = await _connection.Current.QueryAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
 
             return logins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey, x.ProviderDisplayName))
                 .AsList();

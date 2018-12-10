@@ -36,5 +36,6 @@ namespace HQ.Cohort.Configuration
         }
 
         public PasswordHashStrategy HashStrategy { get; set; } = PasswordHashStrategy.Pbkdf2;
+        public bool RequireUniquePassword { get; set; }
     }
 }

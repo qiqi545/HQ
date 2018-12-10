@@ -52,8 +52,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
-            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, documentDbConfig,
-                scope);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, documentDbConfig, scope);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole>(
@@ -86,7 +85,6 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            // this makes more sense in a Configure extension
             var serviceProvider = identityBuilder.Services.BuildServiceProvider();
 
             var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ??
@@ -121,6 +119,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
         {
             if (c is DocumentDbConnection connection)
             {
+
             }
         }
 
@@ -143,9 +142,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
                 }
             };
         }
-
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
-            DocumentDbOptions options) where TKey : IEquatable<TKey>
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions, DocumentDbOptions options) where TKey : IEquatable<TKey>
         {
             var runner = new MigrationRunner(connectionString, options);
 

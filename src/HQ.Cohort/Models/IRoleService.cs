@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Models
 {
-    public interface IRoleService<TRole> where TRole : IdentityRole
+    public interface IRoleService<TRole>
     {
         IQueryable<TRole> Roles { get; }
 
@@ -36,6 +36,7 @@ namespace HQ.Cohort.Models
         Task<Operation<TRole>> FindByNameAsync(string roleName);
 
         Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role);
+        Task<Operation<IList<Claim>>> GetAllRoleClaimsAsync();
         Task<Operation> AddClaimAsync(TRole role, Claim claim);
         Task<Operation> RemoveClaimAsync(TRole role, Claim claim);
     }

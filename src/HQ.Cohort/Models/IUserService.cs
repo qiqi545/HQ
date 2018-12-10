@@ -26,7 +26,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Models
 {
-    public interface IUserService<TUser> where TUser : IdentityUser
+    public interface IUserService<TUser>
     {
         IQueryable<TUser> Users { get; }
 

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -33,21 +33,29 @@ namespace HQ.Cohort.Stores.Sql
         where TRole : IdentityRole<TKey>
         where TKey : IEquatable<TKey>
     {
-        public async Task<IList<Claim>> GetClaimsAsync(TRole role,
-            CancellationToken cancellationToken = new CancellationToken())
+        public async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken = new CancellationToken())
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new {RoleId = role.Id});
-            query.Sql += " AND AspNetRoleClaims.DocumentType = @DocumentType";
 
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
             return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
         }
 
-        public async Task AddClaimAsync(TRole role, Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
+        public async Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>();
+
+            _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
+            var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
+            return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
+        }
+
+        public async Task AddClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -65,8 +73,7 @@ namespace HQ.Cohort.Stores.Sql
             Debug.Assert(inserted == 1);
         }
 
-        public async Task RemoveClaimAsync(TRole role, Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
+        public async Task RemoveClaimAsync(TRole role, Claim claim, CancellationToken cancellationToken = new CancellationToken())
         {
             cancellationToken.ThrowIfCancellationRequested();
 

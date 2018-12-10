@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using HQ.Cohort.Models;
 using HQ.Common;
 using HQ.Connect;
 using Microsoft.AspNetCore.Identity;
@@ -47,8 +48,11 @@ namespace HQ.Cohort.Stores.Sql
             services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
                 onConnection, onCommand);
 
-            services.AddTransient<IUserStore<TUser>, UserStore<TUser, TKey, TRole>>();
-            services.AddTransient<IRoleStore<TRole>, RoleStore<TKey, TRole>>();
+            services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
+            services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());
+
+            services.AddTransient<IRoleStoreExtended<TRole>, RoleStore<TKey, TRole>>();
+            services.AddTransient<IRoleStore<TRole>>(r => r.GetRequiredService<IRoleStoreExtended<TRole>>());
 
             return identityBuilder
                 .AddRoles<TRole>()

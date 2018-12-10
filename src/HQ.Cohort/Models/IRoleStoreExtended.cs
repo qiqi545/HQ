@@ -15,7 +15,10 @@
 
 #endregion
 
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Models
@@ -23,5 +26,7 @@ namespace HQ.Cohort.Models
     public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
     {
         CancellationToken CancellationToken { get; }
+
+        Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = new CancellationToken());
     }
 }

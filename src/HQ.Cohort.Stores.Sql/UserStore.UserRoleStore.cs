@@ -22,7 +22,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Stores.Sql.Models;
-using HQ.Common;
 using HQ.Lingo.Queries;
 using HQ.Tokens;
 using Microsoft.AspNetCore.Identity;

@@ -33,12 +33,14 @@ namespace HQ.Cohort.Services
 {
     public class RoleService<TRole> : IRoleService<TRole> where TRole : IdentityRole
     {
-        private readonly IQueryableProvider<TRole> _queryableProvider;
         private readonly RoleManager<TRole> _roleManager;
-
-        public RoleService(RoleManager<TRole> roleManager, IQueryableProvider<TRole> queryableProvider)
+        private readonly IRoleStoreExtended<TRole> _roleStore;
+        private readonly IQueryableProvider<TRole> _queryableProvider;
+        
+        public RoleService(RoleManager<TRole> roleManager, IRoleStoreExtended<TRole> roleStore, IQueryableProvider<TRole> queryableProvider)
         {
             _roleManager = roleManager;
+            _roleStore = roleStore;
             _queryableProvider = queryableProvider;
         }
 
@@ -46,7 +48,7 @@ namespace HQ.Cohort.Services
 
         public Task<Operation<IEnumerable<TRole>>> GetAsync()
         {
-            var all = _queryableProvider.SafeAll;
+            var all = _queryableProvider.SafeAll ?? Roles;
             return Task.FromResult(new Operation<IEnumerable<TRole>>(all));
         }
 
@@ -96,6 +98,12 @@ namespace HQ.Cohort.Services
         public async Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role)
         {
             var claims = await _roleManager.GetClaimsAsync(role);
+            return new Operation<IList<Claim>>(claims);
+        }
+
+        public async Task<Operation<IList<Claim>>> GetAllRoleClaimsAsync()
+        {
+            var claims = await _roleStore.GetAllRoleClaimsAsync();
             return new Operation<IList<Claim>>(claims);
         }
 

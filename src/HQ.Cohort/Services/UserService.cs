@@ -47,7 +47,7 @@ namespace HQ.Cohort.Services
 
         public Task<Operation<IEnumerable<TUser>>> GetAsync()
         {
-            var all = _queryableProvider.SafeAll;
+            var all = _queryableProvider.SafeAll ?? Users;
             return Task.FromResult(new Operation<IEnumerable<TUser>>(all));
         }
 

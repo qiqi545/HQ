@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -29,8 +29,7 @@ namespace HQ.Cohort.Stores.Sql
 {
     partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorRecoveryCodeStore<TUser>
     {
-        public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes,
-            CancellationToken cancellationToken)
+        public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -83,8 +82,7 @@ namespace HQ.Cohort.Stores.Sql
             });
             _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 
-            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
-                query.Parameters);
+            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql, query.Parameters);
 
             if (!string.IsNullOrWhiteSpace(token.Value))
             {

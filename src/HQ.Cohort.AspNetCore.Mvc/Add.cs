@@ -20,12 +20,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using HQ.Cohort.AspNetCore.Mvc.Configuration;
 using HQ.Cohort.AspNetCore.Mvc.Controllers;
-using HQ.Cohort.Configuration;
-using HQ.Cohort.Models;
-using HQ.Cohort.Services;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Common.Models;
 using HQ.Domicile.Conventions;
 using HQ.Tokens;
 using HQ.Tokens.Configuration;
@@ -98,38 +94,7 @@ namespace HQ.Cohort.AspNetCore.Mvc
                 };
             });
 
-            services.AddScoped<IUserService<TUser>, UserService<TUser>>();
-            services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
-
             return services;
-        }
-
-        public static IdentityBuilder AddIdentity<TUser>(this IServiceCollection services, IConfiguration configuration)
-            where TUser : class
-        {
-            AddIdentityPreamble<TUser>(services);
-
-            return services.AddIdentityCoreExtended<TUser>(configuration);
-        }
-
-        public static IdentityBuilder AddIdentity<TUser>(this IServiceCollection services,
-            Action<IdentityOptionsExtended> setupAction)
-            where TUser : class
-        {
-            AddIdentityPreamble<TUser>(services);
-
-            return services.AddIdentityCoreExtended<TUser>(o => { setupAction?.Invoke(o); });
-        }
-
-        private static void AddIdentityPreamble<TUser>(IServiceCollection services) where TUser : class
-        {
-            var authBuilder = services.AddAuthentication(o =>
-            {
-                o.DefaultScheme = IdentityConstants.ApplicationScheme;
-                o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            });
-
-            var cookiesBuilder = authBuilder.AddIdentityCookies(o => { });
         }
 
         private static IMvcBuilder AddControllers<TUser, TRole>(this IMvcBuilder mvc)
