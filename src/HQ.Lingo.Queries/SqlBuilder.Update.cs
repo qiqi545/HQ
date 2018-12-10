@@ -117,9 +117,10 @@ namespace HQ.Lingo.Queries
                 ? setHashKeyRewrite
                 : whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
-            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
+            var whereParams = whereFilter.ToDictionary(key => whereHashKeyRewrite[key],
                 key => whereHash[whereHashKeyRewrite[key]]);
-            var setParams = setFilter.ToDictionary(key => $"{setHashKeyRewrite[key]}{Dialect.SetSuffix}",
+
+            var setParams = setFilter.ToDictionary(key => setHashKeyRewrite[key],
                 key => setHash[setHashKeyRewrite[key]]);
 
             var setParameters = setParams.Keys.ToList();
@@ -128,10 +129,10 @@ namespace HQ.Lingo.Queries
             var sql = Dialect.Update(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, setFilter,
                 whereFilter, setParameters, whereParameters, Dialect.SetSuffix);
 
-            var @params = Hash.FromDictionary(whereParams);
-            @params.Merge(setParams);
+            var parameters = Hash.FromDictionary(setParams.ToDictionary(k => k.Key + Dialect.SetSuffix, v => v.Value));
+            parameters.Merge(whereParams);
 
-            return new Query(sql, @params);
+            return new Query(sql, parameters);
         }
     }
 }

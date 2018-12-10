@@ -124,7 +124,8 @@ namespace HQ.Lingo.Builders
                 for (var i = 0; i < columns.Count; i++)
                 {
                     var column = columns[i];
-                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, setParameters[i]).Append(setSuffix);
+                    sb.AppendName(d, column).Append(" = ");
+                    sb.AppendParameter(d, setParameters[i] + setSuffix);
                     if (i < columns.Count - 1)
                         sb.Append(", ");
                 }

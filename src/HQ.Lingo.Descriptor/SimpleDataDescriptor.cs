@@ -29,14 +29,13 @@ using HQ.Lingo.Descriptor.Attributes;
 
 namespace HQ.Lingo.Descriptor
 {
-    // todo consider using dialect to cache multiple resolutions
-    // todo move external keys here
-
     public class SimpleDataDescriptor : IDataDescriptor
     {
+        public static Func<string, string> TableNameConvention { get; set; }
+
         private static readonly Hashtable Descriptors = new Hashtable();
 
-        public SimpleDataDescriptor(Type type)
+        private SimpleDataDescriptor(Type type)
         {
             Types = new[] {type};
 
@@ -51,7 +50,7 @@ namespace HQ.Lingo.Descriptor
             var accessor = TypeAccessor.Create(type);
             var descriptors = TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>();
             var accessors = descriptors
-                .Select(property => new PropertyAccessor(type, accessor, property.PropertyType, property.Name))
+                .Select(property => new PropertyAccessor(accessor, property.PropertyType, property.Name))
                 .ToList();
 
             foreach (var property in accessors)
@@ -66,10 +65,10 @@ namespace HQ.Lingo.Descriptor
                 if (property.HasAttribute<KeyAttribute>())
                     Keys.Add(column);
 
-                if (property.TryGetAttribute<OneToManyAttribute>(out _))
+                if (property.HasAttribute<OneToManyAttribute>())
                     Computed.Add(column);
 
-                if (property.TryGetAttribute<DatabaseGeneratedAttribute>(out var generated))
+                if (property.GetAttribute<DatabaseGeneratedAttribute>() is DatabaseGeneratedAttribute generated)
                 {
                     switch (generated.DatabaseGeneratedOption)
                     {
@@ -159,12 +158,12 @@ namespace HQ.Lingo.Descriptor
             var tableAttributes = type.GetCustomAttributes(typeof(TableAttribute), true);
             if (tableAttributes.Length > 0 && tableAttributes[0] is TableAttribute attribute)
             {
-                descriptor.Table = attribute.Name;
+                descriptor.Table = TableNameConvention?.Invoke(attribute.Name);
                 descriptor.Schema = attribute.Schema;
             }
             else
             {
-                descriptor.Table = type.GetNonGenericName();
+                descriptor.Table = TableNameConvention?.Invoke(type.GetNonGenericName());
             }
         }
 

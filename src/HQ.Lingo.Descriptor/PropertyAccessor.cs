@@ -26,12 +26,10 @@ namespace HQ.Lingo.Descriptor
     {
         private readonly TypeAccessor _accessor;
         private readonly Member _member;
-        private readonly Type _parent;
 
-        public PropertyAccessor(Type parent, TypeAccessor accessor, Type type, string name)
+        public PropertyAccessor(TypeAccessor accessor, Type type, string name)
         {
             Type = type;
-            _parent = parent;
             _accessor = accessor;
 
             Name = name;
@@ -51,20 +49,9 @@ namespace HQ.Lingo.Descriptor
             return _member.IsDefined(typeof(T));
         }
 
-        public bool TryGetAttribute<T>(out T attribute) where T : Attribute
+        public Attribute GetAttribute<T>() where T : Attribute
         {
-            // This is a kluge until this is fixed.
-            // See: https://github.com/mgravell/fast-member/issues/55
-
-            var property = _parent.GetProperty(Name);
-            if (property == null)
-            {
-                attribute = null;
-                return false;
-            }
-
-            attribute = Attribute.GetCustomAttribute(property, typeof(T)) as T;
-            return attribute != null;
+            return _member.GetAttribute(typeof(T), true);
         }
 
         public object Get(object instance)
