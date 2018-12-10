@@ -267,8 +267,12 @@ namespace HQ.DotLiquid
 
         private static void AddBaseClassProperties(Type type, List<PropertyInfo> propertyList)
         {
-            propertyList.AddRange(type.GetTypeInfo().BaseType.GetTypeInfo().DeclaredProperties
-                .Where(p => p.CanRead && p.GetMethod.IsPublic && !p.GetMethod.IsStatic).ToList());
+            var baseType = type;
+            while ((baseType = baseType?.BaseType) != typeof(object))
+            {
+                propertyList.AddRange(baseType.GetTypeInfo().DeclaredProperties
+                    .Where(p => p.CanRead && p.GetMethod.IsPublic && !p.GetMethod.IsStatic));
+            }
         }
 
         private static Action<object, Hash> GenerateMapper(Type type, bool includeBaseClassProperties)
