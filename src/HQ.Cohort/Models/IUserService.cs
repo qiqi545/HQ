@@ -22,7 +22,6 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Rosetta;
-using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Models
 {
@@ -62,8 +61,7 @@ namespace HQ.Cohort.Models
         Task<Operation> ChangePasswordAsync(TUser user, string token, string newPassword);
         Task<Operation> ConfirmEmailAsync(TUser user, string token);
         Task<Operation> ResetPasswordAsync(TUser user, string token, string newPassword);
-
-
+        
         Task<Operation> UpdateAsync(TUser user);
     }
 }

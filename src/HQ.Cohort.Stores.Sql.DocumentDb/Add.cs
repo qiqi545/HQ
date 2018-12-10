@@ -21,6 +21,8 @@ using System.Data.DocumentDb;
 using System.Threading;
 using HQ.Cadence;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.DocumentDb;
@@ -39,8 +41,8 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
     {
         public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUser<string>
-            where TRole : IdentityRole<string>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
         {
             return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, null, scope);
         }
@@ -49,8 +51,8 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             string connectionString,
             IConfiguration documentDbConfig,
             ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUser<string>
-            where TRole : IdentityRole<string>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
         {
             return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole>(connectionString, documentDbConfig, scope);
         }
@@ -61,8 +63,8 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             IConfiguration documentDbConfig,
             ConnectionScope scope)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             if (documentDbConfig != null) identityBuilder.Services.Configure<DocumentDbOptions>(documentDbConfig);
 
@@ -80,8 +82,8 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             Action<IdentityOptionsExtended> configureIdentity = null,
             Action<DocumentDbOptions> configureDocumentDb = null)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 

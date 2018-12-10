@@ -20,6 +20,8 @@ using System.Data;
 using System.Threading;
 using HQ.Cadence;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.Sqlite;
@@ -39,8 +41,8 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
     {
         public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUser<string>
-            where TRole : IdentityRole<string>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
         {
             return AddSqliteIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, null, scope);
         }
@@ -50,8 +52,8 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             IConfiguration sqliteConfig,
             ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             if (sqliteConfig != null) identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
             var configureSqlite = sqliteConfig != null ? sqliteConfig.Bind : (Action<SqliteOptions>) null;
@@ -63,8 +65,8 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             string connectionString, ConnectionScope scope, 
             IConfiguration identityConfig, IConfiguration sqliteConfig)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.Configure<IdentityOptions>(identityConfig);
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
@@ -78,8 +80,8 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             Action<IdentityOptionsExtended> configureIdentity = null,
             Action<SqliteOptions> configureSqlite = null)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
@@ -90,10 +92,10 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ?? new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
-            var sqliteOptions = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
-            configureSqlite?.Invoke(sqliteOptions);
+            var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
+            configureSqlite?.Invoke(options);
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, sqliteOptions);
+            MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
             identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope, OnCommand<TKey>(), OnConnection);
             identityBuilder.Services.AddSingleton(dialect);
@@ -104,9 +106,9 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             {
                 switch (s)
                 {
-                    case nameof(IdentityRole):
+                    case nameof(IdentityRoleExtended):
                         return "AspNetRoles";
-                    case nameof(IdentityUser):
+                    case nameof(IdentityUserExtended):
                         return "AspNetUsers";
                     default:
                         return s;

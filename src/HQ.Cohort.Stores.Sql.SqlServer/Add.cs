@@ -20,6 +20,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.SqlServer;
@@ -34,8 +36,8 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
     {
         public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
             IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUser<string>
-            where TRole : IdentityRole<string>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
         {
             return AddSqlServerIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
         }
@@ -44,8 +46,8 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
             this IdentityBuilder identityBuilder, IConfiguration config, string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             return AddSqlServerIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
         }
@@ -54,8 +56,8 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
             string connectionString, ConnectionScope scope,
             IConfiguration identityConfig, IConfiguration SqlServerConfig)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
             identityBuilder.Services.Configure<SqlServerOptions>(SqlServerConfig);
@@ -70,8 +72,8 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
             Action<IdentityOptionsExtended> configureIdentity = null,
             Action<SqlServerOptions> configureSqlServer = null)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
@@ -80,10 +82,10 @@ namespace HQ.Cohort.Stores.Sql.SqlServer
             var identityOptions = new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
-            var SqlServerOptions = new SqlServerOptions();
-            configureSqlServer?.Invoke(SqlServerOptions);
+            var options = new SqlServerOptions();
+            configureSqlServer?.Invoke(options);
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, SqlServerOptions);
+            MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
             identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);

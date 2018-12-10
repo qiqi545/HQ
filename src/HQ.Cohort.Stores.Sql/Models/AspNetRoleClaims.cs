@@ -15,12 +15,22 @@
 
 #endregion
 
+using System.ComponentModel.DataAnnotations;
+
 namespace HQ.Cohort.Stores.Sql.Models
 {
     public class AspNetRoleClaims<TKey>
     {
+        [Required]
+        public int TenantId { get; set; }
+
+        [Required]
         public TKey RoleId { get; set; }
+
+        [Required]
         public string ClaimType { get; set; }
+
+        [Required]
         public string ClaimValue { get; set; }
     }
 }

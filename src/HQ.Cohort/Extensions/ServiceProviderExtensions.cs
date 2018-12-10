@@ -17,21 +17,51 @@
 
 using System;
 using System.Threading;
+using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Cohort.Extensions
 {
     public static class ServiceProviderExtensions
     {
-        public static void TryGetRequestAbortCancellationToken(this IServiceProvider services,
+        public static bool TryGetRequestAbortCancellationToken(this IServiceProvider services,
             out CancellationToken cancelToken)
         {
             cancelToken = CancellationToken.None;
             var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
             var token = accessor?.HttpContext?.RequestAborted;
             if (!token.HasValue)
-                return;
+                return false;
             cancelToken = token.Value;
+            return true;
+        }
+
+        public static bool TryGetTenantId(this IServiceProvider services, out int tenantId)
+        {
+            var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+            var user = accessor?.HttpContext?.User;
+            if (user == null || !user.Identity.IsAuthenticated)
+            {
+                tenantId = 0;
+                return false;
+            }
+
+            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+            if(security?.Value?.Claims == null)
+            {
+                tenantId = 0;
+                return false;
+            }
+
+            var claim = user.FindFirst(security.Value.Claims.TenantIdClaim);
+            if(claim == null)
+            {
+                tenantId = 0;
+                return false;
+            }
+
+            return int.TryParse(claim.Value, out tenantId);
         }
     }
 }

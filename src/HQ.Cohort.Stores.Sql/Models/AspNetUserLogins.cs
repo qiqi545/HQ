@@ -15,13 +15,25 @@
 
 #endregion
 
+using System.ComponentModel.DataAnnotations;
+
 namespace HQ.Cohort.Stores.Sql.Models
 {
     public class AspNetUserLogins<TKey>
     {
+        [Required]
+        public int TenantId { get; set; }
+
+        [Required]
         public TKey UserId { get; set; }
+
+        [Required]
         public string LoginProvider { get; set; }
+
+        [Required]
         public string ProviderKey { get; set; }
+
+        [Required]
         public string ProviderDisplayName { get; set; }
     }
 }

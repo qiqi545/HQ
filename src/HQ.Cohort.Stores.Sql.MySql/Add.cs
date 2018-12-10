@@ -19,6 +19,8 @@ using System;
 using System.Data;
 using System.Threading;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.MySql;
@@ -34,8 +36,8 @@ namespace HQ.Cohort.Stores.Sql.MySql
     {
         public static IdentityBuilder AddMySqlIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
             IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUser<string>
-            where TRole : IdentityRole<string>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
         {
             return AddMySqlIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
         }
@@ -43,8 +45,8 @@ namespace HQ.Cohort.Stores.Sql.MySql
         public static IdentityBuilder AddMySqlIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
             IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             return AddMySqlIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
         }
@@ -53,8 +55,8 @@ namespace HQ.Cohort.Stores.Sql.MySql
             string connectionString, ConnectionScope scope,
             IConfiguration identityConfig, IConfiguration mySqlConfig)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
             identityBuilder.Services.Configure<MySqlOptions>(mySqlConfig);
@@ -67,8 +69,8 @@ namespace HQ.Cohort.Stores.Sql.MySql
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             Action<IdentityOptionsExtended> configureIdentity = null, Action<MySqlOptions> configureMySql = null)
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 

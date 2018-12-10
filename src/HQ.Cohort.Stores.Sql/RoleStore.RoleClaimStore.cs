@@ -30,14 +30,16 @@ using Microsoft.AspNetCore.Identity;
 namespace HQ.Cohort.Stores.Sql
 {
     public partial class RoleStore<TKey, TRole> : IRoleClaimStore<TRole>
-        where TRole : IdentityRole<TKey>
-        where TKey : IEquatable<TKey>
     {
         public async Task<IList<Claim>> GetClaimsAsync(TRole role, CancellationToken cancellationToken = new CancellationToken())
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new {RoleId = role.Id});
+            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new
+            {
+                TenantId = _tenantId,
+                RoleId = role.Id
+            });
 
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
@@ -48,7 +50,10 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>();
+            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new
+            {
+                TenantId = _tenantId
+            });
 
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
@@ -63,6 +68,7 @@ namespace HQ.Cohort.Stores.Sql
 
             var query = SqlBuilder.Insert(new AspNetRoleClaims<TKey>
             {
+                TenantId = _tenantId,
                 RoleId = role.Id,
                 ClaimType = claim.Type,
                 ClaimValue = claim.Value
@@ -78,7 +84,12 @@ namespace HQ.Cohort.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             var query = SqlBuilder.Delete<AspNetRoleClaims<TKey>>(new
-                {RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value});
+            {
+                TenantId = _tenantId,
+                RoleId = role.Id,
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value
+            });
             _connection.SetTypeInfo(typeof(TRole));
 
             var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);

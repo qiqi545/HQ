@@ -32,7 +32,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Services
 {
-    public class UserService<TUser> : IUserService<TUser> where TUser : IdentityUser
+    public class UserService<TUser> : IUserService<TUser> where TUser : IdentityUserExtended
     {
         private readonly IQueryableProvider<TUser> _queryableProvider;
         private readonly UserManager<TUser> _userManager;

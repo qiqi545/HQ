@@ -26,6 +26,7 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
         public override void Up()
         {
             Create.Table("AspNetRoles")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Name").AsString(256).Nullable()
                 .WithColumn("NormalizedName").AsString(256).Nullable()
@@ -33,6 +34,7 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUsers")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUsers")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetUsers")
                 .WithColumn("UserName").AsString(256).Nullable()
                 .WithColumn("NormalizedUserName").AsString(256).Nullable()
@@ -51,53 +53,91 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetRoleClaims")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("RoleId").AsString(450).NotNullable()
-                .ForeignKey("FK_AspNetRoleClaims_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
                 .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
                 .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
+                ;
+
+            Create.ForeignKey("FK_AspNetRoleClaims_AspNetRoles")
+                .FromTable("AspNetRoleClaims").ForeignColumns("TenantId", "RoleId")
+                .ToTable("AspNetRole").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
                 ;
 
             Create.Table("AspNetUserClaims")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserClaims")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetUserClaims")
                 .WithColumn("UserId").AsString(450).NotNullable()
-                .ForeignKey("FK_AspNetUserClaims_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
                 .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
                 .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
                 ;
 
+            Create.ForeignKey("FK_AspNetUserClaims_AspNetUsers")
+                .FromTable("AspNetUserClaims").ForeignColumns("TenantId", "UserId")
+                .ToTable("AspNetUsers").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
+                ;
+
             Create.Table("AspNetUserLogins")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("ProviderKey").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("ProviderDisplayName").AsString(int.MaxValue).Nullable()
                 .WithColumn("UserId").AsString(450).NotNullable()
-                .ForeignKey("FK_AspNetUserLogins_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                ;
+
+            Create.ForeignKey("FK_AspNetUserLogins_AspNetUsers")
+                .FromTable("AspNetUserLogins").ForeignColumns("TenantId", "UserId")
+                .ToTable("AspNetUsers").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
                 ;
 
             Create.Table("AspNetUserRoles")
-                .WithColumn("UserId").AsString(450).NotNullable()
-                .PrimaryKey("PK_AspNetUserRoles")
-                .ForeignKey("FK_AspNetUserRoles_AspNetRoles_RoleId", "AspNetRoles", "Id").OnDelete(Rule.Cascade)
-                .WithColumn("RoleId").AsString(450).NotNullable()
-                .PrimaryKey("PK_AspNetUserRoles")
-                .ForeignKey("FK_AspNetUserRoles_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserRoles")
+                .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
+                .WithColumn("RoleId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
+                ;
+
+            Create.ForeignKey("FK_AspNetUserRoles_AspNetRoles")
+                .FromTable("AspNetUserRoles").ForeignColumns("TenantId", "RoleId")
+                .ToTable("AspNetRoles").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
+                ;
+            Create.ForeignKey("FK_AspNetUserRoles_AspNetUsers")
+                .FromTable("AspNetUserRoles").ForeignColumns("TenantId", "UserId")
+                .ToTable("AspNetUsers").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
                 ;
 
             Create.Table("AspNetUserTokens")
+                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserTokens")
-                .ForeignKey("FK_AspNetUserTokens_AspNetUsers_UserId", "AspNetUsers", "Id").OnDelete(Rule.Cascade)
                 .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("Name").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("Value").AsString(int.MaxValue).Nullable()
                 ;
 
+            Create.ForeignKey("FK_AspNetUserTokens_AspNetUsers")
+                .FromTable("AspNetUserTokens").ForeignColumns("TenantId", "UserId")
+                .ToTable("AspNetUsers").PrimaryColumns("TenantId", "Id")
+                .OnDelete(Rule.Cascade)
+                ;
+
             Create.Index("IX_AspNetRoleClaims_RoleId").OnTable("AspNetRoleClaims").OnColumn("RoleId");
-            Create.Index("RoleNameIndex").OnTable("AspNetRoles").OnColumn("NormalizedName").Unique();
             Create.Index("IX_AspNetUserClaims_UserId").OnTable("AspNetUserClaims").OnColumn("UserId");
             Create.Index("IX_AspNetUserLogins_UserId").OnTable("AspNetUserLogins").OnColumn("UserId");
             Create.Index("IX_AspNetUserRoles_RoleId").OnTable("AspNetUserRoles").OnColumn("RoleId");
             Create.Index("EmailIndex").OnTable("AspNetUsers").OnColumn("NormalizedEmail");
-            Create.Index("UserNameIndex").OnTable("AspNetUsers").OnColumn("NormalizedUserName").Unique();
+
+            Create.Index("RoleNameIndex").OnTable("AspNetRoles")
+                .OnColumn("NormalizedName").Unique()
+                .OnColumn("TenantId").Unique();
+            
+            Create.Index("UserNameIndex").OnTable("AspNetUsers")
+                .OnColumn("NormalizedUserName").Unique()
+                .OnColumn("TenantId").Unique();
         }
 
         public override void Down()

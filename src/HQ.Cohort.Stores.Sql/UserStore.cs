@@ -24,6 +24,8 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Extensions;
+using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Connect;
 using HQ.Lingo.Queries;
 using HQ.Rosetta.Queryable;
@@ -34,7 +36,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Cohort.Stores.Sql
 {
     public partial class UserStore<TUser, TKey, TRole> : IQueryableUserStore<TUser>
-        where TUser : IdentityUser<TKey>
+        where TUser : IdentityUserExtended<TKey>
         where TKey : IEquatable<TKey>
         where TRole : IdentityRole<TKey>
     {
@@ -59,9 +61,9 @@ namespace HQ.Cohort.Stores.Sql
             IQueryableProvider<TUser> queryable,
             IOptions<IdentityOptionsExtended> identity,
             IOptions<SecurityOptions> security,
-            IServiceProvider services)
+            IServiceProvider serviceProvider)
         {
-            services.TryGetRequestAbortCancellationToken(out var cancellationToken);
+            serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
             CancellationToken = cancellationToken;
 
             _connection = connection;

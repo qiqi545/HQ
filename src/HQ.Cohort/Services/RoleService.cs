@@ -31,7 +31,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Services
 {
-    public class RoleService<TRole> : IRoleService<TRole> where TRole : IdentityRole
+    public class RoleService<TRole> : IRoleService<TRole> where TRole : IdentityRoleExtended
     {
         private readonly RoleManager<TRole> _roleManager;
         private readonly IRoleStoreExtended<TRole> _roleStore;

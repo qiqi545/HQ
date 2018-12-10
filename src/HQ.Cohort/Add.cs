@@ -47,8 +47,8 @@ namespace HQ.Cohort
 
 
         public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, IConfiguration configuration)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             AddIdentityPreamble(services);
 
@@ -56,8 +56,8 @@ namespace HQ.Cohort
         }
 
         public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, Action<IdentityOptionsExtended> setupAction = null)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             AddIdentityPreamble(services);
 
@@ -77,8 +77,8 @@ namespace HQ.Cohort
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
             IConfiguration configuration)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
@@ -88,8 +88,8 @@ namespace HQ.Cohort
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
             Action<IdentityOptionsExtended> setupAction = null)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             /*
                 services.AddOptions().AddLogging();
@@ -131,6 +131,8 @@ namespace HQ.Cohort
 
             services.AddScoped<IUserService<TUser>, UserService<TUser>>();
             services.AddScoped<IRoleService<TRole>, RoleService<TRole>>();
+            services.AddScoped<ISignInService<TUser>, SignInService<TUser>>();
+
             services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;

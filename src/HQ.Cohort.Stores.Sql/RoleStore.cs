@@ -34,15 +34,18 @@ namespace HQ.Cohort.Stores.Sql
     public partial class RoleStore<TKey, TRole> :
         IRoleStoreExtended<TRole>,
         IQueryableRoleStore<TRole>
-        where TRole : IdentityRole<TKey>
+        where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IDataConnection _connection;
         private readonly IQueryableProvider<TRole> _queryable;
+        private readonly int _tenantId;
 
-        public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable, IServiceProvider services)
+        public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable, IServiceProvider serviceProvider)
         {
-            services.TryGetRequestAbortCancellationToken(out var cancellationToken);
+            serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
+            serviceProvider.TryGetTenantId(out _tenantId);
+
             CancellationToken = cancellationToken;
 
             _connection = connection;
@@ -57,6 +60,7 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            role.TenantId = _tenantId;
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
             if (role.Id == null)
@@ -75,7 +79,7 @@ namespace HQ.Cohort.Stores.Sql
             _connection.SetTypeInfo(typeof(TRole));
             var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(inserted == 1);
+            Debug.Assert(inserted == 1); 
             return IdentityResult.Success;
         }
 
@@ -84,8 +88,8 @@ namespace HQ.Cohort.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
-
-            var query = SqlBuilder.Update(role, new {role.Id});
+            
+            var query = SqlBuilder.Update(role, new { role.Id, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
             var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
@@ -99,7 +103,7 @@ namespace HQ.Cohort.Stores.Sql
 
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Delete<TRole>(new {role.Id});
+            var query = SqlBuilder.Delete<TRole>(new { role.Id, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
             var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
@@ -143,7 +147,7 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<TRole>(new {Id = roleId});
+            var query = SqlBuilder.Select<TRole>(new { Id = roleId, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
 
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
@@ -154,15 +158,11 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName});
+            var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
 
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
             return role;
-        }
-
-        public void Dispose()
-        {
         }
 
         private IQueryable<TRole> MaybeQueryable()
@@ -178,10 +178,11 @@ namespace HQ.Cohort.Stores.Sql
 
         private async Task<IEnumerable<TRole>> GetAllRolesAsync()
         {
-            var query = SqlBuilder.Select<TRole>();
+            var query = SqlBuilder.Select<TRole>(new { TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
-            var roles = await _connection.Current.QueryAsync<TRole>(query.Sql);
+            var roles = await _connection.Current.QueryAsync<TRole>(query.Sql, query.Parameters);
             return roles;
         }
-    }
+
+        public void Dispose() { }}
 }

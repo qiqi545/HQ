@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using HQ.Cohort.Models;
+using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common;
 using HQ.Connect;
 using Microsoft.AspNetCore.Identity;
@@ -37,8 +38,8 @@ namespace HQ.Cohort.Stores.Sql
         )
             where TDatabase : class, IConnectionFactory, new()
             where TKey : IEquatable<TKey>
-            where TUser : IdentityUser<TKey>
-            where TRole : IdentityRole<TKey>
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
         {
             var services = identityBuilder.Services;
 
