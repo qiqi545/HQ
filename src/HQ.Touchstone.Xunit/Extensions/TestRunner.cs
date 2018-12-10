@@ -44,14 +44,14 @@ namespace HQ.Touchstone.Xunit.Extensions
 
             Should.Assert = new XunitAssert();
 
-            var testOutputHelper = xunitOutputProvider.Inner;
+            var testOutputHelper = xunitOutputProvider.inner;
             testOutputHelper.Initialize(MessageBus, Test);
 
             var time = await InvokeTestMethodAsync(aggregator);
 
             var buffer = testOutputHelper.Output;
             testOutputHelper.Uninitialize();
-            xunitOutputProvider.Inner = null;
+            xunitOutputProvider.inner = null;
 
             return Tuple.Create(time, buffer);
         }

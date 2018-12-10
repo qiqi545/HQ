@@ -24,5 +24,9 @@ namespace HQ.Touchstone.Assertions
         void NotNull(object instance, string userMessage = null, params object[] userMessageArgs);
         void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs);
         void True(bool condition, string userMessage = null, params object[] userMessageArgs);
+        void Equal<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+
+        void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
+        void Empty(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
     }
 }

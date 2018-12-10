@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics;
+using HQ.Touchstone.Assertions;
 using HQ.Touchstone.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,12 @@ namespace HQ.Touchstone
     {
         private ILogger<ServiceUnderTest> _logger;
 
-        protected ServiceUnderTest(IServiceProvider serviceProvider)
+        public IAssert Assert => Should.Assert;
+
+        protected ServiceUnderTest()
         {
+            InitializeServiceProvider();
+
             TryInstallLogging(serviceProvider);
 
             Trace.Listeners.Add(new ActionTraceListener(message =>
@@ -39,6 +44,15 @@ namespace HQ.Touchstone
                 outputProvider.WriteLine(message);
             }));
         }
+
+        private void InitializeServiceProvider()
+        {
+            var services = new ServiceCollection();
+            ConfigureServices(services);
+            serviceProvider = services.BuildServiceProvider();
+        }
+
+        public virtual void ConfigureServices(IServiceCollection services) { }
 
         public void Dispose()
         {

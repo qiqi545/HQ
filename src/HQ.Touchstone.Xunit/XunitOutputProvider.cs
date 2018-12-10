@@ -21,23 +21,23 @@ namespace HQ.Touchstone.Xunit
 {
     public sealed class XunitOutputProvider : IOutputProvider
     {
-        internal TestOutputHelper Inner;
+        internal TestOutputHelper inner;
 
         public XunitOutputProvider()
         {
-            Inner = new TestOutputHelper();
+            inner = new TestOutputHelper();
         }
 
-        public bool IsAvailable => Inner != null;
+        public bool IsAvailable => inner != null;
 
         public void WriteLine(string message)
         {
-            Inner.WriteLine(message);
+            inner.WriteLine(message);
         }
 
         public void WriteLine(string format, params object[] args)
         {
-            Inner.WriteLine(format, args);
+            inner.WriteLine(format, args);
         }
     }
 }

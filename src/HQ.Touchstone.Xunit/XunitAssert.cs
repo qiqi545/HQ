@@ -36,7 +36,7 @@ namespace HQ.Touchstone.Xunit
                 throw;
             }
         }
-
+        
         public void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs)
         {
             try
@@ -57,6 +57,45 @@ namespace HQ.Touchstone.Xunit
                 Assert.True(condition);
             }
             catch (TrueException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void Equal<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.Equal(expected, actual);
+            }
+            catch (NotEqualException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.Single(collection);
+            }
+            catch (SingleException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void Empty(IEnumerable collection, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.Empty(collection);
+            }
+            catch (NotEmptyException)
             {
                 TryLogUserMessage(userMessage, userMessageArgs);
                 throw;

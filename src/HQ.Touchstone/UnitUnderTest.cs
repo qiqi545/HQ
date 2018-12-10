@@ -21,8 +21,6 @@ namespace HQ.Touchstone
 {
     public abstract class UnitUnderTest : ServiceUnderTest, IDisposable
     {
-        protected UnitUnderTest() : base(null)
-        {
-        }
+        
     }
 }

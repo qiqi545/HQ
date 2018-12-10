@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Net.Http;
+using HQ.Touchstone.Assertions;
 using HQ.Touchstone.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +32,8 @@ namespace HQ.Touchstone
     {
         private readonly WebHostFixture<T> _systemUnderTest;
         private ILogger<SystemUnderTest<T>> _logger;
+
+        public IAssert Assert => Should.Assert;
 
         protected SystemUnderTest()
         {
