@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -37,6 +37,7 @@ namespace HQ.Cohort.Stores.Sql
 
             var exists = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
             {
+                TenantId = _tenantId,
                 UserId = user.Id,
                 Name = "AuthenticatorKey",
                 LoginProvider = "[AspNetUserStore]"
@@ -49,6 +50,7 @@ namespace HQ.Cohort.Stores.Sql
             {
                 token = new AspNetUserTokens<TKey>
                 {
+                    TenantId = _tenantId,
                     UserId = user.Id,
                     LoginProvider = "[AspNetUserStore]",
                     Name = "AuthenticatorKey",
@@ -59,7 +61,7 @@ namespace HQ.Cohort.Stores.Sql
             }
             else
             {
-                var query = SqlBuilder.Update(token, new {UserId = user.Id});
+                var query = SqlBuilder.Update(token, new {UserId = user.Id, TenantId = _tenantId });
                 await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             }
         }
@@ -70,6 +72,7 @@ namespace HQ.Cohort.Stores.Sql
 
             var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
             {
+                TenantId = _tenantId,
                 UserId = user.Id,
                 Name = "AuthenticatorKey",
                 LoginProvider = "[AspNetUserStore]"

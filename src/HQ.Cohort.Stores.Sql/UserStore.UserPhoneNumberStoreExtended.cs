@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -59,7 +59,7 @@ namespace HQ.Cohort.Stores.Sql
                 _security?.Value.SuperUser?.PhoneNumber?.ToUpperInvariant())
                 return CreateSuperUserInstance();
 
-            var query = SqlBuilder.Select<TUser>(new {PhoneNumber = phoneNumber});
+            var query = SqlBuilder.Select<TUser>(new {PhoneNumber = phoneNumber, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);

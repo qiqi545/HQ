@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using HQ.Cohort.Models;
-using HQ.Cohort.Stores.Sql.Models;
 using HQ.Cohort.Stores.Sql.Sqlite;
 using HQ.Connect;
 using Microsoft.Data.Sqlite;

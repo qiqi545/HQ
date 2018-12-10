@@ -39,29 +39,46 @@ namespace HQ.Cohort.Extensions
 
         public static bool TryGetTenantId(this IServiceProvider services, out int tenantId)
         {
+            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+            if (security?.Value?.Claims == null)
+            {
+                tenantId = default;
+                return false;
+            }
+            services.TryGetClaim(security.Value.Claims.TenantIdClaim, out var value);
+            return int.TryParse(value, out tenantId);
+        }
+
+        public static bool TryGetTenantName(this IServiceProvider services, out string tenantName)
+        {
+            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+            if (security?.Value?.Claims == null)
+            {
+                tenantName = default;
+                return false;
+            }
+            return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
+        }
+
+        public static bool TryGetClaim(this IServiceProvider services, string type, out string value)
+        {
             var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
             var user = accessor?.HttpContext?.User;
             if (user == null || !user.Identity.IsAuthenticated)
             {
-                tenantId = 0;
+                value = default;
                 return false;
             }
 
-            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if(security?.Value?.Claims == null)
+            var claim = user.FindFirst(type);
+            if (claim == null)
             {
-                tenantId = 0;
+                value = default;
                 return false;
             }
 
-            var claim = user.FindFirst(security.Value.Claims.TenantIdClaim);
-            if(claim == null)
-            {
-                tenantId = 0;
-                return false;
-            }
-
-            return int.TryParse(claim.Value, out tenantId);
+            value = claim.Value;
+            return true;
         }
     }
 }

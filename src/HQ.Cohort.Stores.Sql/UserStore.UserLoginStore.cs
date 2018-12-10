@@ -34,15 +34,16 @@ namespace HQ.Cohort.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             const string sql =
-                "INSERT INTO AspNetUserLogins (LoginProvider, ProviderKey, ProviderDisplayName, UserId) " +
-                "VALUES (@LoginProvider, @ProviderKey, @ProviderDisplayName, @UserId)";
+                "INSERT INTO AspNetUserLogins (LoginProvider, ProviderKey, ProviderDisplayName, UserId, TenantId) " +
+                "VALUES (@LoginProvider, @ProviderKey, @ProviderDisplayName, @UserId, @TenantId)";
 
             var inserted = await _connection.Current.ExecuteAsync(sql, new
             {
                 login.LoginProvider,
                 login.ProviderKey,
                 login.ProviderDisplayName,
-                UserId = user.Id
+                UserId = user.Id,
+                TenantId = _tenantId
             });
 
             Debug.Assert(inserted == 1);
@@ -56,10 +57,12 @@ namespace HQ.Cohort.Stores.Sql
             const string sql = "DELETE FROM AspNetUserLogins " +
                                "WHERE UserId = @UserId " +
                                "AND LoginProvider = @LoginProvider " +
-                               "AND ProviderKey = @ProviderKey";
+                               "AND ProviderKey = @ProviderKey " +
+                               "AND TenantId = @TenantId";
 
             var deleted = await _connection.Current.ExecuteAsync(sql, new
             {
+                TenantId = _tenantId,
                 UserId = user.Id,
                 LoginProvider = loginProvider,
                 ProviderKey = providerKey
@@ -74,7 +77,8 @@ namespace HQ.Cohort.Stores.Sql
 
             var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
             {
-                UserId = user.Id
+                UserId = user.Id,
+                TenantId = _tenantId
             });
 
             _connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
@@ -93,19 +97,22 @@ namespace HQ.Cohort.Stores.Sql
             const string getUserId = "SELECT UserId " +
                                      "FROM AspNetUserLogins " +
                                      "WHERE LoginProvider = @LoginProvider " +
-                                     "AND ProviderKey = @ProviderKey";
+                                     "AND ProviderKey = @ProviderKey " +
+                                     "AND TenantId = @TenantId";
 
             var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(getUserId, new
             {
                 LoginProvider = loginProvider,
-                ProviderKey = providerKey
+                ProviderKey = providerKey,
+                TenantId = _tenantId
             });
 
             if (userId == null) return null;
 
-            const string getUserById = "SELECT * FROM AspNetUsers WHERE Id = @Id";
+            const string getUserById = "SELECT * FROM AspNetUsers WHERE Id = @Id AND TenantId = @TenantId";
 
-            return await _connection.Current.QuerySingleAsync<TUser>(getUserById, new {Id = userId});
+            return await _connection.Current.QuerySingleAsync<TUser>(getUserById,
+                new {Id = userId, TenantId = _tenantId});
         }
     }
 }

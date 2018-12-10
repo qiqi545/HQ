@@ -37,12 +37,14 @@ namespace HQ.Cohort.Stores.Sql
                                   "SET Value = @Value " +
                                   "WHERE UserId = @UserId " +
                                   "AND LoginProvider = '[AspNetUserStore]' " +
-                                  "AND Name = 'RecoveryCodes'";
+                                  "AND Name = 'RecoveryCodes' " +
+                                  "AND TenantId = @TenantId";
 
             await _connection.Current.ExecuteAsync(update, new
             {
                 UserId = user.Id,
-                Value = string.Join(";", recoveryCodes)
+                Value = string.Join(";", recoveryCodes),
+                TenantId = _tenantId
             });
         }
 
@@ -53,11 +55,13 @@ namespace HQ.Cohort.Stores.Sql
             const string sql = "SELECT Value FROM AspNetUserTokens " +
                                "WHERE UserId = @UserId " +
                                "AND LoginProvider = '[AspNetUserStore]' " +
-                               "AND Name = 'RecoveryCodes'";
+                               "AND Name = 'RecoveryCodes' " +
+                               "AND TenantId = @TenantId";
 
             var value = await _connection.Current.QuerySingleOrDefaultAsync<string>(sql, new
             {
-                UserId = user.Id
+                UserId = user.Id,
+                TenantId = _tenantId
             });
 
             if (!string.IsNullOrWhiteSpace(value))
@@ -78,7 +82,8 @@ namespace HQ.Cohort.Stores.Sql
             {
                 UserId = user.Id,
                 Name = "RecoveryCodes",
-                LoginProvider = "[AspNetUserStore]"
+                LoginProvider = "[AspNetUserStore]",
+                TenantId = _tenantId
             });
             _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 

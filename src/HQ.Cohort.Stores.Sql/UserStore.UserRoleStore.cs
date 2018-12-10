@@ -41,7 +41,8 @@ namespace HQ.Cohort.Stores.Sql
                 var query = SqlBuilder.Insert(new AspNetUserRoles<TKey>
                 {
                     UserId = user.Id,
-                    RoleId = roleId
+                    RoleId = roleId,
+                    TenantId = _tenantId
                 });
 
                 _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
@@ -58,7 +59,8 @@ namespace HQ.Cohort.Stores.Sql
 
             if (roleId != null)
             {
-                var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new {UserId = user.Id, RoleId = roleId});
+                var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new
+                    {UserId = user.Id, RoleId = roleId, TenantId = _tenantId});
 
                 _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
                 var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
@@ -77,7 +79,8 @@ namespace HQ.Cohort.Stores.Sql
 
             var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new
             {
-                UserId = user.Id
+                UserId = user.Id,
+                TenantId = _tenantId
             });
 
             // Mapping:
@@ -89,7 +92,7 @@ namespace HQ.Cohort.Stores.Sql
             // Roles:
             if (roleMapping.Any())
             {
-                var roleQuery = SqlBuilder.Select<TRole>();
+                var roleQuery = SqlBuilder.Select<TRole>(new { TenantId = _tenantId });
                 roleQuery.Sql += $" AND {typeof(TRole).Name}.Id IN @RoleIds";
                 roleQuery.Parameters.Add("@RoleIds", roleMapping.Select(x => x.RoleId));
                 _connection.SetTypeInfo(typeof(TRole));
@@ -113,11 +116,13 @@ namespace HQ.Cohort.Stores.Sql
                                "FROM AspNetRoles r " +
                                "INNER JOIN AspNetUserRoles AS ur ON ur.RoleId = r.Id " +
                                "INNER JOIN AspNetUsers u ON u.Id = ur.UserId " +
-                               "WHERE r.NormalizedName = @NormalizedName";
+                               "WHERE r.NormalizedName = @NormalizedName " +
+                               "AND r.TenantId = @TenantId";
 
             var users = await _connection.Current.QueryAsync<TUser>(sql, new
             {
-                NormalizedName = roleName
+                NormalizedName = roleName,
+                TenantId = _tenantId
             });
 
             return users.AsList();
@@ -125,7 +130,7 @@ namespace HQ.Cohort.Stores.Sql
 
         private async Task<TKey> GetRoleIdByNameAsync(string roleName)
         {
-            var query = SqlBuilder.Select<TRole>(new {NormalizedName = roleName?.ToUpperInvariant()});
+            var query = SqlBuilder.Select<TRole>(new {NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TRole));
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
             return role.Id;

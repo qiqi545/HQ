@@ -50,6 +50,12 @@ namespace HQ.Cohort.Stores.Sql
             }
 
             var id = user.Id == null ? string.Empty : $"{user.Id}";
+
+            if(_tenantId != 0)
+                claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
+            if(!string.IsNullOrWhiteSpace(_tenantName))
+                claims.TryAddClaim(_security.Value.Claims.TenantNameClaim, _tenantName);
+
             claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
             claims.TryAddClaim(_security.Value.Claims.UserNameClaim, user.UserName);
             claims.TryAddClaim(_security.Value.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
@@ -84,6 +90,7 @@ namespace HQ.Cohort.Stores.Sql
             {
                 var query = SqlBuilder.Insert(new AspNetUserClaims<TKey>
                 {
+                    TenantId = _tenantId,
                     UserId = user.Id,
                     ClaimType = claim.Type,
                     ClaimValue = claim.Value
@@ -104,10 +111,12 @@ namespace HQ.Cohort.Stores.Sql
                                "    ClaimValue = @NewClaimValue " +
                                "WHERE UserId = @UserId " +
                                "AND ClaimType = @ClaimType " +
-                               "AND ClaimValue = @ClaimValue";
+                               "AND ClaimValue = @ClaimValue " +
+                               "AND TenantId = @TenantId";
 
             await _connection.Current.ExecuteAsync(sql, new
             {
+                TenantId = _tenantId,
                 NewClaimType = newClaim.Type,
                 NewClaimValue = newClaim.Value,
                 UserId = user.Id,
@@ -123,7 +132,7 @@ namespace HQ.Cohort.Stores.Sql
             foreach (var claim in claims)
             {
                 var query = SqlBuilder.Delete<AspNetUserClaims<TKey>>(new
-                    {UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value});
+                    {UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value, TenantId = _tenantId });
 
                 _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
                 var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
@@ -138,10 +147,12 @@ namespace HQ.Cohort.Stores.Sql
             const string sql = "SELECT u.* FROM AspNetUsers u" +
                                "INNER JOIN AspNetUserClaims uc ON uc.UserId = u.Id " +
                                "WHERE uc.ClaimType = @ClaimType " +
-                               "AND uc.ClaimValue = @ClaimValue";
+                               "AND uc.ClaimValue = @ClaimValue " +
+                               "AND uc.TenantId = @TenantId";
 
             var users = await _connection.Current.QueryAsync<TUser>(sql, new
             {
+                TenantId = _tenantId,
                 ClaimType = claim.Type,
                 ClaimValue = claim.Value
             });
@@ -151,10 +162,9 @@ namespace HQ.Cohort.Stores.Sql
 
         private async Task<IList<Claim>> GetUserClaimsAsync(TUser user)
         {
-            var query = SqlBuilder.Select<AspNetUserClaims<TKey>>(new {UserId = user.Id});
+            var query = SqlBuilder.Select<AspNetUserClaims<TKey>>(new {UserId = user.Id, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
-            query.Sql += " AND AspNetUserClaims.DocumentType = @DocumentType";
-
+            
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
             return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
         }

@@ -55,6 +55,9 @@ namespace HQ.Cohort.Stores.Sql
         private readonly RoleManager<TRole> _roles;
         private readonly IOptions<SecurityOptions> _security;
 
+        private readonly int _tenantId;
+        private readonly string _tenantName;
+
         public UserStore(IDataConnection connection,
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
@@ -64,6 +67,9 @@ namespace HQ.Cohort.Stores.Sql
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
+            serviceProvider.TryGetTenantId(out _tenantId);
+            serviceProvider.TryGetTenantName(out _tenantName);
+
             CancellationToken = cancellationToken;
 
             _connection = connection;
@@ -85,6 +91,7 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            user.TenantId = _tenantId;
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
             if (user.Id == null)
@@ -111,7 +118,7 @@ namespace HQ.Cohort.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Delete<TUser>(new {user.Id});
+            var query = SqlBuilder.Delete<TUser>(new {user.Id, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
             var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
@@ -126,7 +133,7 @@ namespace HQ.Cohort.Stores.Sql
             if (SupportsSuperUser && userId == SuperUserGuidId)
                 return CreateSuperUserInstance();
 
-            var query = SqlBuilder.Select<TUser>(new {Id = userId});
+            var query = SqlBuilder.Select<TUser>(new {Id = userId, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
@@ -141,7 +148,7 @@ namespace HQ.Cohort.Stores.Sql
                 _security?.Value.SuperUser?.Username?.ToUpperInvariant())
                 return CreateSuperUserInstance();
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
+            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
@@ -151,28 +158,24 @@ namespace HQ.Cohort.Stores.Sql
         public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             return Task.FromResult(user?.NormalizedUserName);
         }
 
         public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             return Task.FromResult($"{user.Id}");
         }
 
         public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             return Task.FromResult(user?.UserName);
         }
 
         public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             user.NormalizedUserName = normalizedName;
             return Task.CompletedTask;
         }
@@ -180,7 +183,6 @@ namespace HQ.Cohort.Stores.Sql
         public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
             user.UserName = userName;
             return Task.CompletedTask;
         }
@@ -191,16 +193,12 @@ namespace HQ.Cohort.Stores.Sql
 
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Update(user);
+            var query = SqlBuilder.Update(user, new { user.Id, TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TUser));
 
             var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             Debug.Assert(updated == 1);
             return IdentityResult.Success;
-        }
-
-        public void Dispose()
-        {
         }
 
         private IQueryable<TUser> MaybeQueryable()
@@ -216,7 +214,7 @@ namespace HQ.Cohort.Stores.Sql
 
         private Task<IEnumerable<TUser>> GetAllUsersAsync()
         {
-            var query = SqlBuilder.Select<TUser>();
+            var query = SqlBuilder.Select<TUser>(new { TenantId = _tenantId });
             _connection.SetTypeInfo(typeof(TUser));
             var users = _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
             return users;
@@ -249,5 +247,7 @@ namespace HQ.Cohort.Stores.Sql
 
             return superuser;
         }
+
+        public void Dispose() { }
     }
 }
