@@ -6,11 +6,11 @@ using HQ.Connect;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Cohort.Tests
+namespace HQ.Cohort.Tests.Sqlite
 {
-    public class SqliteRoleServiceTests : RoleServiceTests
+    public class SqliteFixture : IDisposable
     {
-        public override void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddIdentity<IdentityUserExtended, IdentityRoleExtended>(options =>
                 {
@@ -21,11 +21,17 @@ namespace HQ.Cohort.Tests
                     ConnectionScope.KeepAlive);
         }
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {
-            var connection = serviceProvider.GetRequiredService<IDataConnection>();
-            if(connection.Current is SqliteConnection sqlite)
+            var connection = ServiceProvider?.GetRequiredService<IDataConnection>();
+            if (connection?.Current is WrapDbConnection wrapped && wrapped.Inner is SqliteConnection sqlite)
+            {
+                sqlite.Close();
+                sqlite.Dispose();
                 File.Delete(sqlite.DataSource);
+            }
         }
+
+        public IServiceProvider ServiceProvider { get; set; }
     }
 }

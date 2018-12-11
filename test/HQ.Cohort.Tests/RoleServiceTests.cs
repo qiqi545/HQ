@@ -12,6 +12,8 @@ namespace HQ.Cohort.Tests
 {
     public abstract class RoleServiceTests : ServiceUnderTest
     {
+        protected RoleServiceTests(IServiceProvider serviceProvider) : base(serviceProvider) { }
+
         [Test]
         public async Task Can_create_role()
         {
