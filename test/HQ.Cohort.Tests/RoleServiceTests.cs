@@ -4,9 +4,7 @@ using System.Threading.Tasks;
 using HQ.Cohort.Models;
 using HQ.Touchstone;
 using HQ.Touchstone.Xunit;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 namespace HQ.Cohort.Tests
 {

@@ -6,12 +6,7 @@ namespace HQ.Cohort.Tests.Sqlite
 {
     public class SqliteUserServiceTests : UserServiceTests, IClassFixture<SqliteFixture>
     {
-        private readonly SqliteFixture _fixture;
-
-        public SqliteUserServiceTests(SqliteFixture fixture) : base(CreateServiceProvider(fixture))
-        {
-            _fixture = fixture;
-        }
+        public SqliteUserServiceTests(SqliteFixture fixture) : base(CreateServiceProvider(fixture)) { }
 
         private static IServiceProvider CreateServiceProvider(SqliteFixture fixture)
         {

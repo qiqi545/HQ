@@ -15,13 +15,12 @@ namespace HQ.Cohort.Tests
         public async Task Can_create_user()
         {
             var service = serviceProvider.GetRequiredService<IUserService<IdentityUserExtended>>();
-            var role = await service.CreateAsync(new CreateUserModel
+            var user = await service.CreateAsync(new CreateUserModel
             {
                 UserName = "MyUserName",
-                ConcurrencyStamp = $"{Guid.NewGuid()}"
+                Password = "MyPassword"
             });
-            Assert.NotNull(role);
-            Assert.NotNull(role.Data);
+            Assert.True(user.Succeeded);
         }
     }
 }

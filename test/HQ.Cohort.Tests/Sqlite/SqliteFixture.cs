@@ -10,10 +10,18 @@ namespace HQ.Cohort.Tests.Sqlite
 {
     public class SqliteFixture : IDisposable
     {
+        public IServiceProvider ServiceProvider { get; set; }
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentity<IdentityUserExtended, IdentityRoleExtended>(options =>
+            services.AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended>(options =>
                 {
+                    options.User.RequirePhoneNumber = false;
+                    options.User.RequireEmail = false;
+
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireDigit = false;
+
                     options.Stores.CreateIfNotExists = true;
                     options.Stores.MigrateOnStartup = true;
                 })
@@ -28,10 +36,12 @@ namespace HQ.Cohort.Tests.Sqlite
             {
                 sqlite.Close();
                 sqlite.Dispose();
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
                 File.Delete(sqlite.DataSource);
             }
         }
-
-        public IServiceProvider ServiceProvider { get; set; }
     }
 }
