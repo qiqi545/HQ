@@ -23,9 +23,6 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Extensions
 {
-    /// <summary>
-    ///     Provides conventional UserManager access to Zero extensions to the ASP.NET Identity system.
-    /// </summary>
     public static class UserManagerExtensions
     {
         public static bool SupportsSuperUser<TUser>(this UserManager<TUser> userManager) where TUser : class

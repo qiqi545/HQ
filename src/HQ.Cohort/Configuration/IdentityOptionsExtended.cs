@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Cohort.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Cohort.Configuration
@@ -30,6 +31,10 @@ namespace HQ.Cohort.Configuration
             User = new UserOptionsExtended(inner.User);
             Password = new PasswordOptionsExtended(inner.Password);
             Stores = new StoreOptionsExtended(inner.Stores);
+
+            base.User = inner.User;
+            base.Password = inner.Password;
+            base.Stores = inner.Stores;
 
             Lockout = inner.Lockout;
             Tokens = inner.Tokens;

@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using HQ.Cohort.Configuration;
+using HQ.Cohort.Extensions;
 using HQ.Cohort.Models;
 using HQ.Cohort.Security;
 using HQ.Cohort.Services;
@@ -46,7 +47,7 @@ namespace HQ.Cohort
         }
 
 
-        public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, IConfiguration configuration)
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services, IConfiguration configuration)
             where TUser : IdentityUserExtended
             where TRole : IdentityRoleExtended
         {
@@ -55,13 +56,17 @@ namespace HQ.Cohort
             return services.AddIdentityCoreExtended<TUser, TRole>(configuration);
         }
 
-        public static IdentityBuilder AddIdentity<TUser, TRole>(this IServiceCollection services, Action<IdentityOptionsExtended> setupAction = null)
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services,
+            Action<IdentityOptionsExtended> setupIdentityExtended = null)
             where TUser : IdentityUserExtended
             where TRole : IdentityRoleExtended
         {
             AddIdentityPreamble(services);
 
-            return services.AddIdentityCoreExtended<TUser, TRole>(o => { setupAction?.Invoke(o); });
+            return services.AddIdentityCoreExtended<TUser, TRole>(setupIdentityExtended: o =>
+            {
+                setupIdentityExtended?.Invoke(o);
+            });
         }
 
         private static void AddIdentityPreamble(IServiceCollection services)
@@ -83,11 +88,12 @@ namespace HQ.Cohort
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
 
-            return services.AddIdentityCoreExtended<TUser, TRole>(configuration.Bind);
+            return services.AddIdentityCoreExtended<TUser, TRole>(configuration.Bind, configuration.Bind);
         }
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
-            Action<IdentityOptionsExtended> setupAction = null)
+            Action<IdentityOptions> setupIdentity = null,
+            Action<IdentityOptionsExtended> setupIdentityExtended = null)
             where TUser : IdentityUserExtended
             where TRole : IdentityRoleExtended
         {
@@ -106,13 +112,17 @@ namespace HQ.Cohort
              */
             var identityBuilder = services.AddIdentityCore<TUser>(o =>
             {
-                var extended = new IdentityOptionsExtended(o);
-                Defaults(extended);
-                setupAction?.Invoke(extended);
+                var x = new IdentityOptionsExtended(o);
+                Defaults(x);
+                setupIdentityExtended?.Invoke(x);
+                o.Apply(x);
             });
 
-            if(setupAction != null)
-                services.Configure(setupAction);
+            if (setupIdentityExtended != null)
+                services.Configure(setupIdentityExtended);
+
+            if (setupIdentity != null)
+                services.Configure(setupIdentity);
 
             identityBuilder.AddDefaultTokenProviders();
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
