@@ -35,7 +35,7 @@ namespace HQ.Lingo.Descriptor
 
         private static readonly Hashtable Descriptors = new Hashtable();
 
-        private SimpleDataDescriptor(Type type)
+        protected SimpleDataDescriptor(Type type)
         {
             Types = new[] {type};
 
