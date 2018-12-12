@@ -95,8 +95,6 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
             configureSqlite?.Invoke(options);
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, options);
-
             identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope, OnCommand<TKey>(), OnConnection);
             identityBuilder.Services.AddSingleton(dialect);
 
@@ -119,6 +117,11 @@ namespace HQ.Cohort.Stores.Sql.Sqlite
             identityBuilder.Services.AddSingleton(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
+
+            lock (identityBuilder)
+            {
+                MigrateToLatest<TKey>(connectionString, identityOptions, options);
+            }
 
             return identityBuilder;
         }

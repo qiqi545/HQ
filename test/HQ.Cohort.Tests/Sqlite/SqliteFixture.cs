@@ -3,12 +3,13 @@ using System.IO;
 using HQ.Cohort.Models;
 using HQ.Cohort.Stores.Sql.Sqlite;
 using HQ.Connect;
+using HQ.Touchstone;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Cohort.Tests.Sqlite
 {
-    public class SqliteFixture : IDisposable
+    public class SqliteFixture : IServiceFixture
     {
         public IServiceProvider ServiceProvider { get; set; }
 
