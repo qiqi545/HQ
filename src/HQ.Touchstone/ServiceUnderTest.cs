@@ -24,6 +24,7 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Touchstone
 {
+
     public abstract class ServiceUnderTest : TestScope, IDisposable
     {
         private ILogger<ServiceUnderTest> _logger;
@@ -33,6 +34,21 @@ namespace HQ.Touchstone
         protected ServiceUnderTest()
         {
             InitializeServiceProvider();
+
+            TryInstallLogging(serviceProvider);
+
+            Trace.Listeners.Add(new ActionTraceListener(message =>
+            {
+                var outputProvider = AmbientContext.OutputProvider;
+                if (outputProvider?.IsAvailable != true)
+                    return;
+                outputProvider.WriteLine(message);
+            }));
+        }
+
+        protected ServiceUnderTest(IServiceProvider serviceProvider)
+        {
+            this.serviceProvider = serviceProvider;
 
             TryInstallLogging(serviceProvider);
 
@@ -78,6 +94,14 @@ namespace HQ.Touchstone
         public override ILogger GetLogger()
         {
             return serviceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? _logger;
+        }
+
+        protected static IServiceProvider CreateServiceProvider(IServiceFixture fixture)
+        {
+            var services = new ServiceCollection();
+            fixture.ConfigureServices(services);
+            fixture.ServiceProvider = services.BuildServiceProvider();
+            return fixture.ServiceProvider;
         }
     }
 }
