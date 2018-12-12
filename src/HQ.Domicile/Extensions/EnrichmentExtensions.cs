@@ -119,7 +119,7 @@ namespace HQ.Domicile.Extensions
 
         internal static string GetFirstPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            return header.TotalPages > 0 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}=1&{options.PerPageOperator}={header.Size}";
+            return header.TotalPages == 0 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}=1&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetLastPage(HttpRequest request, IPageHeader header, QueryOptions options)
