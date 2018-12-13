@@ -25,7 +25,6 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Rosetta.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Cohort.AspNetCore.Mvc.Controllers
@@ -34,7 +33,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    public class UserController<TUser> : DataController where TUser : IdentityUser
+    public class UserController<TUser> : DataController where TUser : IdentityUserExtended
     {
         private readonly IUserService<TUser> _userService;
 

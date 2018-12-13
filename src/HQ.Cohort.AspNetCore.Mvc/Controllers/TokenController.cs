@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Cohort.AspNetCore.Mvc.Models;
 using HQ.Cohort.Extensions;
+using HQ.Cohort.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Domicile.Configuration;
@@ -39,7 +40,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class TokenController<TUser> : DataController where TUser : IdentityUser
+    public class TokenController<TUser> : DataController where TUser : IdentityUserExtended
     {
         private readonly IOptions<PublicApiOptions> _apiOptions;
         private readonly IOptions<SecurityOptions> _securityOptions;

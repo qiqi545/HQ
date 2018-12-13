@@ -26,7 +26,6 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Rosetta.AspNetCore.Mvc;
 using HQ.Tokens.Configuration;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -36,7 +35,7 @@ namespace HQ.Cohort.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    public class RoleController<TRole> : DataController where TRole : IdentityRole
+    public class RoleController<TRole> : DataController where TRole : IdentityRoleExtended
     {
         private readonly IRoleService<TRole> _roleService;
         private readonly IOptions<SecurityOptions> _security;
