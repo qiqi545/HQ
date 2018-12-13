@@ -1,19 +1,19 @@
 // Copyright (c) HQ.IO. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json.Linq;
+
+#pragma warning disable 649
 
 namespace System.Data.DocumentDb
 {
@@ -242,6 +242,7 @@ namespace System.Data.DocumentDb
 
         private struct Sequence
         {
+            // ReSharper disable once InconsistentNaming
             public string id;
             public long Current;
         }
@@ -347,22 +348,11 @@ namespace System.Data.DocumentDb
         #region Custom Properties
 
         public Type Type { get; set; }
+        public string DocumentType { get; set; }
         public string Id { get; set; }
         public string Collection { get; set; }
 
         private bool UseTypeDiscrimination => Type != null && Collection != DocumentType;
-
-        private string DocumentType
-        {
-            get
-            {
-                if (Type == null)
-                    return null;
-                var name = Type.Name;
-                var index = name.IndexOf('`');
-                return index == -1 ? name : name.Substring(0, index);
-            }
-        }
 
         #endregion
 
