@@ -22,10 +22,10 @@ using System.Threading;
 using HQ.Cadence;
 using HQ.Cohort.Configuration;
 using HQ.Cohort.Models;
-using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common.Models;
 using HQ.Connect;
 using HQ.Connect.DocumentDb;
+using HQ.Connect.DocumentDb.Configuration;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.DocumentDb;
 using HQ.Lingo.Queries;
@@ -102,17 +102,33 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
             documentDbOptions.CollectionId = documentDbOptions.CollectionId ??
                                              builder.DefaultCollection ?? Common.Constants.Identity.DefaultCollection;
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, documentDbOptions);
-
             identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
 
             SqlBuilder.Dialect = dialect;
 
+            SimpleDataDescriptor.TableNameConvention = s =>
+            {
+                switch (s)
+                {
+                    case nameof(IdentityRoleExtended):
+                        return nameof(IdentityRole);
+                    case nameof(IdentityUserExtended):
+                        return nameof(IdentityUser);
+                    default:
+                        return s;
+                }
+            };
+
             identityBuilder.Services.AddMetrics();
             identityBuilder.Services.AddSingleton(dialect);
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
+
+            lock (identityBuilder)
+            {
+                MigrateToLatest<TKey>(connectionString, identityOptions, documentDbOptions);
+            }
 
             return identityBuilder;
         }
@@ -140,6 +156,7 @@ namespace HQ.Cohort.Stores.Sql.DocumentDb
 
                     command.Id = descriptor.Id?.Property?.Name;
                     command.Type = t;
+                    command.DocumentType = descriptor.Table;
                     command.Collection = options.Value.CollectionId;
                 }
             };
