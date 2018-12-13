@@ -92,8 +92,9 @@ namespace HQ.Cohort.Stores.Sql
             // Roles:
             if (roleMapping.Any())
             {
-                var roleQuery = SqlBuilder.Select<TRole>(new { TenantId = _tenantId });
-                roleQuery.Sql += $" AND {typeof(TRole).Name}.Id IN @RoleIds";
+                var descriptor = SqlBuilder.GetDescriptor<TRole>();
+                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new { TenantId = _tenantId });
+                roleQuery.Sql += $" AND {descriptor.Table}.Id IN @RoleIds";
                 roleQuery.Parameters.Add("@RoleIds", roleMapping.Select(x => x.RoleId));
                 _connection.SetTypeInfo(typeof(TRole));
 
