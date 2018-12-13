@@ -33,7 +33,7 @@ namespace HQ.Lingo.Queries
         public static ISqlDialect Dialect { get; set; }
         public static Func<Type, IDataDescriptor> DescriptorFunction { get; set; } = SimpleDataDescriptor.Create;
 
-        internal static IDataDescriptor GetDescriptor<T>()
+        public static IDataDescriptor GetDescriptor<T>()
         {
             return DescriptorFunction(typeof(T));
         }
