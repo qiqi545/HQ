@@ -20,13 +20,13 @@ using System.Collections.Generic;
 using System.Reflection;
 using HQ.Cohort.AspNetCore.Mvc.Configuration;
 using HQ.Cohort.AspNetCore.Mvc.Controllers;
+using HQ.Cohort.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Domicile.Conventions;
 using HQ.Tokens;
 using HQ.Tokens.Configuration;
 using HQ.Tokens.Extensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
@@ -49,8 +49,8 @@ namespace HQ.Cohort.AspNetCore.Mvc
 
         public static IServiceCollection AddIdentityApi<TUser, TRole>(this IMvcBuilder mvc,
             IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             var services = mvc.Services;
 
@@ -98,8 +98,8 @@ namespace HQ.Cohort.AspNetCore.Mvc
         }
 
         private static IMvcBuilder AddControllers<TUser, TRole>(this IMvcBuilder mvc)
-            where TUser : IdentityUser
-            where TRole : IdentityRole
+            where TUser : IdentityUserExtended
+            where TRole : IdentityRoleExtended
         {
             var typeInfo = new List<TypeInfo>
             {
