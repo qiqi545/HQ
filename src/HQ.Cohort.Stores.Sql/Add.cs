@@ -18,7 +18,6 @@
 using System;
 using System.Data;
 using HQ.Cohort.Models;
-using HQ.Cohort.Stores.Sql.Models;
 using HQ.Common;
 using HQ.Connect;
 using Microsoft.AspNetCore.Identity;
