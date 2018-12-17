@@ -173,14 +173,20 @@ namespace System.Data.DocumentDb
                     return 0;
 
                 var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-                var sql = $"SELECT c.id FROM c WHERE {Id} = @{Id}";
-                var spec = new SqlQuerySpec(sql, new SqlParameterCollection(new []{ new SqlParameter(Id, objectId) }));
-                var getId = _connection.Client.CreateDocumentQuery(collectionUri, spec).SingleOrDefault();
+
+                var sql = $"SELECT c.id FROM c WHERE c.{Id} = @{Id}";
+                var parameters = new SqlParameterCollection(new []{ new SqlParameter($"@{Id}", objectId) });
+                var query = new SqlQuerySpec(sql, parameters);
+
+                if (MaybeTypeDiscriminate(query))
+                    query.QueryText += " AND c.DocumentType = @DocumentType";
+
+                var getId = _connection.Client.CreateDocumentQuery(collectionUri, query).ToList().SingleOrDefault();
 
                 if (getId == null)
                     return 0;
 
-                id = getId;
+                id = getId.id;
             }
             else
             {
@@ -371,10 +377,11 @@ namespace System.Data.DocumentDb
             return resultSet;
         }
 
-        public void MaybeTypeDiscriminate(SqlQuerySpec query)
+        public bool MaybeTypeDiscriminate(SqlQuerySpec query)
         {
             if (UseTypeDiscrimination)
                 query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
+            return UseTypeDiscrimination;
         }
 
         #region Deactivated
