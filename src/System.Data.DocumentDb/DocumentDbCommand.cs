@@ -175,7 +175,7 @@ namespace System.Data.DocumentDb
                 var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
                 var sql = $"SELECT c.id FROM c WHERE {Id} = @{Id}";
                 var spec = new SqlQuerySpec(sql, new SqlParameterCollection(new []{ new SqlParameter(Id, objectId) }));
-                var getId = _connection.Client.CreateDocumentQuery(collectionUri, sql).SingleOrDefault();
+                var getId = _connection.Client.CreateDocumentQuery(collectionUri, spec).SingleOrDefault();
 
                 if (getId == null)
                     return 0;
