@@ -23,6 +23,17 @@ namespace System.Data.DocumentDb
 
         private DocumentDbConnection _connection;
 
+        #region Custom Properties
+
+        public Type Type { get; set; }
+        public string DocumentType { get; set; }
+        public string Id { get; set; }
+        public string Collection { get; set; }
+
+        private bool UseTypeDiscrimination => Type != null && Collection != DocumentType;
+
+        #endregion
+
         public DocumentDbCommand()
         {
             _parameters = new DocumentDbParameterCollection();
@@ -155,9 +166,30 @@ namespace System.Data.DocumentDb
             var options = new RequestOptions();
             var document = CommandToDocument(Constants.Delete);
 
-            var uri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{document[Constants.IdKey]}");
-            var response = _connection.Client.DeleteDocumentAsync(uri, options).Result;
-            return response.StatusCode == HttpStatusCode.NoContent ? 1 : 0;
+            object id;
+            if (!document.ContainsKey(Constants.IdKey))
+            {
+                if (!document.TryGetValue(Id, out var objectId))
+                    return 0;
+
+                var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+                var sql = $"SELECT c.id FROM c WHERE {Id} = @{Id}";
+                var spec = new SqlQuerySpec(sql, new SqlParameterCollection(new []{ new SqlParameter(Id, objectId) }));
+                var getId = _connection.Client.CreateDocumentQuery(collectionUri, sql).SingleOrDefault();
+
+                if (getId == null)
+                    return 0;
+
+                id = getId;
+            }
+            else
+            {
+                id = document[Constants.IdKey];
+            }
+
+            var documentUri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{id}");
+            var deleted = _connection.Client.DeleteDocumentAsync(documentUri, options).Result;
+            return deleted.StatusCode == HttpStatusCode.NoContent ? 1 : 0;
         }
 
         private Dictionary<string, object> CommandToDocument(string preamble)
@@ -344,17 +376,6 @@ namespace System.Data.DocumentDb
             if (UseTypeDiscrimination)
                 query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
         }
-
-        #region Custom Properties
-
-        public Type Type { get; set; }
-        public string DocumentType { get; set; }
-        public string Id { get; set; }
-        public string Collection { get; set; }
-
-        private bool UseTypeDiscrimination => Type != null && Collection != DocumentType;
-
-        #endregion
 
         #region Deactivated
 
