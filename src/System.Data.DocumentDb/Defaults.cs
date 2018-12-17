@@ -44,7 +44,8 @@ namespace System.Data.DocumentDb
                 if (property.PropertyName == "Id")
                     property.ShouldDeserialize = instance =>
                     {
-                        // Azure's documents insert metadata after all other properties, so this workaround
+                        // WARNING:
+                        // Azure inserts metadata into documents after all other properties, so this workaround
                         // will only opt-in to deserialize "Id" if it hasn't been set yet; this gets around
                         // the case where the mapped object's key is "Id", but it is a different type than "id"
 

@@ -47,7 +47,7 @@ namespace System.Data.DocumentDb
                 if (value is DocumentDbConnection connection)
                     _connection = connection;
                 else
-                    throw new InvalidCastException("The connection passed was not a " + nameof(DocumentDbConnection) + ".");
+                    throw new InvalidCastException($"The connection passed was not a {nameof(DocumentDbConnection)}.");
             }
         }
 
