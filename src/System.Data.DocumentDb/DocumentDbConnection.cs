@@ -55,6 +55,8 @@ namespace System.Data.DocumentDb
 
         public long? LastSequence { get; set; }
 
+        public object GetLastInsertedId() => LastSequence;
+
         public override void Open()
         {
             _isOpen = true;
