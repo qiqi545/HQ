@@ -52,8 +52,7 @@ namespace System.Data.DocumentDb
                         var accessor = TypeAccessor.Create(instance.GetType());
                         var value = accessor[instance, property.PropertyName];
                         var @default = property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null;
-                        var deserialize = value.Equals(@default);
-                        return deserialize;
+                        return value == null && @default == null || value != null && value.Equals(@default);
                     };
                 return property;
             }
