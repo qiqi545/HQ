@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\build\package.props" />
-  <Import Project="$(SolutionDir)..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,7 +12,6 @@
   <PropertyGroup>
     <Description>High performance, low ceremony DI/IoC container for .NET. This package provides ASP.NET Core HTTP request-based lifetimes.</Description>
     <PackageTags>ioc-container dependency-injection dotnet-standard hq-stack</PackageTags>
-    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
