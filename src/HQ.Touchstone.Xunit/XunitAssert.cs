@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections;
 using HQ.Touchstone.Assertions;
 using Xunit;
@@ -24,6 +25,19 @@ namespace HQ.Touchstone.Xunit
 {
     public sealed class XunitAssert : IAssert
     {
+        public void Null(object instance, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.Null(instance);
+            }
+            catch (NullException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
         public void NotNull(object instance, string userMessage = null, params object[] userMessageArgs)
         {
             try
@@ -36,7 +50,7 @@ namespace HQ.Touchstone.Xunit
                 throw;
             }
         }
-        
+
         public void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs)
         {
             try
@@ -63,11 +77,37 @@ namespace HQ.Touchstone.Xunit
             }
         }
 
+        public void False(bool condition, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.False(condition);
+            }
+            catch (FalseException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
         public void Equal<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
         {
             try
             {
                 Assert.Equal(expected, actual);
+            }
+            catch (EqualException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.NotEqual(expected, actual);
             }
             catch (NotEqualException)
             {
@@ -83,6 +123,58 @@ namespace HQ.Touchstone.Xunit
                 Assert.Single(collection);
             }
             catch (SingleException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void IsType<T>(object instance, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.IsType<T>(instance);
+            }
+            catch (IsTypeException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void IsType(Type expectedType, object instance, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.IsType(expectedType, instance);
+            }
+            catch (IsTypeException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void IsNotType(Type expectedType, object instance, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.IsNotType(expectedType, instance);
+            }
+            catch (IsNotTypeException)
+            {
+                TryLogUserMessage(userMessage, userMessageArgs);
+                throw;
+            }
+        }
+
+        public void IsNotType<T>(object instance, string userMessage = null, params object[] userMessageArgs)
+        {
+            try
+            {
+                Assert.IsNotType<T>(instance);
+            }
+            catch (IsNotTypeException)
             {
                 TryLogUserMessage(userMessage, userMessageArgs);
                 throw;

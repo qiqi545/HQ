@@ -15,18 +15,30 @@
 
 #endregion
 
+using System;
 using System.Collections;
 
 namespace HQ.Touchstone.Assertions
 {
     public interface IAssert
     {
+        void Null(object instance, string userMessage = null, params object[] userMessageArgs);
         void NotNull(object instance, string userMessage = null, params object[] userMessageArgs);
+
+        void Empty(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
         void NotEmpty(IEnumerable enumerable, string userMessage = null, params object[] userMessageArgs);
+
         void True(bool condition, string userMessage = null, params object[] userMessageArgs);
+        void False(bool condition, string userMessage = null, params object[] userMessageArgs);
+
         void Equal<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+        void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 
         void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
-        void Empty(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
+
+        void IsType<T>(object instance, string userMessage = null, params object[] userMessageArgs);
+        void IsType(Type expectedType, object instance, string userMessage = null, params object[] userMessageArgs);
+        void IsNotType<T>(object instance, string userMessage = null, params object[] userMessageArgs);
+        void IsNotType(Type expectedType, object instance, string userMessage = null, params object[] userMessageArgs);
     }
 }
