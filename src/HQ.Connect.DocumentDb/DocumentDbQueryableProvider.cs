@@ -81,16 +81,23 @@ namespace HQ.Connect.DocumentDb
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var command = connection.CreateCommand();
 
-                var select = SqlBuilder.Select<T>();
+                var descriptor = SqlBuilder.GetDescriptor<T>();
+                var select = SqlBuilder.Select<T>(descriptor);
                 command.CommandText = select.Sql;
 
                 var query = command.ToQuerySpec();
 
                 if (command is DocumentDbCommand docDbCommand)
                 {
+                    docDbCommand.Id = descriptor.Id?.Property?.Name;
                     docDbCommand.Type = typeof(T);
+                    docDbCommand.DocumentType = descriptor.Table;
                     docDbCommand.MaybeTypeDiscriminate(query);
                 }
+
+                // IMPORTANT: This is a direct call, there is no ADO.NET pass-through here. This means that
+                // the JSON.NET serializer configuration is the only step in converting the typed document into
+                // and object (to be serialized again back to JSON in the output).
 
                 var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
@@ -98,3 +105,4 @@ namespace HQ.Connect.DocumentDb
         }
     }
 }
+
