@@ -25,3 +25,4 @@ namespace HQ.Connect
         public string ConnectionString { get; set; }
     }
 }
+
