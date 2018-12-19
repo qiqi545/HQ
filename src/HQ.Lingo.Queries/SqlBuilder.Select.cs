@@ -34,7 +34,12 @@ namespace HQ.Lingo.Queries
     {
         public static Query Select<T>(params Expression<Func<T, object>>[] orderBy)
         {
-            return Select(GetDescriptor<T>(), null, orderBy);
+            return Select(GetDescriptor<T>(), null, orderBy: orderBy);
+        }
+
+        public static Query Select<T>(IDataDescriptor descriptor, params Expression<Func<T, object>>[] orderBy)
+        {
+            return Select(descriptor, null, orderBy: orderBy);
         }
 
         public static Query Select<T>(int page, int perPage, params Expression<Func<T, object>>[] orderBy)
@@ -42,10 +47,14 @@ namespace HQ.Lingo.Queries
             return Select(GetDescriptor<T>(), null, null, page, perPage, orderBy);
         }
 
+        public static Query Select<T>(IDataDescriptor descriptor, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        {
+            return Select(descriptor, null, null, page, perPage, orderBy);
+        }
+
         public static Query Select<T>(dynamic where, params Expression<Func<T, object>>[] orderBy)
         {
-            var descriptor = GetDescriptor<T>();
-            Query query = Select(descriptor, null, where);
+            Query query = Select(GetDescriptor<T>(), null, where);
 
             if (orderBy?.Length > 0)
                 query.Sql = Dialect.OrderBy(query.Sql, orderBy);
@@ -53,8 +62,17 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(dynamic where, int page, int perPage,
-            params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(IDataDescriptor descriptor, dynamic where, params Expression<Func<T, object>>[] orderBy)
+        {
+            Query query = Select(descriptor, columnFilter: null, where: where);
+
+            if (orderBy?.Length > 0)
+                query.Sql = Dialect.OrderBy(query.Sql, orderBy);
+
+            return query;
+        }
+
+        public static Query Select<T>(dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
         {
             return Select(GetDescriptor<T>(), null, where, page, perPage, orderBy);
         }

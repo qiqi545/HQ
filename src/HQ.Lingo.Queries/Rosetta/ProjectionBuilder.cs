@@ -115,7 +115,7 @@ namespace HQ.Lingo.Queries.Rosetta
         private static IEnumerable<string> GetProjectionMembersNames(Type type)
         {
             // TODO get property names from a cache
-            var descriptor = SqlBuilder.DescriptorFunction(type);
+            var descriptor = SqlBuilder.GetDescriptor(type);
             return descriptor.Inserted.Select(x => x.Property.Name);
         }
     }

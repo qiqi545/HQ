@@ -163,7 +163,7 @@ namespace HQ.Lingo.Descriptor
             }
             else
             {
-                descriptor.Table = TableNameConvention?.Invoke(type.GetNonGenericName());
+                descriptor.Table = TableNameConvention?.Invoke(type.GetNonGenericName()) ?? type.GetNonGenericName();
             }
         }
 
