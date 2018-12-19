@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using System.Reflection;
 
 namespace HQ.Connect
 {
@@ -41,6 +42,17 @@ namespace HQ.Connect
             _type = type;
         }
 
+        public bool TryGetLastInsertedId<TKey>(out TKey key)
+        {
+            if (!(Current is WrapDbConnection wrapped))
+            {
+                key = default;
+                return false;
+            }
+            key = (TKey) Convert.ChangeType(wrapped.LastInsertedId, typeof(TKey));
+            return true;
+        }
+
         public IDbConnection Current
         {
             get
@@ -53,3 +65,4 @@ namespace HQ.Connect
         }
     }
 }
+

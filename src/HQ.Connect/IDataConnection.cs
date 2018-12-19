@@ -24,5 +24,7 @@ namespace HQ.Connect
     {
         IDbConnection Current { get; }
         void SetTypeInfo(Type type);
+        bool TryGetLastInsertedId<TKey>(out TKey key);
     }
 }
+

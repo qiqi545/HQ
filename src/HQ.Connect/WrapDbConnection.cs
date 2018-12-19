@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
+using ImpromptuInterface;
 
 namespace HQ.Connect
 {
@@ -26,17 +27,22 @@ namespace HQ.Connect
         private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
         private readonly IServiceProvider _serviceProvider;
         private readonly Type _type;
+        private readonly IRetainLastInsertedId _maybeRetains;
 
         public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider,
             Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
         {
             Inner = inner;
+
+            _maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
             _serviceProvider = serviceProvider;
             _onCommand = onCommand;
             _type = type;
         }
 
         public DbConnection Inner { get; }
+
+        public object LastInsertedId => _maybeRetains is IRetainLastInsertedId retainer ? retainer.GetLastInsertedId() : null;
 
         public override string ConnectionString
         {
@@ -48,7 +54,7 @@ namespace HQ.Connect
         public override ConnectionState State => Inner.State;
         public override string DataSource => Inner.DataSource;
         public override string ServerVersion => Inner.ServerVersion;
-
+        
         protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
         {
             return Inner.BeginTransaction(isolationLevel);
@@ -77,3 +83,4 @@ namespace HQ.Connect
         }
     }
 }
+
