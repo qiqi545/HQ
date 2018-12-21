@@ -7,6 +7,11 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace System.Data.DocumentDb
 {
+    /// <summary>
+    /// Provides virtual sequences through a software-only pseudo-atomic counter.
+    /// If you don't need fine-grained control over the sequence value, use DocumentDB's DocumentId function,
+    /// i.e. `SELECT DocumentId(r) FROM r`, or map the document's `_rid` field.
+    /// </summary>
     public static class DocumentDbSequence
     {
         public static async Task<(long, long)> GetNextValuesForSequenceAsync(this DocumentClient client, Type documentType, string databaseId, string collectionId, int count)
