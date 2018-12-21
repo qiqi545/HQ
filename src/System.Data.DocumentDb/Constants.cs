@@ -16,5 +16,9 @@ namespace System.Data.DocumentDb
         public const string AccountKeyKey = "AccountKey";
         public const string DatabaseKey = "Database";
         public const string DefaultCollectionKey = "DefaultCollection";
+
+        public const string SequenceDocumentType = "Sequence";
+        public const string SequenceTypeField = "SequenceType";
+        public const string DocumentTypeField = "DocumentType";
     }
 }

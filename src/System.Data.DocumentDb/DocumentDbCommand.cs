@@ -223,7 +223,8 @@ namespace System.Data.DocumentDb
                             var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) || parameterType == typeof(short);
                             if (parameterName == Id && isSequenceIdType)
                             {
-                                GetNextValueForSequence(document);
+                                _connection.Client.SetNextValueForSequenceAsync(document, Id, Type, _connection.Database, Collection)
+                                    .GetAwaiter().GetResult();
                             }
                         }
                         break;
@@ -246,43 +247,6 @@ namespace System.Data.DocumentDb
             }
 
             return document;
-        }
-
-        private void GetNextValueForSequence(IDictionary<string, object> document)
-        {
-            var options = new FeedOptions {MaxItemCount = 1};
-            var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-
-            var sequence = new Dictionary<string, object>
-            {
-                ["DocumentType"] = "Sequence",
-                ["SequenceType"] = DocumentType
-            };
-
-            var query = new SqlQuerySpec("SELECT r.id, r.Current FROM Sequence r WHERE r.DocumentType = @DocumentType AND r.SequenceType = @SequenceType");
-            query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", sequence["DocumentType"]));
-            query.Parameters.Add(new SqlParameter("@SequenceType", sequence["SequenceType"]));
-
-            var result = _connection.Client.CreateDocumentQuery<Sequence>(uri, query, options).AsDocumentQuery();
-            var nextSequence = result.ExecuteNextAsync<Sequence>().GetAwaiter().GetResult().SingleOrDefault();
-            nextSequence.Current++;
-
-            sequence["id"] = nextSequence.id;
-            sequence["Current"] = nextSequence.Current;
-
-            var sequenceOptions = new RequestOptions();
-            var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
-            var response = _connection.Client.UpsertDocumentAsync(uri, sequence, sequenceOptions, disableAutomaticIdGeneration).Result;
-            
-            document[Id] = nextSequence.Current;
-            _connection.LastSequence = nextSequence.Current;
-        }
-
-        private struct Sequence
-        {
-            // ReSharper disable once InconsistentNaming
-            public string id;
-            public long Current;
         }
 
         private Dictionary<string, object> StartDocumentDefinition()
