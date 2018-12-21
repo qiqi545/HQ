@@ -9,7 +9,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace System.Data.DocumentDb
 {
-    internal static class Defaults
+    public static class Defaults
     {
         public static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
         {
