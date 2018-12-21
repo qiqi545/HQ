@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
@@ -18,12 +19,11 @@ namespace System.Data.DocumentDb
         {
             var uri = UriFactory.CreateDocumentCollectionUri(databaseId, collectionId);
 
-            var sequence = new Dictionary<string, object>
-            {
-                [Constants.DocumentTypeField] = Constants.SequenceDocumentType,
-                [Constants.SequenceTypeField] = documentType.Name
-            };
-
+            var document = new ExpandoObject();
+            var sequence = (IDictionary<string, object>) document;
+            sequence.Add(Constants.DocumentTypeField, Constants.SequenceDocumentType);
+            sequence.Add(Constants.SequenceTypeField, documentType.Name);
+            
             var sql = $@"SELECT r.id, r.Current FROM {Constants.SequenceDocumentType} r WHERE r.{Constants.DocumentTypeField} = @{Constants.DocumentTypeField} AND r.{Constants.SequenceTypeField} = @{Constants.SequenceTypeField}";
             var query = new SqlQuerySpec(sql);
             query.Parameters.Add(new SqlParameter($"@{Constants.DocumentTypeField}", sequence[Constants.DocumentTypeField]));
@@ -40,7 +40,7 @@ namespace System.Data.DocumentDb
             sequence[nameof(Sequence.Current)] = endAt;
 
             var requestOptions = new RequestOptions();
-            await client.UpsertDocumentAsync(uri, sequence, requestOptions, true);
+            await client.UpsertDocumentAsync(uri, document, requestOptions);
 
             return (startAt, endAt);
         }
