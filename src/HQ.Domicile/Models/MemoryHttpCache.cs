@@ -59,3 +59,4 @@ namespace HQ.Domicile.Models
         }
     }
 }
+

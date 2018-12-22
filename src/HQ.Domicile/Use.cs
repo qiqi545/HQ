@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Extensions;
@@ -26,6 +27,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
+using HQ.Domicile.Extensions;
 
 namespace HQ.Domicile
 {
@@ -199,5 +201,66 @@ namespace HQ.Domicile
                 await next();
             }
         }
+
+        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<int>, new()
+        {
+            return app.UseMultiTenancy<TTenant, int>(snapshot);
+        }
+
+        public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<TKey>, new()
+        {
+            if (snapshot)
+            {
+                if (app.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options))
+                {
+                    return app.Use(async (context, next) =>
+                    {
+                        await ExecuteFeature(context, options, next);
+                    });
+                }
+                return app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, MultiTenancyOptions o, Func<Task> next)
+            {
+                var tenantResolver = c.RequestServices.GetRequiredService<ITenantContextResolver<TTenant>>();
+                var tenantContext = await tenantResolver.ResolveAsync(c);
+                if (tenantContext != null)
+                {
+                    c.SetTenantContext(tenantContext);
+                }
+                else
+                {
+                    if (!o.RequireTenant)
+                    {
+                        if (!string.IsNullOrWhiteSpace(o.DefaultTenantId) &&
+                            !string.IsNullOrWhiteSpace(o.DefaultTenantName))
+                        {
+                            var tenant = new TTenant { Name = o.DefaultTenantName };
+                            tenantContext = new TenantContext<TTenant> { Tenant = tenant };
+                            tenant.Id = (TKey)(Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey));
+
+                            c.SetTenantContext(tenantContext);
+                        }
+                    }
+                    else
+                    {
+                        c.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                        return;
+                    }
+                }
+
+                await next();
+            }
+        }
     }
 }
+

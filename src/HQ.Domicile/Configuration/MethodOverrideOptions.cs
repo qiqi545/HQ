@@ -27,3 +27,4 @@ namespace HQ.Domicile.Configuration
         public string[] AllowedMethodOverrides { get; set; } = {Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put};
     }
 }
+

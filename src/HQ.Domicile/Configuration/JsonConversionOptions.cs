@@ -34,3 +34,4 @@ namespace HQ.Domicile.Configuration
         public bool PrettyPrintEnabled { get; set; } = true;
     }
 }
+

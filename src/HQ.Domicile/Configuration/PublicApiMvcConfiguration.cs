@@ -71,3 +71,4 @@ namespace HQ.Domicile.Configuration
         }
     }
 }
+

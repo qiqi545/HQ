@@ -23,13 +23,12 @@ namespace HQ.Domicile.Configuration
     {
         public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
         public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
-        public string TenantId { get; set; }
-        public string TenantName { get; set; }
-
+        
         public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
         public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
         public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
         public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
-
+        public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
     }
 }
+

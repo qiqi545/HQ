@@ -22,3 +22,4 @@ namespace HQ.Domicile.Models
         string GenerateFromBuffer(byte[] data);
     }
 }
+

@@ -23,3 +23,4 @@ namespace HQ.Domicile.Serialization
         Output
     }
 }
+

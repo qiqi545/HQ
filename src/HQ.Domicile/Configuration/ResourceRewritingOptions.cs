@@ -25,3 +25,4 @@ namespace HQ.Domicile.Configuration
         public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
     }
 }
+

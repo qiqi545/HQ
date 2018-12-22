@@ -27,3 +27,4 @@ namespace HQ.Domicile.Models
         void Save(string key, DateTimeOffset lastModified);
     }
 }
+

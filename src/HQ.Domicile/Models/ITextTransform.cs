@@ -23,3 +23,4 @@ namespace HQ.Domicile.Models
         string Transform(string input);
     }
 }
+

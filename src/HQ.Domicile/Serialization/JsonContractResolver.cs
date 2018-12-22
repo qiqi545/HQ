@@ -114,3 +114,4 @@ namespace HQ.Domicile.Serialization
         }
     }
 }
+

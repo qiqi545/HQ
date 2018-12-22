@@ -21,3 +21,4 @@ namespace HQ.Domicile.Models
     {
     }
 }
+

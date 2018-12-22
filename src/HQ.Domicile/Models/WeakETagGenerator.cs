@@ -33,3 +33,4 @@ namespace HQ.Domicile.Models
         }
     }
 }
+

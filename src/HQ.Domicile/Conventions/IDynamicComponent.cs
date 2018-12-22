@@ -27,3 +27,4 @@ namespace HQ.Domicile.Conventions
         Func<string> Namespace { get; }
     }
 }
+
