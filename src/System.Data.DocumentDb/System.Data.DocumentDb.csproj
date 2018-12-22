@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="LiteGuard" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.1.3" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.0" />
     <PackageReference Include="FastMember" Version="1.4.1" />
   </ItemGroup>
 
