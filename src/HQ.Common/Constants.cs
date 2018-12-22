@@ -40,6 +40,7 @@ namespace HQ.Common
             public const string JsonPrettyPrint = "JsonPrettyPrint";
             public const string CacheArgument = "cache";
             public const string CacheKeyArgument = "cacheKey";
+            public const string Tenant = "tenant";
         }
 
         public static class PlatformRoutes
@@ -67,9 +68,15 @@ namespace HQ.Common
             public static class Policies
             {
                 public const string SuperUserOnly = "SuperUserOnly";
+                public const string ManageTenants = "ManageTenants";
                 public const string ManageUsers = "ManageUsers";
                 public const string ManageRoles = "ManageRoles";
             }
+        }
+
+        public static class MultiTenancy
+        {
+            public const string DefaultTenantName = "defaultTenant";
         }
 
         public static class QueryStrings
@@ -102,10 +109,12 @@ namespace HQ.Common
             public const string TotalCount = "X-Total-Count";
             public const string TotalPages = "X-Total-Pages";
 
+            public const string TenantHeader = "X-Tenant";
+
             /// <summary>
             ///     See: https://www.w3.org/TR/server-timing/
             /// </summary>
-            public const string ServiceTiming = "Server-Timing";
+            public const string ServerTiming = "Server-Timing";
         }
 
         public static class HttpVerbs
