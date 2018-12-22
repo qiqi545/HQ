@@ -6,6 +6,12 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>An SQL generator multi-tool for .NET. This package adds support for batching large datasets.</Description>
+    <PackageTags>sql generator dotnet-standard hq-stack bulk-copy batching streaming</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
