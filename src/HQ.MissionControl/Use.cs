@@ -112,9 +112,10 @@ namespace HQ.MissionControl
 
                     context.Response.OnStarting(() =>
                     {
+                        var elapsed = sw.Elapsed;
                         sw.Free();
-                        var header = options.Value.RequestProfilingHeader ?? Constants.HttpHeaders.ServiceTiming;
-                        context.Response.Headers.Add(header, $"{sw.Elapsed.TotalMilliseconds}");
+                        var header = options.Value.RequestProfilingHeader ?? Constants.HttpHeaders.ServerTiming;
+                        context.Response.Headers.Add(header, $"roundtrip;dur={elapsed.TotalMilliseconds};desc=\"All middleware\"");
                         return Task.CompletedTask;
                     });
                 }
