@@ -22,5 +22,6 @@ namespace HQ.Tokens
         public const string SuperUser = "superuser";
         public const string ManageUsers = "manage_users";
         public const string ManageRoles = "manage_roles";
+        public const string ManageTenants = "manage_tenants";
     }
 }
