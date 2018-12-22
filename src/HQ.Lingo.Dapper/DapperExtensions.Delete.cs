@@ -34,3 +34,4 @@ namespace HQ.Lingo.Dapper
         }
     }
 }
+

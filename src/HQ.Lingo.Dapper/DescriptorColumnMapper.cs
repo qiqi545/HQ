@@ -28,36 +28,43 @@ namespace HQ.Lingo.Dapper
         private readonly IDictionary<string, PropertyToColumnMemberMap> _memberMap;
         private readonly Type _type;
 
-        public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns)
+        public static void AddTypeMap<T>(IEqualityComparer<string> comparer)
+        {
+            var descriptor = SimpleDataDescriptor.Create<T>();
+            SqlMapper.SetTypeMap(typeof(T), new DescriptorColumnMapper(typeof(T), descriptor.All, comparer));
+        }
+
+        public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns, IEqualityComparer<string> comparer)
         {
             _type = type;
-            _memberMap = new Dictionary<string, PropertyToColumnMemberMap>();
+            _memberMap = new Dictionary<string, PropertyToColumnMemberMap>(comparer);
             foreach (var column in columns)
-                _memberMap.Add(column.ColumnName.ToLower(), new PropertyToColumnMemberMap(column));
+                _memberMap.Add(column.ColumnName, new PropertyToColumnMemberMap(column));
         }
 
         public SqlMapper.IMemberMap GetMember(string columnName)
         {
-            _memberMap.TryGetValue(columnName.ToLower(), out var value);
+            _memberMap.TryGetValue(columnName, out var value);
             return value;
         }
 
         private class PropertyToColumnMemberMap : SqlMapper.IMemberMap
         {
+            private readonly PropertyToColumn _propertyToColumn;
             private readonly PropertyInfo _underlyingProperty;
 
             public PropertyToColumnMemberMap(PropertyToColumn propertyToColumn)
             {
+                _propertyToColumn = propertyToColumn;
                 _underlyingProperty = propertyToColumn.Property.Info;
             }
 
             PropertyInfo SqlMapper.IMemberMap.Property => _underlyingProperty;
-
             Type SqlMapper.IMemberMap.MemberType => _underlyingProperty.PropertyType;
 
             #region Unused
 
-            public string ColumnName => null;
+            public string ColumnName => _propertyToColumn.ColumnName;
 
             FieldInfo SqlMapper.IMemberMap.Field => null;
 
@@ -70,7 +77,7 @@ namespace HQ.Lingo.Dapper
 
         public ConstructorInfo FindConstructor(string[] names, Type[] types)
         {
-            return _type.GetConstructor(types) ?? _type.GetConstructor(new Type[0]);
+            return _type.GetConstructor(types) ?? _type.GetConstructor(Type.EmptyTypes);
         }
 
         public ConstructorInfo FindExplicitConstructor()
@@ -86,3 +93,4 @@ namespace HQ.Lingo.Dapper
         #endregion
     }
 }
+
