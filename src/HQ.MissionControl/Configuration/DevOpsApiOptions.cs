@@ -27,7 +27,7 @@ namespace HQ.MissionControl.Configuration
         public string RouteDebuggingPath { get; set; } = "/routes";
 
         public bool EnableRequestProfiling { get; set; } = true;
-        public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServiceTiming;
+        public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
 
         public bool EnableEnvironmentEndpoint { get; set; } = true;
         public string EnvironmentEndpointPath { get; set; } = "/env";
