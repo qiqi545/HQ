@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -45,6 +45,29 @@ namespace HQ.Cadence
             1000L * 1000L,
             1000L * 1000L * 1000L
         };
+
+        public static string Abbreviate(this TimeUnit unit)
+        {
+            switch (unit)
+            {
+                case TimeUnit.Nanoseconds:
+                    return "ns";
+                case TimeUnit.Microseconds:
+                    return "us";
+                case TimeUnit.Milliseconds:
+                    return "ms";
+                case TimeUnit.Seconds:
+                    return "s";
+                case TimeUnit.Minutes:
+                    return "m";
+                case TimeUnit.Hours:
+                    return "h";
+                case TimeUnit.Days:
+                    return "d";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(unit));
+            }
+        }
 
         public static long ToNanos(this TimeUnit source, long interval)
         {

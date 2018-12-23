@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -28,7 +28,7 @@ namespace HQ.Cadence.AspNetCore
         {
             var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
             foreach (var reporter in reporters)
-                reporter.Start();
+                reporter.InitializeAsync();
 
             app.UseMiddleware<MetricsMiddleware>(app.ApplicationServices
                 .GetRequiredService<IOptions<MetricsOptions>>());

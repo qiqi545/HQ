@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -28,7 +28,7 @@ namespace HQ.Cadence
     ///     A metric which calculates the distribution of a value
     ///     <see href="http://www.johndcook.com/standard_deviation.html">Accurately computing running variance</see>
     /// </summary>
-    public class HistogramMetric : IMetric
+    public class HistogramMetric : IMetric, IDistributed
     {
         private readonly AtomicLong _count = new AtomicLong();
         private readonly AtomicLong _max = new AtomicLong();
@@ -41,12 +41,11 @@ namespace HQ.Cadence
         private readonly AtomicLong _varianceM = new AtomicLong();
         private readonly AtomicLong _varianceS = new AtomicLong();
 
+        /// <inheritdoc />
         /// <summary>
-        ///     Creates a new <see cref="HistogramMetric" /> with the given sample type
+        ///     Creates a new <see cref="T:HQ.Cadence.HistogramMetric" /> with the given sample type
         /// </summary>
-        public HistogramMetric(SampleType type) : this(type.NewSample())
-        {
-        }
+        public HistogramMetric(SampleType type) : this(NewSample(type)) { }
 
         /// <summary>
         ///     Creates a new <see cref="HistogramMetric" /> with the given sample
@@ -221,11 +220,8 @@ namespace HQ.Cadence
                        _varianceS.CompareAndSet(oldSCas, BitConverter.DoubleToInt64Bits(newS));
             }
         }
-    }
 
-    internal static class SampleExtensions
-    {
-        public static ISample NewSample(this SampleType type)
+        private static ISample NewSample(SampleType type)
         {
             switch (type)
             {

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Common.Extensions;
 using Newtonsoft.Json;
 
 namespace HQ.Cadence
@@ -24,6 +25,8 @@ namespace HQ.Cadence
     {
         public abstract string ValueAsString { get; }
         public abstract IMetric Copy { get; }
+        public abstract bool IsNumeric { get; }
+        public abstract bool IsBoolean { get; }
     }
 
     /// <summary>
@@ -43,11 +46,17 @@ namespace HQ.Cadence
         public GaugeMetric(Func<T> evaluator)
         {
             _evaluator = evaluator;
+            IsNumeric = typeof(T).IsNumeric();
+            IsBoolean = typeof(T) == typeof(bool) || typeof(T) == typeof(bool?);
         }
 
         public T Value => _evaluator();
 
         public override string ValueAsString => Value.ToString();
+
+        public override bool IsNumeric { get; }
+
+        public override bool IsBoolean { get; }
 
         [JsonIgnore] public override IMetric Copy => new GaugeMetric<T>(_evaluator);
     }

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -27,7 +27,7 @@ namespace HQ.Cadence
     ///     A timer metric which aggregates timing durations and provides duration statistics, plus throughput statistics via
     ///     <see cref="MeterMetric" />.
     /// </summary>
-    public class TimerMetric : IMetric, IMetered
+    public class TimerMetric : IMetric, IMetered, IDistributed
     {
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
