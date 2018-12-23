@@ -120,6 +120,7 @@ namespace HQ.Common
             ///     See: https://www.w3.org/TR/server-timing/
             /// </summary>
             public const string ServerTiming = "Server-Timing";
+            public const string TimingAllowOrigin = "Timing-Allow-Origin";
         }
 
         public static class HttpVerbs
