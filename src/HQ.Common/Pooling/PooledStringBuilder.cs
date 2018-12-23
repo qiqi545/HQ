@@ -43,10 +43,7 @@ namespace Microsoft.CodeAnalysis.PooledObjects
             _pool = pool;
         }
 
-        public int Length
-        {
-            get { return Builder.Length; }
-        }
+        public int Length => Builder.Length;
 
         public void Free()
         {

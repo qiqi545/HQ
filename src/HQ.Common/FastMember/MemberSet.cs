@@ -41,10 +41,7 @@ namespace HQ.Common.FastMember
         /// <summary>
         ///     Get a member by index
         /// </summary>
-        public Member this[int index]
-        {
-            get { return members[index]; }
-        }
+        public Member this[int index] => members[index];
 
         /// <summary>
         ///     Return a sequence of all defined members
@@ -62,15 +59,12 @@ namespace HQ.Common.FastMember
         /// <summary>
         ///     The number of members defined for this type
         /// </summary>
-        public int Count
-        {
-            get { return members.Length; }
-        }
+        public int Count => members.Length;
 
         Member IList<Member>.this[int index]
         {
-            get { return members[index]; }
-            set { throw new NotSupportedException(); }
+            get => members[index];
+            set => throw new NotSupportedException();
         }
 
         bool ICollection<Member>.Remove(Member item)
@@ -98,17 +92,17 @@ namespace HQ.Common.FastMember
             throw new NotSupportedException();
         }
 
-        bool ICollection<Member>.Contains(Member item) => members.Contains(item);
+        bool ICollection<Member>.Contains(Member item)
+        {
+            return members.Contains(item);
+        }
 
         void ICollection<Member>.CopyTo(Member[] array, int arrayIndex)
         {
             members.CopyTo(array, arrayIndex);
         }
 
-        bool ICollection<Member>.IsReadOnly
-        {
-            get { return true; }
-        }
+        bool ICollection<Member>.IsReadOnly => true;
 
         int IList<Member>.IndexOf(Member member)
         {
@@ -131,10 +125,7 @@ namespace HQ.Common.FastMember
         /// <summary>
         ///     The name of this member
         /// </summary>
-        public string Name
-        {
-            get { return member.Name; }
-        }
+        public string Name => member.Name;
 
         /// <summary>
         ///     The type of value stored in this member
@@ -192,6 +183,8 @@ namespace HQ.Common.FastMember
         ///     Getting Attribute Type
         /// </summary>
         public Attribute GetAttribute(Type attributeType, bool inherit)
-            => Attribute.GetCustomAttribute(member, attributeType, inherit);
+        {
+            return Attribute.GetCustomAttribute(member, attributeType, inherit);
+        }
     }
 }

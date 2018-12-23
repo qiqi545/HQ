@@ -41,7 +41,8 @@ namespace HQ.Common.Extensions
             return appBuilder.ApplicationServices.FeatureEnabled<TFeature, TOptions>(out feature);
         }
 
-        public static bool FeatureEnabled<TFeature, TOptions>(this IServiceProvider serviceProvider, out TFeature feature)
+        public static bool FeatureEnabled<TFeature, TOptions>(this IServiceProvider serviceProvider,
+            out TFeature feature)
             where TFeature : FeatureToggle<TOptions> where TOptions : class, new()
         {
             var options = serviceProvider.GetService(typeof(IOptions<TOptions>));

@@ -90,8 +90,8 @@ namespace HQ.Common.FastMember
 
             public override object this[string name]
             {
-                get { return accessor[Target, name]; }
-                set { accessor[Target, name] = value; }
+                get => accessor[Target, name];
+                set => accessor[Target, name] = value;
             }
 
             public override object Target { get; }
@@ -106,15 +106,12 @@ namespace HQ.Common.FastMember
                 this.target = target;
             }
 
-            public override object Target
-            {
-                get { return target; }
-            }
+            public override object Target => target;
 
             public override object this[string name]
             {
-                get { return CallSiteCache.GetValue(name, target); }
-                set { CallSiteCache.SetValue(name, target, value); }
+                get => CallSiteCache.GetValue(name, target);
+                set => CallSiteCache.SetValue(name, target, value);
             }
         }
     }

@@ -105,43 +105,22 @@ namespace HQ.Common.FastMember
         }
 
 
-        public override int Depth
-        {
-            get { return 0; }
-        }
+        public override int Depth => 0;
 
-        public override bool HasRows
-        {
-            get { return active; }
-        }
+        public override bool HasRows => active;
 
-        public override int RecordsAffected
-        {
-            get { return 0; }
-        }
+        public override int RecordsAffected => 0;
 
-        public override int FieldCount
-        {
-            get { return memberNames.Length; }
-        }
+        public override int FieldCount => memberNames.Length;
 
-        public override bool IsClosed
-        {
-            get { return source == null; }
-        }
+        public override bool IsClosed => source == null;
 
-        public override object this[string name]
-        {
-            get { return accessor[current, name] ?? DBNull.Value; }
-        }
+        public override object this[string name] => accessor[current, name] ?? DBNull.Value;
 
         /// <summary>
         ///     Gets the value of the current object in the member specified
         /// </summary>
-        public override object this[int i]
-        {
-            get { return accessor[current, memberNames[i]] ?? DBNull.Value; }
-        }
+        public override object this[int i] => accessor[current, memberNames[i]] ?? DBNull.Value;
 
         /// <summary>
         ///     Creates a new ObjectReader instance for reading the supplied data
@@ -337,7 +316,10 @@ namespace HQ.Common.FastMember
             return this[i];
         }
 
-        public override IEnumerator GetEnumerator() => new DbEnumerator(this);
+        public override IEnumerator GetEnumerator()
+        {
+            return new DbEnumerator(this);
+        }
 
         public override int GetValues(object[] values)
         {

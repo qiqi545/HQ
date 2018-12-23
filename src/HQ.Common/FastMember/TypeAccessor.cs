@@ -46,18 +46,12 @@ namespace HQ.Common.FastMember
         /// <summary>
         ///     Does this type support new instances via a parameterless constructor?
         /// </summary>
-        public virtual bool CreateNewSupported
-        {
-            get { return false; }
-        }
+        public virtual bool CreateNewSupported => false;
 
         /// <summary>
         ///     Can this type be queried for member availability?
         /// </summary>
-        public virtual bool GetMembersSupported
-        {
-            get { return false; }
-        }
+        public virtual bool GetMembersSupported => false;
 
         public virtual PropertyInfo[] CachedProperties { get; private set; }
 
@@ -393,8 +387,8 @@ namespace HQ.Common.FastMember
 
             public override object this[object target, string name]
             {
-                get { return CallSiteCache.GetValue(name, target); }
-                set { CallSiteCache.SetValue(name, target, value); }
+                get => CallSiteCache.GetValue(name, target);
+                set => CallSiteCache.SetValue(name, target, value);
             }
         }
 
@@ -413,10 +407,7 @@ namespace HQ.Common.FastMember
             /// <summary>
             ///     Can this type be queried for member availability?
             /// </summary>
-            public override bool GetMembersSupported
-            {
-                get { return true; }
-            }
+            public override bool GetMembersSupported => true;
 
             /// <summary>
             ///     Query the members available for this type
@@ -446,10 +437,7 @@ namespace HQ.Common.FastMember
 
             protected override Type Type { get; }
 
-            public override bool CreateNewSupported
-            {
-                get { return ctor != null; }
-            }
+            public override bool CreateNewSupported => ctor != null;
 
             public override object this[object target, string name]
             {

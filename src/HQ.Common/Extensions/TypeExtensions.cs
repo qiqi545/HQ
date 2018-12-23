@@ -25,6 +25,19 @@ namespace HQ.Common.Extensions
 {
     public static class TypeExtensions
     {
+        private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
+        {
+            typeof(sbyte), typeof(sbyte?), typeof(byte), typeof(byte?),
+            typeof(ushort), typeof(ushort?), typeof(short), typeof(short?),
+            typeof(uint), typeof(uint?), typeof(int), typeof(int?),
+            typeof(ulong), typeof(ulong?), typeof(long), typeof(long?)
+        };
+
+        private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
+        {
+            typeof(float), typeof(double), typeof(decimal), typeof(Complex), typeof(BigInteger)
+        };
+
         public static ConstructorInfo GetWidestConstructor(this Type type)
         {
             var allPublic = type.GetConstructors();
@@ -49,21 +62,14 @@ namespace HQ.Common.Extensions
             return index == -1 ? name : name.Substring(0, index);
         }
 
-        private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
+        public static bool IsInteger(this Type type)
         {
-            typeof(sbyte), typeof(sbyte?), typeof(byte), typeof(byte?),
-            typeof(ushort), typeof(ushort?), typeof(short), typeof(short?),
-            typeof(uint), typeof(uint?), typeof(int), typeof(int?),
-            typeof(ulong), typeof(ulong?), typeof(long), typeof(long?)
-        };
+            return IntegerTypes.Contains(type);
+        }
 
-        private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
+        public static bool IsNumeric(this Type type)
         {
-            typeof(float), typeof(double), typeof(decimal), typeof(Complex), typeof(BigInteger)
-        };
-
-        public static bool IsInteger(this Type type) => IntegerTypes.Contains(type);
-
-        public static bool IsNumeric(this Type type) => RealNumberTypes.Contains(type) || type.IsInteger();
+            return RealNumberTypes.Contains(type) || type.IsInteger();
+        }
     }
 }

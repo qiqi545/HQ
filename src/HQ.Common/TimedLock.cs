@@ -1,4 +1,19 @@
-// Code licensed under the MIT License
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
 
 using System;
 using System.Collections;
@@ -9,17 +24,17 @@ using System.Threading;
 namespace HQ.Common
 {
     /// <summary>
-    /// Class provides a nice way of obtaining a lock that will time out 
-    /// with a cleaner syntax than using the whole Monitor.TryEnter() method.
+    ///     Class provides a nice way of obtaining a lock that will time out
+    ///     with a cleaner syntax than using the whole Monitor.TryEnter() method.
     /// </summary>
     /// <remarks>
-    /// Adapted from Ian Griffiths article http://www.interact-sw.co.uk/iangblog/2004/03/23/locking 
-    /// and incorporating suggestions by Marek Malowidzki as outlined in this blog post 
-    /// http://www.interact-sw.co.uk/iangblog/2004/05/12/timedlockstacktrace
+    ///     Adapted from Ian Griffiths article http://www.interact-sw.co.uk/iangblog/2004/03/23/locking
+    ///     and incorporating suggestions by Marek Malowidzki as outlined in this blog post
+    ///     http://www.interact-sw.co.uk/iangblog/2004/05/12/timedlockstacktrace
     /// </remarks>
     /// <example>
-    /// Instead of:
-    /// <code>
+    ///     Instead of:
+    ///     <code>
     /// lock(obj)
     /// {
     ///     //Thread safe operation
@@ -54,8 +69,8 @@ namespace HQ.Common
     public struct TimedLock : IDisposable
     {
         /// <summary>
-        /// Attempts to obtain a lock on the specified object for up 
-        /// to 10 seconds.
+        ///     Attempts to obtain a lock on the specified object for up
+        ///     to 10 seconds.
         /// </summary>
         /// <param name="o"></param>
         /// <returns></returns>
@@ -65,8 +80,8 @@ namespace HQ.Common
         }
 
         /// <summary>
-        /// Attempts to obtain a lock on the specified object for up to 
-        /// the specified timeout.
+        ///     Attempts to obtain a lock on the specified object for up to
+        ///     the specified timeout.
         /// </summary>
         /// <param name="o"></param>
         /// <param name="timeout"></param>
@@ -82,13 +97,14 @@ namespace HQ.Common
                 GC.SuppressFinalize(timedLock.leakDetector);
                 throw new LockTimeoutException(o);
 #else
-            throw new LockTimeoutException();
+                throw new LockTimeoutException();
 #endif
             }
+
             return timedLock;
         }
 
-        TimedLock(object o)
+        private TimedLock(object o)
         {
             target = o;
 #if DEBUG
@@ -96,10 +112,10 @@ namespace HQ.Common
 #endif
         }
 
-        readonly object target;
+        private readonly object target;
 
         /// <summary>
-        /// Disposes of this lock.
+        ///     Disposes of this lock.
         /// </summary>
         public void Dispose()
         {
@@ -116,21 +132,21 @@ namespace HQ.Common
                 Monitor.Exit(target);
             }
 #else
-        Monitor.Exit(target);
+            Monitor.Exit(target);
 #endif
 #if DEBUG
-            // It's a bad error if someone forgets to call Dispose,
-            // so in Debug builds, we put a finalizer in to detect
-            // the error. If Dispose is called, we suppress the
-            // finalizer.
+// It's a bad error if someone forgets to call Dispose,
+// so in Debug builds, we put a finalizer in to detect
+// the error. If Dispose is called, we suppress the
+// finalizer.
             GC.SuppressFinalize(leakDetector);
 #endif
             Thread.EndCriticalRegion();
         }
 
 #if DEBUG
-        // (In Debug mode, we make it a class so that we can add a finalizer
-        // in order to detect when the object is not freed.)
+// (In Debug mode, we make it a class so that we can add a finalizer
+// in order to detect when the object is not freed.)
         class Sentinel
         {
             ~Sentinel()
@@ -148,7 +164,7 @@ namespace HQ.Common
     }
 
     /// <summary>
-    /// Thrown when a lock times out.
+    ///     Thrown when a lock times out.
     /// </summary>
     [Serializable]
     public class LockTimeoutException : Exception
@@ -231,14 +247,14 @@ namespace HQ.Common
 #endif
 
         /// <summary>
-        /// Creates a new <see cref="LockTimeoutException"/> instance.
+        ///     Creates a new <see cref="LockTimeoutException" /> instance.
         /// </summary>
         public LockTimeoutException() : base("Timeout waiting for lock")
         {
         }
 
         /// <summary>
-        /// Constructor.
+        ///     Constructor.
         /// </summary>
         /// <param name="message"></param>
         public LockTimeoutException(string message) : base(message)
@@ -246,7 +262,7 @@ namespace HQ.Common
         }
 
         /// <summary>
-        /// Constructor.
+        ///     Constructor.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -255,7 +271,7 @@ namespace HQ.Common
         }
 
         /// <summary>
-        /// Constructor.
+        ///     Constructor.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -264,12 +280,12 @@ namespace HQ.Common
         }
 
         /// <summary>
-        /// Returns a string representation of the exception.
+        ///     Returns a string representation of the exception.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            string toString = base.ToString();
+            var toString = base.ToString();
 #if DEBUG
             if (blockingStackTrace != null)
             {
@@ -281,12 +297,12 @@ namespace HQ.Common
     }
 
 #if DEBUG
-    /// <summary>
-    /// This exception indicates that a user of the TimedLock struct 
-    /// failed to leave a Monitor.  This could be the result of a 
-    /// deadlock or forgetting to use the using statement or a try 
-    /// finally block.
-    /// </summary>
+/// <summary>
+/// This exception indicates that a user of the TimedLock struct 
+/// failed to leave a Monitor.  This could be the result of a 
+/// deadlock or forgetting to use the using statement or a try 
+/// finally block.
+/// </summary>
     [Serializable]
     public class UndisposedLockException : Exception
     {

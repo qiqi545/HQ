@@ -20,7 +20,7 @@ using Microsoft.Extensions.Internal;
 
 namespace HQ.Common.Models
 {
-    public interface IServerTimestampService : ISystemClock 
+    public interface IServerTimestampService : ISystemClock
     {
         DateTimeOffset GetCurrentTime();
     }
