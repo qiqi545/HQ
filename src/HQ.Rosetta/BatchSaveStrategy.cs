@@ -15,25 +15,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-
 namespace HQ.Rosetta
 {
-    public interface IObjectSaveService
+    public enum BatchSaveStrategy
     {
-        Task<ObjectSave> SaveAsync(Type type, IObject @object);
-        Task<ObjectSave> SaveAsync(Type type, IObject @object, List<string> fields);
-
-        Task SaveAsync(Type type, IEnumerable<IObject> objects, BatchSaveStrategy strategy, long startingAt = 0,
-            int? count = null);
-    }
-
-    public interface IObjectSaveService<in T> where T : IObject
-    {
-        Task<ObjectSave> SaveAsync(T @object);
-        Task<ObjectSave> SaveAsync(T @object, List<string> fields);
-        Task SaveAsync(IEnumerable<T> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null);
+        Insert,
+        Upsert,
+        Update
     }
 }
