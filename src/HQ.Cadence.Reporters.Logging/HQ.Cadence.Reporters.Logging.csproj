@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Real-time business metrics for .NET. This package adds console reporting for business metrics.</Description>
+    <Description>Real-time business metrics for .NET. This package adds logger reporting for business metrics.</Description>
     <PackageTags>metrics dotnet-standard dotnet-core hq-stack</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ.Cadence/master/assets/320x320.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/hq-io/HQ.Cadence/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
@@ -19,11 +19,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj" />
     <ProjectReference Include="..\HQ.Cadence\HQ.Cadence.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Internal\" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
   </ItemGroup>
+
 
 </Project>

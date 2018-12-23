@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using HQ.Cadence.Reporters.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

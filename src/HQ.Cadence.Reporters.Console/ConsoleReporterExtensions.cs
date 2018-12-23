@@ -31,13 +31,13 @@ namespace HQ.Cadence.Reporters.Console
         }
 
         public static IMetricsBuilder AddConsoleReporter(this IMetricsBuilder builder,
-            Action<ConsoleReporterOptions> configure)
+            Action<ConsoleReporterOptions> configureAction)
         {
-            if (configure == null)
-                throw new ArgumentNullException(nameof(configure));
+            if (configureAction == null)
+                throw new ArgumentNullException(nameof(configureAction));
 
             builder.AddConsoleReporter();
-            builder.Services.Configure(configure);
+            builder.Services.Configure(configureAction);
 
             return builder;
         }

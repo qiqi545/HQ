@@ -18,7 +18,7 @@
 using System;
 using System.IO;
 using System.Threading;
-using HQ.Cadence.Reporters.Console.Internal;
+using HQ.Cadence.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Cadence.Reporters.Console
@@ -51,7 +51,7 @@ namespace HQ.Cadence.Reporters.Console
                 Stop();
         }
 
-        internal static bool TryWrite(IMetricsRegistry registry, TextWriter @out, CancellationToken? cancellationToken)
+        public static bool TryWrite(IMetricsRegistry registry, TextWriter @out, CancellationToken? cancellationToken)
         {
             if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
                 return true;
@@ -89,7 +89,7 @@ namespace HQ.Cadence.Reporters.Console
                                 WriteCounter(@out, (CounterMetric) metric);
                                 break;
                             case HistogramMetric _:
-                                WriteHistogram(@out, (HistogramMetric) metric);
+                                WriteDistributed(@out, (HistogramMetric) metric);
                                 break;
                             case MeterMetric _:
                                 WriteMetered(@out, (MeterMetric) metric);
@@ -129,7 +129,7 @@ namespace HQ.Cadence.Reporters.Console
 
         private static void WriteMetered(TextWriter writer, IMetered meter)
         {
-            var unit = Abbreviate(meter.RateUnit);
+            var unit = meter.RateUnit.Abbreviate();
             writer.Write("             count = {0}\n", meter.Count);
             writer.Write("         mean rate = {0} {1}/{2}\n", meter.MeanRate, meter.EventType, unit);
             writer.Write("     1-minute rate = {0} {1}/{2}\n", meter.OneMinuteRate, meter.EventType, unit);
@@ -137,7 +137,7 @@ namespace HQ.Cadence.Reporters.Console
             writer.Write("    15-minute rate = {0} {1}/{2}\n", meter.FifteenMinuteRate, meter.EventType, unit);
         }
 
-        private static void WriteHistogram(TextWriter writer, HistogramMetric histogram)
+        private static void WriteDistributed(TextWriter writer, IDistributed histogram)
         {
             var percentiles = histogram.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
@@ -157,7 +157,7 @@ namespace HQ.Cadence.Reporters.Console
         {
             WriteMetered(writer, timer);
 
-            var durationUnit = Abbreviate(timer.DurationUnit);
+            var durationUnit = timer.DurationUnit.Abbreviate();
 
             var percentiles = timer.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
@@ -173,27 +173,6 @@ namespace HQ.Cadence.Reporters.Console
             writer.Write("            99.9%% <= %{0:2}{1}\n", percentiles[5], durationUnit);
         }
 
-        private static string Abbreviate(TimeUnit unit)
-        {
-            switch (unit)
-            {
-                case TimeUnit.Nanoseconds:
-                    return "ns";
-                case TimeUnit.Microseconds:
-                    return "us";
-                case TimeUnit.Milliseconds:
-                    return "ms";
-                case TimeUnit.Seconds:
-                    return "s";
-                case TimeUnit.Minutes:
-                    return "m";
-                case TimeUnit.Hours:
-                    return "h";
-                case TimeUnit.Days:
-                    return "d";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(unit));
-            }
-        }
+        
     }
 }

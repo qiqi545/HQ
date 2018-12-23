@@ -16,28 +16,16 @@
 #endregion
 
 using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using HQ.Common;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Cadence.Reporters.Console
+namespace HQ.Cadence.Reporters.Logging
 {
-    public static class LogReporterExtensions
+    public class LogReporterOptions
     {
-        public static IMetricsBuilder AddLogReporter(this IMetricsBuilder builder)
-        {
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricsReporter, LogReporter>());
-            return builder;
-        }
-
-        public static IMetricsBuilder AddLogReporter(this IMetricsBuilder builder, Action<LogReporterOptions> configure)
-        {
-            if (configure == null)
-                throw new ArgumentNullException(nameof(configure));
-
-            builder.AddLogReporter();
-            builder.Services.Configure(configure);
-
-            return builder;
-        }
+        public string CategoryName { get; set; } = Constants.Categories.Cadence;
+        public LogLevel LogLevel { get; set; } = LogLevel.Information;
+        public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(5);
+        public bool StopOnError { get; set; } = false;
     }
 }
