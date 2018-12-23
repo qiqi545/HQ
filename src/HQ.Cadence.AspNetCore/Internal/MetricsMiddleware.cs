@@ -45,7 +45,7 @@ namespace HQ.Cadence.AspNetCore.Internal
             if (context.Request.Path == _options.Path)
             {
                 var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
-                var samples = registry.SelectMany(x => x.AsReadOnly);
+                var samples = registry.SelectMany(x => x.AsReadOnly());
                 var cancel = new CancellationTokenSource(_options.Timeout);
 
                 context.Response.StatusCode = 200;

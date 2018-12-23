@@ -16,13 +16,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 
 namespace HQ.Cadence
 {
-    public interface IMetricsHost
+    public interface IMetricsHost : IReadableMetrics
     {
-        IReadOnlyDictionary<MetricName, IMetric> AsReadOnly { get; }
         GaugeMetric<T> Gauge<T>(Type type, string name, Func<T> evaluator);
         CounterMetric Counter(Type type, string name);
         HistogramMetric Histogram(Type type, string name, SampleType sampleType);

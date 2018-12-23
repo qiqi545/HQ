@@ -53,6 +53,14 @@ namespace HQ.Cadence
         public TimeUnit DurationUnit { get; }
 
         /// <summary>
+        ///     Returns a list of all recorded durations in the timers's sample
+        /// </summary>
+        public ICollection<double> Values
+        {
+            get { return _histogram.Values.Select(value => ConvertFromNanos(value)).ToList(); }
+        }
+
+        /// <summary>
         ///     Returns the longest recorded duration
         /// </summary>
         public double Max => ConvertFromNanos(_histogram.Max);
@@ -73,11 +81,14 @@ namespace HQ.Cadence
         public double StdDev => ConvertFromNanos(_histogram.StdDev);
 
         /// <summary>
-        ///     Returns a list of all recorded durations in the timers's sample
+        ///     Returns an array of durations at the given percentiles
         /// </summary>
-        public ICollection<double> Values
+        public double[] Percentiles(params double[] percentiles)
         {
-            get { return _histogram.Values.Select(value => ConvertFromNanos(value)).ToList(); }
+            var scores = _histogram.Percentiles(percentiles);
+            for (var i = 0; i < scores.Length; i++) scores[i] = ConvertFromNanos(scores[i]);
+
+            return scores;
         }
 
         /// <summary>
@@ -90,10 +101,7 @@ namespace HQ.Cadence
         ///     Returns the number of events which have been marked
         /// </summary>
         /// <returns></returns>
-        public long Count
-        {
-            get { return _histogram.Count; }
-        }
+        public long Count => _histogram.Count;
 
         /// <summary>
         ///     Returns the fifteen-minute exponentially-weighted moving average rate at
@@ -103,10 +111,7 @@ namespace HQ.Cadence
         ///         average in the top Unix command.
         ///     </remarks>
         /// </summary>
-        public double FifteenMinuteRate
-        {
-            get { return _meter.FifteenMinuteRate; }
-        }
+        public double FifteenMinuteRate => _meter.FifteenMinuteRate;
 
         /// <summary>
         ///     Returns the five-minute exponentially-weighted moving average rate at
@@ -116,18 +121,12 @@ namespace HQ.Cadence
         ///         average in the top Unix command.
         ///     </remarks>
         /// </summary>
-        public double FiveMinuteRate
-        {
-            get { return _meter.FiveMinuteRate; }
-        }
+        public double FiveMinuteRate => _meter.FiveMinuteRate;
 
         /// <summary>
         ///     Returns the mean rate at which events have occured since the meter was created
         /// </summary>
-        public double MeanRate
-        {
-            get { return _meter.MeanRate; }
-        }
+        public double MeanRate => _meter.MeanRate;
 
         /// <summary>
         ///     Returns the one-minute exponentially-weighted moving average rate at
@@ -196,17 +195,6 @@ namespace HQ.Cadence
                 stopwatch.Stop();
                 Update(stopwatch.Elapsed.Ticks);
             }
-        }
-
-        /// <summary>
-        ///     Returns an array of durations at the given percentiles
-        /// </summary>
-        public double[] Percentiles(params double[] percentiles)
-        {
-            var scores = _histogram.Percentiles(percentiles);
-            for (var i = 0; i < scores.Length; i++) scores[i] = ConvertFromNanos(scores[i]);
-
-            return scores;
         }
 
         private double ConvertFromNanos(double nanos)

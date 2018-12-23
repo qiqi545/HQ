@@ -15,15 +15,13 @@
 
 #endregion
 
-namespace HQ.Cadence
+namespace HQ.Cadence.Reporters.ServerTiming
 {
-    public interface IDistributed
+    public class ServerTimingReporterOptions
     {
-        long Count { get; }
-        double Max { get; }
-        double Min { get; }
-        double Mean { get; }
-        double StdDev { get; }
-        double[] Percentiles(params double[] percentiles);
+        public bool Enabled { get; set; } = true;
+        public string Filter { get; set; } = "*";
+        public ServerTimingRendering Rendering { get; set; } = ServerTimingRendering.Verbose;
+        public string AllowedOrigins { get; set; } = "*";
     }
 }

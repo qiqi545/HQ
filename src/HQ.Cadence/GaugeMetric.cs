@@ -24,9 +24,9 @@ namespace HQ.Cadence
     public abstract class GaugeMetric : IMetric
     {
         public abstract string ValueAsString { get; }
-        public abstract IMetric Copy { get; }
         public abstract bool IsNumeric { get; }
         public abstract bool IsBoolean { get; }
+        public abstract IMetric Copy { get; }
     }
 
     /// <summary>

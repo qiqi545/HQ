@@ -45,7 +45,9 @@ namespace HQ.Cadence
         /// <summary>
         ///     Creates a new <see cref="T:HQ.Cadence.HistogramMetric" /> with the given sample type
         /// </summary>
-        public HistogramMetric(SampleType type) : this(NewSample(type)) { }
+        public HistogramMetric(SampleType type) : this(NewSample(type))
+        {
+        }
 
         /// <summary>
         ///     Creates a new <see cref="HistogramMetric" /> with the given sample
@@ -61,6 +63,13 @@ namespace HQ.Cadence
             _sample = sample;
             if (clear) Clear();
         }
+
+        /// <summary>
+        ///     Returns a list of all values in the histogram's sample
+        /// </summary>
+        public ICollection<long> Values => _sample.Values;
+
+        private double Variance => Count <= 1 ? 0.0 : BitConverter.Int64BitsToDouble(_varianceS.Get()) / (Count - 1);
 
         /// <summary>
         ///     Returns the number of values recorded
@@ -88,11 +97,40 @@ namespace HQ.Cadence
         public double StdDev => Count > 0 ? Math.Sqrt(Variance) : 0.0;
 
         /// <summary>
-        ///     Returns a list of all values in the histogram's sample
+        ///     Returns an array of values at the given percentiles
         /// </summary>
-        public ICollection<long> Values => _sample.Values;
+        public double[] Percentiles(params double[] percentiles)
+        {
+            var scores = new double[percentiles.Length];
+            for (var i = 0; i < scores.Length; i++) scores[i] = 0.0;
 
-        private double Variance => Count <= 1 ? 0.0 : BitConverter.Int64BitsToDouble(_varianceS.Get()) / (Count - 1);
+            if (Count > 0)
+            {
+                var values = _sample.Values.OrderBy(v => v).ToList();
+
+                for (var i = 0; i < percentiles.Length; i++)
+                {
+                    var p = percentiles[i];
+                    var pos = p * (values.Count + 1);
+                    if (pos < 1)
+                    {
+                        scores[i] = values[0];
+                    }
+                    else if (pos >= values.Count)
+                    {
+                        scores[i] = values[values.Count - 1];
+                    }
+                    else
+                    {
+                        var lower = values[(int) pos - 1];
+                        var upper = values[(int) pos];
+                        scores[i] = lower + (pos - Math.Floor(pos)) * (upper - lower);
+                    }
+                }
+            }
+
+            return scores;
+        }
 
         [JsonIgnore]
         public IMetric Copy
@@ -143,42 +181,6 @@ namespace HQ.Cadence
             SetMin(value);
             _sum.GetAndAdd(value);
             UpdateVariance(value);
-        }
-
-        /// <summary>
-        ///     Returns an array of values at the given percentiles
-        /// </summary>
-        public double[] Percentiles(params double[] percentiles)
-        {
-            var scores = new double[percentiles.Length];
-            for (var i = 0; i < scores.Length; i++) scores[i] = 0.0;
-
-            if (Count > 0)
-            {
-                var values = _sample.Values.OrderBy(v => v).ToList();
-
-                for (var i = 0; i < percentiles.Length; i++)
-                {
-                    var p = percentiles[i];
-                    var pos = p * (values.Count + 1);
-                    if (pos < 1)
-                    {
-                        scores[i] = values[0];
-                    }
-                    else if (pos >= values.Count)
-                    {
-                        scores[i] = values[values.Count - 1];
-                    }
-                    else
-                    {
-                        var lower = values[(int) pos - 1];
-                        var upper = values[(int) pos];
-                        scores[i] = lower + (pos - Math.Floor(pos)) * (upper - lower);
-                    }
-                }
-            }
-
-            return scores;
         }
 
         private void SetMax(long potentialMax)

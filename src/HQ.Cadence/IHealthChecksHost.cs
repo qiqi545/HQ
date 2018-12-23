@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -19,7 +19,7 @@ using System;
 
 namespace HQ.Cadence
 {
-    public interface IHealthChecksHost
+    public interface IHealthChecksHost : IReadableMetrics
     {
         GaugeMetric<bool> HealthCheck<T>(Type type, string name, Func<T, bool> predicate, Func<T> evaluator);
     }

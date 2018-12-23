@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -54,7 +54,10 @@ namespace HQ.Cadence
 
         public IReadOnlyDictionary<MetricName, GaugeMetric<bool>> AsReadOnly()
         {
-            return new ReadOnlyDictionary<MetricName, GaugeMetric<bool>>(_metrics);
+            var copy = new Dictionary<MetricName, GaugeMetric<bool>>();
+            foreach (var entry in _metrics)
+                copy.Add(entry.Key, entry.Value.Copy as GaugeMetric<bool>);
+            return new ReadOnlyDictionary<MetricName, GaugeMetric<bool>>(copy);
         }
 
         public void Clear()

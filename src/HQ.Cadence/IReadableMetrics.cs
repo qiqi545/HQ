@@ -15,15 +15,12 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace HQ.Cadence
 {
-    public interface IDistributed
+    public interface IReadableMetrics
     {
-        long Count { get; }
-        double Max { get; }
-        double Min { get; }
-        double Mean { get; }
-        double StdDev { get; }
-        double[] Percentiles(params double[] percentiles);
+        IReadOnlyDictionary<MetricName, IMetric> AsReadOnly();
     }
 }

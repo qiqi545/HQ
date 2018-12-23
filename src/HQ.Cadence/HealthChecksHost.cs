@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,6 +16,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace HQ.Cadence
 {
@@ -31,6 +34,12 @@ namespace HQ.Cadence
         public GaugeMetric<bool> HealthCheck<T>(Type type, string name, Func<T, bool> predicate, Func<T> evaluator)
         {
             return GetOrAdd(new MetricName(type, name), new GaugeMetric<bool>(() => predicate(evaluator())));
+        }
+
+        public IReadOnlyDictionary<MetricName, IMetric> AsReadOnly()
+        {
+            return new ReadOnlyDictionary<MetricName, IMetric>(_store.AsReadOnly()
+                .ToDictionary(entry => entry.Key, entry => entry.Value.Copy));
         }
 
         private GaugeMetric<bool> GetOrAdd(MetricName name, GaugeMetric<bool> metric)

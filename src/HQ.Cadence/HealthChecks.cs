@@ -36,10 +36,7 @@ namespace HQ.Cadence
         /// <summary>
         ///     Returns <code>true</code>  <see cref="HealthCheck" />s have been registered, <code>false</code> otherwise
         /// </summary>
-        public static bool HasHealthChecks
-        {
-            get { return _checks.IsEmpty; }
-        }
+        public static bool HasHealthChecks => _checks.IsEmpty;
 
         /// <summary>
         ///     Registers an application <see cref="HealthCheck" /> with a given name

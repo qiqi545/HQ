@@ -79,10 +79,7 @@ namespace HQ.Cadence.Stats
         /// <summary>
         ///     Returns the number of values recorded
         /// </summary>
-        public int Count
-        {
-            get { return (int) Math.Min(_reservoirSize, _count); }
-        }
+        public int Count => (int) Math.Min(_reservoirSize, _count);
 
         /// <summary>
         ///     Adds a new recorded value to the sample

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -37,7 +37,7 @@ namespace HQ.Cadence.Tests
             var same = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_all_registered_metrics");
             Assert.NotNull(same);
 
-            Assert.Equal(1, _fixture.Metrics.AsReadOnly.Count);
+            Assert.Equal(1, _fixture.Metrics.AsReadOnly().Count);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace HQ.Cadence.Tests
         {
             using (var metrics = new MetricsFixture())
             {
-                Assert.Equal(0, metrics.Metrics.AsReadOnly.Count);
+                Assert.Equal(0, metrics.Metrics.AsReadOnly().Count);
 
                 var name = new MetricName(typeof(CounterTests),
                     "Can_get_all_registered_metrics_as_readonly_and_immutable");
@@ -53,15 +53,15 @@ namespace HQ.Cadence.Tests
                 metrics.Metrics.Counter(typeof(CounterTests),
                     "Can_get_all_registered_metrics_as_readonly_and_immutable");
 
-                Assert.Equal(1, metrics.Metrics.AsReadOnly.Count);
+                Assert.Equal(1, metrics.Metrics.AsReadOnly().Count);
 
-                var value = metrics.Metrics.AsReadOnly[name];
+                var value = metrics.Metrics.AsReadOnly()[name];
 
                 Assert.NotNull(value);
 
                 ((CounterMetric) value).Increment();
 
-                Assert.Equal(0, ((CounterMetric) metrics.Metrics.AsReadOnly[name]).Count);
+                Assert.Equal(0, ((CounterMetric) metrics.Metrics.AsReadOnly()[name]).Count);
             }
         }
 

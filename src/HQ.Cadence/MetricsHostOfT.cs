@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -89,7 +89,7 @@ namespace HQ.Cadence
         /// <summary>
         ///     Returns a copy of all currently registered metrics in an immutable collection
         /// </summary>
-        public IReadOnlyDictionary<MetricName, IMetric> All => _host.AsReadOnly;
+        public IReadOnlyDictionary<MetricName, IMetric> All => _host.AsReadOnly();
 
         /// <summary>
         ///     Clears all previously registered metrics

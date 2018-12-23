@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -34,7 +34,7 @@ namespace HQ.Cadence
 
         public static Result Healthy => Result.Healthy;
 
-        public string Name { get; private set; }
+        public string Name { get; }
 
         public static Result Unhealthy(string message)
         {
@@ -69,11 +69,11 @@ namespace HQ.Cadence
 
             public static Result Healthy { get; } = new Result(true, null, null);
 
-            public string Message { get; private set; }
+            public string Message { get; }
 
-            public Exception Error { get; private set; }
+            public Exception Error { get; }
 
-            public bool IsHealthy { get; private set; }
+            public bool IsHealthy { get; }
 
             public static Result Unhealthy(string errorMessage)
             {

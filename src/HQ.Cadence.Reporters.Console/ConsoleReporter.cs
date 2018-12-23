@@ -68,7 +68,7 @@ namespace HQ.Cadence.Reporters.Console
                 @out.WriteLine();
 
                 foreach (var host in registry)
-                foreach (var entry in host.AsReadOnly.Sort())
+                foreach (var entry in host.AsReadOnly().Sort())
                 {
                     @out.Write(entry.Key);
                     @out.WriteLine(':');
