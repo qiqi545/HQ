@@ -92,6 +92,11 @@ namespace HQ.Common
             public const string Formatters = "Formatters";
         }
 
+        public static class Categories
+        {
+            public const string Cadence = "Cadence";
+        }
+
         public static class HttpHeaders
         {
             public const string ContentType = "Content-Type";

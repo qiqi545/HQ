@@ -16,7 +16,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 
 namespace HQ.Common.Extensions
@@ -46,5 +48,22 @@ namespace HQ.Common.Extensions
             var index = name.IndexOf('`');
             return index == -1 ? name : name.Substring(0, index);
         }
+
+        private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
+        {
+            typeof(sbyte), typeof(sbyte?), typeof(byte), typeof(byte?),
+            typeof(ushort), typeof(ushort?), typeof(short), typeof(short?),
+            typeof(uint), typeof(uint?), typeof(int), typeof(int?),
+            typeof(ulong), typeof(ulong?), typeof(long), typeof(long?)
+        };
+
+        private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
+        {
+            typeof(float), typeof(double), typeof(decimal), typeof(Complex), typeof(BigInteger)
+        };
+
+        public static bool IsInteger(this Type type) => IntegerTypes.Contains(type);
+
+        public static bool IsNumeric(this Type type) => RealNumberTypes.Contains(type) || type.IsInteger();
     }
 }
