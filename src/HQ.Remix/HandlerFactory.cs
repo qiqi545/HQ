@@ -72,7 +72,8 @@ function(callback) {
         }
 
         public HandlerFactory(INodeServices nodeServices,
-            params Assembly[] defaultDependencies) : this(AssemblyBuilder.Default.Value, nodeServices, defaultDependencies.AsEnumerable())
+            params Assembly[] defaultDependencies) : this(AssemblyBuilder.Default.Value, nodeServices,
+            defaultDependencies.AsEnumerable())
         {
         }
 

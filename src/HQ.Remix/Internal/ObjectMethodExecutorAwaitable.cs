@@ -99,7 +99,10 @@ namespace HQ.Remix.Internal
 
             public bool IsCompleted => _isCompletedMethod(_customAwaiter);
 
-            public object GetResult() => _getResultMethod(_customAwaiter);
+            public object GetResult()
+            {
+                return _getResultMethod(_customAwaiter);
+            }
 
             public void OnCompleted(Action continuation)
             {

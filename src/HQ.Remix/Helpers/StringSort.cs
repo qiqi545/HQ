@@ -15,28 +15,11 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.Reflection;
-using Microsoft.AspNetCore.NodeServices;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace HQ.Remix.Tests
+namespace HQ.Remix.Helpers
 {
-    public class HandlerFactoryFixture : IDisposable
+    public enum StringSort
     {
-        public HandlerFactoryFixture()
-        {
-            var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider())
-                {ProjectPath = Directory.GetCurrentDirectory()};
-            var nodeServices = NodeServicesFactory.CreateNodeServices(options);
-            Factory = new HandlerFactory(nodeServices, typeof(string).GetTypeInfo().Assembly); // mscorlib
-        }
-
-        public HandlerFactory Factory { get; }
-
-        public void Dispose()
-        {
-        }
+        Ascending,
+        Descending
     }
 }
