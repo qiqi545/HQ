@@ -28,6 +28,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
             return new ErrorResult(error, args);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public bool Valid(object model, out ErrorResult error, params object[] args)
         {
             if (!TryValidateModel(model))
