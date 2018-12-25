@@ -42,6 +42,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
             return true;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public bool ValidModelState(out ErrorResult error, params object[] args)
         {
             if (!TryValidateModel(ModelState))
@@ -55,6 +56,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
             return true;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public Error ConvertModelStateToError()
         {
             return ControllerExtensions.ConvertModelStateToError(this);
