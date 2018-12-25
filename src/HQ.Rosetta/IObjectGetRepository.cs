@@ -23,29 +23,20 @@ namespace HQ.Rosetta
 {
     public interface IObjectGetRepository
     {
-        Task<Operation<IPage<IObject>>> GetAsync(Type type, SortOptions sort = null, PageOptions page = null,
+        Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null,
             FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
-        Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null,
-            ProjectionOptions projection = null);
-
-        Task<Operation<IPage<IObject>>> GetAsync(Type type, string query, SortOptions sort = null,
-            PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
-            ProjectionOptions projection = null);
+        Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null);
+        
+        Task<Operation<IPage<IObject>>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 
     public interface IObjectGetRepository<T> where T : IObject
     {
-        Task<Operation<IPage<T>>> GetAsync(SortOptions sort = null, PageOptions page = null, FieldOptions fields = null,
-            FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<Operation<IPage<T>>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
         Task<Operation<T>> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
 
-        Task<Operation<IPage<T>>> GetAsync(string query, SortOptions sort = null, PageOptions page = null,
-            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
-
-        Task<Operation<IPage<T>>> GetAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null,
-            SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
-            ProjectionOptions projection = null);
+        Task<Operation<IPage<T>>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 }

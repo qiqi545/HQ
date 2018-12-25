@@ -29,21 +29,19 @@ namespace HQ.Rosetta.AspNetCore.Mvc
     {
         Task<IActionResult> DeleteAsync(FilterOptions filter);
         Task<IActionResult> DeleteAsync([FromRoute] long id);
-        Task<IActionResult> DeleteAsync([FromBody] IList<long> ids);
+        Task<IActionResult> DeleteAsync([FromBody] IEnumerable<long> ids, long startingAt = 0, int? count = null);
     }
 
     public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
     {
-        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
-        Task<IActionResult> GetAsync([FromQuery] string query, SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
+        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null, [FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
         Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
-        Task<IActionResult> GetAsync([FromQuery] IList<long> ids, SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection);
     }
 
-    public interface IObjectPutController<T> : IObjectController, IActionFilter, IAsyncActionFilter
+    public interface IObjectPutController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
     {
         Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
-        Task<IActionResult> PutAsync([FromBody] IList<T> objects);
+        Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
     }
 
     public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
@@ -52,9 +50,9 @@ namespace HQ.Rosetta.AspNetCore.Mvc
         Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
     }
 
-    public interface IObjectPostController<T> : IObjectController, IActionFilter, IAsyncActionFilter
+    public interface IObjectPostController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
     {
         Task<IActionResult> PostAsync([FromBody] T @object);
-        Task<IActionResult> PostAsync([FromBody] IList<T> objects);
+        Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
     }
 }

@@ -16,29 +16,28 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HQ.Rosetta
 {
     public interface IObjectGetService
     {
-        Task<IPage<IObject>> GetAsync(Type type, SortOptions sort = null, PageOptions page = null,
+        Task<IPage<IObject>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null,
             FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
         Task<IObject> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null);
 
-        Task<IPage<IObject>> GetAsync(Type type, string query, SortOptions sort = null, PageOptions page = null,
+        Task<IPage<IObject>> GetAsync(Type type, IEnumerable<long> ids = null, long startingAt = 0, int? count = null,
             FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 
     public interface IObjectGetService<T> where T : IObject
     {
-        Task<IPage<T>> GetAsync(SortOptions sort = null, PageOptions page = null,
-            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<IPage<T>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
         Task<T> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
 
-        Task<IPage<T>> GetAsync(string query, SortOptions sort = null, PageOptions page = null,
-            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<IPage<T>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 }
