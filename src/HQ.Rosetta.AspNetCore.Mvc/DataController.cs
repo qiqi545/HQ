@@ -22,6 +22,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
 {
     public class DataController : ControllerExtended
     {
+        [ApiExplorerSettings(IgnoreApi = true)]
         public IActionResult Error(Error error, params object[] args)
         {
             return new ErrorResult(error, args);
