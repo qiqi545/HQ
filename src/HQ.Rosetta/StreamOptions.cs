@@ -16,7 +16,7 @@ namespace HQ.Rosetta
         public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
             var list = new List<Error>();
-            if (After < 1)
+            if (After < 0)
                 list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PageRangeInvalid,
                     HttpStatusCode.BadRequest));
             if (Before - After > options.PerPageMax)
