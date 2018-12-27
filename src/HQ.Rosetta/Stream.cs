@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace HQ.Rosetta
 {
+
     public class Stream<T> : IStream<T>
     {
         private readonly IEnumerable<T> _source;

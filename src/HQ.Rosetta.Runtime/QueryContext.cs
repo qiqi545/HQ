@@ -30,12 +30,13 @@ namespace HQ.Rosetta.Runtime
         public FieldOptions Fields { get; set; }
         public SortOptions Sorting { get; set; }
         public PageOptions Paging { get; set; }
+        public StreamOptions Streaming { get; set; }
         public FilterOptions Filters { get; set; }
         public ProjectionOptions Projections { get; set; }
 
         public object Execute(IObjectSaveRepository repository)
         {
-            var parameters = new object[] {Sorting, Paging, Fields, Filters, Projections};
+            var parameters = new object[] { Sorting, Paging, Streaming, Fields, Filters, Projections };
 
             return Handle?.Invoke(repository, parameters);
         }

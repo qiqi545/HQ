@@ -23,8 +23,7 @@ namespace HQ.Rosetta
 {
     public interface IObjectGetRepository
     {
-        Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null,
-            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
         Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null);
 

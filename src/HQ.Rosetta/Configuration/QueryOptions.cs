@@ -31,6 +31,8 @@ namespace HQ.Rosetta.Configuration
         public string FieldsOperator { get; set; } = "fields";
         public string FilterOperator { get; set; } = "filter";
         public string ProjectionOperator { get; set; } = "project";
+        public string AfterOperator { get; set; } = "after";
+        public string BeforeOperator { get; set; } = "before";
 
         public string TotalCountHeader { get; set; } = Constants.HttpHeaders.TotalCount;
         public string TotalPagesHeader { get; set; } = Constants.HttpHeaders.TotalPages;
