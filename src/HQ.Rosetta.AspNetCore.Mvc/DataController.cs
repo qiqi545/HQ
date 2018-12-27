@@ -22,13 +22,13 @@ namespace HQ.Rosetta.AspNetCore.Mvc
 {
     public class DataController : ControllerExtended
     {
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public IActionResult Error(Error error, params object[] args)
         {
             return new ErrorResult(error, args);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public bool Valid(object model, out ErrorResult error, params object[] args)
         {
             if (!TryValidateModel(model))
@@ -42,7 +42,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
             return true;
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public bool ValidModelState(out ErrorResult error, params object[] args)
         {
             if (!TryValidateModel(ModelState))
@@ -56,7 +56,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
             return true;
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public Error ConvertModelStateToError()
         {
             return ControllerExtensions.ConvertModelStateToError(this);
