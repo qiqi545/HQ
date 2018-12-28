@@ -104,5 +104,10 @@ namespace HQ.Common.Extensions
 
             return all;
         }
+
+        public static List<T> AsList<T>(this IEnumerable<T> enumerable)
+        {
+            return enumerable as List<T> ?? enumerable.ToList();
+        }
     }
 }
