@@ -15,13 +15,20 @@
 
 #endregion
 
+using System.Runtime.Serialization;
+
 namespace HQ.Rosetta
 {
+    [DataContract]
     public enum ObjectSave
     {
+        [EnumMember]
         NotFound,
+        [EnumMember]
         NoChanges,
+        [EnumMember]
         Created,
+        [EnumMember]
         Updated
     }
 }

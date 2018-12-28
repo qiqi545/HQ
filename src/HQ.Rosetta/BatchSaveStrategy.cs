@@ -15,12 +15,18 @@
 
 #endregion
 
+using System.Runtime.Serialization;
+
 namespace HQ.Rosetta
 {
+    [DataContract]
     public enum BatchSaveStrategy
     {
+        [EnumMember]
         Insert,
+        [EnumMember]
         Upsert,
+        [EnumMember]
         Update
     }
 }

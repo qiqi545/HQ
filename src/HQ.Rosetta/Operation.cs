@@ -16,10 +16,11 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Serialization;
 
 namespace HQ.Rosetta
 {
+    [DataContract]
     public class Operation
     {
         public Operation()
@@ -35,9 +36,16 @@ namespace HQ.Rosetta
 
         public static Operation CompletedWithoutErrors => new Operation();
 
+        [DataMember]
         public OperationResult Result { get; set; }
+
+        [DataMember]
         public bool Succeeded => Result == OperationResult.Succeeded || Result == OperationResult.SucceededWithErrors;
-        public bool HasErrors => Errors?.Count() > 0;
+
+        [DataMember]
+        public bool HasErrors => Errors?.Count > 0;
+
+        [DataMember]
         public IList<Error> Errors { get; set; }
 
         public static Operation<T> FromResult<T>(T data)

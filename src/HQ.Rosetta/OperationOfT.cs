@@ -16,9 +16,11 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace HQ.Rosetta
 {
+    [DataContract]
     public sealed class Operation<T> : Operation
     {
         public Operation(IList<Error> errors) : base(errors)
@@ -44,6 +46,7 @@ namespace HQ.Rosetta
             Data = data;
         }
 
+        [DataMember]
         public T Data { get; set; }
     }
 }

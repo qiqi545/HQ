@@ -18,9 +18,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace HQ.Rosetta
 {
+    [DataContract]
     public class Page<T> : IPage<T>
     {
         private readonly IEnumerable<T> _source;
@@ -33,18 +35,39 @@ namespace HQ.Rosetta
             Size = size;
             Count = count;
             TotalCount = totalCount;
+            TotalPages = (int)Math.Ceiling(TotalCount / (double)Count);
+            HasPreviousPage = Index > 1;
+            HasNextPage = Index < TotalPages - 1;
+            Start = Count * Index - Count + 1;
+            End = Start + Count - 1;
         }
 
-        public int Index { get; }
-        public int Size { get; }
-        public int Count { get; }
-        public long TotalCount { get; }
+        [DataMember]
+        public int Index { get; set; }
 
-        public long TotalPages => (int) Math.Ceiling(TotalCount / (double) Count);
-        public bool HasPreviousPage => Index > 1;
-        public bool HasNextPage => Index < TotalPages - 1;
-        public int Start => Count * Index - Count + 1;
-        public int End => Start + Count - 1;
+        [DataMember]
+        public int Size { get; set; }
+
+        [DataMember]
+        public int Count { get; set; }
+
+        [DataMember]
+        public long TotalCount { get; set; }
+
+        [DataMember]
+        public long TotalPages { get; set; }
+
+        [DataMember]
+        public bool HasPreviousPage { get; set; }
+
+        [DataMember]
+        public bool HasNextPage { get; set; }
+
+        [DataMember]
+        public int Start { get; set; }
+
+        [DataMember]
+        public int End { get; set; }
 
         public IEnumerator<T> GetEnumerator()
         {

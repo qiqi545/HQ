@@ -17,36 +17,45 @@
 
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.Serialization;
+using HQ.Common.Extensions;
 
 namespace HQ.Rosetta
 {
+    [DataContract]
     public class Error
     {
         public Error(long eventId, string message, HttpStatusCode statusCode, IList<Error> errors = null) : this(
-            eventId, message, (short) statusCode, errors)
+            eventId, message, (short)statusCode, errors)
         {
         }
 
-        public Error(long eventId, string message, short statusCode = (short) HttpStatusCode.InternalServerError,
-            params Error[] errors) : this(eventId, message, statusCode, (IList<Error>) errors)
+        public Error(long eventId, string message, short statusCode = (short)HttpStatusCode.InternalServerError,
+            params Error[] errors) : this(eventId, message, statusCode, (IList<Error>)errors)
         {
             Message = message;
             StatusCode = statusCode;
             Errors = errors;
         }
 
-        public Error(long eventId, string message, short statusCode = (short) HttpStatusCode.InternalServerError,
-            IList<Error> errors = null)
+        public Error(long eventId, string message, short statusCode = (short)HttpStatusCode.InternalServerError, IEnumerable<Error> errors = null)
         {
             EventId = eventId;
-            Errors = errors;
+            Errors = errors.AsList();
             StatusCode = statusCode;
             Message = message;
         }
 
-        public short StatusCode { get; }
+        [DataMember]
+        public short StatusCode { get; set; }
+
+        [DataMember]
         public string Message { get; set; }
-        public long EventId { get; }
-        public IList<Error> Errors { get; }
+
+        [DataMember]
+        public long EventId { get; set; }
+
+        [DataMember]
+        public IList<Error> Errors { get; set; }
     }
 }

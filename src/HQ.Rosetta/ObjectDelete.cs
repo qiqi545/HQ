@@ -15,12 +15,18 @@
 
 #endregion
 
+using System.Runtime.Serialization;
+
 namespace HQ.Rosetta
 {
+    [DataContract]
     public enum ObjectDelete
     {
+        [EnumMember]
         NotFound,
+        [EnumMember]
         Deleted,
+        [EnumMember]
         Gone
     }
 }
