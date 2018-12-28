@@ -17,15 +17,19 @@
 
 using System.Buffers;
 using System.Collections.Generic;
+using System.Xml;
 using HQ.Common;
 using HQ.Domicile.Conventions;
 using HQ.Domicile.Extensions;
-using HQ.Domicile.Formatters;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using JsonInputFormatter = HQ.Domicile.Formatters.JsonInputFormatter;
+using JsonOutputFormatter = HQ.Domicile.Formatters.JsonOutputFormatter;
+using JsonPatchInputFormatter = HQ.Domicile.Formatters.JsonPatchInputFormatter;
 
 namespace HQ.Domicile.Configuration
 {
@@ -57,17 +61,38 @@ namespace HQ.Domicile.Configuration
         public void Configure(MvcOptions options)
         {
             var logger = _loggerFactory.CreateLogger(Constants.Loggers.Formatters);
+
             var jsonOptions = new MvcJsonOptions();
             jsonOptions.Apply(_settings);
 
             options.InputFormatters.Clear();
-            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
-            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
-
             options.OutputFormatters.Clear();
-            options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
+
+            AddJson(options, logger, jsonOptions);
+            AddXml(options);
 
             options.Conventions.Add(new DynamicComponentConvention(_components));
+        }
+
+        private void AddXml(MvcOptions options)
+        {
+            if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("xml")))
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", Constants.MediaTypes.Xml);
+            options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter(new XmlWriterSettings
+            {
+                Indent = true,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+            }, _loggerFactory));
+            options.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(options));
+        }
+
+        private void AddJson(MvcOptions options, ILogger logger, MvcJsonOptions jsonOptions)
+        {
+            if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", Constants.MediaTypes.Json);
+            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+            options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
         }
     }
 }

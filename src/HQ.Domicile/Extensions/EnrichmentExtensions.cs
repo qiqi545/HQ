@@ -15,7 +15,9 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Net;
+using System.Runtime.Serialization;
 using HQ.Common;
 using HQ.Common.Helpers;
 using HQ.Domicile.Configuration;
@@ -44,67 +46,101 @@ namespace HQ.Domicile.Extensions
         }
 
         public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions, QueryOptions queryOptions,
-            IPageHeader header, out object body)
+            IPageHeader data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
             {
-                body = new
+                body = new EnvelopeBody
                 {
-                    response = header,
-                    status = response.StatusCode,
-                    headers = response.Headers,
-                    paging = new
+                    Data = data,
+                    Status = response.StatusCode,
+                    Headers = response.Headers,
+                    Paging = new PagingInfo
                     {
-                        header.TotalCount,
-                        header.TotalPages,
-                        NextPage = GetNextPage(request, header, queryOptions),
-                        PreviousPage = GetPreviousPage(request, header, queryOptions),
-                        LastPage = GetLastPage(request, header, queryOptions)
-                    }
+                        TotalCount = data.TotalCount,
+                        TotalPages = data.TotalPages,
+                        NextPage = GetNextPage(request, data, queryOptions),
+                        PreviousPage = GetPreviousPage(request, data, queryOptions),
+                        LastPage = GetLastPage(request, data, queryOptions)
+                    },
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
                 };
 
                 response.StatusCode = (int)HttpStatusCode.OK;
+                return;
+            }
+
+            var link = StringBuilderPool.Scoped(sb =>
+            {
+                if (data.TotalPages > 1)
+                {
+                    var firstPage = $"<{GetFirstPage(request, data, queryOptions)}>; rel=\"first\"";
+                    sb.Append(firstPage);
+                }
+
+                if (data.HasNextPage)
+                {
+                    var nextPage = $"<{GetNextPage(request, data, queryOptions)}>; rel=\"next\"";
+                    if (sb.Length > 0)
+                        sb.Append(", ");
+                    sb.Append(nextPage);
+                }
+
+                if (data.HasPreviousPage)
+                {
+                    var previousPage = $"<{GetPreviousPage(request, data, queryOptions)}>; rel=\"previous\"";
+                    if (sb.Length > 0)
+                        sb.Append(", ");
+                    sb.Append(previousPage);
+                }
+
+                if (data.TotalPages > 1)
+                {
+                    var lastPage = $"<{GetLastPage(request, data, queryOptions)}>; rel=\"last\"";
+                    if (sb.Length > 0)
+                        sb.Append(", ");
+                    sb.Append(lastPage);
+                }
+            });
+
+            if (link.Length > 0)
+                response.Headers.Add(Constants.HttpHeaders.Link, link);
+
+            response.Headers.Add(queryOptions.TotalCountHeader, data.TotalCount.ToString());
+            response.Headers.Add(queryOptions.TotalPagesHeader, data.TotalPages.ToString());
+            body = new NestedBody
+            {
+                Data = data,
+                Errors = errors,
+                HasErrors = errors?.Count > 0
+            };
+        }
+
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions, QueryOptions queryOptions, object data, IList<Error> errors, out object body)
+        {
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
+            {
+                body = new EnvelopeBody
+                {
+                    Data = data,
+                    Status = response.StatusCode,
+                    Headers = response.Headers,
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
             }
             else
             {
-                var link = StringBuilderPool.Scoped(sb =>
+                body = new NestedBody
                 {
-                    if (header.TotalPages > 1)
-                    {
-                        var firstPage = $"<{GetFirstPage(request, header, queryOptions)}>; rel=\"first\"";
-                        sb.Append(firstPage);
-                    }
-
-                    if (header.HasNextPage)
-                    {
-                        var nextPage = $"<{GetNextPage(request, header, queryOptions)}>; rel=\"next\"";
-                        if (sb.Length > 0)
-                            sb.Append(", ");
-                        sb.Append(nextPage);
-                    }
-
-                    if (header.HasPreviousPage)
-                    {
-                        var previousPage = $"<{GetPreviousPage(request, header, queryOptions)}>; rel=\"previous\"";
-                        if (sb.Length > 0)
-                            sb.Append(", ");
-                        sb.Append(previousPage);
-                    }
-
-                    if (header.TotalPages > 1)
-                    {
-                        var lastPage = $"<{GetLastPage(request, header, queryOptions)}>; rel=\"last\"";
-                        if (sb.Length > 0)
-                            sb.Append(", ");
-                        sb.Append(lastPage);
-                    }
-                });
-
-                if (link.Length > 0) response.Headers.Add(Constants.HttpHeaders.Link, link);
-                response.Headers.Add(queryOptions.TotalCountHeader, header.TotalCount.ToString());
-                response.Headers.Add(queryOptions.TotalPagesHeader, header.TotalPages.ToString());
-                body = header;
+                    Data = data,
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
             }
+
+            response.StatusCode = (int)HttpStatusCode.OK;
         }
 
         internal static string GetPreviousPage(HttpRequest request, IPageHeader header, QueryOptions options)
