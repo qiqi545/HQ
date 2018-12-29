@@ -26,43 +26,56 @@ namespace HQ.Common.AspNetCore.Mvc
     {
         #region Additional IActionResult Helpers
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult NotModified()
         {
             return StatusCode((int) HttpStatusCode.NotModified);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult Gone()
         {
             return StatusCode((int) HttpStatusCode.Gone);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult UnsupportedMediaType(object value = null)
         {
             return StatusCode((int) HttpStatusCode.UnsupportedMediaType, value);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult SeeOther(string location)
         {
             Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode((int)HttpStatusCode.SeeOther);
+            return StatusCode((int) HttpStatusCode.SeeOther);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult Created(string location)
         {
             Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode((int)HttpStatusCode.Created);
+            return StatusCode((int) HttpStatusCode.Created);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public IActionResult NotImplemented()
+        {
+            return StatusCode((int)HttpStatusCode.NotImplemented);
         }
 
         #endregion
 
         #region Dispatch
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public T TryOperation<T>(string localizedErrorMessage, Func<T> operation, string action = "")
         {
             try
@@ -79,7 +92,8 @@ namespace HQ.Common.AspNetCore.Mvc
             }
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public Task<T> TryOperationAsync<T>(string localizedErrorMessage, Task<T> operation, string action = "")
         {
             try

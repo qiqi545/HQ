@@ -147,7 +147,7 @@ namespace HQ.Common
 #if DEBUG
 // (In Debug mode, we make it a class so that we can add a finalizer
 // in order to detect when the object is not freed.)
-        class Sentinel
+        private class Sentinel
         {
             ~Sentinel()
             {
@@ -159,7 +159,7 @@ namespace HQ.Common
             }
         }
 
-        readonly Sentinel leakDetector;
+        private readonly Sentinel leakDetector;
 #endif
     }
 
@@ -169,83 +169,6 @@ namespace HQ.Common
     [Serializable]
     public class LockTimeoutException : Exception
     {
-#if DEBUG
-        readonly object lockTarget;
-        StackTrace blockingStackTrace;
-        static readonly Hashtable failedLockTargets = new Hashtable();
-
-        /// <summary>
-        /// Sets the stack trace for the given lock target 
-        /// if an error occurred.
-        /// </summary>
-        /// <param name="lockTarget">Lock target.</param>
-        public static void ReportStackTraceIfError(object lockTarget)
-        {
-            lock (failedLockTargets)
-            {
-                if (failedLockTargets.ContainsKey(lockTarget))
-                {
-                    var waitHandle = failedLockTargets[lockTarget] as ManualResetEvent;
-                    if (waitHandle != null)
-                    {
-                        waitHandle.Set();
-                    }
-                    failedLockTargets[lockTarget] = new StackTrace();
-                    //Also. if you don't call GetBlockingStackTrace()
-                    //the lockTarget doesn't get removed from the hash 
-                    //table and so we'll always think there's an error
-                    //here (though no locktimeout exception is thrown).
-                }
-            }
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="LockTimeoutException"/> instance.
-        /// </summary>
-        /// <remarks>Use this exception.</remarks>
-        /// <param name="lockTarget">Object we tried to lock.</param>
-        public LockTimeoutException(object lockTarget)
-            : base("Timeout waiting for lock")
-        {
-            lock (failedLockTargets)
-            {
-                // This is safer in case somebody forgot to remove 
-                // the lock target.
-                var waitHandle = new ManualResetEvent(false);
-                failedLockTargets[lockTarget] = waitHandle;
-            }
-            this.lockTarget = lockTarget;
-        }
-
-        /// <summary>
-        /// Stack trace of the thread that holds a lock on the object 
-        /// this lock is attempting to acquire when it fails.
-        /// </summary>
-        /// <param name="timeout">Number of milliseconds to wait for the blocking stack trace.</param>
-        public StackTrace GetBlockingStackTrace(int timeout)
-        {
-            if (timeout < 0)
-                throw new InvalidOperationException("We'd all like to be able to go back in time, but this is not allowed. Please choose a positive wait time.");
-
-            ManualResetEvent waitHandle;
-            lock (failedLockTargets)
-            {
-                waitHandle = failedLockTargets[lockTarget] as ManualResetEvent;
-            }
-            if (timeout > 0 && waitHandle != null)
-            {
-                waitHandle.WaitOne(timeout, false);
-            }
-            lock (failedLockTargets)
-            {
-                //Hopefully by now we have a stack trace.
-                blockingStackTrace = failedLockTargets[lockTarget] as StackTrace;
-            }
-
-            return blockingStackTrace;
-        }
-#endif
-
         /// <summary>
         ///     Creates a new <see cref="LockTimeoutException" /> instance.
         /// </summary>
@@ -294,20 +217,101 @@ namespace HQ.Common
 #endif
             return toString;
         }
+#if DEBUG
+        private readonly object lockTarget;
+        private StackTrace blockingStackTrace;
+        private static readonly Hashtable failedLockTargets = new Hashtable();
+
+        /// <summary>
+        ///     Sets the stack trace for the given lock target
+        ///     if an error occurred.
+        /// </summary>
+        /// <param name="lockTarget">Lock target.</param>
+        public static void ReportStackTraceIfError(object lockTarget)
+        {
+            lock (failedLockTargets)
+            {
+                if (failedLockTargets.ContainsKey(lockTarget))
+                {
+                    var waitHandle = failedLockTargets[lockTarget] as ManualResetEvent;
+                    if (waitHandle != null)
+                    {
+                        waitHandle.Set();
+                    }
+
+                    failedLockTargets[lockTarget] = new StackTrace();
+                    //Also. if you don't call GetBlockingStackTrace()
+                    //the lockTarget doesn't get removed from the hash 
+                    //table and so we'll always think there's an error
+                    //here (though no locktimeout exception is thrown).
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Creates a new <see cref="LockTimeoutException" /> instance.
+        /// </summary>
+        /// <remarks>Use this exception.</remarks>
+        /// <param name="lockTarget">Object we tried to lock.</param>
+        public LockTimeoutException(object lockTarget)
+            : base("Timeout waiting for lock")
+        {
+            lock (failedLockTargets)
+            {
+                // This is safer in case somebody forgot to remove 
+                // the lock target.
+                var waitHandle = new ManualResetEvent(false);
+                failedLockTargets[lockTarget] = waitHandle;
+            }
+
+            this.lockTarget = lockTarget;
+        }
+
+        /// <summary>
+        ///     Stack trace of the thread that holds a lock on the object
+        ///     this lock is attempting to acquire when it fails.
+        /// </summary>
+        /// <param name="timeout">Number of milliseconds to wait for the blocking stack trace.</param>
+        public StackTrace GetBlockingStackTrace(int timeout)
+        {
+            if (timeout < 0)
+                throw new InvalidOperationException(
+                    "We'd all like to be able to go back in time, but this is not allowed. Please choose a positive wait time.");
+
+            ManualResetEvent waitHandle;
+            lock (failedLockTargets)
+            {
+                waitHandle = failedLockTargets[lockTarget] as ManualResetEvent;
+            }
+
+            if (timeout > 0 && waitHandle != null)
+            {
+                waitHandle.WaitOne(timeout, false);
+            }
+
+            lock (failedLockTargets)
+            {
+                //Hopefully by now we have a stack trace.
+                blockingStackTrace = failedLockTargets[lockTarget] as StackTrace;
+            }
+
+            return blockingStackTrace;
+        }
+#endif
     }
 
 #if DEBUG
-/// <summary>
-/// This exception indicates that a user of the TimedLock struct 
-/// failed to leave a Monitor.  This could be the result of a 
-/// deadlock or forgetting to use the using statement or a try 
-/// finally block.
-/// </summary>
+    /// <summary>
+    ///     This exception indicates that a user of the TimedLock struct
+    ///     failed to leave a Monitor.  This could be the result of a
+    ///     deadlock or forgetting to use the using statement or a try
+    ///     finally block.
+    /// </summary>
     [Serializable]
     public class UndisposedLockException : Exception
     {
         /// <summary>
-        /// Constructor.
+        ///     Constructor.
         /// </summary>
         /// <param name="message"></param>
         public UndisposedLockException(string message) : base(message)
@@ -315,7 +319,7 @@ namespace HQ.Common
         }
 
         /// <summary>
-        /// Special constructor used for deserialization.
+        ///     Special constructor used for deserialization.
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
