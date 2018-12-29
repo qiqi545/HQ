@@ -17,10 +17,10 @@
 
 using System.Collections.Generic;
 using System.Net;
-using System.Runtime.Serialization;
 using HQ.Common;
 using HQ.Common.Helpers;
 using HQ.Domicile.Configuration;
+using HQ.Domicile.Models;
 using HQ.Rosetta;
 using HQ.Rosetta.Configuration;
 using Microsoft.AspNetCore.Http;
