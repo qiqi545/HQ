@@ -121,7 +121,15 @@ namespace HQ.Common
             /// </summary>
             public const string ServerTiming = "Server-Timing";
 
+            /// <summary>
+            ///     See: https://www.w3.org/TR/server-timing/
+            /// </summary>
             public const string TimingAllowOrigin = "Timing-Allow-Origin";
+            
+            /// <summary>
+            ///     See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
+            /// </summary>
+            public const string Prefer = "Prefer";
         }
 
         public static class HttpVerbs
