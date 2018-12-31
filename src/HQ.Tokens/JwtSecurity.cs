@@ -95,8 +95,6 @@ namespace HQ.Tokens
 
             claims.AddRange(userClaims);
 
-            claims.TryAddClaim(security.Claims.TenantIdClaim, api.TenantId);
-            claims.TryAddClaim(security.Claims.TenantNameClaim, api.TenantName);
             claims.TryAddClaim(security.Claims.ApplicationIdClaim, api.ApiVersion);
             claims.TryAddClaim(security.Claims.ApplicationNameClaim, api.ApiName);
 

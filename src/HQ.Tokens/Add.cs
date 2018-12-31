@@ -15,17 +15,13 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using HQ.Common;
-using HQ.Domicile.Conventions;
 using HQ.Tokens.Configuration;
 using HQ.Tokens.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Tokens
 {
