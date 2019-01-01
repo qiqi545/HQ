@@ -17,6 +17,8 @@
 
 using HQ.Lingo.Batching;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo.DocumentDb
 {
@@ -25,6 +27,8 @@ namespace HQ.Lingo.DocumentDb
         public static void AddDocumentDbBatching(this IServiceCollection services)
         {
             services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
+            services.TryAddSingleton<ISqlDialect, DocumentDbDialect>();
         }
     }
 }
+
