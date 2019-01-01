@@ -64,4 +64,3 @@ namespace HQ.Connect.DocumentDb
         }
     }
 }
-

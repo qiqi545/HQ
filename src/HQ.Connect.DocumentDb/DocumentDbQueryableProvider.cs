@@ -59,7 +59,8 @@ namespace HQ.Connect.DocumentDb
             get
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                var collectionUri =
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri);
             }
         }
@@ -69,7 +70,8 @@ namespace HQ.Connect.DocumentDb
             get
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                var collectionUri =
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
             }
         }
@@ -99,10 +101,10 @@ namespace HQ.Connect.DocumentDb
                 // the JSON.NET serializer configuration is the only step in converting the typed document into
                 // and object (to be serialized again back to JSON in the output).
 
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                var collectionUri =
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
             }
         }
     }
 }
-
