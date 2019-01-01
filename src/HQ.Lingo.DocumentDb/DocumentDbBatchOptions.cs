@@ -19,6 +19,7 @@ namespace HQ.Lingo.DocumentDb
 {
     public class DocumentDbBatchOptions
     {
-
+        public int? MaxConcurrencyPerPartitionKeyRange { get; set; } = null;
+        public int? MaxInMemorySortingBatchSize { get; set; } = null;
     }
 }
