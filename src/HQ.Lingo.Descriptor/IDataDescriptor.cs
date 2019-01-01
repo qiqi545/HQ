@@ -31,6 +31,8 @@ namespace HQ.Lingo.Descriptor
         string Table { get; }
 
         PropertyToColumn Id { get; }
+        PropertyToColumn Timestamp { get; }
+
         IList<PropertyToColumn> All { get; }
         IList<PropertyToColumn> Keys { get; }
         IList<PropertyToColumn> Inserted { get; }

@@ -37,7 +37,7 @@ namespace HQ.Lingo.Descriptor
 
         protected SimpleDataDescriptor(Type type)
         {
-            Types = new[] {type};
+            Types = new[] { type };
 
             ResolveTableInfo(this, type);
 
@@ -63,27 +63,40 @@ namespace HQ.Lingo.Descriptor
                 All.Add(column);
 
                 if (property.HasAttribute<KeyAttribute>())
+                {
+                    column.IsKey = true;
                     Keys.Add(column);
+                }
 
                 if (property.HasAttribute<OneToManyAttribute>())
+                {
+                    column.IsComputed = true;
                     Computed.Add(column);
+                }
 
                 if (property.GetAttribute<DatabaseGeneratedAttribute>() is DatabaseGeneratedAttribute generated)
                 {
                     switch (generated.DatabaseGeneratedOption)
                     {
                         case DatabaseGeneratedOption.Computed:
+                            {
+                                column.IsComputed = true;
+                                Computed.Add(column);
+                                break;
+                            }
                         case DatabaseGeneratedOption.Identity:
-                        {
-                            Computed.Add(column);
-                            break;
-                        }
+                            {
+                                column.IsComputed = true;
+                                column.IsIdentity = true;
+                                Computed.Add(column);
+                                break;
+                            }
                         case DatabaseGeneratedOption.None:
-                        {
-                            Inserted.Add(column);
-                            Updated.Add(column);
-                            break;
-                        }
+                            {
+                                Inserted.Add(column);
+                                Updated.Add(column);
+                                break;
+                            }
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -118,6 +131,13 @@ namespace HQ.Lingo.Descriptor
 
         public PropertyToColumn Id => MaybeGetSingleId();
 
+        public PropertyToColumn Timestamp => MaybeGetTimestamp();
+
+        private PropertyToColumn MaybeGetTimestamp()
+        {
+            return Inserted.SingleOrDefault(x => x.IsTimestamp);
+        }
+
         public static SimpleDataDescriptor Create<T>()
         {
             return Create(typeof(T));
@@ -127,10 +147,10 @@ namespace HQ.Lingo.Descriptor
         {
             lock (Descriptors)
             {
-                var obj = (SimpleDataDescriptor) Descriptors[type];
+                var obj = (SimpleDataDescriptor)Descriptors[type];
                 if (obj != null) return obj;
 
-                obj = (SimpleDataDescriptor) Descriptors[type];
+                obj = (SimpleDataDescriptor)Descriptors[type];
                 if (obj != null) return obj;
 
                 obj = new SimpleDataDescriptor(type);

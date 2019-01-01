@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
   </ItemGroup>
 
 </Project>

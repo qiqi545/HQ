@@ -15,6 +15,9 @@
 
 #endregion
 
+using System;
+using HQ.Rosetta;
+
 namespace HQ.Lingo.Descriptor
 {
     public class PropertyToColumn
@@ -23,13 +26,16 @@ namespace HQ.Lingo.Descriptor
         {
             Property = typedPropertyDescriptor;
             ColumnName = Property.Name;
-            Property.Name = Property.Name; // TODO allow for this to differ
+            Property.Name = Property.Name;
+            IsTimestamp = typedPropertyDescriptor.Type == typeof(DateTimeOffset) &&
+                          typedPropertyDescriptor.Name == nameof(IObject.CreatedAt);
         }
 
-        public PropertyAccessor Property { get; private set; }
-        public string ColumnName { get; private set; }
+        public PropertyAccessor Property { get; }
+        public string ColumnName { get; }
         public bool IsComputed { get; set; }
         public bool IsIdentity { get; set; }
         public bool IsKey { get; set; }
+        public bool IsTimestamp { get; }
     }
 }
