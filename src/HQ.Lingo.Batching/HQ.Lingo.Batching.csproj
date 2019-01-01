@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj" />
     <ProjectReference Include="..\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj" />
   </ItemGroup>
 
