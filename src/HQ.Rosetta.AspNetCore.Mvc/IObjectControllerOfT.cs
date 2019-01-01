@@ -34,7 +34,7 @@ namespace HQ.Rosetta.AspNetCore.Mvc
 
     public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
     {
-        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, FieldOptions fields, FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null, [FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
+        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields, FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null, [FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
         Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
     }
 
