@@ -1,11 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\build\package.props" />
-  <Import Project="$(SolutionDir)..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
   
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Simple connection management for ADO.NET data providers. This package provides support for DocumentDB.</Description>
+    <PackageTags>data-access connection ado-net hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
