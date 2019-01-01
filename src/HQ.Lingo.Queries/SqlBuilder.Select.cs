@@ -47,7 +47,8 @@ namespace HQ.Lingo.Queries
             return Select(GetDescriptor<T>(), null, null, page, perPage, orderBy);
         }
 
-        public static Query Select<T>(IDataDescriptor descriptor, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(IDataDescriptor descriptor, int page, int perPage,
+            params Expression<Func<T, object>>[] orderBy)
         {
             return Select(descriptor, null, null, page, perPage, orderBy);
         }
@@ -62,7 +63,8 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(IDataDescriptor descriptor, dynamic where, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(IDataDescriptor descriptor, dynamic where,
+            params Expression<Func<T, object>>[] orderBy)
         {
             Query query = Select(descriptor, columnFilter: null, where: where);
 
@@ -72,7 +74,8 @@ namespace HQ.Lingo.Queries
             return query;
         }
 
-        public static Query Select<T>(dynamic where, int page, int perPage, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(dynamic where, int page, int perPage,
+            params Expression<Func<T, object>>[] orderBy)
         {
             return Select(GetDescriptor<T>(), null, where, page, perPage, orderBy);
         }

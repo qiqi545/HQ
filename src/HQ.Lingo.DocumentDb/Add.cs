@@ -16,9 +16,9 @@
 #endregion
 
 using HQ.Lingo.Batching;
+using HQ.Lingo.Dialects;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using HQ.Lingo.Dialects;
 
 namespace HQ.Lingo.DocumentDb
 {
@@ -31,4 +31,3 @@ namespace HQ.Lingo.DocumentDb
         }
     }
 }
-

@@ -59,7 +59,8 @@ namespace HQ.Lingo.Queries.Rosetta
             return StringBuilderPool.Scoped(sb =>
             {
                 // SELECT COUNT(1) FROM ...
-                sb.Append($"SELECT {dialect.Count} FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
+                sb.Append(
+                    $"SELECT {dialect.Count} FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
 
                 // WHERE ...
                 if (filter?.Fields.Count > 0)

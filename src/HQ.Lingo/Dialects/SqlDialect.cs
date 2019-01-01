@@ -70,27 +70,66 @@ namespace HQ.Lingo.Dialects
             }
         }
 
-        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb) => true;
-        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb)
+        {
+            return true;
+        }
 
-        public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb) => true;
-        public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+        {
+            return true;
+        }
 
-        public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb) => true;
-        public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns) => true;
+        public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb)
+        {
+            return true;
+        }
 
-        public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb) => true;
+        public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+        {
+            return true;
+        }
 
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+        public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb)
+        {
+            return true;
+        }
+
+        public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+        {
+            return true;
+        }
+
+        public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb)
+        {
+            return true;
+        }
+
+        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
+        {
+            return true;
+        }
 
         public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters) => true;
+            IList<string> parameters)
+        {
+            return true;
+        }
 
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys) => true;
+        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
+        {
+            return true;
+        }
 
         public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters) => true;
+            IList<string> parameters)
+        {
+            return true;
+        }
 
-        public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate) => true;
+        public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate)
+        {
+            return true;
+        }
     }
 }

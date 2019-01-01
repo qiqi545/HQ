@@ -46,7 +46,8 @@ namespace HQ.Lingo.Queries
         public static Query Insert(object instance, IDataDescriptor descriptor)
         {
             var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
-            var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns, false);
+            var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns,
+                false);
             var hash = Hash.FromAnonymousObject(instance, true);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var keys = columns.Intersect(hashKeysRewrite.Keys);

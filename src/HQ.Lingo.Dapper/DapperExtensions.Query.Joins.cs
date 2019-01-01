@@ -65,4 +65,3 @@ namespace HQ.Lingo.Dapper
         }
     }
 }
-

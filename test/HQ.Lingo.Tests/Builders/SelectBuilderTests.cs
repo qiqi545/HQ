@@ -27,14 +27,15 @@ namespace HQ.Lingo.Tests.Builders
         [Fact]
         public void Select_no_projection()
         {
-            var sql = NoDialect.Default.Select("Foo", null, new List<string> {"Id", "CreatedAt"}, keys: null);
+            var sql = NoDialect.Default.Select("Foo", null, new List<string> {"Id", "CreatedAt"}, null);
             Assert.Equal(@"SELECT Id, CreatedAt FROM Foo", sql);
         }
 
         [Fact]
         public void Select_with_keys()
         {
-            var sql = NoDialect.Default.Select("Foo", null, new List<string> { "Id", "CreatedAt"}, new List<string> { "Id"});
+            var sql = NoDialect.Default.Select("Foo", null, new List<string> {"Id", "CreatedAt"},
+                new List<string> {"Id"});
             Assert.Equal(@"SELECT Id, CreatedAt FROM Foo WHERE Id = @Id", sql);
         }
     }

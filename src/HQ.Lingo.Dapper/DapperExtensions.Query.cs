@@ -140,4 +140,3 @@ namespace HQ.Lingo.Dapper
         }
     }
 }
-

@@ -23,35 +23,38 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.CosmosDB.BulkExecutor;
-using Microsoft.Azure.CosmosDB.BulkExecutor.BulkUpdate;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Extensions.Options;
 using HQ.Common.Models;
 using HQ.Lingo.Batching;
 using HQ.Lingo.Descriptor;
 using HQ.Rosetta;
+using Microsoft.Azure.CosmosDB.BulkExecutor;
+using Microsoft.Azure.CosmosDB.BulkExecutor.BulkUpdate;
+using Microsoft.Azure.Documents.Client;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Lingo.DocumentDb
 {
     public class DocumentDbBatchDataOperation : IDataBatchOperation<DocumentDbBatchOptions>
     {
-        private readonly IServerTimestampService _timestamps;
-        private readonly IOptions<DocumentDbOptions> _options;
         private readonly IOptions<DocumentDbBatchOptions> _batchOptions;
-        
-        public DocumentDbBatchDataOperation(IServerTimestampService timestamps, IOptions<DocumentDbOptions> options, IOptions<DocumentDbBatchOptions> batchOptions)
+        private readonly IOptions<DocumentDbOptions> _options;
+        private readonly IServerTimestampService _timestamps;
+
+        public DocumentDbBatchDataOperation(IServerTimestampService timestamps, IOptions<DocumentDbOptions> options,
+            IOptions<DocumentDbBatchOptions> batchOptions)
         {
             _timestamps = timestamps;
             _options = options;
             _batchOptions = batchOptions;
         }
 
-        public async Task<(DocumentDbBatchOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor, IDbTransaction transaction = null, int? commandTimeout = null)
+        public async Task<(DocumentDbBatchOptions, object)> BeforeAsync(IDbConnection connection,
+            IDataDescriptor descriptor, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             var client = connection.GetClient();
 
-            client = new DocumentClient(client.ServiceEndpoint, client.AuthKey, Defaults.JsonSettings, client.ConnectionPolicy,
+            client = new DocumentClient(client.ServiceEndpoint, client.AuthKey, Defaults.JsonSettings,
+                client.ConnectionPolicy,
                 client.ConsistencyLevel);
 
             client.ConnectionPolicy.ConnectionMode = ConnectionMode.Direct;
@@ -74,8 +77,10 @@ namespace HQ.Lingo.DocumentDb
             return (_batchOptions.Value, bulkExecutor);
         }
 
-        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, DocumentDbBatchOptions options,
-            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null,
+        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
+            DocumentDbBatchOptions options,
+            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
+            int? count = null, IDbTransaction transaction = null,
             int? commandTimeout = null, CancellationToken cancellationToken = default)
         {
             object ToDocument(TData x)
@@ -94,7 +99,7 @@ namespace HQ.Lingo.DocumentDb
             var client = connection.GetClient();
             var bulkExecutor = (IBulkExecutor) userState;
             var batchSize = count.GetValueOrDefault();
-            
+
             switch (saveStrategy)
             {
                 case BatchSaveStrategy.Insert:
@@ -146,11 +151,12 @@ namespace HQ.Lingo.DocumentDb
                         var operations = descriptor.Updated.Select(p =>
                         {
                             var type = typeof(SetUpdateOperation<>).MakeGenericType(p.Property.Type);
-                            var ctor = type.GetConstructor(new [] { typeof(string), p.Property.Type });
+                            var ctor = type.GetConstructor(new[] {typeof(string), p.Property.Type});
                             if (ctor == null)
                                 return null;
 
-                            var operation = (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
+                            var operation =
+                                (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
                             return operation;
                         });
 
@@ -166,11 +172,11 @@ namespace HQ.Lingo.DocumentDb
                 default:
                     throw new ArgumentOutOfRangeException(nameof(saveStrategy), saveStrategy, null);
             }
-           
         }
 
         public Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, DocumentDbBatchOptions options,
-            object userState, BatchSaveStrategy saveStrategy, IDbTransaction transaction = null, int? commandTimeout = null)
+            object userState, BatchSaveStrategy saveStrategy, IDbTransaction transaction = null,
+            int? commandTimeout = null)
         {
             return Task.CompletedTask;
         }

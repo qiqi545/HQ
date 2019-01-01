@@ -26,13 +26,17 @@ namespace HQ.Lingo.Batching
 {
     public interface IDataBatchOperation<TOptions>
     {
-        Task<(TOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor, IDbTransaction transaction = null,
+        Task<(TOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
+            IDbTransaction transaction = null,
             int? commandTimeout = null);
 
-        Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, TOptions options, object userState, BatchSaveStrategy saveStrategy,
-            IEnumerable<TData> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null, CancellationToken cancellationToken = default);
+        Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, TOptions options,
+            object userState, BatchSaveStrategy saveStrategy,
+            IEnumerable<TData> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null,
+            int? commandTimeout = null, CancellationToken cancellationToken = default);
 
-        Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, TOptions options, object userState, BatchSaveStrategy saveStrategy,
+        Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, TOptions options, object userState,
+            BatchSaveStrategy saveStrategy,
             IDbTransaction transaction = null, int? commandTimeout = null);
     }
 }

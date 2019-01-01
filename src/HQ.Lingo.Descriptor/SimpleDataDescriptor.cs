@@ -31,13 +31,11 @@ namespace HQ.Lingo.Descriptor
 {
     public class SimpleDataDescriptor : IDataDescriptor
     {
-        public static Func<string, string> TableNameConvention { get; set; }
-
         private static readonly Hashtable Descriptors = new Hashtable();
 
         protected SimpleDataDescriptor(Type type)
         {
-            Types = new[] { type };
+            Types = new[] {type};
 
             ResolveTableInfo(this, type);
 
@@ -79,24 +77,24 @@ namespace HQ.Lingo.Descriptor
                     switch (generated.DatabaseGeneratedOption)
                     {
                         case DatabaseGeneratedOption.Computed:
-                            {
-                                column.IsComputed = true;
-                                Computed.Add(column);
-                                break;
-                            }
+                        {
+                            column.IsComputed = true;
+                            Computed.Add(column);
+                            break;
+                        }
                         case DatabaseGeneratedOption.Identity:
-                            {
-                                column.IsComputed = true;
-                                column.IsIdentity = true;
-                                Computed.Add(column);
-                                break;
-                            }
+                        {
+                            column.IsComputed = true;
+                            column.IsIdentity = true;
+                            Computed.Add(column);
+                            break;
+                        }
                         case DatabaseGeneratedOption.None:
-                            {
-                                Inserted.Add(column);
-                                Updated.Add(column);
-                                break;
-                            }
+                        {
+                            Inserted.Add(column);
+                            Updated.Add(column);
+                            break;
+                        }
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
@@ -116,6 +114,8 @@ namespace HQ.Lingo.Descriptor
                     Keys.Add(defaultKey);
             }
         }
+
+        public static Func<string, string> TableNameConvention { get; set; }
 
         public IList<Type> Types { get; }
         public Type Type => MaybeGetSingleType();
@@ -147,10 +147,10 @@ namespace HQ.Lingo.Descriptor
         {
             lock (Descriptors)
             {
-                var obj = (SimpleDataDescriptor)Descriptors[type];
+                var obj = (SimpleDataDescriptor) Descriptors[type];
                 if (obj != null) return obj;
 
-                obj = (SimpleDataDescriptor)Descriptors[type];
+                obj = (SimpleDataDescriptor) Descriptors[type];
                 if (obj != null) return obj;
 
                 obj = new SimpleDataDescriptor(type);

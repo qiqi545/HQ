@@ -29,7 +29,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Delete_no_dialect()
         {
             var d = NoDialect.Default;
-            var sql = d.Delete(table:"Foo", schema: null, keys: new List<string>());
+            var sql = d.Delete("Foo", null, new List<string>());
             Assert.Equal("DELETE FROM Foo", sql);
         }
 
@@ -37,7 +37,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Delete_SQL_Server()
         {
             var d = new SqlServerDialect();
-            var sql = d.Delete(table:"Foo", schema: "dbo", keys: new List<string> {"Id", "Key"});
+            var sql = d.Delete("Foo", "dbo", new List<string> {"Id", "Key"});
             Assert.Equal("DELETE FROM [dbo].[Foo] WHERE [Id] = @Id AND [Key] = @Key", sql);
         }
     }

@@ -29,7 +29,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Update_no_dialect()
         {
             var d = NoDialect.Default;
-            var sql = d.Update("Foo", null, new List<string> { "CreatedAt"}, null);
+            var sql = d.Update("Foo", null, new List<string> {"CreatedAt"}, null);
             Assert.Equal(@"UPDATE Foo SET CreatedAt = @CreatedAt_set", sql);
         }
 
@@ -37,7 +37,7 @@ namespace HQ.Lingo.Tests.Builders
         public void Update_SQL_Server()
         {
             var d = new SqlServerDialect();
-            var sql = d.Update("Foo", "dbo", new List<string> { "CreatedAt"}, new List<string> { "Id"});
+            var sql = d.Update("Foo", "dbo", new List<string> {"CreatedAt"}, new List<string> {"Id"});
             Assert.Equal(@"UPDATE [dbo].[Foo] SET [CreatedAt] = @CreatedAt_set WHERE [Id] = @Id", sql);
         }
     }

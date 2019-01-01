@@ -42,7 +42,7 @@ namespace HQ.Lingo.Queries.Rosetta
                 var joins = 0;
                 foreach (var projection in projections.Fields)
                 {
-                    string name = projection.Field.ToTitleCase();
+                    var name = projection.Field.ToTitleCase();
                     if (name.EndsWith("s"))
                         name = name.Substring(0, name.Length - 1);
 

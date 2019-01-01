@@ -32,7 +32,7 @@ namespace HQ.Lingo.Dialects
 
         string SetSuffix { get; }
         bool SupportsSelectStar { get; }
-        
+
         bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
         void Page(string sql, StringBuilder sb);
 

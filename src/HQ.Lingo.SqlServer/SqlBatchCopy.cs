@@ -34,7 +34,8 @@ namespace HQ.Lingo.SqlServer
     {
         protected internal const string DefaultSchema = "dbo";
 
-        public async Task<(SqlServerOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor, IDbTransaction transaction = null,
+        public async Task<(SqlServerOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
+            IDbTransaction transaction = null,
             int? commandTimeout = null)
         {
             var database = connection.Database;
@@ -42,10 +43,10 @@ namespace HQ.Lingo.SqlServer
             {
                 PageVerify = (await connection
                     .ExecuteAsync("SELECT page_verify_option_desc FROM sys.databases WHERE [NAME] = @Database",
-                        new { Database = database }, transaction, commandTimeout)).ToString(),
+                        new {Database = database}, transaction, commandTimeout)).ToString(),
                 RecoveryModel = (await connection
                     .ExecuteAsync("SELECT recovery_model_desc FROM sys.databases WHERE [NAME] =  @Database",
-                        new { Database = database }, transaction, commandTimeout)).ToString()
+                        new {Database = database}, transaction, commandTimeout)).ToString()
             };
 
             connection.Execute("USE master;");
@@ -56,31 +57,36 @@ namespace HQ.Lingo.SqlServer
             return (settings, null);
         }
 
-        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,
-            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0, int? count = null,
-            IDbTransaction transaction = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
+        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
+            SqlServerOptions options,
+            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
+            int? count = null,
+            IDbTransaction transaction = null, int? commandTimeout = null,
+            CancellationToken cancellationToken = default)
         {
             // ReSharper disable once PossibleMultipleEnumeration
             var reader = new ObjectReader(typeof(TData), objects,
                 descriptor.Inserted.Select(x => x.ColumnName).ToArray());
 
             var mapping = GenerateBulkCopyMapping(descriptor, reader, connection, transaction, commandTimeout);
-            using (var bcp = new SqlBulkCopy((SqlConnection)connection, SqlBulkCopyOptions.TableLock,
-                (SqlTransaction)transaction))
+            using (var bcp = new SqlBulkCopy((SqlConnection) connection, SqlBulkCopyOptions.TableLock,
+                (SqlTransaction) transaction))
             {
                 foreach (var column in mapping.DatabaseTableColumns)
                     bcp.ColumnMappings.Add(new SqlBulkCopyColumnMapping(column, column));
 
                 // ReSharper disable once PossibleMultipleEnumeration
                 bcp.BatchSize = count ?? objects.Count();
-                bcp.DestinationTableName = $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
+                bcp.DestinationTableName =
+                    $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
                 bcp.BulkCopyTimeout = commandTimeout.GetValueOrDefault();
 
                 await bcp.WriteToServerAsync(reader, cancellationToken);
             }
         }
 
-        public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options, object userState,
+        public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,
+            object userState,
             BatchSaveStrategy saveStrategy, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             var database = connection.Database;
@@ -95,7 +101,8 @@ namespace HQ.Lingo.SqlServer
         {
             var schemaTable = reader.GetSchemaTable();
             var schemaTableColumns = (from DataColumn column in schemaTable?.Columns select column.ColumnName).ToList();
-            var databaseTableColumns = GetDatabaseTableColumns(connection, schemaTable?.TableName, transaction, commandTimeout).ToList();
+            var databaseTableColumns =
+                GetDatabaseTableColumns(connection, schemaTable?.TableName, transaction, commandTimeout).ToList();
             var excludedColumns = descriptor.Computed.Select(c => c.ColumnName).ToList();
 
             databaseTableColumns = databaseTableColumns.Except(excludedColumns).ToList();
