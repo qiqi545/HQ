@@ -18,14 +18,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Common.FastMember;
 using HQ.Lingo.Batching;
 using HQ.Lingo.Descriptor;
 using HQ.Lingo.SqlServer.Configuration;
+using HQ.Rosetta;
 
 namespace HQ.Lingo.SqlServer
 {
@@ -33,18 +34,18 @@ namespace HQ.Lingo.SqlServer
     {
         protected internal const string DefaultSchema = "dbo";
 
-        public virtual SqlServerOptions Before(IDbConnection connection, IDataDescriptor descriptor,
-            IDbTransaction transaction = null, int? commandTimeout = null)
+        public async Task<(SqlServerOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor, IDbTransaction transaction = null,
+            int? commandTimeout = null)
         {
             var database = connection.Database;
             var settings = new SqlServerOptions
             {
-                PageVerify = connection
-                    .Execute("SELECT page_verify_option_desc FROM sys.databases WHERE [NAME] = @Database",
-                        new {Database = database}, transaction, commandTimeout).ToString(),
-                RecoveryModel = connection
-                    .Execute("SELECT recovery_model_desc FROM sys.databases WHERE [NAME] =  @Database",
-                        new {Database = database}, transaction, commandTimeout).ToString()
+                PageVerify = (await connection
+                    .ExecuteAsync("SELECT page_verify_option_desc FROM sys.databases WHERE [NAME] = @Database",
+                        new { Database = database }, transaction, commandTimeout)).ToString(),
+                RecoveryModel = (await connection
+                    .ExecuteAsync("SELECT recovery_model_desc FROM sys.databases WHERE [NAME] =  @Database",
+                        new { Database = database }, transaction, commandTimeout)).ToString()
             };
 
             connection.Execute("USE master;");
@@ -52,101 +53,52 @@ namespace HQ.Lingo.SqlServer
             connection.Execute($"ALTER DATABASE [{database}] SET RECOVERY BULK_LOGGED");
             connection.Execute($"USE [{database}]");
 
-            return settings;
+            return (settings, null);
         }
 
-        public virtual async Task ExecuteAsync<T>(IDbConnection connection, IDataDescriptor descriptor,
-            IEnumerable<T> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null,
-            int? commandTimeout = null)
+        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,
+            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0, int? count = null,
+            IDbTransaction transaction = null, int? commandTimeout = null, CancellationToken cancellationToken = default)
         {
-            descriptor = descriptor ?? SimpleDataDescriptor.Create<T>();
-            commandTimeout = commandTimeout ?? 0;
-            var options = Before(connection, descriptor, transaction, commandTimeout);
+            // ReSharper disable once PossibleMultipleEnumeration
+            var reader = new ObjectReader(typeof(TData), objects,
+                descriptor.Inserted.Select(x => x.ColumnName).ToArray());
 
-            try
+            var mapping = GenerateBulkCopyMapping(descriptor, reader, connection, transaction, commandTimeout);
+            using (var bcp = new SqlBulkCopy((SqlConnection)connection, SqlBulkCopyOptions.TableLock,
+                (SqlTransaction)transaction))
             {
+                foreach (var column in mapping.DatabaseTableColumns)
+                    bcp.ColumnMappings.Add(new SqlBulkCopyColumnMapping(column, column));
+
                 // ReSharper disable once PossibleMultipleEnumeration
-                var reader = new ObjectReader(typeof(T), objects,
-                    descriptor.Inserted.Select(x => x.ColumnName).ToArray());
+                bcp.BatchSize = count ?? objects.Count();
+                bcp.DestinationTableName = $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
+                bcp.BulkCopyTimeout = commandTimeout.GetValueOrDefault();
 
-                var mapping = GenerateBulkCopyMapping(descriptor, reader, connection, transaction, commandTimeout);
-                using (var bcp = new SqlBulkCopy((SqlConnection) connection, SqlBulkCopyOptions.TableLock,
-                    (SqlTransaction) transaction))
-                {
-                    foreach (var column in mapping.DatabaseTableColumns)
-                        bcp.ColumnMappings.Add(new SqlBulkCopyColumnMapping(column, column));
-
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    bcp.BatchSize = count ?? objects.Count();
-                    bcp.DestinationTableName =
-                        $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
-                    bcp.BulkCopyTimeout = (int) commandTimeout;
-
-                    await bcp.WriteToServerAsync(reader);
-                }
-            }
-            finally
-            {
-                After<T>(connection, descriptor, options, transaction, commandTimeout);
+                await bcp.WriteToServerAsync(reader, cancellationToken);
             }
         }
 
-        public virtual void Execute<T>(IDbConnection connection, IDataDescriptor descriptor, IEnumerable<T> objects,
-            long startingAt = 0, int? count = null, IDbTransaction transaction = null, int? commandTimeout = null)
-        {
-            descriptor = descriptor ?? SimpleDataDescriptor.Create<T>();
-            commandTimeout = commandTimeout ?? 0;
-            var options = Before(connection, descriptor, transaction, commandTimeout);
-
-            try
-            {
-                // ReSharper disable once PossibleMultipleEnumeration
-                var reader = new ObjectReader(typeof(T), objects,
-                    descriptor.Inserted.Select(x => x.ColumnName).ToArray());
-
-                var mapping = GenerateBulkCopyMapping(descriptor, reader, connection, transaction, commandTimeout);
-                using (var bcp = new SqlBulkCopy((SqlConnection) connection, SqlBulkCopyOptions.TableLock,
-                    (SqlTransaction) transaction))
-                {
-                    foreach (var column in mapping.DatabaseTableColumns)
-                        bcp.ColumnMappings.Add(new SqlBulkCopyColumnMapping(column, column));
-
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    bcp.BatchSize = count ?? objects.Count();
-                    bcp.DestinationTableName =
-                        $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
-                    bcp.BulkCopyTimeout = (int) commandTimeout;
-
-                    bcp.WriteToServer(reader);
-                }
-            }
-            finally
-            {
-                After<T>(connection, descriptor, options, transaction, commandTimeout);
-            }
-        }
-
-        public void After<T>(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,
-            IDbTransaction transaction = null, int? commandTimeout = null)
+        public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options, object userState,
+            BatchSaveStrategy saveStrategy, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             var database = connection.Database;
-            connection.Execute("USE master");
-            connection.Execute($"ALTER DATABASE [{database}] SET PAGE_VERIFY {options.PageVerify};");
-            connection.Execute($"ALTER DATABASE [{database}] SET RECOVERY {options.RecoveryModel}");
-            connection.Execute($"USE [{database}]");
+            await connection.ExecuteAsync("USE master");
+            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET PAGE_VERIFY {options.PageVerify};");
+            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET RECOVERY {options.RecoveryModel}");
+            await connection.ExecuteAsync($"USE [{database}]");
         }
 
-        public virtual BatchMap GenerateBulkCopyMapping(IDataDescriptor descriptor, IDataReader reader,
+        private static BatchMap GenerateBulkCopyMapping(IDataDescriptor descriptor, IDataReader reader,
             IDbConnection connection, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             var schemaTable = reader.GetSchemaTable();
             var schemaTableColumns = (from DataColumn column in schemaTable?.Columns select column.ColumnName).ToList();
-            var databaseTableColumns =
-                GetDatabaseTableColumns(connection, schemaTable?.TableName, transaction, commandTimeout).ToList();
+            var databaseTableColumns = GetDatabaseTableColumns(connection, schemaTable?.TableName, transaction, commandTimeout).ToList();
             var excludedColumns = descriptor.Computed.Select(c => c.ColumnName).ToList();
 
             databaseTableColumns = databaseTableColumns.Except(excludedColumns).ToList();
-            Debug.Assert(databaseTableColumns.Count == schemaTableColumns.Count);
 
             return new BatchMap
             {
@@ -156,7 +108,7 @@ namespace HQ.Lingo.SqlServer
             };
         }
 
-        public virtual IEnumerable<string> GetDatabaseTableColumns(IDbConnection connection, string tableName,
+        private static IEnumerable<string> GetDatabaseTableColumns(IDbConnection connection, string tableName,
             IDbTransaction transaction = null, int? commandTimeout = null)
         {
             using (var command = connection.CreateCommand())
