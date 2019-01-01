@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Data.DocumentDb;
 using System.Linq;
 using HQ.Cadence;
-using HQ.Connect.DocumentDb.Configuration;
+using HQ.Lingo.DocumentDb;
 using HQ.Lingo.Queries;
 using HQ.Rosetta.Queryable;
 using Microsoft.Azure.Documents.Client;
