@@ -123,11 +123,10 @@ namespace HQ.Tokens.AspNetCore
                 ValidAudience = options.Tokens.Audience,
                 RequireSignedTokens = true,
                 IssuerSigningKey = _credentials.Key,
-                ClockSkew = TimeSpan.FromMinutes(5)
+                ClockSkew = TimeSpan.FromMinutes(5),
+                RoleClaimType = options.Claims.RoleClaim,
+                NameClaimType = options.Claims.UserNameClaim
             };
-
-            parameters.RoleClaimType = options.Claims.RoleClaim;
-            parameters.NameClaimType = options.Claims.UserNameClaim;
 
             return parameters;
         }
