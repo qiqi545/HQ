@@ -22,7 +22,7 @@ using System.Security.Claims;
 
 namespace HQ.Tokens.Extensions
 {
-    public static class ClaimsPrincipalExtensions
+    internal static class ClaimsPrincipalExtensions
     {
         public static ExpandoObject GetClaims(this ClaimsPrincipal user)
         {

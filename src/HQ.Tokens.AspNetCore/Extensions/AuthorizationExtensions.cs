@@ -20,7 +20,7 @@ using HQ.Tokens.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Tokens.Extensions
+namespace HQ.Tokens.AspNetCore.Extensions
 {
     public static class AuthorizationExtensions
     {
