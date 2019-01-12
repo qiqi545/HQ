@@ -15,26 +15,31 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.AspNetCore.Configuration;
-using HQ.Extensions.Metrics.AspNetCore.Internal;
-using Microsoft.AspNetCore.Builder;
+using System;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics.AspNetCore
+namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    public static class MetricsApplicationBuilderExtensions
+    public static class HubReporterExtensions
     {
-        public static IApplicationBuilder UseMetrics(this IApplicationBuilder app)
+        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder) where T : Hub
         {
-            var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
-            foreach (var reporter in reporters)
-                reporter.InitializeAsync();
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricsReporter, HubReporter<T>>());
+            return builder;
+        }
 
-            app.UseMiddleware<MetricsMiddleware>(app.ApplicationServices
-                .GetRequiredService<IOptions<MetricsMiddlewareOptions>>());
+        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder, Action<HubReporterOptions> configureAction)
+            where T : Hub
+        {
+            if (configureAction == null)
+                throw new ArgumentNullException(nameof(configureAction));
 
-            return app;
+            builder.AddHubReporter<T>();
+            builder.Services.Configure(configureAction);
+
+            return builder;
         }
     }
 }

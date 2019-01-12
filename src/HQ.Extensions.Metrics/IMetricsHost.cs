@@ -21,11 +21,11 @@ namespace HQ.Extensions.Metrics
 {
     public interface IMetricsHost : IReadableMetrics
     {
-        GaugeMetric<T> Gauge<T>(Type type, string name, Func<T> evaluator);
-        CounterMetric Counter(Type type, string name);
-        HistogramMetric Histogram(Type type, string name, SampleType sampleType);
-        MeterMetric Meter(Type type, string name, string eventType, TimeUnit rateUnit);
-        TimerMetric Timer(Type type, string name, TimeUnit durationUnit, TimeUnit rateUnit);
+        GaugeMetric<T> Gauge<T>(Type owner, string name, Func<T> evaluator);
+        CounterMetric Counter(Type owner, string name);
+        HistogramMetric Histogram(Type owner, string name, SampleType sampleType);
+        MeterMetric Meter(Type owner, string name, string eventType, TimeUnit rateUnit);
+        TimerMetric Timer(Type owner, string name, TimeUnit durationUnit, TimeUnit rateUnit);
         void Clear();
     }
 }

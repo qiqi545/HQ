@@ -17,7 +17,7 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
@@ -52,12 +52,31 @@ namespace HQ.Extensions.Metrics
             return _metrics.AddOrUpdate(name, metric, (n, m) => m);
         }
 
-        public IReadOnlyDictionary<MetricName, IMetric> AsReadOnly()
+        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
+            ImmutableDictionary.Create<MetricName, IMetric>();
+
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
         {
-            var copy = new Dictionary<MetricName, IMetric>();
+            if (filterType.HasFlag(MetricType.All))
+                return NoSample;
+
+            var filtered = new Dictionary<MetricName, IMetric>();
             foreach (var entry in _metrics)
-                copy.Add(entry.Key, entry.Value.Copy);
-            return new ReadOnlyDictionary<MetricName, IMetric>(copy);
+            {
+                switch (entry.Value)
+                {
+                    case GaugeMetric _ when !filterType.HasFlagFast(MetricType.Gauge):
+                    case CounterMetric _ when !filterType.HasFlagFast(MetricType.Counter):
+                    case MeterMetric _ when !filterType.HasFlagFast(MetricType.Meter):
+                    case HistogramMetric _ when !filterType.HasFlagFast(MetricType.Histogram):
+                    case TimerMetric _ when !filterType.HasFlagFast(MetricType.Timer):
+                        continue;
+                    default:
+                        filtered.Add(entry.Key, entry.Value);
+                        break;
+                }
+            }
+            return filtered.ToImmutableDictionary();
         }
 
         public void Clear()

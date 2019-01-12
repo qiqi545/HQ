@@ -37,7 +37,7 @@ namespace HQ.Extensions.Metrics.Tests
             var same = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_all_registered_metrics");
             Assert.NotNull(same);
 
-            Assert.Equal(1, _fixture.Metrics.AsReadOnly().Count);
+            Assert.Equal(1, _fixture.Metrics.GetSample().Count);
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace HQ.Extensions.Metrics.Tests
         {
             using (var metrics = new MetricsFixture())
             {
-                Assert.Equal(0, metrics.Metrics.AsReadOnly().Count);
+                Assert.Equal(0, metrics.Metrics.GetSample().Count);
 
                 var name = new MetricName(typeof(CounterTests),
                     "Can_get_all_registered_metrics_as_readonly_and_immutable");
@@ -53,15 +53,15 @@ namespace HQ.Extensions.Metrics.Tests
                 metrics.Metrics.Counter(typeof(CounterTests),
                     "Can_get_all_registered_metrics_as_readonly_and_immutable");
 
-                Assert.Equal(1, metrics.Metrics.AsReadOnly().Count);
+                Assert.Equal(1, metrics.Metrics.GetSample().Count);
 
-                var value = metrics.Metrics.AsReadOnly()[name];
+                var value = metrics.Metrics.GetSample()[name];
 
                 Assert.NotNull(value);
 
                 ((CounterMetric) value).Increment();
 
-                Assert.Equal(0, ((CounterMetric) metrics.Metrics.AsReadOnly()[name]).Count);
+                Assert.Equal(0, ((CounterMetric) metrics.Metrics.GetSample()[name]).Count);
             }
         }
 

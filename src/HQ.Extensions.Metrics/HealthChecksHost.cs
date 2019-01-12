@@ -16,9 +16,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
@@ -36,10 +34,9 @@ namespace HQ.Extensions.Metrics
             return GetOrAdd(new MetricName(type, name), new GaugeMetric<bool>(() => predicate(evaluator())));
         }
 
-        public IReadOnlyDictionary<MetricName, IMetric> AsReadOnly()
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
         {
-            return new ReadOnlyDictionary<MetricName, IMetric>(_store.AsReadOnly()
-                .ToDictionary(entry => entry.Key, entry => entry.Value.Copy));
+            return _store.GetSample(filterType).ToImmutableDictionary(k => k.Key, v => v.Value as IMetric);
         }
 
         private GaugeMetric<bool> GetOrAdd(MetricName name, GaugeMetric<bool> metric)

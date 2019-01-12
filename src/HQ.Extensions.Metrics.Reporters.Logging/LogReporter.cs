@@ -19,11 +19,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
-using HQ.Extensions.Metrics.Reporters.Logging;
+using HQ.Extensions.Metrics.Reporters.Console;
+using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Metrics.Reporters.Console
+namespace HQ.Extensions.Metrics.Reporters.Logging
 {
     public sealed class LogReporter : PeriodicReporter
     {

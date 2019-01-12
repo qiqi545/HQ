@@ -144,19 +144,7 @@ namespace HQ.Extensions.Metrics
         /// </summary>
         /// <returns></returns>
         public string EventType => _meter.EventType;
-
-        [JsonIgnore]
-        public IMetric Copy
-        {
-            get
-            {
-                var copy = new TimerMetric(
-                    DurationUnit, RateUnit, _meter, _histogram, false /* clear */
-                );
-                return copy;
-            }
-        }
-
+     
         /// <summary>
         ///     Clears all recorded durations
         /// </summary>
@@ -200,6 +188,12 @@ namespace HQ.Extensions.Metrics
         private double ConvertFromNanos(double nanos)
         {
             return nanos / TimeUnit.Nanoseconds.Convert(1, DurationUnit);
+        }
+
+        public bool TryGetChangeInValue(long previousValue, out long currentValue)
+        {
+            currentValue = Count;
+            return currentValue != previousValue;
         }
     }
 }

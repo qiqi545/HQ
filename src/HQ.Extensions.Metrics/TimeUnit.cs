@@ -126,7 +126,7 @@ namespace HQ.Extensions.Metrics
                         case TimeUnit.Days:
                             return NanosecondsToSeconds(duration) / 60 / 60 / 24;
                         default:
-                            throw new ArgumentOutOfRangeException("target");
+                            throw new ArgumentOutOfRangeException(nameof(target));
                     }
                 case TimeUnit.Microseconds:
                     switch (target)

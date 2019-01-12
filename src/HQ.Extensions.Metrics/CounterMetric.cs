@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,7 +16,6 @@
 #endregion
 
 using HQ.Extensions.Metrics.Internal;
-using Newtonsoft.Json;
 
 namespace HQ.Extensions.Metrics
 {
@@ -38,31 +37,35 @@ namespace HQ.Extensions.Metrics
 
         public long Count => _count.Get();
 
-        [JsonIgnore] public IMetric Copy => new CounterMetric(_count.Get());
-
         public void Increment()
         {
             Increment(1);
         }
 
-        public void Increment(long amount)
+        public long Increment(long amount)
         {
-            _count.AddAndGet(amount);
+            return _count.AddAndGet(amount);
         }
 
-        public void Decrement()
+        public long Decrement()
         {
-            Decrement(1);
+            return Decrement(1);
         }
 
-        public void Decrement(long amount)
+        public long Decrement(long amount)
         {
-            _count.AddAndGet(0 - amount);
+            return _count.AddAndGet(0 - amount);
         }
 
         public void Clear()
         {
             _count.Set(0);
+        }
+
+        public bool TryGetChangeInValue(long previousValue, out long currentValue)
+        {
+            currentValue = Count;
+            return previousValue != currentValue;
         }
     }
 }

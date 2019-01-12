@@ -17,7 +17,6 @@
 
 using System;
 using HQ.Common.Extensions;
-using Newtonsoft.Json;
 
 namespace HQ.Extensions.Metrics
 {
@@ -26,7 +25,7 @@ namespace HQ.Extensions.Metrics
         public abstract string ValueAsString { get; }
         public abstract bool IsNumeric { get; }
         public abstract bool IsBoolean { get; }
-        public abstract IMetric Copy { get; }
+        public abstract bool TryGetChangeInValue(long previousValue, out long currentValue);
     }
 
     /// <summary>
@@ -52,12 +51,16 @@ namespace HQ.Extensions.Metrics
 
         public T Value => _evaluator();
 
-        public override string ValueAsString => Value.ToString();
+        public override string ValueAsString => Value?.ToString();
 
         public override bool IsNumeric { get; }
 
         public override bool IsBoolean { get; }
 
-        [JsonIgnore] public override IMetric Copy => new GaugeMetric<T>(_evaluator);
+        public override bool TryGetChangeInValue(long previousValue, out long currentValue)
+        {
+            currentValue = Value.GetHashCode();
+            return currentValue != previousValue;
+        }
     }
 }

@@ -15,10 +15,24 @@
 
 #endregion
 
-namespace HQ.Extensions.Metrics
+using System;
+using Microsoft.Extensions.Options;
+
+namespace HQ.Extensions.Metrics.AspNetCore.Configuration
 {
-    public interface IMetric
+    internal class DefaultMetricsConfigureOptions : ConfigureOptions<MetricsMiddlewareOptions>
     {
-        bool TryGetChangeInValue(long previousValue, out long currentValue);
+        public DefaultMetricsConfigureOptions() : base(DefaultOptionsBuilder())
+        {
+        }
+
+        private static Action<MetricsMiddlewareOptions> DefaultOptionsBuilder()
+        {
+            return options =>
+            {
+                options.Path = "metrics";
+                options.Timeout = TimeSpan.FromSeconds(5);
+            };
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -38,7 +38,7 @@ namespace HQ.Extensions.Metrics.Stats
     ///     Systems. ICDE '09: Proceedings of the 2009 IEEE International Conference on
     ///     Data Engineering (2009)
     /// </see>
-    public class ExponentiallyDecayingSample : ISample<ExponentiallyDecayingSample>
+    public class ExponentiallyDecayingSample : ISample
     {
         private static readonly long RescaleThreshold = TimeUnit.Hours.ToNanos(1);
         private readonly double _alpha;
@@ -107,21 +107,7 @@ namespace HQ.Extensions.Metrics.Stats
                 }
             }
         }
-
-        [JsonIgnore]
-        public ExponentiallyDecayingSample Copy
-        {
-            get
-            {
-                var copy = new ExponentiallyDecayingSample(_reservoirSize, _alpha);
-                copy._startTime.Set(_startTime);
-                copy._count.Set(_count);
-                copy._nextScaleTime.Set(_nextScaleTime);
-                foreach (var value in _values) copy._values.AddOrUpdate(value.Key, value.Value, (k, v) => v);
-                return copy;
-            }
-        }
-
+        
         private void Update(long value, long timestamp)
         {
             _lock.EnterReadLock();

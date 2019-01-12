@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Extensions.Metrics.Reporters.Console;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

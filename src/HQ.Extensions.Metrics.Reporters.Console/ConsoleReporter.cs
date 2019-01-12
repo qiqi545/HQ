@@ -19,12 +19,13 @@ using System;
 using System.IO;
 using System.Threading;
 using HQ.Extensions.Metrics.Internal;
+using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.Reporters.Console
 {
     /// <summary>
-    ///     A simple reporter which prints out application metrics to a <see cref="TextWriter" /> periodically
+    ///     A simple reporter which prints out application metrics to a <see cref="TextWriter" /> periodically.
     /// </summary>
     public sealed class ConsoleReporter : PeriodicReporter
     {
@@ -68,7 +69,7 @@ namespace HQ.Extensions.Metrics.Reporters.Console
                 @out.WriteLine();
 
                 foreach (var host in registry)
-                foreach (var entry in host.AsReadOnly().Sort())
+                foreach (var entry in host.GetSample().Sort())
                 {
                     @out.Write(entry.Key);
                     @out.WriteLine(':');
@@ -137,14 +138,14 @@ namespace HQ.Extensions.Metrics.Reporters.Console
             writer.Write("    15-minute rate = {0} {1}/{2}\n", meter.FifteenMinuteRate, meter.EventType, unit);
         }
 
-        private static void WriteDistributed(TextWriter writer, IDistributed histogram)
+        private static void WriteDistributed(TextWriter writer, IDistributed distribution)
         {
-            var percentiles = histogram.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
+            var percentiles = distribution.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
 
-            writer.Write("               min = %{0:2}\n", histogram.Min);
-            writer.Write("               max = %{0:2}\n", histogram.Max);
-            writer.Write("              mean = %{0:2}\n", histogram.Mean);
-            writer.Write("            stddev = %{0:2}\n", histogram.StdDev);
+            writer.Write("               min = %{0:2}\n", distribution.Min);
+            writer.Write("               max = %{0:2}\n", distribution.Max);
+            writer.Write("              mean = %{0:2}\n", distribution.Mean);
+            writer.Write("            stddev = %{0:2}\n", distribution.StdDev);
             writer.Write("            median = %{0:2}\n", percentiles[0]);
             writer.Write("              75%% <= %{0:2}\n", percentiles[1]);
             writer.Write("              95%% <= %{0:2}\n", percentiles[2]);
@@ -157,22 +158,7 @@ namespace HQ.Extensions.Metrics.Reporters.Console
         {
             WriteMetered(writer, timer);
 
-            var durationUnit = timer.DurationUnit.Abbreviate();
-
-            var percentiles = timer.Percentiles(0.5, 0.75, 0.95, 0.98, 0.99, 0.999);
-
-            writer.Write("               min = %{0:2}{1}\n", timer.Min, durationUnit);
-            writer.Write("               max = %{0:2}{1}\n", timer.Max, durationUnit);
-            writer.Write("              mean = %{0:2}{1}\n", timer.Mean, durationUnit);
-            writer.Write("            stddev = %{0:2}{1}\n", timer.StdDev, durationUnit);
-            writer.Write("            median = %{0:2}{1}\n", percentiles[0], durationUnit);
-            writer.Write("              75%% <= %{0:2}{1}\n", percentiles[1], durationUnit);
-            writer.Write("              95%% <= %{0:2}{1}\n", percentiles[2], durationUnit);
-            writer.Write("              98%% <= %{0:2}{1}\n", percentiles[3], durationUnit);
-            writer.Write("              99%% <= %{0:2}{1}\n", percentiles[4], durationUnit);
-            writer.Write("            99.9%% <= %{0:2}{1}\n", percentiles[5], durationUnit);
+            WriteDistributed(writer, timer);
         }
-
-        
     }
 }

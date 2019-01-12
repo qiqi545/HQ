@@ -17,7 +17,7 @@
 
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
@@ -52,12 +52,12 @@ namespace HQ.Extensions.Metrics
             return _metrics.AddOrUpdate(name, metric, (n, m) => m);
         }
 
-        public IReadOnlyDictionary<MetricName, GaugeMetric<bool>> AsReadOnly()
+        private static readonly IImmutableDictionary<MetricName, GaugeMetric<bool>> NoSample
+            = ImmutableDictionary.Create<MetricName, GaugeMetric<bool>>();
+
+        public IImmutableDictionary<MetricName, GaugeMetric<bool>> GetSample(MetricType filterTypes = MetricType.None)
         {
-            var copy = new Dictionary<MetricName, GaugeMetric<bool>>();
-            foreach (var entry in _metrics)
-                copy.Add(entry.Key, entry.Value.Copy as GaugeMetric<bool>);
-            return new ReadOnlyDictionary<MetricName, GaugeMetric<bool>>(copy);
+            return filterTypes.HasFlagFast(MetricType.All) ? NoSample : _metrics.ToImmutableDictionary();
         }
 
         public void Clear()

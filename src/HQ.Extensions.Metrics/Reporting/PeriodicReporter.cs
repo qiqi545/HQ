@@ -19,7 +19,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HQ.Extensions.Metrics.Reporters
+namespace HQ.Extensions.Metrics.Reporting
 {
     public abstract class PeriodicReporter : IMetricsReporter
     {

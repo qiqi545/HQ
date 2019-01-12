@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -30,7 +30,7 @@ namespace HQ.Extensions.Metrics.Stats
     ///     produce a statistically representative sample.
     ///     <see href="http://www.cs.umd.edu/~samir/498/vitter.pdf">Random Sampling with a Reservoir</see>
     /// </summary>
-    public class UniformSample : ISample<UniformSample>
+    public class UniformSample : ISample
     {
         private readonly AtomicLong _count = new AtomicLong(0);
         private /* atomic */ readonly long[] _values;
@@ -100,17 +100,6 @@ namespace HQ.Extensions.Metrics.Stats
                 var size = Count;
                 var copy = new List<long>(size);
                 for (var i = 0; i < size; i++) copy.Add(Interlocked.Read(ref _values[i]));
-                return copy;
-            }
-        }
-
-        [JsonIgnore]
-        public UniformSample Copy
-        {
-            get
-            {
-                var copy = new UniformSample(_values);
-                copy._count.Set(_count);
                 return copy;
             }
         }

@@ -68,7 +68,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
         {
             foreach (var host in metrics)
             {
-                foreach (var entry in host.AsReadOnly().Sort())
+                foreach (var entry in host.GetSample().Sort())
                 {
                     foreach (var subEntry in entry.Value)
                     {

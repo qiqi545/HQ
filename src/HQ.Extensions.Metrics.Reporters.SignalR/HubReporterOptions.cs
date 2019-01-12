@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,22 +15,17 @@
 
 #endregion
 
-using System.Collections.ObjectModel;
-using Newtonsoft.Json;
+using System;
+using HQ.Common;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    /// <summary>
-    ///     A marker for types that can copy themselves to another type
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ICopyable<out T>
+    public class HubReporterOptions
     {
-        /// <summary>
-        ///     Obtains a copy of the current type that is used in <see cref="ReadOnlyDictionary{TKey,TValue}" /> to provide
-        ///     immutability
-        /// </summary>
-        [JsonIgnore]
-        T Copy { get; }
+        public string CategoryName { get; set; } = Constants.Categories.Metrics;
+        public LogLevel LogLevel { get; set; } = LogLevel.Information;
+        public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(5);
+        public bool StopOnError { get; set; } = false;
     }
 }

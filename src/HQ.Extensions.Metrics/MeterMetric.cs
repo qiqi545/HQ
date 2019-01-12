@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
@@ -115,8 +116,6 @@ namespace HQ.Extensions.Metrics
         /// <returns></returns>
         public double OneMinuteRate => _m1Rate.Rate(RateUnit);
 
-        [JsonIgnore] public IMetric Copy => new MeterMetric(EventType, RateUnit);
-
         public static MeterMetric New(string eventType, TimeUnit rateUnit)
         {
             var meter = new MeterMetric(eventType, rateUnit);
@@ -187,6 +186,12 @@ namespace HQ.Extensions.Metrics
         private double ConvertNanosRate(double ratePerNs)
         {
             return ratePerNs * RateUnit.ToNanos(1);
+        }
+
+        public bool TryGetChangeInValue(long previousValue, out long currentValue)
+        {
+            currentValue = Count;
+            return currentValue != previousValue;
         }
     }
 }

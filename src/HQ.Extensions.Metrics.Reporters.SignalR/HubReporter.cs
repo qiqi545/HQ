@@ -15,26 +15,34 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.AspNetCore.Configuration;
-using HQ.Extensions.Metrics.AspNetCore.Internal;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Metrics.AspNetCore
+namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    public static class MetricsApplicationBuilderExtensions
+    public sealed class HubReporter<T> : IMetricsReporter where T : Hub
     {
-        public static IApplicationBuilder UseMetrics(this IApplicationBuilder app)
+        private readonly ILogger _logger;
+        private readonly IOptions<HubReporterOptions> _options;
+        private readonly IMetricsRegistry _registry;
+
+        public HubReporter(IMetricsRegistry registry, ILoggerFactory loggerFactory, IOptions<HubReporterOptions> options)
         {
-            var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
-            foreach (var reporter in reporters)
-                reporter.InitializeAsync();
+            _registry = registry;
+            _options = options;
+            _logger = loggerFactory.CreateLogger(options.Value.CategoryName);
+        }
 
-            app.UseMiddleware<MetricsMiddleware>(app.ApplicationServices
-                .GetRequiredService<IOptions<MetricsMiddlewareOptions>>());
+        public Task InitializeAsync()
+        {
+            throw new System.NotImplementedException();
+        }
 
-            return app;
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

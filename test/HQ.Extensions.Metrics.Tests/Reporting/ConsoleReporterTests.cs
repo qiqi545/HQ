@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -21,7 +21,7 @@ using HQ.Extensions.Metrics.Tests.Core;
 using Microsoft.Extensions.Options;
 using Xunit;
 
-namespace HQ.Extensions.Metrics.Tests.Reporters
+namespace HQ.Extensions.Metrics.Tests.Reporting
 {
     public class ConsoleReporterTests : IClassFixture<MetricsFixture>
     {

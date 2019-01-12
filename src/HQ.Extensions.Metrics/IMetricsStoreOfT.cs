@@ -15,7 +15,7 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
@@ -26,7 +26,7 @@ namespace HQ.Extensions.Metrics
         bool TryGetValue(MetricName name, out TFilter metric);
         bool Contains(MetricName name);
         TFilter AddOrUpdate<T>(MetricName name, T metric) where T : TFilter;
-        IReadOnlyDictionary<MetricName, TFilter> AsReadOnly();
+        IImmutableDictionary<MetricName, TFilter> GetSample(MetricType filterTypes = MetricType.None);
         void Clear();
     }
 }

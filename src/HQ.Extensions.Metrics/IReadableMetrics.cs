@@ -15,12 +15,12 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
     public interface IReadableMetrics
     {
-        IReadOnlyDictionary<MetricName, IMetric> AsReadOnly();
+        IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None);
     }
 }

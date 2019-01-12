@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,12 +15,13 @@
 
 #endregion
 
-namespace HQ.Extensions.Metrics.Stats
+using System;
+
+namespace HQ.Extensions.Metrics.AspNetCore.Configuration
 {
-    /// <summary>
-    ///     A statistically representative sample of a data stream
-    /// </summary>
-    public interface ISample<out T> : ISample, ICopyable<T>
+    public class MetricsMiddlewareOptions
     {
+        public string Path { get; set; } = "metrics";
+        public TimeSpan Timeout { get; set; } = TimeSpan.FromMinutes(5);
     }
 }

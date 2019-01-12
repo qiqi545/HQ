@@ -45,9 +45,7 @@ namespace HQ.Extensions.Metrics
         /// <summary>
         ///     Creates a new <see cref="T:HQ.Extensions.Metrics.HistogramMetric" /> with the given sample type
         /// </summary>
-        public HistogramMetric(SampleType type) : this(NewSample(type))
-        {
-        }
+        public HistogramMetric(SampleType type) : this(NewSample(type)) { }
 
         /// <summary>
         ///     Creates a new <see cref="HistogramMetric" /> with the given sample
@@ -130,22 +128,6 @@ namespace HQ.Extensions.Metrics
             }
 
             return scores;
-        }
-
-        [JsonIgnore]
-        public IMetric Copy
-        {
-            get
-            {
-                var copy = new HistogramMetric(_sample, false /* clear */);
-                copy._max.Set(_max);
-                copy._min.Set(_min);
-                copy._sum.Set(_sum);
-                copy._varianceM.Set(_varianceM);
-                copy._varianceS.Set(_varianceS);
-                copy._count.Set(_count);
-                return copy;
-            }
         }
 
         /// <summary>
@@ -234,6 +216,12 @@ namespace HQ.Extensions.Metrics
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
+        }
+
+        public bool TryGetChangeInValue(long previousValue, out long currentValue)
+        {
+            currentValue = Count;
+            return currentValue != previousValue;
         }
     }
 }

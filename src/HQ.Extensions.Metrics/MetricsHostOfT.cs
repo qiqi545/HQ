@@ -29,6 +29,10 @@ namespace HQ.Extensions.Metrics
             _host = host;
         }
 
+        public MetricsHost(IMetricsStore store) : this(new MetricsHost(store)) { }
+
+        public MetricsHost() : this(new MetricsHost(new InMemoryMetricsStore())) { }
+
         /// <summary>
         ///     Creates a new gauge metric and registers it under the given type and name
         /// </summary>
@@ -89,7 +93,7 @@ namespace HQ.Extensions.Metrics
         /// <summary>
         ///     Returns a copy of all currently registered metrics in an immutable collection
         /// </summary>
-        public IReadOnlyDictionary<MetricName, IMetric> All => _host.AsReadOnly();
+        public IReadOnlyDictionary<MetricName, IMetric> All => _host.GetSample();
 
         /// <summary>
         ///     Clears all previously registered metrics
