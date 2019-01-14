@@ -15,13 +15,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Tests", "..\t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Financial", "HQ.Extensions.Financial\HQ.Extensions.Financial.csproj", "{7F95F547-F6FD-4919-BFE7-A32A054E6811}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.Caching.AspNetCore.Mvc", "HQ.Extensions.Caching.AspNetCore.Mvc\HQ.Extensions.Caching.AspNetCore.Mvc.csproj", "{A9172316-3663-407B-8CF2-6DA5E97D03D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Caching.AspNetCore.Mvc", "HQ.Extensions.Caching.AspNetCore.Mvc\HQ.Extensions.Caching.AspNetCore.Mvc.csproj", "{A9172316-3663-407B-8CF2-6DA5E97D03D6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{6631C48C-25E7-47DE-96DD-93F461E91022}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Platform", "_Platform", "{F8D7C18C-59B3-49A2-8B91-5326A2CB8581}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{F5E3C911-A3E3-45A6-9F27-798B3513C42B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{230D512D-A382-407F-ACED-CB72E00FC0E2}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
+		..\README.md = ..\README.md
+		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
