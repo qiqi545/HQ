@@ -1,8 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.1</LangVersion>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <Description>Dependency-backed caching pattern extensions for in-process and distributed cache stores.</Description>
+    <PackageTags>hq-stack caching microcache</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
