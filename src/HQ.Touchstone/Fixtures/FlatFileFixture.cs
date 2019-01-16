@@ -15,10 +15,28 @@
 
 #endregion
 
-namespace HQ.Touchstone
+using System;
+using System.IO;
+using System.Text;
+using Bogus.DataSets;
+
+namespace HQ.Touchstone.Fixtures
 {
-    public abstract class UnitUnderTest : ServiceUnderTest
+    public class FlatFileFixture : TemporaryFileFixture
     {
-        
+        public FlatFileFixture(int lineCount, bool persistent = false) : base(persistent)
+        {
+            var data = new Lorem();
+            for (var i = 0; i < lineCount; i++)
+            {
+                var buffer = Encoding.UTF8.GetBytes(data.Sentence() + Environment.NewLine);
+                FileStream.Write(buffer, 0, buffer.Length);
+            }
+            FileStream.Flush();
+            if (persistent)
+                FileStream.Close();
+            else
+                FileStream.Seek(0, SeekOrigin.Begin);
+        }
     }
 }

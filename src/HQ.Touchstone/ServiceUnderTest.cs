@@ -24,7 +24,6 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Touchstone
 {
-
     public abstract class ServiceUnderTest : TestScope, IDisposable
     {
         private ILogger<ServiceUnderTest> _logger;
