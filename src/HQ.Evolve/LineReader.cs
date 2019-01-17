@@ -99,7 +99,7 @@ namespace HQ.Evolve
                                 position++;
                                 count++;
 
-                                onNewLine?.Invoke(count, start, length - 1, encoding);
+                                onNewLine?.Invoke(count, start, length, encoding);
                             }
 
                             startIndex += length;
@@ -153,14 +153,12 @@ namespace HQ.Evolve
             return ReadOrCountLines(stream, encoding, null, cancellationToken);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine, CancellationToken cancellationToken = default)
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
+            CancellationToken cancellationToken = default)
         {
             unsafe
             {
-                NewLine newLine = (n, s, l, e) =>
-                {
-                    onNewLine?.Invoke(n, e.GetString(s, l));
-                };
+                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, e.GetString(s, l)); };
                 return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
             }
         }
@@ -171,15 +169,29 @@ namespace HQ.Evolve
             return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue, CancellationToken cancellationToken = default)
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+            CancellationToken cancellationToken = default)
         {
             unsafe
             {
-                NewLine onNewLine = (lineNumber, s, l, e) =>
+                NewLine onNewLine = (lineNumber, start, length, e) =>
                 {
-                    LineValuesReader.ReadValues(lineNumber, s, l, e, separator, onNewValue);
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
                 };
-                return ReadLines(stream, Encoding.UTF8, onNewLine, cancellationToken);
+                return ReadLines(stream, encoding, onNewLine, cancellationToken);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
+            CancellationToken cancellationToken = default)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, start, length, e) =>
+                {
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
+                };
+                return ReadLines(stream, encoding, onNewLine, cancellationToken);
             }
         }
 

@@ -15,7 +15,10 @@
 
 #endregion
 
+using System;
+using System.Text;
+
 namespace HQ.Evolve
 {
-    public delegate void NewValueAsString(int index, string value);
+    public delegate void NewValueAsSpan(ulong lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding);
 }

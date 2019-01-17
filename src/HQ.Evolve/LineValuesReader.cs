@@ -23,23 +23,20 @@ namespace HQ.Evolve
 {
     public static class LineValuesReader
     {
-        public static void ReadValues(ulong lineNumber, ReadOnlySpan<byte> line, Encoding encoding, string separator, NewValue newValue)
-        {
-            ReadValues(lineNumber, line, encoding, encoding.GetSeparatorBuffer(separator), newValue);
-        }
-
-        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding, string separator,
-            NewValue newValue)
+        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+            string separator, NewValueAsSpan newValue)
         {
             ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
         }
 
-        private static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding, byte[] separator, NewValue newValue)
+        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+            byte[] separator, NewValueAsSpan newValue)
         {
             ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue);
         }
 
-        private static void ReadValues(ulong lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator, NewValue newValue)
+        public static void ReadValues(ulong lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
+            NewValueAsSpan newValue)
         {
             var position = 0;
             while (true)
@@ -50,9 +47,36 @@ namespace HQ.Evolve
                     newValue?.Invoke(lineNumber, position, line, encoding);
                     break;
                 }
+
                 newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding);
                 line = line.Slice(next + separator.Length);
                 position += next + separator.Length;
+            }
+        }
+
+        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+            string separator, NewValue newValue)
+        {
+            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
+        }
+
+        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+            byte[] separator, NewValue newValue)
+        {
+            var position = 0;
+            while (true)
+            {
+                var line = new ReadOnlySpan<byte>(start, length);
+                var next = line.IndexOf(separator);
+                if (next == -1)
+                {
+                    newValue?.Invoke(lineNumber, position, start, length, encoding);
+                    break;
+                }
+                newValue?.Invoke(lineNumber, position, start, next, encoding);
+                var consumed = next + separator.Length;
+                start += consumed;
+                position += consumed;
             }
         }
     }
