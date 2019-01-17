@@ -29,14 +29,14 @@ namespace HQ.Evolve.Tests
         [Test]
         public void Can_read_lines()
         {
-            using (var fixture = new FlatFileFixture(10000))
+            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
             {
-                var lines = 0L;
+                var lines = 0UL;
                 var sw = Stopwatch.StartNew();
-                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, line =>
+                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line) =>
                 {
                     Assert.Single(line.Split(Environment.NewLine));
-                    lines++;
+                    lines = lineNumber;
                 });
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
@@ -45,7 +45,7 @@ namespace HQ.Evolve.Tests
         [Test]
         public void Can_count_lines()
         {
-            using (var fixture = new FlatFileFixture(10000))
+            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
             {
                 var sw = Stopwatch.StartNew();
                 var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
