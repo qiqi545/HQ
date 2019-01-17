@@ -24,20 +24,6 @@ namespace HQ.Evolve.Internal
     {
         private static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
 
-        // TODO: bench against e.GetString(new ReadOnlySpan<byte>(start, length));
-        public static unsafe string GetStringFast(this Encoding encoding, byte* start, int length)
-        {
-            var charCount = encoding.GetCharCount(start, length);
-            fixed (char* chars = encoding.GetCharBuffer())
-            {
-                encoding.GetChars(start, length, chars, charCount);
-                var value = chars[charCount - 2] == Constants.CarriageReturn
-                    ? new string(chars, 0, charCount - 2)
-                    : new string(chars, 0, charCount - 1);
-                return value;
-            }
-        }
-
         #region Separator
 
         public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)

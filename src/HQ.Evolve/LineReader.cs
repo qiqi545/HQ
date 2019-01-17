@@ -99,7 +99,7 @@ namespace HQ.Evolve
                                 position++;
                                 count++;
 
-                                onNewLine?.Invoke(count, start, length, encoding);
+                                onNewLine?.Invoke(count, start, length - 1, encoding);
                             }
 
                             startIndex += length;
@@ -153,13 +153,14 @@ namespace HQ.Evolve
             return ReadOrCountLines(stream, encoding, null, cancellationToken);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
-            CancellationToken cancellationToken = default)
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine, CancellationToken cancellationToken = default)
         {
             unsafe
             {
-                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, EncodingExtensions.GetStringFast(e, s, l)); };
-
+                NewLine newLine = (n, s, l, e) =>
+                {
+                    onNewLine?.Invoke(n, e.GetString(s, l));
+                };
                 return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
             }
         }
