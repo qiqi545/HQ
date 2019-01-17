@@ -20,5 +20,5 @@ using System.Text;
 
 namespace HQ.Evolve
 {
-    public delegate void NewValue(int index, ReadOnlySpan<byte> value, Encoding encoding);
+    public delegate void NewValue(ulong lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding);
 }

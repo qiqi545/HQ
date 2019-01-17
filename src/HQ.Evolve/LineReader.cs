@@ -158,7 +158,7 @@ namespace HQ.Evolve
         {
             unsafe
             {
-                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, e.ToString(s, l)); };
+                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, EncodingExtensions.GetStringFast(e, s, l)); };
 
                 return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
             }
@@ -170,14 +170,13 @@ namespace HQ.Evolve
             return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
-            CancellationToken cancellationToken = default)
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue, CancellationToken cancellationToken = default)
         {
             unsafe
             {
                 NewLine onNewLine = (lineNumber, s, l, e) =>
                 {
-                    LineValuesReader.ReadValues(s, l, e, separator, onNewValue);
+                    LineValuesReader.ReadValues(lineNumber, s, l, e, separator, onNewValue);
                 };
                 return ReadLines(stream, Encoding.UTF8, onNewLine, cancellationToken);
             }

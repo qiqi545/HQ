@@ -25,7 +25,7 @@ namespace HQ.Evolve.Internal
         private static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
 
         // TODO: bench against e.GetString(new ReadOnlySpan<byte>(start, length));
-        public static unsafe string ToString(this Encoding encoding, byte* start, int length)
+        public static unsafe string GetStringFast(this Encoding encoding, byte* start, int length)
         {
             var charCount = encoding.GetCharCount(start, length);
             fixed (char* chars = encoding.GetCharBuffer())

@@ -32,7 +32,7 @@ namespace HQ.Evolve.Tests
             using (var fixture = new FlatFileFixture(100000, Encoding.UTF8, ","))
             {
                 var sw = Stopwatch.StartNew();
-                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, ",", (i, v, e) => { values++; });
+                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, ",", (n, i, v, e) => { values++; });
                 Trace.WriteLine($"{values} cells took {sw.Elapsed} to read.");
             }
         }

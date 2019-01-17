@@ -18,6 +18,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Evolve.Tests")]
+[assembly: InternalsVisibleTo("HQ.Evolve.Benchmarks")]
 
 namespace HQ.Evolve.Internal
 {
