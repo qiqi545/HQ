@@ -26,44 +26,9 @@ namespace HQ.Evolve
 {
     public static class LineReader
     {
-        #region API
-
-        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, null, cancellationToken);
-        }
-        
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine, CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, e.ToString(s, l)); };
-
-                return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine, CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken);
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue, CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, s, l, e) =>
-                {
-                    LineValuesReader.ReadValues(s, l, e, separator, onNewValue);
-                };
-                return ReadLines(stream, Encoding.UTF8, onNewLine, cancellationToken);
-            }
-        }
-
-        #endregion
-
         // Derived from MimeKit's MimeParser
-        private static ulong ReadOrCountLines(Stream stream, Encoding encoding, NewLine onNewLine, CancellationToken cancellationToken)
+        private static ulong ReadOrCountLines(Stream stream, Encoding encoding, NewLine onNewLine,
+            CancellationToken cancellationToken)
         {
             var count = 0UL;
             var offset = stream.CanSeek ? stream.Position : 0L;
@@ -88,7 +53,8 @@ namespace HQ.Evolve
 
                     do
                     {
-                        if (ReadAhead(stream, workingBytes, Constants.ReadAheadSize, 2, ref from, ref to, ref endOfStream,
+                        if (ReadAhead(stream, workingBytes, Constants.ReadAheadSize, 2, ref from, ref to,
+                                ref endOfStream,
                                 cancellationToken) <= 0)
                             break;
 
@@ -146,11 +112,12 @@ namespace HQ.Evolve
 
             return count;
         }
-        
+
         #region BOM
 
         // Derived from MimeKit's MimeParser
-        private static unsafe bool ReadPreamble(Stream stream, ReadOnlySpan<byte> preamble, byte* buffer, byte[] workingBytes, ref int from, ref int to, ref bool eos, CancellationToken cancellationToken)
+        private static unsafe bool ReadPreamble(Stream stream, ReadOnlySpan<byte> preamble, byte* buffer,
+            byte[] workingBytes, ref int from, ref int to, ref bool eos, CancellationToken cancellationToken)
         {
             var i = 0;
             do
@@ -171,8 +138,7 @@ namespace HQ.Evolve
                     position++;
                 }
 
-                from = (int)(position - buffer);
-
+                from = (int) (position - buffer);
             } while (from == to);
 
             return i == 0 || i == preamble.Length;
@@ -180,12 +146,53 @@ namespace HQ.Evolve
 
         #endregion
 
+        #region API
+
+        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default)
+        {
+            return ReadOrCountLines(stream, encoding, null, cancellationToken);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
+            CancellationToken cancellationToken = default)
+        {
+            unsafe
+            {
+                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, e.ToString(s, l)); };
+
+                return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
+            CancellationToken cancellationToken = default)
+        {
+            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+            CancellationToken cancellationToken = default)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, s, l, e) =>
+                {
+                    LineValuesReader.ReadValues(s, l, e, separator, onNewValue);
+                };
+                return ReadLines(stream, Encoding.UTF8, onNewLine, cancellationToken);
+            }
+        }
+
+        #endregion
+
         #region Alignment
 
         // Derived from MimeKit's MimeParser
-        private static int ReadAhead(Stream stream, byte[] workingBytes, int min, int save, ref int from, ref int to, ref bool endOfStream, CancellationToken cancellationToken)
+        private static int ReadAhead(Stream stream, byte[] workingBytes, int min, int save, ref int from, ref int to,
+            ref bool endOfStream, CancellationToken cancellationToken)
         {
-            if (!AlignReadAheadBuffer(workingBytes, min, save, ref from, ref to, ref endOfStream, out var remaining, out var start, out var end))
+            if (!AlignReadAheadBuffer(workingBytes, min, save, ref from, ref to, ref endOfStream, out var remaining,
+                out var start, out var end))
                 return remaining;
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -203,7 +210,8 @@ namespace HQ.Evolve
         }
 
         // Derived from MimeKit's MimeParser
-        private static bool AlignReadAheadBuffer(byte[] workingBytes, int min, int save, ref int from, ref int to, ref bool endOfStream, out int remaining, out int start, out int end)
+        private static bool AlignReadAheadBuffer(byte[] workingBytes, int min, int save, ref int from, ref int to,
+            ref bool endOfStream, out int remaining, out int start, out int end)
         {
             remaining = to - from;
             start = Constants.ReadAheadSize;

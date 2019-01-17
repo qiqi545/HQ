@@ -21,5 +21,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Evolve.Internal
 {
-    internal sealed class InternalsVisibleTo { }
+    internal sealed class InternalsVisibleTo
+    {
+    }
 }
