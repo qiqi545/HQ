@@ -1,12 +1,12 @@
-Flow by HQ
-=============
+HQ.Extensions.Messaging
+=======================
 
 [![License](https://img.shields.io/badge/License-RPL%201.5-red.svg)](https://opensource.org/licenses/RPL-1.5)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Flow.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Flow?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Extensions.Messaging.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Extensions.Messaging?ref=badge_shield)
 
 ## Documentation
 
 All project documentation can be found here: https://docs.hq.io
 
 ## License
-Flow is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Flow/blob/master/LICENSE.md).
+HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Extensions.Messaging/blob/master/LICENSE.txt).
