@@ -15,13 +15,27 @@
 
 #endregion
 
-namespace HQ.Harmony.AspNetCore
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace HQ.Extensions.DependencyInjection
 {
-    public static class HarmonyContainerExtensions
+    public interface IDependencyResolver : IDisposable
     {
-        public static void AddAspNetCore(this HarmonyContainer container)
-        {
-            container.AddExtension(new HttpAccessorExtension());
-        }
+        T Resolve<T>() where T : class;
+        T MustResolve<T>() where T : class;
+
+        object Resolve(Type serviceType);
+        object MustResolve(Type serviceType);
+
+        T Resolve<T>(string name) where T : class;
+        T MustResolve<T>(string name) where T : class;
+
+        object Resolve(string name, Type serviceType);
+        object MustResolve(string name, Type serviceType);
+
+        IEnumerable<T> ResolveAll<T>() where T : class;
+        IEnumerable ResolveAll(Type serviceType);
     }
 }

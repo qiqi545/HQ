@@ -15,13 +15,29 @@
 
 #endregion
 
-namespace HQ.Harmony
+using System;
+using System.Reflection;
+using HQ.Remix;
+
+namespace HQ.Extensions.DependencyInjection.Internal
 {
-    public enum Lifetime
+    internal sealed class DefaultMethodInvoker : MethodInvokerBase
     {
-        AlwaysNew,
-        Permanent,
-        Thread,
-        Request
+        private readonly IDependencyResolver _inner;
+
+        public DefaultMethodInvoker(IDependencyResolver inner)
+        {
+            _inner = inner;
+        }
+
+        public override object ResolveType(Type serviceType)
+        {
+            return _inner.Resolve(serviceType);
+        }
+
+        public override DelegateBuildStrategy BuildStrategyFor(MethodInfo method, ParameterInfo[] parameters)
+        {
+            return DelegateBuildStrategy.ObjectExecutor;
+        }
     }
 }

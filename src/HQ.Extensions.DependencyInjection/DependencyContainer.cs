@@ -22,13 +22,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using HQ.Harmony.Internal;
+using HQ.Extensions.DependencyInjection.Internal;
 using HQ.Remix;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Harmony
+namespace HQ.Extensions.DependencyInjection
 {
-    public sealed class HarmonyContainer : IContainer, IMethodResolver, IMethodInvoker
+    public sealed class DependencyContainer : IContainer, IMethodResolver, IMethodInvoker
     {
         private readonly List<IResolverExtension> _extensions;
         private readonly IEnumerable<Assembly> _fallbackAssemblies;
@@ -37,7 +37,7 @@ namespace HQ.Harmony
 
         private readonly IMethodResolver _methodResolver;
 
-        public HarmonyContainer(
+        public DependencyContainer(
             IServiceProvider fallbackProvider = null,
             IEnumerable<Assembly> fallbackAssemblies = null,
             IMethodResolver methodResolver = null,
@@ -47,8 +47,8 @@ namespace HQ.Harmony
 
             _fallbackProvider = fallbackProvider;
             _fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
-            _methodResolver = methodResolver ?? new HarmonyMethodResolver(this);
-            _methodInvoker = methodInvoker ?? new HarmonyMethodInvoker(this);
+            _methodResolver = methodResolver ?? new DefaultMethodResolver(this);
+            _methodInvoker = methodInvoker ?? new DefaultMethodInvoker(this);
         }
 
         public bool ThrowIfCantResolve { get; set; }

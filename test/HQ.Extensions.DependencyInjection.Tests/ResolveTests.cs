@@ -17,16 +17,16 @@
 
 using Xunit;
 
-namespace HQ.Harmony.Tests
+namespace HQ.Extensions.DependencyInjection.Tests
 {
-    public class ResolveTests : IClassFixture<HarmonyContainerFixture>
+    public class ResolveTests : IClassFixture<DependencyContainerFixture>
     {
-        public ResolveTests(HarmonyContainerFixture fixture)
+        public ResolveTests(DependencyContainerFixture fixture)
         {
             _fixture = fixture;
         }
 
-        private readonly HarmonyContainerFixture _fixture;
+        private readonly DependencyContainerFixture _fixture;
 
         public interface IFoo
         {

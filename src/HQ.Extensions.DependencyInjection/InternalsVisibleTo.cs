@@ -15,29 +15,14 @@
 
 #endregion
 
-using System;
-using System.Reflection;
-using HQ.Remix;
+using System.Runtime.CompilerServices;
 
-namespace HQ.Harmony.Internal
+[assembly: InternalsVisibleTo("HQ.Extensions.DependencyInjection.AspNetCore")]
+[assembly: InternalsVisibleTo("HQ.Extensions.DependencyInjection.Tests")]
+
+namespace HQ.Extensions.DependencyInjection
 {
-    internal sealed class HarmonyMethodInvoker : MethodInvokerBase
+    internal class InternalsVisibleTo
     {
-        private readonly IDependencyResolver _inner;
-
-        public HarmonyMethodInvoker(IDependencyResolver inner)
-        {
-            _inner = inner;
-        }
-
-        public override object ResolveType(Type serviceType)
-        {
-            return _inner.Resolve(serviceType);
-        }
-
-        public override DelegateBuildStrategy BuildStrategyFor(MethodInfo method, ParameterInfo[] parameters)
-        {
-            return DelegateBuildStrategy.ObjectExecutor;
-        }
     }
 }

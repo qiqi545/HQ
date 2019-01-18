@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Harmony
+namespace HQ.Extensions.DependencyInjection
 {
     public interface IDependencyRegistrar : IDisposable
     {

@@ -17,12 +17,20 @@
 
 using System;
 
-namespace HQ.Harmony
+namespace HQ.Extensions.DependencyInjection.Tests
 {
-    public interface IResolverExtension
+    public class DependencyContainerFixture : IDisposable
     {
-        bool CanResolve(Lifetime lifetime);
-        Func<T> Memoize<T>(IDependencyResolver host, Func<T> f);
-        Func<IDependencyResolver, T> Memoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f);
+        public DependencyContainerFixture()
+        {
+            C = new DependencyContainer();
+        }
+
+        public IContainer C { get; }
+
+        public void Dispose()
+        {
+            C.Dispose();
+        }
     }
 }

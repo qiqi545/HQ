@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -10,16 +10,17 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>High performance, low ceremony DI/IoC container for .NET. This package provides ASP.NET Core HTTP request-based lifetimes.</Description>
+    <Description>High performance, low ceremony DI/IoC container for .NET.</Description>
     <PackageTags>ioc-container dependency-injection dotnet-standard hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Harmony\HQ.Harmony.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
   </ItemGroup>
 
 </Project>

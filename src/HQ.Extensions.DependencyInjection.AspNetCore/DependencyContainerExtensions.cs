@@ -15,22 +15,13 @@
 
 #endregion
 
-using System;
-
-namespace HQ.Harmony.Tests
+namespace HQ.Extensions.DependencyInjection.AspNetCore
 {
-    public class HarmonyContainerFixture : IDisposable
+    public static class DependencyContainerExtensions
     {
-        public HarmonyContainerFixture()
+        public static void AddAspNetCore(this DependencyContainer container)
         {
-            C = new HarmonyContainer();
-        }
-
-        public IContainer C { get; }
-
-        public void Dispose()
-        {
-            C.Dispose();
+            container.AddExtension(new HttpAccessorExtension());
         }
     }
 }

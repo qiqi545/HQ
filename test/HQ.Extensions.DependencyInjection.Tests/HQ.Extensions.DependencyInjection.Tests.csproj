@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Harmony\HQ.Harmony.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

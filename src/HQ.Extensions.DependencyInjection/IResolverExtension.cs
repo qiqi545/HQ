@@ -15,14 +15,14 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using System;
 
-[assembly: InternalsVisibleTo("HQ.Harmony.AspNetCore")]
-[assembly: InternalsVisibleTo("HQ.Harmony.Tests")]
-
-namespace HQ.Harmony
+namespace HQ.Extensions.DependencyInjection
 {
-    internal class InternalsVisibleTo
+    public interface IResolverExtension
     {
+        bool CanResolve(Lifetime lifetime);
+        Func<T> Memoize<T>(IDependencyResolver host, Func<T> f);
+        Func<IDependencyResolver, T> Memoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f);
     }
 }

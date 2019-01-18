@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Harmony
+namespace HQ.Extensions.DependencyInjection
 {
     public interface IContainer : IDependencyResolver, IDependencyRegistrar
     {

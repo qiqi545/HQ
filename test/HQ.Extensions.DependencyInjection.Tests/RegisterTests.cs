@@ -19,16 +19,16 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace HQ.Harmony.Tests
+namespace HQ.Extensions.DependencyInjection.Tests
 {
-    public class RegisterTests : IClassFixture<HarmonyContainerFixture>
+    public class RegisterTests : IClassFixture<DependencyContainerFixture>
     {
-        public RegisterTests(HarmonyContainerFixture fixture)
+        public RegisterTests(DependencyContainerFixture fixture)
         {
             _fixture = fixture;
         }
 
-        private readonly HarmonyContainerFixture _fixture;
+        private readonly DependencyContainerFixture _fixture;
 
         public interface IFoo
         {

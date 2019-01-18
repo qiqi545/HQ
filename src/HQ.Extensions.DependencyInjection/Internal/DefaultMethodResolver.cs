@@ -18,13 +18,13 @@
 using System;
 using HQ.Remix;
 
-namespace HQ.Harmony.Internal
+namespace HQ.Extensions.DependencyInjection.Internal
 {
-    internal sealed class HarmonyMethodResolver : MethodResolverBase
+    internal sealed class DefaultMethodResolver : MethodResolverBase
     {
         private readonly IDependencyResolver _inner;
 
-        public HarmonyMethodResolver(IDependencyResolver inner)
+        public DefaultMethodResolver(IDependencyResolver inner)
         {
             _inner = inner;
         }

@@ -9,19 +9,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
+		..\..\HQ\build\version.props = ..\..\HQ\build\version.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony", "HQ.Harmony\HQ.Harmony.csproj", "{ACDEE7F5-9B2B-48B1-9578-EADF8793D540}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection", "HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj", "{ACDEE7F5-9B2B-48B1-9578-EADF8793D540}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.AspNetCore", "HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj", "{EFA2B802-119F-4C88-ADBC-4139943CD2B6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection.AspNetCore", "HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj", "{EFA2B802-119F-4C88-ADBC-4139943CD2B6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.Tests", "..\test\HQ.Harmony.Tests\HQ.Harmony.Tests.csproj", "{BE043512-B58A-496C-B289-9ACA6DAA864D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection.Tests", "..\test\HQ.Extensions.DependencyInjection.Tests\HQ.Extensions.DependencyInjection.Tests.csproj", "{BE043512-B58A-496C-B289-9ACA6DAA864D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{96D0DF19-C8B1-40DB-8FEA-4BB900C1F34D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{D8F54F93-35B1-4E23-A1ED-2E0411462EBE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{A377B096-3B18-4014-9836-98DB82CB53D6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{455F9EE2-9DE3-4A1C-926E-4E4561C2DCA0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{B4C5B3B2-B055-4972-92C7-C452460ED10F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +70,9 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{ACDEE7F5-9B2B-48B1-9578-EADF8793D540} = {455F9EE2-9DE3-4A1C-926E-4E4561C2DCA0}
+		{EFA2B802-119F-4C88-ADBC-4139943CD2B6} = {455F9EE2-9DE3-4A1C-926E-4E4561C2DCA0}
+		{BE043512-B58A-496C-B289-9ACA6DAA864D} = {B4C5B3B2-B055-4972-92C7-C452460ED10F}
 		{D8F54F93-35B1-4E23-A1ED-2E0411462EBE} = {96D0DF19-C8B1-40DB-8FEA-4BB900C1F34D}
 		{A377B096-3B18-4014-9836-98DB82CB53D6} = {96D0DF19-C8B1-40DB-8FEA-4BB900C1F34D}
 	EndGlobalSection
