@@ -33,7 +33,7 @@ namespace HQ.Evolve.Tests
             {
                 var lines = 0UL;
                 var sw = Stopwatch.StartNew();
-                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line) =>
+                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line, metrics) =>
                 {
                     Assert.Single(line.Split(Environment.NewLine));
                     lines = lineNumber;

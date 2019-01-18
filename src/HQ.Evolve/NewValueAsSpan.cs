@@ -17,8 +17,9 @@
 
 using System;
 using System.Text;
+using HQ.Extensions.Metrics;
 
 namespace HQ.Evolve
 {
-    public delegate void NewValueAsSpan(ulong lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding);
+    public delegate void NewValueAsSpan(ulong lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding, IMetricsHost metrics);
 }

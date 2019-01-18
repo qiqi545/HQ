@@ -15,7 +15,9 @@
 
 #endregion
 
+using HQ.Extensions.Metrics;
+
 namespace HQ.Evolve
 {
-    public delegate void NewLineAsString(ulong lineNumber, string value);
+    public delegate void NewLineAsString(ulong lineNumber, string value, IMetricsHost metrics);
 }

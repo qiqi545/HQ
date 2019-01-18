@@ -16,8 +16,9 @@
 #endregion
 
 using System.Text;
+using HQ.Extensions.Metrics;
 
 namespace HQ.Evolve
 {
-    public unsafe delegate void NewValue(ulong lineNumber, int index, byte* start, int length, Encoding encoding);
+    public unsafe delegate void NewValue(ulong lineNumber, int index, byte* start, int length, Encoding encoding, IMetricsHost metrics);
 }

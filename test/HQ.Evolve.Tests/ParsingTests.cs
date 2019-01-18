@@ -18,10 +18,10 @@ namespace HQ.Evolve.Tests
                 var sw = Stopwatch.StartNew();
                 unsafe
                 {
-                    LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e) =>
+                    LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e, m) =>
                     {
                         values++;
-                        e.TryParse(start, length, out bool value);
+                        e.TryParse(start, length, out bool _);
                     });
                 }
                 Trace.WriteLine($"{values} cells took {sw.Elapsed} to parse.");

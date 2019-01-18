@@ -20,15 +20,68 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using HQ.Evolve.Internal;
+using HQ.Extensions.Metrics;
 using HQ.Strings;
 
 namespace HQ.Evolve
 {
     public static class LineReader
     {
+        #region API
+
+        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default,
+            IMetricsHost metrics = null)
+        {
+            return ReadOrCountLines(stream, encoding, null, cancellationToken, metrics);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine newLine = (n, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+                return ReadOrCountLines(stream, encoding, newLine, cancellationToken, metrics);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken, metrics);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                {
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+                };
+                return ReadLines(stream, encoding, onNewLine, cancellationToken);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                {
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+                };
+                return ReadLines(stream, encoding, onNewLine, cancellationToken, metrics);
+            }
+        }
+
+        #endregion
+
         // Derived from MimeKit's MimeParser
         private static ulong ReadOrCountLines(Stream stream, Encoding encoding, NewLine onNewLine,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, IMetricsHost metrics)
         {
             var count = 0UL;
             var offset = stream.CanSeek ? stream.Position : 0L;
@@ -99,7 +152,7 @@ namespace HQ.Evolve
                                 position++;
                                 count++;
 
-                                onNewLine?.Invoke(count, start, length, encoding);
+                                onNewLine?.Invoke(count, start, length, encoding, metrics);
                             }
 
                             startIndex += length;
@@ -145,58 +198,7 @@ namespace HQ.Evolve
         }
 
         #endregion
-
-        #region API
-
-        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, null, cancellationToken);
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
-            CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine newLine = (n, s, l, e) => { onNewLine?.Invoke(n, e.GetString(s, l)); };
-                return ReadOrCountLines(stream, encoding, newLine, cancellationToken);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
-            CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken);
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
-            CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
-                };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
-            CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
-                };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken);
-            }
-        }
-
-        #endregion
-
+        
         #region Alignment
 
         // Derived from MimeKit's MimeParser

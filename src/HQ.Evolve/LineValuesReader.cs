@@ -18,25 +18,26 @@
 using System;
 using System.Text;
 using HQ.Evolve.Internal;
+using HQ.Extensions.Metrics;
 
 namespace HQ.Evolve
 {
     public static class LineValuesReader
     {
         public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
-            string separator, NewValueAsSpan newValue)
+            string separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
-            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
+            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
         }
 
         public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
-            byte[] separator, NewValueAsSpan newValue)
+            byte[] separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
-            ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue);
+            ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue, metrics);
         }
 
         public static void ReadValues(ulong lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
-            NewValueAsSpan newValue)
+            NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
             var position = 0;
             while (true)
@@ -44,24 +45,24 @@ namespace HQ.Evolve
                 var next = line.IndexOf(separator);
                 if (next == -1)
                 {
-                    newValue?.Invoke(lineNumber, position, line, encoding);
+                    newValue?.Invoke(lineNumber, position, line, encoding, metrics);
                     break;
                 }
 
-                newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding);
+                newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding, metrics);
                 line = line.Slice(next + separator.Length);
                 position += next + separator.Length;
             }
         }
 
         public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
-            string separator, NewValue newValue)
+            string separator, NewValue newValue, IMetricsHost metrics = null)
         {
-            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
+            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
         }
 
         public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
-            byte[] separator, NewValue newValue)
+            byte[] separator, NewValue newValue, IMetricsHost metrics = null)
         {
             var position = 0;
             while (true)
@@ -70,10 +71,10 @@ namespace HQ.Evolve
                 var next = line.IndexOf(separator);
                 if (next == -1)
                 {
-                    newValue?.Invoke(lineNumber, position, start, length, encoding);
+                    newValue?.Invoke(lineNumber, position, start, length, encoding, metrics);
                     break;
                 }
-                newValue?.Invoke(lineNumber, position, start, next, encoding);
+                newValue?.Invoke(lineNumber, position, start, next, encoding, metrics);
                 var consumed = next + separator.Length;
                 start += consumed;
                 position += consumed;
