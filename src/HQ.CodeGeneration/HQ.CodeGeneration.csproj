@@ -2,7 +2,7 @@
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\platform\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
 
 </Project>

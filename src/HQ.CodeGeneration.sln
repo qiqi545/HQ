@@ -9,16 +9,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
-		..\..\HQ\build\version.props = ..\..\HQ\build\version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.CodeGeneration.Tests", "..\test\HQ.CodeGeneration.Tests\HQ.CodeGeneration.Tests.csproj", "{5A8DFE8D-A52B-4321-84AE-2B7C173B63BB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.CodeGeneration", "HQ.CodeGeneration\HQ.CodeGeneration.csproj", "{5C7215BC-04DF-442C-9820-CF09E75BFC68}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{798FA5A2-8F20-4B78-8718-CD697472BF3B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{82AB4134-0BD5-4330-B4F3-C85D13A8A2A7}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.props = ..\build\build.props
+		..\build\package.props = ..\build\package.props
+		..\build\version.props = ..\build\version.props
+	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{625F8981-6D41-43A4-BE20-634C1238F0EB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "platform", "platform", "{53468E34-39F6-455C-8B26-74498C1FBFC7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\platform\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{9AE779C3-D91F-4282-B581-DE408B8BA2C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,18 +45,18 @@ Global
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Package|Any CPU.Build.0 = Package|Any CPU
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C7215BC-04DF-442C-9820-CF09E75BFC68}.Release|Any CPU.Build.0 = Release|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Package|Any CPU.ActiveCfg = Release|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Package|Any CPU.Build.0 = Release|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{625F8981-6D41-43A4-BE20-634C1238F0EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Package|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Package|Any CPU.Build.0 = Release|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{625F8981-6D41-43A4-BE20-634C1238F0EB} = {798FA5A2-8F20-4B78-8718-CD697472BF3B}
+		{9AE779C3-D91F-4282-B581-DE408B8BA2C7} = {53468E34-39F6-455C-8B26-74498C1FBFC7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E228C3D8-EAD0-433D-8A26-828C77C5F379}
