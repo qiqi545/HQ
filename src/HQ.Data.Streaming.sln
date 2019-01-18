@@ -19,9 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Touchstone", "..\..\HQ.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Touchstone.Xunit", "..\..\HQ.Touchstone\src\HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj", "{3BEDF732-3A3C-4A12-8429-136C5A5CB0AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony", "..\..\HQ.Harmony\src\HQ.Harmony\HQ.Harmony.csproj", "{038F8BF9-F1B7-49BE-A339-FE0CA6D9B8AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection", "..\..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj", "{038F8BF9-F1B7-49BE-A339-FE0CA6D9B8AF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.AspNetCore", "..\..\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj", "{A8997993-5EA8-4225-ADBC-21CAA46C0289}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection.AspNetCore", "..\..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj", "{A8997993-5EA8-4225-ADBC-21CAA46C0289}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{33E4FEF9-8A13-434A-9A50-1953BB18447A}"
 EndProject
