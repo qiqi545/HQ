@@ -9,4 +9,4 @@ HQ.Extensions
 All project documentation can be found here: https://docs.hq.io
 
 ## License
-HQ.IO is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Extensions/blob/master/LICENSE.txt).
+HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Extensions/blob/master/LICENSE.txt).
