@@ -1,7 +1,7 @@
 ##################################################################
 
-HQ.IO uses third-party libraries and other materials, distributed 
-under different licenses than HQ.IO licensed components.
+HQ.io uses third-party libraries and other materials, distributed 
+under different licenses than HQ.io licensed components.
 
 If we have omitted a notice here, please let us know by submitting
 an issue on GitHub, or by emailing support@hq.io
@@ -25,7 +25,7 @@ Initial code was licensed under Apache 2.0 as at July 23rd, 2018, commit `887e6b
    See the License for the specific language governing permissions and
    limitations under the License.
    
-HQ.Remix uses ObjectMethodExecutor from ASP.NET Extensions, at at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
+HQ.CodeGeneration uses ObjectMethodExecutor from ASP.NET Extensions, at at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
 from https://github.com/aspnet/Extensions/tree/f27f68628a3c5c598b0f4230fd6b17e81e13249f/shared/Microsoft.Extensions.ObjectMethodExecutor.Sources
 ------------------------------------------------------------------------------
 
