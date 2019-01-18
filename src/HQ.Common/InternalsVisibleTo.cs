@@ -32,7 +32,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("HQ.Lingo.Queries")]
 [assembly: InternalsVisibleTo("HQ.MissionControl")]
 [assembly: InternalsVisibleTo("HQ.Remix")]
-[assembly: InternalsVisibleTo("HQ.Rosetta")]
+[assembly: InternalsVisibleTo("HQ.Data.Contracts")]
 [assembly: InternalsVisibleTo("HQ.Tokens")]
 [assembly: InternalsVisibleTo("HQ.Tokens.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Zero")]
