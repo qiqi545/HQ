@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Real-time business metrics for .NET. This package adds logger reporting for business metrics.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ.Extensions.Metrics.Reporters.Console\HQ.Extensions.Metrics.Reporters.Console.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.2.0" />
+  </ItemGroup>
+
+
+</Project>

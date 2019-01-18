@@ -3,15 +3,16 @@
   <!-- Boilerplate/conventional package identifiers -->
   <PropertyGroup>
     <LangVersion>7.3</LangVersion>
-    <Company>HQ.io Corporation</Company>
-    <Authors>HQ.io Corporation</Authors>
-    <Copyright>© $([System.DateTime]::Now.Year) HQ.io Corporation</Copyright>    
+    <Company>HQ.IO Corporation</Company>
+    <Authors>HQ.IO Corporation</Authors>
+    <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>    
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/$(MSBuildProjectName)/master/assets/320x320.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/hq-io/$(MSBuildProjectName)/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
     <PackageProjectUrl>https://docs.hq.io/$(MSBuildProjectName)</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	<PackageTags>hq-io dotnet-standard serverless platform</PackageTags>
   </PropertyGroup>
    
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">

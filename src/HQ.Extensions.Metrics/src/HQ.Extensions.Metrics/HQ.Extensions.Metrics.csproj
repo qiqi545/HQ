@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SignAssembly>true</SignAssembly>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Real-time business metrics for .NET.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
+    <PackageReference Include="HQ.Common" Version="1.0.31" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
