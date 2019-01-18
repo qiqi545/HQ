@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Remix;
+using HQ.CodeGeneration;
 
 namespace HQ.Extensions.DependencyInjection.Internal
 {

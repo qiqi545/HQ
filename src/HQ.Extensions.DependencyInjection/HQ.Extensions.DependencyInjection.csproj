@@ -11,7 +11,6 @@
 
   <PropertyGroup>
     <Description>High performance, low ceremony DI/IoC container for .NET.</Description>
-    <PackageTags>ioc-container dependency-injection dotnet-standard hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
+    <ProjectReference Include="..\..\..\HQ.CodeGeneration\src\HQ.CodeGeneration\HQ.CodeGeneration.csproj" />
   </ItemGroup>
 
 </Project>

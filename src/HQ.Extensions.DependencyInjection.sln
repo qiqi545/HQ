@@ -22,7 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{96
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{D8F54F93-35B1-4E23-A1ED-2E0411462EBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{A377B096-3B18-4014-9836-98DB82CB53D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.CodeGeneration", "..\..\HQ.CodeGeneration\src\HQ.CodeGeneration\HQ.CodeGeneration.csproj", "{A377B096-3B18-4014-9836-98DB82CB53D6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{455F9EE2-9DE3-4A1C-926E-4E4561C2DCA0}"
 EndProject

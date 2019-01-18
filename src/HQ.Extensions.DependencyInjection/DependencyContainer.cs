@@ -23,7 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using HQ.Extensions.DependencyInjection.Internal;
-using HQ.Remix;
+using HQ.CodeGeneration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.DependencyInjection
