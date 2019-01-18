@@ -121,11 +121,10 @@ namespace HQ.Extensions.Metrics
 
         private T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
         {
-            if (_store.Contains(name)) return (T) _store[name];
-
-            var added = _store.AddOrUpdate(name, metric);
-
-            return added == null ? metric : (T) added;
+            if (_store.Contains(name))
+                return (T) _store[name];
+            _store.AddOrUpdate(name, metric);
+            return metric;
         }
     }
 }

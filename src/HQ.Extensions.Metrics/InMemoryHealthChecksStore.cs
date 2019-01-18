@@ -47,9 +47,9 @@ namespace HQ.Extensions.Metrics
             return _metrics.ContainsKey(name);
         }
 
-        public GaugeMetric<bool> AddOrUpdate<T>(MetricName name, T metric) where T : GaugeMetric<bool>
+        public void AddOrUpdate<T>(MetricName name, T metric) where T : GaugeMetric<bool>
         {
-            return _metrics.AddOrUpdate(name, metric, (n, m) => m);
+            _metrics.AddOrUpdate(name, metric, (n, m) => m);
         }
 
         private static readonly IImmutableDictionary<MetricName, GaugeMetric<bool>> NoSample

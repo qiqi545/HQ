@@ -43,8 +43,8 @@ namespace HQ.Extensions.Metrics
         {
             if (_store.Contains(name))
                 return _store[name];
-            var added = _store.AddOrUpdate(name, metric);
-            return added ?? metric;
+            _store.AddOrUpdate(name, metric);
+            return metric;
         }
     }
 }

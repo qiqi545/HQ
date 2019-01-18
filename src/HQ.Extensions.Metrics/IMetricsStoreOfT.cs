@@ -25,7 +25,7 @@ namespace HQ.Extensions.Metrics
         TFilter GetOrAdd(MetricName name, TFilter metric);
         bool TryGetValue(MetricName name, out TFilter metric);
         bool Contains(MetricName name);
-        TFilter AddOrUpdate<T>(MetricName name, T metric) where T : TFilter;
+        void AddOrUpdate<T>(MetricName name, T metric) where T : TFilter;
         IImmutableDictionary<MetricName, TFilter> GetSample(MetricType filterTypes = MetricType.None);
         void Clear();
     }

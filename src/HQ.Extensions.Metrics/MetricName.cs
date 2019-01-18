@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -62,5 +62,7 @@ namespace HQ.Extensions.Metrics
         {
             return !left.Equals(right);
         }
+
+        public string CacheKey => $"{Class.FullName}.{Name}";
     }
 }

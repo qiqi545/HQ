@@ -14,12 +14,4 @@ namespace HQ.Extensions.Metrics
         None = 0,
         All = 0xFF
     }
-
-    public static class MetricTypeExtensions
-    {
-        public static bool HasFlagFast(this MetricType value, MetricType flag)
-        {
-            return (value & flag) != 0;
-        }
-    }
 }

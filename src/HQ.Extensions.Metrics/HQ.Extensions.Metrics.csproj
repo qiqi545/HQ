@@ -27,7 +27,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+    <ProjectReference Include="..\..\..\HQ.CodeGeneration\src\HQ.CodeGeneration\HQ.CodeGeneration.csproj" />
   </ItemGroup>
 
 </Project>

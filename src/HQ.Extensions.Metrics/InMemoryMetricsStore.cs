@@ -47,9 +47,9 @@ namespace HQ.Extensions.Metrics
             return _metrics.ContainsKey(name);
         }
 
-        public IMetric AddOrUpdate<T>(MetricName name, T metric) where T : IMetric
+        public void AddOrUpdate<T>(MetricName name, T metric) where T : IMetric
         {
-            return _metrics.AddOrUpdate(name, metric, (n, m) => m);
+            _metrics.AddOrUpdate(name, metric, (n, m) => m);
         }
 
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
@@ -57,7 +57,7 @@ namespace HQ.Extensions.Metrics
 
         public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
         {
-            if (filterType.HasFlag(MetricType.All))
+            if (filterType.HasFlagFast(MetricType.All))
                 return NoSample;
 
             var filtered = new Dictionary<MetricName, IMetric>();
