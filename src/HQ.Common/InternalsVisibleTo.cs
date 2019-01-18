@@ -19,12 +19,13 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Adapt")]
 [assembly: InternalsVisibleTo("HQ.Archivist")]
-[assembly: InternalsVisibleTo("HQ.Cohort")]
-[assembly: InternalsVisibleTo("HQ.Cohort.AspNetCore.Mvc")]
-[assembly: InternalsVisibleTo("HQ.Cohort.Stores.Sql")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity.AspNetCore.Mvc")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity.Stores.Sql")]
 [assembly: InternalsVisibleTo("HQ.Common.AspNetCore")]
-[assembly: InternalsVisibleTo("HQ.Cadence")]
-[assembly: InternalsVisibleTo("HQ.Cadence.AspNetCore")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Metrics")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Metrics.AspNetCore")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Metrics.Reporters.SignalR")]
 [assembly: InternalsVisibleTo("HQ.Domicile")]
 [assembly: InternalsVisibleTo("HQ.InteractionTests")]
 [assembly: InternalsVisibleTo("HQ.Lingo")]
@@ -33,6 +34,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("HQ.Remix")]
 [assembly: InternalsVisibleTo("HQ.Rosetta")]
 [assembly: InternalsVisibleTo("HQ.Tokens")]
+[assembly: InternalsVisibleTo("HQ.Tokens.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Zero")]
 
 namespace HQ.Common

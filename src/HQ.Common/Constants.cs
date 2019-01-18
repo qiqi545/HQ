@@ -94,7 +94,7 @@ namespace HQ.Common
 
         public static class Categories
         {
-            public const string Cadence = "Cadence";
+            public const string Metrics = "Metrics";
         }
 
         public static class HttpHeaders
