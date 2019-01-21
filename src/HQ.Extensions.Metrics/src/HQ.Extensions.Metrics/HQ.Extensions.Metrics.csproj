@@ -14,6 +14,11 @@
     <Description>Real-time business metrics for .NET.</Description>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|AnyCPU'">
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
     <PackageReference Include="HQ.Common" Version="1.0.31" />
