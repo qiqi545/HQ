@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
             if (context.Request.Path == _middlewareOptions.Value.Path)
             {
                 var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
-                var samples = registry.SelectMany(x => x.GetSample(_options.Value.Filter));
+                var samples = registry.SelectMany(x => x.GetSample(_options.Value.Filter)).ToImmutableDictionary();
                 var cancel = new CancellationTokenSource(_middlewareOptions.Value.Timeout);
 
                 context.Response.StatusCode = 200;
