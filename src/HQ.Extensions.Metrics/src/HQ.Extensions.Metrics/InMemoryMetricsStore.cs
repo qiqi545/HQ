@@ -65,11 +65,11 @@ namespace HQ.Extensions.Metrics
             {
                 switch (entry.Value)
                 {
-                    case GaugeMetric _ when !filterType.HasFlagFast(MetricType.Gauge):
-                    case CounterMetric _ when !filterType.HasFlagFast(MetricType.Counter):
-                    case MeterMetric _ when !filterType.HasFlagFast(MetricType.Meter):
-                    case HistogramMetric _ when !filterType.HasFlagFast(MetricType.Histogram):
-                    case TimerMetric _ when !filterType.HasFlagFast(MetricType.Timer):
+                    case GaugeMetric _ when filterType.HasFlagFast(MetricType.Gauge):
+                    case CounterMetric _ when filterType.HasFlagFast(MetricType.Counter):
+                    case MeterMetric _ when filterType.HasFlagFast(MetricType.Meter):
+                    case HistogramMetric _ when filterType.HasFlagFast(MetricType.Histogram):
+                    case TimerMetric _ when filterType.HasFlagFast(MetricType.Timer):
                         continue;
                     default:
                         filtered.Add(entry.Key, entry.Value);

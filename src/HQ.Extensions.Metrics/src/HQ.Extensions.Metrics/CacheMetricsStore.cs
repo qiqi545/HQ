@@ -52,11 +52,11 @@ namespace HQ.Extensions.Metrics
             {
                 switch (entry.Class.Name)
                 {
-                    case nameof(GaugeMetric) when !filterType.HasFlagFast(MetricType.Gauge):
-                    case nameof(CounterMetric) when !filterType.HasFlagFast(MetricType.Counter):
-                    case nameof(MeterMetric) when !filterType.HasFlagFast(MetricType.Meter):
-                    case nameof(HistogramMetric) when !filterType.HasFlagFast(MetricType.Histogram):
-                    case nameof(TimerMetric) when !filterType.HasFlagFast(MetricType.Timer):
+                    case nameof(GaugeMetric) when filterType.HasFlagFast(MetricType.Gauge):
+                    case nameof(CounterMetric) when filterType.HasFlagFast(MetricType.Counter):
+                    case nameof(MeterMetric) when filterType.HasFlagFast(MetricType.Meter):
+                    case nameof(HistogramMetric) when filterType.HasFlagFast(MetricType.Histogram):
+                    case nameof(TimerMetric) when filterType.HasFlagFast(MetricType.Timer):
                         continue;
                     default:
                         filtered.Add(entry, _metrics.Get<IMetric>(entry.CacheKey));
