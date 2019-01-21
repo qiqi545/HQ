@@ -20,7 +20,7 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Internal
 {
-    internal static class EncodingExtensions
+    public static class EncodingExtensions
     {
         private static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
 
