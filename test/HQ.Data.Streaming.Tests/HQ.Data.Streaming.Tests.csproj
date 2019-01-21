@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HQ.Test.Sdk" Version="1.0.32" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
@@ -17,8 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone.Xunit\HQ.Touchstone.Xunit.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Touchstone\src\HQ.Touchstone\HQ.Touchstone.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Streaming\HQ.Data.Streaming.csproj" />
   </ItemGroup>
 
