@@ -11,8 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>Shared infrastructure for HQ stack components. This package provides additional features for ASP.NET Core.</Description>
-    <PackageTags>hq-stack</PackageTags>
+    <Description>Shared infrastructure for HQ.io stack components. This package provides additional features for ASP.NET Core.</Description>
   </PropertyGroup>
 
   <ItemGroup>

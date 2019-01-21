@@ -11,12 +11,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
-		..\build\version.props = ..\build\version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.Tests", "..\test\HQ.Common.Tests\HQ.Common.Tests.csproj", "{B41767FC-DD0E-459B-9A78-46F67B05FD67}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore.Mvc", "HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj", "{06F234EF-7EDC-4BE2-9B33-EEC1E1D478FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{97504BED-7061-4883-8495-F76C3AC7952D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{36A3C695-D65D-414E-A8D7-80C91B7F6374}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.props = ..\build\build.props
+		..\build\package.props = ..\build\package.props
+		..\build\version.props = ..\build\version.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5452E1A4-584A-482A-A1AB-882E882E79F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +56,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{46942E81-BA18-4084-A22A-6C941571EEF4} = {97504BED-7061-4883-8495-F76C3AC7952D}
+		{B41767FC-DD0E-459B-9A78-46F67B05FD67} = {5452E1A4-584A-482A-A1AB-882E882E79F0}
+		{06F234EF-7EDC-4BE2-9B33-EEC1E1D478FE} = {97504BED-7061-4883-8495-F76C3AC7952D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D5445DB3-EE7A-47D3-AA5D-36B03E4D6FFF}

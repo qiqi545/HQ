@@ -9,4 +9,4 @@ HQ.Common
 All project documentation can be found here: https://docs.hq.io
 
 ## License
-Common is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Common/blob/master/LICENSE.md).
+HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Common/blob/master/LICENSE.txt).
