@@ -1,6 +1,7 @@
 HQ.Extensions
 =============
 
+[![Build status](https://dev.azure.com/hqio/HQ.io/_apis/build/status/HQ.Extensions)](https://dev.azure.com/hqio/HQ.io/_build/latest?definitionId=2)
 [![License](https://img.shields.io/badge/License-RPL%201.5-red.svg)](https://opensource.org/licenses/RPL-1.5)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Extensions.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fhq-io%2FHQ.Extensions?ref=badge_shield)
 
