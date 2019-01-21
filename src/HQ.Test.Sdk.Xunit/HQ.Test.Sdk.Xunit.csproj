@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,7 +11,6 @@
 
   <PropertyGroup>
     <Description>Power tools for API testing in .NET. This package provides integration with the XUnit test framework.</Description>
-    <PackageTags>hq-stack dotnet-standard unit-tests interaction-tests integration-tests</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
