@@ -57,28 +57,28 @@ namespace HQ.Extensions.Metrics
         /// </summary>
         public ICollection<double> Values
         {
-            get { return _histogram.Values.Select(value => ConvertFromNanos(value)).ToList(); }
+            get { return _histogram.Values.Select(value => ConvertFromNanoseconds(value)).ToList(); }
         }
 
         /// <summary>
         ///     Returns the longest recorded duration
         /// </summary>
-        public double Max => ConvertFromNanos(_histogram.Max);
+        public double Max => ConvertFromNanoseconds(_histogram.Max);
 
         /// <summary>
         ///     Returns the shortest recorded duration
         /// </summary>
-        public double Min => ConvertFromNanos(_histogram.Min);
+        public double Min => ConvertFromNanoseconds(_histogram.Min);
 
         /// <summary>
         ///     Returns the arithmetic mean of all recorded durations
         /// </summary>
-        public double Mean => ConvertFromNanos(_histogram.Mean);
+        public double Mean => ConvertFromNanoseconds(_histogram.Mean);
 
         /// <summary>
         ///     Returns the standard deviation of all recorded durations
         /// </summary>
-        public double StdDev => ConvertFromNanos(_histogram.StdDev);
+        public double StdDev => ConvertFromNanoseconds(_histogram.StdDev);
 
         /// <summary>
         ///     Returns an array of durations at the given percentiles
@@ -86,7 +86,7 @@ namespace HQ.Extensions.Metrics
         public double[] Percentiles(params double[] percentiles)
         {
             var scores = _histogram.Percentiles(percentiles);
-            for (var i = 0; i < scores.Length; i++) scores[i] = ConvertFromNanos(scores[i]);
+            for (var i = 0; i < scores.Length; i++) scores[i] = ConvertFromNanoseconds(scores[i]);
 
             return scores;
         }
@@ -185,9 +185,9 @@ namespace HQ.Extensions.Metrics
             }
         }
 
-        private double ConvertFromNanos(double nanos)
+        private double ConvertFromNanoseconds(double value)
         {
-            return nanos / TimeUnit.Nanoseconds.Convert(1, DurationUnit);
+            return value / DurationUnit.Convert(1, TimeUnit.Nanoseconds);
         }
 
         public bool TryGetChangeInValue(long previousValue, out long currentValue)
