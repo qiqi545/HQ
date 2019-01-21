@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Caching", "..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj", "{BFD7F3BB-757C-484E-8050-2B169748CF48}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics", "src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj", "{465362CB-8FAA-4068-B7A8-BC62D3D47FD8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.AspNetCore", "src\HQ.Extensions.Metrics.AspNetCore\HQ.Extensions.Metrics.AspNetCore.csproj", "{46C382DD-41F1-40C7-9B15-B8F27DB91D9B}"
@@ -51,24 +49,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Debug|x86.Build.0 = Debug|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|Any CPU.ActiveCfg = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|Any CPU.Build.0 = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|Mixed Platforms.ActiveCfg = Package|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|Mixed Platforms.Build.0 = Package|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|x86.ActiveCfg = Package|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Package|x86.Build.0 = Package|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|x86.ActiveCfg = Release|Any CPU
-		{BFD7F3BB-757C-484E-8050-2B169748CF48}.Release|x86.Build.0 = Release|Any CPU
 		{465362CB-8FAA-4068-B7A8-BC62D3D47FD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{465362CB-8FAA-4068-B7A8-BC62D3D47FD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{465362CB-8FAA-4068-B7A8-BC62D3D47FD8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -200,7 +180,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BFD7F3BB-757C-484E-8050-2B169748CF48} = {367FFE2B-6131-4215-8FD5-6C4BCFBEC6DC}
 		{465362CB-8FAA-4068-B7A8-BC62D3D47FD8} = {367FFE2B-6131-4215-8FD5-6C4BCFBEC6DC}
 		{46C382DD-41F1-40C7-9B15-B8F27DB91D9B} = {367FFE2B-6131-4215-8FD5-6C4BCFBEC6DC}
 		{CA74D823-9CAF-4F3A-B698-8C5C3DBCB8FD} = {367FFE2B-6131-4215-8FD5-6C4BCFBEC6DC}
