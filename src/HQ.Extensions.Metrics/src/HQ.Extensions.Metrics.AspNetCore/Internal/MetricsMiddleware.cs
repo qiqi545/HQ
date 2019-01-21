@@ -54,7 +54,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
 
                 context.Response.StatusCode = 200;
                 context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
-                await context.Response.WriteAsync(JsonSerializer.Serialize(samples), cancel.Token);
+                await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
             }
             else
             {

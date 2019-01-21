@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -28,20 +28,20 @@ namespace HQ.Extensions.Metrics.Internal
     /// </summary>
     internal class MetricsConverter : JsonConverter
     {
-        public override void WriteJson(JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (!(value is IDictionary<MetricName, IMetric>)) return;
 
             var collection = (IDictionary<MetricName, IMetric>) value;
             var container = new List<MetricItem>(collection.Count);
             container.AddRange(collection.Select(item => new MetricItem {Name = item.Key.Name, Metric = item.Value}));
-            var serialized = JsonSerializer.Serialize(container);
+            var serialized = JsonSampleSerializer.Serialize(container);
 
             writer.WriteRawValue(serialized);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-            Newtonsoft.Json.JsonSerializer serializer)
+            JsonSerializer serializer)
         {
             throw new NotImplementedException();
         }

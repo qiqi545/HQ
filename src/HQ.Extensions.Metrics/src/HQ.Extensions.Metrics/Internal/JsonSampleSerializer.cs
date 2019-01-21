@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -17,14 +17,15 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace HQ.Extensions.Metrics.Internal
 {
-    internal class JsonSerializer
+    public class JsonSampleSerializer
     {
         private static readonly JsonSerializerSettings _settings;
 
-        static JsonSerializer()
+        static JsonSampleSerializer()
         {
             _settings = new JsonSerializerSettings
             {
@@ -33,12 +34,12 @@ namespace HQ.Extensions.Metrics.Internal
                 ContractResolver = new JsonConventionResolver()
             };
             _settings.Converters.Add(new MetricsConverter());
-            _settings.Converters.Add(new StringEnumConverter(true));
+            _settings.Converters.Add(new StringEnumConverter(new DefaultNamingStrategy()));
         }
 
-        public static string Serialize<T>(T entity)
+        public static string Serialize<T>(T sample)
         {
-            return JsonConvert.SerializeObject(entity, Formatting.Indented, _settings);
+            return JsonConvert.SerializeObject(sample, Formatting.Indented, _settings);
         }
     }
 }
