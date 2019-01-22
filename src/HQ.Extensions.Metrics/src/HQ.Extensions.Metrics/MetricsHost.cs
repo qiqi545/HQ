@@ -17,12 +17,14 @@
 
 using System;
 using System.Collections.Immutable;
+using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
     public class MetricsHost : IMetricsHost
     {
         private readonly IMetricsStore _store;
+        private static readonly Type Owner = typeof(MetricsHost);
 
         public MetricsHost(IMetricsStore store)
         {
@@ -30,6 +32,37 @@ namespace HQ.Extensions.Metrics
         }
 
         public MetricsHost() : this(new InMemoryMetricsStore()) { }
+
+        #region Default Owner
+
+        public GaugeMetric<T> Gauge<T>(string name, Func<T> evaluator)
+        {
+            return Gauge(Owner, name, evaluator);
+        }
+
+        public CounterMetric Counter(string name)
+        {
+            return Counter(Owner, name);
+        }
+
+        public HistogramMetric Histogram(string name, SampleType sampleType)
+        {
+            return Histogram(Owner, name, sampleType);
+        }
+
+        public MeterMetric Meter(string name, string eventType, TimeUnit rateUnit)
+        {
+            return Meter(Owner, name, eventType, rateUnit);
+        }
+
+        public TimerMetric Timer(string name, TimeUnit durationUnit, TimeUnit rateUnit)
+        {
+            return Timer(Owner, name, durationUnit, rateUnit);
+        }
+
+        #endregion
+
+        #region Owner
 
         /// <summary>
         ///     Creates a new gauge metric and registers it under the given type and name
@@ -86,7 +119,7 @@ namespace HQ.Extensions.Metrics
         }
 
         /// <summary>
-        ///     reates a new timer metric and registers it under the given type and name
+        ///     Creates a new timer metric and registers it under the given type and name
         /// </summary>
         /// <param name="owner">The type that owns the metric</param>
         /// <param name="name">The metric name</param>
@@ -106,18 +139,20 @@ namespace HQ.Extensions.Metrics
         /// <summary>
         ///     Returns a copy of all currently registered metrics in an immutable collection
         /// </summary>
-        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
-            return _store.GetSample(filterType);
+            return _store.GetSample(typeFilter);
         }
 
         /// <summary>
-        ///     Clears all previously registered metrics
+        ///     Clears all previously registered metrics, if the underlying <see cref="IMetricsStore"/> supports <see cref="IClearable"/>
         /// </summary>
-        public void Clear()
+        public bool Clear()
         {
-            _store.Clear();
+            return _store.Clear();
         }
+
+        #endregion
 
         private T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
         {

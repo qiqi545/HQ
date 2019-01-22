@@ -55,9 +55,9 @@ namespace HQ.Extensions.Metrics
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
             ImmutableDictionary.Create<MetricName, IMetric>();
 
-        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
-            if (filterType.HasFlagFast(MetricType.All))
+            if (typeFilter.HasFlagFast(MetricType.All))
                 return NoSample;
 
             var filtered = new Dictionary<MetricName, IMetric>();
@@ -65,11 +65,11 @@ namespace HQ.Extensions.Metrics
             {
                 switch (entry.Value)
                 {
-                    case GaugeMetric _ when filterType.HasFlagFast(MetricType.Gauge):
-                    case CounterMetric _ when filterType.HasFlagFast(MetricType.Counter):
-                    case MeterMetric _ when filterType.HasFlagFast(MetricType.Meter):
-                    case HistogramMetric _ when filterType.HasFlagFast(MetricType.Histogram):
-                    case TimerMetric _ when filterType.HasFlagFast(MetricType.Timer):
+                    case GaugeMetric _ when typeFilter.HasFlagFast(MetricType.Gauge):
+                    case CounterMetric _ when typeFilter.HasFlagFast(MetricType.Counter):
+                    case MeterMetric _ when typeFilter.HasFlagFast(MetricType.Meter):
+                    case HistogramMetric _ when typeFilter.HasFlagFast(MetricType.Histogram):
+                    case TimerMetric _ when typeFilter.HasFlagFast(MetricType.Timer):
                         continue;
                     default:
                         filtered.Add(entry.Key, entry.Value);
@@ -79,9 +79,10 @@ namespace HQ.Extensions.Metrics
             return filtered.ToImmutableDictionary();
         }
 
-        public void Clear()
+        public bool Clear()
         {
             _metrics.Clear();
+            return true;
         }
     }
 }

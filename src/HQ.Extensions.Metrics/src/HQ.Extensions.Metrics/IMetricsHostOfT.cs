@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -20,9 +20,8 @@ using System.Collections.Generic;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsHost<out TOwner>
+    public interface IMetricsHost<out TOwner> : IReadableMetrics
     {
-        IReadOnlyDictionary<MetricName, IMetric> All { get; }
         GaugeMetric<T> Gauge<T>(string name, Func<T> evaluator);
         CounterMetric Counter(string name);
         HistogramMetric Histogram(string name, SampleType sampleType);

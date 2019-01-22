@@ -16,7 +16,6 @@
 #endregion
 
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
@@ -55,14 +54,15 @@ namespace HQ.Extensions.Metrics
         private static readonly IImmutableDictionary<MetricName, GaugeMetric<bool>> NoSample
             = ImmutableDictionary.Create<MetricName, GaugeMetric<bool>>();
 
-        public IImmutableDictionary<MetricName, GaugeMetric<bool>> GetSample(MetricType filterTypes = MetricType.None)
+        public IImmutableDictionary<MetricName, GaugeMetric<bool>> GetSample(MetricType typeFilter = MetricType.None)
         {
-            return filterTypes.HasFlagFast(MetricType.All) ? NoSample : _metrics.ToImmutableDictionary();
+            return typeFilter.HasFlagFast(MetricType.All) ? NoSample : _metrics.ToImmutableDictionary();
         }
 
-        public void Clear()
+        public bool Clear()
         {
             _metrics.Clear();
+            return true;
         }
     }
 }

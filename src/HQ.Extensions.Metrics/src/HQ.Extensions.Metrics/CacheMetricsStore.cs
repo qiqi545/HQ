@@ -43,20 +43,20 @@ namespace HQ.Extensions.Metrics
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
             ImmutableDictionary.Create<MetricName, IMetric>();
 
-        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType filterType = MetricType.None)
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
-            if (filterType.HasFlagFast(MetricType.All))
+            if (typeFilter.HasFlagFast(MetricType.All))
                 return NoSample;
             var filtered = new Dictionary<MetricName, IMetric>();
             foreach (var entry in _metrics.Get<List<MetricName>>(Constants.Categories.Metrics))
             {
                 switch (entry.Class.Name)
                 {
-                    case nameof(GaugeMetric) when filterType.HasFlagFast(MetricType.Gauge):
-                    case nameof(CounterMetric) when filterType.HasFlagFast(MetricType.Counter):
-                    case nameof(MeterMetric) when filterType.HasFlagFast(MetricType.Meter):
-                    case nameof(HistogramMetric) when filterType.HasFlagFast(MetricType.Histogram):
-                    case nameof(TimerMetric) when filterType.HasFlagFast(MetricType.Timer):
+                    case nameof(GaugeMetric) when typeFilter.HasFlagFast(MetricType.Gauge):
+                    case nameof(CounterMetric) when typeFilter.HasFlagFast(MetricType.Counter):
+                    case nameof(MeterMetric) when typeFilter.HasFlagFast(MetricType.Meter):
+                    case nameof(HistogramMetric) when typeFilter.HasFlagFast(MetricType.Histogram):
+                    case nameof(TimerMetric) when typeFilter.HasFlagFast(MetricType.Timer):
                         continue;
                     default:
                         filtered.Add(entry, _metrics.Get<IMetric>(entry.CacheKey));
@@ -66,10 +66,12 @@ namespace HQ.Extensions.Metrics
             return filtered.ToImmutableDictionary();
         }
 
-        public void Clear()
+        public bool Clear()
         {
-            if(_metrics is IClearable clearable)
-                clearable.Clear();
+            if (!(_metrics is IClearable clearable))
+                return false;
+            clearable.Clear();
+            return true;
         }
 
         private void UpdateManifest(MetricName name)

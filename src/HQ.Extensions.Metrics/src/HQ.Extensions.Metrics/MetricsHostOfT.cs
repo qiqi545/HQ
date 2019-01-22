@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
@@ -79,7 +79,7 @@ namespace HQ.Extensions.Metrics
         }
 
         /// <summary>
-        ///     reates a new timer metric and registers it under the given type and name
+        ///     Creates a new timer metric and registers it under the given type and name
         /// </summary>
         /// <param name="name">The metric name</param>
         /// <param name="durationUnit">The duration scale unit of the new timer</param>
@@ -89,18 +89,18 @@ namespace HQ.Extensions.Metrics
         {
             return _host.Timer(typeof(TOwner), name, durationUnit, rateUnit);
         }
-
-        /// <summary>
-        ///     Returns a copy of all currently registered metrics in an immutable collection
-        /// </summary>
-        public IReadOnlyDictionary<MetricName, IMetric> All => _host.GetSample();
-
+        
         /// <summary>
         ///     Clears all previously registered metrics
         /// </summary>
         public void Clear()
         {
             _host.Clear();
+        }
+
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
+        {
+            return _host.GetSample(typeFilter);
         }
     }
 }
