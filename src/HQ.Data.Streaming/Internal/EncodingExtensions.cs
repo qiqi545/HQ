@@ -22,8 +22,6 @@ namespace HQ.Data.Streaming.Internal
 {
     public static class EncodingExtensions
     {
-        private static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
-
         #region Separator
 
         public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
@@ -60,7 +58,7 @@ namespace HQ.Data.Streaming.Internal
                 {Encoding.Unicode, BuildSeparatorBuffers(Encoding.Unicode)},
                 {Encoding.BigEndianUnicode, BuildSeparatorBuffers(Encoding.BigEndianUnicode)},
                 {Encoding.UTF32, BuildSeparatorBuffers(Encoding.UTF32)},
-                {BigEndianUtf32, BuildSeparatorBuffers(BigEndianUtf32)}
+                {Constants.BigEndianUtf32, BuildSeparatorBuffers(Constants.BigEndianUtf32)}
             };
 
         private static Dictionary<string, byte[]> BuildSeparatorBuffers(Encoding encoding)
@@ -91,7 +89,7 @@ namespace HQ.Data.Streaming.Internal
             {Encoding.Unicode, Encoding.Unicode.GetPreamble()},
             {Encoding.BigEndianUnicode, Encoding.BigEndianUnicode.GetPreamble()},
             {Encoding.UTF32, Encoding.UTF32.GetPreamble()},
-            {BigEndianUtf32, Encoding.UTF32.GetPreamble()}
+            {Constants.BigEndianUtf32, Encoding.UTF32.GetPreamble()}
         };
 
         #endregion
@@ -115,7 +113,7 @@ namespace HQ.Data.Streaming.Internal
                 new char[Encoding.BigEndianUnicode.GetMaxCharCount(Constants.WorkingBytesLength)]
             },
             {Encoding.UTF32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBytesLength)]},
-            {BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBytesLength)]}
+            {Constants.BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBytesLength)]}
         };
 
         #endregion

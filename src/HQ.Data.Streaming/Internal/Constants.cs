@@ -15,6 +15,9 @@
 
 #endregion
 
+using System;
+using System.Text;
+
 namespace HQ.Data.Streaming.Internal
 {
     internal static class Constants
@@ -29,6 +32,11 @@ namespace HQ.Data.Streaming.Internal
         public const int PadSize = 4;
         public const int BlockSize = 4096;
         public const int WorkingBytesLength = ReadAheadSize + BlockSize + PadSize;
-        public static readonly byte[] WorkingBytes = new byte[WorkingBytesLength];
+
+        [ThreadStatic]
+        private static byte[] _buffer;
+        public static byte[] WorkingBytes => _buffer ?? (_buffer = new byte[WorkingBytesLength]);
+
+        public static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
     }
 }
