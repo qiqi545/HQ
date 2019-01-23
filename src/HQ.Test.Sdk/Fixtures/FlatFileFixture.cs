@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Bogus.DataSets;
@@ -25,10 +26,17 @@ namespace HQ.Test.Sdk.Fixtures
 {
     public class FlatFileFixture : TemporaryFileFixture
     {
-        public FlatFileFixture(int lineCount, Encoding encoding, string separator = null, bool persistent = false) : base(persistent)
+        private static readonly Lorem Lorem = new Lorem(CultureInfo.CurrentCulture.TwoLetterISOLanguageName);
+
+        public FlatFileFixture(int lineCount, int columnCount, Encoding encoding, string separator = null, bool persistent = false) : this(
+            lineCount, () => columnCount, encoding, separator, persistent) { }
+
+        public FlatFileFixture(int lineCount, Encoding encoding, string separator = null, bool persistent = false)
+            : this(lineCount, Lorem.Random.Number(1, 20), encoding, separator, persistent) { }
+
+        public FlatFileFixture(int lineCount, Func<int> columnCount, Encoding encoding, string separator = null, bool persistent = false) : base(persistent)
         {
             encoding = encoding ?? Encoding.UTF8;
-            var data = new Lorem();
             for (var i = 0; i < lineCount; i++)
             {
                 byte[] buffer;
@@ -36,7 +44,7 @@ namespace HQ.Test.Sdk.Fixtures
                 {
                     buffer = encoding.GetBytes(StringBuilderPool.Scoped(sb =>
                     {
-                        var words = data.Words(data.Random.Number(1, 20));
+                        var words = Lorem.Words(columnCount());
                         for (var j = 0; j < words.Length; j++)
                         {
                             sb.Append(words[j]);
@@ -47,7 +55,7 @@ namespace HQ.Test.Sdk.Fixtures
                 }
                 else
                 {
-                    buffer = encoding.GetBytes(data.Sentence() + Environment.NewLine);
+                    buffer = encoding.GetBytes(Lorem.Sentence() + Environment.NewLine);
                 }
                 FileStream.Write(buffer, 0, buffer.Length);
             }
