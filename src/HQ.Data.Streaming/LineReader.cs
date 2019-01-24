@@ -16,9 +16,12 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using HQ.Data.Streaming.Internal;
 using HQ.Extensions.Metrics;
 using HQ.Strings;
@@ -27,58 +30,6 @@ namespace HQ.Data.Streaming
 {
     public static class LineReader
     {
-        #region API
-
-        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default,
-            IMetricsHost metrics = null)
-        {
-            return ReadOrCountLines(stream, encoding, null, cancellationToken, metrics);
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
-        {
-            unsafe
-            {
-                NewLine newLine = (n, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
-                return ReadOrCountLines(stream, encoding, newLine, cancellationToken, metrics);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
-        {
-            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken, metrics);
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken, metrics);
-            }
-        }
-
-        #endregion
-
         // Derived from MimeKit's MimeParser
         private static ulong ReadOrCountLines(Stream stream, Encoding encoding, NewLine onNewLine,
             CancellationToken cancellationToken, IMetricsHost metrics)
@@ -198,7 +149,96 @@ namespace HQ.Data.Streaming
         }
 
         #endregion
-        
+
+        #region API
+
+        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default,
+            IMetricsHost metrics = null)
+        {
+            return ReadOrCountLines(stream, encoding, null, cancellationToken, metrics);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine newLine = (n, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+                return ReadOrCountLines(stream, encoding, newLine, cancellationToken, metrics);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            return ReadOrCountLines(stream, encoding, onNewLine, cancellationToken, metrics);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                {
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+                };
+                return ReadLines(stream, encoding, onNewLine, cancellationToken);
+            }
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
+            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            unsafe
+            {
+                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                {
+                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+                };
+                return ReadLines(stream, encoding, onNewLine, cancellationToken, metrics);
+            }
+        }
+
+        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
+            string separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            return ReadLines(stream, encoding, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine),
+                cancellationToken, metrics);
+        }
+
+        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
+            byte[] separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        {
+            var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
+
+            void ReadLines()
+            {
+                unsafe
+                {
+                    void OnNewLine(ulong a, byte* b, int c, Encoding d, IMetricsHost e)
+                    {
+                        queue.Add(new LineConstructor
+                        {
+                            lineNumber = a,
+                            start = b,
+                            length = c
+                        }, cancellationToken);
+                    }
+
+                    LineReader.ReadLines(stream, encoding, OnNewLine, cancellationToken, metrics);
+
+                    queue.CompleteAdding();
+                }
+            }
+
+            Task.Run(ReadLines, cancellationToken);
+
+            return queue.GetConsumingEnumerable();
+        }
+
+        #endregion
+
         #region Alignment
 
         // Derived from MimeKit's MimeParser

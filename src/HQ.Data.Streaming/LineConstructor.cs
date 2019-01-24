@@ -15,11 +15,12 @@
 
 #endregion
 
-using System.Text;
-using HQ.Extensions.Metrics;
-
 namespace HQ.Data.Streaming
 {
-    public unsafe delegate void NewValue(ulong lineNumber, int index, byte* start, int length, Encoding encoding,
-        IMetricsHost metrics);
+    public struct LineConstructor
+    {
+        public ulong lineNumber;
+        public unsafe byte* start;
+        public int length;
+    }
 }

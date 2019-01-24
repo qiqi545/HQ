@@ -33,10 +33,9 @@ namespace HQ.Data.Streaming.Internal
         public const int BlockSize = 4096;
         public const int WorkingBytesLength = ReadAheadSize + BlockSize + PadSize;
 
-        [ThreadStatic]
-        private static byte[] _buffer;
-        public static byte[] WorkingBytes => _buffer ?? (_buffer = new byte[WorkingBytesLength]);
+        [ThreadStatic] private static byte[] _buffer;
 
         public static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
+        public static byte[] WorkingBytes => _buffer ?? (_buffer = new byte[WorkingBytesLength]);
     }
 }

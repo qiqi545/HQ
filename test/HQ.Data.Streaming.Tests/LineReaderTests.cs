@@ -18,16 +18,19 @@
 using System;
 using System.Diagnostics;
 using System.Text;
+using HQ.Data.Streaming.Fields;
+using HQ.Data.Streaming.Internal;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
 using HQ.Test.Sdk.Xunit;
+using Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {
     public class LineReaderTests : UnitUnderTest
     {
         [Test]
-        public void Can_read_lines()
+        public void Can_read_string_lines()
         {
             using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
             {
@@ -35,7 +38,7 @@ namespace HQ.Data.Streaming.Tests
                 var sw = Stopwatch.StartNew();
                 LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line, metrics) =>
                 {
-                    Assert.Single(line.Split(Environment.NewLine));
+                    Assert.NotNull(line);
                     lines = lineNumber;
                 });
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
@@ -43,6 +46,76 @@ namespace HQ.Data.Streaming.Tests
         }
 
         [Test]
+        public void Can_read_constructor_lines()
+        {
+            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
+            {
+                var lines = 0UL;
+                var sw = Stopwatch.StartNew();
+                foreach(var ctor in LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, "|"))
+                {
+                    var row = new DummyData(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
+                    Assert.NotNull(row.someField.Value);
+                    lines++;
+                }
+                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
+            }
+        }
+
+        public ref struct DummyData
+        {
+            public StringField someField;
+            public StringField extraFields;
+
+            public unsafe DummyData(LineConstructor constructor, Encoding encoding,  byte[] separator)
+                : this(constructor.start, constructor.length, encoding, separator)
+            {
+
+            }
+
+            public unsafe DummyData(byte* start, int length, Encoding encoding, byte[] separator)
+            {
+                someField = default;
+                extraFields = default;
+
+                var column = 0;
+                while (true)
+                {
+                    var line = new ReadOnlySpan<byte>(start, length);
+                    var next = line.IndexOf(separator);
+                    if (next == -1)
+                    {
+                        if (line.IndexOf(Constants.CarriageReturn) > -1)
+                            someField = new StringField(start, length - 2, encoding);
+                        else if (line.IndexOf(Constants.LineFeed) > -1)
+                            someField = new StringField(start, length - 1, encoding);
+                        else
+                            someField = new StringField(start, length, encoding);
+                        break;
+                    }
+
+                    var consumed = next + separator.Length;
+                    length -= next + separator.Length;
+
+                    switch (column)
+                    {
+                        case 0:
+                            someField = new StringField(start, next, encoding);
+                            break;
+                        default:
+                            extraFields = extraFields.Initialized
+                                ? extraFields.AddLength(next)
+                                : new StringField(start, next, encoding);
+                            break;
+                    }
+
+                    start += consumed;
+                    column++;
+                }
+            }
+        }
+
+        [Fact]
         public void Can_count_lines()
         {
             using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))

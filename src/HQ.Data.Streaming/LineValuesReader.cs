@@ -74,6 +74,7 @@ namespace HQ.Data.Streaming
                     newValue?.Invoke(lineNumber, position, start, length, encoding, metrics);
                     break;
                 }
+
                 newValue?.Invoke(lineNumber, position, start, next, encoding, metrics);
                 var consumed = next + separator.Length;
                 start += consumed;
