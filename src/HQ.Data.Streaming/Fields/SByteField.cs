@@ -22,8 +22,9 @@ namespace HQ.Data.Streaming.Fields
 {
     public readonly ref struct SByteField
     {
-        public sbyte? Value => !_encoding.TryParse(_buffer, out sbyte value) ? default(sbyte?) : value;
-        public string RawValue => _encoding.GetString(_buffer);
+        public bool Initialized => _buffer != null;
+        public sbyte? Value => Initialized ? !_encoding.TryParse(_buffer, out sbyte value) ? default(sbyte?) : value : default;
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;

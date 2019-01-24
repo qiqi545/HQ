@@ -22,8 +22,9 @@ namespace HQ.Data.Streaming.Fields
 {
     public readonly ref struct BooleanField
     {
-        public bool? Value => !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value;
-        public string RawValue => _encoding.GetString(_buffer);
+        public bool Initialized => _buffer != null;
+        public bool? Value => Initialized ? !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value : default;
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;

@@ -23,7 +23,9 @@ namespace HQ.Data.Streaming.Fields
 {
     public readonly ref struct CharBooleanField
     {
-        public bool? Value => TryConvertValue();
+        public bool Initialized => _buffer != null;
+        public bool? Value => Initialized ? TryConvertValue() : default;
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private bool? TryConvertValue()
         {
@@ -36,9 +38,7 @@ namespace HQ.Data.Streaming.Fields
                 return false;
             return null;
         }
-
-        public string RawValue => _encoding.GetString(_buffer);
-
+        
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
 

@@ -22,8 +22,9 @@ namespace HQ.Data.Streaming.Fields
 {
     public readonly ref struct Int32Field
     {
-        public int? Value => !_encoding.TryParse(_buffer, out int value) ? default(int?) : value;
-        public string RawValue => _encoding.GetString(_buffer);
+        public bool Initialized => _buffer != null;
+        public int? Value => Initialized ? !_encoding.TryParse(_buffer, out int value) ? default(int?) : value : default;
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;

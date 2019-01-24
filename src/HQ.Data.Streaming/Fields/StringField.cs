@@ -24,14 +24,13 @@ namespace HQ.Data.Streaming.Fields
     {
         public bool Initialized => _buffer != null;
         public string Value => RawValue;
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly unsafe byte* _start;
         private readonly int _length;
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
-
-        public string RawValue => _encoding.GetString(_buffer);
-
+        
         public unsafe StringField(byte* start, int length, Encoding encoding)
         {
             _buffer = new ReadOnlySpan<byte>(start, length);
