@@ -15,13 +15,35 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace HQ.Data.Streaming.Internal
 {
     public static class EncodingExtensions
     {
+        public static unsafe LineConstructor AsLineConstructor(this string value, out Stream stream)
+        {
+            var charBuffer = value.AsSpan();
+            var buffer = new byte[Encoding.Unicode.GetByteCount(charBuffer)];
+            Encoding.Unicode.GetBytes(charBuffer, buffer);
+            stream = new MemoryStream(buffer);
+            LineConstructor constructor = default;
+            LineReader.ReadLines(stream, Encoding.Unicode, (lineNumber, start, length, x, m) =>
+            {
+                constructor = new LineConstructor
+                {
+                    lineNumber = lineNumber,
+                    start = start,
+                    length = length
+                };
+            });
+            stream.Position = 0;
+            return constructor;
+        }
+
         #region Separator
 
         public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
@@ -99,21 +121,21 @@ namespace HQ.Data.Streaming.Internal
         public static char[] GetCharBuffer(this Encoding encoding)
         {
             if (!WorkingChars.TryGetValue(encoding, out var buffer))
-                WorkingChars.Add(encoding, buffer = new char[encoding.GetMaxCharCount(Constants.WorkingBytesLength)]);
+                WorkingChars.Add(encoding, buffer = new char[encoding.GetMaxCharCount(Constants.WorkingBufferLength)]);
             return buffer;
         }
 
         private static readonly Dictionary<Encoding, char[]> WorkingChars = new Dictionary<Encoding, char[]>
         {
-            {Encoding.UTF7, new char[Encoding.UTF7.GetMaxCharCount(Constants.WorkingBytesLength)]},
-            {Encoding.UTF8, new char[Encoding.UTF8.GetMaxCharCount(Constants.WorkingBytesLength)]},
-            {Encoding.Unicode, new char[Encoding.Unicode.GetMaxCharCount(Constants.WorkingBytesLength)]},
+            {Encoding.UTF7, new char[Encoding.UTF7.GetMaxCharCount(Constants.WorkingBufferLength)]},
+            {Encoding.UTF8, new char[Encoding.UTF8.GetMaxCharCount(Constants.WorkingBufferLength)]},
+            {Encoding.Unicode, new char[Encoding.Unicode.GetMaxCharCount(Constants.WorkingBufferLength)]},
             {
                 Encoding.BigEndianUnicode,
-                new char[Encoding.BigEndianUnicode.GetMaxCharCount(Constants.WorkingBytesLength)]
+                new char[Encoding.BigEndianUnicode.GetMaxCharCount(Constants.WorkingBufferLength)]
             },
-            {Encoding.UTF32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBytesLength)]},
-            {Constants.BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBytesLength)]}
+            {Encoding.UTF32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBufferLength)]},
+            {Constants.BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBufferLength)]}
         };
 
         #endregion

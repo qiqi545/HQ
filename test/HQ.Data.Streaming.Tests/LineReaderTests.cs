@@ -115,13 +115,15 @@ namespace HQ.Data.Streaming.Tests
             }
         }
 
-        [Fact]
+        [Test]
         public void Can_count_lines()
         {
-            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
+            var expected = 10000UL;
+            using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
             {
                 var sw = Stopwatch.StartNew();
                 var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
+                Assert.Equal(expected, lines);
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
