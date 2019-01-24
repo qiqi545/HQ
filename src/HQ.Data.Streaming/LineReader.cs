@@ -212,27 +212,30 @@ namespace HQ.Data.Streaming
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
 
-            void ReadLines()
+            void ReadLines(Encoding e)
             {
-                unsafe
+                try
                 {
-                    void OnNewLine(ulong a, byte* b, int c, Encoding d, IMetricsHost e)
+                    unsafe
                     {
-                        queue.Add(new LineConstructor
+                        LineReader.ReadLines(stream, e, (lineNumber, start, length, x, m) =>
                         {
-                            lineNumber = a,
-                            start = b,
-                            length = c
-                        }, cancellationToken);
+                            queue.Add(new LineConstructor
+                            {
+                                lineNumber = lineNumber,
+                                start = start,
+                                length = length
+                            }, cancellationToken);
+                        }, cancellationToken, metrics);
                     }
-
-                    LineReader.ReadLines(stream, encoding, OnNewLine, cancellationToken, metrics);
-
+                }
+                finally
+                {
                     queue.CompleteAdding();
                 }
             }
 
-            Task.Run(ReadLines, cancellationToken);
+            Task.Run(() => ReadLines(encoding), cancellationToken);
 
             return queue.GetConsumingEnumerable();
         }
