@@ -126,18 +126,18 @@ namespace HQ.Data.Streaming
                                 position++;
                                 count++;
 
-//#if DEBUG
-//                                var span = new ReadOnlySpan<byte>(start, length);
-//                                var debug = encoding.GetString(span);
-//#endif
+#if DEBUG
+                                var span = new ReadOnlySpan<byte>(start, length);
+                                var debug = encoding.GetString(span);
+#endif
                                 onNewLine?.Invoke(count, start, length, encoding, metrics);
                             }
                             else if (count == 0 && position == end)
                             {
-//#if DEBUG
-//                                var span = new ReadOnlySpan<byte>(start, length);
-//                                var debug = encoding.GetString(span);
-//#endif
+#if DEBUG
+                                var span = new ReadOnlySpan<byte>(start, length);
+                                var debug = encoding.GetString(span);
+#endif
                                 onNewLine?.Invoke(count, start, length, encoding, metrics);
                                 return 1;
                             }
@@ -317,12 +317,17 @@ namespace HQ.Data.Streaming
                     {
                         LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, start, length, x, m) =>
                         {
-                            queue.Add(new LineConstructor
+                            // TODO convert to row buffer/allocator
+                            var buffer = new byte[length];
+                            new ReadOnlySpan<byte>(start, length).CopyTo(buffer);
+                            var ctor = new LineConstructor
                             {
                                 lineNumber = lineNumber,
-                                start = start,
                                 length = length
-                            }, cancellationToken);
+                            };
+                            fixed (byte* b = buffer)
+                                ctor.start = b;
+                            queue.Add(ctor, cancellationToken);
                         }, cancellationToken, metrics);
                     }
                 }
