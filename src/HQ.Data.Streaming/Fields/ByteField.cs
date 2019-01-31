@@ -16,10 +16,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
+    [DebuggerDisplay("Byte: {Value} ({RawValue}:{_encoding.BodyName})")]
     public readonly ref struct ByteField
     {
         public bool Initialized => _buffer != null;

@@ -16,10 +16,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
+    [DebuggerDisplay("Boolean: {Value} ({RawValue}:{_encoding.BodyName})")]
     public readonly ref struct BooleanField
     {
         public bool Initialized => _buffer != null;

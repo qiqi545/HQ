@@ -16,10 +16,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
+    [DebuggerDisplay("Double: {Value} ({RawValue}:{_encoding.EncodingName})")]
     public readonly ref struct DoubleField
     {
         public bool Initialized => _buffer != null;

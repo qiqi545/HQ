@@ -16,10 +16,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
+    [DebuggerDisplay("DateTime: {Value} ({RawValue}:{_encoding.BodyName})")]
     public readonly ref struct DateTimeField
     {
         public bool Initialized => _buffer != null;
