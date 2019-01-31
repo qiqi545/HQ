@@ -23,7 +23,6 @@ using HQ.Data.Streaming.Internal;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
 using HQ.Test.Sdk.Xunit;
-using Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {
@@ -117,6 +116,19 @@ namespace HQ.Data.Streaming.Tests
 
         [Test]
         public void Can_count_lines()
+        {
+            var expected = 10000UL;
+            using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
+            {
+                var sw = Stopwatch.StartNew();
+                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
+                Assert.Equal(expected, lines);
+                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
+            }
+        }
+
+        [Test]
+        public void Can_count_lines_ranged()
         {
             var expected = 10000UL;
             using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
