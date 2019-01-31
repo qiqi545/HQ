@@ -17,7 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
-		..\..\HQ\build\version.props = ..\..\HQ\build\version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Streaming.Benchmarks", "..\..\Benchmarks\src\HQ.Data.Streaming.Benchmarks\HQ.Data.Streaming.Benchmarks.csproj", "{2ADFAF24-6A25-4A89-BF14-35537449F1B1}"
