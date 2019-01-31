@@ -24,19 +24,19 @@ namespace HQ.Data.Streaming
 {
     public static class LineValuesReader
     {
-        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
             string separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
             ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
         }
 
-        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
             byte[] separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
             ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue, metrics);
         }
 
-        public static void ReadValues(ulong lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
+        public static void ReadValues(long lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
             NewValueAsSpan newValue, IMetricsHost metrics = null)
         {
             var position = 0;
@@ -55,13 +55,13 @@ namespace HQ.Data.Streaming
             }
         }
 
-        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
             string separator, NewValue newValue, IMetricsHost metrics = null)
         {
             ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
         }
 
-        public static unsafe void ReadValues(ulong lineNumber, byte* start, int length, Encoding encoding,
+        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
             byte[] separator, NewValue newValue, IMetricsHost metrics = null)
         {
             var position = 0;

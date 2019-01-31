@@ -22,8 +22,8 @@ namespace HQ.Data.Streaming
     [DebuggerDisplay("{lineNumber}: {start}-{(int)(start + length)}")]
     public struct LineConstructor
     {
-        public ulong lineNumber;
-        public unsafe byte* start;
+        public long lineNumber;
+        public byte[] start;
         public int length;
     }
 }

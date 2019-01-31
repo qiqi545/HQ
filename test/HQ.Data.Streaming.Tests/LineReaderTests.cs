@@ -33,7 +33,7 @@ namespace HQ.Data.Streaming.Tests
         {
             using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
             {
-                var lines = 0UL;
+                var lines = 0L;
                 var sw = Stopwatch.StartNew();
                 LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line, metrics) =>
                 {
@@ -66,50 +66,54 @@ namespace HQ.Data.Streaming.Tests
             public StringField someField;
             public StringField extraFields;
 
-            public unsafe DummyData(LineConstructor constructor, Encoding encoding,  byte[] separator)
-                : this(constructor.start, constructor.length, encoding, separator)
-            {
-
-            }
-
-            public unsafe DummyData(byte* start, int length, Encoding encoding, byte[] separator)
+            public DummyData(LineConstructor constructor, Encoding encoding,  byte[] separator)
             {
                 someField = default;
                 extraFields = default;
 
-                var column = 0;
-                while (true)
+                SetFromLineConstructor(constructor, encoding, separator);
+            }
+
+            private unsafe void SetFromLineConstructor(LineConstructor constructor, Encoding encoding, byte[] separator)
+            {
+                fixed (byte* from = constructor.start)
                 {
-                    var line = new ReadOnlySpan<byte>(start, length);
-                    var next = line.IndexOf(separator);
-                    if (next == -1)
+                    var start = from;
+                    var length = constructor.length;
+                    var column = 0;
+                    while (true)
                     {
-                        if (line.IndexOf(Constants.CarriageReturn) > -1)
-                            someField = new StringField(start, length - 2, encoding);
-                        else if (line.IndexOf(Constants.LineFeed) > -1)
-                            someField = new StringField(start, length - 1, encoding);
-                        else
-                            someField = new StringField(start, length, encoding);
-                        break;
-                    }
-
-                    var consumed = next + separator.Length;
-                    length -= next + separator.Length;
-
-                    switch (column)
-                    {
-                        case 0:
-                            someField = new StringField(start, next, encoding);
+                        var line = new ReadOnlySpan<byte>(start, length);
+                        var next = line.IndexOf(separator);
+                        if (next == -1)
+                        {
+                            if (line.IndexOf(Constants.CarriageReturn) > -1)
+                                someField = new StringField(start, length - 2, encoding);
+                            else if (line.IndexOf(Constants.LineFeed) > -1)
+                                someField = new StringField(start, length - 1, encoding);
+                            else
+                                someField = new StringField(start, length, encoding);
                             break;
-                        default:
-                            extraFields = extraFields.Initialized
-                                ? extraFields.AddLength(next)
-                                : new StringField(start, next, encoding);
-                            break;
-                    }
+                        }
 
-                    start += consumed;
-                    column++;
+                        var consumed = next + separator.Length;
+                        length -= next + separator.Length;
+
+                        switch (column)
+                        {
+                            case 0:
+                                someField = new StringField(start, next, encoding);
+                                break;
+                            default:
+                                extraFields = extraFields.Initialized
+                                    ? extraFields.AddLength(next)
+                                    : new StringField(start, next, encoding);
+                                break;
+                        }
+
+                        start += consumed;
+                        column++;
+                    }
                 }
             }
         }
@@ -117,7 +121,7 @@ namespace HQ.Data.Streaming.Tests
         [Test]
         public void Can_count_lines()
         {
-            var expected = 10000UL;
+            var expected = 10000L;
             using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
             {
                 var sw = Stopwatch.StartNew();
@@ -130,7 +134,7 @@ namespace HQ.Data.Streaming.Tests
         [Test]
         public void Can_count_lines_ranged()
         {
-            var expected = 10000UL;
+            var expected = 10000L;
             using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
             {
                 var sw = Stopwatch.StartNew();

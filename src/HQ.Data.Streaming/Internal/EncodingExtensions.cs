@@ -15,35 +15,13 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 
 namespace HQ.Data.Streaming.Internal
 {
     public static class EncodingExtensions
     {
-        public static unsafe LineConstructor AsLineConstructor(this string value, out Stream stream)
-        {
-            var charBuffer = value.AsSpan();
-            var buffer = new byte[Encoding.Unicode.GetByteCount(charBuffer)];
-            Encoding.Unicode.GetBytes(charBuffer, buffer);
-            stream = new MemoryStream(buffer);
-            LineConstructor constructor = default;
-            LineReader.ReadLines(stream, Encoding.Unicode, (lineNumber, start, length, x, m) =>
-            {
-                constructor = new LineConstructor
-                {
-                    lineNumber = lineNumber,
-                    start = start,
-                    length = length
-                };
-            });
-            stream.Position = 0;
-            return constructor;
-        }
-
         #region Separator
 
         public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
