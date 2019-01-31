@@ -98,12 +98,12 @@ namespace HQ.Data.Streaming
                             var start = position;
                             var c = *aligned;
 
-                            *aligned = (byte)'\n';
-                            while (*position != (byte)'\n')
+                            *aligned = Constants.LineFeed;
+                            while (*position != Constants.LineFeed)
                                 position++;
                             *aligned = c;
 
-                            if (position == aligned && c != (byte)'\n')
+                            if (position == aligned && c != Constants.LineFeed)
                             {
                                 var dword = (uint*) position;
                                 uint mask;
@@ -114,7 +114,7 @@ namespace HQ.Data.Streaming
                                 } while (mask == 0);
 
                                 position = (byte*) (dword - 1);
-                                while (*position != (byte)'\n')
+                                while (*position != Constants.LineFeed)
                                     position++;
                             }
 
@@ -130,6 +130,7 @@ namespace HQ.Data.Streaming
                                 var span = new ReadOnlySpan<byte>(start, length);
                                 var debug = encoding.GetString(span);
 #endif
+                                BytesPerSecond(metrics, length);
                                 onNewLine?.Invoke(count, start, length, encoding, metrics);
                             }
                             else if (count == 0 && position == end)
@@ -138,6 +139,7 @@ namespace HQ.Data.Streaming
                                 var span = new ReadOnlySpan<byte>(start, length);
                                 var debug = encoding.GetString(span);
 #endif
+                                BytesPerSecond(metrics, length);
                                 onNewLine?.Invoke(count, start, length, encoding, metrics);
                                 return 1;
                             }
@@ -151,6 +153,11 @@ namespace HQ.Data.Streaming
             }
 
             return count;
+        }
+
+        private static void BytesPerSecond(IMetricsHost metrics, int length)
+        {
+            metrics?.Meter(typeof(LineReader), "bytes_read_per_second", "bytes", TimeUnit.Seconds).Mark(length);
         }
 
         #region BOM
@@ -188,20 +195,19 @@ namespace HQ.Data.Streaming
 
         #region API
 
-        public static ulong CountLines(Stream stream, Encoding encoding, CancellationToken cancellationToken = default,
-            IMetricsHost metrics = null)
+        public static ulong CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadOrCountLines(stream, encoding, Constants.WorkingBuffer, null, cancellationToken, metrics);
+            return CountLines(stream, encoding, Constants.WorkingBuffer, metrics, cancellationToken);
         }
 
-        public static ulong CountLines(Stream stream, Encoding encoding, byte[] workingBuffer, CancellationToken cancellationToken = default,
-            IMetricsHost metrics = null)
+        public static ulong CountLines(Stream stream, Encoding encoding, byte[] workingBuffer, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadOrCountLines(stream, encoding, workingBuffer, null, cancellationToken, metrics);
         }
-
+        
         public static ulong ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -211,7 +217,8 @@ namespace HQ.Data.Streaming
         }
 
         public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLineAsString onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -221,19 +228,23 @@ namespace HQ.Data.Streaming
         }
 
         public static ulong ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             return ReadOrCountLines(stream, encoding, Constants.WorkingBuffer, onNewLine, cancellationToken, metrics);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadOrCountLines(stream, encoding, workingBuffer, onNewLine, cancellationToken, metrics);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        {
+            return ReadLines(stream, encoding, Constants.WorkingBuffer, separator, onNewValue, metrics, cancellationToken);
+        }
+
+        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -241,25 +252,16 @@ namespace HQ.Data.Streaming
                 {
                     LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
                 };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken);
+                return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
             }
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValue onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, workingBuffer, onNewLine, cancellationToken);
-            }
+            return ReadLines(stream, encoding, Constants.WorkingBuffer, separator, onNewValue, metrics, cancellationToken);
         }
 
-        public static ulong ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -267,45 +269,30 @@ namespace HQ.Data.Streaming
                 {
                     LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
                 };
-                return ReadLines(stream, encoding, onNewLine, cancellationToken, metrics);
-            }
-        }
-
-        public static ulong ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValueAsSpan onNewValue,
-            CancellationToken cancellationToken = default, IMetricsHost metrics = null)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, workingBuffer, onNewLine, cancellationToken, metrics);
+                return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
             }
         }
 
         public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
-            string separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, Constants.WorkingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine),
-                cancellationToken, metrics);
+            return ReadLines(stream, encoding, Constants.WorkingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            string separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine),
-                cancellationToken, metrics);
+            return ReadLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
         }
         
         public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
-            byte[] separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, Constants.WorkingBuffer, separator, cancellationToken, metrics);
+            return ReadLines(stream, encoding, Constants.WorkingBuffer, separator, metrics, cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            byte[] separator, CancellationToken cancellationToken = default, IMetricsHost metrics = null)
+            byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
 
@@ -328,7 +315,7 @@ namespace HQ.Data.Streaming
                             fixed (byte* b = buffer)
                                 ctor.start = b;
                             queue.Add(ctor, cancellationToken);
-                        }, cancellationToken, metrics);
+                        }, metrics, cancellationToken);
                     }
                 }
                 catch (Exception ex)

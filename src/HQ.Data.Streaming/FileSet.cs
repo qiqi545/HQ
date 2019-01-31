@@ -19,21 +19,21 @@ using System.IO;
 
 namespace HQ.Data.Streaming
 {
-    public class FileSet
+    public abstract class FileSet
     {
-        private readonly string baseDirectory;
+        private readonly string _baseDirectory;
 
-        public FileSet(string baseDirectory)
+        protected FileSet(string baseDirectory)
         {
-            this.baseDirectory = baseDirectory;
+            this._baseDirectory = baseDirectory;
         }
 
-        public string TryGet(string mask, params object[] args)
+        public string TryGetPath(string mask, params object[] args)
         {
             if (args.Length == 0)
-                return Path.Combine(baseDirectory, mask);
+                return Path.Combine(_baseDirectory, mask);
 
-            return Path.Combine(baseDirectory, string.Format(mask, args));
+            return Path.Combine(_baseDirectory, string.Format(mask, args));
         }
     }
 }
