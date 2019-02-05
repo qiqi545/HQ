@@ -8,57 +8,11 @@ an issue on GitHub, or by emailing support@hq.io
 
 ##################################################################
 
-Initial project was licensed under MIT as at November 9th, 2015, commit `be188ed305182d9d083952a8469b729ea33e76ac` in this source history:
---------------------------------------------------------------------------------------------------------
+Marked methods in LineReader's internals are derived from MimeKit's
+`MimeParser.cs` and `BoundStream.cs`, as of commit 'e9691023692b401eee45b83f5d7677a223cd36a6' 
+on January 1st, 2019: https://github.com/jstedfast/MimeKit/blob/e9691023692b401eee45b83f5d7677a223cd36a6/MimeKit/MimeParser.cs,
 
-Tuxedo (http://github.com/danielcrenna/tuxedo)
---------------------------------------
-Copyright (c) 2013 Conatus Creative Inc.
+Licensed under the MIT license:
+https://github.com/jstedfast/MimeKit/blob/e9691023692b401eee45b83f5d7677a223cd36a6/License.md
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-TableDescriptor (http://github.com/danielcrenna/TableDescriptor)
---------------------------------------
-Copyright (c) 2013 Conatus Creative Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated 
-documentation files (the "Software"), to deal in the Software without restriction, including without limitation 
-the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and 
-to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES 
-OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR 
-IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
---------------------------------------------------------------------------------------------------------
-
-HQ.Common uses a modified paging helper from PetaPoco from repository (https://github.com/CollaboratingPlatypus/PetaPoco)
-as at commit `cabb39eb219fbe0efd9b19119057b103f5262fd0`, on May 10, 2017:
-
-Copyright (C) 2011-2011 Topten Software (contact@toptensoftware.com)
-All rights reserved.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this product except in compliance with the License.
-You may obtain a copy of the License at
-
-<http://www.apache.org/licenses/LICENSE-2.0>
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Copyright (C) 2012-2019 Xamarin Inc.
