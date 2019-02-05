@@ -16,9 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Extensions.Caching.AspNetCore.Mvc\HQ.Extensions.Caching.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Financial\HQ.Extensions.Financial.csproj" />
   </ItemGroup>
 
 </Project>
