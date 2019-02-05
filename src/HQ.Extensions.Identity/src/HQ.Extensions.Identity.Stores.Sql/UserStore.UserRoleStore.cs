@@ -21,9 +21,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using HQ.Data.Sql.Queries;
 using HQ.Extensions.Identity.Stores.Sql.Models;
-using HQ.Lingo.Queries;
-using HQ.Tokens;
+using HQ.Platform.Security;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Extensions.Identity.Stores.Sql

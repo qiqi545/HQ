@@ -23,10 +23,10 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HQ.Data.Contracts;
+using HQ.Data.Contracts.Queryable;
 using HQ.Extensions.Identity.Extensions;
 using HQ.Extensions.Identity.Models;
-using HQ.Rosetta;
-using HQ.Rosetta.Queryable;
 using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 

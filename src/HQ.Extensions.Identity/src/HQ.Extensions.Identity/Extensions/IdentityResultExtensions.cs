@@ -16,7 +16,7 @@
 #endregion
 
 using System.Linq;
-using HQ.Rosetta;
+using HQ.Data.Contracts;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Extensions.Identity.Extensions

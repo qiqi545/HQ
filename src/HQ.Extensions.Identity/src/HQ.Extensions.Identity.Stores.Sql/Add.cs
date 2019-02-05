@@ -19,7 +19,7 @@ using System;
 using System.Data;
 using HQ.Extensions.Identity.Models;
 using HQ.Common;
-using HQ.Connect;
+using HQ.Data.SessionManagement;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 

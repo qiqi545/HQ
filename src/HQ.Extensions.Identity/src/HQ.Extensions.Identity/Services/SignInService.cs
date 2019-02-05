@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
+using HQ.Data.Contracts;
 using HQ.Extensions.Identity.Models;
-using HQ.Rosetta;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Extensions.Identity.Services

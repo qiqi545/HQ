@@ -19,8 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Rosetta;
-using Microsoft.AspNetCore.Identity;
+using HQ.Data.Contracts;
 
 namespace HQ.Extensions.Identity.Models
 {

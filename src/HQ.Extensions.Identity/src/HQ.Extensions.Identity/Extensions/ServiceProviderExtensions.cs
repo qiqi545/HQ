@@ -17,7 +17,7 @@
 
 using System;
 using System.Threading;
-using HQ.Tokens.Configuration;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 

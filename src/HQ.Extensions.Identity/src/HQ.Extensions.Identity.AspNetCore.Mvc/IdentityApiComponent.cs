@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using HQ.Extensions.Identity.AspNetCore.Mvc.Controllers;
-using HQ.Domicile.Conventions;
+using HQ.Platform.Api.Conventions;
 
 namespace HQ.Extensions.Identity.AspNetCore.Mvc
 {

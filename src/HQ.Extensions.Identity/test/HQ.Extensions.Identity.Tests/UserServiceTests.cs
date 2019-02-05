@@ -1,8 +1,8 @@
 using System;
 using System.Threading.Tasks;
 using HQ.Extensions.Identity.Models;
-using HQ.Touchstone;
-using HQ.Touchstone.Xunit;
+using HQ.Test.Sdk;
+using HQ.Test.Sdk.Xunit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Identity.Tests

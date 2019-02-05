@@ -2,8 +2,8 @@ using System;
 using System.IO;
 using HQ.Extensions.Identity.Models;
 using HQ.Extensions.Identity.Stores.Sql.Sqlite;
-using HQ.Connect;
-using HQ.Touchstone;
+using HQ.Data.SessionManagement;
+using HQ.Test.Sdk;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 

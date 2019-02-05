@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using HQ.Extensions.Identity.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Rosetta.AspNetCore.Mvc;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

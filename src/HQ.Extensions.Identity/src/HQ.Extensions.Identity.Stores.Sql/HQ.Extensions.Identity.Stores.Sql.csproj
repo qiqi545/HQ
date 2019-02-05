@@ -1,4 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,20 +10,16 @@
 
   <PropertyGroup>
     <Description>A powerful extension to ASP.NET Core Identity. This package adds datastore integration for supported ADO.NET providers.</Description>
-    <PackageTags>aspnetcore-identity ado-net hq-stack</PackageTags>
-    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="HQ.Data.SessionManagement" Version="1.0.44" />
+    <PackageReference Include="HQ.Data.Sql.Builders" Version="1.0.44" />
+    <PackageReference Include="HQ.Data.Sql.Queries" Version="1.0.44" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Connect\src\HQ.Connect\HQ.Connect.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.Queries\HQ.Lingo.Queries.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Tokens\src\HQ.Tokens\HQ.Tokens.csproj" />
-    <ProjectReference Include="..\..\..\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Identity\HQ.Extensions.Identity.csproj" />
   </ItemGroup>
 

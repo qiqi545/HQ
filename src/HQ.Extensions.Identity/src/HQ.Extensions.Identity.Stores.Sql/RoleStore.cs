@@ -24,9 +24,9 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Extensions.Identity.Extensions;
 using HQ.Extensions.Identity.Models;
-using HQ.Connect;
-using HQ.Lingo.Queries;
-using HQ.Rosetta.Queryable;
+using HQ.Data.Contracts.Queryable;
+using HQ.Data.SessionManagement;
+using HQ.Data.Sql.Queries;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Extensions.Identity.Stores.Sql

@@ -25,11 +25,10 @@ using Dapper;
 using HQ.Extensions.Identity.Configuration;
 using HQ.Extensions.Identity.Extensions;
 using HQ.Extensions.Identity.Models;
-using HQ.Extensions.Identity.Stores.Sql.Models;
-using HQ.Connect;
-using HQ.Lingo.Queries;
-using HQ.Rosetta.Queryable;
-using HQ.Tokens.Configuration;
+using HQ.Data.Contracts.Queryable;
+using HQ.Data.SessionManagement;
+using HQ.Data.Sql.Queries;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 

@@ -18,7 +18,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using HQ.Lingo.Queries;
+using HQ.Data.Sql.Queries;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Extensions.Identity.Stores.Sql

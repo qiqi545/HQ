@@ -1,23 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
     <Description>A powerful extension to ASP.NET Core Identity. This package adds datastore integration for DocumentDb.</Description>
-    <PackageTags>aspnetcore-identity documentdb cosmosdb hq-stack</PackageTags>
-    <Version>1.0.20</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="DocumentDbProvider" Version="1.0.0-pre5" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
+    <PackageReference Include="HQ.Data.SessionManagement.DocumentDb" Version="1.0.44" />
+    <PackageReference Include="HQ.Data.Sql.DocumentDb" Version="1.0.44" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Connect\src\HQ.Connect.DocumentDb\HQ.Connect.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Lingo\src\HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Identity.Stores.Sql\HQ.Extensions.Identity.Stores.Sql.csproj" />
   </ItemGroup>
 
