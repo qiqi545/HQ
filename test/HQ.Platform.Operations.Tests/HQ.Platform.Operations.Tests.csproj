@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.MissionControl\HQ.MissionControl.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
   </ItemGroup>
 
 </Project>

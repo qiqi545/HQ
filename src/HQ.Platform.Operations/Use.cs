@@ -25,9 +25,9 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Domicile.Models;
-using HQ.Domicile.Serialization;
-using HQ.MissionControl.Configuration;
+using HQ.Platform.Api.Models;
+using HQ.Platform.Api.Serialization;
+using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,7 +40,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace HQ.MissionControl
+namespace HQ.Platform.Operations
 {
     public static class Use
     {

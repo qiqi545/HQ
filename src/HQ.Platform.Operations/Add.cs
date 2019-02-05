@@ -15,11 +15,11 @@
 
 #endregion
 
-using HQ.MissionControl.Configuration;
+using HQ.Platform.Operations.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.MissionControl
+namespace HQ.Platform.Operations
 {
     public static class Add
     {

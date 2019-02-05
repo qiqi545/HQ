@@ -17,7 +17,7 @@
 
 using HQ.Common;
 
-namespace HQ.MissionControl.Configuration
+namespace HQ.Platform.Operations.Configuration
 {
     public class DevOpsApiOptions
     {
