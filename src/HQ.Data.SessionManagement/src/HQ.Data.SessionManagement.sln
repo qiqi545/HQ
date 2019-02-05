@@ -5,13 +5,10 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D7D8B0F5-AD26-47CC-9049-C356C41AB9F0}"
 	ProjectSection(SolutionItems) = preProject
-		..\build\build.props = ..\build\build.props
-		..\LICENSE.txt = ..\LICENSE.txt
-		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
-		..\build\package.props = ..\build\package.props
+		..\..\..\LICENSE.txt = ..\..\..\LICENSE.txt
+		..\..\..\LICENSE_FULL.txt = ..\..\..\LICENSE_FULL.txt
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
-		..\build\version.props = ..\build\version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement", "HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj", "{9BF57E15-6975-4B7C-A557-7A6CA361F07E}"
@@ -25,6 +22,13 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.MySql", "HQ.Data.SessionManagement.MySql\HQ.Data.SessionManagement.MySql.csproj", "{8174352B-2875-4621-BE6C-ECD19613BAAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.DocumentDb", "HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj", "{4363C8D9-C2A1-4938-B2C5-0038377E9810}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B5F00B7A-EA6D-4765-8BAE-FA2398280BD0}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\build\build.props = ..\..\..\build\build.props
+		..\..\..\build\package.props = ..\..\..\build\package.props
+		..\..\..\build\version.props = ..\..\..\build\version.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

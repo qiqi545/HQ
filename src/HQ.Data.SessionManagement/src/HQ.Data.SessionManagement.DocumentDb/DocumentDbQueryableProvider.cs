@@ -93,7 +93,6 @@ namespace HQ.Data.SessionManagement.DocumentDb
                 {
                     docDbCommand.Id = descriptor.Id?.Property?.Name;
                     docDbCommand.Type = typeof(T);
-                    docDbCommand.DocumentType = descriptor.Table;
                     docDbCommand.MaybeTypeDiscriminate(query);
                 }
 

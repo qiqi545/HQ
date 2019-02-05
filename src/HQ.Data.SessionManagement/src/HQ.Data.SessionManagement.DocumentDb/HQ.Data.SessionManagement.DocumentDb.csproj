@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\build\package.props" />
-  <Import Project="$(ProjectDir)..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
   
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -11,15 +11,16 @@
 
   <PropertyGroup>
     <Description>Simple connection management for ADO.NET data providers. This package provides support for DocumentDB.</Description>
-    <PackageTags>data-access connection ado-net hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HQ.Data.Sql.DocumentDb" Version="1.0.44" />
+    <PackageReference Include="HQ.Data.Sql.Queries" Version="1.0.44" />
+    <PackageReference Include="HQ.Extensions.Metrics" Version="1.0.37" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
   </ItemGroup>
 

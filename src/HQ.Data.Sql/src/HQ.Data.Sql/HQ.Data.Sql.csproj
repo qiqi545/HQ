@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\build\package.props" />
-  <Import Project="$(ProjectDir)..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
