@@ -17,25 +17,22 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Adapt")]
-[assembly: InternalsVisibleTo("HQ.Platform.Schema")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Identity")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Identity.AspNetCore.Mvc")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Identity.Stores.Sql")]
 [assembly: InternalsVisibleTo("HQ.Common.AspNetCore")]
+[assembly: InternalsVisibleTo("HQ.CodeGeneration")]
+[assembly: InternalsVisibleTo("HQ.Data.Contracts")]
+[assembly: InternalsVisibleTo("HQ.Data.Sql")]
+[assembly: InternalsVisibleTo("HQ.Data.Sql.Queries")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Metrics")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Metrics.AspNetCore")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Metrics.Reporters.SignalR")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity.AspNetCore.Mvc")]
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity.Stores.Sql")]
 [assembly: InternalsVisibleTo("HQ.Platform.Api")]
-[assembly: InternalsVisibleTo("HQ.InteractionTests")]
-[assembly: InternalsVisibleTo("HQ.Lingo")]
-[assembly: InternalsVisibleTo("HQ.Lingo.Queries")]
 [assembly: InternalsVisibleTo("HQ.Platform.Operations")]
-[assembly: InternalsVisibleTo("HQ.CodeGeneration")]
-[assembly: InternalsVisibleTo("HQ.Data.Contracts")]
-[assembly: InternalsVisibleTo("HQ.Tokens")]
-[assembly: InternalsVisibleTo("HQ.Tokens.AspNetCore")]
-[assembly: InternalsVisibleTo("HQ.Zero")]
+[assembly: InternalsVisibleTo("HQ.Platform.Schema")]
+[assembly: InternalsVisibleTo("HQ.Platform.Security")]
+[assembly: InternalsVisibleTo("HQ.Platform.Security.AspNetCore")]
 
 namespace HQ.Common
 {
