@@ -11,17 +11,13 @@
 
   <PropertyGroup>
     <Description>Common contracts for data access patterns in .NET.</Description>
-    <PackageTags>data-access-library hq-stack</PackageTags>
-    
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HQ.Common" Version="1.0.44" />
+    <PackageReference Include="HQ.Strings" Version="1.0.30" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj" />
   </ItemGroup>
 
 </Project>
