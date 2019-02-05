@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>
+      Adds date frequency support to .NET.
+
+      Commonly used types:
+      DateInterval
+      DateSpan
+      DatePeriod
+    </Description>
+    <PackageTags>hq-stack dates</PackageTags>
+  </PropertyGroup>
+
+</Project>

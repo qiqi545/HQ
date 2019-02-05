@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\HQ\build\version.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Dependency-backed caching pattern extensions for in-process and distributed cache stores. This package adds ASP.NET Core MVC attributes for declarative cache applications.</Description>
+    <PackageTags>hq-stack caching microcache aspnetcore-mvc</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+  </ItemGroup>
+
+</Project>
