@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Data.Contracts" Version="1.0.30" />
+    <PackageReference Include="HQ.Data.Contracts" Version="1.0.44" />
     <PackageReference Include="HQ.Extensions.Caching" Version="1.0.31" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
