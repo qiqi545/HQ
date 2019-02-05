@@ -15,16 +15,10 @@
 
 #endregion
 
-using HQ.Common.Configuration;
-
-namespace HQ.Tokens.Configuration
+namespace HQ.Platform.Security
 {
-    public class TokenOptions : FeatureToggle<SecurityOptions>
+    public interface IUserNameProvider
     {
-        public string Path { get; set; } = "tokens";
-        public string Key { get; set; }
-        public string Issuer { get; set; } = "https://mysite.com";
-        public string Audience { get; set; } = "https://mysite.com";
-        public int TimeToLiveSeconds { get; set; } = 180;
+        string UserName { get; }
     }
 }

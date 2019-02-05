@@ -15,18 +15,11 @@
 
 #endregion
 
-namespace HQ.Tokens.Configuration
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("HQ.Extensions.Identity.AspnetCore.Mvc")]
+
+namespace HQ.Platform.Security
 {
-    public class ClaimOptions
-    {
-        public string TenantIdClaim { get; set; } = "tenantId";
-        public string TenantNameClaim { get; set; } = "tenantName";
-        public string ApplicationIdClaim { get; set; } = "applicationId";
-        public string ApplicationNameClaim { get; set; } = "applicationName";
-        public string UserIdClaim { get; set; } = "userId";
-        public string UserNameClaim { get; set; } = "userName";
-        public string RoleClaim { get; set; } = "role";
-        public string EmailClaim { get; set; } = "email";
-        public string PermissionClaim { get; set; } = "permission";
-    }
+    internal sealed class InternalsVisibleTo { }
 }

@@ -15,17 +15,18 @@
 
 #endregion
 
-using System.Net;
-
-namespace HQ.Tokens.Configuration
+namespace HQ.Platform.Security.Configuration
 {
-    public class SecurityOptions
+    public class ClaimOptions
     {
-        public SuperUserOptions SuperUser { get; set; } = new SuperUserOptions();
-        public ClaimOptions Claims { get; set; } = new ClaimOptions();
-        public TokenOptions Tokens { get; set; } = new TokenOptions();
-        public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
-
-        public HttpStatusCode? ForbidStatusCode { get; set; } = HttpStatusCode.Forbidden;
+        public string TenantIdClaim { get; set; } = "tenantId";
+        public string TenantNameClaim { get; set; } = "tenantName";
+        public string ApplicationIdClaim { get; set; } = "applicationId";
+        public string ApplicationNameClaim { get; set; } = "applicationName";
+        public string UserIdClaim { get; set; } = "userId";
+        public string UserNameClaim { get; set; } = "userName";
+        public string RoleClaim { get; set; } = "role";
+        public string EmailClaim { get; set; } = "email";
+        public string PermissionClaim { get; set; } = "permission";
     }
 }

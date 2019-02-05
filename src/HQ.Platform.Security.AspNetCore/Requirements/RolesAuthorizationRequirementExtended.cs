@@ -15,37 +15,46 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Tokens.Configuration;
+using HQ.Platform.Security.Configuration;
 using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HQ.Tokens.Requirements
+namespace HQ.Platform.Security.Requirements
 {
-    public class DenyAnonymousAuthorizationRequirementExtended :
-        AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,
+    public class RolesAuthorizationRequirementExtended :
+        AuthorizationHandler<RolesAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
         private readonly SecurityOptions _options;
 
-        public DenyAnonymousAuthorizationRequirementExtended(SecurityOptions options)
+        public RolesAuthorizationRequirementExtended(SecurityOptions options, IEnumerable<string> allowedRoles)
         {
             Guard.AgainstNullArgument(nameof(options), options);
+            Guard.AgainstNullArgument(nameof(allowedRoles), allowedRoles);
             _options = options;
+            AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
 
         private bool SupportsSuperUser => _options.SuperUser?.Enabled ?? false;
 
+        public IEnumerable<string> AllowedRoles { get; }
+
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-            DenyAnonymousAuthorizationRequirementExtended requirement)
+            RolesAuthorizationRequirementExtended requirement)
         {
             if (context.User != null)
             {
                 if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
                     context.Succeed(requirement);
-                else if ((context.User.Identity == null ? 1 :
-                             context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
+
+                var flag = false;
+                if (requirement.AllowedRoles != null && requirement.AllowedRoles.Any())
+                    flag = requirement.AllowedRoles.Any(r => context.User.IsInRole(r));
+                if (flag)
                     context.Succeed(requirement);
             }
 

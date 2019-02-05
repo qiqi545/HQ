@@ -21,13 +21,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using HQ.Common.Extensions;
-using HQ.Domicile.Configuration;
-using HQ.Tokens.Configuration;
+using HQ.Platform.Api.Configuration;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HQ.Tokens.AspNetCore
+namespace HQ.Platform.Security.AspNetCore
 {
     public static class JwtSecurity
     {

@@ -17,7 +17,7 @@
 
 using HQ.Common.Configuration;
 
-namespace HQ.Tokens.Configuration
+namespace HQ.Platform.Security.Configuration
 {
     public class BlockListOptions : FeatureToggle<SecurityOptions>
     {

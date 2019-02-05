@@ -15,12 +15,12 @@
 
 #endregion
 
-using HQ.Tokens.Configuration;
-using HQ.Tokens.Requirements;
+using HQ.Platform.Security.Configuration;
+using HQ.Platform.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Tokens.AspNetCore.Extensions
+namespace HQ.Platform.Security.AspNetCore.Extensions
 {
     public static class AuthorizationExtensions
     {

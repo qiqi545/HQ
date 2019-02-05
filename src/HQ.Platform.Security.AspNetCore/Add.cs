@@ -16,13 +16,14 @@
 #endregion
 
 using HQ.Common;
-using HQ.Tokens.Configuration;
+using HQ.Platform.Security.AspNetCore.Extensions;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Tokens.AspNetCore
+namespace HQ.Platform.Security.AspNetCore
 {
     public static class Add
     {

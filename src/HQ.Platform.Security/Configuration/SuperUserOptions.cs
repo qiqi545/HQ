@@ -18,7 +18,7 @@
 using System.ComponentModel.DataAnnotations;
 using HQ.Common.Configuration;
 
-namespace HQ.Tokens.Configuration
+namespace HQ.Platform.Security.Configuration
 {
     public class SuperUserOptions : FeatureToggle<SecurityOptions>
     {

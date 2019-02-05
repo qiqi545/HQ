@@ -19,11 +19,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Tokens.Configuration;
+using HQ.Platform.Security.Configuration;
 using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HQ.Tokens.Requirements
+namespace HQ.Platform.Security.Requirements
 {
     public class ClaimsAuthorizationRequirementExtended :
         AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,
