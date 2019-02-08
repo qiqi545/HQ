@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using HQ.CodeGeneration.Internal;
+using HQ.CodeGeneration.Internal.Execution;
 using Microsoft.AspNetCore.NodeServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
