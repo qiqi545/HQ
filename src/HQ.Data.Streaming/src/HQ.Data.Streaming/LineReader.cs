@@ -88,7 +88,7 @@ namespace HQ.Data.Streaming
                         var position = buffer + from;
                         var end = buffer + to;
                         var startIndex = from;
-
+                        
                         *end = (byte)'\n';
 
                         while (position < end)
@@ -102,7 +102,7 @@ namespace HQ.Data.Streaming
                             while (*position != Constants.LineFeed)
                                 position++;
                             *aligned = c;
-
+                            
                             if (position == aligned && c != Constants.LineFeed)
                             {
                                 var dword = (uint*) position;
@@ -131,7 +131,7 @@ namespace HQ.Data.Streaming
                                 var debug = encoding.GetString(span);
 #endif
                                 BytesPerSecond(metrics, length);
-                                onNewLine?.Invoke(count, start, length, encoding, metrics);
+                                onNewLine?.Invoke(count, false, start, length, encoding, metrics);
                             }
                             else if (count == 0 && position == end)
                             {
@@ -140,8 +140,19 @@ namespace HQ.Data.Streaming
                                 var debug = encoding.GetString(span);
 #endif
                                 BytesPerSecond(metrics, length);
-                                onNewLine?.Invoke(count, start, length, encoding, metrics);
+                                onNewLine?.Invoke(count, false, start, length, encoding, metrics);
                                 return 1;
+                            }
+                            else
+                            {
+#if DEBUG
+                                var span = new ReadOnlySpan<byte>(start, length);
+                                var debug = encoding.GetString(span);
+#endif
+
+                                // line spans across the read-ahead buffer
+                                BytesPerSecond(metrics, length);
+                                onNewLine?.Invoke(count, true, start, length, encoding, metrics);
                             }
 
                             startIndex += length;
@@ -211,7 +222,7 @@ namespace HQ.Data.Streaming
         {
             unsafe
             {
-                NewLine newLine = (n, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+                NewLine newLine = (n, p, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
                 return ReadOrCountLines(stream, encoding, Constants.WorkingBuffer, newLine, cancellationToken, metrics);
             }
         }
@@ -222,7 +233,7 @@ namespace HQ.Data.Streaming
         {
             unsafe
             {
-                NewLine newLine = (n, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+                NewLine newLine = (n, p, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
                 return ReadOrCountLines(stream, encoding, workingBuffer, newLine, cancellationToken, metrics);
             }
         }
@@ -248,7 +259,7 @@ namespace HQ.Data.Streaming
         {
             unsafe
             {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
                 {
                     LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
                 };
@@ -265,7 +276,7 @@ namespace HQ.Data.Streaming
         {
             unsafe
             {
-                NewLine onNewLine = (lineNumber, start, length, e, m) =>
+                NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
                 {
                     LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
                 };
@@ -273,53 +284,72 @@ namespace HQ.Data.Streaming
             }
         }
 
-        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
+        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
             string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, Constants.WorkingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.WorkingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
         }
 
-        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
             string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
+            return StreamLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
         }
         
-        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding,
+        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
             byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
-            return ReadLines(stream, encoding, Constants.WorkingBuffer, separator, metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.WorkingBuffer, separator, metrics, cancellationToken);
         }
 
-        public static IEnumerable<LineConstructor> ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
             byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
-
+           
             void ReadLines(Encoding e)
             {
+                var pendingLength = 0;
+                byte[] buffer = null; // TODO convert to allocator
+
                 try
                 {
                     unsafe
                     {
-                        LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, start, length, x, m) =>
+                        LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
                         {
-                            // TODO convert to row buffer/allocator
-                            var buffer = new byte[length];
-                            new ReadOnlySpan<byte>(start, length).CopyTo(buffer);
-                            var ctor = new LineConstructor
+                            if (buffer == null)
+                                buffer = new byte[Constants.ReadAheadSize * 2];
+                            
+                            var target = new Span<byte>(buffer, pendingLength, length);
+                            var segment = new ReadOnlySpan<byte>(start, length);
+                            segment.CopyTo(target);
+
+                            if (partial)
                             {
-                                lineNumber = lineNumber,
-                                length = length,
-                                start = buffer
-                            };
-                            queue.Add(ctor, cancellationToken);
+                                pendingLength = length;
+#if DEBUG
+                                var debug = encoding.GetString(segment);
+#endif
+                            }
+                            else
+                            {
+#if DEBUG
+                                var concat = new ReadOnlySpan<byte>(buffer, 0, length + pendingLength);
+                                var debug = encoding.GetString(concat);
+#endif
+                                var ctor = new LineConstructor { lineNumber = lineNumber, length = length + pendingLength, start = buffer };
+                                queue.Add(ctor, cancellationToken);
+                                pendingLength = 0;
+                                buffer = null;
+                            }
+
                         }, metrics, cancellationToken);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
                 finally
                 {
