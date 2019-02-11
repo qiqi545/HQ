@@ -45,13 +45,13 @@ namespace HQ.Data.Streaming.Tests
         }
 
         [Test]
-        public void Can_read_constructor_lines()
+        public void Can_stream_constructor_lines()
         {
             using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
             {
                 var lines = 0UL;
                 var sw = Stopwatch.StartNew();
-                foreach(var ctor in LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, "|"))
+                foreach(var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8, "|"))
                 {
                     var row = new DummyData(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
                     Assert.NotNull(row.someField.Value);

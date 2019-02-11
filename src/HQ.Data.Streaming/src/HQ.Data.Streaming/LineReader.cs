@@ -307,7 +307,7 @@ namespace HQ.Data.Streaming
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
            
-            void ReadLines(Encoding e)
+            void ReadLines(Encoding e) 
             {
                 var pendingLength = 0;
                 byte[] buffer = null; // TODO convert to allocator
@@ -319,7 +319,7 @@ namespace HQ.Data.Streaming
                         LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
                         {
                             if (buffer == null)
-                                buffer = new byte[Constants.ReadAheadSize * 2];
+                                buffer = new byte[Math.Max(length, Constants.ReadAheadSize * 2)];
                             
                             var target = new Span<byte>(buffer, pendingLength, length);
                             var segment = new ReadOnlySpan<byte>(start, length);
