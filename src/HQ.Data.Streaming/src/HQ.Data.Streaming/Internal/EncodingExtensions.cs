@@ -99,21 +99,21 @@ namespace HQ.Data.Streaming.Internal
         public static char[] GetCharBuffer(this Encoding encoding)
         {
             if (!WorkingChars.TryGetValue(encoding, out var buffer))
-                WorkingChars.Add(encoding, buffer = new char[encoding.GetMaxCharCount(Constants.WorkingBufferLength)]);
+                WorkingChars.Add(encoding, buffer = new char[encoding.GetMaxCharCount(Constants.BufferLength)]);
             return buffer;
         }
 
         private static readonly Dictionary<Encoding, char[]> WorkingChars = new Dictionary<Encoding, char[]>
         {
-            {Encoding.UTF7, new char[Encoding.UTF7.GetMaxCharCount(Constants.WorkingBufferLength)]},
-            {Encoding.UTF8, new char[Encoding.UTF8.GetMaxCharCount(Constants.WorkingBufferLength)]},
-            {Encoding.Unicode, new char[Encoding.Unicode.GetMaxCharCount(Constants.WorkingBufferLength)]},
+            {Encoding.UTF7, new char[Encoding.UTF7.GetMaxCharCount(Constants.BufferLength)]},
+            {Encoding.UTF8, new char[Encoding.UTF8.GetMaxCharCount(Constants.BufferLength)]},
+            {Encoding.Unicode, new char[Encoding.Unicode.GetMaxCharCount(Constants.BufferLength)]},
             {
                 Encoding.BigEndianUnicode,
-                new char[Encoding.BigEndianUnicode.GetMaxCharCount(Constants.WorkingBufferLength)]
+                new char[Encoding.BigEndianUnicode.GetMaxCharCount(Constants.BufferLength)]
             },
-            {Encoding.UTF32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBufferLength)]},
-            {Constants.BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.WorkingBufferLength)]}
+            {Encoding.UTF32, new char[Encoding.UTF32.GetMaxCharCount(Constants.BufferLength)]},
+            {Constants.BigEndianUtf32, new char[Encoding.UTF32.GetMaxCharCount(Constants.BufferLength)]}
         };
 
         #endregion

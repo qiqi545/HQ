@@ -31,11 +31,11 @@ namespace HQ.Data.Streaming.Internal
         public const int ReadAheadSize = 128;
         public const int PadSize = 4;
         public const int BlockSize = 4096;
-        public const int WorkingBufferLength = ReadAheadSize + BlockSize + PadSize;
+        public const int BufferLength = ReadAheadSize + BlockSize + PadSize;
 
-        [ThreadStatic] private static byte[] _working;
+        [ThreadStatic] private static byte[] _buffer;
 
         public static readonly UTF32Encoding BigEndianUtf32 = new UTF32Encoding(true, true);
-        public static byte[] WorkingBuffer => _working ?? (_working = new byte[WorkingBufferLength]);
+        public static byte[] Buffer => _buffer ?? (_buffer = new byte[BufferLength]);
     }
 }
