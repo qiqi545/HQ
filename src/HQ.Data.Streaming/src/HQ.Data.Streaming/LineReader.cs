@@ -295,25 +295,29 @@ namespace HQ.Data.Streaming
         }
 
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
-            string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+            string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, Constants.Buffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.Buffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics, cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            string separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+            string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), metrics, cancellationToken);
+            return StreamLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics, cancellationToken);
         }
         
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
-            byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+            byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, Constants.Buffer, separator, metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.Buffer, separator, maxWorkingMemoryBytes, metrics, cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            byte[] separator, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+            byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
            
@@ -330,7 +334,7 @@ namespace HQ.Data.Streaming
                         {
                             if (buffer == null)
                                 buffer = new byte[Math.Max(length, Constants.ReadAheadSize * 2)];
-                            
+
                             var target = new Span<byte>(buffer, pendingLength, length);
                             var segment = new ReadOnlySpan<byte>(start, length);
                             segment.CopyTo(target);
@@ -341,7 +345,15 @@ namespace HQ.Data.Streaming
                             }
                             else
                             {
-                                var ctor = new LineConstructor { lineNumber = lineNumber, length = length + pendingLength, start = buffer };
+                                var ctor = new LineConstructor{lineNumber = lineNumber, length = length + pendingLength, buffer = buffer};
+
+                                if(maxWorkingMemoryBytes > 0)
+                                {
+                                    var usedBytes = queue.Count * (buffer.Length + sizeof(long) + sizeof(int));
+                                    while (usedBytes > maxWorkingMemoryBytes)
+                                        Task.Delay(10, cancellationToken).Wait(cancellationToken);
+                                }
+
                                 queue.Add(ctor, cancellationToken);
                                 pendingLength = 0;
                                 buffer = null;
@@ -349,6 +361,10 @@ namespace HQ.Data.Streaming
 
                         }, metrics, cancellationToken);
                     }
+                }
+                catch (Exception ex)
+                {
+                    throw;
                 }
                 finally
                 {

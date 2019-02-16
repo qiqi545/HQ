@@ -76,7 +76,7 @@ namespace HQ.Data.Streaming.Tests
 
             private unsafe void SetFromLineConstructor(LineConstructor constructor, Encoding encoding, byte[] separator)
             {
-                fixed (byte* from = constructor.start)
+                fixed (byte* from = constructor.buffer)
                 {
                     var start = from;
                     var length = constructor.length;
