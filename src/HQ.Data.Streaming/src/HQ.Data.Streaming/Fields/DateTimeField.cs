@@ -21,7 +21,7 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("DateTime: {Value} ({RawValue}:{_encoding.BodyName})")]
+    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
     public readonly ref struct DateTimeField
     {
         public bool Initialized => _buffer != null;
@@ -42,5 +42,7 @@ namespace HQ.Data.Streaming.Fields
             _buffer = new ReadOnlySpan<byte>(start, length);
             _encoding = encoding;
         }
+
+        public string DisplayName => $"{nameof(DateTimeField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

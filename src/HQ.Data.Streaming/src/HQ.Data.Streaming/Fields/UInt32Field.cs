@@ -21,7 +21,7 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("UInt32: {Value} ({RawValue}:{_encoding.BodyName})")]
+    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
     public readonly ref struct UInt32Field
     {
         public bool Initialized => _buffer != null;
@@ -42,5 +42,8 @@ namespace HQ.Data.Streaming.Fields
             _buffer = new ReadOnlySpan<byte>(start, length);
             _encoding = encoding;
         }
+
+        public string DisplayName => $"{nameof(UInt32Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+
     }
 }

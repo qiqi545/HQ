@@ -21,7 +21,7 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("Boolean: {Value} ({RawValue}:{_encoding.BodyName})")]
+    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
     public readonly ref struct BooleanField
     {
         public bool Initialized => _buffer != null;
@@ -49,5 +49,7 @@ namespace HQ.Data.Streaming.Fields
                 throw ex;
             }
         }
+
+        public string DisplayName => $"{nameof(BooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

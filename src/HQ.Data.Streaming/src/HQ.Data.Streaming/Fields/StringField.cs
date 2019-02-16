@@ -21,7 +21,7 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("String: {Value} ({RawValue}:{_encoding.BodyName})")]
+    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
     public readonly ref struct StringField
     {
         public bool Initialized => _buffer != null;
@@ -45,5 +45,8 @@ namespace HQ.Data.Streaming.Fields
         {
             return new StringField(_start, _length + length, _encoding);
         }
+
+        public string DisplayName => $"{nameof(StringField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+
     }
 }
