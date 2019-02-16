@@ -19,11 +19,11 @@ using System.Diagnostics;
 
 namespace HQ.Data.Streaming
 {
-    [DebuggerDisplay("{lineNumber}: {start}-{(int)(start + length)}")]
+    [DebuggerDisplay("{lineNumber}: {buffer}-{(int)(start + length)}")]
     public struct LineConstructor
     {
         public long lineNumber;
-        public byte[] start;
+        public byte[] buffer;
         public int length;
     }
 }
