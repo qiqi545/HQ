@@ -60,7 +60,7 @@
   <!-- TODO only tokenize changed files -->
   <PropertyGroup>
     <PreBuildEvent>
-      dotnet run -c Release -p &quot;$(MSBuildProjectDirectory)\..\..\package\PackagePrep\PackagePrep.csproj&quot; -- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
+      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)\..\package\PackagePrep\PackagePrep.csproj&quot; -- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
     </PreBuildEvent>
   </PropertyGroup>
 

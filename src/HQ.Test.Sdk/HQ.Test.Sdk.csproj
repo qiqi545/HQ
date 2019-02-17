@@ -16,8 +16,8 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="25.0.4" />
     <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
-    <PackageReference Include="HQ.Extensions.DependencyInjection" Version="1.0.31" />
-    <PackageReference Include="HQ.Extensions.DependencyInjection.AspNetCore" Version="1.0.31" />
+    <PackageReference Include="HQ.Extensions.DependencyInjection" Version="1.0.50" />
+    <PackageReference Include="HQ.Extensions.DependencyInjection.AspNetCore" Version="1.0.50" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
