@@ -1,0 +1,2 @@
+Location: https://github.com/aspnet/Extensions/blob/34204b6bc41de865f5310f5f237781a57a83976c/src/Shared/src/ObjectMethodExecutor/ObjectMethodExecutor.cs
+License: Apache 2.0
