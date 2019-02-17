@@ -16,22 +16,27 @@
 #endregion
 
 using System;
-using HQ.Extensions.CodeGeneration;
+using System.IO;
+using System.Reflection;
+using Microsoft.AspNetCore.NodeServices;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration.Tests
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public class HandlerFactoryFixture : IDisposable
     {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
+        public HandlerFactoryFixture()
         {
-            _inner = inner;
+            var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider())
+                {ProjectPath = Directory.GetCurrentDirectory()};
+            var nodeServices = NodeServicesFactory.CreateNodeServices(options);
+            Factory = new HandlerFactory(nodeServices, typeof(string).GetTypeInfo().Assembly); // mscorlib
         }
 
-        public override object ResolveType(Type serviceType)
+        public HandlerFactory Factory { get; }
+
+        public void Dispose()
         {
-            return _inner.Resolve(serviceType);
         }
     }
 }

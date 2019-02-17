@@ -15,23 +15,12 @@
 
 #endregion
 
-using System;
-using HQ.Extensions.CodeGeneration;
+using System.Runtime.CompilerServices;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+[assembly: InternalsVisibleTo("HQ.Extensions.CodeGeneration.Tests")]
+[assembly: InternalsVisibleTo("HQ.Extensions.CodeGeneration.Benchmarks")]
+
+namespace HQ.Extensions.CodeGeneration.Internal
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
-    {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
-        {
-            _inner = inner;
-        }
-
-        public override object ResolveType(Type serviceType)
-        {
-            return _inner.Resolve(serviceType);
-        }
-    }
+    internal class InternalsVisibleTo { }
 }

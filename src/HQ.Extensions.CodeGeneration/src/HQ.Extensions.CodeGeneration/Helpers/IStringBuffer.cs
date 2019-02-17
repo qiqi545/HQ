@@ -16,22 +16,14 @@
 #endregion
 
 using System;
-using HQ.Extensions.CodeGeneration;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration.Helpers
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public interface IStringBuffer : IDisposable
     {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
-        {
-            _inner = inner;
-        }
-
-        public override object ResolveType(Type serviceType)
-        {
-            return _inner.Resolve(serviceType);
-        }
+        void AppendLine(string value);
+        void AppendLine();
+        void Append(string value);
+        void Append(object value);
     }
 }

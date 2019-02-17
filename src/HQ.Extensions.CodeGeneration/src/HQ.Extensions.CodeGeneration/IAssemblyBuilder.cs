@@ -15,23 +15,19 @@
 
 #endregion
 
-using System;
-using HQ.Extensions.CodeGeneration;
+using System.Reflection;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public interface IAssemblyBuilder
     {
-        private readonly IDependencyResolver _inner;
+        Assembly CreateInMemory(string assemblyName, string code, params Assembly[] dependencies);
+        Assembly CreateInMemory(string assemblyName, string code, params string[] dependencyLocations);
 
-        public DefaultMethodResolver(IDependencyResolver inner)
-        {
-            _inner = inner;
-        }
+        Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
+            params Assembly[] dependencies);
 
-        public override object ResolveType(Type serviceType)
-        {
-            return _inner.Resolve(serviceType);
-        }
+        Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,
+            params string[] dependencyLocations);
     }
 }

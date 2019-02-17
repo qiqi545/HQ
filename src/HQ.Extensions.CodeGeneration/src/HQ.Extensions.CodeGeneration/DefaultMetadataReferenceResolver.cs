@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,23 +15,21 @@
 
 #endregion
 
-using System;
-using HQ.Extensions.CodeGeneration;
+using System.Reflection;
+using Microsoft.CodeAnalysis;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public class DefaultMetadataReferenceResolver : IMetadataReferenceResolver
     {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
+        public MetadataReference Resolve(Assembly assembly)
         {
-            _inner = inner;
+            return MetadataReference.CreateFromFile(assembly.Location);
         }
 
-        public override object ResolveType(Type serviceType)
+        public MetadataReference Resolve(string location)
         {
-            return _inner.Resolve(serviceType);
+            return MetadataReference.CreateFromFile(location);
         }
     }
 }

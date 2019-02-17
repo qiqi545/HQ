@@ -15,23 +15,15 @@
 
 #endregion
 
-using System;
-using HQ.Extensions.CodeGeneration;
+using System.Runtime.Loader;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
     {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
+        public AssemblyLoadContext Get()
         {
-            _inner = inner;
-        }
-
-        public override object ResolveType(Type serviceType)
-        {
-            return _inner.Resolve(serviceType);
+            return AssemblyLoadContext.Default;
         }
     }
 }

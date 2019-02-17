@@ -17,7 +17,7 @@
 
 using System;
 using System.Reflection;
-using HQ.CodeGeneration;
+using HQ.Extensions.CodeGeneration;
 
 namespace HQ.Extensions.DependencyInjection.Internal
 {

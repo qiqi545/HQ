@@ -16,22 +16,30 @@
 #endregion
 
 using System;
-using HQ.Extensions.CodeGeneration;
+using System.Reflection;
 
-namespace HQ.Extensions.DependencyInjection.Internal
+namespace HQ.Extensions.CodeGeneration
 {
-    internal sealed class DefaultMethodResolver : MethodResolverBase
+    public abstract class HandlerResolverBase : IHandlerResolver
     {
-        private readonly IDependencyResolver _inner;
-
-        public DefaultMethodResolver(IDependencyResolver inner)
+        public Handler ResolveHandler(MethodInfo method)
         {
-            _inner = inner;
+            return HandlerFactory.Default.GetOrCacheHandlerFromMethod(method.DeclaringType, method,
+                BuildStrategyFor(method, method.GetParameters()));
         }
 
-        public override object ResolveType(Type serviceType)
+        public Handler ResolveHandler(Type serviceType, string name)
         {
-            return _inner.Resolve(serviceType);
+            var method = ResolveMethod(serviceType, name);
+            return method == null ? null : ResolveHandler(method);
         }
+
+        public Handler ResolveHandler<T>(string name) where T : class
+        {
+            return ResolveHandler(typeof(T), name);
+        }
+
+        public abstract MethodInfo ResolveMethod(Type serviceType, string name);
+        public abstract DelegateBuildStrategy BuildStrategyFor(MethodInfo method, ParameterInfo[] parameters);
     }
 }
