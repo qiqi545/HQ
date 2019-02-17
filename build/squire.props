@@ -1,0 +1,27 @@
+<Project>
+
+  <!--Reference the contentFiles in the package -->
+  <ItemGroup>
+    <PackageReference Include="$(SourceName)" Version="$(SourceVersion)">
+      <IncludeAssets>contentFiles</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+ <!-- https://github.com/dotnet/sdk/blob/master/src/Tasks/Microsoft.NET.Build.Tasks/targets/Microsoft.PackageDependencyResolution.targets-->
+  <Target Name="RunProduceContentAssets"
+          DependsOnTargets="ResolvePackageAssets"
+          Outputs="%(SyncSources.Identity)">
+    <ProduceContentAssets
+      ContentFileDependencies="@(_ContentFilesToPreprocess)"
+      ContentPreprocessorValues="@(PreprocessorValue)"
+      ContentPreprocessorOutputDirectory="$(ContentPreprocessorOutputDirectory)"
+      ProduceOnlyPreprocessorFiles="true"
+      ProjectLanguage="$(Language)">
+      <Output TaskParameter="CopyLocalItems" ItemName="_ContentCopyLocalItems" />
+      <Output TaskParameter="ProcessedContentItems" ItemName="_ProcessedContentItems" />
+      <Output TaskParameter="FileWrites" ItemName="FileWrites" />
+    </ProduceContentAssets>
+    <Exec Command="dotnet run -c Release -p &quot;$(SolutionDir)..\build\Squire\Squire.csproj&quot; -- $(MSBuildProjectDirectory) $(Configuration) $(TargetFramework) %(SyncSources.Identity)" />
+  </Target>
+
+</Project>
