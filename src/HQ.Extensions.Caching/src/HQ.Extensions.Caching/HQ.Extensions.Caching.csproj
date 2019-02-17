@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
+    <PackageReference Include="HQ.CodeGeneration" Version="1.0.48" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />

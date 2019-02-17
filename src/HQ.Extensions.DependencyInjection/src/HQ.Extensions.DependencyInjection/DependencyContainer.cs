@@ -53,9 +53,7 @@ namespace HQ.Extensions.DependencyInjection
 
         public bool ThrowIfCantResolve { get; set; }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         internal bool AddExtension<T>(T extension) where T : IResolverExtension
         {
