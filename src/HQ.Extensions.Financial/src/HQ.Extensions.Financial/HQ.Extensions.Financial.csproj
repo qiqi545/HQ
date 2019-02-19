@@ -11,12 +11,10 @@
 
   <PropertyGroup>
     <Description>
-      Adds currency and financial type supports to .NET.
-
       Commonly used types:
-      Currency
-      CurrencyInfo
-      Money
+      HQ.Extensions.Financial.Currency
+      HQ.Extensions.Financial.CurrencyInfo
+      HQ.Extensions.Financial.Money
     </Description>
   </PropertyGroup>
 

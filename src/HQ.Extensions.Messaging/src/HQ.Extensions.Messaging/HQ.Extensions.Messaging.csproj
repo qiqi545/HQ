@@ -9,10 +9,6 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Description>High-performance Enterprise Service Bus (ESB) and messaging state machine (MSM) for .NET.</Description>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />

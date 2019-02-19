@@ -22,13 +22,9 @@ namespace HQ.Extensions.CodeGeneration.Tests
 {
     public class InstanceFactoryTests
     {
-        public class Foo
-        {
-        }
+        public class Foo { }
 
-        public class Class
-        {
-        }
+        public class Class { }
 
         [Fact]
         public void Can_replace_activator()

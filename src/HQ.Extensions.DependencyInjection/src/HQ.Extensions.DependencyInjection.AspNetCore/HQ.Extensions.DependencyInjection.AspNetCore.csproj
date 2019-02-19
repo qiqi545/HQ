@@ -9,10 +9,6 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Description>High performance, low ceremony DI/IoC container for .NET. This package provides ASP.NET Core HTTP request-based lifetimes.</Description>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
   </ItemGroup>

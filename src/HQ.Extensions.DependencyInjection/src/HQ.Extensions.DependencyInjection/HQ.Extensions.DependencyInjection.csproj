@@ -9,12 +9,8 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Description>High performance, low ceremony DI/IoC container for .NET.</Description>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.49" />
+    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.50" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
