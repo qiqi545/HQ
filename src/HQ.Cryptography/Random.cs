@@ -17,6 +17,7 @@
 
 using System;
 using System.Security.Cryptography;
+using HQ.Cryptography.Internal;
 using NSec.Cryptography;
 using Sodium;
 
@@ -26,25 +27,45 @@ namespace HQ.Cryptography
     {
         private static readonly RandomNumberGenerator SystemNetRandom = RandomNumberGenerator.Create();
 
-        public static byte[] NextBytes(int upperBound, RandomSource source)
+        public static byte[] NextBytes(int length, RandomSource source)
         {
-            var buffer = new byte[upperBound];
+            var buffer = new byte[length];
+            NextBytes(buffer, source);
+            return buffer;
+        }
+
+        public static void NextBytes(byte[] buffer, RandomSource source)
+        {
             switch (source)
             {
                 case RandomSource.SystemNet:
                     SystemNetRandom.GetBytes(buffer);
                     break;
-                case RandomSource.Sodium:
-                    SodiumCore.GetRandomNumber(upperBound);
+                case RandomSource.SodiumCore:
+                    SodiumCore.FillRandomBytes(buffer);
                     break;
                 case RandomSource.NSec:
-                    RandomGenerator.Default.GenerateBytes(upperBound);
+                    RandomGenerator.Default.GenerateBytes(buffer);
                     break;
                 default:
                     throw new NotSupportedException();
             }
+        }
 
-            return buffer;
+        public static void NextBytes(Span<byte> buffer, RandomSource source)
+        {
+            switch (source)
+            {
+                case RandomSource.SodiumCore:
+                    SodiumCore.FillRandomBytes(buffer);
+                    break;
+                case RandomSource.NSec:
+                    RandomGenerator.Default.GenerateBytes(buffer);
+                    break;
+                case RandomSource.SystemNet:
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }

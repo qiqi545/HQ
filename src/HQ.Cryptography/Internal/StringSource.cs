@@ -15,16 +15,12 @@
 
 #endregion
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
-    internal enum HashType
+    internal enum StringSource
     {
-        Md5,
-        Sha1,
-        Sha256,
-        Sha384,
-        Sha512,
-        Blake2B,
-        SipHash24
+        SystemNet,
+        SodiumCore,
+        SodiumCoreDirect
     }
 }

@@ -1,0 +1,3 @@
+[submodule "ThirdParty/Sodium.Core"]
+	path = ThirdParty/Sodium.Core
+	url = https://github.com/hq-io/libsodium-core

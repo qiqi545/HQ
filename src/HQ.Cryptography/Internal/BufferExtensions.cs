@@ -16,17 +16,23 @@
 #endregion
 
 using System;
+using Sodium;
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     internal static class BufferExtensions
     {
-        public static ReadOnlySpan<byte> Concat(this byte[] input, byte[] append)
+        public static ReadOnlySpan<byte> Concat(this byte[] buffer, byte[] append)
         {
-            var result = new byte[checked(input.Length + append.Length)];
-            Buffer.BlockCopy(input, 0, result, 0, input.Length);
-            Buffer.BlockCopy(append, 0, result, input.Length, append.Length);
+            var result = new byte[checked(buffer.Length + append.Length)];
+            Buffer.BlockCopy(buffer, 0, result, 0, buffer.Length);
+            Buffer.BlockCopy(append, 0, result, buffer.Length, append.Length);
             return result;
+        }
+
+        public static string ToHex(this byte[] input)
+        {
+            return Utilities.BinaryToHex(input);
         }
     }
 }

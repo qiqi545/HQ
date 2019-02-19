@@ -15,12 +15,12 @@
 
 #endregion
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     internal enum RandomSource
     {
         SystemNet,
-        Sodium,
+        SodiumCore,
         NSec
     }
 }

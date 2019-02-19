@@ -18,13 +18,13 @@
 using System;
 using System.Security;
 using System.Security.Cryptography;
+using HQ.Cryptography.Internal;
 using Sodium;
 
 namespace HQ.Cryptography
 {
     /// <summary>
-    ///     <see
-    ///         href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.create?view=netframework-4.7.2" />
+    ///     <see href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.create?view=netframework-4.7.2" />
     /// </summary>
     internal static class Hashes
     {
@@ -35,17 +35,42 @@ namespace HQ.Cryptography
             CryptoConfig.AddAlgorithm(typeof(GenericHash.GenericHashAlgorithm), Blake2BDefaultHashName, "Blake-2b");
         }
 
+#if NETCOREAPP
+        public static void ComputeHash(byte[] buffer, byte[] hash, HashType type, HashSource source)
+        {
+            if (CryptoConfig.AllowOnlyFipsAlgorithms && source != HashSource.SystemNetFips)
+                throw new SecurityException("This environment restricts hash algorithms to only those that are FIPS certified.");
+
+            switch (source)
+            {
+                case HashSource.SystemNetFips:
+                    FipsHash(type, buffer, hash);
+                    break;
+                case HashSource.SodiumCore:
+                    SodiumHash(type, buffer, hash);
+                    break;
+                case HashSource.NSec:
+                    NSecHash(type, buffer, hash);
+                    break;
+                case HashSource.SystemNetManaged:
+                    ManagedHash(type, buffer, hash);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
+            }
+        }
+#endif
+
         public static byte[] ComputeHash(byte[] buffer, HashType type, HashSource source)
         {
             if (CryptoConfig.AllowOnlyFipsAlgorithms && source != HashSource.SystemNetFips)
-                throw new SecurityException(
-                    "This environment restricts hash algorithms to only those that are FIPS certified.");
+                throw new SecurityException("This environment restricts hash algorithms to only those that are FIPS certified.");
 
             switch (source)
             {
                 case HashSource.SystemNetFips:
                     return FipsHash(type, buffer);
-                case HashSource.Sodium:
+                case HashSource.SodiumCore:
                     return SodiumHash(type, buffer);
                 case HashSource.NSec:
                     return NSecHash(type, buffer);
@@ -56,7 +81,7 @@ namespace HQ.Cryptography
             }
         }
 
-        #region Factory
+#region Factory
 
         private static readonly HashAlgorithm Md5Managed = MD5.Create();
         private static readonly HashAlgorithm Sha1Managed = SHA1.Create();
@@ -64,9 +89,9 @@ namespace HQ.Cryptography
         private static readonly HashAlgorithm Sha384Managed = SHA384.Create();
         private static readonly HashAlgorithm Sha512Managed = SHA512.Create();
 
-        private static byte[] ManagedHash(HashType hash, byte[] buffer)
+        private static byte[] ManagedHash(HashType type, byte[] buffer)
         {
-            switch (hash)
+            switch (type)
             {
                 case HashType.Md5:
                     return Md5Managed.ComputeHash(buffer);
@@ -84,16 +109,16 @@ namespace HQ.Cryptography
                     throw new NotSupportedException();
             }
         }
-
+        
         private static readonly HashAlgorithm Md5Csp = new MD5CryptoServiceProvider();
         private static readonly HashAlgorithm Sha1Csp = new SHA1CryptoServiceProvider();
         private static readonly HashAlgorithm Sha256Csp = new SHA256CryptoServiceProvider();
         private static readonly HashAlgorithm Sha384Csp = new SHA384CryptoServiceProvider();
         private static readonly HashAlgorithm Sha512Csp = new SHA512CryptoServiceProvider();
 
-        private static byte[] FipsHash(HashType hash, byte[] buffer)
+        private static byte[] FipsHash(HashType type, byte[] buffer)
         {
-            switch (hash)
+            switch (type)
             {
                 case HashType.Md5:
                     return Md5Csp.ComputeHash(buffer);
@@ -118,11 +143,11 @@ namespace HQ.Cryptography
             {
                 case HashType.Sha256:
                     return NSec.Cryptography.HashAlgorithm.Sha256.Hash(buffer);
-                case HashType.Sha384:
                 case HashType.Sha512:
                     return NSec.Cryptography.HashAlgorithm.Sha512.Hash(buffer);
                 case HashType.Md5:
                 case HashType.Sha1:
+                case HashType.Sha384:
                 case HashType.Blake2B:
                 case HashType.SipHash24:
                 default:
@@ -153,6 +178,98 @@ namespace HQ.Cryptography
             }
         }
 
+#if NETCOREAPP
+
+        private static void ManagedHash(HashType type, ReadOnlySpan<byte> buffer, Span<byte> destination)
+        {
+            TryComputeHash(type, buffer, destination, Md5Managed, Sha1Managed, Sha256Managed, Sha384Managed, Sha512Managed);
+        }
+
+        private static void FipsHash(HashType type, ReadOnlySpan<byte> buffer, Span<byte> destination)
+        {
+            TryComputeHash(type, buffer, destination, Md5Csp, Sha1Csp, Sha256Csp, Sha384Csp, Sha512Csp);
+        }
+
+        private static void NSecHash(HashType type, ReadOnlySpan<byte> buffer, Span<byte> hash)
+        {
+            switch (type)
+            {
+                case HashType.Sha256:
+                    NSec.Cryptography.HashAlgorithm.Sha256.Hash(buffer, hash);
+                    break;
+                case HashType.Sha512:
+                    NSec.Cryptography.HashAlgorithm.Sha512.Hash(buffer, hash);
+                    break;
+                case HashType.Md5:
+                case HashType.Sha1:
+                case HashType.Sha384:
+                case HashType.Blake2B:
+                case HashType.SipHash24:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+            }
+        }
+
+        private static void SodiumHash(HashType type, byte[] buffer, byte[] hash)
+        {
+            switch (type)
+            {
+                case HashType.Blake2B:
+                {
+                    Blake2B.TryComputeHash(buffer, hash, out _);
+                    break;
+                }
+                case HashType.SipHash24:
+                {
+                    SodiumLibrary.crypto_shorthash(hash, buffer, buffer.LongLength, SipHash24Key);
+                    break;
+                }
+                case HashType.Sha256:
+                {
+                    SodiumLibrary.crypto_hash_sha256(hash, buffer, buffer.LongLength);
+                    break;
+                }
+                case HashType.Sha512:
+                {
+                    SodiumLibrary.crypto_hash_sha512(hash, buffer, buffer.LongLength);
+                    break;
+                }
+                case HashType.Md5:
+                case HashType.Sha1:
+                case HashType.Sha384:
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private static void TryComputeHash(HashType hash, ReadOnlySpan<byte> buffer, Span<byte> destination,
+            HashAlgorithm md5, HashAlgorithm sha1, HashAlgorithm sha256, HashAlgorithm sha384, HashAlgorithm sha512)
+        {
+            switch (hash)
+            {
+                case HashType.Md5:
+                    md5.TryComputeHash(buffer, destination, out _);
+                    break;
+                case HashType.Sha1:
+                    sha1.TryComputeHash(buffer, destination, out _);
+                    break;
+                case HashType.Sha256:
+                    sha256.TryComputeHash(buffer, destination, out _);
+                    break;
+                case HashType.Sha384:
+                    sha384.TryComputeHash(buffer, destination, out _);
+                    break;
+                case HashType.Sha512:
+                    sha512.TryComputeHash(buffer, destination, out _);
+                    break;
+                case HashType.SipHash24:
+                case HashType.Blake2B:
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+#endif
         #endregion
+
     }
 }

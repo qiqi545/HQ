@@ -17,14 +17,13 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Blockchain")]
-[assembly: InternalsVisibleTo("HQ.Tokens")]
+[assembly: InternalsVisibleTo("HQ.Data.Blockchain")]
+[assembly: InternalsVisibleTo("HQ.Platform.Security")]
 [assembly: InternalsVisibleTo("HQ.Cryptography")]
+[assembly: InternalsVisibleTo("HQ.Cryptography.Tests")]
 [assembly: InternalsVisibleTo("HQ.Cryptography.Benchmarks")]
 
 namespace HQ.Cryptography
 {
-    internal class InternalsVisibleTo
-    {
-    }
+    internal class InternalsVisibleTo { }
 }

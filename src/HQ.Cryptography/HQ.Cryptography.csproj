@@ -1,16 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="libsodium" Version="1.0.17" />
     <PackageReference Include="NSec.Cryptography" Version="18.6.0" />
     <PackageReference Include="Sodium.Core" Version="1.2.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,14 +17,14 @@
 
 using System;
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     [Flags]
     internal enum HashSource : byte
     {
         SystemNetManaged,
         SystemNetFips,
-        Sodium,
+        SodiumCore,
         NSec
     }
 }
