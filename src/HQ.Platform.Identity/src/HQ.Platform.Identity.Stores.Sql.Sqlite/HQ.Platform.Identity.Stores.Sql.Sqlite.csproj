@@ -1,19 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>A powerful extension to ASP.NET Core Identity. This package adds datastore integration for SQLite.</Description>
+    <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.5" />
+    <PackageReference Include="Dapper" Version="1.50.7" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
     <PackageReference Include="HQ.Data.SessionManagement.Sqlite" Version="1.0.44" />
     <PackageReference Include="HQ.Data.Sql.Sqlite" Version="1.0.44" />

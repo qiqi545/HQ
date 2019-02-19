@@ -1,17 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Common.AspNetCore.Mvc" Version="1.0.45" />
+    <PackageReference Include="HQ.Common.AspNetCore.Mvc" Version="1.0.49" />
     <PackageReference Include="HQ.Data.Contracts.AspNetCore.Mvc" Version="1.0.44" />
-    <PackageReference Include="HQ.Platform.Api" Version="1.0.31" />
+    <PackageReference Include="HQ.Platform.Api" Version="1.0.44" />
     <PackageReference Include="HQ.Platform.Security.AspNetCore" Version="1.0.45" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
   </ItemGroup>
@@ -19,9 +20,5 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <Description>A powerful extension to ASP.NET Core Identity. This package adds RESTful API support.</Description>
-  </PropertyGroup>
 
 </Project>

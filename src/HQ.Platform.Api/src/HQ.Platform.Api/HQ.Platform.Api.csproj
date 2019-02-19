@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -9,15 +9,11 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <Description>Public API middleware for ASP.NET Core.</Description>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="HQ.Data.Contracts" Version="1.0.44" />
-    <PackageReference Include="HQ.Extensions.Caching" Version="1.0.31" />
+    <PackageReference Include="HQ.Extensions.Caching" Version="1.0.50" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
