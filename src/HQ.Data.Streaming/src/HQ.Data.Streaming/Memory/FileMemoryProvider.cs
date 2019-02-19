@@ -64,7 +64,7 @@ namespace HQ.Data.Streaming.Memory
                 .OrderBy(x => x).Select(File.OpenRead);
         }
 
-        public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             var histogram = metrics?.Histogram(typeof(FileMemoryProvider<T>), "line_length", SampleType.Uniform);
             var count = 0L;
@@ -80,7 +80,7 @@ namespace HQ.Data.Streaming.Memory
                     sw.WriteLine(line);
                     count++;
 
-                    if (sw.BaseStream.Length < maxWorkingMemoryBytes)
+                    if (maxWorkingMemoryBytes == 0 || sw.BaseStream.Length < maxWorkingMemoryBytes)
                         continue;
 
                     sw.Flush();
