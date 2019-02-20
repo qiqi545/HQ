@@ -17,11 +17,10 @@
 
 using System;
 using System.Security.Cryptography;
-using HQ.Cryptography.Internal;
 using NSec.Cryptography;
 using Sodium;
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     internal static class Random
     {
@@ -42,7 +41,7 @@ namespace HQ.Cryptography
                     SystemNetRandom.GetBytes(buffer);
                     break;
                 case RandomSource.SodiumCore:
-                    SodiumCore.FillRandomBytes(buffer);
+                    SodiumCore.GetRandomBytes(new Span<byte>(buffer, 0, buffer.Length));
                     break;
                 case RandomSource.NSec:
                     RandomGenerator.Default.GenerateBytes(buffer);
@@ -54,15 +53,19 @@ namespace HQ.Cryptography
 
         public static void NextBytes(Span<byte> buffer, RandomSource source)
         {
+            NextBytes(buffer, buffer.Length, source);
+        }
+
+        public static void NextBytes(Span<byte> buffer, int count, RandomSource source)
+        {
             switch (source)
             {
                 case RandomSource.SodiumCore:
-                    SodiumCore.FillRandomBytes(buffer);
+                    SodiumCore.GetRandomBytes(buffer, count);
                     break;
                 case RandomSource.NSec:
                     RandomGenerator.Default.GenerateBytes(buffer);
                     break;
-                case RandomSource.SystemNet:
                 default:
                     throw new NotSupportedException();
             }

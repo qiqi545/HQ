@@ -6,7 +6,7 @@ namespace HQ.Cryptography.Tests
     {
         public RandomStringFixture()
         {
-            Value = Strings.BinToHex(Crypto.RandomBytes(32), StringSource.SystemNet);
+            Value = Crypto.GetRandomString(64);
         }
 
         public string Value { get; set; }

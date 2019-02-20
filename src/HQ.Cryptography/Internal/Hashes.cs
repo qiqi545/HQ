@@ -18,10 +18,9 @@
 using System;
 using System.Security;
 using System.Security.Cryptography;
-using HQ.Cryptography.Internal;
 using Sodium;
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     /// <summary>
     ///     <see href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.create?view=netframework-4.7.2" />
@@ -132,8 +131,9 @@ namespace HQ.Cryptography
                     return Sha512Csp.ComputeHash(buffer);
                 case HashType.SipHash24:
                 case HashType.Blake2B:
-                default:
                     throw new NotSupportedException();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 
@@ -150,6 +150,7 @@ namespace HQ.Cryptography
                 case HashType.Sha384:
                 case HashType.Blake2B:
                 case HashType.SipHash24:
+                    throw new NotSupportedException();
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }

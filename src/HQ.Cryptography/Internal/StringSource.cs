@@ -21,6 +21,7 @@ namespace HQ.Cryptography.Internal
     {
         SystemNet,
         SodiumCore,
-        SodiumCoreDirect
+        SodiumCoreDirect,
+        SodiumCoreUnsafePooled
     }
 }

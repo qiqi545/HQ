@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("HQ.Cryptography.Tests")]
 [assembly: InternalsVisibleTo("HQ.Cryptography.Benchmarks")]
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     internal class InternalsVisibleTo { }
 }

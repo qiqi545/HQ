@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Cryptography
+namespace HQ.Cryptography.Internal
 {
     internal enum HashType
     {
