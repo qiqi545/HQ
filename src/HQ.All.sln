@@ -12,69 +12,75 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "Stack\HQ.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore.Mvc", "Stack\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj", "{8485886D-F8EB-49C3-964A-E1CD7CD1B3FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence", "Stack\HQ.Cadence\src\HQ.Cadence\HQ.Cadence.csproj", "{C009F815-264C-422D-8524-F025A4D90D26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics", "Stack\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj", "{C009F815-264C-422D-8524-F025A4D90D26}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence.AspNetCore", "Stack\HQ.Cadence\src\HQ.Cadence.AspNetCore\HQ.Cadence.AspNetCore.csproj", "{19109D76-F369-4AFA-8225-23E344A19D96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.AspNetCore", "Stack\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\HQ.Extensions.Metrics.AspNetCore.csproj", "{19109D76-F369-4AFA-8225-23E344A19D96}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cadence.Reporters.Console", "Stack\HQ.Cadence\src\HQ.Cadence.Reporters.Console\HQ.Cadence.Reporters.Console.csproj", "{8EBB65D6-9ED1-4E0A-8868-DB377C03CF64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.Reporters.Console", "Stack\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\HQ.Extensions.Metrics.Reporters.Console.csproj", "{8EBB65D6-9ED1-4E0A-8868-DB377C03CF64}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Connect", "Stack\HQ.Connect\src\HQ.Connect\HQ.Connect.csproj", "{75615D3B-3C5A-4A58-9BCE-BB979B6DFEFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement", "Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj", "{75615D3B-3C5A-4A58-9BCE-BB979B6DFEFE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Connect.DocumentDb", "Stack\HQ.Connect\src\HQ.Connect.DocumentDb\HQ.Connect.DocumentDb.csproj", "{2AB29711-026C-42BC-A771-70867911D9AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.DocumentDb", "Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj", "{2AB29711-026C-42BC-A771-70867911D9AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Connect.MySql", "Stack\HQ.Connect\src\HQ.Connect.MySql\HQ.Connect.MySql.csproj", "{56278D9A-CB45-4CF5-8809-E5CDEC4B5B71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.MySql", "Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\HQ.Data.SessionManagement.MySql.csproj", "{56278D9A-CB45-4CF5-8809-E5CDEC4B5B71}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Connect.Sqlite", "Stack\HQ.Connect\src\HQ.Connect.Sqlite\HQ.Connect.Sqlite.csproj", "{EB922853-FF6D-4AF4-B89F-932188D47BF0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.Sqlite", "Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj", "{EB922853-FF6D-4AF4-B89F-932188D47BF0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Connect.SqlServer", "Stack\HQ.Connect\src\HQ.Connect.SqlServer\HQ.Connect.SqlServer.csproj", "{90D5DDB5-DDC4-4586-A4C4-65465CABD55D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.SqlServer", "Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj", "{90D5DDB5-DDC4-4586-A4C4-65465CABD55D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Domicile", "Stack\HQ.Domicile\src\HQ.Domicile\HQ.Domicile.csproj", "{F9C23E0C-05F8-408B-8F79-C394C32908CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Api", "Stack\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj", "{F9C23E0C-05F8-408B-8F79-C394C32908CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Remix", "Stack\HQ.Remix\src\HQ.Remix\HQ.Remix.csproj", "{C2FA9311-F5A9-4493-A166-74C1EA664CFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.CodeGeneration", "Stack\HQ.CodeGeneration\src\HQ.CodeGeneration\HQ.CodeGeneration.csproj", "{C2FA9311-F5A9-4493-A166-74C1EA664CFF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo", "Stack\HQ.Lingo\src\HQ.Lingo\HQ.Lingo.csproj", "{57F0DFDD-0F16-4384-AC6D-18A699EEF2A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql", "Stack\HQ.Data.Sql\src\HQ.Data.Sql\HQ.Data.Sql.csproj", "{57F0DFDD-0F16-4384-AC6D-18A699EEF2A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Queries", "Stack\HQ.Lingo\src\HQ.Lingo.Queries\HQ.Lingo.Queries.csproj", "{1269BF36-2732-4CAE-8949-3406414BBCB7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Queries", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj", "{1269BF36-2732-4CAE-8949-3406414BBCB7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Dapper", "Stack\HQ.Lingo\src\HQ.Lingo.Dapper\HQ.Lingo.Dapper.csproj", "{137DBBF2-028D-45D6-94F0-3D699993FE0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Dapper", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj", "{137DBBF2-028D-45D6-94F0-3D699993FE0A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Builders", "Stack\HQ.Lingo\src\HQ.Lingo.Builders\HQ.Lingo.Builders.csproj", "{9972205F-59D0-47C4-9CE9-3C71E7A63E35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Builders", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Builders\HQ.Data.Sql.Builders.csproj", "{9972205F-59D0-47C4-9CE9-3C71E7A63E35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.DocumentDb", "Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\HQ.Lingo.DocumentDb.csproj", "{5C8C30F4-AE64-4E17-9434-5D15A98934EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.DocumentDb", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj", "{5C8C30F4-AE64-4E17-9434-5D15A98934EB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.SqlServer", "Stack\HQ.Lingo\src\HQ.Lingo.SqlServer\HQ.Lingo.SqlServer.csproj", "{3F3F6073-D03C-4543-92C3-75DC292E4DBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.SqlServer", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj", "{3F3F6073-D03C-4543-92C3-75DC292E4DBC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Sqlite", "Stack\HQ.Lingo\src\HQ.Lingo.Sqlite\HQ.Lingo.Sqlite.csproj", "{D1C15508-EC21-46FA-9134-FC8AD7A1CB5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Sqlite", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj", "{D1C15508-EC21-46FA-9134-FC8AD7A1CB5C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Descriptor", "Stack\HQ.Lingo\src\HQ.Lingo.Descriptor\HQ.Lingo.Descriptor.csproj", "{3DD6AA52-538E-4921-822A-D52C999A8856}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Descriptor", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj", "{3DD6AA52-538E-4921-822A-D52C999A8856}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony", "Stack\HQ.Harmony\src\HQ.Harmony\HQ.Harmony.csproj", "{16D07B29-4FAC-47C0-AABF-B34880A354E3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection", "Stack\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj", "{16D07B29-4FAC-47C0-AABF-B34880A354E3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Harmony.AspNetCore", "Stack\HQ.Harmony\src\HQ.Harmony.AspNetCore\HQ.Harmony.AspNetCore.csproj", "{88E8BBCC-29FD-4BA1-975C-647CBF3314C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.DependencyInjection.AspNetCore", "Stack\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj", "{88E8BBCC-29FD-4BA1-975C-647CBF3314C5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Data.DocumentDb", "Stack\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj", "{94598BB7-A50D-416A-A2CF-07215F44F3A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Rosetta", "Stack\HQ.Rosetta\src\HQ.Rosetta\HQ.Rosetta.csproj", "{37ABF984-8D67-4E5B-B6DB-3AB0FF54A36C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts", "Stack\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj", "{37ABF984-8D67-4E5B-B6DB-3AB0FF54A36C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Rosetta.Runtime", "Stack\HQ.Rosetta\src\HQ.Rosetta.Runtime\HQ.Rosetta.Runtime.csproj", "{2446AC6B-A6E9-42F1-A1FB-C3D735E1D1B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.Runtime", "Stack\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\HQ.Data.Contracts.Runtime.csproj", "{2446AC6B-A6E9-42F1-A1FB-C3D735E1D1B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Rosetta.AspNetCore.Mvc", "Stack\HQ.Rosetta\src\HQ.Rosetta.AspNetCore.Mvc\HQ.Rosetta.AspNetCore.Mvc.csproj", "{CDE33D11-89E5-4AD0-819A-99635F531CE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.AspNetCore.Mvc", "Stack\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj", "{CDE33D11-89E5-4AD0-819A-99635F531CE9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Strings", "Stack\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj", "{DC903DA4-164B-444D-B4A5-C5722F7CEFAC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Lingo.Batching", "Stack\HQ.Lingo\src\HQ.Lingo.Batching\HQ.Lingo.Batching.csproj", "{ACEAD071-8F91-4DD6-A30D-005185727D35}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Batching", "Stack\HQ.Data.Sql\src\HQ.Data.Sql.Batching\HQ.Data.Sql.Batching.csproj", "{ACEAD071-8F91-4DD6-A30D-005185727D35}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cohort", "Stack\HQ.Cohort\src\HQ.Cohort\HQ.Cohort.csproj", "{DF1B29E2-A720-44C1-ADDD-C97391F0E471}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Identity", "Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity\HQ.Extensions.Identity.csproj", "{DF1B29E2-A720-44C1-ADDD-C97391F0E471}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cohort.AspNetCore.Mvc", "Stack\HQ.Cohort\src\HQ.Cohort.AspNetCore.Mvc\HQ.Cohort.AspNetCore.Mvc.csproj", "{2D9ECB53-B01A-4670-AAEC-2C58EC06DAC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Identity.AspNetCore.Mvc", "Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.AspNetCore.Mvc\HQ.Extensions.Identity.AspNetCore.Mvc.csproj", "{2D9ECB53-B01A-4670-AAEC-2C58EC06DAC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Tokens", "Stack\HQ.Tokens\src\HQ.Tokens\HQ.Tokens.csproj", "{F59D8510-AC14-4399-AE47-368053313093}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Security", "Stack\HQ.Platform.Security\src\HQ.Platform.Security\HQ.Platform.Security.csproj", "{F59D8510-AC14-4399-AE47-368053313093}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.MissionControl", "Stack\HQ.MissionControl\src\HQ.MissionControl\HQ.MissionControl.csproj", "{640DE4F1-4013-43CF-908C-2E7A61DF77C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Operations", "Stack\HQ.Platform.Operations\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj", "{640DE4F1-4013-43CF-908C-2E7A61DF77C4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cohort.Stores.Sql.DocumentDb", "Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\HQ.Cohort.Stores.Sql.DocumentDb.csproj", "{C3F58EB9-2023-44FF-B08F-D235A720F71D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Identity.Stores.Sql.DocumentDb", "Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql.DocumentDb\HQ.Extensions.Identity.Stores.Sql.DocumentDb.csproj", "{C3F58EB9-2023-44FF-B08F-D235A720F71D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Cohort.Stores.Sql", "Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql\HQ.Cohort.Stores.Sql.csproj", "{76C13B1C-2D27-4C3C-A1C9-669B20014856}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Identity.Stores.Sql", "Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql\HQ.Extensions.Identity.Stores.Sql.csproj", "{76C13B1C-2D27-4C3C-A1C9-669B20014856}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk", "..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj", "{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk.Xunit", "..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj", "{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Identity.Stores.Sql.Sqlite", "..\..\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql.Sqlite\HQ.Extensions.Identity.Stores.Sql.Sqlite.csproj", "{3C282BF6-A180-44D9-9048-0E97401BB8FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -287,6 +293,24 @@ Global
 		{76C13B1C-2D27-4C3C-A1C9-669B20014856}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{76C13B1C-2D27-4C3C-A1C9-669B20014856}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76C13B1C-2D27-4C3C-A1C9-669B20014856}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2308FEB8-B42B-4CEA-8BAA-8ECBC51C7614}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EF3514D-1ED5-4372-B9FE-1E433A038D2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C282BF6-A180-44D9-9048-0E97401BB8FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

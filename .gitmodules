@@ -1,51 +1,24 @@
 [submodule "src/Stack/HQ.Common"]
 	path = src/Stack/HQ.Common
 	url = https://github.com/hq-io/HQ.Common
-[submodule "src/Stack/HQ.Remix"]
-	path = src/Stack/HQ.Remix
-	url = https://github.com/hq-io/HQ.Remix
-[submodule "src/Stack/HQ.Harmony"]
-	path = src/Stack/HQ.Harmony
-	url = https://github.com/hq-io/HQ.Harmony	
-[submodule "src/Stack/HQ.Touchstone"]
-	path = src/Stack/HQ.Touchstone
-	url = https://github.com/hq-io/HQ.Touchstone	
-[submodule "src/Stack/HQ.Cadence"]
-	path = src/Stack/HQ.Cadence
-	url = https://github.com/hq-io/HQ.Cadence	
-[submodule "src/Stack/HQ.Domicile"]
-	path = src/Stack/HQ.Domicile
-	url = https://github.com/hq-io/HQ.Domicile	
-[submodule "src/Stack/HQ.MissionControl"]
-	path = src/Stack/HQ.MissionControl
-	url = https://github.com/hq-io/HQ.MissionControl	
-[submodule "src/Stack/HQ.Rosetta"]
-	path = src/Stack/HQ.Rosetta
-	url = https://github.com/hq-io/HQ.Rosetta	
-[submodule "src/Stack/HQ.Flow"]
-	path = src/Stack/HQ.Flow
-	url = https://github.com/hq-io/HQ.Flow	
-[submodule "src/Stack/HQ.Cohort"]
-	path = src/Stack/HQ.Cohort
-	url = https://github.com/hq-io/HQ.Cohort
-[submodule "src/Stack/HQ.Tokens"]
-	path = src/Stack/HQ.Tokens	
-	url = https://github.com/hq-io/HQ.Tokens
+[submodule "src/Stack/HQ.Extensions"]
+	path = src/Stack/HQ.Extensions
+	url = https://github.com/hq-io/Extensions
+[submodule "src/Stack/HQ.Data"]
+	path = src/Stack/HQ.Data
+	url = https://github.com/hq-io/Data
+[submodule "src/Stack/HQ.Platform"]
+	path = src/Stack/HQ.Platform
+	url = https://github.com/hq-io/Platform
+[submodule "src/Stack/HQ.Test.Sdk"]
+	path = src/Stack/HQ.Test.Sdk
+	url = https://github.com/hq-io/HQ.Test.Sdk	
 [submodule "src/Stack/HQ.Zero"]
 	path = src/Stack/HQ.Zero
 	url = https://github.com/hq-io/HQ.Zero
-[submodule "src/Stack/System.Data.DocumentDb"]
-	path = src/Stack/System.Data.DocumentDb
-	url = https://github.com/hq-io/System.Data.DocumentDb
-[submodule "src/Stack/HQ.Lingo"]
-	path = src/Stack/HQ.Lingo
-	url = https://github.com/hq-io/HQ.Lingo
-[submodule "src/Stack/HQ.Connect"]
-	path = src/Stack/HQ.Connect
-	url = https://github.com/hq-io/HQ.Connect
+[submodule "src/Stack/HQ.Community"]
+	path = src/Stack/HQ.Community
+	url = https://github.com/hq-io/HQ.Community
 [submodule "src/Stack/HQ.Strings"]
 	path = src/Stack/HQ.Strings
 	url = https://github.com/hq-io/HQ.Strings
-[submodule "src/Stack/HQ.Extensions"]
-	path = src/Stack/HQ.Extensions
-	url = https://github.com/hq-io/HQ.Extensions

@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>This package contains the full-stack build for HQ.IO for the DocumentDb backend.</Description>
+    <Description>This package contains the full-stack build for HQ.io for the DocumentDb backend.</Description>
     <PackageTags>hq-stack</PackageTags>
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ/master/assets/320x320.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/hq-io/HQ/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
@@ -19,13 +19,13 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Description>This package contains the full-stack sources for HQ.IO for the DocumentDb backend.</Description>
+    <Description>This package contains the full-stack sources for HQ.io for the DocumentDb backend.</Description>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\obj\**;..\Stack\HQ.Connect\src\HQ.Connect.DocumentDb\bin\**" Link="Connect.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\obj\**;..\Stack\HQ.Lingo\src\HQ.Lingo.DocumentDb\bin\**" Link="Lingo.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\obj\**;..\Stack\HQ.Cohort\src\HQ.Cohort.Stores.Sql.DocumentDb\bin\**" Link="Cohort.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\obj\**;..\Stack\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\bin\**" Link="Connect.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\obj\**;..\Stack\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\bin\**" Link="Lingo.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql.DocumentDb\obj\**;..\Stack\HQ.Extensions.Identity\src\HQ.Extensions.Identity.Stores.Sql.DocumentDb\bin\**" Link="Cohort.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,14 +1,14 @@
 ##################################################################
 
-HQ.IO uses third-party libraries and other materials, distributed 
-under different licenses than HQ.IO licensed components.
+HQ.io uses third-party libraries and other materials, distributed 
+under different licenses than HQ.io licensed components.
 
 If we have omitted a notice here, please let us know by submitting
 an issue on GitHub, or by emailing support@hq.io
 
 ##################################################################
 
-This packge is an aggregate of all stable HQ.IO components.
+This packge is an aggregate of all stable HQ.io components.
 
 Please see each individual component's git repository for
 licensing information.

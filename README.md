@@ -1,4 +1,4 @@
-HQ.IO
+HQ.io
 =====
 
 [![License](https://img.shields.io/badge/License-RPL%201.5-red.svg)](https://opensource.org/licenses/RPL-1.5)
@@ -9,4 +9,4 @@ HQ.IO
 All project documentation can be found here: https://docs.hq.io
 
 ## License
-HQ.IO is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ/blob/master/LICENSE.md).
+HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ/blob/master/LICENSE.md).
