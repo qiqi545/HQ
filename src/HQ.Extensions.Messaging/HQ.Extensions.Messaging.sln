@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B5D1C9BE
 		..\..\build\version.props = ..\..\build\version.props
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Benchmarks", "test\HQ.Extensions.Messaging.Benchmarks\HQ.Extensions.Messaging.Benchmarks.csproj", "{D781CE15-B71E-49AC-898F-36C68498D37F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,12 @@ Global
 		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +60,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D1988C03-593B-4508-97A3-CDC3C2EBA137} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
 		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
+		{D781CE15-B71E-49AC-898F-36C68498D37F} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3021A61F-9383-4C4A-B162-D1C4C186AB90}
