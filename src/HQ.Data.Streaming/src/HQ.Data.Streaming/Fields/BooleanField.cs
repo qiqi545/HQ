@@ -25,7 +25,10 @@ namespace HQ.Data.Streaming.Fields
     public readonly ref struct BooleanField
     {
         public bool Initialized => _buffer != null;
-        public bool? Value => Initialized ? !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value : default;
+
+        public bool? Value =>
+            Initialized ? !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value : default;
+
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
@@ -50,6 +53,7 @@ namespace HQ.Data.Streaming.Fields
             }
         }
 
-        public string DisplayName => $"{nameof(BooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+        public string DisplayName =>
+            $"{nameof(BooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

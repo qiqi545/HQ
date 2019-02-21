@@ -25,7 +25,10 @@ namespace HQ.Data.Streaming.Fields
     public readonly ref struct UInt64Field
     {
         public bool Initialized => _buffer != null;
-        public ulong? Value => Initialized ? !_encoding.TryParse(_buffer, out ulong value) ? default(ulong?) : value : default;
+
+        public ulong? Value =>
+            Initialized ? !_encoding.TryParse(_buffer, out ulong value) ? default(ulong?) : value : default;
+
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
@@ -43,7 +46,7 @@ namespace HQ.Data.Streaming.Fields
             _encoding = encoding;
         }
 
-        public string DisplayName => $"{nameof(UInt64Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-
+        public string DisplayName =>
+            $"{nameof(UInt64Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

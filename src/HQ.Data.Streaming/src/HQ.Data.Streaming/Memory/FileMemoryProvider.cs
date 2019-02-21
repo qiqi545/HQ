@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,10 +27,10 @@ namespace HQ.Data.Streaming.Memory
 {
     public class FileMemoryProvider<T> : IExternalMemoryProvider<T>
     {
+        private readonly string _baseDirectory;
+        private readonly Func<string, T> _deserialize;
         private readonly int _hashCode;
         private readonly Func<T, string> _serialize;
-        private readonly Func<string, T> _deserialize;
-        private readonly string _baseDirectory;
 
         public FileMemoryProvider(Func<T, string> serialize, Func<string, T> deserialize, string baseDirectory)
         {
@@ -34,14 +51,16 @@ namespace HQ.Data.Streaming.Memory
             File.Delete(GetFilePathForSegment(label, index));
         }
 
-        public IEnumerable<T> Read(string label, int index, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public IEnumerable<T> Read(string label, int index, IComparer<T> sort, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             var stream = File.OpenRead(GetFilePathForSegment(label, index));
 
             return Read(stream, sort, metrics, cancellationToken);
         }
 
-        public IEnumerable<T> Read(Stream stream, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public IEnumerable<T> Read(Stream stream, IComparer<T> sort, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             var list = new List<T>();
             LineReader.ReadLines(stream, Encoding.UTF8, (lineNumber, line, m) =>
@@ -53,18 +72,14 @@ namespace HQ.Data.Streaming.Memory
             return list;
         }
 
-        private string GetFilePathForSegment(string label, int index)
-        {
-            return $"{_baseDirectory}\\{label}_{_hashCode}_{index:D3}.bin";
-        }
-
         public IEnumerable<Stream> GetAllSegments(string label)
         {
             return Directory.GetFiles(_baseDirectory, $"{label}_{_hashCode}_*.bin")
                 .OrderBy(x => x).Select(File.OpenRead);
         }
 
-        public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             var histogram = metrics?.Histogram(typeof(FileMemoryProvider<T>), "line_length", SampleType.Uniform);
             var count = 0L;
@@ -81,7 +96,9 @@ namespace HQ.Data.Streaming.Memory
                     count++;
 
                     if (maxWorkingMemoryBytes == 0 || sw.BaseStream.Length < maxWorkingMemoryBytes)
+                    {
                         continue;
+                    }
 
                     sw.Flush();
                     sw.Close();
@@ -98,12 +115,13 @@ namespace HQ.Data.Streaming.Memory
             return new SegmentStats
             {
                 RecordCount = count,
-                RecordLength = (int)(histogram?.Mean ?? 0) + 1,
-                SegmentCount = segments,
+                RecordLength = (int) (histogram?.Mean ?? 0) + 1,
+                SegmentCount = segments
             };
         }
 
-        public void Sort(string fromLabel, string toLabel, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public void Sort(string fromLabel, string toLabel, IComparer<T> sort, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             var streams = GetAllSegments(fromLabel);
             var data = new Queue<Stream>(streams);
@@ -119,35 +137,50 @@ namespace HQ.Data.Streaming.Memory
                             var line = _serialize(item);
                             sw.WriteLine(line);
                         }
+
                         sw.Flush();
                     }
                 }
+
                 DeleteSegment(fromLabel, i);
             }
         }
 
         /// <summary>
-        /// https://en.wikipedia.org/wiki/K-way_merge_algorithm
+        ///     https://en.wikipedia.org/wiki/K-way_merge_algorithm
         /// </summary>
-        public IEnumerable<T> Merge(string label, int maxWorkingMemoryBytes, SegmentStats stats, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public IEnumerable<T> Merge(string label, SegmentStats stats, int maxWorkingMemoryBytes = 0,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             var segments = GetAllSegments(label).ToList();
-            var queueSize = (int) Math.Min(stats.RecordCount, maxWorkingMemoryBytes / segments.Count / stats.RecordLength);
+            var queueSize = (int) Math.Min(stats.RecordCount,
+                maxWorkingMemoryBytes / segments.Count / stats.RecordLength);
+            if (queueSize == 0)
+            {
+                queueSize = (int) stats.RecordCount;
+            }
 
             var readers = new StreamReader[segments.Count];
             for (var i = 0; i < segments.Count; i++)
+            {
                 readers[i] = new StreamReader(segments[i]);
+            }
 
             var queues = new Queue<string>[segments.Count];
             for (var i = 0; i < segments.Count; i++)
+            {
                 queues[i] = new Queue<string>(queueSize);
+            }
 
             for (var i = 0; i < segments.Count; i++)
             {
                 for (var j = 0; j < queueSize; j++)
                 {
                     if (readers[i].Peek() < 0)
+                    {
                         break;
+                    }
+
                     var line = readers[i].ReadLine();
                     queues[i].Enqueue(line);
                 }
@@ -164,47 +197,69 @@ namespace HQ.Data.Streaming.Memory
                     {
                         var queue = queues[i];
                         if (queue == default)
+                        {
                             continue;
+                        }
 
                         var next = queue.Peek();
                         if (segment >= 0 && string.CompareOrdinal(next, current) >= 0)
+                        {
                             continue;
+                        }
 
                         segment = i;
                         current = next;
                     }
 
                     if (segment == -1)
+                    {
                         break;
+                    }
 
                     var l = queues[segment].Dequeue();
 
                     yield return _deserialize(l);
 
                     if (queues[segment].Count != 0)
+                    {
                         continue;
+                    }
 
                     for (var i = 0; i < queueSize; i++)
                     {
                         var next = readers[segment].Peek();
                         if (next < 0)
+                        {
                             break;
+                        }
+
                         var line = readers[segment].ReadLine();
                         queues[segment].Enqueue(line);
                     }
 
                     if (queues[segment].Count == 0)
+                    {
                         queues[segment] = null;
+                    }
                 }
             }
             finally
             {
                 for (var i = 0; i < segments.Count; i++)
+                {
                     readers[i].Close();
+                }
 
                 for (var i = 0; i < segments.Count; i++)
+                {
                     DeleteSegment(label, i);
+                }
             }
+        }
+
+        private string GetFilePathForSegment(string label, int index)
+        {
+            return $"{_baseDirectory}\\{label}_{_hashCode}_{index:D3}.bin";
         }
     }
 }

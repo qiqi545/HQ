@@ -22,31 +22,31 @@ using System.Text;
 namespace HQ.Data.Streaming.Fields
 {
     [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct DecimalField
+    public readonly ref struct GuidField
     {
         public bool Initialized => _buffer != null;
 
-        public decimal? Value =>
-            Initialized ? !_encoding.TryParse(_buffer, out decimal value) ? default(decimal?) : value : default;
+        public Guid? Value =>
+            Initialized ? !_encoding.TryParse(_buffer, out Guid value) ? default(Guid?) : value : default;
 
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
 
-        public DecimalField(ReadOnlySpan<byte> buffer, Encoding encoding)
+        public GuidField(ReadOnlySpan<byte> buffer, Encoding encoding)
         {
             _buffer = buffer;
             _encoding = encoding;
         }
 
-        public unsafe DecimalField(byte* start, int length, Encoding encoding)
+        public unsafe GuidField(byte* start, int length, Encoding encoding)
         {
             _buffer = new ReadOnlySpan<byte>(start, length);
             _encoding = encoding;
         }
 
         public string DisplayName =>
-            $"{nameof(DecimalField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+            $"{nameof(GuidField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

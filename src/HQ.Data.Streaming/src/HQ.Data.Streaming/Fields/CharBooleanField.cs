@@ -33,14 +33,23 @@ namespace HQ.Data.Streaming.Fields
         {
             var @char = !char.TryParse(_encoding.GetString(_buffer), out var value) ? default(char?) : value;
             if (!@char.HasValue)
+            {
                 return null;
+            }
+
             if (_true.Contains(@char.Value))
+            {
                 return true;
+            }
+
             if (_false.Contains(@char.Value))
+            {
                 return false;
+            }
+
             return null;
         }
-        
+
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
 
@@ -71,6 +80,7 @@ namespace HQ.Data.Streaming.Fields
             }
         }
 
-        public string DisplayName => $"{nameof(CharBooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+        public string DisplayName =>
+            $"{nameof(CharBooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

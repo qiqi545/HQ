@@ -25,7 +25,11 @@ namespace HQ.Data.Streaming.Fields
     public readonly ref struct DateTimeOffsetField
     {
         public bool Initialized => _buffer != null;
-        public DateTimeOffset? Value => Initialized ? !_encoding.TryParse(_buffer, out DateTimeOffset value) ? default(DateTimeOffset?) : value : default;
+
+        public DateTimeOffset? Value => Initialized
+            ? !_encoding.TryParse(_buffer, out DateTimeOffset value) ? default(DateTimeOffset?) : value
+            : default;
+
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
@@ -43,6 +47,7 @@ namespace HQ.Data.Streaming.Fields
             _encoding = encoding;
         }
 
-        public string DisplayName => $"{nameof(DateTimeOffsetField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+        public string DisplayName =>
+            $"{nameof(DateTimeOffsetField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

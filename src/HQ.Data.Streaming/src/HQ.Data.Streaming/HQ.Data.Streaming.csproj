@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Extensions.Metrics" Version="1.0.36" />
+    <PackageReference Include="HQ.Extensions.Metrics" Version="1.0.51" />
     <PackageReference Include="HQ.Strings" Version="1.0.30" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>

@@ -25,8 +25,11 @@ namespace HQ.Data.Streaming.Fields
     public readonly ref struct UInt32Field
     {
         public bool Initialized => _buffer != null;
-        public uint? Value => Initialized ? !_encoding.TryParse(_buffer, out uint value) ? default(uint?) : value : default;
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default; 
+
+        public uint? Value =>
+            Initialized ? !_encoding.TryParse(_buffer, out uint value) ? default(uint?) : value : default;
+
+        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
@@ -43,7 +46,7 @@ namespace HQ.Data.Streaming.Fields
             _encoding = encoding;
         }
 
-        public string DisplayName => $"{nameof(UInt32Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-
+        public string DisplayName =>
+            $"{nameof(UInt32Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

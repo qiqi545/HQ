@@ -27,10 +27,14 @@ namespace HQ.Data.Streaming.Internal
         public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
         {
             if (!WorkingSeparators.TryGetValue(encoding, out var buffers))
+            {
                 WorkingSeparators.Add(encoding, buffers = new Dictionary<string, byte[]>());
+            }
 
             if (!buffers.TryGetValue(separator, out var buffer))
+            {
                 buffers.Add(separator, buffer = BuildSeparatorBuffer(encoding, separator));
+            }
 
             return buffer;
         }
@@ -78,7 +82,10 @@ namespace HQ.Data.Streaming.Internal
         public static byte[] GetPreambleBuffer(this Encoding encoding)
         {
             if (!WorkingPreambles.TryGetValue(encoding, out var buffer))
+            {
                 WorkingPreambles.Add(encoding, buffer = encoding.GetPreamble());
+            }
+
             return buffer;
         }
 
@@ -99,7 +106,10 @@ namespace HQ.Data.Streaming.Internal
         public static char[] GetCharBuffer(this Encoding encoding)
         {
             if (!WorkingChars.TryGetValue(encoding, out var buffer))
+            {
                 WorkingChars.Add(encoding, buffer = new char[encoding.GetMaxCharCount(Constants.BufferLength)]);
+            }
+
             return buffer;
         }
 

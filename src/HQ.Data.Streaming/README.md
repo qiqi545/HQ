@@ -9,4 +9,4 @@ HQ.Data.Streaming
 All project documentation can be found here: https://docs.hq.io
 
 ## License
-HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/HQ.Data/blob/master/LICENSE.txt).
+HQ.io is licensed under RPL 1.5. More details can be found [here](https://github.com/hq-io/Shared/blob/master/LICENSE.txt).

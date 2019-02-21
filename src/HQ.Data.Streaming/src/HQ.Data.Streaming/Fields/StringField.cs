@@ -32,7 +32,7 @@ namespace HQ.Data.Streaming.Fields
         private readonly int _length;
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;
-        
+
         public unsafe StringField(byte* start, int length, Encoding encoding)
         {
             _buffer = new ReadOnlySpan<byte>(start, length);
@@ -46,7 +46,7 @@ namespace HQ.Data.Streaming.Fields
             return new StringField(_start, _length + length, _encoding);
         }
 
-        public string DisplayName => $"{nameof(StringField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-
+        public string DisplayName =>
+            $"{nameof(StringField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
     }
 }

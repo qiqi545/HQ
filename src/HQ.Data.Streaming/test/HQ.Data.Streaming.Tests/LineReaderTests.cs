@@ -51,12 +51,39 @@ namespace HQ.Data.Streaming.Tests
             {
                 var lines = 0UL;
                 var sw = Stopwatch.StartNew();
-                foreach(var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8, "|"))
+                foreach (var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8, "|"))
                 {
                     var row = new DummyData(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
                     Assert.NotNull(row.someField.Value);
                     lines++;
                 }
+
+                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
+            }
+        }
+
+        [Test]
+        public void Can_count_lines()
+        {
+            var expected = 10000L;
+            using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
+            {
+                var sw = Stopwatch.StartNew();
+                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
+                Assert.Equal(expected, lines);
+                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
+            }
+        }
+
+        [Test]
+        public void Can_count_lines_ranged()
+        {
+            var expected = 10000L;
+            using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
+            {
+                var sw = Stopwatch.StartNew();
+                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
+                Assert.Equal(expected, lines);
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
@@ -66,7 +93,7 @@ namespace HQ.Data.Streaming.Tests
             public StringField someField;
             public StringField extraFields;
 
-            public DummyData(LineConstructor constructor, Encoding encoding,  byte[] separator)
+            public DummyData(LineConstructor constructor, Encoding encoding, byte[] separator)
             {
                 someField = default;
                 extraFields = default;
@@ -88,11 +115,18 @@ namespace HQ.Data.Streaming.Tests
                         if (next == -1)
                         {
                             if (line.IndexOf(Constants.CarriageReturn) > -1)
+                            {
                                 someField = new StringField(start, length - 2, encoding);
+                            }
                             else if (line.IndexOf(Constants.LineFeed) > -1)
+                            {
                                 someField = new StringField(start, length - 1, encoding);
+                            }
                             else
+                            {
                                 someField = new StringField(start, length, encoding);
+                            }
+
                             break;
                         }
 
@@ -115,32 +149,6 @@ namespace HQ.Data.Streaming.Tests
                         column++;
                     }
                 }
-            }
-        }
-
-        [Test]
-        public void Can_count_lines()
-        {
-            var expected = 10000L;
-            using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
-            {
-                var sw = Stopwatch.StartNew();
-                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
-                Assert.Equal(expected, lines);
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
-            }
-        }
-
-        [Test]
-        public void Can_count_lines_ranged()
-        {
-            var expected = 10000L;
-            using (var fixture = new FlatFileFixture((int)expected, Encoding.UTF8))
-            {
-                var sw = Stopwatch.StartNew();
-                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
-                Assert.Equal(expected, lines);
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
     }

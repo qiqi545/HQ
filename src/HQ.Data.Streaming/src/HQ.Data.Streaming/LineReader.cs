@@ -13,32 +13,6 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 
-//
-// MimeParser.cs
-//
-// Author: Jeffrey Stedfast <jestedfa@microsoft.com>
-//
-// Copyright (c) 2013-2019 Xamarin Inc. (www.xamarin.com)
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-
 #endregion
 
 using System;
@@ -73,23 +47,30 @@ namespace HQ.Data.Streaming
                 fixed (byte* buffer = workingBuffer)
                 {
                     if (stream.CanSeek && stream.Position != offset)
+                    {
                         stream.Seek(offset, SeekOrigin.Begin);
+                    }
 
-                    if (!ReadPreamble(stream, preamble, buffer, workingBuffer, ref from, ref to, ref endOfStream, cancellationToken))
+                    if (!ReadPreamble(stream, preamble, buffer, workingBuffer, ref from, ref to, ref endOfStream,
+                        cancellationToken))
+                    {
                         throw new FormatException(ErrorStrings.Evolve_UnexpectedEndOfStream);
+                    }
 
                     do
                     {
                         if (ReadAhead(stream, workingBuffer, Constants.ReadAheadSize, 2, ref from, ref to,
                                 ref endOfStream,
                                 cancellationToken) <= 0)
+                        {
                             break;
+                        }
 
                         var position = buffer + from;
                         var end = buffer + to;
                         var startIndex = from;
-                        
-                        *end = (byte)'\n';
+
+                        *end = (byte) '\n';
 
                         while (position < end)
                         {
@@ -100,9 +81,12 @@ namespace HQ.Data.Streaming
 
                             *aligned = Constants.LineFeed;
                             while (*position != Constants.LineFeed)
+                            {
                                 position++;
+                            }
+
                             *aligned = c;
-                            
+
                             if (position == aligned && c != Constants.LineFeed)
                             {
                                 var dword = (uint*) position;
@@ -115,7 +99,9 @@ namespace HQ.Data.Streaming
 
                                 position = (byte*) (dword - 1);
                                 while (*position != Constants.LineFeed)
+                                {
                                     position++;
+                                }
                             }
 
                             var length = (int) (position - start);
@@ -193,16 +179,18 @@ namespace HQ.Data.Streaming
 
         #region API
 
-        public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null,
+            CancellationToken cancellationToken = default)
         {
             return CountLines(stream, encoding, Constants.Buffer, metrics, cancellationToken);
         }
 
-        public static long CountLines(Stream stream, Encoding encoding, byte[] workingBuffer, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long CountLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadOrCountLines(stream, encoding, workingBuffer, null, cancellationToken, metrics);
         }
-        
+
         public static long ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
             IMetricsHost metrics = null,
             CancellationToken cancellationToken = default)
@@ -215,7 +203,9 @@ namespace HQ.Data.Streaming
                 NewLine newLine = (lineNumber, partial, start, length, x, m) =>
                 {
                     if (buffer == null)
+                    {
                         buffer = new byte[Constants.ReadAheadSize * 2];
+                    }
 
                     var target = new Span<byte>(buffer, pendingLength, length);
                     var segment = new ReadOnlySpan<byte>(start, length);
@@ -255,17 +245,20 @@ namespace HQ.Data.Streaming
             return ReadOrCountLines(stream, encoding, Constants.Buffer, onNewLine, cancellationToken, metrics);
         }
 
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadOrCountLines(stream, encoding, workingBuffer, onNewLine, cancellationToken, metrics);
         }
 
-        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
         }
 
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
+            NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -277,12 +270,14 @@ namespace HQ.Data.Streaming
             }
         }
 
-        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
+            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
         }
 
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
+            NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
         {
             unsafe
             {
@@ -298,21 +293,26 @@ namespace HQ.Data.Streaming
             string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
             CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, Constants.Buffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.Buffer,
+                encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
+                cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
             string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
             CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics, cancellationToken);
+            return StreamLines(stream, encoding, workingBuffer,
+                encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
+                cancellationToken);
         }
-        
+
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
             byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
             CancellationToken cancellationToken = default)
         {
-            return StreamLines(stream, encoding, Constants.Buffer, separator, maxWorkingMemoryBytes, metrics, cancellationToken);
+            return StreamLines(stream, encoding, Constants.Buffer, separator, maxWorkingMemoryBytes, metrics,
+                cancellationToken);
         }
 
         public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
@@ -320,8 +320,8 @@ namespace HQ.Data.Streaming
             CancellationToken cancellationToken = default)
         {
             var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
-           
-            void ReadLines(Encoding e) 
+
+            void ReadLines(Encoding e)
             {
                 var pendingLength = 0;
                 byte[] buffer = null; // TODO convert to allocator
@@ -333,7 +333,9 @@ namespace HQ.Data.Streaming
                         LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
                         {
                             if (buffer == null)
+                            {
                                 buffer = new byte[Math.Max(length, Constants.ReadAheadSize * 2)];
+                            }
 
                             var target = new Span<byte>(buffer, pendingLength, length);
                             var segment = new ReadOnlySpan<byte>(start, length);
@@ -345,26 +347,24 @@ namespace HQ.Data.Streaming
                             }
                             else
                             {
-                                var ctor = new LineConstructor{lineNumber = lineNumber, length = length + pendingLength, buffer = buffer};
+                                var ctor = new LineConstructor
+                                    {lineNumber = lineNumber, length = length + pendingLength, buffer = buffer};
 
-                                if(maxWorkingMemoryBytes > 0)
+                                if (maxWorkingMemoryBytes > 0)
                                 {
                                     var usedBytes = queue.Count * (buffer.Length + sizeof(long) + sizeof(int));
                                     while (usedBytes > maxWorkingMemoryBytes)
+                                    {
                                         Task.Delay(10, cancellationToken).Wait(cancellationToken);
+                                    }
                                 }
 
                                 queue.Add(ctor, cancellationToken);
                                 pendingLength = 0;
                                 buffer = null;
                             }
-
                         }, metrics, cancellationToken);
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw;
                 }
                 finally
                 {
@@ -382,11 +382,15 @@ namespace HQ.Data.Streaming
         #region Alignment
 
         // Derived from MimeKit's MimeParser
-        private static int ReadAhead(Stream stream, byte[] workingBytes, int minimumSize, int save, ref int from, ref int to,
+        private static int ReadAhead(Stream stream, byte[] workingBytes, int minimumSize, int save, ref int from,
+            ref int to,
             ref bool endOfStream, CancellationToken cancellationToken)
         {
-            if (!AlignReadAheadBuffer(workingBytes, minimumSize, save, ref from, ref to, ref endOfStream, out var remaining, out var start, out var end))
+            if (!AlignReadAheadBuffer(workingBytes, minimumSize, save, ref from, ref to, ref endOfStream,
+                out var remaining, out var start, out var end))
+            {
                 return remaining;
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
             var read = stream.Read(workingBytes, start, end - start);
@@ -411,7 +415,9 @@ namespace HQ.Data.Streaming
             end = to;
 
             if (remaining >= min || endOfStream)
+            {
                 return false;
+            }
 
             remaining += save;
 

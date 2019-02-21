@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,14 +15,15 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Running;
 
-[assembly: InternalsVisibleTo("HQ.Data.Streaming.Tests")]
-[assembly: InternalsVisibleTo("HQ.Data.Streaming.Benchmarks")]
-
-namespace HQ.Data.Streaming.Internal
+namespace HQ.Data.Streaming.Benchmarks
 {
-    internal sealed class InternalsVisibleTo
+    internal class Program
     {
+        private static void Main()
+        {
+            BenchmarkRunner.Run<LineCountBenchmarks>();
+        }
     }
 }
