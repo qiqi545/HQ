@@ -33,17 +33,24 @@ namespace HQ.Extensions.DependencyInjection.AspNetCore
             {
                 var accessor = host.Resolve<IHttpContextAccessor>();
                 if (accessor?.HttpContext == null)
+                {
                     return f(); // always new
+                }
 
                 var cache = accessor.HttpContext.Items;
                 var cacheKey = f.ToString();
                 if (cache.TryGetValue(cacheKey, out var item))
+                {
                     return (T) item; // got it
+                }
 
                 item = f(); // need it
                 cache.Add(cacheKey, item);
                 if (item is IDisposable disposable)
+                {
                     accessor.HttpContext.Response.RegisterForDispose(disposable);
+                }
+
                 return (T) item;
             };
         }
@@ -54,17 +61,24 @@ namespace HQ.Extensions.DependencyInjection.AspNetCore
             {
                 var accessor = r.Resolve<IHttpContextAccessor>();
                 if (accessor?.HttpContext == null)
+                {
                     return f(host); // always new
+                }
 
                 var cache = accessor.HttpContext.Items;
                 var cacheKey = f.ToString();
                 if (cache.TryGetValue(cacheKey, out var item))
+                {
                     return (T) item; // got it
+                }
 
                 item = f(host); // need it
                 cache.Add(cacheKey, item);
                 if (item is IDisposable disposable)
+                {
                     accessor.HttpContext.Response.RegisterForDispose(disposable);
+                }
+
                 return (T) item;
             };
         }

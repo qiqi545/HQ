@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.50" />
+    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.51" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
   </ItemGroup>
