@@ -47,6 +47,7 @@ namespace HQ.Extensions.Messaging
         public static void Clear()
         {
             if (_allStateInstances != null)
+            {
                 foreach (var state in _allStateInstances)
                 {
                     var stateInstanceLookupType = typeof(StateInstanceLookup<>).MakeGenericType(state.GetType());
@@ -56,6 +57,7 @@ namespace HQ.Extensions.Messaging
                         stateInstanceLookupType.GetMethod(nameof(StateInstanceLookup<State>.Clear), bindingFlags);
                     clearMethod?.Invoke(null, null);
                 }
+            }
 
             _allStatesByType?.Clear();
             _allStatesByType = null;
@@ -130,10 +132,14 @@ namespace HQ.Extensions.Messaging
             {
                 // ReSharper disable once SuspiciousTypeConversion.Global
                 if (!(state is INamedState queryable))
+                {
                     continue;
+                }
 
                 if (queryable.Name == symbol)
+                {
                     return state;
+                }
             }
 
             return null;
@@ -184,7 +190,9 @@ namespace HQ.Extensions.Messaging
             var stateMachinesToAbstractStates = new Dictionary<Type, Dictionary<Type, MethodTable>>();
 
             foreach (var type in types.Where(t => typeof(StateProvider).IsAssignableFrom(t)))
+            {
                 SetupStateMachineTypeRecursive(stateMachinesToStates, stateMachinesToAbstractStates, type);
+            }
 
             _allStatesByType = new Dictionary<Type, List<State>>();
             foreach (var stateMachineAndStates in stateMachinesToStates.NetworkOrder(kvp => kvp.Key.ToString()))
@@ -211,14 +219,19 @@ namespace HQ.Extensions.Messaging
         private static void Initialize()
         {
             if (Interlocked.CompareExchange(ref _allStateInstances, new List<State>(), null) != null)
+            {
                 throw new AlreadyInitializedException();
+            }
         }
 
         private static string GetStateName(MemberInfo stateType)
         {
             var stateName = stateType.Name;
             if (stateName != "State" && stateName.EndsWith("State"))
+            {
                 stateName = stateName.Substring(0, stateName.Length - "State".Length);
+            }
+
             return stateName;
         }
 
@@ -230,7 +243,9 @@ namespace HQ.Extensions.Messaging
             Debug.Assert(typeof(StateProvider).IsAssignableFrom(stateMachineType));
 
             if (stateMachinesToStates.ContainsKey(stateMachineType))
+            {
                 return;
+            }
 
             Dictionary<Type, State> baseStates = null;
             Dictionary<Type, MethodTable> baseAbstractStates = null;
@@ -269,7 +284,9 @@ namespace HQ.Extensions.Messaging
                             var naturalName = methodName.Replace(StateDisambiguatorPrefix, string.Empty);
 
                             if (stateMethods.ContainsKey(naturalName))
+                            {
                                 duplicateMethods.Add(naturalName);
+                            }
                         }
 
                         throw new DuplicateStateMethodException(duplicateMethods.ToArray());
@@ -286,16 +303,23 @@ namespace HQ.Extensions.Messaging
                            BindingFlags.Public | BindingFlags.NonPublic)) == null)
             {
                 if (!typeof(StateProvider).IsAssignableFrom(methodTableSearchType?.BaseType))
+                {
                     break;
+                }
+
                 methodTableSearchType = methodTableSearchType?.BaseType;
             }
 
             if (methodTableType == null)
+            {
                 throw new InvalidOperationException($"{nameof(MethodTable)} not found for {stateMachineType}");
+            }
 
             if (!typeof(MethodTable).IsAssignableFrom(methodTableType))
+            {
                 throw new InvalidOperationException(
                     $"{nameof(MethodTable)} must be derived from StateMachine.MethodTable");
+            }
 
             var states = new Dictionary<Type, State>();
             var abstractStates = new Dictionary<Type, MethodTable>();
@@ -321,8 +345,10 @@ namespace HQ.Extensions.Messaging
             }
 
             foreach (var stateType in newStateTypes)
+            {
                 SetupStateTypeRecursive(states, abstractStates, stateType, stateMachineType, methodTableType,
                     stateMethods);
+            }
 
             var stateTypesToMethodTables = states
                 .Select(kvp => new KeyValuePair<Type, MethodTable>(kvp.Key, kvp.Value.methodTable))
@@ -335,7 +361,9 @@ namespace HQ.Extensions.Messaging
                     .Where(fi => fi.FieldType.BaseType == typeof(MulticastDelegate)).ToList();
 
                 if (!allMethodTableEntries.Any())
+                {
                     stateMethods.Clear();
+                }
 
                 var toRemove = new List<string>(stateMethods.Keys);
                 foreach (var fieldInfo in allMethodTableEntries)
@@ -343,7 +371,9 @@ namespace HQ.Extensions.Messaging
                 {
                     var ignore = stateMethod.Value.GetCustomAttributes(typeof(IgnoreStateMethodAttribute), false);
                     if (ignore.Length > 0)
+                    {
                         continue;
+                    }
 
                     var aliasName = $@"{fieldInfo.Name}";
                     var disambiguatedName = $@"{StateDisambiguatorPrefix}_\w*_{fieldInfo.Name}";
@@ -352,14 +382,21 @@ namespace HQ.Extensions.Messaging
                     if (Regex.IsMatch(stateMethod.Key, disambiguatedName) ||
                         Regex.IsMatch(stateMethod.Key, naturalName) ||
                         stateMethod.Key == aliasName)
+                    {
                         toRemove.Remove(stateMethod.Key);
+                    }
                 }
 
                 foreach (var stateMethod in toRemove)
+                {
                     stateMethods.Remove(stateMethod);
+                }
             }
 
-            if (stateMethods.Count > 0) throw new UnusedStateMethodsException(stateMethods.Values);
+            if (stateMethods.Count > 0)
+            {
+                throw new UnusedStateMethodsException(stateMethods.Values);
+            }
 
             foreach (var typeToMethodTable in stateTypesToMethodTables)
             {
@@ -370,7 +407,9 @@ namespace HQ.Extensions.Messaging
                 foreach (var fieldInfo in allMethodTableEntries)
                 {
                     if (fieldInfo.GetCustomAttributes(typeof(AlwaysNullCheckedAttribute), true).Length != 0)
+                    {
                         continue;
+                    }
 
                     if (fieldInfo.GetValue(methodTable) == null)
                     {
@@ -403,10 +442,14 @@ namespace HQ.Extensions.Messaging
             var stateTypeName = newStateTypeMethod.DeclaringType?.Name;
 
             if (methodName.StartsWith($"{stateTypeName}{Separator}"))
+            {
                 methodName = $"{StateDisambiguatorPrefix}{methodName}";
+            }
             else if (!methodName.StartsWith($"{StateDisambiguatorPrefix}{stateTypeName}{Separator}"))
+            {
                 methodName =
                     $"{StateDisambiguatorPrefix}{newStateTypeMethod?.DeclaringType?.Name}{Separator}{newStateTypeMethod.Name}";
+            }
 
             return methodName;
         }
@@ -414,7 +457,9 @@ namespace HQ.Extensions.Messaging
         private static void EmitDefault(ILGenerator il, Type type)
         {
             if (type == typeof(void))
+            {
                 return;
+            }
 
             switch (Type.GetTypeCode(type))
             {
@@ -465,7 +510,9 @@ namespace HQ.Extensions.Messaging
             Type stateType, Type stateMachineType, Type methodTableType, Dictionary<string, MethodInfo> stateMethods)
         {
             if (states.ContainsKey(stateType) || abstractStates.ContainsKey(stateType))
+            {
                 return;
+            }
 
             if (stateType == typeof(State) && stateMachineType == typeof(StateProvider))
             {
@@ -509,15 +556,21 @@ namespace HQ.Extensions.Messaging
 
             var baseType = state.GetType();
             if (!baseType.IsAssignableFrom(derivedType))
+            {
                 throw new Exception("Method table inheritance hierarchy error.");
+            }
 
             if (derivedType.ContainsGenericParameters)
+            {
                 return state;
+            }
 
             var derivedMethodTable = (MethodTable) Activator.CreateInstance(derivedType);
             foreach (var field in baseType.GetFields(BindingFlags.Public | BindingFlags.NonPublic |
                                                      BindingFlags.Instance))
+            {
                 field.SetValue(derivedMethodTable, field.GetValue(state));
+            }
 
             return derivedMethodTable;
         }
@@ -536,7 +589,9 @@ namespace HQ.Extensions.Messaging
                 if (stateMethods.TryGetValue(naturalName, out var methodInStateMachine))
                 {
                     if (stateMethods.ContainsKey(disambiguatedName))
+                    {
                         throw new DuplicateStateMethodException(naturalName, disambiguatedName);
+                    }
 
                     PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo,
                         methodInStateMachine, naturalName);
@@ -545,7 +600,9 @@ namespace HQ.Extensions.Messaging
                 if (stateMethods.TryGetValue(disambiguatedName, out methodInStateMachine))
                 {
                     if (stateMethods.ContainsKey(naturalName))
+                    {
                         throw new DuplicateStateMethodException(disambiguatedName, naturalName);
+                    }
 
                     PotentialMethodNameMatch(methodTable, stateMachineType, stateMethods, fieldInfo,
                         methodInStateMachine, disambiguatedName);
@@ -561,23 +618,31 @@ namespace HQ.Extensions.Messaging
             Debug.Assert(methodInMethodTable != null, nameof(methodInMethodTable) + " != null");
 
             if (methodInStateMachine.ReturnType != methodInMethodTable.ReturnType)
+            {
                 ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+            }
 
             var methodInMethodTableParameters = methodInMethodTable.GetParameters();
             var methodInStateMachineParameters = methodInStateMachine.GetParameters();
 
             if (methodInStateMachineParameters.Length != methodInMethodTableParameters.Length - 1
             ) // -1 to account for 'this' parameter to open delegate
+            {
                 ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+            }
 
             for (var i = 0; i < methodInStateMachineParameters.Length; i++)
+            {
                 if (methodInStateMachineParameters[i].ParameterType !=
                     methodInMethodTableParameters[i + 1]
                         .ParameterType && // +1 to account for 'this' parameter to open delegate     
                     !methodInMethodTableParameters[i + 1].ParameterType
                         .IsAssignableFrom(methodInStateMachineParameters[i].ParameterType)
                 ) // i.e. supports custom implementations of TStateData
+                {
                     ThrowMethodMismatch(methodInStateMachine, methodInMethodTable);
+                }
+            }
 
             if (!stateMachineType.IsAssignableFrom(methodInMethodTableParameters[0].ParameterType))
             {
@@ -589,14 +654,32 @@ namespace HQ.Extensions.Messaging
                 var il = dynamicMethod.GetILGenerator();
                 il.Emit(OpCodes.Ldarg_0);
                 il.Emit(OpCodes.Castclass, stateMachineType); // <- the casting bit of the shim
-                if (methodInMethodTableParameters.Length > 1) il.Emit(OpCodes.Ldarg_1);
-                if (methodInMethodTableParameters.Length > 2) il.Emit(OpCodes.Ldarg_2);
-                if (methodInMethodTableParameters.Length > 3) il.Emit(OpCodes.Ldarg_3);
+                if (methodInMethodTableParameters.Length > 1)
+                {
+                    il.Emit(OpCodes.Ldarg_1);
+                }
+
+                if (methodInMethodTableParameters.Length > 2)
+                {
+                    il.Emit(OpCodes.Ldarg_2);
+                }
+
+                if (methodInMethodTableParameters.Length > 3)
+                {
+                    il.Emit(OpCodes.Ldarg_3);
+                }
+
                 for (var i = 4; i < methodInMethodTableParameters.Length; i++)
+                {
                     if (i <= byte.MaxValue)
+                    {
                         il.Emit(OpCodes.Ldarg_S, (byte) i);
+                    }
                     else
+                    {
                         il.Emit(OpCodes.Ldarg, (ushort) i);
+                    }
+                }
 
                 il.Emit(OpCodes.Callvirt, methodInStateMachine);
                 il.Emit(OpCodes.Ret);

@@ -49,14 +49,18 @@ namespace HQ.Extensions.Messaging
         private void DirectlySetState(State nextState, TStateData stateData, bool allowStateRestart)
         {
             if (!allowStateRestart && ReferenceEquals(CurrentState, nextState))
+            {
                 return;
+            }
 
             {
                 if (CurrentState?.methodTable is MethodTable methodTable)
                 {
                     var beforeEnd = methodTable.BeforeEndState?.Invoke(this, stateData, CurrentState);
                     if (beforeEnd.HasValue && !beforeEnd.Value)
+                    {
                         return;
+                    }
                 }
             }
 
@@ -65,7 +69,9 @@ namespace HQ.Extensions.Messaging
                 {
                     var beforeBegin = methodTable.BeforeBeginState?.Invoke(this, stateData, nextState);
                     if (beforeBegin.HasValue && !beforeBegin.Value)
+                    {
                         return;
+                    }
                 }
             }
 

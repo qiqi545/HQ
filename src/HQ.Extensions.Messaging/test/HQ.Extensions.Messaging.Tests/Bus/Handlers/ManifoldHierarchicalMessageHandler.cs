@@ -40,7 +40,10 @@ namespace HQ.Extensions.Messaging.Tests.Bus.Handlers
         public bool Handle(ErrorMessage message)
         {
             if (message.Error)
+            {
                 throw new Exception("the message made me do it!");
+            }
+
             return true;
         }
 

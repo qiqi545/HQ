@@ -34,7 +34,11 @@ namespace HQ.Extensions.Messaging.Tests.Bus.Messages
 
         public bool Equals(StringMessage other)
         {
-            if (other == null) return false;
+            if (other == null)
+            {
+                return false;
+            }
+
             return Text != null && other.Text.Equals(Text);
         }
 

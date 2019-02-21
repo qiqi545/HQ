@@ -48,10 +48,14 @@ namespace HQ.Extensions.Messaging.Bus
         public IEnumerable<Type> GetAncestors(Type type)
         {
             foreach (var i in type?.GetInterfaces() ?? Type.EmptyTypes)
+            {
                 yield return i;
+            }
 
             if (type?.BaseType == null || type.BaseType == typeof(object))
+            {
                 yield break;
+            }
 
             var baseType = type.BaseType;
             while (baseType != null && baseType != typeof(object))
@@ -73,7 +77,9 @@ namespace HQ.Extensions.Messaging.Bus
             };
 
             foreach (var childType in GetAncestors(superType))
+            {
                 dispatchers.Add(childType, publishTyped.MakeGenericMethod(childType));
+            }
 
             bool Dispatch(object message)
             {

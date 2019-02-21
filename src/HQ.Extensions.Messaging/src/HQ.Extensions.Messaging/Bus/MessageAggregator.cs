@@ -40,6 +40,7 @@ namespace HQ.Extensions.Messaging.Bus
                 i.IsGenericType && typeof(IMessageHandler<>).IsAssignableFrom(i.GetGenericTypeDefinition())).ToList();
 
             if (consumers.Count == 0)
+            {
                 if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Action<>))
                 {
                     const BindingFlags binding = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -49,6 +50,7 @@ namespace HQ.Extensions.Messaging.Bus
                     subscribeAction?.MakeGenericMethod(handlerType)
                         .Invoke(this, new[] {handler, onError ?? NoopErrorHandler});
                 }
+            }
 
             {
                 const BindingFlags binding = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -91,13 +93,17 @@ namespace HQ.Extensions.Messaging.Bus
         public bool Handle(Type subscriptionType, object message)
         {
             if (!_subscriptions.TryGetValue(subscriptionType, out var subscription))
+            {
                 return true;
+            }
 
             var result = true;
             foreach (var handler in subscription)
             {
                 if (handler == null)
+                {
                     continue;
+                }
 
                 var handled = handler(message);
                 result &= handled;
@@ -130,14 +136,20 @@ namespace HQ.Extensions.Messaging.Bus
 
             var handle = RuntimeHelpers.GetHashCode(handler);
             if (!_subscriptions.TryGetValue(subscriptionType, out var list))
+            {
                 _subscriptions.Add(subscriptionType,
                     list = new HashSet<HandlerDelegate>(ReferenceEqualityComparer<HandlerDelegate>.Instance));
+            }
 
             if (!_handlers.TryGetValue(subscriptionType, out var handlers))
+            {
                 _handlers.Add(subscriptionType, handlers = new List<int>());
+            }
 
             if (handlers.Contains(handle))
+            {
                 throw new DuplicateSubscriptionException();
+            }
 
             handlers.Add(handle);
 
@@ -153,12 +165,16 @@ namespace HQ.Extensions.Messaging.Bus
         private void Dispose(bool disposing)
         {
             if (!disposing || _subscriptions == null || _subscriptions.Count == 0)
+            {
                 return;
+            }
 
             foreach (var subscription in _subscriptions)
             {
                 if (subscription.Value == null)
+                {
                     continue;
+                }
 
                 if (_subscriptions.Remove(subscription.Key))
                 {

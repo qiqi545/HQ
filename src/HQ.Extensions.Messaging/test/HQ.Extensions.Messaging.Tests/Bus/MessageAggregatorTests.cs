@@ -193,7 +193,12 @@ namespace HQ.Extensions.Messaging.Tests.Bus
             var handled = 0;
 
             var hub = new MessageHub();
-            void Handler(IMessage e) => handled++;
+
+            void Handler(IMessage e)
+            {
+                handled++;
+            }
+
             hub.Subscribe((Action<IMessage>) Handler);
 
             var sent = hub.Publish(new InheritedMessage {Id = 123, Value = "ABC"});

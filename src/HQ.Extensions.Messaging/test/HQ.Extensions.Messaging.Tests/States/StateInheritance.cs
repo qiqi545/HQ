@@ -25,7 +25,9 @@ namespace HQ.Extensions.Messaging.Tests.States
         {
             var current = (DerivedState) CurrentState;
             if (current.Widgets != 10 || current.Sprockets != 5)
+            {
                 throw new Exception("widgets had unexpected value");
+            }
         }
 
         public class StateA : DerivedState
