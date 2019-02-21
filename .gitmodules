@@ -1,24 +1,31 @@
 [submodule "src/Stack/HQ.Common"]
 	path = src/Stack/HQ.Common
 	url = https://github.com/hq-io/HQ.Common
+
 [submodule "src/Stack/HQ.Extensions"]
 	path = src/Stack/HQ.Extensions
-	url = https://github.com/hq-io/Extensions
+	url = https://github.com/hq-io/HQ.Extensions
+
 [submodule "src/Stack/HQ.Data"]
 	path = src/Stack/HQ.Data
-	url = https://github.com/hq-io/Data
+	url = https://github.com/hq-io/HQ.Data
+
 [submodule "src/Stack/HQ.Platform"]
 	path = src/Stack/HQ.Platform
-	url = https://github.com/hq-io/Platform
+	url = https://github.com/hq-io/HQ.Platform
+
 [submodule "src/Stack/HQ.Test.Sdk"]
 	path = src/Stack/HQ.Test.Sdk
 	url = https://github.com/hq-io/HQ.Test.Sdk	
+
 [submodule "src/Stack/HQ.Zero"]
 	path = src/Stack/HQ.Zero
 	url = https://github.com/hq-io/HQ.Zero
+
 [submodule "src/Stack/HQ.Community"]
 	path = src/Stack/HQ.Community
 	url = https://github.com/hq-io/HQ.Community
+
 [submodule "src/Stack/HQ.Strings"]
 	path = src/Stack/HQ.Strings
 	url = https://github.com/hq-io/HQ.Strings
