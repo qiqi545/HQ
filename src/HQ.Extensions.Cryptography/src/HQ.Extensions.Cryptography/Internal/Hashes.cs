@@ -20,10 +20,11 @@ using System.Security;
 using System.Security.Cryptography;
 using Sodium;
 
-namespace HQ.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Internal
 {
     /// <summary>
-    ///     <see href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.create?view=netframework-4.7.2" />
+    ///     <see
+    ///         href="https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.hashalgorithm.create?view=netframework-4.7.2" />
     /// </summary>
     internal static class Hashes
     {
@@ -63,7 +64,10 @@ namespace HQ.Cryptography.Internal
         public static byte[] ComputeHash(byte[] buffer, HashType type, HashSource source)
         {
             if (CryptoConfig.AllowOnlyFipsAlgorithms && source != HashSource.SystemNetFips)
-                throw new SecurityException("This environment restricts hash algorithms to only those that are FIPS certified.");
+            {
+                throw new SecurityException(
+                    "This environment restricts hash algorithms to only those that are FIPS certified.");
+            }
 
             switch (source)
             {
@@ -80,7 +84,7 @@ namespace HQ.Cryptography.Internal
             }
         }
 
-#region Factory
+        #region Factory
 
         private static readonly HashAlgorithm Md5Managed = MD5.Create();
         private static readonly HashAlgorithm Sha1Managed = SHA1.Create();
@@ -108,7 +112,7 @@ namespace HQ.Cryptography.Internal
                     throw new NotSupportedException();
             }
         }
-        
+
         private static readonly HashAlgorithm Md5Csp = new MD5CryptoServiceProvider();
         private static readonly HashAlgorithm Sha1Csp = new SHA1CryptoServiceProvider();
         private static readonly HashAlgorithm Sha256Csp = new SHA256CryptoServiceProvider();
@@ -180,7 +184,6 @@ namespace HQ.Cryptography.Internal
         }
 
 #if NETCOREAPP
-
         private static void ManagedHash(HashType type, ReadOnlySpan<byte> buffer, Span<byte> destination)
         {
             TryComputeHash(type, buffer, destination, Md5Managed, Sha1Managed, Sha256Managed, Sha384Managed, Sha512Managed);
@@ -270,7 +273,7 @@ namespace HQ.Cryptography.Internal
             }
         }
 #endif
-        #endregion
 
+        #endregion
     }
 }

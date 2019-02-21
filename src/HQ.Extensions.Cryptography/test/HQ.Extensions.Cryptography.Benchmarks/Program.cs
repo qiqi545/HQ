@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,17 +15,18 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Running;
+using HQ.Extensions.Cryptography.Benchmarks.Benchmarks;
 
-[assembly: InternalsVisibleTo("HQ.Data.Blockchain")]
-[assembly: InternalsVisibleTo("HQ.Platform.Security")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Cryptography")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Cryptography.Tests")]
-[assembly: InternalsVisibleTo("HQ.Extensions.Cryptography.Benchmarks")]
-
-namespace HQ.Extensions.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Benchmarks
 {
-    internal class InternalsVisibleTo
+    internal class Program
     {
+        private static void Main(string[] args)
+        {
+            //BenchmarkRunner.Run<RandomBenchmarks>();
+            //BenchmarkRunner.Run<Sha256Benchmarks>();
+            BenchmarkRunner.Run<BinToHexBenchmarks>();
+        }
     }
 }

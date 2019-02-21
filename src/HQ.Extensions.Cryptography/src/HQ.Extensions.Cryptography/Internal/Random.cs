@@ -20,7 +20,7 @@ using System.Security.Cryptography;
 using NSec.Cryptography;
 using Sodium;
 
-namespace HQ.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Internal
 {
     internal static class Random
     {

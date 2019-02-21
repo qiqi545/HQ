@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Internal
 {
     [Flags]
     internal enum HashSource : byte

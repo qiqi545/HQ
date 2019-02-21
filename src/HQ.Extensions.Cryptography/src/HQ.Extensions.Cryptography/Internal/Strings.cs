@@ -19,7 +19,7 @@ using System;
 using System.Text;
 using Sodium;
 
-namespace HQ.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Internal
 {
     internal static class Strings
     {
@@ -31,7 +31,10 @@ namespace HQ.Cryptography.Internal
                 {
                     var sb = new StringBuilder(buffer.Length * 2);
                     foreach (var b in buffer)
+                    {
                         sb.AppendFormat("{0:x2}", b);
+                    }
+
                     return sb.ToString();
                 }
                 case StringSource.SodiumCore:
@@ -51,7 +54,10 @@ namespace HQ.Cryptography.Internal
                 {
                     var sb = new StringBuilder(buffer.Length * 2);
                     foreach (var b in buffer)
+                    {
                         sb.AppendFormat("{0:x2}", b);
+                    }
+
                     return sb.ToString();
                 }
                 case StringSource.SodiumCore:

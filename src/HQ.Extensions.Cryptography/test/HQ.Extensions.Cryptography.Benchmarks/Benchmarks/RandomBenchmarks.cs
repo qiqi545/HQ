@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,37 +15,44 @@
 
 #endregion
 
-using System;
+using BenchmarkDotNet.Attributes;
 using HQ.Extensions.Cryptography.Internal;
-using Random = HQ.Extensions.Cryptography.Internal.Random;
 
-namespace HQ.Extensions.Cryptography
+namespace HQ.Extensions.Cryptography.Benchmarks.Benchmarks
 {
-    public static class Crypto
+    [CoreJob]
+    [MarkdownExporter]
+    [MemoryDiagnoser]
+    public class RandomBenchmarks
     {
-        public static byte[] GetRandomBytes(int length)
+        [Params(512)] public int BufferSize;
+        [Params(10000)] public int Trials;
+
+        [Benchmark(Baseline = true)]
+        public void Random_SystemNet()
         {
-            return Random.NextBytes(length, RandomSource.SodiumCore);
+            for (var i = 0; i < Trials; i++)
+            {
+                Random.NextBytes(BufferSize, RandomSource.SodiumCore);
+            }
         }
 
-        public static void FillRandomBytes(Span<byte> buffer)
+        [Benchmark]
+        public void Random_SodiumCore()
         {
-            FillRandomBytes(buffer, buffer.Length);
+            for (var i = 0; i < Trials; i++)
+            {
+                Random.NextBytes(BufferSize, RandomSource.SodiumCore);
+            }
         }
 
-        public static void FillRandomBytes(Span<byte> buffer, int length)
+        [Benchmark]
+        public void Random_NSec()
         {
-            Random.NextBytes(buffer, length, RandomSource.SodiumCore);
-        }
-
-        public static string BinToHex(ReadOnlySpan<byte> buffer)
-        {
-            return Strings.BinToHex(buffer, StringSource.SodiumCoreUnsafePooled);
-        }
-
-        public static string GetRandomString(int length)
-        {
-            return BinToHex(GetRandomBytes(length / 2));
+            for (var i = 0; i < Trials; i++)
+            {
+                Random.NextBytes(BufferSize, RandomSource.NSec);
+            }
         }
     }
 }

@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Cryptography.Internal
+namespace HQ.Extensions.Cryptography.Internal
 {
     internal enum RandomSource
     {
