@@ -17,8 +17,9 @@
 
 using System.Collections.Generic;
 using System.Text;
+using HQ.Data.Streaming.Internal;
 
-namespace HQ.Data.Streaming.Internal
+namespace HQ.Data.Streaming
 {
     public static class EncodingExtensions
     {
