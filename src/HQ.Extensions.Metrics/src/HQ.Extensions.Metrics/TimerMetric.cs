@@ -189,11 +189,5 @@ namespace HQ.Extensions.Metrics
         {
             return value / DurationUnit.Convert(1, TimeUnit.Nanoseconds);
         }
-
-        public bool TryGetChangeInValue(long previousValue, out long currentValue)
-        {
-            currentValue = Count;
-            return currentValue != previousValue;
-        }
     }
 }

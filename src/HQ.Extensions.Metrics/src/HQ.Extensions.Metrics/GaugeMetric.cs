@@ -25,7 +25,6 @@ namespace HQ.Extensions.Metrics
         public abstract string ValueAsString { get; }
         public abstract bool IsNumeric { get; }
         public abstract bool IsBoolean { get; }
-        public abstract bool TryGetChangeInValue(long previousValue, out long currentValue);
     }
 
     /// <summary>
@@ -56,11 +55,5 @@ namespace HQ.Extensions.Metrics
         public override bool IsNumeric { get; }
 
         public override bool IsBoolean { get; }
-
-        public override bool TryGetChangeInValue(long previousValue, out long currentValue)
-        {
-            currentValue = Value.GetHashCode();
-            return currentValue != previousValue;
-        }
     }
 }

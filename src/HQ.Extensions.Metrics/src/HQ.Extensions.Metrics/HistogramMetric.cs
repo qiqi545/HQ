@@ -217,11 +217,5 @@ namespace HQ.Extensions.Metrics
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
-
-        public bool TryGetChangeInValue(long previousValue, out long currentValue)
-        {
-            currentValue = Count;
-            return currentValue != previousValue;
-        }
     }
 }

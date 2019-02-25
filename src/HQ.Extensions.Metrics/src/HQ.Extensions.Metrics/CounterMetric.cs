@@ -61,11 +61,5 @@ namespace HQ.Extensions.Metrics
         {
             _count.Set(0);
         }
-
-        public bool TryGetChangeInValue(long previousValue, out long currentValue)
-        {
-            currentValue = Count;
-            return previousValue != currentValue;
-        }
     }
 }

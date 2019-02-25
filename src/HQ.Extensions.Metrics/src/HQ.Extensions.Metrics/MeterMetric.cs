@@ -16,12 +16,10 @@
 #endregion
 
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
 using HQ.Extensions.Metrics.Stats;
-using Newtonsoft.Json;
 
 namespace HQ.Extensions.Metrics
 {
@@ -186,12 +184,6 @@ namespace HQ.Extensions.Metrics
         private double ConvertNanosRate(double ratePerNs)
         {
             return ratePerNs * RateUnit.ToNanos(1);
-        }
-
-        public bool TryGetChangeInValue(long previousValue, out long currentValue)
-        {
-            currentValue = Count;
-            return currentValue != previousValue;
         }
     }
 }

@@ -17,8 +17,5 @@
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetric
-    {
-        bool TryGetChangeInValue(long previousValue, out long currentValue);
-    }
+    public interface IMetric { }
 }
