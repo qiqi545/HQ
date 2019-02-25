@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using HQ.CodeGeneration;
+using HQ.Extensions.CodeGeneration;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.Reporting

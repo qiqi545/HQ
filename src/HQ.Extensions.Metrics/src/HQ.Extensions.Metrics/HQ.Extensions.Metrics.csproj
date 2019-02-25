@@ -10,9 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
     <PackageReference Include="HQ.Common" Version="1.0.49" />
-    <PackageReference Include="HQ.Extensions.Caching" Version="1.0.50" />
+    <PackageReference Include="HQ.Extensions.Caching" Version="1.0.51" />
+    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.51" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
