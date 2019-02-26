@@ -71,5 +71,10 @@ namespace HQ.Common.Extensions
         {
             return RealNumberTypes.Contains(type) || type.IsInteger();
         }
+
+        public static bool IsTruthy(this Type type)
+        {
+            return type == typeof(bool) || type == typeof(bool?);
+        }
     }
 }
