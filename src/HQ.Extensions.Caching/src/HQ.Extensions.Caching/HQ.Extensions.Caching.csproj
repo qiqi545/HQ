@@ -10,10 +10,14 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="HQ.Extensions.CodeGeneration" Version="1.0.50" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\HQ.Extensions.CodeGeneration.csproj" />
   </ItemGroup>
 
 </Project>

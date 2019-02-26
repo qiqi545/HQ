@@ -45,7 +45,7 @@ namespace HQ.Extensions.Metrics
         {
             _evaluator = evaluator;
             IsNumeric = typeof(T).IsNumeric();
-            IsBoolean = typeof(T) == typeof(bool) || typeof(T) == typeof(bool?);
+            IsBoolean = typeof(T).IsTruthy();
         }
 
         public T Value => _evaluator();

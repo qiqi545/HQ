@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HQ.Extensions.Metrics.Internal;
 using HQ.Extensions.Metrics.Stats;
-using Newtonsoft.Json;
 
 namespace HQ.Extensions.Metrics
 {

@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using HQ.Extensions.Metrics.Internal;
-using Newtonsoft.Json;
 using Random = HQ.Extensions.Metrics.Internal.Random;
 
 namespace HQ.Extensions.Metrics.Stats

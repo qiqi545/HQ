@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>
 </Project>
