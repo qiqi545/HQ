@@ -17,8 +17,6 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Tests")]
-
 [assembly: InternalsVisibleTo("HQ.DocumentDb")]
 [assembly: InternalsVisibleTo("HQ.MySql")]
 [assembly: InternalsVisibleTo("HQ.Sqlite")]
