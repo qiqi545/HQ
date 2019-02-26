@@ -15,9 +15,6 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="25.0.4" />
-    <PackageReference Include="HQ.CodeGeneration" Version="1.0.31" />
-    <PackageReference Include="HQ.Extensions.DependencyInjection" Version="1.0.50" />
-    <PackageReference Include="HQ.Extensions.DependencyInjection.AspNetCore" Version="1.0.50" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
@@ -25,6 +22,12 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\HQ.Extensions.CodeGeneration.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

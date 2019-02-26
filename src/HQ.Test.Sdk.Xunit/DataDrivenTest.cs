@@ -20,14 +20,14 @@ using Xunit.Sdk;
 namespace HQ.Test.Sdk.Xunit
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TestCaseDiscoverer",
+    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TheoryDiscoverer",
 #if PLATFORM
         "HQ.Platform"
 #else
         "HQ.Test.Sdk.Xunit"
 #endif
     )]
-    public class RowTestAttribute : TheoryAttribute
+    public class DataDrivenTest : TheoryAttribute
     {
         public string[] Environments { get; set; }
 

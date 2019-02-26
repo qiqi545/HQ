@@ -24,7 +24,7 @@ using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
 using HQ.Common.FastMember;
-using HQ.CodeGeneration;
+using HQ.Extensions.CodeGeneration;
 using HQ.Test.Sdk.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
