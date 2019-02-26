@@ -15,10 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocumentDbProvider" Version="1.0.0-pre5" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
   </ItemGroup>
 

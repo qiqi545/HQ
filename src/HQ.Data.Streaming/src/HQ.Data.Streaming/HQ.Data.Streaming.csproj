@@ -21,9 +21,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Extensions.Metrics" Version="1.0.51" />
-    <PackageReference Include="HQ.Strings" Version="1.0.30" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj" />
   </ItemGroup>
 
 </Project>

@@ -2,7 +2,7 @@
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -15,14 +15,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DocumentDbProvider" Version="1.0.0-pre5" />
-    <PackageReference Include="HQ.Connect" Version="1.0.29" />
     <PackageReference Include="LiteGuard" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.1.0-preview2" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.1" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Batching\HQ.Data.Sql.Batching.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
   </ItemGroup>

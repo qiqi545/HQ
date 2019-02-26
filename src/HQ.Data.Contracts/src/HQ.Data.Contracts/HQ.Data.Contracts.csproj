@@ -14,10 +14,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Common" Version="1.0.49" />
-    <PackageReference Include="HQ.Strings" Version="1.0.30" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj" />
   </ItemGroup>
 
 </Project>

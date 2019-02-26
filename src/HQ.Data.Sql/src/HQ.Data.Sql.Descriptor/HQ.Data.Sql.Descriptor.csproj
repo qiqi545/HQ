@@ -15,9 +15,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Common" Version="1.0.44" />
-    <PackageReference Include="HQ.Data.Contracts" Version="1.0.44" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
