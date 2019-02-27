@@ -190,7 +190,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="25.0.4" />
+    <PackageReference Include="Bogus" Version="26.0.1" />
     <PackageReference Include="Dapper" Version="1.50.7" />
     <PackageReference Include="DotLiquid" Version="2.0.298" />
     <PackageReference Include="Humanizer" Version="2.5.16" />

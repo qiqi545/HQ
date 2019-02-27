@@ -132,6 +132,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLServer", "SQLServer", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Strings", "..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj", "{C4E5225A-5648-499F-9D72-03E196491E22}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Runtime.Rest", "..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\HQ.Platform.Runtime.Rest.csproj", "{4DA0A567-4926-430D-8D76-285368B3E9CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -475,6 +477,12 @@ Global
 		{C4E5225A-5648-499F-9D72-03E196491E22}.Package|Any CPU.Build.0 = Package|Any CPU
 		{C4E5225A-5648-499F-9D72-03E196491E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4E5225A-5648-499F-9D72-03E196491E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
