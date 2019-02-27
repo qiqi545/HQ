@@ -15,8 +15,8 @@
 
 #endregion
 
+using HQ.Platform.Security.AspNetCore.Requirements;
 using HQ.Platform.Security.Configuration;
-using HQ.Platform.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 

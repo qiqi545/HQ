@@ -17,8 +17,6 @@
 
 namespace HQ.Platform.Api.Models
 {
-    public interface IViewModel
-    {
-    }
+    public interface IViewModel { }
 }
 

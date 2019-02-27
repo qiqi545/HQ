@@ -12,11 +12,11 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.7" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
-    <PackageReference Include="HQ.Data.SessionManagement.MySql" Version="1.0.44" />
-    <PackageReference Include="HQ.Data.Sql.MySql" Version="1.0.44" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\HQ.Data.SessionManagement.MySql.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.MySql\HQ.Data.Sql.MySql.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
   </ItemGroup>
 </Project>

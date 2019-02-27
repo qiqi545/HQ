@@ -17,7 +17,7 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Platform.Identity.AspnetCore.Mvc")]
+[assembly: InternalsVisibleTo("HQ.Platform.Identity.AspNetCore.Mvc")]
 
 namespace HQ.Platform.Security
 {

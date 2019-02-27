@@ -21,7 +21,7 @@ using HQ.Platform.Security.Configuration;
 using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HQ.Platform.Security.Requirements
+namespace HQ.Platform.Security.AspNetCore.Requirements
 {
     public class DenyAnonymousAuthorizationRequirementExtended :
         AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,

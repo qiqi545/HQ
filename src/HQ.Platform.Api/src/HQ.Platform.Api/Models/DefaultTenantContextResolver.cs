@@ -30,26 +30,20 @@ namespace HQ.Platform.Api.Models
                 tenantKey = http?.Request?.Host.Value.ToUpperInvariant();
 
             var useCache = _options.Value.TenantLifetimeSeconds.HasValue;
-
-            if (useCache)
-            {
-                if (_tenantCache.Get(tenantKey) is TenantContext<TTenant> tenantContext)
-                    return tenantContext;
-
-                tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey);
-
-                if (tenantContext != null)
-                {
-                    foreach (var identifier in tenantContext.Identifiers ?? Enumerable.Empty<string>())
-                        _tenantCache.Set(identifier, tenantContext, TimeSpan.FromSeconds(_options.Value.TenantLifetimeSeconds.Value));
-                }
-
-                return tenantContext;
-            }
-            else
-            {
+            if (!useCache)
                 return await _tenantContextStore.FindByKeyAsync(tenantKey);
-            }
+
+            if (_tenantCache.Get(tenantKey) is TenantContext<TTenant> tenantContext)
+                return tenantContext;
+
+            tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey);
+            if (tenantContext == null)
+                return null;
+
+            foreach (var identifier in tenantContext.Identifiers ?? Enumerable.Empty<string>())
+                _tenantCache.Set(identifier, tenantContext, TimeSpan.FromSeconds(_options.Value.TenantLifetimeSeconds.Value));
+
+            return tenantContext;
         }
     }
 }

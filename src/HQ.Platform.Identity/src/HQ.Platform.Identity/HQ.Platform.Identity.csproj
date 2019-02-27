@@ -10,15 +10,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Common" Version="1.0.49" />
-    <PackageReference Include="HQ.Data.Contracts" Version="1.0.44" />
-    <PackageReference Include="HQ.Platform.Security" Version="1.0.45" />
-    <PackageReference Include="HQ.Strings" Version="1.0.30" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="2.2.0" />
     <PackageReference Include="Sodium.Core" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Platform.Security\src\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>
 
 </Project>

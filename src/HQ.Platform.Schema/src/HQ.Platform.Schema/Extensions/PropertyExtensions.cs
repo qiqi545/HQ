@@ -27,8 +27,8 @@ namespace HQ.Platform.Schema.Extensions
         {
             return property.Type == PropertyType.Object ||
                    property.Type == PropertyType.View ||
-                   property.Rel == PropertyRelationship.OneToMany ||
-                   property.Rel == PropertyRelationship.OneToOne;
+                   property.Rel  == PropertyRelationship.OneToMany ||
+                   property.Rel  == PropertyRelationship.OneToOne;
         }
 
         public static string Label(this Property property)

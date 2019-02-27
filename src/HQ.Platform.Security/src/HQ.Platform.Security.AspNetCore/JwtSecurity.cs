@@ -31,13 +31,13 @@ namespace HQ.Platform.Security.AspNetCore
 {
     public static class JwtSecurity
     {
-        private static SigningCredentials _credentials;
+        private static SigningCredentials credentials;
 
         public static TokenValidationParameters TokenValidationParameters { get; private set; }
 
         public static void AddAuthentication(this IServiceCollection services, SecurityOptions options)
         {
-            _credentials = _credentials ?? BuildSigningCredentials(options);
+            credentials = credentials ?? BuildSigningCredentials(options);
 
             TokenValidationParameters = TokenValidationParameters ?? BuildTokenValidationParameters(options);
 
@@ -98,10 +98,10 @@ namespace HQ.Platform.Security.AspNetCore
             claims.TryAddClaim(security.Claims.ApplicationIdClaim, api.ApiVersion);
             claims.TryAddClaim(security.Claims.ApplicationNameClaim, api.ApiName);
 
-            _credentials = _credentials ?? BuildSigningCredentials(security);
+            credentials = credentials ?? BuildSigningCredentials(security);
 
             var handler = new JwtSecurityTokenHandler();
-            var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _credentials);
+            var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, credentials);
 
             return handler.WriteToken(jwt);
         }
@@ -122,7 +122,7 @@ namespace HQ.Platform.Security.AspNetCore
                 ValidateAudience = true,
                 ValidAudience = options.Tokens.Audience,
                 RequireSignedTokens = true,
-                IssuerSigningKey = _credentials.Key,
+                IssuerSigningKey = credentials.Key,
                 ClockSkew = TimeSpan.FromMinutes(5),
                 RoleClaimType = options.Claims.RoleClaim,
                 NameClaimType = options.Claims.UserNameClaim

@@ -38,7 +38,7 @@ namespace HQ.Platform.Schema.Models
 
         public string Name { get; set; }
 
-        #region ISelfDescribingJson
+        #region ISelfDescribingSchema
 
         public string Namespace => Self?.Namespace;
 

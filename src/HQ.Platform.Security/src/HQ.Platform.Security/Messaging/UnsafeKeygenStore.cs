@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using NSec.Cryptography;
 using Sodium;
 
 namespace HQ.Platform.Security.Messaging

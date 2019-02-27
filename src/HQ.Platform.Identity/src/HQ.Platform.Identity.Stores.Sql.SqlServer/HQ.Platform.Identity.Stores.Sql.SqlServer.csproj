@@ -12,11 +12,11 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.50.7" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
-    <PackageReference Include="HQ.Data.SessionManagement.SqlServer" Version="1.0.44" />
-    <PackageReference Include="HQ.Data.Sql.SqlServer" Version="1.0.44" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
   </ItemGroup>
 

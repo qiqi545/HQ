@@ -9,12 +9,12 @@
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HQ.Common.AspNetCore.Mvc" Version="1.0.49" /> 
+  <ItemGroup> 
     <PackageReference Include="Microsoft.AspNetCore.Mvc.ViewFeatures" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Platform.Schema\HQ.Platform.Schema.csproj" />
   </ItemGroup>
 
