@@ -27,6 +27,7 @@ using HQ.Common.Models;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Contracts;
+using HQ.Data.SessionManagement.DocumentDb;
 using Microsoft.Azure.CosmosDB.BulkExecutor;
 using Microsoft.Azure.CosmosDB.BulkExecutor.BulkUpdate;
 using Microsoft.Azure.Documents.Client;

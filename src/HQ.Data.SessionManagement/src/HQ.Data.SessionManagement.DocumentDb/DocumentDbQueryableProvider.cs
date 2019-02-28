@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Data.DocumentDb;
 using System.Linq;
 using HQ.Extensions.Metrics;
-using HQ.Data.Sql.DocumentDb;
 using HQ.Data.Sql.Queries;
 using HQ.Data.Contracts.Queryable;
 using Microsoft.Azure.Documents.Client;
