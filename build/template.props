@@ -1,0 +1,25 @@
+<Project>
+
+  <ItemGroup>
+    <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user;*.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Update="template.nuspec;pack.bat;.template.config\template.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <PreBuildEvent>
+      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)\..\package\PackagePrep\PackagePrep.csproj&quot; -- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
+    </PreBuildEvent>
+    <PostBuildEvent>
+      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)\..\package\PackagePrep\PackagePrep.csproj&quot; -- nuspec $(MSBuildProjectDirectory)\bin\$(Configuration)\$(TargetFramework) true
+    </PostBuildEvent>
+  </PropertyGroup>
+
+</Project>

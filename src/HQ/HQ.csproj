@@ -57,10 +57,59 @@
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Zero\src\HQ.Zero\**\*.cs" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\**\*.cs" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\**\*.cs" Link="Test.Sdk.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
 
+  </ItemGroup>
+
+  <!-- Cosmos DB -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\bin\**" Link="Data.SessionManagement.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\bin\**" Link="Data.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\bin\**" Link="Platform.Identity.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FastMember" Version="1.4.1" />
+    <PackageReference Include="LiteGuard" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.2.0-preview2" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.2" />
+  </ItemGroup>
+
+  <!-- MySQL -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\bin\**" Link="Data.SessionManagement.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.MySql\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.MySql\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.MySql\bin\**" Link="Data.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.MySql\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.MySql\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.MySql\bin\**" Link="Platform.Identity.Stores.Sql.MySql\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.15" />
+    <PackageReference Include="Dapper" Version="1.50.7" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
+  </ItemGroup>
+
+  <!-- SQLite -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\bin\**" Link="Data.SessionManagement.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\bin\**" Link="Data.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\bin\**" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.2" />
+    <PackageReference Include="Dapper" Version="1.50.7" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
+  </ItemGroup>
+
+  <!-- SQL Server -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\bin\**" Link="Data.SessionManagement.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\bin\**" Link="Data.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\bin\**" Link="Platform.Identity.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.50.7" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -88,6 +137,7 @@
     <Compile Remove="Platform.Api\obj\**" />
     <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <Compile Remove="Platform.Identity.Stores.Sql\obj\**" />
+    <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <Compile Remove="Platform.Identity\obj\**" />
     <Compile Remove="Platform.Operations\obj\**" />
     <Compile Remove="Platform.Security.AspNetCore\obj\**" />
@@ -118,6 +168,7 @@
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\Debug\netstandard2.0\**" />
+    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\Debug\netstandard2.0\**" />
@@ -224,6 +275,25 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="Utf8Json" Version="1.3.7" />
     <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Platform.Identity\ErrorStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ErrorStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Platform.Identity\ErrorStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

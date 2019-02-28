@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "HQ.IO Corporation",
+  "classifications": ["HQ"],
+  "identity": "HQ",
+  "name": "HQ",
+  "shortName": "hq",
+  "tags": {
+    "language": "C#"
+  },
+  "sourceName": "HQ.Template",
+  "symbols": {
+    "db": {
+      "type": "parameter",
+      "datatype": "choice",
+      "isRequired": true,
+      "choices": [
+        {
+          "choice": "cosmos-db",
+          "description": "Microsoft Azure DocumentDB"
+        },
+        {
+          "choice": "sql-server",
+          "description": "Microsoft SQL Server"
+        },
+        {
+          "choice": "sqlite",
+          "description": "SQLite"
+        },
+        {
+          "choice": "mysql",
+          "description": "MySQL"
+        }
+      ],
+      "defaultValue": "sqlite",
+      "description": "The storage technology used to persist permanent objects."
+    }
+  }
+}
