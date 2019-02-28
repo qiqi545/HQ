@@ -12,7 +12,8 @@
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-	  <PackageTags>hq-io dotnet-standard serverless platform</PackageTags>
+    <PackageTags>hq hq-io dotnet-standard serverless platform</PackageTags>
+    <Description>HQ.io is a cross-platform, cloud-agnostic, multi-modal serverless platform.</Description>
   </PropertyGroup>
    
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">

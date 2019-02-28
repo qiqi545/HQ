@@ -28,8 +28,13 @@ namespace HQ.Data.Sql.Dapper
         private readonly IDictionary<string, PropertyToColumnMemberMap> _memberMap;
         private readonly Type _type;
 
-        public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns,
-            IEqualityComparer<string> comparer)
+        public static void AddTypeMap<T>(IEqualityComparer<string> comparer)
+        {
+            var descriptor = SimpleDataDescriptor.Create<T>();
+            SqlMapper.SetTypeMap(typeof(T), new DescriptorColumnMapper(typeof(T), descriptor.All, comparer));
+        }
+
+        public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns, IEqualityComparer<string> comparer)
         {
             _type = type;
             _memberMap = new Dictionary<string, PropertyToColumnMemberMap>(comparer);
@@ -41,12 +46,6 @@ namespace HQ.Data.Sql.Dapper
         {
             _memberMap.TryGetValue(columnName, out var value);
             return value;
-        }
-
-        public static void AddTypeMap<T>(IEqualityComparer<string> comparer)
-        {
-            var descriptor = SimpleDataDescriptor.Create<T>();
-            SqlMapper.SetTypeMap(typeof(T), new DescriptorColumnMapper(typeof(T), descriptor.All, comparer));
         }
 
         private class PropertyToColumnMemberMap : SqlMapper.IMemberMap
