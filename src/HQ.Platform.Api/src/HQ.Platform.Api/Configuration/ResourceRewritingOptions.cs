@@ -25,4 +25,3 @@ namespace HQ.Platform.Api.Configuration
         public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
     }
 }
-

@@ -134,7 +134,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             Create.Index("RoleNameIndex").OnTable("AspNetRoles")
                 .OnColumn("NormalizedName").Unique()
                 .OnColumn("TenantId").Unique();
-            
+
             Create.Index("UserNameIndex").OnTable("AspNetUsers")
                 .OnColumn("NormalizedUserName").Unique()
                 .OnColumn("TenantId").Unique();

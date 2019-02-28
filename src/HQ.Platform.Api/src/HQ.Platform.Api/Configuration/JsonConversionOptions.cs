@@ -23,7 +23,7 @@ namespace HQ.Platform.Api.Configuration
     public class JsonConversionOptions : FeatureToggle<PublicApiOptions>
     {
         public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
-        
+
         public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
         public bool EnvelopeEnabled { get; set; } = false;
 
@@ -34,4 +34,3 @@ namespace HQ.Platform.Api.Configuration
         public bool PrettyPrintEnabled { get; set; } = true;
     }
 }
-

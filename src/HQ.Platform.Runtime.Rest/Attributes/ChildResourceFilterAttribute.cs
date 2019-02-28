@@ -38,7 +38,9 @@ namespace HQ.Platform.Runtime.Rest.Attributes
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             if (!(context.Controller is IObjectController controller))
+            {
                 return;
+            }
 
             var resourceType = context.ActionDescriptor is ControllerActionDescriptor descriptor
                 ? descriptor.MethodInfo.GetCustomAttribute(typeof(ObjectTypeAttribute)) is ObjectTypeAttribute
@@ -51,21 +53,31 @@ namespace HQ.Platform.Runtime.Rest.Attributes
             };
 
             var qs = QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value);
-            
+
             if (context.Result == null)
+            {
                 PageFilterAttribute.Execute(context, qs, qc);
+            }
 
             if (context.Result == null)
+            {
                 SortFilterAttribute.Execute(context, qs, qc);
+            }
 
             if (context.Result == null)
+            {
                 FieldsFilterAttribute.Execute(context, qs, qc);
+            }
 
             if (context.Result == null)
+            {
                 FilterFilterAttribute.Execute(context, qs, qc);
+            }
 
             if (context.Result == null)
+            {
                 ProjectionFilterAttribute.Execute(context, qs, qc);
+            }
         }
     }
 }

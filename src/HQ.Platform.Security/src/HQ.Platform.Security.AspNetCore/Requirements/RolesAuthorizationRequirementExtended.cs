@@ -49,13 +49,20 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             if (context.User != null)
             {
                 if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                {
                     context.Succeed(requirement);
+                }
 
                 var flag = false;
                 if (requirement.AllowedRoles != null && requirement.AllowedRoles.Any())
+                {
                     flag = requirement.AllowedRoles.Any(r => context.User.IsInRole(r));
+                }
+
                 if (flag)
+                {
                     context.Succeed(requirement);
+                }
             }
 
             return Task.CompletedTask;

@@ -17,8 +17,8 @@
 
 using System;
 using System.Threading.Tasks;
-using HQ.Platform.Identity.Models;
 using HQ.Common.FastMember;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Extensions
@@ -35,7 +35,10 @@ namespace HQ.Platform.Identity.Extensions
             where TUser : class
         {
             if (userManager.GetStore() is IUserPhoneNumberStoreExtended<TUser> extended)
+            {
                 return extended.FindByPhoneNumberAsync(phoneNumber, extended.CancellationToken);
+            }
+
             return null;
         }
 
@@ -51,7 +54,9 @@ namespace HQ.Platform.Identity.Extensions
             var accessor = TypeAccessor.Create(typeof(UserManager<TUser>), true);
             var disposedField = accessor[userManager, "_disposed"];
             if (disposedField is bool disposed && disposed)
+            {
                 throw new ObjectDisposedException(userManager.GetType().Name);
+            }
         }
     }
 }

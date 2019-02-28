@@ -19,12 +19,12 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
 using HQ.Common.Models;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.SqlServer;
 using HQ.Data.Sql.SqlServer;
+using HQ.Platform.Identity.Configuration;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,39 +33,44 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant>(
+            this IdentityBuilder identityBuilder,
             IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
+            where TTenant : IdentityTenant<string>
         {
-            return AddSqlServerIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, scope);
+            return AddSqlServerIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, scope);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder, IConfiguration config, string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
-            return AddSqlServerIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope);
+            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
+            IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope,
             IConfiguration identityConfig, IConfiguration SqlServerConfig)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
             identityBuilder.Services.Configure<SqlServerOptions>(SqlServerConfig);
 
-            return AddSqlServerIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope,
+            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
                 identityConfig.Bind, SqlServerConfig.Bind);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole>(
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder, string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest,
             Action<IdentityOptionsExtended> configureIdentity = null,
@@ -73,6 +78,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
@@ -86,7 +92,8 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
 
             MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
-            identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole>(connectionString, scope,
+            identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString,
+                scope,
                 OnCommand<TKey>(), OnConnection);
 
             identityBuilder.Services.AddSingleton(dialect);
@@ -118,10 +125,14 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             var runner = new MigrationRunner(connectionString, options);
 
             if (identityOptions.Stores.CreateIfNotExists)
+            {
                 runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+            }
 
             if (identityOptions.Stores.MigrateOnStartup)
+            {
                 runner.MigrateUp(CancellationToken.None);
+            }
         }
     }
 }

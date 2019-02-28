@@ -32,7 +32,10 @@ namespace HQ.Platform.Identity.Extensions
             var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
             var token = accessor?.HttpContext?.RequestAborted;
             if (!token.HasValue)
+            {
                 return false;
+            }
+
             cancelToken = token.Value;
             return true;
         }
@@ -45,6 +48,7 @@ namespace HQ.Platform.Identity.Extensions
                 tenantId = default;
                 return false;
             }
+
             services.TryGetClaim(security.Value.Claims.TenantIdClaim, out var value);
             return int.TryParse(value, out tenantId);
         }
@@ -57,6 +61,7 @@ namespace HQ.Platform.Identity.Extensions
                 tenantName = default;
                 return false;
             }
+
             return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
         }
 

@@ -21,5 +21,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Platform.Identity
 {
-    internal sealed class InternalsVisibleTo { }
+    internal sealed class InternalsVisibleTo
+    {
+    }
 }

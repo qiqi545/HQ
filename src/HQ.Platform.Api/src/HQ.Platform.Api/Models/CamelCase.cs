@@ -28,15 +28,19 @@ namespace HQ.Platform.Api.Models
             return StringBuilderPool.Scoped(sb =>
             {
                 if (input == null)
+                {
                     return;
+                }
 
                 sb.Append(input);
 
-                if (string.IsNullOrWhiteSpace(input) || char.IsLower(input[0])) return;
+                if (string.IsNullOrWhiteSpace(input) || char.IsLower(input[0]))
+                {
+                    return;
+                }
 
                 sb[0] = char.ToLowerInvariant(sb[0]);
             });
         }
     }
 }
-

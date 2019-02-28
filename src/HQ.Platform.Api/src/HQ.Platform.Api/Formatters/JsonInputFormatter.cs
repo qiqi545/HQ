@@ -95,4 +95,3 @@ namespace HQ.Platform.Api.Formatters
         }
     }
 }
-

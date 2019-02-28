@@ -22,11 +22,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using HQ.Platform.Identity.Extensions;
-using HQ.Platform.Identity.Models;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Extensions;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
@@ -41,7 +41,8 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IQueryableProvider<TRole> _queryable;
         private readonly int _tenantId;
 
-        public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable, IServiceProvider serviceProvider)
+        public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable,
+            IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
             serviceProvider.TryGetTenantId(out _tenantId);
@@ -51,8 +52,6 @@ namespace HQ.Platform.Identity.Stores.Sql
             _connection = connection;
             _queryable = queryable;
         }
-
-        public CancellationToken CancellationToken { get; }
 
         public IQueryable<TRole> Roles => MaybeQueryable();
 
@@ -68,18 +67,24 @@ namespace HQ.Platform.Identity.Stores.Sql
                 var idType = typeof(TKey);
                 var id = Guid.NewGuid();
                 if (idType == typeof(Guid))
+                {
                     role.Id = (TKey) (object) id;
+                }
                 else if (idType == typeof(string))
+                {
                     role.Id = (TKey) (object) $"{id}";
+                }
                 else
+                {
                     throw new NotSupportedException();
+                }
             }
 
             var query = SqlBuilder.Insert(role);
             _connection.SetTypeInfo(typeof(TRole));
             var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(inserted == 1); 
+            Debug.Assert(inserted == 1);
             return IdentityResult.Success;
         }
 
@@ -88,8 +93,8 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
-            
-            var query = SqlBuilder.Update(role, new { role.Id, TenantId = _tenantId });
+
+            var query = SqlBuilder.Update(role, new {role.Id, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
             var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
@@ -103,7 +108,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Delete<TRole>(new { role.Id, TenantId = _tenantId });
+            var query = SqlBuilder.Delete<TRole>(new {role.Id, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
             var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
@@ -147,7 +152,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<TRole>(new { Id = roleId, TenantId = _tenantId });
+            var query = SqlBuilder.Select<TRole>(new {Id = roleId, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
 
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
@@ -158,31 +163,40 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName, TenantId = _tenantId });
+            var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
 
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
             return role;
         }
 
+        public void Dispose()
+        {
+        }
+
+        public CancellationToken CancellationToken { get; }
+
         private IQueryable<TRole> MaybeQueryable()
         {
             if (_queryable.IsSafe)
+            {
                 return _queryable.Queryable;
+            }
 
             if (_queryable.SupportsUnsafe)
+            {
                 return _queryable.UnsafeQueryable;
+            }
 
             return Task.Run(GetAllRolesAsync, CancellationToken).Result.AsQueryable();
         }
 
         private async Task<IEnumerable<TRole>> GetAllRolesAsync()
         {
-            var query = SqlBuilder.Select<TRole>(new { TenantId = _tenantId });
+            var query = SqlBuilder.Select<TRole>(new {TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
             var roles = await _connection.Current.QueryAsync<TRole>(query.Sql, query.Parameters);
             return roles;
         }
-
-        public void Dispose() { }}
+    }
 }

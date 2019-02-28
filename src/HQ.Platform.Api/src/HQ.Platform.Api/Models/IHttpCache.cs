@@ -27,4 +27,3 @@ namespace HQ.Platform.Api.Models
         void Save(string key, DateTimeOffset lastModified);
     }
 }
-

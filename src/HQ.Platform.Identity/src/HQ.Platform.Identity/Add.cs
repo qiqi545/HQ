@@ -18,13 +18,14 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using HQ.Common.Models;
+using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Security;
 using HQ.Platform.Identity.Services;
 using HQ.Platform.Identity.Validators;
-using HQ.Common.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,7 +48,8 @@ namespace HQ.Platform.Identity
         }
 
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services, IConfiguration configuration)
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services,
+            IConfiguration configuration)
             where TUser : IdentityUserExtended
             where TRole : IdentityRoleExtended
         {
@@ -119,10 +121,14 @@ namespace HQ.Platform.Identity
             });
 
             if (setupIdentityExtended != null)
+            {
                 services.Configure(setupIdentityExtended);
+            }
 
             if (setupIdentity != null)
+            {
                 services.Configure(setupIdentity);
+            }
 
             identityBuilder.AddDefaultTokenProviders();
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
@@ -146,6 +152,13 @@ namespace HQ.Platform.Identity
             services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;
+        }
+
+        public static IServiceCollection AddIdentityTenantContextStore<TTenant>(this IServiceCollection services)
+            where TTenant : IdentityTenant
+        {
+            services.AddScoped<ITenantContextStore<TTenant>, IdentityTenantContextStore<TTenant>>();
+            return services;
         }
     }
 }

@@ -16,9 +16,9 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Platform.Schema.Models;
 using HQ.Common;
 using HQ.Common.Helpers;
+using HQ.Platform.Schema.Models;
 
 namespace HQ.Platform.Schema.Extensions
 {
@@ -31,7 +31,10 @@ namespace HQ.Platform.Schema.Extensions
                 sb.Append(ns ?? schema?.Self?.Namespace ?? Constants.Schema.DefaultNamespace);
                 var version = schema?.Self?.Version ?? 0;
                 if (version == 0)
+                {
                     return;
+                }
+
                 sb.Append($".V{version}");
             });
         }
@@ -70,15 +73,22 @@ namespace HQ.Platform.Schema.Extensions
             {
                 sb.Append(schema?.Self?.Namespace ?? Constants.Schema.DefaultNamespace);
                 if (schema?.Self?.Version == 0)
+                {
                     return;
+                }
+
                 var version = schema?.Self?.Version ?? 0;
                 if (version == 0)
+                {
                     return;
+                }
+
                 sb.Append($".V{version}");
             });
         }
 
-        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema, Dictionary<string, Models.Schema> map)
+        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema,
+            Dictionary<string, Models.Schema> map)
         {
             var self = schema.FullTypeString();
 
@@ -95,7 +105,9 @@ namespace HQ.Platform.Schema.Extensions
                 {
                     var candidate = entry.Value.FullTypeString();
                     if (self == candidate)
+                    {
                         continue;
+                    }
 
                     if (candidate == propertyTypeString)
                     {

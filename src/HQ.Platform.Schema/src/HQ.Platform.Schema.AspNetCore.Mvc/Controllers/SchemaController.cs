@@ -26,7 +26,9 @@ namespace HQ.Platform.Schema.AspNetCore.Mvc.Controllers
     public class SchemaController : ControllerExtended
     {
         [HttpPost("{schemaType}")]
-        public Task<IActionResult> CreateAsync([FromRoute] string schemaType, [FromHeader(Name = Constants.HttpHeaders.ContentType)] string format = Constants.MediaTypes.HqSchema)
+        public Task<IActionResult> CreateAsync([FromRoute] string schemaType,
+            [FromHeader(Name = Constants.HttpHeaders.ContentType)]
+            string format = Constants.MediaTypes.HqSchema)
         {
             return Task.FromResult(NotImplemented());
         }

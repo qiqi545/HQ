@@ -129,11 +129,20 @@ namespace HQ.Platform.Operations
             string GetPlatform()
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
                     return "Linux";
+                }
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
                     return "Windows";
+                }
+
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
                     return "OSX";
+                }
+
                 return "Unknown";
             }
 
@@ -166,7 +175,9 @@ namespace HQ.Platform.Operations
 
                     IDictionary<string, object> configuration = new ExpandoObject();
                     foreach (var entry in config.AsEnumerable())
+                    {
                         configuration.Add(entry.Key, entry.Value);
+                    }
 
                     var env = new
                     {
@@ -240,10 +251,14 @@ namespace HQ.Platform.Operations
             if (serializerSettings != null)
             {
                 if (context.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
+                {
                     serializerSettings.ContractResolver =
                         new JsonContractResolver(transform, JsonProcessingDirection.Output);
+                }
                 else
+                {
                     serializerSettings = JsonConvert.DefaultSettings();
+                }
             }
 
             var json = serializerSettings != null

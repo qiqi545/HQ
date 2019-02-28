@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -26,5 +27,6 @@ namespace HQ.Platform.Identity.Models
         IUserPhoneNumberStore<TUser> where TUser : class
     {
         Task<TUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
+        Task<IEnumerable<TUser>> FindAllByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
     }
 }

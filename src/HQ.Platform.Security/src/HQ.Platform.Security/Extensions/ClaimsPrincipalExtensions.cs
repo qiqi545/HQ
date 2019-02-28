@@ -29,15 +29,23 @@ namespace HQ.Platform.Security.Extensions
             IDictionary<string, object> result = new ExpandoObject();
 
             if (user?.Identity == null || !user.Identity.IsAuthenticated)
+            {
                 return (ExpandoObject) result;
+            }
 
             var claims = user.GetClaimsList();
 
             foreach (var claim in claims)
+            {
                 if (claim.Value.Count == 1)
+                {
                     result.Add(claim.Key, claim.Value[0]);
+                }
                 else
+                {
                     result.Add(claim.Key, claim.Value);
+                }
+            }
 
             return (ExpandoObject) result;
         }
@@ -48,7 +56,10 @@ namespace HQ.Platform.Security.Extensions
             foreach (var claim in user?.Claims ?? Enumerable.Empty<Claim>())
             {
                 if (!claims.TryGetValue(claim.Type, out var list))
+                {
                     claims.Add(claim.Type, list = new List<string>());
+                }
+
                 list.Add(claim.Value);
             }
 

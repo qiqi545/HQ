@@ -30,7 +30,7 @@ namespace HQ.Platform.Api.Conventions
         {
             _components = components;
         }
-        
+
         public void Apply(ApplicationModel application)
         {
             foreach (var component in _components)
@@ -41,7 +41,9 @@ namespace HQ.Platform.Api.Conventions
                 foreach (var controller in application.Controllers)
                 {
                     if (!typeNames.Contains(controller.ControllerName))
+                    {
                         continue;
+                    }
 
                     var template = component.Namespace();
                     var prefix = new AttributeRouteModel(new RouteAttribute(template));
@@ -57,4 +59,3 @@ namespace HQ.Platform.Api.Conventions
         }
     }
 }
-

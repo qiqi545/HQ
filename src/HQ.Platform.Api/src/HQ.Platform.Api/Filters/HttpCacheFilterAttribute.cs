@@ -19,8 +19,8 @@ using System;
 using System.Net;
 using System.Text;
 using HQ.Common;
-using HQ.Platform.Api.Models;
 using HQ.Data.Contracts;
+using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -46,9 +46,13 @@ namespace HQ.Platform.Api.Filters
         {
             var request = context.HttpContext.Request;
             if (request.Method == Constants.HttpVerbs.Get)
+            {
                 HandleSafeRequests(context, request);
+            }
             else
+            {
                 HandleUnsafeRequests(context, request);
+            }
         }
 
         private void HandleUnsafeRequests(ActionExecutingContext context, HttpRequest request)
@@ -56,7 +60,9 @@ namespace HQ.Platform.Api.Filters
             var key = request.GetDisplayUrl();
 
             if (IfMatchFailed(request, key) || UnmodifiedSinceFailed(request, key))
+            {
                 context.Result = new StatusCodeResult((int) HttpStatusCode.PreconditionFailed);
+            }
         }
 
         private void HandleSafeRequests(ActionExecutingContext context, HttpRequest request)
@@ -64,7 +70,9 @@ namespace HQ.Platform.Api.Filters
             var key = request.GetDisplayUrl();
 
             if (NoneMatch(request, key) || NotModifiedSince(request, key))
+            {
                 context.Result = new StatusCodeResult((int) HttpStatusCode.NotModified);
+            }
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
@@ -77,7 +85,9 @@ namespace HQ.Platform.Api.Filters
         private void MaybeCacheObject(ActionExecutedContext context)
         {
             if (!(context.Result is OkObjectResult result))
+            {
                 return;
+            }
 
             var cacheKey = context.HttpContext.Request.GetDisplayUrl();
             var json = JsonConvert.SerializeObject(result.Value, _settings);
@@ -127,4 +137,3 @@ namespace HQ.Platform.Api.Filters
         #endregion
     }
 }
-

@@ -26,18 +26,18 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Services
 {
     public class RoleService<TRole> : IRoleService<TRole> where TRole : IdentityRoleExtended
     {
+        private readonly IQueryableProvider<TRole> _queryableProvider;
         private readonly RoleManager<TRole> _roleManager;
         private readonly IRoleStoreExtended<TRole> _roleStore;
-        private readonly IQueryableProvider<TRole> _queryableProvider;
-        
-        public RoleService(RoleManager<TRole> roleManager, IRoleStoreExtended<TRole> roleStore, IQueryableProvider<TRole> queryableProvider)
+
+        public RoleService(RoleManager<TRole> roleManager, IRoleStoreExtended<TRole> roleStore,
+            IQueryableProvider<TRole> queryableProvider)
         {
             _roleManager = roleManager;
             _roleStore = roleStore;
@@ -54,7 +54,7 @@ namespace HQ.Platform.Identity.Services
 
         public async Task<Operation<TRole>> CreateAsync(CreateRoleModel model)
         {
-            var role = (TRole)FormatterServices.GetUninitializedObject(typeof(TRole));
+            var role = (TRole) FormatterServices.GetUninitializedObject(typeof(TRole));
             role.Name = model.Name;
             role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
             role.NormalizedName = model.Name?.ToUpperInvariant();
@@ -67,7 +67,9 @@ namespace HQ.Platform.Identity.Services
         {
             var operation = await FindByIdAsync(id);
             if (!operation.Succeeded)
+            {
                 return operation;
+            }
 
             var deleted = await _roleManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
@@ -79,7 +81,8 @@ namespace HQ.Platform.Identity.Services
         {
             var role = await _roleManager.FindByIdAsync(id);
             return role == null
-                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_RoleNotFound, HttpStatusCode.NotFound))
+                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.RoleNotFound,
+                    HttpStatusCode.NotFound))
                 : new Operation<TRole>(role);
         }
 
@@ -87,7 +90,8 @@ namespace HQ.Platform.Identity.Services
         {
             var role = await _roleManager.FindByNameAsync(roleName);
             return role == null
-                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_RoleNotFound, HttpStatusCode.NotFound))
+                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.RoleNotFound,
+                    HttpStatusCode.NotFound))
                 : new Operation<TRole>(role);
         }
 

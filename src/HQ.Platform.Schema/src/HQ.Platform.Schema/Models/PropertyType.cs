@@ -15,8 +15,6 @@
 
 #endregion
 
-using System;
-
 namespace HQ.Platform.Schema.Models
 {
     public enum PropertyType : short
@@ -60,63 +58,5 @@ namespace HQ.Platform.Schema.Models
         Float = Single,
         Currency = Money,
         PhoneNumber = Phone
-    }
-
-    public static class PropertyTypeExtensions
-    {
-        public static bool IsString(this PropertyType propertyType)
-        {
-            switch (propertyType)
-            {
-                case PropertyType.String:
-                case PropertyType.Money:
-                case PropertyType.Email:
-                case PropertyType.Password:
-                case PropertyType.CreditCard:
-                case PropertyType.Phone:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        public static string ToLayoutField(this PropertyType propertyType)
-        {
-            switch (propertyType)
-            {
-                case PropertyType.String:
-                case PropertyType.Boolean:
-                case PropertyType.Byte:
-                case PropertyType.Int32:
-                case PropertyType.Int16:
-                case PropertyType.Int64:
-                case PropertyType.Float:
-                case PropertyType.Double:
-                case PropertyType.Decimal:
-                case PropertyType.TimeSpan:
-                    return Enum.GetName(typeof(PropertyType), propertyType) + "Field";
-
-                case PropertyType.Date:
-                case PropertyType.DateTime:
-                    return "DateTimeOffsetField";
-
-                case PropertyType.Money:
-                case PropertyType.Email:
-                case PropertyType.Password:
-                case PropertyType.CreditCard:
-                case PropertyType.Phone:
-                    return "StringField";
-
-                case PropertyType.Enum:
-                    return "Int64Field";
-
-                case PropertyType.Object:
-                case PropertyType.View:
-                    throw new NotSupportedException();
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(propertyType), propertyType, null);
-            }
-        }
     }
 }

@@ -20,10 +20,10 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Platform.Identity.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -47,7 +47,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var users = await _userService.GetAsync();
             if (users?.Data == null)
+            {
                 return NotFound();
+            }
+
             return Ok(users.Data);
         }
 
@@ -55,7 +58,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             var result = await _userService.CreateAsync(model);
 
@@ -68,7 +73,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _userService.DeleteAsync(id);
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
@@ -77,7 +85,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Update([FromBody] TUser user)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _userService.UpdateAsync(user);
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
@@ -87,7 +98,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
+
             return user.Succeeded
                 ? Ok(user.Data)
                 : (IActionResult) BadRequest(user.Errors);
@@ -98,7 +112,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByEmailAsync(email);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
+
             return user.Succeeded
                 ? Ok(user.Data)
                 : (IActionResult) BadRequest(user.Errors);
@@ -109,7 +126,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByNameAsync(username);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
+
             return user.Succeeded
                 ? Ok(user.Data)
                 : (IActionResult) BadRequest(user.Errors);
@@ -122,11 +142,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var result = await _userService.GetRolesAsync(user.Data);
             if (result.Data == null || result.Data.Count == 0)
+            {
                 return NotFound();
+            }
 
             return Ok(result.Data);
         }
@@ -136,7 +160,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var result = await _userService.AddToRoleAsync(user.Data, role);
 
@@ -151,7 +177,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var result = await _userService.RemoveFromRoleAsync(user.Data, role);
 
@@ -169,7 +197,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var result = await _userService.GetClaimsAsync(user.Data);
 
@@ -182,11 +212,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] AddClaimModel model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String);
 
@@ -203,7 +237,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claims = await _userService.GetClaimsAsync(user.Data);
 
@@ -211,7 +247,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                                                         x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
 
             if (claim == null)
+            {
                 return NotFound();
+            }
 
             var result = await _userService.RemoveClaimAsync(user.Data, claim);
 

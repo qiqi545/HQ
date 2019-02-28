@@ -31,7 +31,7 @@ namespace HQ.Platform.Api.Serialization
     {
         private readonly JsonProcessingDirection _direction;
         private readonly ITextTransform _transform;
-        
+
         public JsonContractResolver(ITextTransform transform, JsonProcessingDirection direction)
         {
             _transform = transform;
@@ -42,7 +42,10 @@ namespace HQ.Platform.Api.Serialization
         {
             var property = base.CreateProperty(member, memberSerialization);
             if (IsCollection(property))
+            {
                 property.ShouldSerialize = instance => IsNotEmpty(member, instance);
+            }
+
             return property;
         }
 
@@ -90,15 +93,23 @@ namespace HQ.Platform.Api.Serialization
                     IEnumerable<Type> interfaces =
                         type.GetInterfaces().Where(i => typeof(IViewModel).IsAssignableFrom(i)).ToList();
                     if (!interfaces.Any())
+                    {
                         properties = base.CreateProperties(type, memberSerialization);
+                    }
                     else
+                    {
                         foreach (var interfaceType in interfaces)
                         {
                             var props = base.CreateProperties(interfaceType, memberSerialization);
                             foreach (var prop in props)
+                            {
                                 if (!properties.Contains(prop))
+                                {
                                     properties.Add(prop);
+                                }
+                            }
                         }
+                    }
 
                     break;
                 default:
@@ -114,4 +125,3 @@ namespace HQ.Platform.Api.Serialization
         }
     }
 }
-

@@ -61,7 +61,7 @@ namespace HQ.Platform.Identity.Models
         Task<Operation> ChangePasswordAsync(TUser user, string token, string newPassword);
         Task<Operation> ConfirmEmailAsync(TUser user, string token);
         Task<Operation> ResetPasswordAsync(TUser user, string token, string newPassword);
-        
+
         Task<Operation> UpdateAsync(TUser user);
     }
 }

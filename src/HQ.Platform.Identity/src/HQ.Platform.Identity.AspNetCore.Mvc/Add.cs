@@ -18,12 +18,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using HQ.Platform.Identity.AspNetCore.Mvc.Configuration;
-using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
-using HQ.Platform.Identity.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Conventions;
+using HQ.Platform.Identity.AspNetCore.Mvc.Configuration;
+using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
@@ -74,7 +74,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             });
 
             services.Configure<IdentityApiOptions>(identityConfig);
-            services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
+            services.Configure<RazorViewEngineOptions>(x =>
+            {
+                x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
+            });
 
             mvc.AddControllers<TUser, TRole>();
             services.AddSingleton<IDynamicComponent>(r =>

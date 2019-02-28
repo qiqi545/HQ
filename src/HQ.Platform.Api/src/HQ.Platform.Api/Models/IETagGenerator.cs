@@ -22,4 +22,3 @@ namespace HQ.Platform.Api.Models
         string GenerateFromBuffer(byte[] data);
     }
 }
-

@@ -17,14 +17,14 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Conventions;
+using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public class TokensComponent : IDynamicComponent
     {
-        public IEnumerable<Type> ControllerTypes => new[] { typeof(TokenController<>) };
+        public IEnumerable<Type> ControllerTypes => new[] {typeof(TokenController<>)};
         public Func<string> Namespace { get; set; }
     }
 }

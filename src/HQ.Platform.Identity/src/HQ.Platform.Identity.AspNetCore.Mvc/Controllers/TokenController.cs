@@ -18,14 +18,14 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using HQ.Platform.Identity.AspNetCore.Mvc.Models;
-using HQ.Platform.Identity.Extensions;
-using HQ.Platform.Identity.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Api.Configuration;
+using HQ.Platform.Identity.AspNetCore.Mvc.Models;
+using HQ.Platform.Identity.Extensions;
+using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.Configuration;
@@ -67,11 +67,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public IActionResult VerifyToken()
         {
             if (User.Identity == null)
+            {
                 return Unauthorized();
+            }
 
 
             if (User.Identity.IsAuthenticated)
+            {
                 return Ok(User.GetClaims());
+            }
 
             return Unauthorized();
         }
@@ -81,7 +85,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             TUser user;
             switch (model.IdentityType)
@@ -92,22 +98,32 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 case IdentityType.Email:
                     user = await _userManager.FindByEmailAsync(model.Identity);
                     if (!user.EmailConfirmed)
+                    {
                         return NotFound();
+                    }
+
                     break;
                 case IdentityType.PhoneNumber:
                     user = await _userManager.FindByPhoneNumberAsync(model.Identity);
                     if (!user.PhoneNumberConfirmed)
+                    {
                         return NotFound();
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
             if (user == null)
+            {
                 return NotFound();
+            }
 
             if (user.LockoutEnd.HasValue && user.LockoutEnd > _timestamps.GetCurrentTime())
+            {
                 return Forbid();
+            }
 
             if (await _userManager.CheckPasswordAsync(user, model.Password))
             {

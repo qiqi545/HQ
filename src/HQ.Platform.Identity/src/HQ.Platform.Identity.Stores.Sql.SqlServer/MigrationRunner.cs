@@ -44,6 +44,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
                 var dbFilePath = $"%USERPROFILE%\\{csb.InitialCatalog}.mdf";
                 var filePath = Environment.ExpandEnvironmentVariables(dbFilePath);
                 if (!File.Exists(filePath))
+                {
                     using (var connection =
                         new SqlConnection(
                             @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=master;Integrated Security=True"))
@@ -64,6 +65,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
                             await command.ExecuteNonQueryAsync(cancellationToken);
                         }
                     }
+                }
             }
         }
 

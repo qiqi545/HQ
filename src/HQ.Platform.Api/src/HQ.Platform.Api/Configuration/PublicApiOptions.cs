@@ -23,7 +23,7 @@ namespace HQ.Platform.Api.Configuration
     {
         public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
         public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
-        
+
         public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
         public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
         public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
@@ -31,4 +31,3 @@ namespace HQ.Platform.Api.Configuration
         public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
     }
 }
-

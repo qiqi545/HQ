@@ -61,14 +61,18 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             if (context.User != null)
             {
                 if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                {
                     context.Succeed(requirement);
+                }
                 else if (requirement.AllowedValues == null || !requirement.AllowedValues.Any()
                     ? context.User.Claims.Any(c =>
                         string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase))
                     : context.User.Claims.Any(c =>
                         string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase) &&
                         requirement.AllowedValues.Contains(c.Value, StringComparer.Ordinal)))
+                {
                     context.Succeed(requirement);
+                }
             }
 
             return Task.CompletedTask;

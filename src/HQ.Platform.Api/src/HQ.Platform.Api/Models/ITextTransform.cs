@@ -23,4 +23,3 @@ namespace HQ.Platform.Api.Models
         string Transform(string input);
     }
 }
-

@@ -28,22 +28,33 @@ namespace HQ.Platform.Identity.Extensions
             var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}"));
             var operation = new Operation(errors.ToList());
             if (result.Succeeded)
+            {
                 operation.Result =
                     operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
+            }
             else
+            {
                 operation.Result = OperationResult.Error;
+            }
+
             return operation;
         }
 
         public static Operation<T> ToOperation<T>(this IdentityResult result, T data)
         {
-            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}")).ToList();
+            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}"))
+                .ToList();
             var operation = new Operation<T>(data, errors);
             if (result.Succeeded)
+            {
                 operation.Result =
                     operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
+            }
             else
+            {
                 operation.Result = OperationResult.Error;
+            }
+
             return operation;
         }
     }

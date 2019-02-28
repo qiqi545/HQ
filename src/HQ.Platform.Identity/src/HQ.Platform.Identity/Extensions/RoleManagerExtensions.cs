@@ -31,7 +31,9 @@ namespace HQ.Platform.Identity.Extensions
             var accessor = TypeAccessor.Create(typeof(RoleManager<TUser>), true);
             var disposedField = accessor[roleManager, "_disposed"];
             if (disposedField is bool disposed && disposed)
+            {
                 throw new ObjectDisposedException(roleManager.GetType().Name);
+            }
         }
     }
 }

@@ -22,12 +22,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Extensions;
-using HQ.Platform.Identity.Models;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Configuration;
+using HQ.Platform.Identity.Extensions;
+using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -80,10 +80,6 @@ namespace HQ.Platform.Identity.Stores.Sql
             _security = security;
         }
 
-        public CancellationToken CancellationToken { get; }
-
-        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
-
         public IQueryable<TUser> Users => MaybeQueryable();
 
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
@@ -98,11 +94,17 @@ namespace HQ.Platform.Identity.Stores.Sql
                 var idType = typeof(TKey);
                 var id = Guid.NewGuid();
                 if (idType == typeof(Guid))
+                {
                     user.Id = (TKey) (object) id;
+                }
                 else if (idType == typeof(string))
+                {
                     user.Id = (TKey) (object) $"{id}";
+                }
                 else
+                {
                     throw new NotSupportedException();
+                }
             }
 
             var query = SqlBuilder.Insert(user);
@@ -130,9 +132,11 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             if (SupportsSuperUser && userId == SuperUserGuidId)
+            {
                 return CreateSuperUserInstance();
+            }
 
-            var query = SqlBuilder.Select<TUser>(new {Id = userId, TenantId = _tenantId });
+            var query = SqlBuilder.Select<TUser>(new {Id = userId, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
@@ -145,9 +149,11 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
                 _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+            {
                 return CreateSuperUserInstance();
+            }
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName, TenantId = _tenantId });
+            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
@@ -192,7 +198,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Update(user, new { user.Id, TenantId = _tenantId });
+            var query = SqlBuilder.Update(user, new {user.Id, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
 
             var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
@@ -200,20 +206,50 @@ namespace HQ.Platform.Identity.Stores.Sql
             return IdentityResult.Success;
         }
 
+        public void Dispose()
+        {
+        }
+
+        public CancellationToken CancellationToken { get; }
+
+        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
+
+        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
+                _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+            {
+                return new[] {CreateSuperUserInstance()};
+            }
+
+            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
+            _connection.SetTypeInfo(typeof(TUser));
+
+            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+            return users;
+        }
+
         private IQueryable<TUser> MaybeQueryable()
         {
             if (_queryable.IsSafe)
+            {
                 return _queryable.Queryable;
+            }
 
             if (_queryable.SupportsUnsafe)
+            {
                 return _queryable.UnsafeQueryable;
+            }
 
             return Task.Run(GetAllUsersAsync, CancellationToken).Result.AsQueryable();
         }
 
         private Task<IEnumerable<TUser>> GetAllUsersAsync()
         {
-            var query = SqlBuilder.Select<TUser>(new { TenantId = _tenantId });
+            var query = SqlBuilder.Select<TUser>(new {TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
             var users = _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
             return users;
@@ -223,11 +259,17 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             var superuser = Activator.CreateInstance<TUser>();
             if (typeof(TKey) == typeof(Guid))
+            {
                 superuser.Id = (TKey) (object) Guid.Parse(SuperUserGuidId);
+            }
             else if (typeof(TKey) == typeof(string))
+            {
                 superuser.Id = (TKey) (object) SuperUserGuidId;
+            }
             else
+            {
                 superuser.Id = (TKey) (object) SuperUserNumberId;
+            }
 
             var options = _security?.Value.SuperUser;
 
@@ -246,7 +288,5 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             return superuser;
         }
-
-        public void Dispose() { }
     }
 }

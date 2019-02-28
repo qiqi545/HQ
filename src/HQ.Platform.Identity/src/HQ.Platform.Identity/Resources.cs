@@ -16,7 +16,6 @@
 #endregion
 
 using System.Globalization;
-using HQ.Strings;
 
 namespace HQ.Platform.Identity
 {
@@ -24,13 +23,24 @@ namespace HQ.Platform.Identity
     {
         internal static string FormatInvalidPhoneNumber(string phoneNumber)
         {
-            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.Cohort_InvalidPhoneNumber, phoneNumber);
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidPhoneNumber, phoneNumber);
         }
 
         /// <summary></summary>
         internal static string FormatDuplicatePhoneNumber(string phoneNumber)
         {
-            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.Cohort_DuplicatePhoneNumber, phoneNumber);
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicatePhoneNumber, phoneNumber);
+        }
+
+        internal static string FormatInvalidTenantName(string tenantName)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidTenantName, tenantName);
+        }
+
+        /// <summary></summary>
+        internal static string FormatDuplicateTenantName(string tenantName)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicateTenantName, tenantName);
         }
     }
 }

@@ -107,7 +107,10 @@ namespace HQ.Platform.Identity.Stores.Sql
                 TenantId = _tenantId
             });
 
-            if (userId == null) return null;
+            if (userId == null)
+            {
+                return null;
+            }
 
             const string getUserById = "SELECT * FROM AspNetUsers WHERE Id = @Id AND TenantId = @TenantId";
 

@@ -26,7 +26,7 @@ namespace HQ.Platform.Identity.Tests.Sqlite
                     options.Stores.CreateIfNotExists = true;
                     options.Stores.MigrateOnStartup = true;
                 })
-                .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended>($"Data Source={Guid.NewGuid()}.db",
+                .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>($"Data Source={Guid.NewGuid()}.db",
                     ConnectionScope.KeepAlive);
         }
 

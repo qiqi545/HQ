@@ -61,7 +61,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             }
             else
             {
-                var query = SqlBuilder.Update(token, new {UserId = user.Id, TenantId = _tenantId });
+                var query = SqlBuilder.Update(token, new {UserId = user.Id, TenantId = _tenantId});
                 await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             }
         }

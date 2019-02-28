@@ -35,7 +35,8 @@ namespace HQ.Platform.Runtime.Rest.Attributes
             Execute<RestPageFilter>(context, filter => filter.Options.PageOperator, c => c.Paging);
         }
 
-        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs, QueryContext qc)
+        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
+            QueryContext qc)
         {
             Execute<RestPageFilter>(context, filter => filter.Options.PageOperator, c => c.Paging, qs, qc);
         }

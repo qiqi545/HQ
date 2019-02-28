@@ -104,8 +104,11 @@ namespace HQ.Platform.Api.Extensions
             value.Context = settings.Context;
             value.ContractResolver = settings.ContractResolver;
             value.Converters.Clear();
-            foreach(var converter in settings.Converters)
+            foreach (var converter in settings.Converters)
+            {
                 value.Converters.Add(converter);
+            }
+
             value.Culture = settings.Culture;
             value.DateFormatHandling = settings.DateFormatHandling;
             value.DateFormatString = settings.DateFormatString;
@@ -140,7 +143,10 @@ namespace HQ.Platform.Api.Extensions
             value.ContractResolver = serializer.ContractResolver;
             value.Converters.Clear();
             foreach (var converter in serializer.Converters)
+            {
                 value.Converters.Add(converter);
+            }
+
             value.Culture = serializer.Culture;
             value.DateFormatHandling = serializer.DateFormatHandling;
             value.DateFormatString = serializer.DateFormatString;
@@ -167,4 +173,3 @@ namespace HQ.Platform.Api.Extensions
         }
     }
 }
-

@@ -47,11 +47,15 @@ namespace HQ.Platform.Identity.Security
             string providedPassword)
         {
             if (PasswordHash.ArgonHashStringVerify(hashedPassword, providedPassword))
+            {
                 return PasswordVerificationResult.Success;
+            }
 
             if (_previous?.VerifyHashedPassword(user, hashedPassword, providedPassword) ==
                 PasswordVerificationResult.Success)
+            {
                 return PasswordVerificationResult.SuccessRehashNeeded;
+            }
 
             return PasswordVerificationResult.Failed;
         }

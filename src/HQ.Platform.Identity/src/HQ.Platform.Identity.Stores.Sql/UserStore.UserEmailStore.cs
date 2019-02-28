@@ -15,15 +15,17 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class UserStore<TUser, TKey, TRole> : IUserEmailStore<TUser>
+    public partial class UserStore<TUser, TKey, TRole> : IUserEmailStoreExtended<TUser>, IUserEmailStore<TUser>
     {
         public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
         {
@@ -56,7 +58,9 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
             if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
                 _security?.Value.SuperUser?.Username.ToUpperInvariant())
+            {
                 return CreateSuperUserInstance();
+            }
 
             var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
@@ -75,6 +79,22 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
             user.NormalizedEmail = normalizedEmail;
             return Task.FromResult<object>(null);
+        }
+
+        public async Task<IEnumerable<TUser>> FindAllByEmailAsync(string normalizedEmail,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
+                _security?.Value.SuperUser?.Username.ToUpperInvariant())
+            {
+                return new[] {CreateSuperUserInstance()};
+            }
+
+            var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail});
+            _connection.SetTypeInfo(typeof(TUser));
+            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+            return users;
         }
     }
 }

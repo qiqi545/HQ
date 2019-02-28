@@ -34,7 +34,10 @@ namespace HQ.Platform.Api.Models
         public bool TryGetETag(string key, out string etag)
         {
             if (!_cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out etag))
+            {
                 return true;
+            }
+
             etag = default;
             return false;
         }
@@ -42,7 +45,10 @@ namespace HQ.Platform.Api.Models
         public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
         {
             if (!_cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out lastModified))
+            {
                 return true;
+            }
+
             lastModified = default;
             return false;
         }
@@ -59,4 +65,3 @@ namespace HQ.Platform.Api.Models
         }
     }
 }
-

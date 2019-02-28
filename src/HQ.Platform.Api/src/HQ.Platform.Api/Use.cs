@@ -22,12 +22,12 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Extensions;
 using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
-using HQ.Platform.Api.Extensions;
 
 namespace HQ.Platform.Api
 {
@@ -47,18 +47,16 @@ namespace HQ.Platform.Api
 
             return app;
         }
-        
+
         private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app, bool snapshot)
         {
             if (snapshot)
             {
                 if (app.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options))
                 {
-                    return app.Use(async (context, next) =>
-                    {
-                        await ExecuteFeature(context, options, next);
-                    });
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
                 }
+
                 return app;
             }
 
@@ -77,8 +75,11 @@ namespace HQ.Platform.Api
                 {
                     var value = header.ToString();
                     if (o.AllowedMethodOverrides.Contains(value, StringComparer.OrdinalIgnoreCase))
+                    {
                         c.Request.Method = value;
+                    }
                 }
+
                 await next();
             }
         }
@@ -89,11 +90,9 @@ namespace HQ.Platform.Api
             {
                 if (app.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options))
                 {
-                    return app.Use(async (context, next) =>
-                    {
-                        await ExecuteFeature(context, options, next);
-                    });
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
                 }
+
                 return app;
             }
 
@@ -126,6 +125,7 @@ namespace HQ.Platform.Api
                     path = $"{path}/merge";
                     c.Request.Path = path;
                 }
+
                 await next();
             }
         }
@@ -136,11 +136,9 @@ namespace HQ.Platform.Api
             {
                 if (app.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options))
                 {
-                    return app.Use(async (context, next) =>
-                    {
-                        await ExecuteFeature(context, options, next);
-                    });
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
                 }
+
                 return app;
             }
 
@@ -156,7 +154,10 @@ namespace HQ.Platform.Api
             {
                 var bodySize = c.Features.Get<IHttpMaxRequestBodySizeFeature>();
                 if (bodySize != null && !bodySize.IsReadOnly)
+                {
                     bodySize.MaxRequestBodySize = o.MaxRequestSizeBytes;
+                }
+
                 await next();
             }
         }
@@ -167,11 +168,9 @@ namespace HQ.Platform.Api
             {
                 if (app.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options))
                 {
-                    return app.Use(async (context, next) =>
-                    {
-                        await ExecuteFeature(context, options, next);
-                    });
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
                 }
+
                 return app;
             }
 
@@ -192,32 +191,36 @@ namespace HQ.Platform.Api
                     foreach (var entry in c.RequestServices.GetServices<ITextTransform>())
                     {
                         if (!entry.Name.Equals(value, StringComparison.OrdinalIgnoreCase))
+                        {
                             continue;
+                        }
+
                         c.Items[Constants.ContextKeys.JsonMultiCase] = entry;
                         goto next;
                     }
                 }
+
                 next:
                 await next();
             }
         }
 
-        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<int>, new()
+        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true)
+            where TTenant : class, ITenant<int>, new()
         {
             return app.UseMultiTenancy<TTenant, int>(snapshot);
         }
 
-        public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<TKey>, new()
+        public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app,
+            bool snapshot = true) where TTenant : class, ITenant<TKey>, new()
         {
             if (snapshot)
             {
                 if (app.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options))
                 {
-                    return app.Use(async (context, next) =>
-                    {
-                        await ExecuteFeature(context, options, next);
-                    });
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
                 }
+
                 return app;
             }
 
@@ -244,9 +247,9 @@ namespace HQ.Platform.Api
                         if (!string.IsNullOrWhiteSpace(o.DefaultTenantId) &&
                             !string.IsNullOrWhiteSpace(o.DefaultTenantName))
                         {
-                            var tenant = new TTenant { Name = o.DefaultTenantName };
-                            tenantContext = new TenantContext<TTenant> { Tenant = tenant };
-                            tenant.Id = (TKey)(Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey));
+                            var tenant = new TTenant {Name = o.DefaultTenantName};
+                            tenantContext = new TenantContext<TTenant> {Tenant = tenant};
+                            tenant.Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey));
 
                             c.SetTenantContext(tenantContext);
                         }
@@ -263,4 +266,3 @@ namespace HQ.Platform.Api
         }
     }
 }
-

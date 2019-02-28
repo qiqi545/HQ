@@ -29,7 +29,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 {
     partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorRecoveryCodeStore<TUser>
     {
-        public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
+        public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -87,7 +88,8 @@ namespace HQ.Platform.Identity.Stores.Sql
             });
             _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 
-            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql, query.Parameters);
+            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
+                query.Parameters);
 
             if (!string.IsNullOrWhiteSpace(token.Value))
             {

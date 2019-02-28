@@ -51,7 +51,9 @@ namespace HQ.Platform.Api.Models
             {
                 var input = Encoding.UTF8.GetString(buffer);
                 if (DateTimeOffset.TryParse(input, out lastModified))
+                {
                     return true;
+                }
             }
 
             lastModified = default;
@@ -70,4 +72,3 @@ namespace HQ.Platform.Api.Models
         }
     }
 }
-

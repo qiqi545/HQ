@@ -36,10 +36,10 @@ namespace HQ.Platform.Api.Configuration
     internal class PublicApiMvcConfiguration : IConfigureOptions<MvcOptions>
     {
         private readonly ArrayPool<char> _charPool;
+        private readonly IEnumerable<IDynamicComponent> _components;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ObjectPoolProvider _objectPoolProvider;
         private readonly IOptions<PublicApiOptions> _options;
-        private readonly IEnumerable<IDynamicComponent> _components;
         private readonly JsonSerializerSettings _settings;
 
         public PublicApiMvcConfiguration(
@@ -77,11 +77,14 @@ namespace HQ.Platform.Api.Configuration
         private void AddXml(MvcOptions options)
         {
             if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("xml")))
+            {
                 options.FormatterMappings.SetMediaTypeMappingForFormat("xml", Constants.MediaTypes.Xml);
+            }
+
             options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter(new XmlWriterSettings
             {
                 Indent = true,
-                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates
             }, _loggerFactory));
             options.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(options));
         }
@@ -89,11 +92,15 @@ namespace HQ.Platform.Api.Configuration
         private void AddJson(MvcOptions options, ILogger logger, MvcJsonOptions jsonOptions)
         {
             if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
+            {
                 options.FormatterMappings.SetMediaTypeMappingForFormat("json", Constants.MediaTypes.Json);
-            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
-            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+            }
+
+            options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider,
+                options, jsonOptions));
+            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider,
+                options, jsonOptions));
             options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
         }
     }
 }
-

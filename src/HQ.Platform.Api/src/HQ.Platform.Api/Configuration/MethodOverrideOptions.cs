@@ -24,7 +24,7 @@ namespace HQ.Platform.Api.Configuration
     {
         public string MethodOverrideHeader { get; set; } = Constants.HttpHeaders.MethodOverride;
 
-        public string[] AllowedMethodOverrides { get; set; } = {Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put};
+        public string[] AllowedMethodOverrides { get; set; } =
+            {Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put};
     }
 }
-

@@ -15,7 +15,9 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
@@ -23,7 +25,7 @@ namespace HQ.Platform.Identity.Models
     public interface IUserStoreExtended<TUser> : IUserStore<TUser> where TUser : class
     {
         CancellationToken CancellationToken { get; }
-
         bool SupportsSuperUser { get; }
+        Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken);
     }
 }

@@ -25,12 +25,16 @@ namespace HQ.Platform.Api.Models
 
         public string Transform(string input)
         {
-            if (string.IsNullOrEmpty(input) || input.Length > 0 && char.IsLower(input[0])) return input;
+            if (string.IsNullOrEmpty(input) || input.Length > 0 && char.IsLower(input[0]))
+            {
+                return input;
+            }
 
             return StringBuilderPool.Scoped(sb =>
             {
                 sb.Append(char.ToLowerInvariant(input[0]));
                 for (var i = 1; i < input.Length; i++)
+                {
                     if (char.IsLower(input[i]))
                     {
                         sb.Append(input[i]);
@@ -40,8 +44,8 @@ namespace HQ.Platform.Api.Models
                         sb.Append('_');
                         sb.Append(char.ToLowerInvariant(input[i]));
                     }
+                }
             });
         }
     }
 }
-

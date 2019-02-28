@@ -17,7 +17,7 @@
 
 using System.Net;
 using System.Threading.Tasks;
-using HQ.Data.Sql.DocumentDb;
+using HQ.Data.SessionManagement.DocumentDb;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
@@ -51,11 +51,15 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == HttpStatusCode.NotFound)
+                {
                     await _client.CreateDocumentCollectionAsync(UriFactory.CreateDatabaseUri(_databaseId),
                         new DocumentCollection {Id = _options.CollectionId},
                         new RequestOptions {OfferThroughput = _options.OfferThroughput});
+                }
                 else
+                {
                     throw;
+                }
             }
         }
     }

@@ -37,7 +37,9 @@ namespace HQ.Platform.Security.AspNetCore
             services.Configure<SecurityOptions>(config);
 
             if (options.Tokens.Enabled)
+            {
                 services.AddAuthentication(options);
+            }
 
             services.AddAuthorization(x =>
             {
@@ -46,8 +48,10 @@ namespace HQ.Platform.Security.AspNetCore
                     .Build();
 
                 if (options.SuperUser.Enabled)
+                {
                     x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
                         builder => { builder.RequireRoleExtended(services, options, ClaimValues.SuperUser); });
+                }
             });
 
             return services;

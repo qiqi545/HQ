@@ -30,6 +30,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 {
     partial class UserStore<TUser, TKey, TRole> : IUserRoleStore<TUser>
     {
+        private static readonly List<string> SuperUserRoles = new List<string> {ClaimValues.SuperUser};
+
         public async Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -68,14 +70,14 @@ namespace HQ.Platform.Identity.Stores.Sql
             }
         }
 
-        private static readonly List<string> SuperUserRoles = new List<string> { ClaimValues.SuperUser };
-
         public async Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             if (user.NormalizedUserName == _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+            {
                 return SuperUserRoles;
+            }
 
             var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new
             {
@@ -93,7 +95,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (roleMapping.Any())
             {
                 var descriptor = SqlBuilder.GetDescriptor<TRole>();
-                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new { TenantId = _tenantId });
+                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new {TenantId = _tenantId});
                 roleQuery.Sql += $" AND {descriptor.Table}.Id IN @RoleIds";
                 roleQuery.Parameters.Add("@RoleIds", roleMapping.Select(x => x.RoleId));
                 _connection.SetTypeInfo(typeof(TRole));
@@ -131,7 +133,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         private async Task<TKey> GetRoleIdByNameAsync(string roleName)
         {
-            var query = SqlBuilder.Select<TRole>(new {NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId });
+            var query = SqlBuilder.Select<TRole>(new
+                {NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
             return role.Id;

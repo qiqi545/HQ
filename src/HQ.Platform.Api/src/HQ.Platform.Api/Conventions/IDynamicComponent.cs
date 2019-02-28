@@ -27,4 +27,3 @@ namespace HQ.Platform.Api.Conventions
         Func<string> Namespace { get; }
     }
 }
-

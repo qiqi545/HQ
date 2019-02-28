@@ -18,8 +18,6 @@
 using System;
 using System.Data;
 using System.Threading;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
 using HQ.Common.Models;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
@@ -28,6 +26,8 @@ using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Queries;
 using HQ.Data.Sql.Sqlite;
 using HQ.Extensions.Metrics;
+using HQ.Platform.Identity.Configuration;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
@@ -38,49 +38,64 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole>(this IdentityBuilder identityBuilder,
+        public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole, TTenant>(
+            this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
+            where TTenant : IdentityTenant<string>
         {
-            return AddSqliteIdentityStore<string, TUser, TRole>(identityBuilder, connectionString, null, scope);
+            return AddSqliteIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, null,
+                scope);
         }
 
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
+            this IdentityBuilder identityBuilder,
             string connectionString,
             IConfiguration sqliteConfig,
             ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
-            if (sqliteConfig != null) identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
+            if (sqliteConfig != null)
+            {
+                identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
+            }
+
             var configureSqlite = sqliteConfig != null ? sqliteConfig.Bind : (Action<SqliteOptions>) null;
 
-            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope, null, configureSqlite);
+            return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, null,
+                configureSqlite);
         }
-        
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope, 
+
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
+            IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope,
             IConfiguration identityConfig, IConfiguration sqliteConfig)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
             identityBuilder.Services.Configure<IdentityOptions>(identityConfig);
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
             identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
 
-            return AddSqliteIdentityStore<TKey, TUser, TRole>(identityBuilder, connectionString, scope, identityConfig.Bind, sqliteConfig.Bind);
+            return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
+                identityConfig.Bind, sqliteConfig.Bind);
         }
 
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole>(this IdentityBuilder identityBuilder,
+        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
+            this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             Action<IdentityOptionsExtended> configureIdentity = null,
             Action<SqliteOptions> configureSqlite = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
             identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
@@ -88,13 +103,15 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
             var serviceProvider = identityBuilder.Services.BuildServiceProvider();
 
-            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ?? new IdentityOptionsExtended();
+            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ??
+                                  new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
             var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
             configureSqlite?.Invoke(options);
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole>(connectionString, scope, OnCommand<TKey>(), OnConnection);
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString, scope,
+                OnCommand<TKey>(), OnConnection);
             identityBuilder.Services.AddSingleton(dialect);
 
             SqlBuilder.Dialect = dialect;
@@ -138,20 +155,24 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             {
                 if (c is SqliteCommand command)
                 {
-
                 }
             };
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions, SqliteOptions options) where TKey : IEquatable<TKey>
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
+            SqliteOptions options) where TKey : IEquatable<TKey>
         {
             var runner = new MigrationRunner(connectionString, options);
 
             if (identityOptions.Stores.CreateIfNotExists)
+            {
                 runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+            }
 
             if (identityOptions.Stores.MigrateOnStartup)
+            {
                 runner.MigrateUp(CancellationToken.None);
+            }
         }
     }
 }

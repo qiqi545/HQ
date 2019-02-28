@@ -19,10 +19,10 @@ using System.Collections.Generic;
 using System.Net;
 using HQ.Common;
 using HQ.Common.Helpers;
-using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Models;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
+using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Extensions
@@ -39,16 +39,19 @@ namespace HQ.Platform.Api.Extensions
 
         public static void MaybePrettyPrint(this HttpResponse response, HttpRequest request, PublicApiOptions options)
         {
-            if (FeatureRequested(request, options.JsonConversion.PrettyPrintOperator, options.JsonConversion.PrettyPrintEnabled))
+            if (FeatureRequested(request, options.JsonConversion.PrettyPrintOperator,
+                options.JsonConversion.PrettyPrintEnabled))
             {
                 request.HttpContext.Items[Constants.ContextKeys.JsonPrettyPrint] = true;
             }
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions, QueryOptions queryOptions,
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+            QueryOptions queryOptions,
             IPageHeader data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
+                apiOptions.JsonConversion.EnvelopeEnabled))
             {
                 body = new EnvelopeBody
                 {
@@ -67,7 +70,7 @@ namespace HQ.Platform.Api.Extensions
                     HasErrors = errors?.Count > 0
                 };
 
-                response.StatusCode = (int)HttpStatusCode.OK;
+                response.StatusCode = (int) HttpStatusCode.OK;
                 return;
             }
 
@@ -83,7 +86,10 @@ namespace HQ.Platform.Api.Extensions
                 {
                     var nextPage = $"<{GetNextPage(request, data, queryOptions)}>; rel=\"next\"";
                     if (sb.Length > 0)
+                    {
                         sb.Append(", ");
+                    }
+
                     sb.Append(nextPage);
                 }
 
@@ -91,7 +97,10 @@ namespace HQ.Platform.Api.Extensions
                 {
                     var previousPage = $"<{GetPreviousPage(request, data, queryOptions)}>; rel=\"previous\"";
                     if (sb.Length > 0)
+                    {
                         sb.Append(", ");
+                    }
+
                     sb.Append(previousPage);
                 }
 
@@ -99,13 +108,18 @@ namespace HQ.Platform.Api.Extensions
                 {
                     var lastPage = $"<{GetLastPage(request, data, queryOptions)}>; rel=\"last\"";
                     if (sb.Length > 0)
+                    {
                         sb.Append(", ");
+                    }
+
                     sb.Append(lastPage);
                 }
             });
 
             if (link.Length > 0)
+            {
                 response.Headers.Add(Constants.HttpHeaders.Link, link);
+            }
 
             response.Headers.Add(queryOptions.TotalCountHeader, data.TotalCount.ToString());
             response.Headers.Add(queryOptions.TotalPagesHeader, data.TotalPages.ToString());
@@ -117,9 +131,11 @@ namespace HQ.Platform.Api.Extensions
             };
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions, QueryOptions queryOptions, object data, IList<Error> errors, out object body)
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+            QueryOptions queryOptions, object data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
+                apiOptions.JsonConversion.EnvelopeEnabled))
             {
                 body = new EnvelopeBody
                 {
@@ -140,40 +156,55 @@ namespace HQ.Platform.Api.Extensions
                 };
             }
 
-            response.StatusCode = (int)HttpStatusCode.OK;
+            response.StatusCode = (int) HttpStatusCode.OK;
         }
 
         internal static string GetPreviousPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            return !header.HasPreviousPage ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
+            return !header.HasPreviousPage
+                ? null
+                : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index - 1}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetNextPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            return !header.HasNextPage ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
+            return !header.HasNextPage
+                ? null
+                : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.Index + 2}&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetFirstPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            return header.TotalPages == 0 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}=1&{options.PerPageOperator}={header.Size}";
+            return header.TotalPages == 0
+                ? null
+                : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}=1&{options.PerPageOperator}={header.Size}";
         }
 
         internal static string GetLastPage(HttpRequest request, IPageHeader header, QueryOptions options)
         {
-            return header.TotalPages < 2 ? null : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
+            return header.TotalPages < 2
+                ? null
+                : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
         }
 
         public static bool FeatureRequested(this HttpRequest request, string @operator, bool @default)
         {
             if (string.IsNullOrWhiteSpace(@operator))
+            {
                 return @default;
+            }
+
             bool useFeature;
             if (request.Query.TryGetValue(@operator, out var values))
+            {
                 bool.TryParse(values, out useFeature);
+            }
             else
+            {
                 useFeature = @default;
+            }
+
             return useFeature;
         }
     }
 }
-

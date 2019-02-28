@@ -43,10 +43,14 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             if (context.User != null)
             {
                 if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                {
                     context.Succeed(requirement);
+                }
                 else if ((context.User.Identity == null ? 1 :
                              context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
+                {
                     context.Succeed(requirement);
+                }
             }
 
             return Task.CompletedTask;

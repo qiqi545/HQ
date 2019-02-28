@@ -22,19 +22,11 @@ namespace HQ.Platform.Schema.Models
     [Flags]
     public enum PropertyScope : byte
     {
-        Read  = 1 << 0,
+        Read = 1 << 0,
         Write = 1 << 1,
 
         ReadWrite = Read | Write,
         None = 0x0,
         All = 0xFF
-    }
-
-    public static class PropertyScopeExtensions
-    {
-        public static bool HasFlagFast(this PropertyScope value, PropertyScope flag)
-        {
-            return (value & flag) != 0;
-        }
     }
 }

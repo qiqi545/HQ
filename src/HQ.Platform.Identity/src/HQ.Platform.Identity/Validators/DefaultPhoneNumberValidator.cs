@@ -45,7 +45,9 @@ namespace HQ.Platform.Identity.Validators
             var phoneNumber = await manager.GetPhoneNumberAsync(user);
 
             if (!_options.Value.User.RequirePhoneNumber && string.IsNullOrWhiteSpace(phoneNumber))
+            {
                 return;
+            }
 
             if (string.IsNullOrWhiteSpace(phoneNumber) || ContainsDeniedPhoneNumberCharacters(phoneNumber) ||
                 !PhoneAttribute.IsValid(phoneNumber))
@@ -56,13 +58,19 @@ namespace HQ.Platform.Identity.Validators
 
             var exists = await manager.FindByNameAsync(phoneNumber);
             if (exists == null)
+            {
                 return;
+            }
 
             if (!_options.Value.User.RequireUniquePhoneNumber)
+            {
                 return;
+            }
 
             if (!string.Equals(await manager.GetUserIdAsync(exists), await manager.GetUserIdAsync(user)))
+            {
                 errors.Add(_describer.DuplicatePhoneNumber(phoneNumber));
+            }
         }
 
         private bool ContainsDeniedPhoneNumberCharacters(string userName)

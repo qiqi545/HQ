@@ -17,9 +17,9 @@
 
 using System;
 using System.Data;
-using HQ.Platform.Identity.Models;
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,7 +27,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 {
     public static class Add
     {
-        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole>
+        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole, TTenant>
         (
             this IdentityBuilder identityBuilder,
             string connectionString,
@@ -39,11 +39,14 @@ namespace HQ.Platform.Identity.Stores.Sql
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
         {
             var services = identityBuilder.Services;
 
             if (scope == ConnectionScope.ByRequest)
+            {
                 services.AddHttpContextAccessor();
+            }
 
             services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
                 onConnection, onCommand);
@@ -53,6 +56,9 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             services.AddTransient<IRoleStoreExtended<TRole>, RoleStore<TKey, TRole>>();
             services.AddTransient<IRoleStore<TRole>>(r => r.GetRequiredService<IRoleStoreExtended<TRole>>());
+
+            services.AddTransient<ITenantStore<TTenant>, TenantStore<TTenant, TKey>>();
+            services.AddScoped<TenantManager<TTenant, TUser, TKey>>();
 
             return identityBuilder
                 .AddRoles<TRole>()

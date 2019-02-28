@@ -15,7 +15,6 @@
 
 #endregion
 
-using HQ.Platform.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
@@ -45,6 +44,6 @@ namespace HQ.Platform.Identity.Configuration
         public new UserOptionsExtended User { get; set; } = new UserOptionsExtended();
         public new PasswordOptionsExtended Password { get; set; } = new PasswordOptionsExtended();
         public new StoreOptionsExtended Stores { get; set; } = new StoreOptionsExtended();
+        public TenantOptions Tenant { get; set; }
     }
 }
-

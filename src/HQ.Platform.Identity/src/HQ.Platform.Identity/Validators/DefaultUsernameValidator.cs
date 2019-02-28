@@ -46,7 +46,9 @@ namespace HQ.Platform.Identity.Validators
             var username = await manager.GetUserNameAsync(user);
 
             if (!_options.Value.User.RequireUsername && string.IsNullOrWhiteSpace(username))
+            {
                 return;
+            }
 
             if (string.IsNullOrWhiteSpace(username) || ContainsDeniedUserNameCharacters(manager, username))
             {
@@ -56,13 +58,19 @@ namespace HQ.Platform.Identity.Validators
 
             var exists = await manager.FindByNameAsync(username);
             if (exists == null)
+            {
                 return;
+            }
 
             if (!_options.Value.User.RequireUniqueUsername)
+            {
                 return;
+            }
 
             if (!string.Equals(await manager.GetUserIdAsync(exists), await manager.GetUserIdAsync(user)))
+            {
                 errors.Add(_describer.DuplicateUserName(username));
+            }
         }
 
         private static bool ContainsDeniedUserNameCharacters(UserManager<TUser> manager, string userName)

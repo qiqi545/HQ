@@ -33,4 +33,3 @@ namespace HQ.Platform.Api.Models
         }
     }
 }
-

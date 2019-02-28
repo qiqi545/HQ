@@ -17,8 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Conventions;
+using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
 {

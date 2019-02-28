@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
@@ -57,13 +58,33 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
                 _security?.Value.SuperUser?.PhoneNumber?.ToUpperInvariant())
+            {
                 return CreateSuperUserInstance();
+            }
 
-            var query = SqlBuilder.Select<TUser>(new {PhoneNumber = phoneNumber, TenantId = _tenantId });
+            var query = SqlBuilder.Select<TUser>(new {PhoneNumber = phoneNumber, TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TUser));
 
             var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
             return user;
+        }
+
+        public async Task<IEnumerable<TUser>> FindAllByPhoneNumberAsync(string phoneNumber,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
+                _security?.Value.SuperUser?.PhoneNumber?.ToUpperInvariant())
+            {
+                return new[] {CreateSuperUserInstance()};
+            }
+
+            var query = SqlBuilder.Select<TUser>(new {PhoneNumber = phoneNumber});
+            _connection.SetTypeInfo(typeof(TUser));
+
+            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+            return users;
         }
     }
 }

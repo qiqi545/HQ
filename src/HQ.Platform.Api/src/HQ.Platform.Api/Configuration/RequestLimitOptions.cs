@@ -24,4 +24,3 @@ namespace HQ.Platform.Api.Configuration
         public long MaxRequestSizeBytes { get; set; } = 30_000_000;
     }
 }
-

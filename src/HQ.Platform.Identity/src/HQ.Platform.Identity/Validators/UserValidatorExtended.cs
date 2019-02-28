@@ -65,10 +65,14 @@ namespace HQ.Platform.Identity.Validators
             await ValidateUserName(manager, user, errors);
 
             if (_options.Value.User.RequireEmailPhoneNumberOrUsername)
+            {
                 if (string.IsNullOrWhiteSpace(await manager.GetEmailAsync(user)) &&
                     string.IsNullOrWhiteSpace(await manager.GetPhoneNumberAsync(user)) &&
                     string.IsNullOrWhiteSpace(await manager.GetUserNameAsync(user)))
+                {
                     errors.Add(manager.ErrorDescriber.MustHaveEmailPhoneOrUsername());
+                }
+            }
 
             return errors.Count > 0 ? IdentityResultFactory.Failed(errors) : IdentityResult.Success;
         }
@@ -76,20 +80,26 @@ namespace HQ.Platform.Identity.Validators
         private async Task ValidateUserName(UserManager<TUser> manager, TUser user, ICollection<IdentityError> errors)
         {
             foreach (var validator in _username)
+            {
                 await validator.ValidateAsync(manager, user, errors);
+            }
         }
 
         private async Task ValidatePhoneNumberAsync(UserManager<TUser> manager, TUser user,
             ICollection<IdentityError> errors)
         {
             foreach (var validator in _phone)
+            {
                 await validator.ValidateAsync(manager, user, errors);
+            }
         }
 
         private async Task ValidateEmail(UserManager<TUser> manager, TUser user, ICollection<IdentityError> errors)
         {
             foreach (var validator in _email)
+            {
                 await validator.ValidateAsync(manager, user, errors);
+            }
         }
     }
 }

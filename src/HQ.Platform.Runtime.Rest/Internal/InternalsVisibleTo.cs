@@ -17,5 +17,7 @@
 
 namespace HQ.Platform.Runtime.Rest.Internal
 {
-    internal sealed class InternalsVisibleTo { }
+    internal sealed class InternalsVisibleTo
+    {
+    }
 }

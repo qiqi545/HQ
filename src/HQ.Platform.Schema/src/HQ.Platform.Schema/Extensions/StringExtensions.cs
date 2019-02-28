@@ -30,9 +30,15 @@ namespace HQ.Platform.Schema.Extensions
         private static string ToTitleCase(this string value)
         {
             if (string.IsNullOrWhiteSpace(value))
+            {
                 return value;
+            }
+
             if (char.IsUpper(value[0]))
+            {
                 return char.ToUpperInvariant(value[0]) + value.Substring(1);
+            }
+
             return value;
         }
 

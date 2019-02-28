@@ -35,7 +35,8 @@ namespace HQ.Platform.Runtime.Rest.Attributes
             Execute<RestSortFilter>(context, filter => filter.Options.SortOperator, c => c.Sorting);
         }
 
-        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,             QueryContext qc)
+        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
+            QueryContext qc)
         {
             Execute<RestSortFilter>(context, filter => filter.Options.SortOperator, c => c.Sorting, qs, qc);
         }

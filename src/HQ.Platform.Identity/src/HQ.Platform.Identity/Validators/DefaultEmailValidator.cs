@@ -49,7 +49,9 @@ namespace HQ.Platform.Identity.Validators
             var email = await manager.GetEmailAsync(user);
 
             if (!_options.Value.User.RequireEmail && string.IsNullOrWhiteSpace(email))
+            {
                 return;
+            }
 
             if (string.IsNullOrWhiteSpace(email) || !EmailAddressAttribute.IsValid(email))
             {
@@ -59,11 +61,15 @@ namespace HQ.Platform.Identity.Validators
 
             var exists = await manager.FindByEmailAsync(email);
             if (exists == null)
+            {
                 return;
+            }
 
             if (manager.Options.User.RequireUniqueEmail && !string.Equals(await manager.GetUserIdAsync(exists),
                     await manager.GetUserIdAsync(user)))
+            {
                 errors.Add(_describer.DuplicateEmail(email));
+            }
         }
     }
 }

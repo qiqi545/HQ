@@ -20,10 +20,10 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Platform.Identity.Models;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +51,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var roles = await _roleService.GetAsync();
             if (roles?.Data == null)
+            {
                 return NotFound();
+            }
+
             return Ok(roles.Data);
         }
 
@@ -59,13 +62,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             var result = await _roleService.CreateAsync(model);
 
             return result.Succeeded
                 ? Created("/api/roles/" + result.Data.Id, result.Data)
-                : (IActionResult)BadRequest(result.Errors);
+                : (IActionResult) BadRequest(result.Errors);
         }
 
 
@@ -74,12 +79,16 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var role = await _roleService.FindByIdAsync(id);
             if (role?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claims = await _roleService.GetClaimsAsync(role.Data);
 
             if (claims?.Data.Count == 0)
+            {
                 return NotFound();
+            }
 
             return Ok(claims);
         }
@@ -88,11 +97,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
         {
             if (!Valid(model, out var error))
+            {
                 return error;
+            }
 
             var role = await _roleService.FindByIdAsync(id);
             if (role?.Data == null)
+            {
                 return NotFound();
+            }
 
             var issuer = _security.Value.Tokens.Issuer;
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
@@ -100,15 +113,18 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
             return result.Succeeded
                 ? Created($"/api/roles/{role.Data.Id}/claims", claim)
-                : (IActionResult)BadRequest(result.Errors);
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}/claims/{type}/{value}")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
+        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
+            [FromRoute] string value)
         {
             var user = await _roleService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claims = await _roleService.GetClaimsAsync(user.Data);
 
@@ -116,13 +132,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                                                         x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
 
             if (claim == null)
+            {
                 return NotFound();
+            }
 
             var result = await _roleService.RemoveClaimAsync(user.Data, claim);
 
             return result.Succeeded
-                ? StatusCode((int)HttpStatusCode.NoContent)
-                : (IActionResult)BadRequest(result.Errors);
+                ? StatusCode((int) HttpStatusCode.NoContent)
+                : (IActionResult) BadRequest(result.Errors);
         }
 
 

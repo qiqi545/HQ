@@ -27,7 +27,6 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Services
@@ -69,7 +68,9 @@ namespace HQ.Platform.Identity.Services
         {
             var operation = await FindByIdAsync(id);
             if (!operation.Succeeded)
+            {
                 return operation;
+            }
 
             var deleted = await _userManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
@@ -81,7 +82,8 @@ namespace HQ.Platform.Identity.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             return user == null
-                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.Cohort_UserNotFound, HttpStatusCode.NotFound))
+                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.UserNotFound,
+                    HttpStatusCode.NotFound))
                 : new Operation<TUser>(user);
         }
 

@@ -15,7 +15,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
@@ -36,7 +35,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
         public Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;            
+            return Task.CompletedTask;
         }
 
         public void MigrateUp(CancellationToken cancellationToken)

@@ -15,7 +15,6 @@
 
 #endregion
 
-using HQ.Strings;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Extensions
@@ -45,7 +44,25 @@ namespace HQ.Platform.Identity.Extensions
             return new IdentityError
             {
                 Code = nameof(MustHaveEmailPhoneOrUsername),
-                Description = ErrorStrings.Cohort_MustHaveEmailPhoneOrUsername
+                Description = ErrorStrings.MustHaveEmailPhoneOrUsername
+            };
+        }
+
+        public static IdentityError InvalidTenantName(this IdentityErrorDescriber describer, string tenantName)
+        {
+            return new IdentityError
+            {
+                Code = nameof(DuplicateTenantName),
+                Description = Resources.FormatInvalidTenantName(tenantName)
+            };
+        }
+
+        public static IdentityError DuplicateTenantName(this IdentityErrorDescriber describer, string tenantName)
+        {
+            return new IdentityError
+            {
+                Code = nameof(DuplicateTenantName),
+                Description = Resources.FormatDuplicateTenantName(tenantName)
             };
         }
     }
