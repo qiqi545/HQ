@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using Sodium;
 
 namespace HQ.Extensions.Cryptography.Internal
 {
@@ -32,7 +31,7 @@ namespace HQ.Extensions.Cryptography.Internal
 
         public static string ToHex(this byte[] input)
         {
-            return Utilities.BinaryToHex(input);
+            return Crypto.BinToHex(input);
         }
     }
 }

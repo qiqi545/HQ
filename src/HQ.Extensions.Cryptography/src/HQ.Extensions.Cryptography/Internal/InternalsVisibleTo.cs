@@ -18,7 +18,6 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Data.Blockchain")]
-[assembly: InternalsVisibleTo("HQ.Platform.Security")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Cryptography")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Cryptography.Tests")]
 [assembly: InternalsVisibleTo("HQ.Extensions.Cryptography.Benchmarks")]
