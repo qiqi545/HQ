@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
 using HQ.Platform.Identity.Models;
@@ -22,7 +23,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Services
 {
-    public class SignInService<TUser> : ISignInService<TUser> where TUser : IdentityUserExtended
+    public class SignInService<TUser, TKey> : ISignInService<TUser> where TUser :
+        IdentityUserExtended<TKey>
+        where TKey : IEquatable<TKey>
     {
         private readonly SignInManager<TUser> _signInManager;
 

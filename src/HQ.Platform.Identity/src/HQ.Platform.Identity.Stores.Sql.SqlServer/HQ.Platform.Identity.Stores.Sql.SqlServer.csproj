@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
   </ItemGroup>
 

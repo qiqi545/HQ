@@ -19,6 +19,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using HQ.Common.Models;
+using HQ.Data.Sql.Dapper;
+using HQ.Data.Sql.Descriptor;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
@@ -47,27 +49,29 @@ namespace HQ.Platform.Identity
             };
         }
 
-
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services,
-            IConfiguration configuration)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services, IConfiguration configuration)
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
+            where TKey : IEquatable<TKey>
         {
             AddIdentityPreamble(services);
 
-            return services.AddIdentityCoreExtended<TUser, TRole>(configuration);
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration);
         }
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole>(this IServiceCollection services,
-            Action<IdentityOptionsExtended> setupIdentityExtended = null)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+            Action<IdentityOptionsExtended> configureIdentityExtended = null)
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
+            where TKey : IEquatable<TKey>
         {
             AddIdentityPreamble(services);
 
-            return services.AddIdentityCoreExtended<TUser, TRole>(setupIdentityExtended: o =>
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configureIdentityExtended: o =>
             {
-                setupIdentityExtended?.Invoke(o);
+                configureIdentityExtended?.Invoke(o);
             });
         }
 
@@ -82,22 +86,26 @@ namespace HQ.Platform.Identity
             var cookiesBuilder = authBuilder.AddIdentityCookies(o => { });
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
             IConfiguration configuration)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
+            where TKey : IEquatable<TKey>
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
 
-            return services.AddIdentityCoreExtended<TUser, TRole>(configuration.Bind, configuration.Bind);
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind, configuration.Bind);
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole>(this IServiceCollection services,
-            Action<IdentityOptions> setupIdentity = null,
-            Action<IdentityOptionsExtended> setupIdentityExtended = null)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+            Action<IdentityOptions> configureIdentity = null,
+            Action<IdentityOptionsExtended> configureIdentityExtended = null)
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant<TKey>
+            where TKey : IEquatable<TKey>
         {
             /*
                 services.AddOptions().AddLogging();
@@ -116,19 +124,15 @@ namespace HQ.Platform.Identity
             {
                 var x = new IdentityOptionsExtended(o);
                 Defaults(x);
-                setupIdentityExtended?.Invoke(x);
+                configureIdentityExtended?.Invoke(x);
                 o.Apply(x);
             });
 
-            if (setupIdentityExtended != null)
-            {
-                services.Configure(setupIdentityExtended);
-            }
+            if (configureIdentityExtended != null)
+                services.Configure(configureIdentityExtended);
 
-            if (setupIdentity != null)
-            {
-                services.Configure(setupIdentity);
-            }
+            if (configureIdentity != null)
+                services.Configure(configureIdentity);
 
             identityBuilder.AddDefaultTokenProviders();
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
@@ -144,12 +148,31 @@ namespace HQ.Platform.Identity
             Debug.Assert(removed);
 
             services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
+            services.AddScoped<ITenantValidator<TTenant, TUser, TKey>, TenantValidator<TTenant, TUser, TKey>>();
 
-            services.AddScoped<IUserService<TUser>, UserService<TUser>>();
-            services.AddScoped<IRoleService<TRole>, RoleService<TRole>>();
-            services.AddScoped<ISignInService<TUser>, SignInService<TUser>>();
+            services.AddScoped<IUserService<TUser>, UserService<TUser, TKey>>();
+            services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();
+            services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
+            services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
 
             services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
+
+            SimpleDataDescriptor.TableNameConvention = s =>
+            {
+                switch (s)
+                {
+                    case nameof(IdentityRoleExtended):
+                        return nameof(IdentityRole);
+                    case nameof(IdentityUserExtended):
+                        return nameof(IdentityUser);
+                    default:
+                        return s;
+                }
+            };
+
+            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
+            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
+            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
 
             return identityBuilder;
         }

@@ -29,6 +29,7 @@ namespace HQ.Platform.Identity.Models
 
         Task<Operation<IEnumerable<TRole>>> GetAsync();
         Task<Operation<TRole>> CreateAsync(CreateRoleModel model);
+        Task<Operation> UpdateAsync(TRole role);
         Task<Operation> DeleteAsync(string id);
 
         Task<Operation<TRole>> FindByIdAsync(string id);

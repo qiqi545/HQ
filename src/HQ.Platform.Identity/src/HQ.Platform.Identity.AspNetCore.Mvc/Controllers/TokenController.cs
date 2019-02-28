@@ -17,12 +17,14 @@
 
 using System;
 using System.Diagnostics;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Extensions;
+using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
@@ -41,9 +43,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
-    public class TokenController<TUser> : DataController where TUser : IdentityUserExtended
+    public class TokenController<TUser, TTenant, TKey> : DataController
+        where TUser : IdentityUserExtended<TKey>
+        where TTenant : IdentityTenant
+        where TKey : IEquatable<TKey>
     {
         private readonly IOptions<PublicApiOptions> _apiOptions;
+        private readonly ILogger<TokenController<TUser, TTenant, TKey>> _logger;
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
         private readonly UserManager<TUser> _userManager;
@@ -53,13 +59,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             IServerTimestampService timestamps,
             IOptions<SecurityOptions> securityOptions,
             IOptions<PublicApiOptions> apiOptions,
-            IQueryableProvider<TUser> queryable,
-            ILogger<TokenController<TUser>> logger)
+            ILogger<TokenController<TUser, TTenant, TKey>> logger)
         {
             _userManager = userManager;
             _timestamps = timestamps;
             _securityOptions = securityOptions;
             _apiOptions = apiOptions;
+            _logger = logger;
         }
 
         [Authorize]
@@ -67,15 +73,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public IActionResult VerifyToken()
         {
             if (User.Identity == null)
-            {
                 return Unauthorized();
-            }
-
 
             if (User.Identity.IsAuthenticated)
-            {
                 return Ok(User.GetClaims());
-            }
 
             return Unauthorized();
         }
@@ -85,9 +86,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
             if (!ValidModelState(out var error))
-            {
                 return error;
-            }
 
             TUser user;
             switch (model.IdentityType)
@@ -98,43 +97,40 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 case IdentityType.Email:
                     user = await _userManager.FindByEmailAsync(model.Identity);
                     if (!user.EmailConfirmed)
-                    {
                         return NotFound();
-                    }
-
                     break;
                 case IdentityType.PhoneNumber:
                     user = await _userManager.FindByPhoneNumberAsync(model.Identity);
                     if (!user.PhoneNumberConfirmed)
-                    {
                         return NotFound();
-                    }
-
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
             if (user.LockoutEnd.HasValue && user.LockoutEnd > _timestamps.GetCurrentTime())
-            {
                 return Forbid();
-            }
 
             if (await _userManager.CheckPasswordAsync(user, model.Password))
             {
                 Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
 
                 var claims = await _userManager.GetClaimsAsync(user);
-                var provider = user.ActLike<IUserIdProvider>();
-                var security = _securityOptions.Value;
-                var api = _apiOptions.Value;
 
-                var token = JwtSecurity.CreateToken(provider, claims, security, api);
+                if (HttpContext.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext)
+                {
+                    if (tenantContext.Tenant != null)
+                    {
+                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantIdClaim, tenantContext.Tenant.Id));
+                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+                    }
+                }
+
+                var provider = user.ActLike<IUserIdProvider>();
+                var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.Value, _apiOptions.Value);
 
                 return Ok(new
                 {

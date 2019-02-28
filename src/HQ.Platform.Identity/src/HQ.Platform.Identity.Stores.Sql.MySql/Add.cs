@@ -19,38 +19,54 @@ using System;
 using System.Data;
 using System.Threading;
 using HQ.Common.Models;
+using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.MySql;
+using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.MySql;
+using HQ.Data.Sql.Queries;
+using HQ.Extensions.Metrics;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 
 namespace HQ.Platform.Identity.Stores.Sql.MySql
 {
     public static class Add
     {
-        public static IdentityBuilder AddMySqlIdentityStore<TUser, TRole, TTenant>(this IdentityBuilder identityBuilder,
-            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+        public static IdentityBuilder AddMySqlIdentityStore<TUser, TRole, TTenant>(
+            this IdentityBuilder identityBuilder,
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant<string>
         {
-            return AddMySqlIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, scope);
+            return AddMySqlIdentityStore<TUser, TRole, TTenant>(identityBuilder, connectionString, null,
+                scope);
         }
 
-        public static IdentityBuilder AddMySqlIdentityStore<TKey, TUser, TRole, TTenant>(
+        public static IdentityBuilder AddMySqlIdentityStore<TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
-            IConfiguration config, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
+            string connectionString,
+            IConfiguration mySqlConfig,
+            ConnectionScope scope = ConnectionScope.ByRequest)
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
+            where TTenant : IdentityTenant<string>
         {
-            return AddMySqlIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope);
+            if (mySqlConfig != null)
+            {
+                identityBuilder.Services.Configure<MySqlOptions>(mySqlConfig);
+            }
+
+            var configureMySql = mySqlConfig != null ? mySqlConfig.Bind : (Action<MySqlOptions>)null;
+
+            return AddMySqlIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, null,
+                configureMySql);
         }
 
         public static IdentityBuilder AddMySqlIdentityStore<TKey, TUser, TRole, TTenant>(
@@ -62,6 +78,7 @@ namespace HQ.Platform.Identity.Stores.Sql.MySql
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
         {
+            identityBuilder.Services.Configure<IdentityOptions>(identityConfig);
             identityBuilder.Services.Configure<IdentityOptionsExtended>(identityConfig);
             identityBuilder.Services.Configure<MySqlOptions>(mySqlConfig);
 
@@ -72,7 +89,8 @@ namespace HQ.Platform.Identity.Stores.Sql.MySql
         public static IdentityBuilder AddMySqlIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptionsExtended> configureIdentity = null, Action<MySqlOptions> configureMySql = null)
+            Action<IdentityOptionsExtended> configureIdentity = null,
+            Action<MySqlOptions> configureMySql = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
@@ -82,18 +100,42 @@ namespace HQ.Platform.Identity.Stores.Sql.MySql
 
             var dialect = new MySqlDialect();
 
-            var identityOptions = new IdentityOptionsExtended();
+            var serviceProvider = identityBuilder.Services.BuildServiceProvider();
+
+            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ??
+                                  new IdentityOptionsExtended();
             configureIdentity?.Invoke(identityOptions);
 
-            var mySqlOptions = new MySqlOptions();
-            configureMySql?.Invoke(mySqlOptions);
-
-            MigrateToLatest<TKey>(connectionString, identityOptions, mySqlOptions);
+            var options = serviceProvider.GetService<IOptions<MySqlOptions>>()?.Value ?? new MySqlOptions();
+            configureMySql?.Invoke(options);
 
             identityBuilder.AddSqlStores<MySqlConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
-
             identityBuilder.Services.AddSingleton(dialect);
+
+            SqlBuilder.Dialect = dialect;
+
+            SimpleDataDescriptor.TableNameConvention = s =>
+            {
+                switch (s)
+                {
+                    case nameof(IdentityRoleExtended):
+                        return "AspNetRoles";
+                    case nameof(IdentityUserExtended):
+                        return "AspNetUsers";
+                    case nameof(IdentityTenant):
+                        return "AspNetTenants";
+                    default:
+                        return s;
+                }
+            };
+
+            identityBuilder.Services.AddMetrics();
+            identityBuilder.Services.AddSingleton(dialect);
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
+
+            MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
             return identityBuilder;
         }
@@ -105,8 +147,7 @@ namespace HQ.Platform.Identity.Stores.Sql.MySql
             }
         }
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
-            where TKey : IEquatable<TKey>
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>() where TKey : IEquatable<TKey>
         {
             return (c, t, r) =>
             {

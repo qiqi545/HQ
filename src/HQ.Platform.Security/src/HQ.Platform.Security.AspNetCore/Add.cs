@@ -27,7 +27,7 @@ namespace HQ.Platform.Security.AspNetCore
 {
     public static class Add
     {
-        public static IServiceCollection AddTokens(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config)
         {
             // for now
             var options = new SecurityOptions();

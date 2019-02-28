@@ -39,7 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
 {
     public static class Add
     {
-        public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant>(
+       public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUserExtended<string>

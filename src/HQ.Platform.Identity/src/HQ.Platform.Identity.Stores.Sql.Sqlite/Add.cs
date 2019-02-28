@@ -45,28 +45,27 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant<string>
         {
-            return AddSqliteIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, null,
+            return AddSqliteIdentityStore<TUser, TRole, TTenant>(identityBuilder, connectionString, null,
                 scope);
         }
 
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
+        public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
             string connectionString,
             IConfiguration sqliteConfig,
             ConnectionScope scope = ConnectionScope.ByRequest)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
+            where TUser : IdentityUserExtended<string>
+            where TRole : IdentityRoleExtended<string>
+            where TTenant : IdentityTenant<string>
         {
             if (sqliteConfig != null)
             {
                 identityBuilder.Services.Configure<SqliteOptions>(sqliteConfig);
             }
 
-            var configureSqlite = sqliteConfig != null ? sqliteConfig.Bind : (Action<SqliteOptions>) null;
+            var configureSqlite = sqliteConfig != null ? sqliteConfig.Bind : (Action<SqliteOptions>)null;
 
-            return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, null,
+            return AddSqliteIdentityStore<string, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, null,
                 configureSqlite);
         }
 
@@ -124,6 +123,8 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                         return "AspNetRoles";
                     case nameof(IdentityUserExtended):
                         return "AspNetUsers";
+                    case nameof(IdentityTenant):
+                        return "AspNetTenants";
                     default:
                         return s;
                 }
@@ -134,10 +135,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
 
-            lock (identityBuilder)
-            {
-                MigrateToLatest<TKey>(connectionString, identityOptions, options);
-            }
+            MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
             return identityBuilder;
         }

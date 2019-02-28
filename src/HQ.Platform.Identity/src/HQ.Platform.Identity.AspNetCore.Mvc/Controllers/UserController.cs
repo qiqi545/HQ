@@ -23,9 +23,11 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Platform.Identity.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
@@ -33,13 +35,19 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    public class UserController<TUser> : DataController where TUser : IdentityUserExtended
+    public class UserController<TUser, TTenant, TKey> : DataController
+        where TUser : IdentityUserExtended<TKey>
+        where TKey : IEquatable<TKey>
     {
         private readonly IUserService<TUser> _userService;
+        private readonly ITenantService<TTenant> _tenantService;
+        private readonly IOptions<IdentityApiOptions> _options;
 
-        public UserController(IUserService<TUser> userService)
+        public UserController(IUserService<TUser> userService, ITenantService<TTenant> tenantService, IOptions<IdentityApiOptions> options)
         {
             _userService = userService;
+            _tenantService = tenantService;
+            _options = options;
         }
 
         [HttpGet("")]
@@ -47,10 +55,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var users = await _userService.GetAsync();
             if (users?.Data == null)
-            {
                 return NotFound();
-            }
-
             return Ok(users.Data);
         }
 
@@ -58,81 +63,80 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
             if (!ValidModelState(out var error))
-            {
                 return error;
-            }
 
             var result = await _userService.CreateAsync(model);
 
             return result.Succeeded
-                ? Created("/api/users/" + result.Data.Id, result.Data)
-                : (IActionResult) BadRequest(result.Errors);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
-
-            var result = await _userService.DeleteAsync(id);
-            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+                ? Created($"{_options.Value.RootPath ?? string.Empty}/users/{result.Data.Id}", result.Data)
+                : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TUser user)
         {
             if (!ValidModelState(out var error))
-            {
                 return error;
-            }
-
             var result = await _userService.UpdateAsync(user);
-            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+                return NotFound();
+            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            if (!ValidModelState(out var error))
+                return error;
+            var result = await _userService.DeleteAsync(id);
+            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+                return NotFound();
+            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public async Task<IActionResult> FindById([FromRoute] string id)
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
-
             return user.Succeeded
                 ? Ok(user.Data)
-                : (IActionResult) BadRequest(user.Errors);
+                : (IActionResult)BadRequest(user.Errors);
         }
 
-        [HttpGet("{id}/email")]
+        [HttpGet("email/{email}")]
         public async Task<IActionResult> FindByEmail([FromRoute] string email)
         {
             var user = await _userService.FindByEmailAsync(email);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
-
             return user.Succeeded
                 ? Ok(user.Data)
-                : (IActionResult) BadRequest(user.Errors);
+                : (IActionResult)BadRequest(user.Errors);
         }
 
-        [HttpGet("{id}/username")]
+        [HttpGet("username/{username}")]
         public async Task<IActionResult> FindByUsername([FromRoute] string username)
         {
             var user = await _userService.FindByNameAsync(username);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
-
             return user.Succeeded
                 ? Ok(user.Data)
-                : (IActionResult) BadRequest(user.Errors);
+                : (IActionResult)BadRequest(user.Errors);
+        }
+
+        [HttpGet("phone/{phone}")]
+        public async Task<IActionResult> FindByPhoneNumber([FromRoute] string phone)
+        {
+            var user = await _userService.FindByPhoneNumberAsync(phone);
+            if (user?.Data == null)
+                return NotFound();
+            return user.Succeeded
+                ? Ok(user.Data)
+                : (IActionResult)BadRequest(user.Errors);
         }
 
         #region Role Assignment
@@ -142,15 +146,11 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userService.GetRolesAsync(user.Data);
             if (result.Data == null || result.Data.Count == 0)
-            {
                 return NotFound();
-            }
 
             return Ok(result.Data);
         }
@@ -160,15 +160,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userService.AddToRoleAsync(user.Data, role);
 
             return result.Succeeded
                 ? Created($"/api/users/{user.Data}/roles", user)
-                : (IActionResult) BadRequest(result.Errors);
+                : (IActionResult)BadRequest(result.Errors);
         }
 
 
@@ -177,15 +175,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userService.RemoveFromRoleAsync(user.Data, role);
 
             return result.Succeeded
                 ? Ok()
-                : (IActionResult) BadRequest(result.Errors);
+                : (IActionResult)BadRequest(result.Errors);
         }
 
         #endregion
@@ -197,30 +193,24 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userService.GetClaimsAsync(user.Data);
 
             return result.Succeeded
                 ? Ok(result.Data)
-                : (IActionResult) BadRequest(result.Errors);
+                : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpPost("{id}/claims")]
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] AddClaimModel model)
         {
             if (!ValidModelState(out var error))
-            {
                 return error;
-            }
 
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String);
 
@@ -228,18 +218,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
             return result.Succeeded
                 ? Created($"/api/users/{user.Data}/claims", claim)
-                : (IActionResult) BadRequest(result.Errors);
+                : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}/claims/{type}/{value}")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
-            [FromRoute] string value)
+        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
         {
             var user = await _userService.FindByIdAsync(id);
             if (user?.Data == null)
-            {
                 return NotFound();
-            }
 
             var claims = await _userService.GetClaimsAsync(user.Data);
 
@@ -247,15 +234,50 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                                                         x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
 
             if (claim == null)
-            {
                 return NotFound();
-            }
 
             var result = await _userService.RemoveClaimAsync(user.Data, claim);
 
             return result.Succeeded
-                ? StatusCode((int) HttpStatusCode.NoContent)
-                : (IActionResult) BadRequest(result.Errors);
+                ? StatusCode((int)HttpStatusCode.NoContent)
+                : (IActionResult)BadRequest(result.Errors);
+        }
+
+        #endregion
+
+        #region Tenant Assignment
+
+        [HttpGet("email/{email}/tenants")]
+        public async Task<IActionResult> FindTenantsByEmail([FromRoute] string email)
+        {
+            var tenants = await _tenantService.FindByEmailAsync(email);
+            if (tenants?.Data == null)
+                return NotFound();
+            return tenants.Succeeded
+                ? Ok(tenants.Data)
+                : (IActionResult)BadRequest(tenants.Errors);
+        }
+
+        [HttpGet("username/{username}/tenants")]
+        public async Task<IActionResult> FindTenantsByUsername([FromRoute] string username)
+        {
+            var tenants = await _tenantService.FindByUserNameAsync(username);
+            if (tenants?.Data == null)
+                return NotFound();
+            return tenants.Succeeded
+                ? Ok(tenants.Data)
+                : (IActionResult)BadRequest(tenants.Errors);
+        }
+
+        [HttpGet("phone/{phone}/tenants")]
+        public async Task<IActionResult> FindTenantsByPhoneNumber([FromRoute] string phone)
+        {
+            var tenants = await _tenantService.FindByPhoneNumberAsync(phone);
+            if (tenants?.Data == null)
+                return NotFound();
+            return tenants.Succeeded
+                ? Ok(tenants.Data)
+                : (IActionResult)BadRequest(tenants.Errors);
         }
 
         #endregion

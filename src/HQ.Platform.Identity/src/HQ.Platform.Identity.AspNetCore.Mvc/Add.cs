@@ -47,10 +47,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
-        public static IServiceCollection AddIdentityApi<TUser, TRole>(this IMvcBuilder mvc,
+        public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
             IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant
+            where TKey : IEquatable<TKey>
         {
             var services = mvc.Services;
 
@@ -71,15 +73,18 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageRoles);
                     });
+                x.AddPolicy(Constants.Security.Policies.ManageTenants,
+                    b =>
+                    {
+                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                            ClaimValues.ManageTenants);
+                    });
             });
 
             services.Configure<IdentityApiOptions>(identityConfig);
-            services.Configure<RazorViewEngineOptions>(x =>
-            {
-                x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
-            });
+            services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
 
-            mvc.AddControllers<TUser, TRole>();
+            mvc.AddControllers<TUser, TRole, TTenant, TKey>();
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
@@ -100,15 +105,18 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             return services;
         }
 
-        private static IMvcBuilder AddControllers<TUser, TRole>(this IMvcBuilder mvc)
-            where TUser : IdentityUserExtended
-            where TRole : IdentityRoleExtended
+        private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc)
+            where TUser : IdentityUserExtended<TKey>
+            where TRole : IdentityRoleExtended<TKey>
+            where TTenant : IdentityTenant
+            where TKey : IEquatable<TKey>
         {
             var typeInfo = new List<TypeInfo>
             {
-                typeof(TokenController<TUser>).GetTypeInfo(),
-                typeof(UserController<TUser>).GetTypeInfo(),
-                typeof(RoleController<TRole>).GetTypeInfo()
+                typeof(TokenController<TUser, TTenant, TKey>).GetTypeInfo(),
+                typeof(TenantController<TTenant>).GetTypeInfo(),
+                typeof(UserController<TUser, TTenant, TKey>).GetTypeInfo(),
+                typeof(RoleController<TRole, TKey>).GetTypeInfo(),
             };
             return mvc.ConfigureApplicationPartManager(x =>
             {
