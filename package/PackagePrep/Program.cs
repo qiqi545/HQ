@@ -13,6 +13,9 @@ namespace PackagePrep
     {
         private static void Main(string[] args)
         {
+			Console.WriteLine($"PackagePrep {string.Join(' ', args)}");
+            Console.WriteLine();
+			
             if (args.Length == 0 || args.Length > 3 ||
                 args[0].Equals("tokenize", StringComparison.OrdinalIgnoreCase) && args.Length != 3 ||
                 args[0].Equals("nuspec", StringComparison.OrdinalIgnoreCase) && args.Length != 3)
@@ -20,9 +23,6 @@ namespace PackagePrep
                 Console.WriteLine("Usage: PackagePrep [tokenize|nuspec] [project-directory] [rootNamespace|devDependency]");
                 Environment.Exit(1);
             }
-
-            Console.WriteLine($"PackagePrep {string.Join(' ', args)}");
-            Console.WriteLine();
 
             void ReplaceFileInArchive(ZipArchiveEntry entry, string content)
             {
