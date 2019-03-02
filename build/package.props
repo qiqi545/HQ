@@ -1,0 +1,17 @@
+<Project>
+
+  <PropertyGroup>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Blowdart Inc. &amp; Contributors</Authors>
+    <Company>Blowdart Inc.</Company>
+    <Description>Cross-platform, cross-modal, immediate-mode GUI.</Description>
+    <Copyright>Copyright © Blowdart Inc. All rights reserved.</Copyright>
+    <PackageIconUrl>https://raw.githubusercontent.com/blowdart-ui/Blowdart.UI/master/assets/logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://blowdartui.com</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/blowdart-ui/Blowdart.UI/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/blowdart-ui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>ui imgui</PackageTags>
+  </PropertyGroup>
+  
+ </Project>

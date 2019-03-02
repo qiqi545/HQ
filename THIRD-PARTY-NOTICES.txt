@@ -1,0 +1,10 @@
+#######################################################################
+
+Blowdart.UI uses third-party libraries and other materials, distributed 
+under different licenses than Blowdart.UI licensed components.
+
+If we have omitted a notice here, please let us know by submitting
+an issue on GitHub, or by emailing support@blowdart.io
+
+#######################################################################
+
