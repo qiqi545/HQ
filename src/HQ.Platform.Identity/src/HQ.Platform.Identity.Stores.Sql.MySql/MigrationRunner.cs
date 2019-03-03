@@ -19,6 +19,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
+using FluentMigrator.Runner.Initialization;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Identity.Stores.Sql.MySql
@@ -45,12 +46,17 @@ namespace HQ.Platform.Identity.Stores.Sql.MySql
                 .AddFluentMigratorCore()
                 .ConfigureRunner(
                     builder => builder
-                        .AddSQLite()
+                        .AddMySql5()
                         .WithGlobalConnectionString(_connectionString)
                         .ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
                 .BuildServiceProvider();
 
             var runner = container.GetRequiredService<IMigrationRunner>();
+            if (runner is FluentMigrator.Runner.MigrationRunner defaultRunner && defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
+            {
+                var source = container.GetRequiredService<IFilteringMigrationSource>();
+                defaultRunner.MigrationLoader = new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
+            };
             runner.MigrateUp();
         }
     }

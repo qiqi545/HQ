@@ -25,8 +25,16 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
     {
         public override void Up()
         {
+            Create.Table("AspNetTenants")
+                .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetTenants")
+                .WithColumn("Name").AsString(256).Nullable()
+                .WithColumn("NormalizedName").AsString(256).Nullable()
+                .WithColumn("SecurityStamp").AsString(int.MaxValue).Nullable()
+                .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
+                ;
+
             Create.Table("AspNetRoles")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetRoles")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Name").AsString(256).Nullable()
                 .WithColumn("NormalizedName").AsString(256).Nullable()
@@ -34,7 +42,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUsers")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUsers")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUsers")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetUsers")
                 .WithColumn("UserName").AsString(256).Nullable()
                 .WithColumn("NormalizedUserName").AsString(256).Nullable()
@@ -53,7 +61,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetRoleClaims")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("RoleId").AsString(450).NotNullable()
                 .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
@@ -67,7 +75,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUserClaims")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserClaims")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserClaims")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetUserClaims")
                 .WithColumn("UserId").AsString(450).NotNullable()
                 .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
@@ -81,7 +89,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUserLogins")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserLogins")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("ProviderKey").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserLogins")
                 .WithColumn("ProviderDisplayName").AsString(int.MaxValue).Nullable()
@@ -95,7 +103,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUserRoles")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserRoles")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 .WithColumn("RoleId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 ;
@@ -112,7 +120,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetUserTokens")
-                .WithColumn("TenantId").AsInt32().NotNullable().PrimaryKey("PK_AspNetUserTokens")
+                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("LoginProvider").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
                 .WithColumn("Name").AsString(128).NotNullable().PrimaryKey("PK_AspNetUserTokens")
@@ -149,6 +157,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             Delete.Table("AspNetUserTokens");
             Delete.Table("AspNetRoles");
             Delete.Table("AspNetUsers");
+            Delete.Table("AspNetTenants");
         }
     }
 }

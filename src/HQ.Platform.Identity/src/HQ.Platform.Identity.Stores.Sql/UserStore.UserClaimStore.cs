@@ -51,10 +51,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var id = user.Id == null ? string.Empty : $"{user.Id}";
 
-            if (_tenantId != 0)
-            {
+            if (!_tenantId.Equals(default))
                 claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
-            }
 
             if (!string.IsNullOrWhiteSpace(_tenantName))
             {

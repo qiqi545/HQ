@@ -39,7 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql
     {
         private readonly IDataConnection _connection;
         private readonly IQueryableProvider<TRole> _queryable;
-        private readonly int _tenantId;
+        private readonly TKey _tenantId;
 
         public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable,
             IServiceProvider serviceProvider)

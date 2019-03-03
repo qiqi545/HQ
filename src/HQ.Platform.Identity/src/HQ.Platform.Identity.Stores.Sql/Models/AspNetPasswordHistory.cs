@@ -22,7 +22,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Models
 {
     public class AspNetPasswordHistory<TKey>
     {
-        [Required] public int TenantId { get; set; }
+        [Required] public TKey TenantId { get; set; }
 
         [Required] public TKey UserId { get; set; }
 

@@ -24,6 +24,7 @@ using HQ.Common.Models;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.DocumentDb;
+using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.DocumentDb;
 using HQ.Data.Sql.Queries;
@@ -39,53 +40,36 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
 {
     public static class Add
     {
-       public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
-            where TUser : IdentityUserExtended<string>
-            where TRole : IdentityRoleExtended<string>
-            where TTenant : IdentityTenant
-        {
-            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant>(connectionString, null,
-                scope);
-        }
-
         public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
-            string connectionString,
-            IConfiguration documentDbConfig,
-            ConnectionScope scope = ConnectionScope.ByRequest)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            IConfiguration databaseConfig = null)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant
         {
-            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant>(connectionString,
-                documentDbConfig, scope);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope, databaseConfig);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
-            string connectionString,
-            IConfiguration documentDbConfig,
-            ConnectionScope scope)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            IConfiguration databaseConfig = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
         {
-            var configureDocumentDb =
-                documentDbConfig != null ? documentDbConfig.Bind : (Action<DocumentDbOptions>) null;
+            var configureDatabase =
+                databaseConfig != null ? databaseConfig.Bind : (Action<DocumentDbOptions>)null;
 
-            return AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
-                null,
-                configureDocumentDb);
+            return AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, configureDatabase);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
             string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<IdentityOptionsExtended> configureIdentity = null,
             Action<DocumentDbOptions> configureDocumentDb = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
@@ -96,11 +80,6 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
             var serviceProvider = services.BuildServiceProvider();
-
-            var identityOptions = serviceProvider.GetService<IOptions<IdentityOptionsExtended>>()?.Value ??
-                                  new IdentityOptionsExtended();
-            configureIdentity?.Invoke(identityOptions);
-
             var builder = new DocumentDbConnectionStringBuilder(connectionString);
 
             void ConfigureAction(DocumentDbOptions o)
@@ -119,6 +98,23 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
 
             SqlBuilder.Dialect = dialect;
 
+            SimpleDataDescriptor.TableNameConvention = s =>
+            {
+                switch (s)
+                {
+                    case nameof(IdentityRoleExtended):
+                        return nameof(IdentityRole);
+                    case nameof(IdentityUserExtended):
+                        return nameof(IdentityUser);
+                    default:
+                        return s;
+                }
+            };
+
+            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
+            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
+            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
+
             services.AddMetrics();
             services.AddSingleton(dialect);
             services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
@@ -127,6 +123,8 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
 
             var options = new DocumentDbOptions();
             ConfigureAction(options);
+
+            var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
             MigrateToLatest<TKey>(connectionString, identityOptions, options);
 

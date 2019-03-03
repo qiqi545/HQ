@@ -54,7 +54,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly RoleManager<TRole> _roles;
         private readonly IOptions<SecurityOptions> _security;
 
-        private readonly int _tenantId;
+        private readonly TKey _tenantId;
         private readonly string _tenantName;
 
         public UserStore(IDataConnection connection,
