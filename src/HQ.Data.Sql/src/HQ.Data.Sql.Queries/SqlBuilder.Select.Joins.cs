@@ -19,10 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using HQ.DotLiquid;
+using HQ.Data.Contracts;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
-using HQ.Data.Contracts;
+using HQ.DotLiquid;
 
 namespace HQ.Data.Sql.Queries
 {

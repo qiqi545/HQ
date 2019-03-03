@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Text;
 using HQ.Common;
 using HQ.Common.Helpers;
+using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
-using HQ.Data.Contracts;
 using Humanizer;
 
 namespace HQ.Data.Sql.Builders

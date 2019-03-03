@@ -23,10 +23,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Common.FastMember;
+using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.SqlServer.Configuration;
-using HQ.Data.Contracts;
 
 namespace HQ.Data.Sql.SqlServer
 {

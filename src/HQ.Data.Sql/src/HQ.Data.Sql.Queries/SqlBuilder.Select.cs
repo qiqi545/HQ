@@ -21,9 +21,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using HQ.Common.Helpers;
-using HQ.DotLiquid;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
+using HQ.DotLiquid;
 
 namespace HQ.Data.Sql.Queries
 {

@@ -17,7 +17,6 @@
 
 using System;
 using System.Text;
-using HQ.Data.Streaming.Internal;
 using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming

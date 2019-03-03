@@ -17,9 +17,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using HQ.DotLiquid;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
+using HQ.DotLiquid;
 
 namespace HQ.Data.Sql.Queries
 {

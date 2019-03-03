@@ -19,8 +19,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Data.Sql.Descriptor;
 using HQ.Data.Contracts;
+using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Batching
 {
