@@ -126,6 +126,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Strings", "..\..\HQ.Stri
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Runtime.Rest", "..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\HQ.Platform.Runtime.Rest.csproj", "{4DA0A567-4926-430D-8D76-285368B3E9CA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Logging", "..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj", "{C3297F4A-6098-4CE5-9151-FF63596C4955}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -475,6 +477,12 @@ Global
 		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DA0A567-4926-430D-8D76-285368B3E9CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

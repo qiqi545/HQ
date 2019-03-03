@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -48,8 +48,9 @@
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
-
+    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
+ 
     <!-- Platform -->
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -134,6 +135,8 @@
     <Compile Remove="Extensions.Metrics.AspNetCore\obj\**" />
     <Compile Remove="Extensions.Metrics.Reporters.Console\obj\**" />
     <Compile Remove="Extensions.Metrics\obj\**" />
+    <Compile Remove="Extensions.Messaging\obj\**" />
+    <Compile Remove="Extensions.Logging\obj\**" />
     <Compile Remove="Platform.Api\obj\**" />
     <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <Compile Remove="Platform.Identity.Stores.Sql\obj\**" />
@@ -145,6 +148,7 @@
     <Compile Remove="Strings\obj\**" />
     <Compile Remove="Test.Sdk.Xunit\obj\**" />
     <Compile Remove="Test.Sdk\obj\**" />
+
     <Content Remove="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\obj\**" />
     <Content Remove="..\..\..\HQ.Common\src\HQ.Common\obj\**" />
     <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\obj\**" />
@@ -166,6 +170,8 @@
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**" />
+    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**" />
+    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\Debug\netstandard2.0\**" />
@@ -176,6 +182,7 @@
     <Content Remove="..\..\..\HQ.Strings\src\HQ.Strings\obj\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\Debug\netstandard2.0\**" />
+    
     <EmbeddedResource Remove="Common.AspNetCore.Mvc\obj\**" />
     <EmbeddedResource Remove="Common\obj\**" />
     <EmbeddedResource Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
@@ -197,6 +204,8 @@
     <EmbeddedResource Remove="Extensions.Metrics.AspNetCore\obj\**" />
     <EmbeddedResource Remove="Extensions.Metrics.Reporters.Console\obj\**" />
     <EmbeddedResource Remove="Extensions.Metrics\obj\**" />
+    <EmbeddedResource Remove="Extensions.Messaging\obj\**" />
+    <EmbeddedResource Remove="Extensions.Logging\obj\**" />
     <EmbeddedResource Remove="Platform.Api\obj\**" />
     <EmbeddedResource Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <EmbeddedResource Remove="Platform.Identity.Stores.Sql\obj\**" />
@@ -207,6 +216,7 @@
     <EmbeddedResource Remove="Strings\obj\**" />
     <EmbeddedResource Remove="Test.Sdk.Xunit\obj\**" />
     <EmbeddedResource Remove="Test.Sdk\obj\**" />
+
     <None Remove="Common.AspNetCore.Mvc\obj\**" />
     <None Remove="Common\obj\**" />
     <None Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
@@ -228,6 +238,8 @@
     <None Remove="Extensions.Metrics.AspNetCore\obj\**" />
     <None Remove="Extensions.Metrics.Reporters.Console\obj\**" />
     <None Remove="Extensions.Metrics\obj\**" />
+    <None Remove="Extensions.Messaging\obj\**" />
+    <None Remove="Extensions.Logging\obj\**" />
     <None Remove="Platform.Api\obj\**" />
     <None Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <None Remove="Platform.Identity.Stores.Sql\obj\**" />
@@ -247,6 +259,7 @@
     <PackageReference Include="Humanizer" Version="2.5.16" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="LiteGuard" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
@@ -282,15 +295,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Platform.Identity\ErrorStrings.Designer.cs">
+    <Compile Update="**\ErrorStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>ErrorStrings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
-    <EmbeddedResource Update="Platform.Identity\ErrorStrings.resx">
+    <EmbeddedResource Update="**\ErrorStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
