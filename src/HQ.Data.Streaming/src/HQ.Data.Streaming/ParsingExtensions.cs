@@ -181,7 +181,20 @@ namespace HQ.Data.Streaming
 
         #endregion
 
-        #region Span (.NET Core 2.2 only)
+#if NETSTANDARD
+        public static string GetString(this Encoding encoding, ReadOnlySpan<byte> buffer)
+        {
+            unsafe
+            {
+                fixed (byte* b = buffer)
+                {
+                    return encoding.GetString(b, buffer.Length);
+                }
+            }
+        }
+#endif
+
+#region Span (.NET Core 2.2 only, without shim)
 
         public static bool TryParse(this Encoding encoding, ReadOnlySpan<byte> buffer, out byte value)
         {
@@ -359,6 +372,6 @@ namespace HQ.Data.Streaming
             return Guid.TryParse(field, out value);
         }
 
-        #endregion
+#endregion
     }
 }
