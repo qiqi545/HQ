@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
+  
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+    <OutputType>Exe</OutputType>
+    <StartupObject>HQ.Installer.Program</StartupObject>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>hq</ToolCommandName>
+    <PackageOutputPath>./nupkg</PackageOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>HQ bootstrap infrastructure. Do not install this package directly.</Description>
+    <Version>0.0.1-pre</Version>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\_BLOWDART\Blowdart.UI\src\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+</Project>
