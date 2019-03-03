@@ -1,7 +1,7 @@
 {
   "$schema": "http://json.schemastore.org/template",
   "author": "HQ.IO Corporation",
-  "classifications": ["HQ"],
+  "classifications": [ "HQ" ],
   "identity": "HQ",
   "name": "HQ",
   "shortName": "hq",
@@ -9,7 +9,18 @@
     "language": "C#"
   },
   "sourceName": "HQ.Template",
+  "preferNameDirectory": true,
+  "primaryOutputs": [
+    { "path": "HQ.Template.csproj" }
+  ],
   "symbols": {
+    "key": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": false,
+      "replaces": "PRIVATE-KEY-REPLACE-ME",
+      "description": "This is your private key. It must match the key provided by your HQ.io Administrator. This key is used for signing, as well as for accessing the code generation service."
+    },
     "db": {
       "type": "parameter",
       "datatype": "choice",
@@ -34,6 +45,55 @@
       ],
       "defaultValue": "sqlite",
       "description": "The storage technology used to persist permanent objects."
+    },
+    "connectionString": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": false,
+      "replaces": "DB-CONNECTION-STRING",
+      "description": "The connection string to use with your chosen persistence database."
+    },
+    "http": {
+      "type": "generated",
+      "generator": "port"
+    },
+    "http-swap": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "http",
+        "fallbackVariableName": "http"
+      },
+      "replaces": "7070"
+    },
+    "https": {
+      "type": "generated",
+      "generator": "port"
+    },
+    "https-swap": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "https",
+        "fallbackVariableName": "https"
+      },
+      "replaces": "7171"
     }
+  },
+  "DocumentDb": {
+    "type": "computed",
+    "value": "(db == \"cosmos-db\")"
+  },
+  "SqlServer": {
+    "type": "computed",
+    "value": "(db == \"sql-server\")"
+  },
+  "MySql": {
+    "type": "computed",
+    "value": "(db == \"mysql\")"
+  },
+  "Sqlite": {
+    "type": "computed",
+    "value": "(db == \"sqlite\")"
   }
 }

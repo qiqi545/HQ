@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using HQ.Installer;
 
 namespace HQ.Template
 {
@@ -7,11 +6,7 @@ namespace HQ.Template
     {
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            HqServer.Start<Startup>(args);
         }
-
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
     }
 }

@@ -1,3 +1,4 @@
+using HQ.Installer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,16 @@ namespace HQ.Template
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHq(DatabaseType.CosmosDb, _configuration.GetSection("HQ"));
+#if (DocumentDb)
+            services.AddHq(DatabaseType.DocumentDb, _configuration.GetSection("HQ"))
+#elif (SqlServer)
+            services.AddHq(DatabaseType.SqlServer, _configuration.GetSection("HQ"))
+#elif (MySql)
+            services.AddHq(DatabaseType.MySql, _configuration.GetSection("HQ"))
+#else
+            services.AddHq(DatabaseType.Sqlite, _configuration.GetSection("HQ"))
+#endif
+                .AddUi();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
