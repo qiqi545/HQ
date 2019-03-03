@@ -23,6 +23,8 @@ namespace Blowdart.UI.Web
 
         public override void Begin()
         {
+            _dom = null;
+            _scripts = null;
             Dom = StringBuilderPool.Get();
             Scripts = StringBuilderPool.Get();
         }
