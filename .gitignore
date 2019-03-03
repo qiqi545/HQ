@@ -338,3 +338,4 @@ ASALocalRun/
 
 # Source tokenization artifacts
 *.cs.pp
+src/HQ.Installer/Properties/launchSettings.json

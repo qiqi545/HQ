@@ -16,14 +16,12 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
 using HQ.Common;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Logging;
 using HQ.Installer.UI;
 using HQ.Platform.Api;
 using HQ.Platform.Identity;
@@ -49,33 +47,12 @@ namespace HQ.Installer
     {
         public static void Start<TStartup>(string[] args) where TStartup : class
         {
-            try
+            Program.Execute(args, () =>
             {
-                Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
-                Trace.TraceInformation(args == null || args.Length == 0
-                    ?  "HQ started."
-                    : $"HQ started with args: {string.Join(" ", args)}");
-
                 var builder = UseStartup<TStartup>(args);
                 var host = builder.Build();
                 host.Run();
-
-                Trace.TraceInformation("HQ stopped normally.");
-            }
-            catch (Exception exception)
-            {
-                Trace.TraceError("HQ stopped unexpectedly. Error: {0}", exception);
-
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else if (Environment.UserInteractive)
-                {
-                    Console.WriteLine("Press any key to quit.");
-                    Console.ReadKey();
-                }
-            }
+            });
         }
 
         private static IWebHostBuilder UseStartup<TStartup>(string[] args) where TStartup : class
@@ -167,7 +144,7 @@ namespace HQ.Installer
             app.UseMultiTenancy<IdentityTenant, string>();
             app.UseAuthentication();
 
-            Program.MastHead();
+            Program.Masthead();
 
             if (app.ApplicationServices.GetService(typeof(LayoutRoot)) == null)
                 return app;
