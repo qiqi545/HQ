@@ -45,7 +45,7 @@ namespace HQ.Data.Contracts
                         valid = true;
                 if (!valid)
                     list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
-                        string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
+                        string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 
@@ -67,7 +67,7 @@ namespace HQ.Data.Contracts
                         valid = true;
                 if (!valid)
                     list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
-                        string.Format(ErrorStrings.Rosetta_FieldToPropertyMismatch, field, type.Name),
+                        string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
                         HttpStatusCode.BadRequest));
             }
 

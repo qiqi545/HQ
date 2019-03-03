@@ -37,7 +37,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
                 errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
             }
 
-            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.Rosetta_ValidationFailed, 422,
+            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422,
                 errors);
             return validationError;
         }

@@ -19,7 +19,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
                 case OperationResult.SucceededWithErrors:
                 {
                     var errors = operation.Errors.Count > 1
-                        ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.Rosetta_AggregateErrors, 500, operation.Errors)
+                        ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
                         : operation.Errors[0];
 
                     var error = new ErrorResult(errors);
@@ -44,7 +44,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
             }
 
             var error = operation.Errors.Count > 1
-                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.Rosetta_AggregateErrors, 500, operation.Errors)
+                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
                 : operation.Errors[0];
 
             if (operation.Result == OperationResult.Error)

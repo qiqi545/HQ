@@ -17,10 +17,10 @@ namespace HQ.Data.Contracts
         {
             var list = new List<Error>();
             if (After < 0)
-                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PageRangeInvalid,
+                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.PageRangeInvalid,
                     HttpStatusCode.BadRequest));
             if (Before - After > options.PerPageMax)
-                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.Rosetta_PerPageTooHigh,
+                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.PerPageTooHigh,
                     HttpStatusCode.RequestEntityTooLarge));
 
             errors = list;
