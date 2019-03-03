@@ -5,7 +5,7 @@
 	  "properties":
 	  [
 	    { "name": "Name", "type": "string", "required": true },
-	  	{ "name": "Welcome", "type": "string", "from": "Hello, {{ Description }}!" },
+	  	{ "name": "Welcome", "type": "string", "from": "Hello, {{ Description }}!" }
 	  ]
 	}
 ]
