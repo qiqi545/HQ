@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using HQ.Extensions.DependencyInjection.Internal;
 using HQ.Extensions.CodeGeneration;
+using HQ.Extensions.DependencyInjection.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.DependencyInjection
