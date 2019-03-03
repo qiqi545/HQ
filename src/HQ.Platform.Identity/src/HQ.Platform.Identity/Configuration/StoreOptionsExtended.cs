@@ -31,7 +31,7 @@ namespace HQ.Platform.Identity.Configuration
             ProtectPersonalData = inner.ProtectPersonalData;
         }
 
-        public bool CreateIfNotExists { get; set; }
-        public bool MigrateOnStartup { get; set; }
+        public bool CreateIfNotExists { get; set; } = true;
+        public bool MigrateOnStartup { get; set; } = true;
     }
 }
