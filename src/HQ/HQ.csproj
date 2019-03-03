@@ -17,7 +17,7 @@
     <Configurations>Debug;Release;PackageSources;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
-    <PackageReleaseNotes />
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
@@ -31,6 +31,7 @@
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\**\*.cs" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql\**\*.cs" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Streaming\src\HQ.Data.Streaming\**\*.cs" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Builders\**\*.cs" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\**\*.cs" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\**\*.cs" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -56,6 +57,7 @@
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security\**\*.cs" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Schema\src\HQ.Platform.Schema\**\*.cs" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -120,6 +122,7 @@
     <Compile Remove="Data.Contracts.Runtime\obj\**" />
     <Compile Remove="Data.Contracts\obj\**" />
     <Compile Remove="Data.SessionManagement\obj\**" />
+    <Compile Remove="Data.Streaming\obj\**" />
     <Compile Remove="Data.Sql.Batching\obj\**" />
     <Compile Remove="Data.Sql.Builders\obj\**" />
     <Compile Remove="Data.Sql.Dapper\obj\**" />
@@ -145,6 +148,7 @@
     <Compile Remove="Platform.Operations\obj\**" />
     <Compile Remove="Platform.Security.AspNetCore\obj\**" />
     <Compile Remove="Platform.Security\obj\**" />
+    <Compile Remove="Platform.Schema\obj\**" />
     <Compile Remove="Strings\obj\**" />
     <Compile Remove="Test.Sdk.Xunit\obj\**" />
     <Compile Remove="Test.Sdk\obj\**" />
@@ -161,6 +165,7 @@
     <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql\obj\Debug\netstandard2.0\**" />
+    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\src\HQ.Extensions.Caching\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\Debug\netstandard2.0\**" />
@@ -179,6 +184,7 @@
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security\obj\Debug\netstandard2.0\**" />
+    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Strings\src\HQ.Strings\obj\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\Debug\netstandard2.0\**" />
@@ -195,6 +201,7 @@
     <EmbeddedResource Remove="Data.Sql.Descriptor\obj\**" />
     <EmbeddedResource Remove="Data.Sql.Queries\obj\**" />
     <EmbeddedResource Remove="Data.Sql\obj\**" />
+    <EmbeddedResource Remove="Data.Streaming\obj\**" />
     <EmbeddedResource Remove="Extensions.Caching\obj\**" />
     <EmbeddedResource Remove="Extensions.CodeGeneration\obj\**" />
     <EmbeddedResource Remove="Extensions.Dates\obj\**" />
@@ -213,6 +220,7 @@
     <EmbeddedResource Remove="Platform.Operations\obj\**" />
     <EmbeddedResource Remove="Platform.Security.AspNetCore\obj\**" />
     <EmbeddedResource Remove="Platform.Security\obj\**" />
+    <EmbeddedResource Remove="Platform.Schema\obj\**" />
     <EmbeddedResource Remove="Strings\obj\**" />
     <EmbeddedResource Remove="Test.Sdk.Xunit\obj\**" />
     <EmbeddedResource Remove="Test.Sdk\obj\**" />
@@ -229,6 +237,7 @@
     <None Remove="Data.Sql.Descriptor\obj\**" />
     <None Remove="Data.Sql.Queries\obj\**" />
     <None Remove="Data.Sql\obj\**" />
+    <None Remove="Data.Streaming\obj\**" />
     <None Remove="Extensions.Caching\obj\**" />
     <None Remove="Extensions.CodeGeneration\obj\**" />
     <None Remove="Extensions.Dates\obj\**" />
@@ -247,6 +256,7 @@
     <None Remove="Platform.Operations\obj\**" />
     <None Remove="Platform.Security.AspNetCore\obj\**" />
     <None Remove="Platform.Security\obj\**" />
+    <None Remove="Platform.Schema\obj\**" />
     <None Remove="Strings\obj\**" />
     <None Remove="Test.Sdk.Xunit\obj\**" />
     <None Remove="Test.Sdk\obj\**" />
@@ -282,6 +292,7 @@
     <PackageReference Include="NSec.Cryptography" Version="18.6.0" />
     <PackageReference Include="Sodium.Core" Version="1.2.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Memory" Version="4.5.2" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
