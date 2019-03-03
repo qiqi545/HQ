@@ -109,7 +109,7 @@ namespace HQ.Platform.Security.AspNetCore
         private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
         {
             return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key)),
-                SecurityAlgorithms.HmacSha256);
+                SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)

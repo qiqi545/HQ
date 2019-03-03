@@ -40,32 +40,27 @@ namespace HQ.Platform.Identity.Extensions
             return true;
         }
 
-        public static bool TryGetTenantId(this IServiceProvider services, out int tenantId)
+        public static bool TryGetTenantId<TKey>(this IServiceProvider services, out TKey tenantId)
         {
             var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims == null)
-            {
-                tenantId = default;
-                return false;
-            }
+            if (security?.Value?.Claims != null)
+                return services.TryGetClaim(security.Value.Claims.TenantIdClaim, out tenantId);
 
-            services.TryGetClaim(security.Value.Claims.TenantIdClaim, out var value);
-            return int.TryParse(value, out tenantId);
+            tenantId = default;
+            return false;
         }
 
         public static bool TryGetTenantName(this IServiceProvider services, out string tenantName)
         {
             var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims == null)
-            {
-                tenantName = default;
-                return false;
-            }
+            if (security?.Value?.Claims != null)
+                return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
 
-            return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
+            tenantName = default;
+            return false;
         }
 
-        public static bool TryGetClaim(this IServiceProvider services, string type, out string value)
+        public static bool TryGetClaim<TKey>(this IServiceProvider services, string type, out TKey value)
         {
             var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
             var user = accessor?.HttpContext?.User;
@@ -82,7 +77,7 @@ namespace HQ.Platform.Identity.Extensions
                 return false;
             }
 
-            value = claim.Value;
+            value = (TKey)Convert.ChangeType(claim.Value, typeof(TKey));
             return true;
         }
     }

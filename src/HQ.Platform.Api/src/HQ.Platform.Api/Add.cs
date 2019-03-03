@@ -46,8 +46,7 @@ namespace HQ.Platform.Api
             services.AddHttpCaching();
             services.AddGzipCompression();
 
-            services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[]
-                {new CamelCase(), new SnakeCase(), new PascalCase()});
+            services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
             services.AddSingleton<IConfigureOptions<MvcOptions>, PublicApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 
@@ -82,7 +81,7 @@ namespace HQ.Platform.Api
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options =>
             {
-                options.EnableForHttps = true;
+                options.EnableForHttps = false;
                 options.Providers.Add<GzipCompressionProvider>();
             });
             return services;

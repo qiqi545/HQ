@@ -19,8 +19,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using HQ.Common.Models;
-using HQ.Data.Sql.Dapper;
-using HQ.Data.Sql.Descriptor;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
@@ -95,8 +93,14 @@ namespace HQ.Platform.Identity
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
-
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind, configuration.Bind);
+            
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(options =>
+            {
+                configuration.Bind(options);
+            }, extended =>
+            {
+                configuration.Bind(extended);
+            });
         }
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
@@ -156,23 +160,6 @@ namespace HQ.Platform.Identity
             services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
 
             services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
-
-            SimpleDataDescriptor.TableNameConvention = s =>
-            {
-                switch (s)
-                {
-                    case nameof(IdentityRoleExtended):
-                        return nameof(IdentityRole);
-                    case nameof(IdentityUserExtended):
-                        return nameof(IdentityUser);
-                    default:
-                        return s;
-                }
-            };
-
-            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
 
             return identityBuilder;
         }

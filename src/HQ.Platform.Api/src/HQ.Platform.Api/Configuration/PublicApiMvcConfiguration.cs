@@ -39,7 +39,6 @@ namespace HQ.Platform.Api.Configuration
         private readonly IEnumerable<IDynamicComponent> _components;
         private readonly ILoggerFactory _loggerFactory;
         private readonly ObjectPoolProvider _objectPoolProvider;
-        private readonly IOptions<PublicApiOptions> _options;
         private readonly JsonSerializerSettings _settings;
 
         public PublicApiMvcConfiguration(
@@ -47,14 +46,12 @@ namespace HQ.Platform.Api.Configuration
             ArrayPool<char> charPool,
             ObjectPoolProvider objectPoolProvider,
             JsonSerializerSettings settings,
-            IOptions<PublicApiOptions> options,
             IEnumerable<IDynamicComponent> components)
         {
             _loggerFactory = loggerFactory;
             _charPool = charPool;
             _objectPoolProvider = objectPoolProvider;
             _settings = settings;
-            _options = options;
             _components = components;
         }
 

@@ -206,9 +206,9 @@ namespace HQ.Platform.Api
         }
 
         public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true)
-            where TTenant : class, ITenant<int>, new()
+            where TTenant : class, ITenant<string>, new()
         {
-            return app.UseMultiTenancy<TTenant, int>(snapshot);
+            return app.UseMultiTenancy<TTenant, string>(snapshot);
         }
 
         public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app,
