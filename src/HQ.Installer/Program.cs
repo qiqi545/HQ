@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 
 namespace HQ.Installer
 {
+
     public static class Program
     {
         public static void Main(params string[] args)
@@ -129,7 +130,8 @@ namespace HQ.Installer
                                     {
                                         ["platformNs"] = "HQ",
                                         ["package"] = "true",
-                                        ["appNs"] = appNs
+                                        ["appNs"] = appNs,
+                                        ["flags"] = CodeGenFlags.All.ToString()
                                     },
                                     Headers = new WebHeaderCollection
                                     {

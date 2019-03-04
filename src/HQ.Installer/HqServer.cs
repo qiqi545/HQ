@@ -111,30 +111,6 @@ namespace HQ.Installer
             return services;
         }
 
-        public static void AddUi(this IServiceCollection services)
-        {
-            var title = Assembly.GetCallingAssembly().GetName().Name;
-
-            UiConfig.Settings = settings =>
-            {
-                settings.Title = title;
-                settings.System = new SemanticUi();
-                settings.ComponentAssemblies = new[]
-                {
-                    typeof(UiComponent).Assembly,       // Blowdart.UI
-                    typeof(HtmlSystem).Assembly,        // Blowdart.UI.Web
-                    typeof(SemanticUi).Assembly,        // Blowdart.UI.Web.Semantic.UI,
-                    typeof(SplashPage).Assembly,        // HQ
-                    Assembly.GetEntryAssembly()         // App
-                };
-            };
-
-            var serviceProvider = services.BuildServiceProvider();
-            var env = serviceProvider.GetRequiredService<IHostingEnvironment>();
-
-            services.AddBlowdartUi(env, typeof(SemanticUi).Assembly);
-        }
-
         public static IApplicationBuilder UseHq(this IApplicationBuilder app, Action<IRouteBuilder> configureRoutes = null)
         {
             Bootstrap.EnsureInitialized();
@@ -158,6 +134,30 @@ namespace HQ.Installer
             });
 
             return app;
+        }
+
+        public static void AddUi(this IServiceCollection services)
+        {
+            var title = Assembly.GetCallingAssembly().GetName().Name;
+
+            UiConfig.Settings = settings =>
+            {
+                settings.Title = title;
+                settings.System = new SemanticUi();
+                settings.ComponentAssemblies = new[]
+                {
+                    typeof(UiComponent).Assembly,       // Blowdart.UI
+                    typeof(HtmlSystem).Assembly,        // Blowdart.UI.Web
+                    typeof(SemanticUi).Assembly,        // Blowdart.UI.Web.Semantic.UI,
+                    typeof(SplashPage).Assembly,        // HQ
+                    Assembly.GetEntryAssembly()         // App
+                };
+            };
+
+            var serviceProvider = services.BuildServiceProvider();
+            var env = serviceProvider.GetRequiredService<IHostingEnvironment>();
+
+            services.AddBlowdartUi(env, typeof(SemanticUi).Assembly);
         }
     }
 }
