@@ -21,17 +21,16 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Runtime.Rest.Models;
-using HQ.Strings;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Runtime.Rest.Filters
 {
-    public class RestStreamFilter : IRestFilter
+    public class RestPageFilter : IRestFilter
     {
         private readonly IOptions<QueryOptions> _options;
 
-        public RestStreamFilter(IOptions<QueryOptions> options)
+        public RestPageFilter(IOptions<QueryOptions> options)
         {
             _options = options;
         }
@@ -40,31 +39,31 @@ namespace HQ.Platform.Runtime.Rest.Filters
 
         public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
         {
-            qs.TryGetValue(_options.Value.AfterOperator, out var after);
-            qs.TryGetValue(_options.Value.BeforeOperator, out var before);
+            qs.TryGetValue(_options.Value.PageOperator, out var page);
+            qs.TryGetValue(_options.Value.PerPageOperator, out var perPage);
 
-            var options = new StreamOptions();
+            var options = new PageOptions();
 
-            if (after.Count == 0 || !long.TryParse(after[0], out var afterValue))
+            if (page.Count == 0 || !int.TryParse(page[0], out var pageValue))
             {
-                afterValue = 0;
+                pageValue = 1;
             }
 
-            if (before.Count == 0 || !long.TryParse(before[0], out var beforeValue))
+            if (perPage.Count == 0 || !int.TryParse(perPage[0], out var perPageValue))
             {
-                beforeValue = _options.Value.PerPageDefault + _options.Value.PerPageDefault * afterValue;
+                perPageValue = _options.Value.PerPageDefault;
             }
 
-            options.After = afterValue;
-            options.Before = beforeValue;
+            options.Page = pageValue;
+            options.PerPage = perPageValue;
 
             if (!options.Validate(context.Type, _options.Value, out var errors))
             {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.Adapt_ValidationFailed,
+                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
                     HttpStatusCode.BadRequest, errors));
             }
 
-            context.Streaming = options;
+            context.Paging = options;
         }
     }
 }

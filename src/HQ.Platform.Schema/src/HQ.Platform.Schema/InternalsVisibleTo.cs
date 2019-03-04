@@ -17,10 +17,10 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Adapt")]
-[assembly: InternalsVisibleTo("HQ.Adapt.Migrations")]
-[assembly: InternalsVisibleTo("HQ.Adapt.Rest")]
-[assembly: InternalsVisibleTo("HQ.Adapt.GraphQl")]
+[assembly: InternalsVisibleTo("HQ.Platform.Runtime")]
+[assembly: InternalsVisibleTo("HQ.Platform.Runtime.Migrations")]
+[assembly: InternalsVisibleTo("HQ.Platform.Runtime.Rest")]
+[assembly: InternalsVisibleTo("HQ.Platform.Runtime.GraphQl")]
 [assembly: InternalsVisibleTo("HQ.Platform.Schema.AspNetCore.Mvc")]
 [assembly: InternalsVisibleTo("HQ.Platform.Schema.JsonSchema")]
 

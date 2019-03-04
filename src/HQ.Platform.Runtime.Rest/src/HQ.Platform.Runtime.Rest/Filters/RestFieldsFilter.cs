@@ -22,17 +22,16 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Runtime.Rest.Models;
-using HQ.Strings;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Runtime.Rest.Filters
 {
-    public class RestSortFilter : IRestFilter
+    public class RestFieldsFilter : IRestFilter
     {
         private readonly IOptions<QueryOptions> _options;
 
-        public RestSortFilter(IOptions<QueryOptions> options)
+        public RestFieldsFilter(IOptions<QueryOptions> options)
         {
             _options = options;
         }
@@ -41,32 +40,28 @@ namespace HQ.Platform.Runtime.Rest.Filters
 
         public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
         {
-            qs.TryGetValue(_options.Value.SortOperator, out var sorters);
-            if (sorters.Count == 0)
+            qs.TryGetValue(_options.Value.FieldsOperator, out var fields);
+
+            if (fields.Count == 0)
             {
                 return;
             }
 
-            var options = new SortOptions();
-            foreach (var sorter in sorters)
-            foreach (var value in sorter.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
+            var options = new FieldOptions();
+            foreach (var field in fields)
+            foreach (var value in field.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
             {
                 var v = value.Trim();
-
-                options.Fields.Add(new Sort
-                {
-                    Field = v.TrimStart('-'),
-                    Descending = v.StartsWith("-")
-                });
+                options.Fields.Add(v);
             }
 
             if (!options.Validate(context.Type, _options.Value, out var errors))
             {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.Adapt_ValidationFailed,
+                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
                     HttpStatusCode.BadRequest, errors));
             }
 
-            context.Sorting = options;
+            context.Fields = options;
         }
     }
 }

@@ -15,23 +15,23 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Runtime.Rest.Models;
-using HQ.Strings;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Runtime.Rest.Filters
 {
-    public class RestPageFilter : IRestFilter
+    public class RestSortFilter : IRestFilter
     {
         private readonly IOptions<QueryOptions> _options;
 
-        public RestPageFilter(IOptions<QueryOptions> options)
+        public RestSortFilter(IOptions<QueryOptions> options)
         {
             _options = options;
         }
@@ -40,31 +40,32 @@ namespace HQ.Platform.Runtime.Rest.Filters
 
         public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
         {
-            qs.TryGetValue(_options.Value.PageOperator, out var page);
-            qs.TryGetValue(_options.Value.PerPageOperator, out var perPage);
-
-            var options = new PageOptions();
-
-            if (page.Count == 0 || !int.TryParse(page[0], out var pageValue))
+            qs.TryGetValue(_options.Value.SortOperator, out var sorters);
+            if (sorters.Count == 0)
             {
-                pageValue = 1;
+                return;
             }
 
-            if (perPage.Count == 0 || !int.TryParse(perPage[0], out var perPageValue))
+            var options = new SortOptions();
+            foreach (var sorter in sorters)
+            foreach (var value in sorter.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
             {
-                perPageValue = _options.Value.PerPageDefault;
-            }
+                var v = value.Trim();
 
-            options.Page = pageValue;
-            options.PerPage = perPageValue;
+                options.Fields.Add(new Sort
+                {
+                    Field = v.TrimStart('-'),
+                    Descending = v.StartsWith("-")
+                });
+            }
 
             if (!options.Validate(context.Type, _options.Value, out var errors))
             {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.Adapt_ValidationFailed,
+                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
                     HttpStatusCode.BadRequest, errors));
             }
 
-            context.Paging = options;
+            context.Sorting = options;
         }
     }
 }

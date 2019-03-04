@@ -19,7 +19,6 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Runtime;
-using HQ.Strings;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
 
@@ -65,7 +64,7 @@ namespace HQ.Platform.Runtime.Rest.Attributes
             if (qc.Errors?.Count > 0)
             {
                 context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
-                    ErrorStrings.Adapt_ValidationFailed, (HttpStatusCode) 422, qc.Errors));
+                    ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
             }
         }
     }
