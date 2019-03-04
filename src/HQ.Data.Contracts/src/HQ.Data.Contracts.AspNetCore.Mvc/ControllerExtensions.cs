@@ -17,7 +17,6 @@
 
 using System.Collections.Generic;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Strings;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
 {

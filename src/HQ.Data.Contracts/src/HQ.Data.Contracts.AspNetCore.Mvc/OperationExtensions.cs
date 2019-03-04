@@ -1,5 +1,4 @@
 using System;
-using HQ.Strings;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc

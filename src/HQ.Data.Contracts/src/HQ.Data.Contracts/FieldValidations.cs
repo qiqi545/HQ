@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Net;
 using HQ.Common.Extensions;
 using HQ.Common.FastMember;
-using HQ.Strings;
 
 namespace HQ.Data.Contracts
 {

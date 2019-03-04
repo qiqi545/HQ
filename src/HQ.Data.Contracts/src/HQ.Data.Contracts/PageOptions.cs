@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using HQ.Data.Contracts.Configuration;
-using HQ.Strings;
 
 namespace HQ.Data.Contracts
 {

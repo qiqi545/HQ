@@ -22,7 +22,7 @@ namespace HQ.Data.Contracts {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ErrorStrings {
+    public class ErrorStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace HQ.Data.Contracts {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("HQ.Data.Contracts.ErrorStrings", typeof(ErrorStrings).Assembly);
@@ -51,7 +51,7 @@ namespace HQ.Data.Contracts {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to Multiple errors encountered..
         /// </summary>
-        internal static string AggregateErrors {
+        public static string AggregateErrors {
             get {
                 return ResourceManager.GetString("AggregateErrors", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid attribute of &apos;{1}&apos;..
         /// </summary>
-        internal static string FieldToPropertyMismatch {
+        public static string FieldToPropertyMismatch {
             get {
                 return ResourceManager.GetString("FieldToPropertyMismatch", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to Page range starts at 1..
         /// </summary>
-        internal static string PageRangeInvalid {
+        public static string PageRangeInvalid {
             get {
                 return ResourceManager.GetString("PageRangeInvalid", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to Per page request is higher than the maximum allowed..
         /// </summary>
-        internal static string PerPageTooHigh {
+        public static string PerPageTooHigh {
             get {
                 return ResourceManager.GetString("PerPageTooHigh", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to Batch size cannot be larger than {0} items..
         /// </summary>
-        internal static string PostBatchSizeExceeded {
+        public static string PostBatchSizeExceeded {
             get {
                 return ResourceManager.GetString("PostBatchSizeExceeded", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to You must provide a resource to save it..
         /// </summary>
-        internal static string ResourceMissingInSave {
+        public static string ResourceMissingInSave {
             get {
                 return ResourceManager.GetString("ResourceMissingInSave", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace HQ.Data.Contracts {
         /// <summary>
         ///   Looks up a localized string similar to Validation failed..
         /// </summary>
-        internal static string ValidationFailed {
+        public static string ValidationFailed {
             get {
                 return ResourceManager.GetString("ValidationFailed", resourceCulture);
             }

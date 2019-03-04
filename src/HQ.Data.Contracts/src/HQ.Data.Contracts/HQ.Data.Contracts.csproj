@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\..\HQ.Strings\src\HQ.Strings\HQ.Strings.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,7 +32,7 @@
 
   <ItemGroup>
     <EmbeddedResource Update="ErrorStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
