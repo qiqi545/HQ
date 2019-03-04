@@ -5,7 +5,7 @@
   <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netstandard20</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
