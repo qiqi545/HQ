@@ -25,7 +25,7 @@ using Dynamitey;
 using Dynamitey.DynamicObjects;
 using HQ.Common.FastMember;
 using HQ.Extensions.CodeGeneration;
-using HQ.Test.Sdk.Logging;
+using HQ.Extensions.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;

@@ -18,8 +18,8 @@
 using System;
 using System.Diagnostics;
 using System.Net.Http;
+using HQ.Extensions.Logging;
 using HQ.Test.Sdk.Assertions;
-using HQ.Test.Sdk.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

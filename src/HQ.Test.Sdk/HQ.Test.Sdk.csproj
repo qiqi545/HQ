@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="25.0.4" />
+    <PackageReference Include="Bogus" Version="26.0.1" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\HQ.Extensions.CodeGeneration.csproj" />
     <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
   </ItemGroup>
 
 </Project>
