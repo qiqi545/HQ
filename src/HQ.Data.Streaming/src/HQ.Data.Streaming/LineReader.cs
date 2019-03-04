@@ -24,7 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Data.Streaming.Internal;
 using HQ.Extensions.Metrics;
-using HQ.Strings;
 
 namespace HQ.Data.Streaming
 {
@@ -54,7 +53,7 @@ namespace HQ.Data.Streaming
                     if (!ReadPreamble(stream, preamble, buffer, workingBuffer, ref from, ref to, ref endOfStream,
                         cancellationToken))
                     {
-                        throw new FormatException(ErrorStrings.Evolve_UnexpectedEndOfStream);
+                        throw new FormatException(ErrorStrings.UnexpectedEndOfStream);
                     }
 
                     do
