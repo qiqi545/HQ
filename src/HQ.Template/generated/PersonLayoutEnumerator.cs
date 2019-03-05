@@ -53,29 +53,47 @@ using HQ.Platform.Runtime.Rest.Attributes;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 
+
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+    public struct PersonLayoutEnumerator
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
+        private readonly IEnumerator<LineConstructor> _inner;
+        private readonly Encoding _encoding;
+        private readonly byte[] _separator;
+        private ulong _index;
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
+        public ulong Index => _index;
 
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
+        public PersonLayoutEnumerator(IEnumerator<LineConstructor> inner, Encoding encoding, byte[] separator)
+        {
+            _inner = inner;
+            _encoding = encoding;
+            _separator = separator;
+            _index = 0UL;
+        }
 
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
+        public PersonLayout Current
+        {
+            get
+            {
+                var row = new PersonLayout(_inner.Current, _encoding, _separator);
+                return row;
+            }
+        }
 
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+        public bool MoveNext()
+        {
+            var result = _inner.MoveNext();
+            if (result)
+                _index++;
+            return result;
+        }
+
+        public void Reset()
+        {
+           _inner.Reset();
+        }
     }
 }
+

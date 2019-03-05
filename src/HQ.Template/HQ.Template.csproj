@@ -2,30 +2,34 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>    
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <LangVersion>7.2</LangVersion>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <HQEndpoint>https://build.hq.io</HQEndpoint>
+    <HQKey>PRIVATE-KEY-REPLACE-ME</HQKey>
+  </PropertyGroup>
+  
   <!--#if(false)-->
+  <Import Project="$(ProjectDir)..\..\build\template.props" />
   <PropertyGroup>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
-  </PropertyGroup>
-  <Import Project="$(ProjectDir)..\..\build\template.props" />
+  </PropertyGroup>  
+  <!--#endif--> 
+
   <ItemGroup>
     <Folder Include="generated\" />
   </ItemGroup>
-  <!--#endif-->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="HQ" Version="1.0.59" />
+    <PackageReference Include="HQ.Installer" Version="0.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />
-    <ProjectReference Include="..\HQ\HQ.csproj" />
-  </ItemGroup>
+  <Import Project="$(ProjectDir)codegen.targets" />
 
-  
-  
 </Project>
  

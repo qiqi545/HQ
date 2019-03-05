@@ -53,29 +53,32 @@ using HQ.Platform.Runtime.Rest.Attributes;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 
+
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+    public static class PersonLayoutParser
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
+        public static PersonLayoutEnumerable Parse(Stream stream, Encoding encoding, string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        {
+            return Enumerate(stream, encoding, encoding.GetSeparatorBuffer(separator), maxWorkingMemoryBytes, metrics, cancellationToken);
+        }
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
+        public static PersonLayoutEnumerable Parse(Stream stream, Encoding encoding, byte[] workingBuffer, string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        {
+            return Enumerate(stream, encoding, workingBuffer, encoding.GetSeparatorBuffer(separator), maxWorkingMemoryBytes, metrics, cancellationToken);
+        }
 
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
+        private static PersonLayoutEnumerable Enumerate(Stream stream, Encoding encoding, byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        {
+            var data = LineReader.StreamLines(stream, encoding, separator, maxWorkingMemoryBytes, metrics, cancellationToken);
+            return new PersonLayoutEnumerable(data, encoding, separator);
+        }
 
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
-
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+        private static PersonLayoutEnumerable Enumerate(Stream stream, Encoding encoding, byte[] workingBuffer, byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+        {
+            var data = LineReader.StreamLines(stream, encoding, workingBuffer, separator, maxWorkingMemoryBytes, metrics, cancellationToken);
+            return new PersonLayoutEnumerable(data, encoding, separator);
+        }
     }
 }
+

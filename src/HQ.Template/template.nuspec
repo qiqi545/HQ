@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>HQ.Template</id>
-    <version>0.0.1</version>
+    <version>0.0.2</version>
     <authors>HQ.IO Corporation</authors>
     <description>HQ.io Web Application</description>
     <tags>hq hq-io dotnet-standard serverless platform</tags>
@@ -13,5 +13,10 @@
     <packageTypes>
       <packageType name="Template" />
     </packageTypes>
+	<dependencies>
+		<dependency id="Microsoft.AspNetCore.App" version="[*,9999.0]" />
+		<dependency id="HQ" version="[*,9999.0]" />
+		<dependency id="HQ.Installer" version="[*,9999.0]" />
+	</dependencies>
   </metadata>
 </package>

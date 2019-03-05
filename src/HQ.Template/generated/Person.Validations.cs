@@ -55,27 +55,15 @@ using HQ.Platform.Security.Configuration;
 
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+    public partial class Person : IValidated
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
-
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
-
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
-
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+        public virtual bool TryValidate(out IList<Error> errors)
+        {
+            errors = new List<Error>();
+            if(string.IsNullOrWhiteSpace(Name))
+                errors.Add(new Error(ErrorEvents.ValidationFailed, "", HttpStatusCode.BadRequest));
+            return errors.Count == 0;
+        }
     }
 }

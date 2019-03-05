@@ -53,29 +53,26 @@ using HQ.Platform.Runtime.Rest.Attributes;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 
+
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+    public struct PersonLayoutEnumerable
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
+        private readonly Encoding _encoding;
+        private readonly byte[] _separator;
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
+        public IEnumerable<LineConstructor> Inner { get; }
 
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
+        public PersonLayoutEnumerable(IEnumerable<LineConstructor> inner, Encoding encoding, byte[] separator)
+        {
+            Inner = inner;
+            _encoding = encoding;
+            _separator = separator;
+        }
 
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
-
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+        public PersonLayoutEnumerator GetEnumerator()
+        {
+            return new PersonLayoutEnumerator(Inner.GetEnumerator(), _encoding, _separator);
+        }
     }
 }

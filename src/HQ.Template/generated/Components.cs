@@ -53,29 +53,18 @@ using HQ.Platform.Runtime.Rest.Attributes;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 
+
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+
+    public class GeneratedComponent : IDynamicComponent
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
+        public IEnumerable<Type> ControllerTypes => new[]
+        {
+            typeof(PersonController),
+        };
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
-
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
-
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
-
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+         public Func<string> Namespace { get; internal set; }
     }
+
 }

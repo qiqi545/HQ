@@ -53,29 +53,34 @@ using HQ.Platform.Runtime.Rest.Attributes;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 
+
 namespace HQ.Template
 {
-    [DataContract]
-    public partial class Person : IObject
+    public static partial class ServiceCollectionExtensions
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity), DataMember]
-        public virtual long Id { get; set; }
+        public static IServiceCollection AddGenerated<TBatchOptions>(this IServiceCollection services, IConfiguration securityConfig, string rootPath = "/api")
+        {
+            return services.AddGenerated<TBatchOptions>(securityConfig.Bind, rootPath);
+        }
 
-        /// <summary>Name</summary>
-        [Required]
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Name { get; set; } 
+        public static IServiceCollection AddGenerated<TBatchOptions>(this IServiceCollection services, Action<SecurityOptions> configureAction = null, string rootPath = "/api")
+        {
+            KnownTypesContext.KnownTypes = new[]
+            {
+                typeof(Person), typeof(Page<Person>), typeof(Stream<Person>),
+            };
 
-        /// <summary>Welcome</summary>
-        [ReadOnly(false)]
-        [DataMember]
-        public virtual string Welcome => ComputedString.Compute(this, "Hello, {{ Name }}!");
+            services.AddScoped<HQ.Template.IPersonRepository>(r =>
+                new HQ.Template.PersonRepository<TBatchOptions>(r.GetRequiredService<IDataConnection>(),
+                    r.GetRequiredService<ISqlDialect>(), r.GetRequiredService<IDataBatchOperation<TBatchOptions>>(),
+                    r.GetRequiredService<IServerTimestampService>()));
 
-        [DataMember]
-        public virtual DateTimeOffset CreatedAt { get; set; }
+            services.AddScoped<HQ.Template.IPersonService, HQ.Template.PersonService>();
 
-        [DataMember]
-        public virtual DateTimeOffset? DeletedAt { get; set; }
+
+            services.AddSingleton<IDynamicComponent>(r => new GeneratedComponent { Namespace = () => rootPath });
+
+            return services;
+        }
     }
 }
