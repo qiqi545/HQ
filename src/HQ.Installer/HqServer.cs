@@ -16,12 +16,14 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Logging;
 using HQ.Installer.UI;
 using HQ.Platform.Api;
 using HQ.Platform.Identity;
@@ -47,7 +49,7 @@ namespace HQ.Installer
     {
         public static void Start<TStartup>(string[] args) where TStartup : class
         {
-            Program.Execute(args, () =>
+            Execute(args, () =>
             {
                 var builder = UseStartup<TStartup>(args);
                 var host = builder.Build();
@@ -120,7 +122,7 @@ namespace HQ.Installer
             app.UseMultiTenancy<IdentityTenant, string>();
             app.UseAuthentication();
 
-            Program.Masthead();
+            Masthead();
 
             if (app.ApplicationServices.GetService(typeof(LayoutRoot)) == null)
                 return app;
@@ -158,6 +160,53 @@ namespace HQ.Installer
             var env = serviceProvider.GetRequiredService<IHostingEnvironment>();
 
             services.AddBlowdartUi(env, typeof(SemanticUi).Assembly);
+        }
+
+        public static void Masthead()
+        {
+            // Credit: http://patorjk.com/software/taag/
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine(@"
+ __   __  _______        ___   _______ 
+|  | |  ||       |      |   | |       |
+|  |_|  ||   _   |      |   | |   _   |
+|       ||  | |  |      |   | |  | |  |
+|       ||  |_|  | ___  |   | |  |_|  |
+|   _   ||      | |   | |   | |       |
+|__| |__||____||_||___| |___| |_______|
+");
+            Console.ForegroundColor = color;
+        }
+
+        internal static void Execute(string[] args, Action action)
+        {
+            try
+            {
+                Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
+
+                Console.WriteLine(args == null || args.Length == 0
+                    ? "HQ started."
+                    : $"HQ started with args: {string.Join(" ", args)}");
+
+                action?.Invoke();
+
+                Console.WriteLine("HQ stopped normally.");
+            }
+            catch (Exception exception)
+            {
+                Console.Error.WriteLine("HQ stopped unexpectedly. Error: {0}", exception);
+
+                if (Debugger.IsAttached)
+                {
+                    Debugger.Break();
+                }
+                else if (Environment.UserInteractive)
+                {
+                    Console.WriteLine("Press any key to quit.");
+                    Console.ReadKey();
+                }
+            }
         }
     }
 }
