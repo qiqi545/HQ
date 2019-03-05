@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(SolutionDir)..\build\package.props" />
+  <Import Project="$(SolutionDir)..\build\build.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+    <OutputType>Exe</OutputType>
+    <StartupObject>HQ.Build.Program</StartupObject>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>hq</ToolCommandName>
+    <License>RPL-1.5</License>
+    <Copyright>Copyright © HQ.IO Corporation. All rights reserved.</Copyright>
+    <RequireLicenseAcceptance>true</RequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>HQ build tools.</Description>
+    <Version>0.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+</Project>
