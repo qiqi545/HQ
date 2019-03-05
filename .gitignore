@@ -338,4 +338,7 @@ ASALocalRun/
 
 # Source tokenization artifacts
 *.cs.pp
-src/HQ.Installer/Properties/launchSettings.json
+
+
+# Sensitive data in build tools
+src/HQ.Build/Properties/launchSettings.json
