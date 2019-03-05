@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -21,7 +21,6 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\..\..\HQ.Strings\src\HQ.Strings\**\*.cs" Link="Strings\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Common\src\HQ.Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\**\*.cs" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     
@@ -151,7 +150,6 @@
     <Compile Remove="Platform.Security\obj\**" />
     <Compile Remove="Platform.Schema\obj\**" />
     <Compile Remove="Platform.Runtime.Rest\obj\**" />
-    <Compile Remove="Strings\obj\**" />
     <Compile Remove="Test.Sdk.Xunit\obj\**" />
     <Compile Remove="Test.Sdk\obj\**" />
 
@@ -188,11 +186,10 @@
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Strings\src\HQ.Strings\obj\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\Debug\netstandard2.0\**" />
     
-    <EmbeddedResource Remove="Common.AspNetCore.Mvc\obj\**" />
+    <!--<EmbeddedResource Remove="Common.AspNetCore.Mvc\obj\**" />
     <EmbeddedResource Remove="Common\obj\**" />
     <EmbeddedResource Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
     <EmbeddedResource Remove="Data.Contracts.Runtime\obj\**" />
@@ -225,9 +222,8 @@
     <EmbeddedResource Remove="Platform.Security\obj\**" />
     <EmbeddedResource Remove="Platform.Schema\obj\**" />
     <EmbeddedResource Remove="Platform.Runtime.Rest\obj\**" />
-    <EmbeddedResource Remove="Strings\obj\**" />
     <EmbeddedResource Remove="Test.Sdk.Xunit\obj\**" />
-    <EmbeddedResource Remove="Test.Sdk\obj\**" />
+    <EmbeddedResource Remove="Test.Sdk\obj\**" />-->
 
     <None Remove="Common.AspNetCore.Mvc\obj\**" />
     <None Remove="Common\obj\**" />
@@ -262,7 +258,6 @@
     <None Remove="Platform.Security\obj\**" />
     <None Remove="Platform.Schema\obj\**" />
     <None Remove="Platform.Runtime.Rest\obj\**" />
-    <None Remove="Strings\obj\**" />
     <None Remove="Test.Sdk.Xunit\obj\**" />
     <None Remove="Test.Sdk\obj\**" />
   </ItemGroup>
