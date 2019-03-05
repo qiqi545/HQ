@@ -8,7 +8,7 @@
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>    
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/Shared/master/assets/320x320.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/hq-io/Shared/blob/master/LICENSE_FULL.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://docs.hq.io/$(MSBuildProjectName)</PackageProjectUrl>
+    <PackageProjectUrl>https://hq.io</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
