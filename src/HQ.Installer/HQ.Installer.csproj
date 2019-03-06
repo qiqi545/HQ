@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -13,7 +13,7 @@
 
   <PropertyGroup>
     <Description>HQ bootstrap infrastructure. Do not install this package directly.</Description>
-    <Version>0.0.3</Version>
+    <Version>0.0.4</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   

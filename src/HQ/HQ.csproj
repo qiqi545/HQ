@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(SolutionDir)..\build\package.props" />
   <Import Project="$(SolutionDir)..\build\build.props" />
@@ -23,7 +23,10 @@
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
     <Content Include="..\..\..\HQ.Common\src\HQ.Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\**\*.cs" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-    
+
+    <!-- Strings -->
+    <EmbeddedResource Include="..\..\..\**\*.resx" Link="Strings\%(RecursiveDir)%(Filename)%(Extension)" />
+
     <!-- Data -->
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts\**\*.cs" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\**\*.cs" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -188,42 +191,6 @@
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\Debug\netstandard2.0\**" />
-    
-    <!--<EmbeddedResource Remove="Common.AspNetCore.Mvc\obj\**" />
-    <EmbeddedResource Remove="Common\obj\**" />
-    <EmbeddedResource Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
-    <EmbeddedResource Remove="Data.Contracts.Runtime\obj\**" />
-    <EmbeddedResource Remove="Data.Contracts\obj\**" />
-    <EmbeddedResource Remove="Data.SessionManagement\obj\**" />
-    <EmbeddedResource Remove="Data.Sql.Batching\obj\**" />
-    <EmbeddedResource Remove="Data.Sql.Builders\obj\**" />
-    <EmbeddedResource Remove="Data.Sql.Dapper\obj\**" />
-    <EmbeddedResource Remove="Data.Sql.Descriptor\obj\**" />
-    <EmbeddedResource Remove="Data.Sql.Queries\obj\**" />
-    <EmbeddedResource Remove="Data.Sql\obj\**" />
-    <EmbeddedResource Remove="Data.Streaming\obj\**" />
-    <EmbeddedResource Remove="Extensions.Caching\obj\**" />
-    <EmbeddedResource Remove="Extensions.CodeGeneration\obj\**" />
-    <EmbeddedResource Remove="Extensions.Dates\obj\**" />
-    <EmbeddedResource Remove="Extensions.DependencyInjection.AspNetCore\obj\**" />
-    <EmbeddedResource Remove="Extensions.DependencyInjection\obj\**" />
-    <EmbeddedResource Remove="Extensions.Financial\obj\**" />
-    <EmbeddedResource Remove="Extensions.Metrics.AspNetCore\obj\**" />
-    <EmbeddedResource Remove="Extensions.Metrics.Reporters.Console\obj\**" />
-    <EmbeddedResource Remove="Extensions.Metrics\obj\**" />
-    <EmbeddedResource Remove="Extensions.Messaging\obj\**" />
-    <EmbeddedResource Remove="Extensions.Logging\obj\**" />
-    <EmbeddedResource Remove="Platform.Api\obj\**" />
-    <EmbeddedResource Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
-    <EmbeddedResource Remove="Platform.Identity.Stores.Sql\obj\**" />
-    <EmbeddedResource Remove="Platform.Identity\obj\**" />
-    <EmbeddedResource Remove="Platform.Operations\obj\**" />
-    <EmbeddedResource Remove="Platform.Security.AspNetCore\obj\**" />
-    <EmbeddedResource Remove="Platform.Security\obj\**" />
-    <EmbeddedResource Remove="Platform.Schema\obj\**" />
-    <EmbeddedResource Remove="Platform.Runtime.Rest\obj\**" />
-    <EmbeddedResource Remove="Test.Sdk.Xunit\obj\**" />
-    <EmbeddedResource Remove="Test.Sdk\obj\**" />-->
 
     <None Remove="Common.AspNetCore.Mvc\obj\**" />
     <None Remove="Common\obj\**" />
@@ -314,7 +281,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="**\ErrorStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>ErrorStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
