@@ -161,8 +161,10 @@ namespace HQ.Build
                                         [HttpRequestHeader.ContentType] = "application/vnd.hq.archivist+json"
                                     }
                                 };
+                                ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
                                 var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(manifest));
                                 payload = wc.UploadData("codegen", "POST", data);
+                                
                             }
                             catch (Exception ex)
                             {
