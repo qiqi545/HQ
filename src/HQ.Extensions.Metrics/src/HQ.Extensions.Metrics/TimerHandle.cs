@@ -11,7 +11,7 @@ namespace HQ.Extensions.Metrics
     {
         private readonly Stopwatch _stopwatch;
         
-        public DateTimeOffset? StartedAt { get; set; }
+        public DateTimeOffset? StartedAt { get; private set; }
         public DateTimeOffset? StoppedAt { get; private set; }
         public TimeSpan Elapsed => _stopwatch.Elapsed;
 
