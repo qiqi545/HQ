@@ -47,6 +47,7 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppDelegate.cs" />
     <Compile Include="UiClient.cs" />
     <Compile Include="UiKitSystem.cs" />
     <Compile Include="UiViewController.cs" />

@@ -10,8 +10,16 @@ namespace Blowdart.UI.iOS
     public class UiClient
     {
         private static readonly IServiceCollection Services = new ServiceCollection();
+        private static Action<LayoutRoot> _layout;
 
-        public static bool Start(UIApplicationDelegate appDelegate, Action<LayoutRoot> layout)
+        public static void Start(string[] args, Action<LayoutRoot> layout)
+        {
+            _layout = layout;
+
+            UIApplication.Main(args, null, nameof(AppDelegate));
+        }
+
+        public static bool FinishedLaunching(UIApplicationDelegate appDelegate)
         {
             UiConfig.Initialize<UiKitSystem>(Services);
             UiConfig.ConfigureServices?.Invoke(Services);
@@ -21,7 +29,7 @@ namespace Blowdart.UI.iOS
 
             UiConfig.Settings = settings => settings.System = new UiKitSystem(controller);
 
-            layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
+            _layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
             appDelegate.Window = new UIWindow(UIScreen.MainScreen.Bounds) { RootViewController = controller };
             appDelegate.Window.MakeKeyAndVisible();
 
