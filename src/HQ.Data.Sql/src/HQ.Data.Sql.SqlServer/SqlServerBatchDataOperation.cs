@@ -30,7 +30,7 @@ using HQ.Data.Sql.SqlServer.Configuration;
 
 namespace HQ.Data.Sql.SqlServer
 {
-    public class SqlBatchCopy : IDataBatchOperation<SqlServerOptions>
+    public class SqlServerBatchDataOperation : IDataBatchOperation<SqlServerOptions>
     {
         protected internal const string DefaultSchema = "dbo";
 
@@ -77,8 +77,7 @@ namespace HQ.Data.Sql.SqlServer
 
                 // ReSharper disable once PossibleMultipleEnumeration
                 bcp.BatchSize = count ?? objects.Count();
-                bcp.DestinationTableName =
-                    $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
+                bcp.DestinationTableName = $"[{descriptor.Schema ?? DefaultSchema}].[{mapping.DataReaderTable.TableName}]";
                 bcp.BulkCopyTimeout = commandTimeout.GetValueOrDefault();
 
                 await bcp.WriteToServerAsync(reader, cancellationToken);
