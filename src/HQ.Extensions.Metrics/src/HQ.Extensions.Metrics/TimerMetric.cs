@@ -31,8 +31,13 @@ namespace HQ.Extensions.Metrics
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
 
+        public TimerMetric(TimeUnit durationUnit) : this(durationUnit, TimeUnit.Seconds,
+            MeterMetric.New("updates", TimeUnit.Seconds), new HistogramMetric(SampleType.Biased), true)
+        {
+        }
+
         public TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit, rateUnit,
-            MeterMetric.New("calls", rateUnit), new HistogramMetric(SampleType.Biased), true)
+            MeterMetric.New("updates", rateUnit), new HistogramMetric(SampleType.Biased), true)
         {
         }
 
@@ -52,7 +57,7 @@ namespace HQ.Extensions.Metrics
         public TimeUnit DurationUnit { get; }
 
         /// <summary>
-        ///     Returns a list of all recorded durations in the timers's sample
+        ///     Returns a list of all recorded durations in the timer's sample
         /// </summary>
         public ICollection<double> Values
         {
@@ -137,7 +142,7 @@ namespace HQ.Extensions.Metrics
         /// </summary>
         /// <returns></returns>
         public double OneMinuteRate => _meter.OneMinuteRate;
-
+        
         /// <summary>
         ///     Returns the type of events the meter is measuring
         /// </summary>
@@ -169,21 +174,22 @@ namespace HQ.Extensions.Metrics
         /// </summary>
         /// <typeparam name="T">The type of the value returned by the event</typeparam>
         /// <param name="event">A function whose duration should be timed</param>
-        public T Time<T>(Func<T> @event)
+        public TimerHandle<T> Time<T>(Func<T> @event)
         {
-            var stopwatch = new Stopwatch();
+            var handle = new TimerHandle<T>(new Stopwatch());
             try
             {
-                stopwatch.Start();
-                return @event.Invoke();
+                handle.Start();
+                handle.Value = @event();
+                return handle;
             }
             finally
             {
-                stopwatch.Stop();
-                Update(stopwatch.Elapsed.Ticks);
+                Update(handle.Elapsed.Ticks);
+                handle.Stop();
             }
         }
-
+        
         private double ConvertFromNanoseconds(double value)
         {
             return value / DurationUnit.Convert(1, TimeUnit.Nanoseconds);

@@ -33,11 +33,16 @@ namespace HQ.Extensions.Metrics.Tests
         public void Can_time_closure()
         {
             var timer = new TimerMetric(TimeUnit.Seconds, TimeUnit.Seconds);
-            timer.Time(() =>
+            var result = timer.Time(() =>
             {
                 Thread.Sleep(1);
                 return true;
             });
+            Assert.True(result.IsStarted);
+            Assert.True(result.IsStopped);
+            Assert.True(result.StartedAt.HasValue);
+            Assert.True(result.StoppedAt.HasValue);
+            Assert.True(result);
             Assert.Equal(1, timer.Count);
             Assert.True(timer.Mean > 0);
         }

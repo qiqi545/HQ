@@ -23,7 +23,7 @@ using HQ.Common.Helpers;
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
-    public sealed class UniqueStringBuilder
+    public sealed class UniqueStringBuilder : IDisposable
     {
         private readonly HashSet<string> _bucket;
         private readonly StringBuilder _buffer;
@@ -75,6 +75,8 @@ namespace HQ.Extensions.CodeGeneration.Helpers
 
         public void Dispose()
         {
+            _buffer.Clear();
+            _bucket?.Clear();
         }
     }
 }
