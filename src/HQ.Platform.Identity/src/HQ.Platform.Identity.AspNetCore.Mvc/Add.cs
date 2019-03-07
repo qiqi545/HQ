@@ -37,16 +37,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddDynamicMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
-        {
-            // See: https://github.com/aspnet/Mvc/issues/5992
-            var controllerAssembly = Assembly.GetCallingAssembly();
-
-            return services.AddMvc(o => { setupAction?.Invoke(o); })
-                .AddApplicationPart(controllerAssembly)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-        }
-
         public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
             IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
             where TUser : IdentityUserExtended<TKey>

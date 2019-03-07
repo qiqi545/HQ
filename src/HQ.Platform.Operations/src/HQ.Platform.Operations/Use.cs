@@ -44,8 +44,7 @@ namespace HQ.Platform.Operations
 {
     public static class Use
     {
-        public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes = null)
+        public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app)
         {
             Bootstrap.EnsureInitialized();
 
@@ -92,8 +91,6 @@ namespace HQ.Platform.Operations
 
                             routes.MapGet(options.Value.RouteDebuggingPath ?? "/routes", GetRoutesHandler);
                         }
-
-                        configureRoutes?.Invoke(routes);
                     });
                 });
             }
