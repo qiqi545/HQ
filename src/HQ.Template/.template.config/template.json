@@ -11,14 +11,19 @@
   "sourceName": "HQ.Template",
   "preferNameDirectory": true,
   "primaryOutputs": [
-    { "path": "HQ.Template.csproj" }
+    { "path": "HQ.Template.csproj" },
+    { "path": "HQ.Template.sln" }
   ],
-  "guids": [ "79444781-327F-44A0-B1B6-E7C6297C5CCB", "9A19103F-16F7-4668-BE54-9A1E7A4F7556", "9B8316F4-6D55-4917-A18B-34F64DA84CFB" ],
+  "guids": [
+    "79444781-327F-44A0-B1B6-E7C6297C5CCB",
+    "9A19103F-16F7-4668-BE54-9A1E7A4F7556",
+    "9B8316F4-6D55-4917-A18B-34F64DA84CFB"
+  ],
   "symbols": {
     "key": {
       "type": "parameter",
       "datatype": "string",
-      "isRequired": false,
+      "isRequired": true,
       "replaces": "PRIVATE-KEY-REPLACE-ME",
       "description": "This is your private key. It must match the key provided by your HQ.io Administrator. This key is used for signing, as well as for accessing the code generation service."
     },
@@ -30,6 +35,10 @@
         {
           "choice": "cosmos-db",
           "description": "Microsoft Azure DocumentDB"
+        },
+        {
+          "choice": "sql-azure",
+          "description": "Microsoft Azure SQL"
         },
         {
           "choice": "sql-server",
@@ -53,7 +62,11 @@
     },
     "SqlServer": {
       "type": "computed",
-      "value": "(db == \"sql-server\")"
+      "value": "(db == \"sql-server\" || db == \"sql-azure\")"
+    },
+    "SqlAzure": {
+      "type": "computed",
+      "value": "(db == \"sql-azure\")"
     },
     "MySql": {
       "type": "computed",
@@ -62,13 +75,6 @@
     "Sqlite": {
       "type": "computed",
       "value": "(db == \"sqlite\")"
-    },
-    "connectionString": {
-      "type": "parameter",
-      "datatype": "string",
-      "isRequired": false,
-      "replaces": "DB-CONNECTION-STRING",
-      "description": "The connection string to use with your chosen persistence database."
     },
     "http": {
       "type": "generated",

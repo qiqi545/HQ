@@ -28,6 +28,8 @@
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
   <ItemGroup>
+    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -45,7 +47,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.8</Version>
+    <Version>0.0.9</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
@@ -58,6 +60,7 @@
     <Description>HQ.io Web Application</Description>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
+    <DefineConstants>Sqlite</DefineConstants>
   </PropertyGroup>
   <!--#endif-->
 

@@ -339,6 +339,8 @@ ASALocalRun/
 # Source tokenization artifacts
 *.cs.pp
 
-
 # Sensitive data in build tools
 src/HQ.Build/Properties/launchSettings.json
+
+# Testing databases
+/src/**/*.db

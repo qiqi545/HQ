@@ -15,8 +15,10 @@
 
 #endregion
 
+using System.Reflection;
 using Blowdart.UI;
 using Blowdart.UI.Web;
+using HQ.Platform.Schema.Models;
 
 namespace HQ.Installer.UI
 {
@@ -121,13 +123,11 @@ namespace HQ.Installer.UI
 
                         ui.BeginDiv(new { @class = "three wide column" });
                         {
-                            ui.Element("h4", "Group 3", new { @class = "ui inverted header" });
+                            ui.Element("h4", "Meta", new { @class = "ui inverted header" });
                             ui.BeginDiv(new { @class = "ui inverted link list" });
                             {
-                                ui.Element("a", "Link One", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Two", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Three", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Four", new { href = "#", @class = "item" });
+                                ui.Element("a", "Postman", new { href = "/meta/postman", target = "_blank", @class = "item" });
+                                ui.Element("a", "Swagger", new { href = "/meta/swagger", target = "_blank", @class = "item" });
                             }
                             ui.EndDiv();
                         }
@@ -135,8 +135,14 @@ namespace HQ.Installer.UI
 
                         ui.BeginDiv(new { @class = "seven wide column" });
                         {
-                            ui.Element("h4", "Footer Header", new { @class = "ui inverted header" });
-                            ui.Element("p", "Extra space for a call to action inside the footer that could help re-engage users.");
+                            ui.Element("h4", "Build Info", new { @class = "ui inverted header" });
+                            ui.BeginDiv(new { @class = "text container" });
+                            {
+                                ui.Element("p", $"UI Version: {typeof(SplashPage).Assembly.GetName().Version}");
+                                ui.Element("p", $"Platform Version: {typeof(Schema).Assembly.GetName().Version}");
+                                ui.Element("p", $"App Version: {Assembly.GetEntryAssembly().GetName().Version}");
+                            }
+                            ui.EndDiv();
                         }
                         ui.EndDiv();
                     }
@@ -146,10 +152,16 @@ namespace HQ.Installer.UI
                     ui.Element("img", attr: new { src = "assets/images/logo.png", @class = "ui centered mini image"});
                     ui.BeginDiv(new { @class = "ui horizontal inverted small divided link list"});
                     {
-                        ui.Element("a", "About Us", new { href = "#", @class = "item" });
-                        ui.Element("a", "Contact Us", new { href = "#", @class = "item" });
-                        ui.Element("a", "Terms & Conditions", new { href = "#", @class = "item" });
-                        ui.Element("a", "Open Source", new { href = "#", @class = "item" });
+                        ui.Element("a", "About Us", new { href = "https://hq.io/about", @class = "item" });
+                        ui.Element("a", "Contact Us", new { href = "https://hq.io/contact", @class = "item" });
+                        ui.Element("a", "Terms & Conditions", new { href = "https://hq.io/toc", @class = "item" });
+                        ui.BeginElement("a", new { href = "https://github.com/hq-io", @class = "item" });
+                        {
+                            ui.Literal("Open Source ");
+                            ui.Element("i", "", new { @class = "github icon"});
+                        }
+                        ui.EndElement("a");
+
                     }
                     ui.EndDiv();
                 }
