@@ -19,14 +19,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.2" />
+    <PackageReference Include="HQ" Version="1.0.64" />
+    <PackageReference Include="HQ.Installer" Version="0.0.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />
-    <ProjectReference Include="..\HQ\HQ.csproj" />
-  </ItemGroup>
-
-  <!--#if(false)-->  <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
+  <!--#if(false)-->
+  <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
   <ItemGroup>
@@ -47,7 +45,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.7</Version>
+    <Version>0.0.8</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>

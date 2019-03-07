@@ -1,4 +1,12 @@
+#if (DocumentDb)
+using HQ.Data.Sql.DocumentDb;
+#elif (SqlServer)
+using HQ.Data.Sql.SqlServer;
+#elif (MySql)
+using HQ.Data.Sql.MySql;
+#else
 using HQ.Data.Sql.Sqlite;
+#endif
 using HQ.Installer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,9 +41,9 @@ namespace HQ.Template
 #else
             services.AddHq(DatabaseType.Sqlite, _configuration.GetSection("HQ"))
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
-                .AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api");
+                .AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #endif
-            //.AddUi();
+                .AddUi();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
