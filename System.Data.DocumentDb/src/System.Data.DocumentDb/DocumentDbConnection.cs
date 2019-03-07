@@ -4,8 +4,8 @@
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents.Client;
 using LiteGuard;
+using Microsoft.Azure.Documents.Client;
 
 namespace System.Data.DocumentDb
 {
