@@ -1,9 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <Import Project="$(ProjectDir)codegen.targets" />
+
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -11,13 +13,6 @@
     <HQEndpoint>https://build.hq.io</HQEndpoint>
     <HQKey>PRIVATE-KEY-REPLACE-ME</HQKey>
   </PropertyGroup>
-  
-  <!--#if(false)-->
-  <Import Project="$(ProjectDir)..\..\build\template.props" />
-  <PropertyGroup>
-    <EnableDefaultContentItems>false</EnableDefaultContentItems>
-  </PropertyGroup>  
-  <!--#endif--> 
 
   <ItemGroup>
     <Folder Include="generated\" />
@@ -25,11 +20,49 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.2" />
-    <PackageReference Include="HQ" Version="1.0.60" />
-    <PackageReference Include="HQ.Installer" Version="0.0.4" />
   </ItemGroup>
 
-  <Import Project="$(ProjectDir)codegen.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+  <!--#if(false)-->
+  <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
+    <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
+  </Target>
+  <ItemGroup>
+    <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Update="template.nuspec;pack.bat;.template.config\template.json;*.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <PropertyGroup>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.0.5</Version>
+    <Company>HQ.IO Corporation</Company>
+    <Authors>HQ.IO Corporation</Authors>
+    <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
+    <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
+    <PackageIconUrl>https://raw.githubusercontent.com/hq-io/Shared/master/assets/320x320.png</PackageIconUrl>
+    <PackageTags>hq hq-io dotnet-standard serverless platform</PackageTags>
+    <PackageType>template</PackageType>
+    <PackageProjectUrl>https://hq.io</PackageProjectUrl>
+    <Description>HQ.io Web Application</Description>
+    <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+  </PropertyGroup>
+  <!--#endif-->
 
 </Project>
  

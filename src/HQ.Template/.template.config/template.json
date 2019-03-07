@@ -13,6 +13,7 @@
   "primaryOutputs": [
     { "path": "HQ.Template.csproj" }
   ],
+  "guids": [ "79444781-327F-44A0-B1B6-E7C6297C5CCB", "9A19103F-16F7-4668-BE54-9A1E7A4F7556", "9B8316F4-6D55-4917-A18B-34F64DA84CFB" ],
   "symbols": {
     "key": {
       "type": "parameter",
@@ -45,6 +46,22 @@
       ],
       "defaultValue": "sqlite",
       "description": "The storage technology used to persist permanent objects."
+    },
+    "DocumentDb": {
+      "type": "computed",
+      "value": "(db == \"cosmos-db\")"
+    },
+    "SqlServer": {
+      "type": "computed",
+      "value": "(db == \"sql-server\")"
+    },
+    "MySql": {
+      "type": "computed",
+      "value": "(db == \"mysql\")"
+    },
+    "Sqlite": {
+      "type": "computed",
+      "value": "(db == \"sqlite\")"
     },
     "connectionString": {
       "type": "parameter",
@@ -79,21 +96,5 @@
       },
       "replaces": "7171"
     }
-  },
-  "DocumentDb": {
-    "type": "computed",
-    "value": "(db == \"cosmos-db\")"
-  },
-  "SqlServer": {
-    "type": "computed",
-    "value": "(db == \"sql-server\")"
-  },
-  "MySql": {
-    "type": "computed",
-    "value": "(db == \"mysql\")"
-  },
-  "Sqlite": {
-    "type": "computed",
-    "value": "(db == \"sqlite\")"
   }
 }

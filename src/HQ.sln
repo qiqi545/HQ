@@ -22,7 +22,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{EB23AC18
 	ProjectSection(SolutionItems) = preProject
 		..\build\build.props = ..\build\build.props
 		..\build\package.props = ..\build\package.props
-		..\build\template.props = ..\build\template.props
 		..\build\version.props = ..\build\version.props
 	EndProjectSection
 EndProject
@@ -38,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blowdart.UI.Web.SemanticUI"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Installer", "HQ.Installer\HQ.Installer.csproj", "{F9563716-859E-42C1-8215-54191BA582C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Build", "HQ.Build\HQ.Build.csproj", "{A78D4ADB-0C01-470F-8251-5DEFEA46A6B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Build", "HQ.Build\HQ.Build.csproj", "{A78D4ADB-0C01-470F-8251-5DEFEA46A6B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

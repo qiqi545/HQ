@@ -22,6 +22,7 @@ using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
 using HQ.Installer.UI;
@@ -116,13 +117,13 @@ namespace HQ.Installer
         public static IApplicationBuilder UseHq(this IApplicationBuilder app, Action<IRouteBuilder> configureRoutes = null)
         {
             Bootstrap.EnsureInitialized();
-
-            app.UsePublicApi();
-            app.UseDevOpsApi(configureRoutes);
-            app.UseMultiTenancy<IdentityTenant, string>();
-            app.UseAuthentication();
-
             Masthead();
+
+            app.UseAuthentication();
+            app.UsePublicApi();
+            app.UseMultiTenancy<IdentityTenant, string>();
+            app.UseDevOpsApi();
+            app.UseMvc(builder => { configureRoutes?.Invoke(builder); });
 
             if (app.ApplicationServices.GetService(typeof(LayoutRoot)) == null)
                 return app;
