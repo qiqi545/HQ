@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,33 +11,25 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
-using HQ.Common.Helpers;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-    public class DynamicControllerAttribute : Attribute, IControllerModelConvention
+    public static class Add
     {
-        public void Apply(ControllerModel controller)
+        public static IMvcBuilder AddDynamicMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
         {
-            if (!controller.ControllerType.IsGenericType)
-                return;
+            // See: https://github.com/aspnet/Mvc/issues/5992
+            var controllerAssembly = Assembly.GetCallingAssembly();
 
-            var types = controller.ControllerType.GetGenericArguments();
-            if (types.Length == 0)
-                return;
-
-            controller.ControllerName = StringBuilderPool.Scoped(sb =>
-            {
-                var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
-                sb.Append(controllerName);
-                foreach (var type in types)
-                    sb.Append($"_{type.Name}");
-            });
+            return services.AddMvc(o => { setupAction?.Invoke(o); })
+                .AddApplicationPart(controllerAssembly)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
     }
 }
