@@ -9,7 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blowdart.UI
 {
-    public class Ui
+    public class Ui : IServiceProvider
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -92,5 +92,10 @@ namespace Blowdart.UI
         }
 
         #endregion
+
+        public object GetService(Type serviceType)
+        {
+            return _serviceProvider.GetService(serviceType);
+        }
     }
 }
