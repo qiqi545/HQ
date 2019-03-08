@@ -19,8 +19,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.2" />
-    <PackageReference Include="HQ" Version="1.0.64" />
-    <PackageReference Include="HQ.Installer" Version="0.0.7" />
+    <PackageReference Include="HQ" Version="1.0.65" />
+    <PackageReference Include="HQ.Installer" Version="0.0.11" />
   </ItemGroup>
 
   <!--#if(false)-->
@@ -47,7 +47,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.10</Version>
+    <Version>0.0.11</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
