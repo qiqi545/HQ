@@ -38,7 +38,7 @@
         },
         {
           "choice": "sql-azure",
-          "description": "Microsoft Azure SQL"
+          "description": "Microsoft SQL Azure"
         },
         {
           "choice": "sql-server",
@@ -55,6 +55,13 @@
       ],
       "defaultValue": "sqlite",
       "description": "The storage technology used to persist permanent objects."
+    },
+    "port": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": false,
+      "replaces": "7070",
+      "description": "The port to use for HTTPS communication. The default is 7070."
     },
     "DocumentDb": {
       "type": "computed",
@@ -75,32 +82,6 @@
     "Sqlite": {
       "type": "computed",
       "value": "(db == \"sqlite\")"
-    },
-    "http": {
-      "type": "generated",
-      "generator": "port"
-    },
-    "http-swap": {
-      "type": "generated",
-      "generator": "coalesce",
-      "parameters": {
-        "sourceVariableName": "http",
-        "fallbackVariableName": "http"
-      },
-      "replaces": "7070"
-    },
-    "https": {
-      "type": "generated",
-      "generator": "port"
-    },
-    "https-swap": {
-      "type": "generated",
-      "generator": "coalesce",
-      "parameters": {
-        "sourceVariableName": "https",
-        "fallbackVariableName": "https"
-      },
-      "replaces": "7171"
     }
   }
 }
