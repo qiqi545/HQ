@@ -8,9 +8,11 @@ namespace Blowdart.UI.Web
     public class UiServerOptions
     {
         public PathString HubPath { get; set; } = "/ui";
+        public PathString LoggingPath { get; set; } = "/server/logs";
         public PathString TemplatePath { get; set; } = "/lib/index.html";
         public string ContentType { get; set; } = "text/html";
         public bool UseServerSideRendering { get; set; } = true;
+        public bool UseServerSideLogging { get; set; } = true;
         public ServerTransport MessagingModel { get; set; } = ServerTransport.All;
     }
 }

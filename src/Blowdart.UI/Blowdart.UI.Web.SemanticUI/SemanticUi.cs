@@ -45,7 +45,60 @@ namespace Blowdart.UI.Web.SemanticUI
 <script type=""text/javascript"" src=""~/lib/jquery/dist/jquery.slim.min.js""></script>
 <script type=""text/javascript"" src=""~/lib/semantic-ui/semantic.min.js""></script>
 ";
-            return scripts;
+
+            const string logging = @"<script type=""text/javascript"">
+document.addEventListener(""DOMContentLoaded"", function(event) {
+    var clear = $('#clear-logs');
+    if(clear) {
+        clear.click(function() {
+            $('#no-logs').addClass('active');
+            $('#logs').empty();
+        });
+    }
+});
+
+function logMessage(m) {
+    var lvl;
+    switch (m.level) {
+        case 0:
+            lvl = ""Trace"";
+            break;
+        case 1:
+            lvl = ""Debug"";
+            break;
+        case 2:
+            lvl = ""Information"";
+            break;
+        case 3:
+            lvl = ""Warning"";
+            break;
+        case 4:
+            lvl = ""Error"";
+            break;
+        case 5:
+            lvl = ""Critical"";
+            break;
+        default:
+            lvl = ""Unknown"";
+            break;
+    }
+    var div =
+        ""<div class='item'>"" +
+            ""<i class='large envelope middle aligned icon'></i>"" +
+            ""<div class='content'>"" +
+                ""<a class='header'>"" + lvl + ""</a>"" +
+                ""<div class='description'>"" + m.message + ""</div>"" +
+            ""</div>"" +
+        ""</div>"";
+    var feed = $(""#logs"");
+    if (feed !== null) {
+        feed.append(div);
+        $(""#no-logs"").removeClass(""active"");
+    }
+}
+</script>";
+
+            return scripts + logging;
         }
     }
 }

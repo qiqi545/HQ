@@ -10,9 +10,11 @@ using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web
@@ -54,6 +56,10 @@ namespace Blowdart.UI.Web
             var serviceProvider = app.ApplicationServices;
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
 
+            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+            if (options.Value.UseServerSideRendering)
+                loggerFactory?.AddProvider(new ServerSideLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
+
             app.UseStaticFiles();
             app.Map("/~", x =>
             {
@@ -64,9 +70,15 @@ namespace Blowdart.UI.Web
             });
             app.UseSignalR(r =>
             {
-                r.MapHub<HtmlHub>(options.Value.HubPath,
-                    o => { o.Transports = (HttpTransportType) options.Value.MessagingModel; });
+                void SetMessagingModel(HttpConnectionDispatcherOptions o)
+                {
+                    o.Transports = (HttpTransportType) options.Value.MessagingModel;
+                }
+                r.MapHub<HtmlHub>(options.Value.HubPath, SetMessagingModel);
+                if(options.Value.UseServerSideLogging)
+                    r.MapHub<LoggingHub>(options.Value.LoggingPath, SetMessagingModel);
             });
+
             var template = ServerSideRenderer.LoadPageTemplate(serviceProvider, options);
             layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
 
