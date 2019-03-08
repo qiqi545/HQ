@@ -1,6 +1,6 @@
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Tests.Extensions
+namespace HQ.Extensions.Dates.Tests.Extensions
 {
     internal static class TestOutputHelperExtensions
     {

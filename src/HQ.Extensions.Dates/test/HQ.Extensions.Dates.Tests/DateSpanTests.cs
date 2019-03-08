@@ -16,12 +16,11 @@
 #endregion
 
 using System;
-using HQ.Extensions.Dates;
-using HQ.Extensions.Tests.Extensions;
+using HQ.Extensions.Dates.Tests.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Tests.Dates
+namespace HQ.Extensions.Dates.Tests
 {
     public class DateSpanTests
     {
@@ -35,8 +34,9 @@ namespace HQ.Extensions.Tests.Dates
         [Fact]
         public void Can_get_date_difference_in_days()
         {
-            var start = DateTime.Now;
-            var end = DateTime.Now.AddDays(5);
+            var now = DateTimeOffset.Now;
+            var start = now;
+            var end = now.AddDays(5);
             var diff = DateSpan.GetDifference(DateInterval.Days, start, end);
 
             Assert.Equal(5, diff);
@@ -90,6 +90,16 @@ namespace HQ.Extensions.Tests.Dates
 
             var difference = DateSpan.GetDifference(DateInterval.Days, start, end);
             _console.WriteLine(difference);
+        }
+
+        [Fact]
+        public void Can_get_date_difference_in_seconds()
+        {
+            var start = DateTime.Now;
+            var end = DateTime.Now.AddDays(5);
+            var diff = DateSpan.GetDifference(DateInterval.Seconds, start, end);
+
+            Assert.Equal(432000, diff);
         }
     }
 }

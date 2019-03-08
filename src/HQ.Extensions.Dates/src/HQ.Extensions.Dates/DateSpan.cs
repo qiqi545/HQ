@@ -20,8 +20,8 @@ using System;
 namespace HQ.Extensions.Dates
 {
     /// <summary>
-    ///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
-    ///     but does so in a way that respects the number of actual days in the elapsed years and months.
+    /// A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
+    /// but does so in a way that respects the number of actual days in the elapsed years and months.
     /// </summary>
     [Serializable]
     public struct DateSpan
@@ -31,9 +31,19 @@ namespace HQ.Extensions.Dates
         /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
         public DateSpan(DateTime start, DateTime end, bool excludeEndDate = true) : this()
         {
-            start = start.ToUniversalTime();
-            end = end.ToUniversalTime();
+            Initialize(start, end, excludeEndDate);
+        }
 
+        /// <param name="start">The start date</param>
+        /// <param name="end">The end date</param>
+        /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
+        public DateSpan(DateTimeOffset start, DateTimeOffset end, bool excludeEndDate = true) : this()
+        {
+            Initialize(start.DateTime, end.DateTime, excludeEndDate);
+        }
+
+        private void Initialize(DateTime start, DateTime end, bool excludeEndDate)
+        {
             if (start > end)
             {
                 var temp = start;
@@ -50,53 +60,64 @@ namespace HQ.Extensions.Dates
         }
 
         /// <summary>
-        ///     The number of discrete years occurring in this span
+        /// The number of discrete years occurring in this span
         /// </summary>
         public int Years { get; private set; }
 
         /// <summary>
-        ///     The number of discrete months occurring in this span
+        /// The number of discrete months occurring in this span
         /// </summary>
         public int Months { get; private set; }
 
         /// <summary>
-        ///     The number of discrete weeks occurring in this span
+        /// The number of discrete weeks occurring in this span
         /// </summary>
         public int Weeks { get; private set; }
 
         /// <summary>
-        ///     The number of discrete days occurring in this span
+        /// The number of discrete days occurring in this span
         /// </summary>
         public int Days { get; private set; }
 
         /// <summary>
-        ///     The number of discrete hours occurring in this span
+        /// The number of discrete hours occurring in this span
         /// </summary>
         public int Hours { get; private set; }
 
         /// <summary>
-        ///     The number of discrete minutes occurring in this span
+        /// The number of discrete minutes occurring in this span
         /// </summary>
         public int Minutes { get; private set; }
 
         /// <summary>
-        ///     The number of discrete seconds occurring in this span
+        /// The number of discrete seconds occurring in this span
         /// </summary>
         public int Seconds { get; private set; }
 
         /// <summary>
-        ///     Gets the scalar difference between two dates given a <see cref="DateInterval" /> value.
+        /// Gets the scalar difference between two dates given a <see cref="DateInterval"/> value.
         /// </summary>
-        /// <param name="interval">The interval to calculate</param>
-        /// <param name="start">The start date</param>
-        /// <param name="end">The end date</param>
+        /// <param name="start">The interval to calculate</param>
+        /// <param name="end">The start date</param>
+        /// <param name="excludeEndDate">The end date</param>
         /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
         /// <returns></returns>
-        public static int GetDifference(DateInterval interval, DateTime start, DateTime end,
-            bool excludeEndDate = false)
+        public static long GetDifference(DateInterval interval, DateTime start, DateTime end, bool excludeEndDate = false)
         {
-            var sum = 0;
+            return CalculateDifference(interval, start, end, excludeEndDate);
+        }
+
+        public static long GetDifference(DateInterval interval, DateTimeOffset start, DateTimeOffset end, bool excludeEndDate = false)
+        {
+            return CalculateDifference(interval, start.DateTime, end.DateTime, excludeEndDate);
+        }
+
+        private static long CalculateDifference(DateInterval interval, DateTime start, DateTime end, bool excludeEndDate)
+        {
+            long sum = 0;
             var span = new DateSpan(start, end);
+
+            long differenceInDays = GetDifferenceInDays(start, span, excludeEndDate);
 
             switch (interval)
             {
@@ -105,30 +126,27 @@ namespace HQ.Extensions.Dates
                     break;
                 case DateInterval.Months:
                     if (span.Years > 0)
-                    {
                         sum += span.Years * 12;
-                    }
-
                     sum += span.Months;
                     sum += span.Weeks / 4; // Helps resolve lower resolution
                     break;
                 case DateInterval.Weeks:
-                    sum = GetDifferenceInDays(start, span, excludeEndDate) / 7;
+                    sum = differenceInDays / 7;
                     break;
                 case DateInterval.Days:
-                    sum = GetDifferenceInDays(start, span, excludeEndDate);
+                    sum = differenceInDays;
                     break;
                 case DateInterval.Hours:
-                    sum = GetDifferenceInDays(start, span, excludeEndDate) * 24;
+                    sum = differenceInDays * 24;
                     sum += span.Hours;
                     break;
                 case DateInterval.Minutes:
-                    sum = GetDifferenceInDays(start, span, excludeEndDate) * 24 * 60;
+                    sum = differenceInDays * 24 * 60;
                     sum += span.Hours * 60;
                     sum += span.Minutes;
                     break;
                 case DateInterval.Seconds:
-                    sum = GetDifferenceInDays(start, span, excludeEndDate) * 24 * 60 * 60;
+                    sum = differenceInDays * 24 * 60 * 60;
                     sum += span.Hours * 60 * 60;
                     sum += span.Minutes * 60;
                     sum += span.Seconds;
@@ -140,7 +158,7 @@ namespace HQ.Extensions.Dates
             return sum;
         }
 
-        private static int GetDifferenceInDays(DateTime start, DateSpan span, bool excludeEndDate = true)
+        private static long GetDifferenceInDays(DateTime start, DateSpan span, bool excludeEndDate = true)
         {
             var sum = 0;
 
@@ -162,7 +180,6 @@ namespace HQ.Extensions.Dates
                     {
                         month -= 12;
                     }
-
                     sum += DateTime.DaysInMonth(start.Year + span.Years, month);
                 }
             }
@@ -286,7 +303,7 @@ namespace HQ.Extensions.Dates
         {
             Months = end.Month - start.Month;
 
-            if (end.Month < start.Month || end.Month <= start.Month && Years > 1)
+            if (end.Month < start.Month || (end.Month <= start.Month && Years > 1))
             {
                 Months = 12 - start.Month + end.Month;
             }
@@ -324,6 +341,7 @@ namespace HQ.Extensions.Dates
                 }
             }
         }
+
         private void CalculateYears(DateTime start, DateTime end)
         {
             Years = end.Year - start.Year;

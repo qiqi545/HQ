@@ -18,27 +18,36 @@
 namespace HQ.Extensions.Dates
 {
     /// <summary>
-    ///     The frequency interval between occurrences in a <see cref="DatePeriod" />.
+    /// The frequency interval between occurrences in a <see cref="DatePeriod" />.
     /// </summary>
     public enum DatePeriodFrequency
     {
         /// <summary>
-        ///     Days
+        /// Seconds
+        /// </summary>
+        Seconds,
+        /// <summary>
+        /// Minutes
+        /// </summary>
+        Minutes,
+        /// <summary>
+        /// Hours
+        /// </summary>
+        Hours,
+        /// <summary>
+        /// Days
         /// </summary>
         Days,
-
         /// <summary>
-        ///     Weeks
+        /// Weeks
         /// </summary>
         Weeks,
-
         /// <summary>
-        ///     Months
+        /// Months
         /// </summary>
         Months,
-
         /// <summary>
-        ///     Years
+        /// Years
         /// </summary>
         Years
     }

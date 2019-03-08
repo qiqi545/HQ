@@ -17,17 +17,16 @@
 
 using System;
 using System.Linq;
-using HQ.Extensions.Dates;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Tests.Dates
+namespace HQ.Extensions.Dates.Tests
 {
-    public class PeriodTests
+    public class DatePeriodTests
     {
         private readonly ITestOutputHelper _console;
 
-        public PeriodTests(ITestOutputHelper console)
+        public DatePeriodTests(ITestOutputHelper console)
         {
             _console = console;
         }
