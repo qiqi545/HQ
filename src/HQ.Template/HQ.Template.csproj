@@ -47,7 +47,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.11</Version>
+    <Version>0.0.12</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
