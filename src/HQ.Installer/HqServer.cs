@@ -17,32 +17,9 @@
 
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using Blowdart.UI;
-using Blowdart.UI.Web;
-using Blowdart.UI.Web.SemanticUI;
-using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
-using HQ.Installer.UI;
-using HQ.Platform.Api;
-using HQ.Platform.Identity;
-using HQ.Platform.Identity.AspNetCore.Mvc;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Stores.Sql.DocumentDb;
-using HQ.Platform.Identity.Stores.Sql.MySql;
-using HQ.Platform.Identity.Stores.Sql.Sqlite;
-using HQ.Platform.Identity.Stores.Sql.SqlServer;
-using HQ.Platform.Operations;
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Installer
 {
@@ -52,115 +29,10 @@ namespace HQ.Installer
         {
             Execute(args, () =>
             {
-                var builder = UseStartup<TStartup>(args);
+                var builder = WebHost.CreateDefaultBuilder(args).UseStartup<TStartup>();
                 var host = builder.Build();
                 host.Run();
             });
-        }
-
-        private static IWebHostBuilder UseStartup<TStartup>(string[] args) where TStartup : class
-        {
-            var builder = WebHost.CreateDefaultBuilder(args);
-
-            return builder.UseStartup<TStartup>();
-        }
-
-        public static IServiceCollection AddHq(this IServiceCollection services, DatabaseType databaseType, IConfiguration config,
-            Action<MvcOptions> setupAction = null)
-        {
-            services.AddPublicApi(config.GetSection("Api"));
-
-            services.AddDevOpsApi(config.GetSection("Ops"));
-
-            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Tenants"))
-                .AddIdentityTenantContextStore<IdentityTenant>();
-
-            var identity = services
-                .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
-                    config.GetSection("Identity"));
-
-            services.AddDynamicMvc(setupAction)
-               .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
-                   config.GetSection("IdentityApi"), config.GetSection("Security"));
-
-            switch (databaseType)
-            {
-                case DatabaseType.DocumentDb:
-                    identity.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
-                    break;
-                case DatabaseType.SqlServer:
-                    identity.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
-                    break;
-                case DatabaseType.MySql:
-                    identity.AddMySqlIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
-                    break;
-                case DatabaseType.Sqlite:
-                    identity.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
-            }
-
-            services.AddSecurityPolicies(config.GetSection("Security"));
-
-            return services;
-        }
-
-        public static IApplicationBuilder UseHq(this IApplicationBuilder app, Action<IRouteBuilder> configureRoutes = null)
-        {
-            Bootstrap.EnsureInitialized();
-            Masthead();
-
-            app.UseAuthentication();
-            app.UsePublicApi();
-            app.UseMultiTenancy<IdentityTenant, string>();
-            app.UseDevOpsApi();
-            app.UseMvc(builder => { configureRoutes?.Invoke(builder); });
-
-            if (app.ApplicationServices.GetService(typeof(LayoutRoot)) == null)
-                return app;
-
-            app.UseBlowdartUi(site =>
-            {
-                site.Default(ui =>
-                {
-                    ui.Component("SplashPage");
-                });
-            });
-
-            return app;
-        }
-
-        public static void AddUi(this IServiceCollection services)
-        {
-            var title = Assembly.GetCallingAssembly().GetName().Name;
-
-            UiConfig.Settings = settings =>
-            {
-                settings.Title = title;
-                settings.System = new SemanticUi();
-                settings.ComponentAssemblies = new[]
-                {
-                    typeof(UiComponent).Assembly,       // Blowdart.UI
-                    typeof(HtmlSystem).Assembly,        // Blowdart.UI.Web
-                    typeof(SemanticUi).Assembly,        // Blowdart.UI.Web.Semantic.UI,
-                    typeof(SplashPage).Assembly,        // HQ
-                    Assembly.GetEntryAssembly()         // App
-                };
-            };
-
-            var serviceProvider = services.BuildServiceProvider();
-            var env = serviceProvider.GetRequiredService<IHostingEnvironment>();
-
-            services.AddBlowdartUi(env, typeof(SemanticUi).Assembly);
         }
 
         public static void Masthead()
