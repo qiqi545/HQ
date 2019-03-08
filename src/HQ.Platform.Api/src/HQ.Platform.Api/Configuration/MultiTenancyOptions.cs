@@ -25,7 +25,7 @@ namespace HQ.Platform.Api.Configuration
         public bool RequireTenant { get; set; } = false;
         public string DefaultTenantId { get; set; } = "0";
         public string DefaultTenantName { get; set; } = Constants.MultiTenancy.DefaultTenantName;
-        public string TenantHeader { get; set; } = null;
+        public string TenantHeader { get; set; } = Constants.MultiTenancy.TenantHeader;
         public int? TenantLifetimeSeconds { get; set; } = null;
         public TenantPartitionStrategy PartitionStrategy { get; set; } = TenantPartitionStrategy.Shared;
     }

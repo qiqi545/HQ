@@ -23,9 +23,11 @@ namespace HQ.Platform.Security.AspNetCore
     {
         public static IApplicationBuilder UseSecurityPolicies(this IApplicationBuilder app)
         {
-            if (!(app.ApplicationServices.GetService(typeof(IOptions<SecurityOptions>)) is IOptions<SecurityOptions>
-                options))
+            if (!(app.ApplicationServices.GetService(typeof(IOptions<SecurityOptions>)) is IOptions<SecurityOptions> options))
                 return app;
+
+            if (options.Value.Tokens.Enabled)
+                app.UseAuthentication();
 
             if (!options.Value.Https.Enabled)
                 return app;
