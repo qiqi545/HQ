@@ -20,7 +20,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class ResourceRewritingOptions : FeatureToggle<PublicApiOptions>
+    public class ResourceRewritingOptions : FeatureToggle
     {
         public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
     }

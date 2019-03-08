@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\HQ.Extensions.Cryptography.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,7 +19,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class RequestLimitOptions : FeatureToggle<PublicApiOptions>
+    public class RequestLimitOptions : FeatureToggle
     {
         public long MaxRequestSizeBytes { get; set; } = 30_000_000;
     }

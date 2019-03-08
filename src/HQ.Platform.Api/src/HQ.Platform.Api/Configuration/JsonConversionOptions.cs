@@ -20,7 +20,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class JsonConversionOptions : FeatureToggle<PublicApiOptions>
+    public class JsonConversionOptions : FeatureToggle
     {
         public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
 

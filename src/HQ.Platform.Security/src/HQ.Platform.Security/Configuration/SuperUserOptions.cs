@@ -20,7 +20,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class SuperUserOptions : FeatureToggle<SecurityOptions>
+    public class SuperUserOptions : FeatureToggle
     {
         private string _email;
         private string _password;

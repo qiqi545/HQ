@@ -20,7 +20,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class MethodOverrideOptions : FeatureToggle<PublicApiOptions>
+    public class MethodOverrideOptions : FeatureToggle
     {
         public string MethodOverrideHeader { get; set; } = Constants.HttpHeaders.MethodOverride;
 

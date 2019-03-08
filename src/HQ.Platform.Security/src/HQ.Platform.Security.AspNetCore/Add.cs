@@ -15,11 +15,14 @@
 
 #endregion
 
+using System;
+using System.Net;
 using HQ.Common;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,12 +32,15 @@ namespace HQ.Platform.Security.AspNetCore
     {
         public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config)
         {
-            // for now
-            var options = new SecurityOptions();
-            config.Bind(options);
+            return AddSecurityPolicies(services, config.Bind);
+        }
 
-            // for later
-            services.Configure<SecurityOptions>(config);
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, Action<SecurityOptions> configureAction = null)
+        {
+            var options = new SecurityOptions();
+            configureAction?.Invoke(options);
+            
+            services.Configure<SecurityOptions>(o => { configureAction?.Invoke(o); });
 
             if (options.Tokens.Enabled)
             {
@@ -53,6 +59,26 @@ namespace HQ.Platform.Security.AspNetCore
                         builder => { builder.RequireRoleExtended(services, options, ClaimValues.SuperUser); });
                 }
             });
+
+            if (options.Https.Enabled)
+            {
+                services.AddHttpsRedirection(o =>
+                {
+                    o.HttpsPort = null;
+                    o.RedirectStatusCode = options.Https.Hsts.Enabled ? 307 : 301;
+                });
+
+                if (options.Https.Hsts.Enabled)
+                {
+                    services.AddHsts(o =>
+                    {
+                        o.MaxAge = options.Https.Hsts.HstsMaxAge;
+                        o.IncludeSubDomains = options.Https.Hsts.IncludeSubdomains;
+                        o.Preload = options.Https.Hsts.Preload;
+                    });
+                }
+            }
+            
 
             return services;
         }

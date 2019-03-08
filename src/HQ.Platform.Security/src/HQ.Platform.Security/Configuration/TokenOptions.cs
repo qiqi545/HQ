@@ -19,7 +19,7 @@ using HQ.Common.Configuration;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class TokenOptions : FeatureToggle<SecurityOptions>
+    public class TokenOptions : FeatureToggle
     {
         public string Path { get; set; } = "tokens";
         public string Key { get; set; } = null;
