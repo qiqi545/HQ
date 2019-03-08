@@ -29,7 +29,10 @@ namespace HQ.Installer
         {
             Execute(args, () =>
             {
-                var builder = WebHost.CreateDefaultBuilder(args).UseStartup<TStartup>();
+                var builder = WebHost.CreateDefaultBuilder(args)
+                    .UseKestrel(o => { o.AddServerHeader = false; })
+                    .UseStartup<TStartup>();
+
                 var host = builder.Build();
                 host.Run();
             });
