@@ -19,6 +19,9 @@ using System.Reflection;
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using HQ.Platform.Schema.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Installer.UI
 {
@@ -26,6 +29,10 @@ namespace HQ.Installer.UI
     {
         public override void Render(Ui ui)
         {
+            var accessor = ui.GetRequiredService<IHttpContextAccessor>();
+            var connection = accessor.HttpContext.Features.Get<IHttpConnectionFeature>();
+            var local = $"{connection?.LocalIpAddress}:{connection?.LocalPort}";
+
             //
             // Top Bar Menu:
             //
@@ -35,10 +42,12 @@ namespace HQ.Installer.UI
                 {
                     ui.BeginElement("a", new { href = "#", @class = "header item"});
                     {
-                        ui.Element("img", "HQ.Template", new { @class = "logo", src = "assets/images/logo.png", style= "margin-right: 1.5em;" });
+                        ui.Element("img", "HQ", new { @class = "logo", src = "assets/images/logo.png", style= "margin-right: 1.5em;" });
                     }
                     ui.EndElement("a");
-                    ui.Element("a", "Home", new { href = "#", @class = "item"});
+                    ui.Element("a", $"{local}", new { href = "#", @class = "item"});
+
+                    /*
                     ui.BeginDiv(new { @class = "ui simple dropdown item" });
                     {
                         ui.Literal("Dropdown ");
@@ -68,6 +77,7 @@ namespace HQ.Installer.UI
                         ui.EndDiv();
                     }
                     ui.EndDiv();
+                    */
                 }
                 ui.EndDiv();
             }
@@ -78,9 +88,38 @@ namespace HQ.Installer.UI
             //
             ui.BeginDiv(new { @class = "ui main text container", style = "margin-top: 7em;" });
             {
-                ui.Element("h1", "Semantic UI Fixed Template");
-                ui.Element("p", "This is a basic fixed menu template using fixed size containers.");
-                ui.Element("p", "A text container is used for the main container, which is useful for single column layouts.");
+                ui.BeginDiv(new { @class = "ui four column grid"});
+                {
+                    ui.BeginDiv(new { @class = "column"});
+                    {
+                        ui.Element("h1", "Server Logs");
+                    }
+                    ui.EndDiv();
+                    ui.BeginDiv(new { @class = "column" });
+                    {
+                        ui.BeginElement("button", new { @class = "ui labeled small icon button", id="clear-logs" });
+                        {
+                            ui.Element("i", "", new { @class = "trash icon" });
+                            ui.Literal("Clear");
+                        }
+                        ui.EndElement("button");
+                    }
+                    ui.EndDiv();
+                }
+                ui.EndDiv();
+                
+                ui.Element("p", "");
+                ui.BeginDiv(new { @class = "ui segment"});
+                {
+                    ui.BeginDiv(new { @class = "ui active dimmer", id="no-logs"});
+                    {
+                         ui.Div("Tailing logs...", new { @class = "ui indeterminate text loader" });
+                    }
+                    ui.EndDiv();
+                    ui.BeginDiv(new { id = "logs", @class = "ui relaxed divided list", style = "height: 300px; overflow: auto;" });
+                    ui.EndDiv();
+                }
+                ui.EndDiv();
             }
             ui.EndDiv();
 
@@ -95,13 +134,13 @@ namespace HQ.Installer.UI
                     {
                         ui.BeginDiv(new { @class = "three wide column" });
                         {
-                            ui.Element("h4", "Group 1", new { @class = "ui inverted header"});
+                            ui.Element("h4", "Platform", new { @class = "ui inverted header"});
                             ui.BeginDiv(new { @class = "ui inverted link list"});
                             {
-                                ui.Element("a", "Link One", new { href="#", @class = "item"});
-                                ui.Element("a", "Link Two", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Three", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Four", new { href = "#", @class = "item" });
+                                ui.Element("a", "Security", new { href="#", @class = "item"});
+                                ui.Element("a", "Pricing", new { href = "#", @class = "item" });
+                                ui.Element("a", "Integrations", new { href = "#", @class = "item" });
+                                ui.Element("a", "Documentations", new { href = "#", @class = "item" });
                             }
                             ui.EndDiv();
                         }
@@ -109,13 +148,14 @@ namespace HQ.Installer.UI
 
                         ui.BeginDiv(new { @class = "three wide column" });
                         {
-                            ui.Element("h4", "Group 2", new { @class = "ui inverted header" });
+                            ui.Element("h4", "Corporate", new { @class = "ui inverted header" });
                             ui.BeginDiv(new { @class = "ui inverted link list" });
                             {
-                                ui.Element("a", "Link One", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Two", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Three", new { href = "#", @class = "item" });
-                                ui.Element("a", "Link Four", new { href = "#", @class = "item" });
+                                ui.Element("a", "About", new { href = "#", @class = "item" });
+                                ui.Element("a", "Jobs", new { href = "#", @class = "item" });
+                                ui.Element("a", "Blog", new { href = "#", @class = "item" });
+                                ui.Element("a", "Press", new { href = "#", @class = "item" });
+                                ui.Element("a", "Partners", new { href = "#", @class = "item" });
                             }
                             ui.EndDiv();
                         }
@@ -123,11 +163,11 @@ namespace HQ.Installer.UI
 
                         ui.BeginDiv(new { @class = "three wide column" });
                         {
-                            ui.Element("h4", "Meta", new { @class = "ui inverted header" });
+                            ui.Element("h4", "Community", new { @class = "ui inverted header" });
                             ui.BeginDiv(new { @class = "ui inverted link list" });
                             {
-                                ui.Element("a", "Postman", new { href = "/meta/postman", target = "_blank", @class = "item" });
-                                ui.Element("a", "Swagger", new { href = "/meta/swagger", target = "_blank", @class = "item" });
+                                ui.Element("a", "Events", new { href = "#", @class = "item" });
+                                ui.Element("a", "Case Studies", new { href = "#", @class = "item" });
                             }
                             ui.EndDiv();
                         }
@@ -152,8 +192,7 @@ namespace HQ.Installer.UI
                     ui.Element("img", attr: new { src = "assets/images/logo.png", @class = "ui centered mini image"});
                     ui.BeginDiv(new { @class = "ui horizontal inverted small divided link list"});
                     {
-                        ui.Element("a", "About Us", new { href = "https://hq.io/about", @class = "item" });
-                        ui.Element("a", "Contact Us", new { href = "https://hq.io/contact", @class = "item" });
+                        ui.Element("a", "Privacy Policy", new { href = "https://hq.io/privacy", @class = "item" });
                         ui.Element("a", "Terms & Conditions", new { href = "https://hq.io/toc", @class = "item" });
                         ui.BeginElement("a", new { href = "https://github.com/hq-io", @class = "item" });
                         {
