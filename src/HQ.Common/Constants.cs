@@ -77,6 +77,7 @@ namespace HQ.Common
         public static class MultiTenancy
         {
             public const string DefaultTenantName = "defaultTenant";
+            public const string TenantHeader = "X-Api-Tenant";
         }
 
         public static class QueryStrings
