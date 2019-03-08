@@ -17,7 +17,7 @@
 
 namespace HQ.Common.Configuration
 {
-    public class FeatureToggle<T>
+    public class FeatureToggle
     {
         public bool Enabled { get; set; } = true;
     }
