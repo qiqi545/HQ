@@ -49,7 +49,7 @@ namespace HQ.Installer
 
             services.AddDevOpsApi(config.GetSection("Ops"));
 
-            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Tenants"))
+            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Api").GetSection("MultiTenancy"))
                 .AddIdentityTenantContextStore<IdentityTenant>();
 
             var identity = services

@@ -22,6 +22,7 @@ using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -34,7 +35,8 @@ namespace HQ.Installer
             Bootstrap.EnsureInitialized();
             HqServer.Masthead();
 
-            app.UseAuthentication();
+            app.UseSecurityPolicies();
+
             app.UsePublicApi();
             app.UseMultiTenancy<IdentityTenant, string>();
             app.UseDevOpsApi();
