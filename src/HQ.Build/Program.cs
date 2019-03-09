@@ -178,7 +178,13 @@ namespace HQ.Build
                                 var archive = new ZipArchive(ms, ZipArchiveMode.Read);
                                 foreach (var entry in archive.Entries)
                                 {
-                                    using (var destination = File.OpenWrite(Path.Combine(target, entry.Name)))
+                                    var relativePath = entry.FullName;
+                                    var targetPath = Path.Combine(target, relativePath);
+
+                                    var targetDir = Path.GetDirectoryName(targetPath);
+                                    Directory.CreateDirectory(targetDir);
+
+                                    using (var destination = File.OpenWrite(targetPath))
                                     {
                                         using (var fs = entry.Open())
                                         {
