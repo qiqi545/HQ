@@ -31,15 +31,13 @@ namespace HQ.Platform.Security.AspNetCore
 {
     public static class JwtSecurity
     {
-        private static SigningCredentials credentials;
-
-        public static TokenValidationParameters TokenValidationParameters { get; private set; }
-
+        private static SigningCredentials _signing;
+        private static EncryptingCredentials _encrypting;
+        
         public static void AddAuthentication(this IServiceCollection services, SecurityOptions options)
         {
-            credentials = credentials ?? BuildSigningCredentials(options);
-
-            TokenValidationParameters = TokenValidationParameters ?? BuildTokenValidationParameters(options);
+            _signing = _signing ?? BuildSigningCredentials(options);
+            _encrypting = _encrypting ?? BuildEncryptingCredentials(options);
 
             services
                 .AddAuthentication(x =>
@@ -50,7 +48,7 @@ namespace HQ.Platform.Security.AspNetCore
                 })
                 .AddJwtBearer(x =>
                 {
-                    x.TokenValidationParameters = TokenValidationParameters;
+                    x.TokenValidationParameters = BuildTokenValidationParameters(options);
 #if DEBUG
                     x.IncludeErrorDetails = true;
                     x.RequireHttpsMetadata = false;
@@ -62,9 +60,7 @@ namespace HQ.Platform.Security.AspNetCore
                 .AddCookie(cfg => cfg.SlidingExpiration = true);
         }
 
-        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security,
-            PublicApiOptions api)
-            where TUser : IUserIdProvider
+        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PublicApiOptions api) where TUser : IUserIdProvider
         {
             var now = DateTimeOffset.Now;
             var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
@@ -98,23 +94,59 @@ namespace HQ.Platform.Security.AspNetCore
             claims.TryAddClaim(security.Claims.ApplicationIdClaim, api.ApiVersion);
             claims.TryAddClaim(security.Claims.ApplicationNameClaim, api.ApiName);
 
-            credentials = credentials ?? BuildSigningCredentials(security);
+            _signing = _signing ?? BuildSigningCredentials(security);
+            _encrypting = _encrypting ?? BuildEncryptingCredentials(security);
 
             var handler = new JwtSecurityTokenHandler();
-            var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, credentials);
 
-            return handler.WriteToken(jwt);
+            if (security.Tokens.Encrypt)
+            {
+                var descriptor = new SecurityTokenDescriptor
+                {
+                    Audience = aud,
+                    Issuer = iss,
+                    Subject = new ClaimsIdentity(claims),
+                    EncryptingCredentials = _encrypting
+                };
+
+                return handler.CreateEncodedJwt(descriptor);
+            }
+
+            return handler.WriteToken(new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _signing));
         }
 
         private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
         {
-            return new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key)),
-                SecurityAlgorithms.Aes256CbcHmacSha512);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key));
+            return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        }
+
+        private static EncryptingCredentials BuildEncryptingCredentials(SecurityOptions options)
+        {
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key));
+            return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)
         {
-            var parameters = new TokenValidationParameters
+            if (options.Tokens.Encrypt)
+            {
+                return new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = false,
+                    ValidIssuer = options.Tokens.Issuer,
+                    ValidateLifetime = true,
+                    ValidateAudience = true,
+                    ValidAudience = options.Tokens.Audience,
+                    RequireSignedTokens = false,
+                    TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key)),
+                    ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
+                    RoleClaimType = options.Claims.RoleClaim,
+                    NameClaimType = options.Claims.UserNameClaim
+                };
+            }
+
+            return new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = options.Tokens.Issuer,
@@ -122,13 +154,11 @@ namespace HQ.Platform.Security.AspNetCore
                 ValidateAudience = true,
                 ValidAudience = options.Tokens.Audience,
                 RequireSignedTokens = true,
-                IssuerSigningKey = credentials.Key,
-                ClockSkew = TimeSpan.FromMinutes(5),
+                IssuerSigningKey = _signing.Key,
+                ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
                 RoleClaimType = options.Claims.RoleClaim,
                 NameClaimType = options.Claims.UserNameClaim
             };
-
-            return parameters;
         }
     }
 }

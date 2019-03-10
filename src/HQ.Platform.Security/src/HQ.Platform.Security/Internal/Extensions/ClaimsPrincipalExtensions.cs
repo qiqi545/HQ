@@ -20,7 +20,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace HQ.Platform.Security.Extensions
+namespace HQ.Platform.Security.Internal.Extensions
 {
     internal static class ClaimsPrincipalExtensions
     {

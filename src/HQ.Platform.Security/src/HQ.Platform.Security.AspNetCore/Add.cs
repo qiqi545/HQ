@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Net;
 using HQ.Common;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;

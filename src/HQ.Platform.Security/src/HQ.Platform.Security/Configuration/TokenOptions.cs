@@ -26,5 +26,7 @@ namespace HQ.Platform.Security.Configuration
         public string Issuer { get; set; } = "https://mysite.com";
         public string Audience { get; set; } = "https://mysite.com";
         public int TimeToLiveSeconds { get; set; } = 180;
+        public bool Encrypt { get; set; } = true;
+        public int ClockSkewSeconds { get; set; } = 10;
     }
 }

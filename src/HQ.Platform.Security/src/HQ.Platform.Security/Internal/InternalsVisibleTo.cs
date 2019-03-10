@@ -17,11 +17,10 @@
 
 using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("HQ.Platform.Security.AspNetCore.Mvc")]
 [assembly: InternalsVisibleTo("HQ.Platform.Identity.AspNetCore.Mvc")]
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Security.Internal
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+    internal sealed class InternalsVisibleTo { }
 }

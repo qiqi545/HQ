@@ -45,11 +45,12 @@ namespace HQ.Platform.Schema.Models
         View,
         Enum,
 
-        // Aliases:
+        // Object Type Aliases:
         O = Object,
         V = View,
         E = Enum,
 
+        // Type Aliases:
         Bool = Boolean,
         Short = Int16,
         Integer = Int32,
