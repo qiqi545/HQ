@@ -47,5 +47,10 @@ namespace HQ.Extensions.Cryptography
         {
             return BinToHex(GetRandomBytes(length / 2));
         }
+
+        public static bool ConstantTimeEquals(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+        {
+            return Sodium.Utilities.Compare(left, right);
+        }
     }
 }
