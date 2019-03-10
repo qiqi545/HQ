@@ -41,7 +41,7 @@ namespace HQ.Data.Contracts
         public Error(long eventId, string message, short statusCode = (short)HttpStatusCode.InternalServerError, IEnumerable<Error> errors = null)
         {
             EventId = eventId;
-            Errors = errors.MaybeList();
+            Errors = errors?.MaybeList();
             StatusCode = statusCode;
             Message = message;
         }
