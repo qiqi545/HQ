@@ -16,6 +16,7 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Models
 {
@@ -23,8 +24,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Models
     {
         [Required] public IdentityType IdentityType { get; set; } = IdentityType.Username;
 
-        [Required] public string Identity { get; set; }
+        [Required, PersonalData] public string Identity { get; set; }
 
-        [Required] public string Password { get; set; }
+        [Required, ProtectedPersonalData] public string Password { get; set; }
     }
 }

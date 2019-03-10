@@ -31,7 +31,7 @@ using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.Configuration;
-using HQ.Platform.Security.Extensions;
+using HQ.Platform.Security.Internal.Extensions;
 using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;

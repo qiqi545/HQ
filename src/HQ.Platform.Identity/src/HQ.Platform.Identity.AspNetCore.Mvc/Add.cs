@@ -37,7 +37,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
+        public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
             IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
@@ -92,7 +92,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 };
             });
 
-            return services;
+            return mvc;
         }
 
         private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc)
