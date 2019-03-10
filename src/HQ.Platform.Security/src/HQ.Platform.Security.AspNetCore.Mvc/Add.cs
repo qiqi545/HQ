@@ -29,7 +29,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddSuperUserController(this IMvcBuilder mvc)
+        public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvc)
         {
             var services = mvc.Services;
 
