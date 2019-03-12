@@ -13,13 +13,14 @@
 
   <PropertyGroup>
     <Description>HQ bootstrap infrastructure. Do not install this package directly.</Description>
-    <Version>0.0.12</Version>
+    <Version>0.0.13</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\_BLOWDART\Blowdart.UI\src\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
     <ProjectReference Include="..\HQ\HQ.csproj" />
+    <ProjectReference Include="..\HQ.Azure\HQ.Azure.csproj" />
   </ItemGroup>
 
 </Project>

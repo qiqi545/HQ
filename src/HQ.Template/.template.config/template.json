@@ -71,6 +71,10 @@
       "type": "computed",
       "value": "(db == \"sql-azure\")"
     },
+    "Azure": {
+      "type": "computed",
+      "value": "(db == \"sql-azure\" || db == \"cosmos-db\")"
+    },
     "Sqlite": {
       "type": "computed",
       "value": "(db == \"sqlite\")"
