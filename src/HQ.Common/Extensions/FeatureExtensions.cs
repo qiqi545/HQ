@@ -17,11 +17,11 @@
 
 using System;
 using System.Linq;
-using HQ.Common.Configuration;
-using HQ.Common.FastMember;
+using FastMember;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using HQ.Common.Configuration;
 
 namespace HQ.Common.Extensions
 {
