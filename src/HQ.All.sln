@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Identity.Stores
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Identity.Stores.Sql.DocumentDb", "..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj", "{CF943DC2-EB1E-447B-9F40-7F4E2C067635}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Identity.Stores.Sql.MySql", "..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.MySql\HQ.Platform.Identity.Stores.Sql.MySql.csproj", "{E780EF09-3BB4-495E-AF8D-57A17753A725}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Identity.Stores.Sql.Sqlite", "..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj", "{D2B28E87-C80F-47A6-8E29-50BBCA2FC592}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Identity.Stores.Sql.SqlServer", "..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj", "{4711A93C-571C-4952-8DF4-01F2F0BE9DEF}"
@@ -86,8 +84,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.DocumentDb", "..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj", "{050F7359-F99C-4B5C-9AC1-3357CF8C68C1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.MySql", "..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.MySql\HQ.Data.SessionManagement.MySql.csproj", "{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.Sqlite", "..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj", "{2F342D7E-4019-4DE3-9FD1-47AAEEAEE4A7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.SqlServer", "..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj", "{3A2D3A84-CC74-4F19-AEBF-281D43BB639B}"
@@ -103,8 +99,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Descriptor", "..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj", "{1744E3B0-A8FB-4E1B-AE3F-96C60A642ACD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.DocumentDb", "..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj", "{88331663-EF16-469C-BB2F-FC92AC52FD4C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.MySql", "..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.MySql\HQ.Data.Sql.MySql.csproj", "{0C538FDB-9262-4A21-B462-82662E885BDA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Queries", "..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj", "{714A225C-8E71-4971-B90E-350CD5B81851}"
 EndProject
@@ -181,12 +175,6 @@ Global
 		{CF943DC2-EB1E-447B-9F40-7F4E2C067635}.Package|Any CPU.Build.0 = Package|Any CPU
 		{CF943DC2-EB1E-447B-9F40-7F4E2C067635}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF943DC2-EB1E-447B-9F40-7F4E2C067635}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Package|Any CPU.ActiveCfg = Package|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Package|Any CPU.Build.0 = Package|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E780EF09-3BB4-495E-AF8D-57A17753A725}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D2B28E87-C80F-47A6-8E29-50BBCA2FC592}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D2B28E87-C80F-47A6-8E29-50BBCA2FC592}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2B28E87-C80F-47A6-8E29-50BBCA2FC592}.Package|Any CPU.ActiveCfg = Package|Any CPU
@@ -361,12 +349,6 @@ Global
 		{050F7359-F99C-4B5C-9AC1-3357CF8C68C1}.Package|Any CPU.Build.0 = Package|Any CPU
 		{050F7359-F99C-4B5C-9AC1-3357CF8C68C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{050F7359-F99C-4B5C-9AC1-3357CF8C68C1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Package|Any CPU.ActiveCfg = Package|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Package|Any CPU.Build.0 = Package|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{563F1FAE-E3DD-41D7-9F7F-73D7077B142D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F342D7E-4019-4DE3-9FD1-47AAEEAEE4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F342D7E-4019-4DE3-9FD1-47AAEEAEE4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F342D7E-4019-4DE3-9FD1-47AAEEAEE4A7}.Package|Any CPU.ActiveCfg = Package|Any CPU
@@ -415,12 +397,6 @@ Global
 		{88331663-EF16-469C-BB2F-FC92AC52FD4C}.Package|Any CPU.Build.0 = Package|Any CPU
 		{88331663-EF16-469C-BB2F-FC92AC52FD4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88331663-EF16-469C-BB2F-FC92AC52FD4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Package|Any CPU.ActiveCfg = Package|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Package|Any CPU.Build.0 = Package|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0C538FDB-9262-4A21-B462-82662E885BDA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{714A225C-8E71-4971-B90E-350CD5B81851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{714A225C-8E71-4971-B90E-350CD5B81851}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{714A225C-8E71-4971-B90E-350CD5B81851}.Package|Any CPU.ActiveCfg = Package|Any CPU
