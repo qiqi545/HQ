@@ -23,9 +23,7 @@ namespace HQ.Data.Sql.Descriptor.Attributes
     ///     This is the database table's identity column.
     ///     <remarks>
     ///         Use this to force the identity column in situations where you want to use <see cref="SimpleDataDescriptor" />
-    ///         but
-    ///         don't like
-    ///         the default behavior when multiple key fields are found.
+    ///         but don't like the default behavior when multiple key fields are found.
     ///     </remarks>
     /// </summary>
     [AttributeUsage(AttributeTargets.Property)]
