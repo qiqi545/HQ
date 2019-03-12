@@ -22,7 +22,6 @@ using System.Text;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.PetaPoco.Utilities;
-using LiteGuard;
 
 namespace HQ.Data.Sql.DocumentDb
 {
@@ -161,8 +160,6 @@ namespace HQ.Data.Sql.DocumentDb
 
         private bool ResolveDocumentType(IDataDescriptor descriptor, IList<string> keys, IList<string> parameters)
         {
-            Guard.AgainstNullArgument(nameof(keys), keys);
-            Guard.AgainstNullArgument(nameof(parameters), parameters);
             if (parameters.Contains(Discriminator))
                 return true;
             keys.Add(ResolveColumnName(descriptor, Discriminator));
