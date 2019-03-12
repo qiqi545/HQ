@@ -47,10 +47,6 @@
         {
           "choice": "sqlite",
           "description": "SQLite"
-        },
-        {
-          "choice": "mysql",
-          "description": "MySQL"
         }
       ],
       "defaultValue": "sqlite",
@@ -74,10 +70,6 @@
     "SqlAzure": {
       "type": "computed",
       "value": "(db == \"sql-azure\")"
-    },
-    "MySql": {
-      "type": "computed",
-      "value": "(db == \"mysql\")"
     },
     "Sqlite": {
       "type": "computed",

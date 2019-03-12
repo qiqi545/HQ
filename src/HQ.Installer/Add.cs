@@ -28,7 +28,6 @@ using HQ.Platform.Identity;
 using HQ.Platform.Identity.AspNetCore.Mvc;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Stores.Sql.DocumentDb;
-using HQ.Platform.Identity.Stores.Sql.MySql;
 using HQ.Platform.Identity.Stores.Sql.Sqlite;
 using HQ.Platform.Identity.Stores.Sql.SqlServer;
 using HQ.Platform.Operations;
@@ -69,11 +68,6 @@ namespace HQ.Installer
                     break;
                 case DatabaseType.SqlServer:
                     identity.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
-                    break;
-                case DatabaseType.MySql:
-                    identity.AddMySqlIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
                         config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
                         config.GetSection("DbOptions"));
                     break;
