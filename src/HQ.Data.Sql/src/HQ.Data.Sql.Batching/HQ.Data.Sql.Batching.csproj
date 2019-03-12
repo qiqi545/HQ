@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
   </ItemGroup>
