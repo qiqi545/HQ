@@ -23,7 +23,7 @@ using System.Linq;
 using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
-using HQ.Common.FastMember;
+using FastMember;
 using HQ.Extensions.CodeGeneration;
 using HQ.Extensions.Logging;
 using ImpromptuInterface;
