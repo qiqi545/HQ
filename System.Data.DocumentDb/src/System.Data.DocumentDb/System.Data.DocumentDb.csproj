@@ -10,21 +10,21 @@
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
-    <PackageLicenseUrl>https://github.com/System.Data.DocumentDb/blob/master/LICENSE.txt</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/System.Data.DocumentDb</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/System.Data.DocumentDb</RepositoryUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/hq-io/Community</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hq-io/Community</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>An ADO.NET provider for DocumentDb.</Description>
     <PackageTags>azure cosmosdb documentdb sdk ado-net</PackageTags>
     <PackageId>DocumentDbProvider</PackageId>
-    <Version>1.0.0-pre5</Version>
+    <Version>1.0.0-pre6</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LiteGuard" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.2" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.3" />
     <PackageReference Include="FastMember" Version="1.4.1" />
   </ItemGroup>
 
