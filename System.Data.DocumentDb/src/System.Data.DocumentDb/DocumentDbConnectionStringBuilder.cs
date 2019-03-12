@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using LiteGuard;
 using Microsoft.Azure.Documents.Client;
 
 namespace System.Data.DocumentDb
@@ -22,8 +21,6 @@ namespace System.Data.DocumentDb
 
         public DocumentDbConnectionStringBuilder(string connectionString) : this()
         {
-            Guard.AgainstNullArgument(nameof(connectionString), connectionString);
-
             var entries = connectionString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             var tokens = entries.Select(part => part.Split(new [] { '=' }, 2));
             _settings = tokens.ToDictionary(split => split[0], split => split[1], StringComparer.OrdinalIgnoreCase);
@@ -91,7 +88,6 @@ namespace System.Data.DocumentDb
 
         public override bool ShouldSerialize(string keyword)
         {
-            Guard.AgainstNullArgument(nameof(keyword), keyword);
             return _settings.ContainsKey(keyword);
         }
 
@@ -102,20 +98,16 @@ namespace System.Data.DocumentDb
 
         public override bool ContainsKey(string keyword)
         {
-            Guard.AgainstNullArgument(nameof(keyword), keyword);
             return _settings.ContainsKey(keyword);
         }
 
         public override bool Remove(string keyword)
         {
-            Guard.AgainstNullArgument(nameof(keyword), keyword);
             return _settings.Remove(keyword);
         }
 
         public override bool TryGetValue(string keyword, out object value)
         {
-            Guard.AgainstNullArgument(nameof(keyword), keyword);
-
             if (_settings.TryGetValue(keyword, out var valueString))
             {
                 value = valueString;
@@ -128,8 +120,6 @@ namespace System.Data.DocumentDb
 
         public override bool EquivalentTo(DbConnectionStringBuilder connectionStringBuilder)
         {
-            Guard.AgainstNullArgument(nameof(connectionStringBuilder), connectionStringBuilder);
-
             if (connectionStringBuilder is DocumentDbConnectionStringBuilder)
                 return ConnectionString.Equals(connectionStringBuilder.ConnectionString,
                     StringComparison.OrdinalIgnoreCase);
@@ -139,8 +129,6 @@ namespace System.Data.DocumentDb
 
         protected override void GetProperties(Hashtable propertyDescriptors)
         {
-            Guard.AgainstNullArgument(nameof(propertyDescriptors), propertyDescriptors);
-
             foreach (var entry in _settings)
                 propertyDescriptors.Add(entry.Key, entry.Value);
         }

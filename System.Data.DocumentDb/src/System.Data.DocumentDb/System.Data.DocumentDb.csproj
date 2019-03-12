@@ -19,11 +19,10 @@
     <Description>An ADO.NET provider for DocumentDb.</Description>
     <PackageTags>azure cosmosdb documentdb sdk ado-net</PackageTags>
     <PackageId>DocumentDbProvider</PackageId>
-    <Version>1.0.0-pre6</Version>
+    <Version>1.0.0-pre7</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiteGuard" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.3" />
     <PackageReference Include="FastMember" Version="1.4.1" />
   </ItemGroup>

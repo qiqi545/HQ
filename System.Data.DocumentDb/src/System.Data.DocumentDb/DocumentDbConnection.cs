@@ -4,7 +4,6 @@
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
-using LiteGuard;
 using Microsoft.Azure.Documents.Client;
 
 namespace System.Data.DocumentDb
@@ -75,7 +74,6 @@ namespace System.Data.DocumentDb
 
         public override void ChangeDatabase(string databaseName)
         {
-            Guard.AgainstNullArgument(nameof(databaseName), databaseName);
             _builder.Database = databaseName;
         }
 

@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
-using LiteGuard;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -53,8 +52,6 @@ namespace System.Data.DocumentDb
             get => _connection;
             set
             {
-                Guard.AgainstNullArgument("value", value);
-
                 if (value is DocumentDbConnection connection)
                     _connection = connection;
                 else

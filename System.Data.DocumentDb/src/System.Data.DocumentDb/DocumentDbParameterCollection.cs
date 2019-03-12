@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using LiteGuard;
 
 namespace System.Data.DocumentDb
 {
@@ -36,8 +35,6 @@ namespace System.Data.DocumentDb
 
         public override int Add(object value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             if (value is DocumentDbParameter parameter)
             {
                 if (_parameters.Any(p => p.ParameterName == parameter.ParameterName))
@@ -67,8 +64,6 @@ namespace System.Data.DocumentDb
 
         public void AddRange(DocumentDbParameter[] values)
         {
-            Guard.AgainstNullArgument(nameof(values), values);
-
             foreach (var value in values)
                 if (value != null)
                     _parameters.Add(value);
@@ -83,15 +78,11 @@ namespace System.Data.DocumentDb
 
         public override bool Contains(string parameterName)
         {
-            Guard.AgainstNullArgument(nameof(parameterName), parameterName);
-
             return _parameters.Any(p => p.ParameterName == parameterName);
         }
 
         public override bool Contains(object value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             return _parameters.Any(p => p.Value == value);
         }
 
@@ -102,43 +93,31 @@ namespace System.Data.DocumentDb
 
         protected override DbParameter GetParameter(string parameterName)
         {
-            Guard.AgainstNullArgument(nameof(parameterName), parameterName);
-
             return _parameters.Single(p => p.ParameterName == parameterName);
         }
 
         public override int IndexOf(string parameterName)
         {
-            Guard.AgainstNullArgument(nameof(parameterName), parameterName);
-
             return _parameters.IndexOf(_parameters.Single(p => p.ParameterName == parameterName));
         }
 
         public override int IndexOf(object value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             return _parameters.IndexOf((DocumentDbParameter) value);
         }
 
         public override void Insert(int index, object value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             _parameters.Insert(index, (DocumentDbParameter) value);
         }
 
         public override void Remove(object value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             _parameters.Remove((DocumentDbParameter) value);
         }
 
         public override void RemoveAt(string parameterName)
         {
-            Guard.AgainstNullArgument(nameof(parameterName), parameterName);
-
             _parameters.Remove(_parameters.Single(p => p.ParameterName == parameterName));
         }
 
@@ -154,7 +133,6 @@ namespace System.Data.DocumentDb
 
         public override void CopyTo(Array array, int index)
         {
-            Guard.AgainstNullArgument(nameof(array), array);
             Debug.Assert(array != null, nameof(array) + " != null");
 
             foreach (var item in array.Cast<DocumentDbParameter>())
@@ -163,8 +141,6 @@ namespace System.Data.DocumentDb
 
         protected override void SetParameter(int index, DbParameter value)
         {
-            Guard.AgainstNullArgument(nameof(value), value);
-
             if (value is DocumentDbParameter parameter)
                 _parameters[index] = parameter;
             else
@@ -173,9 +149,6 @@ namespace System.Data.DocumentDb
 
         protected override void SetParameter(string parameterName, DbParameter value)
         {
-            Guard.AgainstNullArgument(nameof(parameterName), parameterName);
-            Guard.AgainstNullArgument(nameof(value), value);
-
             var index = IndexOf(parameterName);
             if (index > -1)
             {

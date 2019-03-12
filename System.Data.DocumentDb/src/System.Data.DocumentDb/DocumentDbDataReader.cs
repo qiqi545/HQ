@@ -7,7 +7,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using FastMember;
-using LiteGuard;
 
 namespace System.Data.DocumentDb
 {
@@ -96,8 +95,6 @@ namespace System.Data.DocumentDb
 
         public override int GetOrdinal(string name)
         {
-            Guard.AgainstNullArgument(nameof(name), name);
-
             if (_members.TryGetValue(name, out var member))
             {
                 var count = CurrentRow.Count();
@@ -119,8 +116,6 @@ namespace System.Data.DocumentDb
 
         public override int GetValues(object[] values)
         {
-            Guard.AgainstNullArgument(nameof(values), values);
-
             for (var i = 0; i < values.Length; i++)
             {
                 if (CurrentRow.Count() <= i)
@@ -133,7 +128,6 @@ namespace System.Data.DocumentDb
 
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
-            Guard.AgainstNullArgument(nameof(buffer), buffer);
             if (!_resultSet.SupportsBinary)
                 throw new NotSupportedException();
             throw new NotImplementedException();
@@ -141,7 +135,6 @@ namespace System.Data.DocumentDb
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
-            Guard.AgainstNullArgument(nameof(buffer), buffer);
             if (!_resultSet.SupportsBinary)
                 throw new NotSupportedException();
             throw new NotImplementedException();
