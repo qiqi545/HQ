@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
-using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
@@ -33,8 +32,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
 
         public RolesAuthorizationRequirementExtended(SecurityOptions options, IEnumerable<string> allowedRoles)
         {
-            Guard.AgainstNullArgument(nameof(options), options);
-            Guard.AgainstNullArgument(nameof(allowedRoles), allowedRoles);
             _options = options;
             AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }

@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
-using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
@@ -35,10 +34,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             IEnumerable<string> allowedValues)
         {
             var values = allowedValues.ToArray();
-
-            Guard.AgainstNullArgument(nameof(options), options);
-            Guard.AgainstNullArgument(nameof(allowedValues), values);
-            Guard.AgainstNullArgument(nameof(claimType), claimType);
 
             _options = options;
             ClaimType = claimType;

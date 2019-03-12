@@ -18,7 +18,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
-using LiteGuard;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
@@ -31,7 +30,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
 
         public DenyAnonymousAuthorizationRequirementExtended(SecurityOptions options)
         {
-            Guard.AgainstNullArgument(nameof(options), options);
             _options = options;
         }
 
