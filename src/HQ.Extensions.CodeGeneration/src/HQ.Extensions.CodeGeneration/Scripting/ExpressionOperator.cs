@@ -17,9 +17,9 @@
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
-    public class ScriptContext
+    public enum ExpressionOperator
     {
-        // ReSharper disable once InconsistentNaming
-        public object @this;
+        Equal,
+        NotEqual
     }
 }
