@@ -18,7 +18,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using HQ.Common.FastMember;
+using FastMember;
 
 namespace HQ.Data.Sql.Descriptor
 {

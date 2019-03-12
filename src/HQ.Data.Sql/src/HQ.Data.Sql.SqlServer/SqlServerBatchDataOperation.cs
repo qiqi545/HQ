@@ -22,7 +22,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using HQ.Common.FastMember;
+using FastMember;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
