@@ -29,32 +29,37 @@ namespace HQ.Common
         {
             try
             {
-                JsonConvert.DefaultSettings = () =>
-                {
-                    var settings = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.None,
-
-                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                        Formatting = Formatting.Indented,
-                        NullValueHandling = NullValueHandling.Include,
-                        DefaultValueHandling = DefaultValueHandling.Include,
-
-                        DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                        DateParseHandling = DateParseHandling.DateTimeOffset,
-                        DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                        DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
-                    };
-
-                    settings.Converters.Add(new StringEnumConverter());
-
-                    return settings;
-                };
+                SetDefaultJsonSettings();
             }
             catch (Exception e)
             {
                 Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
             }
+        }
+
+        public static void SetDefaultJsonSettings()
+        {
+            JsonConvert.DefaultSettings = () =>
+            {
+                var settings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.None,
+
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Include,
+                    DefaultValueHandling = DefaultValueHandling.Include,
+
+                    DateTimeZoneHandling = DateTimeZoneHandling.Utc,
+                    DateParseHandling = DateParseHandling.DateTimeOffset,
+                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                    DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
+                };
+
+                settings.Converters.Add(new StringEnumConverter());
+
+                return settings;
+            };
         }
     }
 }
