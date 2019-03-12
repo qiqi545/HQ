@@ -17,7 +17,7 @@
 
 using System;
 using System.Threading.Tasks;
-using HQ.Common.FastMember;
+using FastMember;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 

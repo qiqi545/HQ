@@ -20,7 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using HQ.Common.FastMember;
+using FastMember;
 using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;

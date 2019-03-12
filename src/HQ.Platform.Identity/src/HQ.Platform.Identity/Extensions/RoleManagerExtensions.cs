@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Common.FastMember;
+using FastMember;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Extensions
