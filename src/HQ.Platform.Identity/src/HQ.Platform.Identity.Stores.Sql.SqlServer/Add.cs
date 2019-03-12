@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using System.Data.DocumentDb;
 using System.Data.SqlClient;
 using System.Threading;
 using HQ.Common.Models;
@@ -132,7 +131,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
 
         private static void OnConnection(IDbConnection c, IServiceProvider r)
         {
-            if (c is DocumentDbConnection connection)
+            if (c is SqlConnection connection)
             {
             }
         }
