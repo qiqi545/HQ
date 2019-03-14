@@ -32,7 +32,7 @@ namespace Blowdart.UI
                 var assemblies = settings.ComponentAssemblies ?? new[] {typeof(UiConfig).Assembly};
                 var exportedTypes = assemblies.SelectMany(x => x.GetExportedTypes());
                 var componentTypes = exportedTypes
-                    .Where(x => x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
+                    .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
 
                 var components = componentTypes
                     .Select(x => (UiComponent) Activator.CreateInstance(x))

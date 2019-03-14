@@ -2,30 +2,27 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Text;
-using DotLiquid;
 
 namespace Blowdart.UI.Web.Internal
 {
     internal static class StringBuilderExtensions
     {
-        public static StringBuilder AppendTag(this StringBuilder sb, string el, object attributes = null)
+        public static StringBuilder AppendTag(this StringBuilder sb, string el, Attributes attributes = null)
         {
             return sb.OpenBlock(el, attributes).CloseBlock(el, true);
         }
 
-        public static StringBuilder AppendTag(this StringBuilder sb, string el, string innerText,
-            object attributes = null)
+        public static StringBuilder AppendTag(this StringBuilder sb, string el, string innerText, Attributes attributes = null)
         {
             return sb.OpenBlock(el, attributes).Append(innerText).CloseBlock(el, true);
         }
 
-        public static StringBuilder AppendTag(this StringBuilder sb, string el, Value128 id, string innerText,
-            object attributes = null)
+        public static StringBuilder AppendTag(this StringBuilder sb, string el, Value128 id, string innerText, Attributes attributes = null)
         {
             return sb.OpenBlock(el, id, attributes).Append(innerText).CloseBlock(el, true);
         }
 
-        public static StringBuilder OpenBlock(this StringBuilder sb, string el, Value128 id, object attributes = null)
+        public static StringBuilder OpenBlock(this StringBuilder sb, string el, Value128 id, Attributes attributes = null)
         {
             if (attributes == null)
                 return sb.Append('<').Append(el).Append(" id='").Append(id).Append("'>");
@@ -33,7 +30,7 @@ namespace Blowdart.UI.Web.Internal
             return sb;
         }
 
-        public static StringBuilder OpenBlock(this StringBuilder sb, string el, object attributes = null)
+        public static StringBuilder OpenBlock(this StringBuilder sb, string el, Attributes attributes = null)
         {
             if (attributes == null)
                 return sb.Append('<').Append(el).Append('>');
@@ -41,9 +38,12 @@ namespace Blowdart.UI.Web.Internal
             return sb;
         }
 
-        private static StringBuilder AppendAttributes(this StringBuilder sb, object attributes)
+        private static StringBuilder AppendAttributes(this StringBuilder sb, Attributes attributes)
         {
-            foreach (var item in Hash.FromAnonymousObject(attributes))
+            if (attributes == null)
+                return sb;
+
+            foreach (var item in attributes.Inner) 
             {
                 sb.Append(" ");
                 sb.Append(item.Key);

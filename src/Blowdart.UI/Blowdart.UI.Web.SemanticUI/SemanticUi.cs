@@ -14,7 +14,7 @@ namespace Blowdart.UI.Web.SemanticUI
             var attr = BuildString(sb => { sb.Append("ui button"); });
 
             var id = ui.NextIdHash;
-            Dom.AppendTag("button", id, text, new {@class = attr});
+            Dom.AppendTag("button", id, text, Attributes.Attr(new {@class = attr}));
             Scripts.AppendClick(id);
             return ui.Clicked.Contains(id);
         }
