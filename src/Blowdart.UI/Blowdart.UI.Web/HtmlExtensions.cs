@@ -227,5 +227,39 @@ namespace Blowdart.UI.Web
         #endregion
 
         #endregion
+
+        #region Pareto Helpers
+
+        public static void Div(this Ui ui, string @class, Action action)
+        {
+            ui.Div(Attributes.Attr(new { @class }), action);
+        }
+
+        public static void Div(this Ui ui, string @class, Attributes attr, Action action)
+        {
+            ui.Div(Attributes.Attr(new { @class }), action);
+        }
+
+        public static void A(this Ui ui, string href, Action action = null)
+        {
+            ui.Div(Attributes.Attr(new { href }), action);
+        }
+
+        public static void A(this Ui ui, string href, string @class, Action action = null)
+        {
+            ui.A(Attributes.Attr(new { href, @class }), action);
+        }
+
+        public static void Img(this Ui ui, string src, Action action = null)
+        {
+            ui.Img(Attributes.Attr(new { src }), action);
+        }
+
+        public static void Img(this Ui ui, string src, string @class, Action action = null)
+        {
+            ui.Img(Attributes.Attr(new { src, @class }), action);
+        }
+
+        #endregion
     }
 }

@@ -1,9 +1,6 @@
-﻿#region LICENSE
-// Unless explicitly acquired and licensed from HQ.IO Corporation 
-// under another license, the contents of this file are copyrighted, 
-// and you are strictly prohibited from using it for any purpose. 
-// Violations will be prosecuted under the full extent the law allows.
-#endregion
+﻿// Copyright (c) Blowdart, Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
 namespace Blowdart.UI.Web
 {
     public abstract class HtmlComponent : UiComponent
