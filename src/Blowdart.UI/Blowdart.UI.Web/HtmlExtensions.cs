@@ -237,7 +237,7 @@ namespace Blowdart.UI.Web
 
         public static void Div(this Ui ui, string @class, Attributes attr, Action action)
         {
-            ui.Div(Attributes.Attr(new { @class }), action);
+            ui.Div(Attributes.Attr(new { @class }, attr), action);
         }
 
         public static void A(this Ui ui, string href, Action action = null)

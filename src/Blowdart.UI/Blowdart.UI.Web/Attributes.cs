@@ -27,7 +27,19 @@ namespace Blowdart.UI.Web
         {
             var hash = Hash.FromAnonymousObject(attr[0], true);
             for (var i = 1; i < attr.Length; i++)
-                hash.Merge(Hash.FromAnonymousObject(attr[i]));
+            {
+                switch (attr[i])
+                {
+                    case string _:
+                        throw new HtmlException($"You provided a string literal for an attribute object. Did you mean new {{ @class = \"{attr[i]}\" }} ?");
+                    case Attributes other:
+                        hash.Merge(other.Inner);
+                        break;
+                    default:
+                        hash.Merge(Hash.FromAnonymousObject(attr[i]));
+                        break;
+                }
+            }
             return new Attributes(hash);
         }
 
