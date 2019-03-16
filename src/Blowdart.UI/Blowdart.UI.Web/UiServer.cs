@@ -4,7 +4,7 @@
 using System;
 using System.IO;
 using System.Linq.Expressions;
-using Blowdart.UI.Scripting;
+using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +12,8 @@ using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Blowdart.UI.Internal;
+using Blowdart.UI.Scripting;
 
 namespace Blowdart.UI.Web
 {
@@ -31,27 +33,36 @@ namespace Blowdart.UI.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(o => o.AddDefaultPolicy(builder =>
+            if (Standalone)
             {
-                builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
-            }));
-            services.AddResponseCompression(o => { o.EnableForHttps = false; });
-            services.AddHttpsRedirection(o => { });
+                services.AddCors(o => o.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+                }));
+                services.AddResponseCompression(o => { o.EnableForHttps = false; });
+                services.AddHttpsRedirection(o => { });
+            }
             services.AddBlowdartUi(_env);
+            _startup?.ExecuteMethod(nameof(ConfigureServices), services);
         }
+
+        private static bool Standalone => _startup == null;
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-            else
-                app.UseHsts();
-
-            app.UseCors();
-            app.UseResponseCompression();
-            app.UseHttpsRedirection();
-
+            if (Standalone)
+            {
+                app.UseCors();
+                app.UseResponseCompression();
+                if (env.IsDevelopment())
+                    app.UseDeveloperExceptionPage();
+                else
+                    app.UseHsts();
+                app.UseHttpsRedirection();
+            }
+           
             app.UseBlowdartUi(_layout);
+            _startup?.ExecuteMethod(nameof(Configure), app, env);
         }
 
         public static void Start<TStartup>(string[] args, Action<LayoutRoot> layout)
