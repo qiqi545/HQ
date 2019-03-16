@@ -226,6 +226,30 @@ namespace Blowdart.UI.Web
 
         #endregion
 
+        #region pre
+
+        public static void BeginPre(this Ui ui, Attributes attr = null)
+        {
+            ui.BeginElement("pre", attr);
+        }
+
+        public static void EndPre(this Ui ui)
+        {
+            ui.EndElement("pre");
+        }
+
+        public static void Pre(this Ui ui, Attributes attr = null, Action action = null)
+        {
+            ui.Element("pre", attr, action);
+        }
+
+        public static void Pre(this Ui ui, string innerText, Attributes attr = null)
+        {
+            ui.Element("pre", innerText, attr);
+        }
+
+        #endregion
+
         #endregion
 
         #region Pareto Helpers
