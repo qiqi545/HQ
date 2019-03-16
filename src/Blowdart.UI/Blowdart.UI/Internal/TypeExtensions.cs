@@ -1,0 +1,36 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Blowdart.UI.Internal.Execution;
+
+namespace Blowdart.UI.Internal
+{
+    internal static class TypeExtensions
+    {
+        private static readonly Dictionary<Type, Dictionary<string, ObjectMethodExecutor>> Lookup;
+        private static readonly Dictionary<Type, object> Instances;
+
+        static TypeExtensions()
+        {
+            Lookup = new Dictionary<Type, Dictionary<string, ObjectMethodExecutor>>();
+            Instances = new Dictionary<Type, object>();
+        }
+
+        public static void ExecuteMethod(this Type type, string name, params object[] args)
+        {
+            if (!Lookup.TryGetValue(type, out var map))
+                Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
+
+            if (!map.TryGetValue(name, out var executor))
+            {
+                var methodByName = type.GetMethod(name);
+                if (methodByName == null)
+                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
+                map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
+            }
+            if(!Instances.TryGetValue(type, out var instance))
+                Instances.Add(type, instance = Activator.CreateInstance(type));
+            executor.Execute(instance, args);
+        }
+    }
+}

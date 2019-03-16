@@ -29,8 +29,10 @@ namespace Blowdart.UI
             {
                 var settings = r.GetRequiredService<UiSettings>();
 
-                var assemblies = settings.ComponentAssemblies ?? new[] {typeof(UiConfig).Assembly};
-                var exportedTypes = assemblies.SelectMany(x => x.GetExportedTypes());
+                if(settings.ComponentAssemblies == null)
+                    settings.AutoRegisterComponents();
+
+                var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
                 var componentTypes = exportedTypes
                     .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
 
