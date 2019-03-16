@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.StaticFiles.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -21,26 +22,27 @@ namespace Blowdart.UI.Web
 {
     public static class Installer
     {
-        public static IServiceCollection AddBlowdartUi(this IServiceCollection services, IHostingEnvironment env,
-            params Assembly[] uiAssemblies)
+        internal static CompositeFileProvider ProviderContainer;
+
+        public static IServiceCollection AddBlowdartUi(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
         {
-            var fileProviders = new List<IFileProvider>
-            {
-                env.ContentRootFileProvider,
-                RegisterUiAssembly(typeof(UiServer).Assembly)
-            };
+            AddUiResources(services, env, uiAssemblies);
 
-            fileProviders.AddRange(uiAssemblies.Select(RegisterUiAssembly));
-
-            var composite = new CompositeFileProvider(fileProviders);
-            services.AddSingleton<IFileProvider>(composite);
             services.AddSignalR(o => { });
 
             UiConfig.Initialize<HtmlSystem>(services);
             UiConfig.ConfigureServices?.Invoke(services);
 
             return services;
+        }
 
+        internal static IServiceCollection AddUiResources(this IServiceCollection services, params Assembly[] uiAssemblies)
+        {
+            return AddUiResources(services, null, uiAssemblies);
+        }
+
+        internal static IServiceCollection AddUiResources(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
+        {
             ManifestEmbeddedFileProvider RegisterUiAssembly(Assembly a)
             {
                 var prefix = a.GetName().Name;
@@ -49,6 +51,34 @@ namespace Blowdart.UI.Web
                     Trace.TraceInformation($"\t{name.Replace(prefix, "")}");
                 return new ManifestEmbeddedFileProvider(a);
             }
+
+            var fileProviders = new List<IFileProvider>();
+
+            if (env != null)
+                fileProviders.Add(env.ContentRootFileProvider);
+
+            if (ProviderContainer == null)
+                fileProviders.Add(RegisterUiAssembly(typeof(UiServer).Assembly));
+            
+            fileProviders.AddRange(uiAssemblies.Select(RegisterUiAssembly));
+            
+            if (ProviderContainer == null)
+            {
+                var composite = new CompositeFileProvider(fileProviders);
+                services.AddSingleton<IFileProvider>(composite);
+                ProviderContainer = composite;
+            }
+            else
+            {
+                var merge = new List<IFileProvider>(ProviderContainer.FileProviders);
+                merge.AddRange(fileProviders);
+
+                var composite = new CompositeFileProvider(merge);
+                services.Replace(ServiceDescriptor.Singleton<IFileProvider>(composite));
+                ProviderContainer = composite;
+            }
+
+            return services;
         }
 
         public static void UseBlowdartUi(this IApplicationBuilder app, Action<LayoutRoot> layout)
