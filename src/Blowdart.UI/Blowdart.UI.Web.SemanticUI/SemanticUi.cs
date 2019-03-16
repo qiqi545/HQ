@@ -57,7 +57,7 @@ document.addEventListener(""DOMContentLoaded"", function(event) {
     }
 });
 
-function logMessage(m) {
+logMessage = function(m) {
     var lvl;
     switch (m.level) {
         case 0:
