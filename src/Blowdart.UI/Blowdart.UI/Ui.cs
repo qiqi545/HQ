@@ -37,6 +37,15 @@ namespace Blowdart.UI
                 Error($"MISSING COMPONENT '{name}'");
         }
 
+        public void Component<T>() where T : UiComponent
+        {
+            var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
+            if (components.TryGetValue(typeof(T), out var component))
+                component.Render(this);
+            else
+                Error($"MISSING COMPONENT TYPE '{typeof(T).Name}'");
+        }
+
         #endregion
 
         #region Lifecycle

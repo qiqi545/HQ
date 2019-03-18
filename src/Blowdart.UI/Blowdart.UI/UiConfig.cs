@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,23 +28,36 @@ namespace Blowdart.UI
             services.AddSingleton(r => new LayoutRoot(r));
             services.AddSingleton(r =>
             {
-                var settings = r.GetRequiredService<UiSettings>();
+                var componentTypes = ResolveComponentTypes(r);
 
-                if(settings.ComponentAssemblies == null)
-                    settings.AutoRegisterComponents();
-
-                var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
-                var componentTypes = exportedTypes
-                    .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
-
-                var components = componentTypes
+                var byName = componentTypes
                     .Select(x => (UiComponent) Activator.CreateInstance(x))
                     .ToDictionary(k => k.Name ?? k.GetType().Name, StringComparer.OrdinalIgnoreCase);
 
-                return components;
+                return byName;
+            });
+            services.AddSingleton(r =>
+            {
+                var componentTypes = ResolveComponentTypes(r);
+
+                var byType = componentTypes
+                    .ToDictionary(k => k, v => (UiComponent) Activator.CreateInstance(v));
+
+                return byType;
             });
 
             ConfigureServices?.Invoke(services);
+        }
+
+        private static IEnumerable<Type> ResolveComponentTypes(IServiceProvider r)
+        {
+            var settings = r.GetRequiredService<UiSettings>();
+            if (settings.ComponentAssemblies == null)
+                settings.AutoRegisterComponents();
+            var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
+            var componentTypes = exportedTypes
+                .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
+            return componentTypes;
         }
     }
 }
