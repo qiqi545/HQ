@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace Blowdart.UI.Internal
 {
@@ -9,21 +11,20 @@ namespace Blowdart.UI.Internal
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public InvokeUiData(IServiceProvider serviceProvider)
+        public InvokeUiData(IServiceProvider serviceProvider, IEnumerable<Assembly> fallbackAssemblies)
         {
-            _serviceProvider = serviceProvider;
+            _serviceProvider = new NoContainer(serviceProvider, fallbackAssemblies);
         }
 
         public override TModel GetModel<TService, TModel>(string methodName)
         {
-            return GetModel<TService>(methodName) as TModel;
-        }
+            var serviceType = typeof(TService);
+            var service = _serviceProvider.GetService(serviceType);
+            if (service == null)
+                return default;
 
-        public override object GetModel<TService>(string methodName)
-        {
-            var service = _serviceProvider.GetService(typeof(TService));
-            var model = service?.GetType().ExecuteMethod(methodName);
-            return model;
+            var model = service.ExecuteMethod(methodName);
+            return model as TModel;
         }
     }
 }

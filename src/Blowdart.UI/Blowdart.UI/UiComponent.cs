@@ -19,7 +19,7 @@ namespace Blowdart.UI
             {
                 var modelType = componentType.BaseType.GetGenericArguments()[0];
                 var getMethod = new Func<MethodInfo>(() => componentType.GetMethod(nameof(Render), new[] { typeof(Ui), modelType }));
-                TypeExtensions.ExecuteMethod(componentType, $"{componentType.Name}_{nameof(Render)}_{modelType.Name}", this, getMethod, ui, model);
+                TypeExtensions.ExecuteMethodFunction(this, $"{componentType.Name}_{nameof(Render)}_{modelType.Name}", getMethod, ui, model);
             }
             else
             {

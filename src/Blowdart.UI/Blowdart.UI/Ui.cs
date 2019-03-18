@@ -19,9 +19,11 @@ namespace Blowdart.UI
         {
             _serviceProvider = serviceProvider;
             System = serviceProvider.GetRequiredService<UiSystem>();
+            Data = serviceProvider.GetRequiredService<UiData>();
         }
 
         internal UiSystem System { get; }
+        internal UiData Data { get; set; }
 
         public static Ui CreateNew(IServiceProvider serviceProvider)
         {
@@ -66,8 +68,11 @@ namespace Blowdart.UI
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
         }
 
-        public void Component<TComponent, TModel>(TModel model) where TComponent : UiComponent<TModel>
+        public void Component<TComponent, TService, TModel>() 
+            where TComponent : UiComponent<TModel>
+            where TModel : class
         {
+            var model = Data.GetModel<TService, TModel>("Default");
             var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {

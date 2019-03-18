@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Blowdart, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Blowdart.UI.Internal.Execution;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Blowdart.UI.Internal.Execution;
 
 namespace Blowdart.UI.Internal
 {
@@ -28,7 +28,7 @@ namespace Blowdart.UI.Internal
             {
                 var methodByName = type.GetMethod(name);
                 if (methodByName == null)
-                    throw new ArgumentException($"No getMethod on type '{type.FullName}' named '{name}'.");
+                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
                 map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
             }
 
@@ -38,15 +38,35 @@ namespace Blowdart.UI.Internal
             return executor.Execute(instance, args);
         }
 
-        public static object ExecuteMethod(Type instanceType, string cacheKey, object instance, Func<MethodInfo> getMethod, params object[] args)
+        public static object ExecuteMethod(this object instanceOfType, string name, params object[] args)
         {
-            if (!Lookup.TryGetValue(instanceType, out var map))
-                Lookup.Add(instanceType, map = new Dictionary<string, ObjectMethodExecutor>());
+            var type = instanceOfType.GetType();
+
+            if (!Lookup.TryGetValue(type, out var map))
+                Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
+
+            if (!map.TryGetValue(name, out var executor))
+            {
+                var methodByName = type.GetMethod(name);
+                if (methodByName == null)
+                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
+                map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
+            }
+            
+            return executor.Execute(instanceOfType, args);
+        }
+
+        public static object ExecuteMethodFunction(this object instanceOfType, string cacheKey, Func<MethodInfo> getMethod, params object[] args)
+        {
+            var type = instanceOfType.GetType();
+
+            if (!Lookup.TryGetValue(type, out var map))
+                Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
             
             if (!map.TryGetValue(cacheKey, out var executor))
-                map.Add(cacheKey, executor = ObjectMethodExecutor.Create(getMethod(), instanceType.GetTypeInfo()));
+                map.Add(cacheKey, executor = ObjectMethodExecutor.Create(getMethod(), type.GetTypeInfo()));
 
-            return executor.Execute(instance, args);
+            return executor.Execute(instanceOfType, args);
         }
     }
 }

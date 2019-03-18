@@ -21,13 +21,20 @@ namespace Blowdart.UI
             {
                 var settings = new UiSettings(r);
                 Settings?.Invoke(settings);
+
+                if (settings.ComponentAssemblies == null)
+                    settings.AutoRegisterComponentAssemblies();
+
                 if (settings.System == null)
                     settings.System = Activator.CreateInstance<TSystem>();
-                if(settings.Data == null)
-                    settings.Data = new InvokeUiData(r);
+
+                if (settings.Data == null)
+                    settings.Data = new InvokeUiData(r, settings.ComponentAssemblies);
+
                 return settings;
             });
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().System);
+            services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
             services.AddSingleton(r => new LayoutRoot(r));
             services.AddSingleton(r =>
             {
@@ -55,8 +62,6 @@ namespace Blowdart.UI
         private static IEnumerable<Type> ResolveComponentTypes(IServiceProvider r)
         {
             var settings = r.GetRequiredService<UiSettings>();
-            if (settings.ComponentAssemblies == null)
-                settings.AutoRegisterComponentAssemblies();
             var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
             var componentTypes = exportedTypes
                 .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
