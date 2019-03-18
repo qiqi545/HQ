@@ -28,22 +28,22 @@ namespace Blowdart.UI
 
         #region Components
 
-        public void Component(string name)
+        public void Component(string name, dynamic model = null)
         {
             var components = _serviceProvider.GetRequiredService<Dictionary<string, UiComponent>>();
             if (components.TryGetValue(name, out var component))
-                component.Render(this);
+                component.Render(this, model);
             else
                 Error($"MISSING COMPONENT '{name}'");
         }
 
-        public void Component<T>() where T : UiComponent
+        public void Component<TComponent>(dynamic model = null) where TComponent : UiComponent
         {
             var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
-            if (components.TryGetValue(typeof(T), out var component))
-                component.Render(this);
+            if (components.TryGetValue(typeof(TComponent), out var component))
+                component.Render(this, model);
             else
-                Error($"MISSING COMPONENT TYPE '{typeof(T).Name}'");
+                Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
         }
 
         #endregion

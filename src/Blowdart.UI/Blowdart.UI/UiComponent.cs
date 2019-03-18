@@ -6,6 +6,7 @@ namespace Blowdart.UI
     public abstract class UiComponent
     {
         public virtual string Name => null;
-        public abstract void Render(Ui ui);
+        public virtual void Render(Ui ui) { Render(ui, null); }
+        public abstract void Render(Ui ui, dynamic model);
     }
 }

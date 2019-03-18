@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Blowdart, Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Blowdart.UI.Internal.Execution;
@@ -16,7 +19,7 @@ namespace Blowdart.UI.Internal
             Instances = new Dictionary<Type, object>();
         }
 
-        public static void ExecuteMethod(this Type type, string name, params object[] args)
+        public static object ExecuteMethod(this Type type, string name, params object[] args)
         {
             if (!Lookup.TryGetValue(type, out var map))
                 Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
@@ -30,7 +33,7 @@ namespace Blowdart.UI.Internal
             }
             if(!Instances.TryGetValue(type, out var instance))
                 Instances.Add(type, instance = Activator.CreateInstance(type));
-            executor.Execute(instance, args);
+            return executor.Execute(instance, args);
         }
     }
 }
