@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Blowdart.UI.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Blowdart.UI
@@ -22,6 +23,8 @@ namespace Blowdart.UI
                 Settings?.Invoke(settings);
                 if (settings.System == null)
                     settings.System = Activator.CreateInstance<TSystem>();
+                if(settings.Data == null)
+                    settings.Data = new InvokeUiData(r);
                 return settings;
             });
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().System);
@@ -53,7 +56,7 @@ namespace Blowdart.UI
         {
             var settings = r.GetRequiredService<UiSettings>();
             if (settings.ComponentAssemblies == null)
-                settings.AutoRegisterComponents();
+                settings.AutoRegisterComponentAssemblies();
             var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
             var componentTypes = exportedTypes
                 .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));

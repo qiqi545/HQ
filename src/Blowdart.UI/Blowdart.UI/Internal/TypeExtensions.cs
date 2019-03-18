@@ -28,11 +28,24 @@ namespace Blowdart.UI.Internal
             {
                 var methodByName = type.GetMethod(name);
                 if (methodByName == null)
-                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
+                    throw new ArgumentException($"No getMethod on type '{type.FullName}' named '{name}'.");
                 map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
             }
-            if(!Instances.TryGetValue(type, out var instance))
+
+            if (!Instances.TryGetValue(type, out var instance))
                 Instances.Add(type, instance = Activator.CreateInstance(type));
+
+            return executor.Execute(instance, args);
+        }
+
+        public static object ExecuteMethod(Type instanceType, string cacheKey, object instance, Func<MethodInfo> getMethod, params object[] args)
+        {
+            if (!Lookup.TryGetValue(instanceType, out var map))
+                Lookup.Add(instanceType, map = new Dictionary<string, ObjectMethodExecutor>());
+            
+            if (!map.TryGetValue(cacheKey, out var executor))
+                map.Add(cacheKey, executor = ObjectMethodExecutor.Create(getMethod(), instanceType.GetTypeInfo()));
+
             return executor.Execute(instance, args);
         }
     }

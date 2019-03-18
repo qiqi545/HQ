@@ -10,4 +10,12 @@ namespace Blowdart.UI.Web
             return Attributes.Attr(attr);
         }
     }
+
+    public abstract class HtmlComponent<TModel> : UiComponent<TModel>
+    {
+        public static Attributes Attr(object attr)
+        {
+            return Attributes.Attr(attr);
+        }
+    }
 }

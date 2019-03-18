@@ -19,9 +19,10 @@ namespace Blowdart.UI
 
         public string Title { get; set; }
         public UiSystem System { get; set; }
+        public UiData Data { get; set; }
         public Assembly[] ComponentAssemblies { get; set; }
 
-        public void AutoRegisterComponents()
+        public void AutoRegisterComponentAssemblies()
         {
             var list = new List<Assembly>();
             if(ComponentAssemblies != null)
