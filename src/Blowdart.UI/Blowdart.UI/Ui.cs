@@ -3,11 +3,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
-using Blowdart.UI.Internal;
 
 namespace Blowdart.UI
 {
@@ -72,7 +70,7 @@ namespace Blowdart.UI
             where TComponent : UiComponent<TModel>
             where TModel : class
         {
-            var model = Data.GetModel<TService, TModel>("Default");
+            var model = Data.GetModel<TService, TModel>(nameof(LayoutRoot.Default));
             var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {

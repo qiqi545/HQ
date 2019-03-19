@@ -5,6 +5,7 @@ namespace Blowdart.UI
 {
     public abstract class UiData
     {
-        public abstract TModel GetModel<TService, TModel>(string methodName) where TModel : class;
+        public abstract TModel GetModel<TService, TModel>(string template);
+        public abstract object GetModel<TService>(string template);
     }
 }

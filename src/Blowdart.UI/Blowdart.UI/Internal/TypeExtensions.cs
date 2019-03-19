@@ -4,6 +4,7 @@
 using Blowdart.UI.Internal.Execution;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Blowdart.UI.Internal
@@ -21,15 +22,13 @@ namespace Blowdart.UI.Internal
 
         public static object ExecuteMethod(this Type type, string name, params object[] args)
         {
-            if (!Lookup.TryGetValue(type, out var map))
-                Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
+            var executor = GetExecutor(type, name, args);
 
-            if (!map.TryGetValue(name, out var executor))
+            if (!SameMethodParameters(executor, args))
             {
-                var methodByName = type.GetMethod(name);
-                if (methodByName == null)
-                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
-                map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
+                throw new InvalidOperationException(
+                    $"The intended method was '{name}({string.Join(", ", args.Select(x => x.GetType().Name))})' but " +
+                    $"the provided instance's method is '{name}({string.Join(", ", executor.MethodParameters.Select(x => x.ParameterType.Name))})' ");
             }
 
             if (!Instances.TryGetValue(type, out var instance))
@@ -40,8 +39,20 @@ namespace Blowdart.UI.Internal
 
         public static object ExecuteMethod(this object instanceOfType, string name, params object[] args)
         {
-            var type = instanceOfType.GetType();
+            var executor = GetExecutor(instanceOfType.GetType(), name, args);
 
+            if (!SameMethodParameters(executor, args))
+            {
+                throw new InvalidOperationException(
+                    $"The expected method was '{name}({string.Join(", ", args.Select(x => x.GetType().Name))})' but " +
+                    $"the actual method is '{name}({string.Join(", ", executor.MethodParameters.Select(x => x.ParameterType.Name))})' ");
+            }
+            
+            return executor.Execute(instanceOfType, args);
+        }
+
+        public static ObjectMethodExecutor GetExecutor(this Type type, string name, params object[] args)
+        {
             if (!Lookup.TryGetValue(type, out var map))
                 Lookup.Add(type, map = new Dictionary<string, ObjectMethodExecutor>());
 
@@ -52,8 +63,31 @@ namespace Blowdart.UI.Internal
                     throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
                 map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
             }
-            
-            return executor.Execute(instanceOfType, args);
+
+            return executor;
+        }
+
+        public static bool SameMethodParameters(this ObjectMethodExecutor executor, object[] args)
+        {
+            if (executor.MethodParameters.Length != args.Length)
+                return false;
+
+            for (var i = 0; i < args.Length; i++)
+            {
+                var arg = args[i];
+                if (arg == null)
+                    continue;
+
+                var expected = arg.GetType();
+                var actual = executor.MethodParameters[i].ParameterType;
+                if (actual.IsInterface && actual.IsAssignableFrom(expected))
+                    continue; // we have an implementation of the interface
+
+                if (expected != actual)
+                    return false;
+            }
+
+            return true;
         }
 
         public static object ExecuteMethodFunction(this object instanceOfType, string cacheKey, Func<MethodInfo> getMethod, params object[] args)

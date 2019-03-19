@@ -23,5 +23,29 @@ namespace Blowdart.UI
             Root = view;
             return this;
         }
+
+        public void Default<TService>(Action<Ui, dynamic> view)
+        {
+            Root = ui =>
+            {
+                view(ui, ui.Data.GetModel<TService>(nameof(Default)));
+            };
+        }
+
+        public void Default<TService, TModel>(Action<Ui, TModel> view) where TModel : class
+        {
+            Root = ui =>
+            {
+                view(ui, ui.Data.GetModel<TService, TModel>(nameof(Default)));
+            };
+        }
+
+        public void Template<TService>(string template, Action<Ui, dynamic> view)
+        {
+            Root = ui =>
+            {
+                view(ui, ui.Data.GetModel<TService>(template));
+            };
+        }
     }
 }

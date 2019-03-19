@@ -17,5 +17,11 @@ namespace Blowdart.UI
         {
             Trace.WriteLine($"UI error: {errorMessage} {(exception == null ? "" : $"{exception}")}");
         }
+
+        public virtual void PopulateAction(UiAction action, IServiceProvider serviceProvider, string template, object target)
+        {
+            action.MethodName = template;
+            action.Arguments = null;
+        }
     }
 }
