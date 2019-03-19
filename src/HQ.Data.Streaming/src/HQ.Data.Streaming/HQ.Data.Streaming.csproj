@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -8,16 +8,6 @@
     <TargetFramework>netstandard20</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>Power tools for data stream processing in .NET.</Description>
-    <PackageTags>hq-stack flat-file delimited-files tsv csv files fixed-length import export etl-framework data dotnet-standard</PackageTags>
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Package|AnyCPU'">
-    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <ItemGroup>
