@@ -4,7 +4,6 @@
 using System;
 using System.IO;
 using System.Linq.Expressions;
-using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +34,12 @@ namespace Blowdart.UI.Web
         {
             if (Standalone)
             {
+                services.AddRouting(options =>
+                {
+                    options.LowercaseUrls = true;
+                    options.LowercaseQueryStrings = true;
+                    options.AppendTrailingSlash = true;
+                });
                 services.AddCors(o => o.AddDefaultPolicy(builder =>
                 {
                     builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
