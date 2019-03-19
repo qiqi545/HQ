@@ -28,6 +28,7 @@ namespace Blowdart.UI.Web
         {
             AddUiResources(services, env, uiAssemblies);
 
+            services.AddHttpContextAccessor();
             services.AddSignalR(o => { });
 
             UiConfig.Initialize<HtmlSystem>(services);
