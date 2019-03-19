@@ -28,6 +28,7 @@ namespace HQ.Data.Streaming.Fields
         public bool Initialized => _buffer != null;
         public bool? Value => Initialized ? TryConvertValue() : default;
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+        public int Length => _buffer.Length;
 
         private bool? TryConvertValue()
         {

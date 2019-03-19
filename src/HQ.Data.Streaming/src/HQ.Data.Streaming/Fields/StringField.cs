@@ -27,6 +27,7 @@ namespace HQ.Data.Streaming.Fields
         public bool Initialized => _buffer != null;
         public string Value => RawValue;
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+        public int Length => _buffer.Length;
 
         private readonly unsafe byte* _start;
         private readonly int _length;

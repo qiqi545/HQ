@@ -25,12 +25,9 @@ namespace HQ.Data.Streaming.Fields
     public readonly ref struct CharField
     {
         public bool Initialized => _buffer != null;
-
-        public char? Value => Initialized
-            ? !char.TryParse(_encoding.GetString(_buffer), out var value) ? default(char?) : value
-            : default;
-
+        public char? Value => Initialized ? !char.TryParse(_encoding.GetString(_buffer), out var value) ? default(char?) : value : default; 
         public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+        public int Length => _buffer.Length;
 
         private readonly Encoding _encoding;
         private readonly ReadOnlySpan<byte> _buffer;

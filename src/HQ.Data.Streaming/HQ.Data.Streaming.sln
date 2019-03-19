@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.CodeGeneratio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\..\HQ.Common\src\HQ.Common\HQ.Common.csproj", "{B158EBCB-D1C2-4BC3-A9C5-10F282BE3C34}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastMember", "..\..\..\..\_FORKS\fast-member\FastMember\FastMember.csproj", "{29FA12FF-EB78-425A-A94A-CEF980D489C1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,12 @@ Global
 		{B158EBCB-D1C2-4BC3-A9C5-10F282BE3C34}.Package|Any CPU.Build.0 = Release|Any CPU
 		{B158EBCB-D1C2-4BC3-A9C5-10F282BE3C34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B158EBCB-D1C2-4BC3-A9C5-10F282BE3C34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +103,7 @@ Global
 		{BEC0E1A9-BD83-487B-B4AB-504BD6878B02} = {E4F423C8-8C79-4E1B-AD0A-2F3AFE870832}
 		{8F5FE210-55CB-4BCC-839A-6A8BB585161D} = {E4F423C8-8C79-4E1B-AD0A-2F3AFE870832}
 		{B158EBCB-D1C2-4BC3-A9C5-10F282BE3C34} = {E4F423C8-8C79-4E1B-AD0A-2F3AFE870832}
+		{29FA12FF-EB78-425A-A94A-CEF980D489C1} = {E4F423C8-8C79-4E1B-AD0A-2F3AFE870832}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA486866-52F3-4D4C-B1DD-5A2E837EB1A4}
