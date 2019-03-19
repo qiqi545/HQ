@@ -1,7 +1,7 @@
-Location: https://github.com/aspnet/Extensions/blob/34204b6bc41de865f5310f5f237781a57a83976c/src/Shared/src/ObjectMethodExecutor/ObjectMethodExecutor.cs
+Location: https://github.com/danielcrenna/Tavis.UriTemplates/tree/2575dc8fbd55e5bcc49d6acf07eb3ebfac1161c8
 License: Apache 2.0
 
-   Copyright (c) .NET Foundation and Contributors
+   Copyright 2012 Tavis Software Inc.
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
