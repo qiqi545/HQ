@@ -20,32 +20,41 @@ namespace Blowdart.UI
 
         public LayoutRoot Default(Action<Ui> view)
         {
+            return Template(nameof(Default), view);
+        }
+
+        public LayoutRoot Default<TService>(Action<Ui, dynamic> view)
+        {
+            return Template<TService>(nameof(Default), view);
+        }
+
+        public LayoutRoot Default<TService, TModel>(Action<Ui, TModel> view) where TModel : class
+        {
+            return Template<TService, TModel>(nameof(Default), view);
+        }
+
+        public LayoutRoot Template(string template, Action<Ui> view)
+        {
             Root = view;
             return this;
         }
 
-        public void Default<TService>(Action<Ui, dynamic> view)
-        {
-            Root = ui =>
-            {
-                view(ui, ui.Data.GetModel<TService>(nameof(Default)));
-            };
-        }
-
-        public void Default<TService, TModel>(Action<Ui, TModel> view) where TModel : class
-        {
-            Root = ui =>
-            {
-                view(ui, ui.Data.GetModel<TService, TModel>(nameof(Default)));
-            };
-        }
-
-        public void Template<TService>(string template, Action<Ui, dynamic> view)
+        public LayoutRoot Template<TService>(string template, Action<Ui, dynamic> view)
         {
             Root = ui =>
             {
                 view(ui, ui.Data.GetModel<TService>(template));
             };
+            return this;
+        }
+
+        public LayoutRoot Template<TService, TModel>(string template, Action<Ui, TModel> view) where TModel : class
+        {
+            Root = ui =>
+            {
+                view(ui, ui.Data.GetModel<TService, TModel>(template));
+            };
+            return this;
         }
     }
 }
