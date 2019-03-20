@@ -43,6 +43,11 @@ namespace Blowdart.UI.Web
             ui.EndElement(el);
         }
 
+        public static void Element(this Ui ui, string el, Attributes attr = null, Action<Ui> action = null)
+        {
+            ui.Element(el, attr, () => action?.Invoke(ui));
+        }
+
         public static void EndElement(this Ui ui, string el)
         {
             if (Elements.Count == 0)
@@ -99,6 +104,11 @@ namespace Blowdart.UI.Web
             ui.Element("div", attr, action);
         }
 
+        public static void Div(this Ui ui, Attributes attr, Action<Ui> action)
+        {
+            ui.Element("div", attr, action);
+        }
+
         public static void Div(this Ui ui, string innerText, Attributes attr = null)
         {
             ui.Element("div", innerText, attr);
@@ -119,6 +129,11 @@ namespace Blowdart.UI.Web
         }
 
         public static void Span(this Ui ui, Attributes attr = null, Action action = null)
+        {
+            ui.Element("span", attr, action);
+        }
+
+        public static void Span(this Ui ui, Attributes attr = null, Action<Ui> action = null)
         {
             ui.Element("span", attr, action);
         }
@@ -147,6 +162,11 @@ namespace Blowdart.UI.Web
             ui.Element("p", attr, action);
         }
 
+        public static void P(this Ui ui, Attributes attr = null, Action<Ui> action = null)
+        {
+            ui.Element("p", attr, action);
+        }
+
         public static void P(this Ui ui, string innerText, Attributes attr = null)
         {
             ui.Element("p", innerText, attr);
@@ -167,6 +187,11 @@ namespace Blowdart.UI.Web
         }
 
         public static void A(this Ui ui, Attributes attr = null, Action action = null)
+        {
+            ui.Element("a", attr, action);
+        }
+
+        public static void A(this Ui ui, Attributes attr = null, Action<Ui> action = null)
         {
             ui.Element("a", attr, action);
         }
@@ -195,6 +220,11 @@ namespace Blowdart.UI.Web
             ui.Element("img", attr, action);
         }
 
+        public static void Img(this Ui ui, Attributes attr = null, Action<Ui> action = null)
+        {
+            ui.Element("img", attr, action);
+        }
+
         public static void Img(this Ui ui, string innerText, Attributes attr = null)
         {
             ui.Element("img", innerText, attr);
@@ -215,6 +245,11 @@ namespace Blowdart.UI.Web
         }
 
         public static void H(this Ui ui, byte level, Attributes attr = null, Action action = null)
+        {
+            ui.Element($"h{level}", attr, action);
+        }
+
+        public static void H(this Ui ui, byte level, Attributes attr = null, Action<Ui> action = null)
         {
             ui.Element($"h{level}", attr, action);
         }
@@ -243,6 +278,11 @@ namespace Blowdart.UI.Web
             ui.Element("pre", attr, action);
         }
 
+        public static void Pre(this Ui ui, Attributes attr = null, Action<Ui> action = null)
+        {
+            ui.Element("pre", attr, action);
+        }
+
         public static void Pre(this Ui ui, string innerText, Attributes attr = null)
         {
             ui.Element("pre", innerText, attr);
@@ -259,7 +299,17 @@ namespace Blowdart.UI.Web
             ui.Div(Attributes.Attr(new { @class }), action);
         }
 
+        public static void Div(this Ui ui, string @class, Action<Ui> action)
+        {
+            ui.Div(Attributes.Attr(new { @class }), action);
+        }
+
         public static void Div(this Ui ui, string @class, Attributes attr, Action action)
+        {
+            ui.Div(Attributes.Attr(new { @class }, attr), action);
+        }
+
+        public static void Div(this Ui ui, string @class, Attributes attr, Action<Ui> action)
         {
             ui.Div(Attributes.Attr(new { @class }, attr), action);
         }
@@ -269,7 +319,17 @@ namespace Blowdart.UI.Web
             ui.Div(Attributes.Attr(new { href }), action);
         }
 
+        public static void A(this Ui ui, string href, Action<Ui> action)
+        {
+            ui.Div(Attributes.Attr(new { href }), action);
+        }
+
         public static void A(this Ui ui, string href, string @class, Action action = null)
+        {
+            ui.A(Attributes.Attr(new { href, @class }), action);
+        }
+
+        public static void A(this Ui ui, string href, string @class, Action<Ui> action)
         {
             ui.A(Attributes.Attr(new { href, @class }), action);
         }
@@ -279,7 +339,17 @@ namespace Blowdart.UI.Web
             ui.Img(Attributes.Attr(new { src }), action);
         }
 
+        public static void Img(this Ui ui, string src, Action<Ui> action)
+        {
+            ui.Img(Attributes.Attr(new { src }), action);
+        }
+
         public static void Img(this Ui ui, string src, string @class, Action action = null)
+        {
+            ui.Img(Attributes.Attr(new { src, @class }), action);
+        }
+
+        public static void Img(this Ui ui, string src, string @class, Action<Ui> action)
         {
             ui.Img(Attributes.Attr(new { src, @class }), action);
         }
