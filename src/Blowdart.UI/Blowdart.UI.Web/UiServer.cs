@@ -82,6 +82,28 @@ namespace Blowdart.UI.Web
             Start(args, filePath);
         }
 
+        public static void Start<TStartup, TService, TComponent>(string[] args) where TComponent : UiComponent
+        {
+            Start<TStartup>(args, site =>
+            {
+                site.Default<TService>((ui, model) =>
+                {
+                    ui.Component<TComponent>(model);
+                });
+            });
+        }
+
+        public static void Start<TStartup, TService, TComponent, TModel>(string[] args) where TComponent : UiComponent<TModel>
+        {
+            Start<TStartup>(args, site =>
+            {
+                site.Default<TService>((ui, model) =>
+                {
+                    ui.Component<TComponent>(model);
+                });
+            });
+        }
+
         public static void Start(string[] args, Action<LayoutRoot> layout)
         {
             _layout = layout;
