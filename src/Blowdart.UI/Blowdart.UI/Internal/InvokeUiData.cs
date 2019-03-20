@@ -39,7 +39,7 @@ namespace Blowdart.UI.Internal
 
             try
             {
-                settings.System.PopulateAction(action, _autoResolver, template, target);
+                settings.System.PopulateAction(settings, action, _autoResolver, template, target);
 
                 return action.Arguments == null
                     ? target.ExecuteMethod(action.MethodName)
@@ -47,6 +47,8 @@ namespace Blowdart.UI.Internal
             }
             finally
             {
+                action.Arguments = null;
+                action.MethodName = null;
                 ActionPool.Return(action);
             }
         }

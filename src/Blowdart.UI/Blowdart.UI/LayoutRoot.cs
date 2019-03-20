@@ -18,7 +18,7 @@ namespace Blowdart.UI
 
         public LayoutRoot Default(Action<Ui> view)
         {
-            return Template(nameof(Default), view);
+            return Template("/", view);
         }
 
         public LayoutRoot Default<TService>(Action<Ui, dynamic> view)

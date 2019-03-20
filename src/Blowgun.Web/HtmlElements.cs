@@ -33,7 +33,7 @@ namespace Blowgun.Web
         {
             var id = ui.NextIdHash;
             _html.Dom.AppendTag(el, id, text);
-            _html.Scripts.AppendClick(id);
+            _html.Scripts.AppendEvent("click", id);
             return ui.Clicked.Contains(id);
         }
     }

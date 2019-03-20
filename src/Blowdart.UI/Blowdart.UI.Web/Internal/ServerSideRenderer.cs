@@ -62,13 +62,20 @@ namespace Blowdart.UI.Web.Internal
                     throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
                 const string titleSlug = "<title></title>";
-                var domSlug = $"<div id=\"{options.BodyElementId}\">";
-                var scriptSlug = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">function initUi() {{ ";
+                var bodySlug = $"<div id=\"{options.BodyElementId}\">";
+                var scriptOpen = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">";
+                var scriptClose = "</script>";
+                var scriptSlug = scriptOpen + scriptClose;
+
+#if DEBUG
+                if (!template.Contains(bodySlug) || !template.Contains(scriptSlug))
+                    throw new Exception();
+#endif
 
                 html = template
                         .Replace(titleSlug, $"<title>{settings.Title}</title>")
-                        .Replace($"<div id=\"{options.BodyElementId}\">", domSlug + system.RenderDom)
-                        .Replace(scriptSlug, scriptSlug + system.RenderScripts)
+                        .Replace(bodySlug, bodySlug + system.RenderDom)
+                        .Replace(scriptSlug, scriptOpen + "function initUi() {" + system.RenderScripts + "};" + scriptClose)
                         .Replace("<!-- STYLES -->", system.StylesSection())
                         .Replace("<!-- SCRIPTS -->", system.ScriptsSection())
                     ;

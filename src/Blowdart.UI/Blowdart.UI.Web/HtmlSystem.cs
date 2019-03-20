@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web
 {
@@ -55,10 +56,11 @@ namespace Blowdart.UI.Web
             return "<!-- STYLES -->";
         }
 
-        public override void PopulateAction(UiAction action, IServiceProvider serviceProvider, string template, object target)
+        public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target)
         {
             var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-
+            var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
+            
             var uriTemplate = new UriTemplate(template);
             var request = http.HttpContext.Request;
             var requestUri = new Uri(request.GetEncodedUrl(), UriKind.Absolute);
@@ -78,18 +80,12 @@ namespace Blowdart.UI.Web
 
             //
             // Routing:
-            string methodName;
-            if (requestUri.Segments.Length == 1 && requestUri.Segments[0] == "/")
-                methodName = nameof(LayoutRoot.Default);
-            else
-                methodName = requestUri.Segments.FirstOrDefault();
-
-            action.MethodName = methodName;
+            action.MethodName = IsRootPath(requestUri, options) ? settings.DefaultMethodName : requestUri.Segments.FirstOrDefault();
 
             //
             // Parameter Resolution (does not overwrite):
             var parameterValues = parameters.Values.ToArray();
-            var executor = target.GetType().GetExecutor(methodName, parameterValues);
+            var executor = target.GetType().GetExecutor(action.MethodName, parameterValues);
             if (executor.SameMethodParameters(parameterValues))
             {
                 action.Arguments = parameterValues;
@@ -130,6 +126,12 @@ namespace Blowdart.UI.Web
                 arguments.Clear();
                 ArgumentsPool.Return(arguments);
             }
+        }
+
+        private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
+        {
+            return (requestUri.Segments.Length == 1 && requestUri.Segments[0] == "/") || 
+                   (requestUri.AbsolutePath == options.Value.HubPath);
         }
 
         private static string ParameterToHeader(string parameterName)

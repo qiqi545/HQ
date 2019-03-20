@@ -64,16 +64,10 @@ namespace Blowdart.UI.Web.Internal
             return sb.Append('/').Append(el).Append('>');
         }
 
-        public static StringBuilder AppendClick(this StringBuilder sb, Value128 id)
+        public static StringBuilder AppendEvent(this StringBuilder sb, string eventType, Value128 id)
         {
             sb.AppendLine();
-            return sb
-                .AppendLine($"document.getElementById('{id}').addEventListener('click', function(e) {{ ")
-                .AppendLine($"    ui.invoke('e', window.location.toString(), '{id}', 'click').catch(function (err) {{ ")
-                .AppendLine("        return console.error(err.toString()); ")
-                .AppendLine("    });")
-                .AppendLine("    e.preventDefault();")
-                .AppendLine("});");
+            return sb.AppendLine($"maybeAddListener(\"{id}\", \"click\", document.getElementById(\"{id}\")); ");
         }
     }
 }
