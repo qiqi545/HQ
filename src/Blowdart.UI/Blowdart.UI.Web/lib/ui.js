@@ -6,13 +6,11 @@ ui.start().then(function () { }).catch(function (e) {
     return c.error(e.toString());
 });
 ui.on("f", function (b, s) {
-    d.getElementById("ui-dom").innerHTML = b;
+    d.getElementById("ui-body").innerHTML = b;
     d.getElementById("ui-scripts").innerHTML = s;
 });
 ui.on("x", function (b, s) {
-    //window.setDOM(document, b);
-    d.getElementById("ui-dom").innerHTML = b;
-    d.getElementById("ui-scripts").innerHTML = s;
+    window.setDOM(document, b);
     initUi();
 });
 ui.on("l", function (id, e) {

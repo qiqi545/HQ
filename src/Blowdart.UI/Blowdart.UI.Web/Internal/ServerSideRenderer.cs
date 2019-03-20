@@ -30,7 +30,7 @@ namespace Blowdart.UI.Web.Internal
             }
             else
             {
-                foreach (var page in layout.Routes)
+                foreach (var page in layout.Handlers)
                 {
                     var pathString = new PathString(page.Key);
                     if (!pathString.StartsWithSegments(path))
@@ -42,16 +42,14 @@ namespace Blowdart.UI.Web.Internal
             }
         }
 
-        private static async Task Response(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template,
-            HttpContext context, UiServerOptions options, UiSettings settings)
+        private static async Task Response(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
         {
             var html = RenderToTarget(renderTarget, renderList, layout, template, options, settings);
 
             await WriteResponseAsync(html, context);
         }
 
-        private static string RenderToTarget(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template,
-            UiServerOptions options, UiSettings settings)
+        private static string RenderToTarget(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template, UiServerOptions options, UiSettings settings)
         {
             string html;
             if (options.UseServerSideRendering)
@@ -64,12 +62,12 @@ namespace Blowdart.UI.Web.Internal
                     throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
                 const string titleSlug = "<title></title>";
-                const string domSlug = "<div id=\"ui-dom\">";
-                const string scriptSlug = "<script type=\"text/javascript\" id=\"ui-scripts\">function initUi() { ";
+                var domSlug = $"<div id=\"{options.BodyElementId}\">";
+                var scriptSlug = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">function initUi() {{ ";
 
                 html = template
                         .Replace(titleSlug, $"<title>{settings.Title}</title>")
-                        .Replace(domSlug, domSlug + system.RenderDom)
+                        .Replace($"<div id=\"{options.BodyElementId}\">", domSlug + system.RenderDom)
                         .Replace(scriptSlug, scriptSlug + system.RenderScripts)
                         .Replace("<!-- STYLES -->", system.StylesSection())
                         .Replace("<!-- SCRIPTS -->", system.ScriptsSection())

@@ -11,6 +11,8 @@ namespace Blowdart.UI.Web
         public PathString LoggingPath { get; set; } = "/server/logs";
         public PathString TemplatePath { get; set; } = "/lib/index.html";
         public string ContentType { get; set; } = "text/html";
+        public string BodyElementId { get; set; } = "ui-body";
+        public string ScriptElementId { get; set; } = "ui-scripts";
         public bool UseServerSideRendering { get; set; } = true;
         public bool UseServerSideLogging { get; set; } = true;
         public ServerTransport MessagingModel { get; set; } = ServerTransport.All;
