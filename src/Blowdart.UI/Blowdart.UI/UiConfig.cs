@@ -38,21 +38,24 @@ namespace Blowdart.UI
             services.AddSingleton(r => new LayoutRoot(r));
             services.AddSingleton(r =>
             {
+                var settings = r.GetRequiredService<UiSettings>();
                 var componentTypes = ResolveComponentTypes(r);
-
+                var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
                 var byName = componentTypes
-                    .Select(x => (UiComponent) Activator.CreateInstance(x))
+                    .Select(x => autoResolver.GetService(x) as UiComponent ?? Activator.CreateInstance<UiComponent>())
                     .ToDictionary(k => k.Name ?? k.GetType().Name, StringComparer.OrdinalIgnoreCase);
 
                 return byName;
             });
             services.AddSingleton(r =>
             {
+                var settings = r.GetRequiredService<UiSettings>();
                 var componentTypes = ResolveComponentTypes(r);
-
-                var byType = componentTypes
-                    .ToDictionary(k => k, v => (UiComponent) Activator.CreateInstance(v));
-
+                var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+                var byType = componentTypes.ToDictionary(k => k, v =>
+                {
+                    return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Activator.CreateInstance<UiComponent>());
+                });
                 return byType;
             });
 

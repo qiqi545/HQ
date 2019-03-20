@@ -128,9 +128,22 @@ namespace Blowdart.UI.Web
 
         private static void StartServer(string[] args)
         {
+            Masthead();
             var builder = WebHost.CreateDefaultBuilder(args).UseStartup<UiServer>();
             var webHost = builder.Build();
             webHost.Run(); // <-- blocks thread
+        }
+
+        private static void Masthead()
+        {
+            // Credit: http://patorjk.com/software/taag/
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(@"Powered By:
+ __        __        __        __  ___         
+|__) |    /  \ |  | |  \  /\  |__)  |   |  | | 
+|__) |___ \__/ |/\| |__/ /~~\ |  \  |  .\__/ |                                               
+");
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
     }
 }

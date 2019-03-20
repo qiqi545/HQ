@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Internal.UriTemplates;
+using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +17,6 @@ namespace Blowdart.UI.Web
 {
     public class HtmlSystem : UiSystem
     {
-        private static readonly ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPool<StringBuilder>(new StringBuilderPooledObjectPolicy());
         private static readonly ObjectPool<List<object>> ArgumentsPool = new DefaultObjectPool<List<object>>(new DefaultPooledObjectPolicy<List<object>>());
 
         private string _dom;
@@ -32,8 +32,8 @@ namespace Blowdart.UI.Web
         {
             _dom = null;
             _scripts = null;
-            Dom = StringBuilderPool.Get();
-            Scripts = StringBuilderPool.Get();
+            Dom = StringBuilderHelper.Get();
+            Scripts = StringBuilderHelper.Get();
         }
 
         public override void End()
@@ -41,29 +41,10 @@ namespace Blowdart.UI.Web
             _dom = RenderDom;
             _scripts = RenderScripts;
 
-            StringBuilderPool.Return(Dom);
-            StringBuilderPool.Return(Scripts);
+            StringBuilderHelper.Return(Dom);
+            StringBuilderHelper.Return(Scripts);
         }
-
-        internal string BuildString(Action<StringBuilder> action)
-        {
-            var sb = StringBuilderPool.Get();
-            try
-            {
-                action(sb);
-                return sb.ToString();
-            }
-            finally
-            {
-                StringBuilderPool.Return(sb);
-            }
-        }
-
-        public override bool Button(Ui ui, string text)
-        {
-            throw new NotSupportedException("You must use a higher-order UI system, or raw DOM elements.");
-        }
-
+        
         public virtual string ScriptsSection()
         {
             return "<!-- SCRIPTS -->";
@@ -153,8 +134,7 @@ namespace Blowdart.UI.Web
 
         private static string ParameterToHeader(string parameterName)
         {
-            var sb = StringBuilderPool.Get();
-            try
+            return StringBuilderHelper.BuildString(sb =>
             {
                 foreach (var c in parameterName)
                 {
@@ -162,12 +142,7 @@ namespace Blowdart.UI.Web
                         sb.Append('-');
                     sb.Append(char.ToLowerInvariant(c));
                 }
-                return sb.ToString();
-            }
-            finally
-            {
-                StringBuilderPool.Return(sb);
-            }
+            });
         }
     }
 }

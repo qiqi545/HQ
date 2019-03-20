@@ -5,7 +5,7 @@ namespace Blowdart.UI.Web
 {
     public abstract class HtmlComponent : UiComponent
     {
-        public static Attributes Attr(object attr)
+        public Attributes Attr(object attr)
         {
             return Attributes.Attr(attr);
         }
@@ -13,7 +13,7 @@ namespace Blowdart.UI.Web
 
     public abstract class HtmlComponent<TModel> : UiComponent<TModel>
     {
-        public static Attributes Attr(object attr)
+        public Attributes Attr(object attr)
         {
             return Attributes.Attr(attr);
         }

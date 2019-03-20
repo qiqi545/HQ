@@ -11,8 +11,6 @@ namespace Blowdart.UI
         public abstract void Begin();
         public abstract void End();
 
-        public abstract bool Button(Ui ui, string text);
-
         public virtual void Error(string errorMessage, Exception exception = null)
         {
             Trace.WriteLine($"UI error: {errorMessage} {(exception == null ? "" : $"{exception}")}");

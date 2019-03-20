@@ -32,36 +32,36 @@ namespace Blowdart.UI
 
         public void Component(string name)
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<string, UiComponent>>();
+            var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
             if (components.TryGetValue(name, out var component))
-                component.Render(this);
+                component().Render(this);
             else
                 Error($"MISSING COMPONENT '{name}'");
         }
 
         public void Component(string name, dynamic model)
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<string, UiComponent>>();
+            var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
             if (components.TryGetValue(name, out var component))
-                component.Render(this, model);
+                component().Render(this, model);
             else
                 Error($"MISSING COMPONENT '{name}'");
         }
 
         public void Component<TComponent>() where TComponent : UiComponent
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
+            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
-                component.Render(this);
+                component().Render(this);
             else
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
         }
 
         public void Component<TComponent>(dynamic model) where TComponent : UiComponent
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
+            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
-                component.Render(this, model);
+                component().Render(this, model);
             else
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
         }
@@ -71,13 +71,13 @@ namespace Blowdart.UI
             where TModel : class
         {
             var model = Data.GetModel<TService, TModel>(nameof(LayoutRoot.Default));
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, UiComponent>>();
+            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {
                 if(component is UiComponent<TModel> typed)
                     typed.Render(this, model);
                 else
-                    component.Render(this, model);
+                    component().Render(this, model);
             }
             else
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
@@ -126,11 +126,6 @@ namespace Blowdart.UI
         #endregion
 
         #region System Forwards
-
-        public bool Button(string text)
-        {
-            return System.Button(this, text);
-        }
 
         public void Error(string errorMessage, Exception exception = null)
         {
