@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Internal.UriTemplates;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 
 namespace Blowdart.UI.Web
 {
@@ -28,13 +30,15 @@ namespace Blowdart.UI.Web
 
         public string RenderDom => _dom ?? Dom?.ToString();
         public string RenderScripts => _scripts ?? Scripts?.ToString();
+        public IDictionary<string, object> Request { get; private set; }
 
-        public override void Begin()
+        public override void Begin(IDictionary<string, object> context = null)
         {
             _dom = null;
             _scripts = null;
             Dom = StringBuilderHelper.Get();
             Scripts = StringBuilderHelper.Get();
+            Request = context;
         }
 
         public override void End()
@@ -44,6 +48,7 @@ namespace Blowdart.UI.Web
 
             StringBuilderHelper.Return(Dom);
             StringBuilderHelper.Return(Scripts);
+            Request.Clear();
         }
         
         public virtual string ScriptsSection()
@@ -61,21 +66,39 @@ namespace Blowdart.UI.Web
             var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
             
-            var uriTemplate = new UriTemplate(template);
+            var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
             var request = http.HttpContext.Request;
             var requestUri = new Uri(request.GetEncodedUrl(), UriKind.Absolute);
 
             //
             // URI Resolution:
-            var parameters = uriTemplate.GetParameters(requestUri) ?? new Dictionary<string, object>();
+            var templateParameters = uriTemplate.GetParameters(requestUri);
+
+            var parameters = templateParameters ?? 
+                             new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
             //
-            // Header Resolution (overwrites):
-            foreach (var parameterName in parameters.Keys)
+            // Header Resolution (overwrites URI):
+            if (request.Headers != null)
             {
-                var headerName = ParameterToHeader(parameterName);
-                if (request.Headers.TryGetValue(headerName, out var value))
-                    parameters[parameterName] = value;
+                foreach (var headerName in request.Headers.Keys)
+                {
+                    if (request.Headers.TryGetValue(headerName, out var value))
+                        parameters[headerName.Replace("-", string.Empty)] = value;
+                }
+            }
+
+            //
+            // Form Collection (overwrites headers):
+            if (request.HasFormContentType && request.Form != null)
+            {
+                foreach (var parameterName in request.Form.Keys)
+                {
+                    if (request.Form.TryGetValue(parameterName, out var value))
+                    {
+                        parameters[parameterName] = value;
+                    }
+                }
             }
 
             //
@@ -91,7 +114,6 @@ namespace Blowdart.UI.Web
                 action.Arguments = parameterValues;
                 return;
             }
-
             var arguments = ArgumentsPool.Get();
             try
             {
@@ -99,24 +121,32 @@ namespace Blowdart.UI.Web
                 {
                     if (parameters.TryGetValue(parameter.Name, out var argument))
                     {
-                        arguments.Add(argument);
+                        if (argument is StringValues multiString)
+                        {
+                            if (parameter.ParameterType == typeof(string))
+                            {
+                                arguments.Add(string.Join(",", multiString));
+                            }
+                            else
+                            {
+                                arguments.Add(multiString);
+                            }
+                        }
+                        else
+                        {
+                            arguments.Add(argument);
+                        }
+
                         continue;
                     }
 
-                    if (parameter.ParameterType.IsValueType || parameter.ParameterType == typeof(string))
+                    if (NotResolvableByContainer(parameter))
                     {
-                        //
-                        // Header/QueryString Resolution:
-                        var headerName = ParameterToHeader(parameter.Name);
-                        if (request.Headers.TryGetValue(headerName, out var value) || request.Query.TryGetValue(parameter.Name, out value))
-                            arguments.Add(value);
-                        else
-                            arguments.Add(null);
+                        arguments.Add(null);
+                        continue;
                     }
-                    else
-                    {
-                        arguments.Add(serviceProvider.GetService(parameter.ParameterType));
-                    }
+
+                    arguments.Add(serviceProvider.GetService(parameter.ParameterType));
                 }
 
                 action.Arguments = arguments.ToArray();
@@ -128,23 +158,41 @@ namespace Blowdart.UI.Web
             }
         }
 
-        private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
+        private static bool NotResolvableByContainer(ParameterInfo parameter)
         {
-            return (requestUri.Segments.Length == 1 && requestUri.Segments[0] == "/") || 
-                   (requestUri.AbsolutePath == options.Value.HubPath);
+            return parameter.ParameterType == typeof(string) || 
+                   parameter.ParameterType == typeof(StringValues) ||
+                   parameter.ParameterType == typeof(StringValues?) ||
+                   parameter.ParameterType == typeof(byte) ||
+                   parameter.ParameterType == typeof(byte?) ||
+                   parameter.ParameterType == typeof(bool) ||
+                   parameter.ParameterType == typeof(bool?) ||
+                   parameter.ParameterType == typeof(short) ||
+                   parameter.ParameterType == typeof(short?) ||
+                   parameter.ParameterType == typeof(int) ||
+                   parameter.ParameterType == typeof(int?) ||
+                   parameter.ParameterType == typeof(long) ||
+                   parameter.ParameterType == typeof(long?) ||
+                   parameter.ParameterType == typeof(float) ||
+                   parameter.ParameterType == typeof(float?) ||
+                   parameter.ParameterType == typeof(double) ||
+                   parameter.ParameterType == typeof(double?) ||
+                   parameter.ParameterType == typeof(decimal) ||
+                   parameter.ParameterType == typeof(decimal?) ||
+                   parameter.ParameterType == typeof(DateTime) ||
+                   parameter.ParameterType == typeof(DateTime?) ||
+                   parameter.ParameterType == typeof(DateTimeOffset) ||
+                   parameter.ParameterType == typeof(DateTimeOffset?) ||
+                   parameter.ParameterType == typeof(TimeSpan) ||
+                   parameter.ParameterType == typeof(TimeSpan?) ||
+                   parameter.ParameterType == typeof(Guid) ||
+                   parameter.ParameterType == typeof(Guid?);
         }
 
-        private static string ParameterToHeader(string parameterName)
+        private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
         {
-            return StringBuilderHelper.BuildString(sb =>
-            {
-                foreach (var c in parameterName)
-                {
-                    if (char.IsUpper(c))
-                        sb.Append('-');
-                    sb.Append(char.ToLowerInvariant(c));
-                }
-            });
+            return requestUri.Segments.Length == 1 && requestUri.Segments[0] == "/" || 
+                   requestUri.AbsolutePath == options.Value.HubPath;
         }
     }
 }

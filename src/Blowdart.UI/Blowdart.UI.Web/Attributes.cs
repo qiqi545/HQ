@@ -17,6 +17,8 @@ namespace Blowdart.UI.Web
             Inner = inner;
         }
 
+        private Attributes() { }
+
         public static Attributes Attr(object attr)
         {
             if(attr is string)
@@ -29,7 +31,12 @@ namespace Blowdart.UI.Web
 
         public static Attributes Attr(params object[] attr)
         {
-            var hash = Hash.FromAnonymousObject(attr[0], true);
+            if (attr.Length == 0)
+                return new Attributes();
+
+            var hash = attr[0] is Attributes full ? full.Inner :
+                attr[0] is null ? new Hash() : Hash.FromAnonymousObject(attr[0], true);
+
             for (var i = 1; i < attr.Length; i++)
             {
                 switch (attr[i])
@@ -49,6 +56,9 @@ namespace Blowdart.UI.Web
 
         private static Hash CreateHash(object attr)
         {
+            if (attr == null)
+                return new Hash();
+
             var type = attr.GetType();
 
             // We can't hash anonymous objects from external assemblies, they must be merged in.

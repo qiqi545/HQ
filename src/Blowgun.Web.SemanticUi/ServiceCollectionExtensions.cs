@@ -9,8 +9,9 @@ namespace Blowgun.Web.SemanticUi
     {
         public static IServiceCollection AddBlowgun(this IServiceCollection services)
         {
-            services.AddSingleton<Elements>(r => new SemanticUiElements(r));
-
+            services.AddTransient<Elements>(r => r.GetRequiredService<SemanticUiElements>());
+            services.AddTransient<HtmlElements>(r => r.GetRequiredService<SemanticUiElements>());
+            services.AddSingleton<SemanticUiElements>(r => new SemanticUiElements(r));
             return services;
         }
     }
