@@ -118,8 +118,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore.Mvc", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Logging", "..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj", "{C3297F4A-6098-4CE5-9151-FF63596C4955}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Runtime.Rest", "..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\HQ.Platform.Runtime.Rest.csproj", "{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FastMember", "..\..\..\_FORKS\fast-member\FastMember\FastMember.csproj", "{E721DF8E-C609-4162-928D-E0D74A4DB83F}"
 EndProject
 Global
@@ -447,12 +445,6 @@ Global
 		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Package|Any CPU.Build.0 = Package|Any CPU
 		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3297F4A-6098-4CE5-9151-FF63596C4955}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Package|Any CPU.ActiveCfg = Package|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Package|Any CPU.Build.0 = Package|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BB2EBB4-9EF5-4BCB-8760-E0AD82E65FA1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E721DF8E-C609-4162-928D-E0D74A4DB83F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E721DF8E-C609-4162-928D-E0D74A4DB83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E721DF8E-C609-4162-928D-E0D74A4DB83F}.Package|Any CPU.ActiveCfg = Debug|Any CPU

@@ -2,8 +2,6 @@
 using HQ.Data.Sql.DocumentDb;
 #elif (SqlServer)
 using HQ.Data.Sql.SqlServer;
-#elif (MySql)
-using HQ.Data.Sql.MySql;
 #else
 using HQ.Data.Sql.Sqlite;
 #endif
