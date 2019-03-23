@@ -16,13 +16,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 
-namespace HQ.Data.Sql.Queries.Rosetta
+namespace HQ.Data.Sql.Queries
 {
     public static class SortingBuilder
     {
@@ -35,14 +33,6 @@ namespace HQ.Data.Sql.Queries.Rosetta
                     $"r.{dialect.StartIdentifier}{a.Field}{dialect.EndIdentifier} {(a.Descending ? "DESC" : "ASC")}"));
 
             return $"ORDER BY {clauses}";
-        }
-
-        public static SortOptions OrderBy<T>(Expression<Func<IEnumerable<T>, IOrderedEnumerable<T>>> expression)
-        {
-            return SortByIdAscending.Value;
-
-            // http://stackoverflow.com/questions/41244/dynamic-linq-orderby-on-ienumerablet
-            throw new NotImplementedException();
         }
 
         private static SortOptions DefaultSort()

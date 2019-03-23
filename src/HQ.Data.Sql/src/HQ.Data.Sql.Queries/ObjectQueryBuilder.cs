@@ -21,7 +21,7 @@ using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 
-namespace HQ.Data.Sql.Queries.Rosetta
+namespace HQ.Data.Sql.Queries
 {
     public static class ObjectQueryBuilder
     {

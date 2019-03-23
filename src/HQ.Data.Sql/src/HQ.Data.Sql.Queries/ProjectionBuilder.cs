@@ -22,7 +22,7 @@ using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 
-namespace HQ.Data.Sql.Queries.Rosetta
+namespace HQ.Data.Sql.Queries
 {
     public static class ProjectionBuilder
     {
