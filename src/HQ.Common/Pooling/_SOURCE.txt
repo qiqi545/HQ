@@ -1,2 +1,0 @@
-﻿Location: https://github.com/dotnet/roslyn/tree/master/src/Dependencies/PooledObjects
-Commit: `8a34dfb2e06bdb4807c82419b5bb36e692967139`

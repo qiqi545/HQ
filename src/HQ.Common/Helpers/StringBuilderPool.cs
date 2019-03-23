@@ -17,24 +17,43 @@
 
 using System;
 using System.Text;
-using Microsoft.CodeAnalysis.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace HQ.Common.Helpers
 {
     public static class StringBuilderPool
     {
+        internal static readonly ObjectPool<StringBuilder> Pool =
+            new LeakTrackingObjectPool<StringBuilder>(new DefaultObjectPool<StringBuilder>(
+                new StringBuilderPooledObjectPolicy()
+                ));
+
         public static string Scoped(Action<StringBuilder> closure)
         {
-            var sb = PooledStringBuilder.GetInstance();
-            closure(sb);
-            return sb.ToStringAndFree();
+            var sb = Pool.Get();
+            try
+            {
+                closure(sb);
+                return sb.ToString();
+            }
+            finally
+            {
+                Pool.Return(sb);
+            }
         }
 
         public static string Scoped(Action<StringBuilder> closure, int startIndex, int length)
         {
-            var sb = PooledStringBuilder.GetInstance();
-            closure(sb);
-            return sb.ToStringAndFree(startIndex, length);
+            var sb = Pool.Get();
+            try
+            {
+                closure(sb);
+                return sb.ToString(startIndex, length);
+            }
+            finally
+            {
+                Pool.Return(sb);
+            }
         }
     }
 }

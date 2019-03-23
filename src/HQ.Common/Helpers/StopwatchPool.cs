@@ -17,19 +17,36 @@
 
 using System;
 using System.Diagnostics;
-using Microsoft.CodeAnalysis.PooledObjects;
+using Microsoft.Extensions.ObjectPool;
 
 namespace HQ.Common.Helpers
 {
     public static class StopwatchPool
     {
+        internal static ObjectPool<Stopwatch> Pool = new LeakTrackingObjectPool<Stopwatch>(
+            new DefaultObjectPool<Stopwatch>(new StopwatchPoolPolicy()));
+
         public static TimeSpan Scoped(Action<Stopwatch> closure)
         {
-            var sw = PooledStopwatch.StartInstance();
+            var sw = Pool.Get();
             closure(sw);
             var elapsed = sw.Elapsed;
-            sw.Free();
+            Pool.Return(sw);
             return elapsed;
+        }
+
+        private class StopwatchPoolPolicy : IPooledObjectPolicy<Stopwatch>
+        {
+            public Stopwatch Create()
+            {
+                return Stopwatch.StartNew();
+            }
+
+            public bool Return(Stopwatch obj)
+            {
+                obj.Reset();
+                return true;
+            }
         }
     }
 }
