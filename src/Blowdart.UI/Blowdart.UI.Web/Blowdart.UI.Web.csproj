@@ -17,12 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\_FORKS\fast-member\FastMember\FastMember.csproj" />
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.0.298" />
-    <PackageReference Include="FastMember" Version="1.4.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
