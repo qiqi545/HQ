@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.Helpers;
+using HQ.Common;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 
