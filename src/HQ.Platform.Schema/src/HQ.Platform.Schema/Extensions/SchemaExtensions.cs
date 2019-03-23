@@ -28,14 +28,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(ns ?? schema?.Self?.Namespace ?? Constants.Schema.DefaultNamespace);
-                var version = schema?.Self?.Version ?? 0;
-                if (version == 0)
-                {
-                    return;
-                }
-
-                sb.Append($".V{version}");
+                sb.Append(ns ?? schema?.Namespace ?? Constants.Schema.DefaultNamespace);
             });
         }
 
@@ -48,16 +41,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(ns ?? schema?.Self?.Namespace ?? Constants.Schema.DefaultNamespace);
-                if (schema?.Self?.Version != 0)
-                {
-                    var version = schema?.Self?.Version ?? 0;
-                    if (version != 0)
-                    {
-                        sb.Append(".V").Append(version);
-                    }
-                }
-
+                sb.Append(ns ?? schema?.Namespace ?? Constants.Schema.DefaultNamespace);
                 sb.Append('.').Append(schema.TypeString());
             });
         }
@@ -71,19 +55,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(schema?.Self?.Namespace ?? Constants.Schema.DefaultNamespace);
-                if (schema?.Self?.Version == 0)
-                {
-                    return;
-                }
-
-                var version = schema?.Self?.Version ?? 0;
-                if (version == 0)
-                {
-                    return;
-                }
-
-                sb.Append($".V{version}");
+                sb.Append(schema?.Namespace ?? Constants.Schema.DefaultNamespace);
             });
         }
 

@@ -24,9 +24,8 @@ using HQ.Platform.Schema.Extensions;
 namespace HQ.Platform.Schema.Models
 {
     [DebuggerDisplay("{" + nameof(DebuggerDisplayName) + "}")]
-    public class Schema : ISelfDescribingSchema
+    public class Schema
     {
-        public Self Self { get; set; }
         public SchemaType Type { get; set; } = SchemaType.Object;
         public IList<Property> Properties { get; set; } = new List<Property>();
         public IList<string> Values { get; } = new List<string>();
@@ -36,15 +35,15 @@ namespace HQ.Platform.Schema.Models
 
         [IgnoreDataMember] private string DebuggerDisplayName => this.FullTypeString();
 
-        public string Name { get; set; }
-
         #region ISelfDescribingSchema
 
-        public string Namespace => Self?.Namespace;
+        public string Namespace { get; set; }
 
-        public IDictionary<string, ISelfDescribingSchema> GetMap(string ns)
+        public string Name { get; set; }
+
+        public IDictionary<string, Schema> GetMap(string ns)
         {
-            return Scope.ToDictionary(k => k.Key, v => v.Value as ISelfDescribingSchema);
+            return Scope.ToDictionary(k => k.Key, v => v.Value);
         }
 
         #endregion
