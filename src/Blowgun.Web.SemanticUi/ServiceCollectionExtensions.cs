@@ -11,7 +11,7 @@ namespace Blowgun.Web.SemanticUi
         {
             services.AddTransient<Elements>(r => r.GetRequiredService<SemanticUiElements>());
             services.AddTransient<HtmlElements>(r => r.GetRequiredService<SemanticUiElements>());
-            services.AddSingleton<SemanticUiElements>(r => new SemanticUiElements(r));
+            services.AddSingleton(r => new SemanticUiElements(r));
             return services;
         }
     }
