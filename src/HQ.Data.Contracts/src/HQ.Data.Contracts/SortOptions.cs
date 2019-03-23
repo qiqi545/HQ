@@ -19,7 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using HQ.Common.Extensions;
+using HQ.Common;
 using HQ.Data.Contracts.Configuration;
 
 namespace HQ.Data.Contracts

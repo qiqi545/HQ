@@ -16,7 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Common.Helpers;
+using HQ.Common;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;

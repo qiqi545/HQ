@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Helpers;
+using HQ.Common;
 using HQ.Data.Sql.Dialects;
 
 namespace HQ.Data.Sql.Builders

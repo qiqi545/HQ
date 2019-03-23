@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using HQ.Common.Extensions;
+using HQ.Common;
 using HQ.Data.Contracts.Configuration;
 
 namespace HQ.Data.Contracts

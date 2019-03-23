@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Helpers;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;

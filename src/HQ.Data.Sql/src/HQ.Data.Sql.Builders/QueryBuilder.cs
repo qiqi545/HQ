@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using HQ.Common.Helpers;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 

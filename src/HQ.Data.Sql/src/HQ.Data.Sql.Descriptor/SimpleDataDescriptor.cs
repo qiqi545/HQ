@@ -24,7 +24,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
 using FastMember;
-using HQ.Common.Extensions;
+using HQ.Common;
 using HQ.Data.Sql.Descriptor.Attributes;
 
 namespace HQ.Data.Sql.Descriptor

@@ -18,8 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HQ.Common.Extensions;
-using HQ.Common.Helpers;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 

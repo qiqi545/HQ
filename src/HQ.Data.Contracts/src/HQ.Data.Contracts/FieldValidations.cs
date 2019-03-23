@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using FastMember;
-using HQ.Common.Extensions;
+using HQ.Common;
 
 namespace HQ.Data.Contracts
 {

@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HQ.Common;
-using HQ.Common.Helpers;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;

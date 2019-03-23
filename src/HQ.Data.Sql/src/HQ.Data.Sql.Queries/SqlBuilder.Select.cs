@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using HQ.Common.Helpers;
+using DotLiquid;
+using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
-using HQ.DotLiquid;
 
 namespace HQ.Data.Sql.Queries
 {

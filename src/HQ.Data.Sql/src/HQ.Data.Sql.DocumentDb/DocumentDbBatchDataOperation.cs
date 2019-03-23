@@ -23,7 +23,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Common.Models;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.SessionManagement.DocumentDb;
 using HQ.Data.Sql.Batching;
