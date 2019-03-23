@@ -16,19 +16,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
-    internal static class ClaimsExtensions
+    public class LocalServerTimestampService : IServerTimestampService
     {
-        public static void TryAddClaim(this List<Claim> claims, string type, string value,
-            string typeValue = ClaimValueTypes.String)
+        public DateTimeOffset GetCurrentTime()
         {
-            if (!string.IsNullOrWhiteSpace(type) && !string.IsNullOrWhiteSpace(value) &&
-                !claims.Exists(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
-                claims.Add(new Claim(type, value, typeValue));
+            return DateTimeOffset.Now;
         }
+
+        public DateTimeOffset UtcNow => DateTimeOffset.UtcNow;
     }
 }

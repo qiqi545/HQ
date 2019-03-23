@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Common.Helpers;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace HQ.Common.AspNetCore.Mvc

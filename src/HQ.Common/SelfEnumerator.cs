@@ -17,20 +17,30 @@
 
 using System.Collections.Generic;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
-    internal struct SelfEnumerable<T>
+    public struct SelfEnumerator<T>
     {
-        public SelfEnumerable(List<T> inner)
+        private readonly List<T> _inner;
+        private int _index;
+
+        public SelfEnumerator(List<T> inner)
         {
-            AsList = inner;
+            _inner = inner;
+            _index = 0;
         }
 
-        public SelfEnumerator<T> GetEnumerator()
+        public T Current => _inner == null || _index == 0 ? default : _inner[_index - 1];
+
+        public bool MoveNext()
         {
-            return new SelfEnumerator<T>(AsList);
+            _index++;
+            return _inner != null && _inner.Count >= _index;
         }
 
-        public List<T> AsList { get; }
+        public void Reset()
+        {
+            _index = 0;
+        }
     }
 }

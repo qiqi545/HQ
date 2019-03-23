@@ -20,7 +20,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 
-namespace HQ.Common.Models
+namespace HQ.Common
 {
     public class TypeRegistry : ITypeRegistry
     {
@@ -35,7 +35,7 @@ namespace HQ.Common.Models
             return true;
         }
 
-        public bool RegisterIfNotRegistered(Type type)
+        public bool TryRegister(Type type)
         {
             Debug.Assert(type.AssemblyQualifiedName != null, "type.AssemblyQualifiedName != null");
             if (_typesByName.TryGetValue(type.AssemblyQualifiedName, out _))

@@ -19,9 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
-    internal static class EnumerableExtensions
+    public static class EnumerableExtensions
     {
         public static SelfEnumerable<T> SelfEnumerate<T>(this List<T> inner)
         {

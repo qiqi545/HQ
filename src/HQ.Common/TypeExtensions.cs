@@ -21,7 +21,7 @@ using System.Linq;
 using System.Numerics;
 using System.Reflection;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
     public static class TypeExtensions
     {

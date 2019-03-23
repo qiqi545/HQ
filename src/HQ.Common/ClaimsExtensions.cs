@@ -16,37 +16,19 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using Microsoft.Extensions.ObjectPool;
+using System.Collections.Generic;
+using System.Security.Claims;
 
-namespace HQ.Common.Helpers
+namespace HQ.Common
 {
-    public static class StopwatchPool
+    public static class ClaimsExtensions
     {
-        internal static ObjectPool<Stopwatch> Pool = new LeakTrackingObjectPool<Stopwatch>(
-            new DefaultObjectPool<Stopwatch>(new StopwatchPoolPolicy()));
-
-        public static TimeSpan Scoped(Action<Stopwatch> closure)
+        public static void TryAddClaim(this List<Claim> claims, string type, string value,
+            string typeValue = ClaimValueTypes.String)
         {
-            var sw = Pool.Get();
-            closure(sw);
-            var elapsed = sw.Elapsed;
-            Pool.Return(sw);
-            return elapsed;
-        }
-
-        private class StopwatchPoolPolicy : IPooledObjectPolicy<Stopwatch>
-        {
-            public Stopwatch Create()
-            {
-                return Stopwatch.StartNew();
-            }
-
-            public bool Return(Stopwatch obj)
-            {
-                obj.Reset();
-                return true;
-            }
+            if (!string.IsNullOrWhiteSpace(type) && !string.IsNullOrWhiteSpace(value) &&
+                !claims.Exists(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase)))
+                claims.Add(new Claim(type, value, typeValue));
         }
     }
 }

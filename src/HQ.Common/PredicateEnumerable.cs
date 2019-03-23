@@ -16,13 +16,25 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
-namespace HQ.Common.Models
+namespace HQ.Common
 {
-    public interface ITypeRegistry
+    public struct PredicateEnumerable<T>
     {
-        bool Register(Type type);
-        bool RegisterIfNotRegistered(Type type);
-        bool TryGetType(string name, out Type type);
+        private readonly Predicate<T> _predicate;
+
+        public PredicateEnumerable(List<T> inner, Predicate<T> predicate)
+        {
+            AsList = inner;
+            _predicate = predicate;
+        }
+
+        public PredicateEnumerator<T> GetEnumerator()
+        {
+            return new PredicateEnumerator<T>(AsList, _predicate);
+        }
+
+        public List<T> AsList { get; }
     }
 }

@@ -19,11 +19,11 @@ using System;
 using System.Text;
 using Microsoft.Extensions.ObjectPool;
 
-namespace HQ.Common.Helpers
+namespace HQ.Common
 {
     public static class StringBuilderPool
     {
-        internal static readonly ObjectPool<StringBuilder> Pool =
+        public static readonly ObjectPool<StringBuilder> Pool =
             new LeakTrackingObjectPool<StringBuilder>(new DefaultObjectPool<StringBuilder>(
                 new StringBuilderPooledObjectPolicy()
                 ));

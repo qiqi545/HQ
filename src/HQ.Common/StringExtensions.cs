@@ -15,26 +15,23 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
-    internal struct FuncEnumerable<T, TResult>
+    public static class StringExtensions
     {
-        private readonly Func<T, TResult> _func;
-
-        public FuncEnumerable(List<T> inner, Func<T, TResult> func)
+        public static string ToTitleCase(this string value)
         {
-            AsList = inner;
-            _func = func;
-        }
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return value;
+            }
 
-        public FuncEnumerator<T, TResult> GetEnumerator()
-        {
-            return new FuncEnumerator<T, TResult>(AsList, _func);
-        }
+            if (char.IsUpper(value[0]))
+            {
+                return char.ToUpperInvariant(value[0]) + value.Substring(1);
+            }
 
-        public List<T> AsList { get; }
+            return value;
+        }
     }
 }

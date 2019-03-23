@@ -15,10 +15,14 @@
 
 #endregion
 
-namespace HQ.Common.Configuration
+using System;
+
+namespace HQ.Common
 {
-    public class FeatureToggle
+    public interface ITypeRegistry
     {
-        public bool Enabled { get; set; } = true;
+        bool Register(Type type);
+        bool TryRegister(Type type);
+        bool TryGetType(string name, out Type type);
     }
 }

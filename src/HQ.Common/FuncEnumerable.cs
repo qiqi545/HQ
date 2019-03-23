@@ -18,32 +18,23 @@
 using System;
 using System.Collections.Generic;
 
-namespace HQ.Common.Extensions
+namespace HQ.Common
 {
-    internal struct FuncEnumerator<T, TResult>
+    public struct FuncEnumerable<T, TResult>
     {
-        private readonly List<T> _inner;
         private readonly Func<T, TResult> _func;
-        private int _index;
 
-        public FuncEnumerator(List<T> inner, Func<T, TResult> func)
+        public FuncEnumerable(List<T> inner, Func<T, TResult> func)
         {
-            _inner = inner;
+            AsList = inner;
             _func = func;
-            _index = 0;
         }
 
-        public TResult Current => _inner == null || _index == 0 ? default : _func(_inner[_index - 1]);
-
-        public bool MoveNext()
+        public FuncEnumerator<T, TResult> GetEnumerator()
         {
-            _index++;
-            return _inner != null && _inner.Count >= _index;
+            return new FuncEnumerator<T, TResult>(AsList, _func);
         }
 
-        public void Reset()
-        {
-            _index = 0;
-        }
+        public List<T> AsList { get; }
     }
 }
