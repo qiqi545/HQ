@@ -32,7 +32,7 @@ namespace Blowdart.UI.Web
         public string RenderScripts => _scripts ?? Scripts?.ToString();
         public IDictionary<string, object> Request { get; private set; }
 
-        public override void Begin(IDictionary<string, object> context = null)
+        public override void Begin(UiContext context = null)
         {
             _dom = null;
             _scripts = null;
@@ -45,7 +45,6 @@ namespace Blowdart.UI.Web
         {
             _dom = RenderDom;
             _scripts = RenderScripts;
-
             StringBuilderHelper.Return(Dom);
             StringBuilderHelper.Return(Scripts);
             Request.Clear();

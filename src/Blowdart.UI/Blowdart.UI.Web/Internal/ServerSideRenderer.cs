@@ -2,11 +2,13 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using DotLiquid;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -44,17 +46,17 @@ namespace Blowdart.UI.Web.Internal
 
         private static async Task Response(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
         {
-            var html = RenderToTarget(renderTarget, renderList, layout, template, options, settings);
+            var html = RenderToTarget(renderTarget, renderList, layout, template, context, options, settings);
 
             await WriteResponseAsync(html, context);
         }
 
-        private static string RenderToTarget(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template, UiServerOptions options, UiSettings settings)
+        private static string RenderToTarget(Ui renderTarget, Action<Ui> renderList, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
         {
             string html;
             if (options.UseServerSideRendering)
             {
-                renderTarget.Begin();
+                renderTarget.Begin(WebUiContext.Build(context));
                 renderList(renderTarget);
                 renderTarget.End();
 
@@ -75,7 +77,7 @@ namespace Blowdart.UI.Web.Internal
                 html = template
                         .Replace(titleSlug, $"<title>{settings.Title}</title>")
                         .Replace(bodySlug, bodySlug + system.RenderDom)
-                        .Replace(scriptSlug, scriptOpen + "function initUi() {" + system.RenderScripts + "};" + scriptClose)
+                        .Replace(scriptSlug, $"{scriptOpen}function initUi() {{{system.RenderScripts}}};{scriptClose}")
                         .Replace("<!-- STYLES -->", system.StylesSection())
                         .Replace("<!-- SCRIPTS -->", system.ScriptsSection())
                     ;
@@ -87,7 +89,7 @@ namespace Blowdart.UI.Web.Internal
 
             return html;
         }
-
+        
         public static string LoadPageTemplate(IServiceProvider resolver, IOptions<UiServerOptions> options)
         {
             var fp = resolver.GetRequiredService<IFileProvider>();

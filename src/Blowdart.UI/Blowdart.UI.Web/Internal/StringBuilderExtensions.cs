@@ -14,12 +14,16 @@ namespace Blowdart.UI.Web.Internal
 
         public static StringBuilder AppendTag(this StringBuilder sb, string el, string innerText, Attributes attributes = null)
         {
-            return sb.OpenBlock(el, attributes).Append(innerText).CloseBlock(el, true);
+            return innerText != null
+                ? sb.OpenBlock(el, attributes).Append(innerText).CloseBlock(el, true)
+                : sb.OpenBlock(el, attributes).CloseBlock(el, true);
         }
 
         public static StringBuilder AppendTag(this StringBuilder sb, string el, Value128 id, string innerText, Attributes attributes = null)
         {
-            return sb.OpenBlock(el, id, attributes).Append(innerText).CloseBlock(el, true);
+            return innerText != null
+                ? sb.OpenBlock(el, id, attributes).Append(innerText).CloseBlock(el, true)
+                : sb.OpenBlock(el, id, attributes).CloseBlock(el, true);
         }
 
         public static StringBuilder OpenBlock(this StringBuilder sb, string el, Value128 id, Attributes attributes = null)

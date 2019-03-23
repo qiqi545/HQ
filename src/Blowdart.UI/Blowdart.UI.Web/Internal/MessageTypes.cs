@@ -5,8 +5,8 @@ namespace Blowdart.UI.Web.Internal
 {
     internal static class MessageTypes
     {
-        public const string FirstTimeDraw = "f";
-        public const string ReplaceAll = "x";
+        public const string FirstTimeRender = "f";
+        public const string Replace = "x";
         public const string Log = "l";
         public const string Error = "e";
     }

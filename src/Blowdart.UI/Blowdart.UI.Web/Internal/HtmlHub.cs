@@ -27,12 +27,12 @@ namespace Blowdart.UI.Web.Internal
             if (!_options.Value.UseServerSideRendering)
             {
                 var ui = Ui.CreateNew(_layoutRoot.Services);
-                ui.Begin();
+                ui.Begin(WebUiContext.Build(this));
                 _layoutRoot.Root(ui);
                 ui.End();
 
                 var system = _layoutRoot.Services.GetRequiredService<HtmlSystem>();
-                await Clients.Caller.SendAsync(MessageTypes.FirstTimeDraw, system.RenderDom, system.RenderScripts);
+                await Clients.Caller.SendAsync(MessageTypes.FirstTimeRender, system.RenderDom, system.RenderScripts);
             }
         }
 
@@ -44,7 +44,7 @@ namespace Blowdart.UI.Web.Internal
             if (!(_layoutRoot.Services.GetRequiredService<UiSystem>() is HtmlSystem system))
                 throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
-            await Clients.Caller.SendAsync(MessageTypes.ReplaceAll, system.RenderDom, system.RenderScripts);
+            await Clients.Caller.SendAsync(MessageTypes.Replace, system.RenderDom, system.RenderScripts);
             await Clients.Caller.SendAsync(MessageTypes.Log, id, eventType);
         }
 
@@ -52,19 +52,21 @@ namespace Blowdart.UI.Web.Internal
         {
             var ui = Ui.CreateNew(layout.Services);
 
+            ui.Begin(WebUiContext.Build(this));
+
             switch (eventType)
             {
                 case "click":
                 {
-                    ui.Begin();
                     ui.Clicked.Add(id);
-                    layout.Root(ui);
-                    ui.End();
                     break;
                 }
                 default:
                     throw new NotSupportedException(eventType);
             }
+
+            layout.Root(ui);
+            ui.End();
         }
     }
 }

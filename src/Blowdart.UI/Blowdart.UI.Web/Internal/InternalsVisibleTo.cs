@@ -9,7 +9,5 @@ using System.Runtime.CompilerServices;
 
 namespace Blowdart.UI.Web.Internal
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+    internal sealed class InternalsVisibleTo { }
 }
