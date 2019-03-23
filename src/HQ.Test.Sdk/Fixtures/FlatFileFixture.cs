@@ -20,7 +20,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Bogus.DataSets;
-using HQ.Common.Helpers;
+using HQ.Common;
 
 namespace HQ.Test.Sdk.Fixtures
 {
