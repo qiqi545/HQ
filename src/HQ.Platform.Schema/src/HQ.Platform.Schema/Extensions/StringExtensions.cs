@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Helpers;
+using HQ.Common;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace HQ.Platform.Schema.Extensions
@@ -25,21 +25,6 @@ namespace HQ.Platform.Schema.Extensions
         public static string Label(this string value)
         {
             return value?.Identifier()?.ToTitleCase();
-        }
-
-        private static string ToTitleCase(this string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return value;
-            }
-
-            if (char.IsUpper(value[0]))
-            {
-                return char.ToUpperInvariant(value[0]) + value.Substring(1);
-            }
-
-            return value;
         }
 
         public static string Identifier(this string value)

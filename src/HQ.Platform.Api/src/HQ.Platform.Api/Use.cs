@@ -20,7 +20,6 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Common.Extensions;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;

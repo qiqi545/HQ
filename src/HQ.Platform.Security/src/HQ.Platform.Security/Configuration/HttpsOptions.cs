@@ -14,7 +14,7 @@
 #endregion
 
 using System;
-using HQ.Common.Configuration;
+using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {

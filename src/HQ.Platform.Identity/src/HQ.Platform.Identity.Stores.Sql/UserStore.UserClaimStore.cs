@@ -22,7 +22,7 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using HQ.Common.Extensions;
+using HQ.Common;
 using HQ.Data.Sql.Queries;
 using HQ.Platform.Identity.Stores.Sql.Models;
 using HQ.Platform.Security;

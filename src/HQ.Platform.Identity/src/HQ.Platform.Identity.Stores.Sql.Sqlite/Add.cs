@@ -18,7 +18,7 @@
 using System;
 using System.Data;
 using System.Threading;
-using HQ.Common.Models;
+using HQ.Common;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.Sqlite;

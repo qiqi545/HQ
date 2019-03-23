@@ -17,7 +17,6 @@
 
 using System.Collections.Generic;
 using HQ.Common;
-using HQ.Common.Helpers;
 using HQ.Platform.Schema.Models;
 
 namespace HQ.Platform.Schema.Extensions

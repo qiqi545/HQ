@@ -18,7 +18,6 @@
 using System.Collections.Generic;
 using System.Net;
 using HQ.Common;
-using HQ.Common.Helpers;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Platform.Api.Configuration;

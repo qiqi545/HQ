@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using HQ.Common.Extensions;
+using HQ.Common;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

@@ -18,7 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using HQ.Common.Models;
+using HQ.Common;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;

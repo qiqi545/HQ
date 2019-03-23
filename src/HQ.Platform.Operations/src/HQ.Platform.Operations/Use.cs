@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.CodeAnalysis.PooledObjects;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -105,12 +104,12 @@ namespace HQ.Platform.Operations
                 var options = context.RequestServices.GetService<IOptions<DevOpsApiOptions>>();
                 if (options?.Value != null && options.Value.EnableRequestProfiling)
                 {
-                    var sw = PooledStopwatch.StartInstance();
+                    var sw = StopwatchPool.Pool.Get();
 
                     context.Response.OnStarting(() =>
                     {
                         var elapsed = sw.Elapsed;
-                        sw.Free();
+                        StopwatchPool.Pool.Return(sw);
                         var header = options.Value.RequestProfilingHeader ?? Constants.HttpHeaders.ServerTiming;
                         context.Response.Headers.Add(header, $"roundtrip;dur={elapsed.TotalMilliseconds};desc=\"*\"");
                         return Task.CompletedTask;

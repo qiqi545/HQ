@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Helpers;
+using HQ.Common;
 
 namespace HQ.Platform.Api.Models
 {

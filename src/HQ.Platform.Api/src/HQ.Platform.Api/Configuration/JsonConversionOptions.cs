@@ -16,7 +16,6 @@
 #endregion
 
 using HQ.Common;
-using HQ.Common.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {

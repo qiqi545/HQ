@@ -20,7 +20,6 @@ using System.Data;
 using System.Data.DocumentDb;
 using System.Threading;
 using HQ.Common;
-using HQ.Common.Models;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.DocumentDb;
@@ -149,7 +148,7 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
                     var registry = r.GetRequiredService<ITypeRegistry>();
 
                     var descriptor = SimpleDataDescriptor.Create(t);
-                    registry.RegisterIfNotRegistered(t);
+                    registry.TryRegister(t);
 
                     command.Id = descriptor.Id?.Property?.Name;
                     command.Type = t;

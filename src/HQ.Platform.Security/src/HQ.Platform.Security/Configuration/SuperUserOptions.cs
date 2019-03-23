@@ -16,7 +16,7 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
-using HQ.Common.Configuration;
+using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {
