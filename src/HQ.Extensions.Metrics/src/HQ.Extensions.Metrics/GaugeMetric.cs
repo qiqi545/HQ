@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Common.Extensions;
+using HQ.Common;
 
 namespace HQ.Extensions.Metrics
 {

@@ -17,8 +17,8 @@
 
 using System;
 using HQ.Common;
-using HQ.Common.Models;
 using HQ.Extensions.Caching.Configuration;
+using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 

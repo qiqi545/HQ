@@ -1,5 +1,5 @@
 using System;
-using HQ.Common.Helpers;
+using HQ.Common;
 
 namespace HQ.Extensions.Metrics.Internal
 {

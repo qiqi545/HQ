@@ -17,7 +17,5 @@
 
 namespace HQ.Extensions.DependencyInjection
 {
-    public interface IContainer : IDependencyResolver, IDependencyRegistrar
-    {
-    }
+    public interface IContainer : IDependencyResolver, IDependencyRegistrar { }
 }

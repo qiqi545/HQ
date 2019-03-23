@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Helpers;
+using HQ.Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc

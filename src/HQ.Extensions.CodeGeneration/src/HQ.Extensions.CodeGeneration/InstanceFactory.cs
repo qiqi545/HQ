@@ -22,7 +22,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using HQ.Common.Extensions;
+using HQ.Common;
 
 namespace HQ.Extensions.CodeGeneration
 {

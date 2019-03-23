@@ -18,7 +18,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.CodeAnalysis.PooledObjects;
+using System.Text;
+using HQ.Common;
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
@@ -57,41 +58,41 @@ namespace HQ.Extensions.CodeGeneration.Helpers
 
         private class StringBuffer : IStringBuffer
         {
-            private readonly PooledStringBuilder _inner;
+            private readonly StringBuilder _inner;
 
             public StringBuffer()
             {
-                _inner = PooledStringBuilder.GetInstance();
+                _inner = StringBuilderPool.Pool.Get();
             }
 
             public void AppendLine(string value)
             {
-                _inner.Builder.AppendLine(value);
+                _inner.AppendLine(value);
             }
 
             public void AppendLine()
             {
-                _inner.Builder.AppendLine();
+                _inner.AppendLine();
             }
 
             public void Append(string value)
             {
-                _inner.Builder.Append(value);
+                _inner.Append(value);
             }
 
             public void Append(object value)
             {
-                _inner.Builder.Append(value);
+                _inner.Append(value);
             }
 
             public void Dispose()
             {
-                _inner.Free();
+                StringBuilderPool.Pool.Return(_inner);
             }
 
             public override string ToString()
             {
-                return _inner.Builder.ToString();
+                return _inner.ToString();
             }
         }
     }
