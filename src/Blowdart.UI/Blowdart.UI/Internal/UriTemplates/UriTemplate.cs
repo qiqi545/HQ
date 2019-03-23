@@ -33,7 +33,7 @@ namespace Blowdart.UI.Internal.UriTemplates
             
 
             private readonly bool _resolvePartially;
-
+            
             public UriTemplate(string template, bool resolvePartially = false, bool caseInsensitiveParameterNames = false)
             {
                 _resolvePartially = resolvePartially;
@@ -364,7 +364,7 @@ namespace Blowdart.UI.Internal.UriTemplates
                         }
 
                         var match = _ParameterRegex.Match(uri.OriginalString);
-                        var parameters = new Dictionary<string, object>();
+                        var parameters = new Dictionary<string, object>(_parameters.Comparer);;
 
                         for (int x = 1; x < match.Groups.Count; x++)
                         {
@@ -388,7 +388,8 @@ namespace Blowdart.UI.Internal.UriTemplates
                         var uriString = uri.GetComponents(UriComponents.SchemeAndServer | UriComponents.Path | UriComponents.Fragment, UriFormat.UriEscaped);
                         var uriWithoutQuery = new Uri(uriString, UriKind.Absolute);
                         
-                        var pathParameters = GetParameters(uriWithoutQuery) ?? new Dictionary<string, object>(_parameters.Comparer);
+                        var pathParameters = GetParameters(uriWithoutQuery) ?? 
+                                             new Dictionary<string, object>(_parameters.Comparer);
 
                         Result result = ResolveResult();
 
