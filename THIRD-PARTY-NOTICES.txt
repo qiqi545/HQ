@@ -33,7 +33,7 @@ https://semantic-ui.mit-license.org/
 	SOFTWARE.
 
 
-Blowdart.UI uses ObjectMethodExecutor from ASP.NET Extensions, at at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
+Blowdart.UI uses ObjectMethodExecutor from ASP.NET Extensions, as at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
 https://github.com/aspnet/Extensions/tree/f27f68628a3c5c598b0f4230fd6b17e81e13249f/shared/Microsoft.Extensions.ObjectMethodExecutor.Sources
 ------------------------------------------------------------------------------
 
