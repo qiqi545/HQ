@@ -16,7 +16,7 @@ namespace Blowgun.Web.SemanticUi
             ui.NextId();
 
             var @class = StringBuilderHelper.BuildString(sb =>
-            {
+            { 
                 sb.Append("ui button");
             });
 
