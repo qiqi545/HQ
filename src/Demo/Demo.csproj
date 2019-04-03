@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web\Blowdart.UI.Web.csproj" />
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI\Blowdart.UI.csproj" />
   </ItemGroup>
