@@ -10,7 +10,7 @@ namespace Demo
         {
             UiConfig.Settings = site =>
             {
-                site.Title = "AntHill";
+                site.Title = "Demo";
                 site.System = new SemanticUi();
             };
 
