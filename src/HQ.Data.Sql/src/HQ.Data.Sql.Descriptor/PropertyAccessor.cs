@@ -18,24 +18,28 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using FastMember;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Descriptor
 {
     public class PropertyAccessor
     {
-        private readonly TypeAccessor _accessor;
-        private readonly Member _member;
+        private readonly AccessorMember _member;
+        private readonly ITypeReadAccessor _reads;
+        private readonly ITypeWriteAccessor _writes;
 
-        public PropertyAccessor(TypeAccessor accessor, Type type, string name)
+        public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, Type type, string name)
         {
             Type = type;
-            _accessor = accessor;
-
             Name = name;
-            Info = accessor.CachedMembers.SingleOrDefault(m => m.Name == name) as PropertyInfo;
 
-            var member = accessor.GetMembers().SingleOrDefault(p => p.Name == name);
+            _reads = reads;
+            _writes = writes;
+
+            var members = AccessorMembers.Create(type);
+            Info = members.PropertyInfo.SingleOrDefault(m => m.Name == name);
+
+            var member = members.SingleOrDefault(p => p.Name == name);
             if (member == null) return;
             _member = member;
         }
@@ -46,22 +50,22 @@ namespace HQ.Data.Sql.Descriptor
 
         public bool HasAttribute<T>() where T : Attribute
         {
-            return _member.IsDefined(typeof(T));
+            return Attribute.IsDefined(Info, typeof(T));
         }
 
         public Attribute GetAttribute<T>() where T : Attribute
         {
-            return _member.GetAttribute(typeof(T), true);
+            return Info.GetCustomAttribute(typeof(T), true);
         }
 
         public object Get(object instance)
         {
-            return _accessor[instance, Name];
+            return _reads[instance, Name];
         }
 
         public void Set(object instance, object value)
         {
-            _accessor[instance, Name] = value;
+            _writes[instance, Name] = value;
         }
     }
 }

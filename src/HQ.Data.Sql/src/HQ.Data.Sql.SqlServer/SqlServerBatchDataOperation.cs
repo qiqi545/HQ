@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,7 +23,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
-using FastMember;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
@@ -64,6 +64,9 @@ namespace HQ.Data.Sql.SqlServer
             IDbTransaction transaction = null, int? commandTimeout = null,
             CancellationToken cancellationToken = default)
         {
+            throw new NotImplementedException();
+
+            /*
             // ReSharper disable once PossibleMultipleEnumeration
             var reader = new ObjectReader(typeof(TData), objects,
                 descriptor.Inserted.Select(x => x.ColumnName).ToArray());
@@ -82,6 +85,7 @@ namespace HQ.Data.Sql.SqlServer
 
                 await bcp.WriteToServerAsync(reader, cancellationToken);
             }
+            */
         }
 
         public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,

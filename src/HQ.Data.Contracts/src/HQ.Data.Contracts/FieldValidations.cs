@@ -18,8 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using FastMember;
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts
 {
@@ -32,14 +32,11 @@ namespace HQ.Data.Contracts
 
         public static List<Error> MustExistOnType(Type type, SelfEnumerable<string> fields)
         {
-            var accessor = TypeAccessor.Create(type);
-            var members = accessor.GetMembers();
-
             var list = new List<Error>();
             foreach (var field in fields)
             {
                 var valid = false;
-                foreach (var member in members)
+                foreach (var member in AccessorMembers.Create(type))
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)
@@ -54,14 +51,11 @@ namespace HQ.Data.Contracts
         public static List<Error> MustExistOnType<T>(FuncEnumerable<T, string> fields)
         {
             var type = typeof(T);
-            var accessor = TypeAccessor.Create(type);
-            var members = accessor.GetMembers();
-
             var list = new List<Error>();
             foreach (var field in fields)
             {
                 var valid = false;
-                foreach (var member in members)
+                foreach (var member in AccessorMembers.Create(type))
                     if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
                         valid = true;
                 if (!valid)

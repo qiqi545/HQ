@@ -23,9 +23,9 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.Serialization;
-using FastMember;
 using HQ.Common;
 using HQ.Data.Sql.Descriptor.Attributes;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Descriptor
 {
@@ -45,10 +45,12 @@ namespace HQ.Data.Sql.Descriptor
             Updated = new List<PropertyToColumn>();
             Computed = new List<PropertyToColumn>();
 
-            var accessor = TypeAccessor.Create(type);
+            var reads = ReadAccessor.Create(type);
+            var writes = WriteAccessor.Create(type);
+
             var descriptors = TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>();
             var accessors = descriptors
-                .Select(property => new PropertyAccessor(accessor, property.PropertyType, property.Name))
+                .Select(property => new PropertyAccessor(reads, writes, property.PropertyType, property.Name))
                 .ToList();
 
             foreach (var property in accessors)
