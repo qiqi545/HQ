@@ -17,9 +17,10 @@
 
 using System;
 using System.Threading.Tasks;
-using FastMember;
+using HQ.Extensions.CodeGeneration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
+using TypeKitchen;
 
 namespace HQ.Platform.Identity.Extensions
 {
@@ -44,14 +45,14 @@ namespace HQ.Platform.Identity.Extensions
 
         public static IUserStore<TUser> GetStore<TUser>(this UserManager<TUser> userManager) where TUser : class
         {
-            var accessor = TypeAccessor.Create(typeof(UserManager<TUser>), true);
+            var accessor = ReadAccessor.Create(typeof(UserManager<TUser>));
             var userStore = accessor[userManager, "Store"];
             return userStore as IUserStore<TUser>;
         }
 
         private static void ThrowIfDisposed<TUser>(this UserManager<TUser> userManager) where TUser : class
         {
-            var accessor = TypeAccessor.Create(typeof(UserManager<TUser>), true);
+            var accessor = ReadAccessor.Create(typeof(UserManager<TUser>));
             var disposedField = accessor[userManager, "_disposed"];
             if (disposedField is bool disposed && disposed)
             {

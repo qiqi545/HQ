@@ -16,8 +16,8 @@
 #endregion
 
 using System.Collections.Generic;
-using FastMember;
 using Microsoft.AspNetCore.Identity;
+using TypeKitchen;
 
 namespace HQ.Platform.Identity.Extensions
 {
@@ -31,11 +31,12 @@ namespace HQ.Platform.Identity.Extensions
         /// <returns></returns>
         public static IdentityResult Failed(ICollection<IdentityError> errors)
         {
-            var accessor = TypeAccessor.Create(typeof(IdentityResult), true);
+            var read = ReadAccessor.Create(typeof(IdentityResult));
+            var write = WriteAccessor.Create(typeof(IdentityResult));
             var result = new IdentityResult();
-            var list = accessor[result, "_errors"] as List<IdentityError>;
+            var list = read[result, "_errors"] as List<IdentityError>;
             list?.AddRange(errors);
-            accessor[result, "Succeeded"] = false;
+            write[result, "Succeeded"] = false;
             return result;
         }
     }

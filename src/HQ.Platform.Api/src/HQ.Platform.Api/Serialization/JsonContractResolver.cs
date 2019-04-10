@@ -20,10 +20,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using FastMember;
+using HQ.Extensions.CodeGeneration;
 using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Serialization
 {
@@ -51,7 +52,7 @@ namespace HQ.Platform.Api.Serialization
 
         private static bool IsNotEmpty(MemberInfo member, object instance)
         {
-            var accessor = TypeAccessor.Create(instance.GetType());
+            var accessor = ReadAccessor.Create(instance.GetType());
 
             IEnumerable enumerable = null;
             switch (member.MemberType)

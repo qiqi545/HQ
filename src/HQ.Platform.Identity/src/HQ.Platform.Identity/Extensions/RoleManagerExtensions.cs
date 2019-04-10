@@ -16,8 +16,8 @@
 #endregion
 
 using System;
-using FastMember;
 using Microsoft.AspNetCore.Identity;
+using TypeKitchen;
 
 namespace HQ.Platform.Identity.Extensions
 {
@@ -28,7 +28,7 @@ namespace HQ.Platform.Identity.Extensions
     {
         private static void ThrowIfDisposed<TUser>(this RoleManager<TUser> roleManager) where TUser : class
         {
-            var accessor = TypeAccessor.Create(typeof(RoleManager<TUser>), true);
+            var accessor = ReadAccessor.Create(typeof(RoleManager<TUser>));
             var disposedField = accessor[roleManager, "_disposed"];
             if (disposedField is bool disposed && disposed)
             {
