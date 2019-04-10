@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,9 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="blowdart.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="blowdart.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web\Blowdart.UI.Web.csproj" />
     <ProjectReference Include="..\Blowdart.UI\Blowdart.UI\Blowdart.UI.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

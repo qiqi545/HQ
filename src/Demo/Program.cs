@@ -1,4 +1,5 @@
-﻿using Blowdart.UI;
+﻿using System;
+using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
 
@@ -19,6 +20,11 @@ namespace Demo
                 layout.Default(ui =>
                 {
                     ui.P("Hello, World!");
+
+                    if (ui.Button("Click Me!"))
+                    {
+                        Console.WriteLine("Foo");
+                    }
                 });
             });
         }

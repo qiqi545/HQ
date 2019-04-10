@@ -2,8 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -13,6 +20,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Scripting;
+using Microsoft.AspNetCore.Hosting.Internal;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 
 namespace Blowdart.UI.Web
 {
@@ -129,9 +138,100 @@ namespace Blowdart.UI.Web
         private static void StartServer(string[] args)
         {
             Masthead();
-            var builder = WebHost.CreateDefaultBuilder(args).UseStartup<UiServer>();
+
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("blowdart.json", optional: true)
+                .Build();
+            
+            if (!string.IsNullOrEmpty(config["applicationUrls"]))
+                Environment.SetEnvironmentVariable("ASPNETCORE_URLS", config["applicationUrls"]);
+
+            var environmentVariables = config.GetSection("environmentVariables");
+            foreach (var entry in environmentVariables.AsEnumerable())
+            {
+                if (entry.Value == null)
+                    continue;
+                Environment.SetEnvironmentVariable(entry.Key, entry.Value);
+            }
+
+            var builder = WebHost.CreateDefaultBuilder(args);
+
+            builder.UseConfiguration(new ConfigurationBuilder()
+                .AddConfiguration(config)
+                .AddCommandLine(args).Build());
+
+            builder.UseStartup<UiServer>();
             var webHost = builder.Build();
-            webHost.Run(); // <-- blocks thread
+
+            var token = new CancellationToken();
+            
+            // webHost.Run(); 
+            using (webHost)
+            {
+                webHost.StartAsync(token).GetAwaiter().GetResult();
+                var service = webHost.Services.GetService<IHostingEnvironment>();
+                if (!webHost.Services.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
+                {
+                    Console.WriteLine("Hosting environment: " + service.EnvironmentName);
+                    Console.WriteLine("Content root path: " + service.ContentRootPath);
+                    ICollection<string> addresses = webHost.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses;
+                    if (addresses != null)
+                    {
+                        foreach (var address in addresses)
+                            Console.WriteLine("Now listening on: " + address);
+                    }
+                    Console.WriteLine("Application started. Press Ctrl+C to shut down.");
+                }
+                
+                OnStarted(webHost, config);
+
+                var appLifetime = webHost.Services.GetService<IApplicationLifetime>();
+                token.Register(state => ((IApplicationLifetime)state).StopApplication(), appLifetime);
+                var completionSource = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
+                appLifetime.ApplicationStopping.Register(obj => ((TaskCompletionSource<object>)obj).TrySetResult(null), completionSource);
+                completionSource.Task.GetAwaiter().GetResult();
+                webHost.StopAsync(token).GetAwaiter().GetResult();
+            }
+        }
+
+        private static void OnStarted(IWebHost webHost, IConfiguration config)
+        {
+            var feature = webHost.ServerFeatures.Get<IServerAddressesFeature>();
+            
+            bool.TryParse(config["launchBrowser"], out var launchBrowser);
+
+            if (!launchBrowser)
+                return;
+
+            var url = feature.Addresses.FirstOrDefault(x => x.StartsWith("https://")) ?? feature.Addresses.First();
+
+            if (IPAddress.TryParse(url, out var address) && IPAddress.IsLoopback(address))
+                url = url.Replace(address.ToString(), "localhost");
+
+            var startInfo = new ProcessStartInfo();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                startInfo.FileName = "cmd";
+                startInfo.Arguments = ("/C start " + url);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                startInfo.FileName = "open";
+                startInfo.Arguments = url;
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                startInfo.FileName = "xdg-open";
+                startInfo.Arguments = url;
+            }
+            else
+            {
+                return;
+            }
+
+            Process.Start(startInfo);
         }
 
         private static void Masthead()
