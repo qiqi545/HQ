@@ -91,6 +91,11 @@ namespace Blowdart.UI.Web
             return ui.Html().Dom;
         }
 
+        private static StringBuilder Scripts(Ui ui)
+        {
+            return ui.Html().Scripts;
+        }
+
         private static Attributes Attr(object attr)
         {
             return Attributes.Attr(attr);
