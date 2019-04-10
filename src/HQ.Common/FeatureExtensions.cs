@@ -17,10 +17,10 @@
 
 using System;
 using System.Linq;
-using FastMember;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Common
 {
@@ -51,14 +51,14 @@ namespace HQ.Common
                 return false;
             }
 
-            var accessor = TypeAccessor.Create(o.Value.GetType());
-            var featureType = accessor.GetMembers().SingleOrDefault(x => x.Type == typeof(TFeature));
+            var featureType = AccessorMembers.Create(o.Value.GetType()).SingleOrDefault(x => x.Type == typeof(TFeature));
             if (featureType == null)
             {
                 feature = default;
                 return false;
             }
 
+            var accessor = ReadAccessor.Create(featureType.Type);
             feature = accessor[o.Value, featureType.Name] as TFeature;
             return feature != null && feature.Enabled;
         }
