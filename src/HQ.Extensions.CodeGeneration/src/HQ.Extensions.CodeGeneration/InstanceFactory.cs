@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -22,7 +22,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using HQ.Common;
+using HQ.Extensions.CodeGeneration.Internal;
 
 namespace HQ.Extensions.CodeGeneration
 {

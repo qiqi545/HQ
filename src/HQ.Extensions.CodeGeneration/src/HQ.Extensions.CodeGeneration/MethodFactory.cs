@@ -19,7 +19,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
-using HQ.Common;
+using HQ.Extensions.CodeGeneration.Internal;
 
 namespace HQ.Extensions.CodeGeneration
 {

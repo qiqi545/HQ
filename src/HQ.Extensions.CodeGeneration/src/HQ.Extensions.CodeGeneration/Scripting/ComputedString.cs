@@ -18,9 +18,11 @@
 using System;
 using System.Globalization;
 using System.Linq.Expressions;
-using DotLiquid;
+using System.Text.RegularExpressions;
+using HQ.Extensions.CodeGeneration.Internal;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using TypeKitchen;
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
@@ -38,11 +40,20 @@ namespace HQ.Extensions.CodeGeneration.Scripting
         public static string Compute(object @this, string expression)
         {
             //
-            // Pass 1: Resolve any {{ Property }} against self.
-            var template = Template.Parse(expression);
-            var parameters = new RenderParameters(CultureInfo.InvariantCulture);
-            parameters.LocalVariables = Hash.FromAnonymousObject(@this, true);
-            var code = $"return \"{template.Render(parameters)}\";";
+            // Pass 1: Resolve any {{ Member }} against self.
+            var code = StringBuilderPool.Scoped(sb =>
+            {
+                var accessor = ReadAccessor.Create(@this.GetType());
+                foreach (Match match in Regex.Matches(expression, @"{{([a-zA-Z\s]+)}}", RegexOptions.IgnoreCase | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled))
+                {
+                    var key = match.Groups[1].Value;
+
+                    if (accessor.TryGetValue(@this, key, out var value))
+                        expression = expression.Replace(match.Groups[0].Value, value.ToString());
+                }
+                sb.Append($"return \"{expression}\";");
+            });
+            
 
             //
             // Pass 2: Execute script in context.

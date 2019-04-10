@@ -19,7 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using HQ.Common;
+using HQ.Extensions.CodeGeneration.Internal;
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
