@@ -3,16 +3,16 @@
 
 using System.Collections.Generic;
 using System.Dynamic;
-using DotLiquid;
-using FastMember;
+using System.Linq;
+using TypeKitchen;
 
 namespace Blowdart.UI.Web
 {
     public class Attributes : DynamicObject
     {
-        internal Hash Inner { get; }
+        internal IReadOnlyDictionary<string, object> Inner { get; }
 
-        private Attributes(Hash inner)
+        private Attributes(IReadOnlyDictionary<string, object> inner)
         {
             Inner = inner;
         }
@@ -34,8 +34,10 @@ namespace Blowdart.UI.Web
             if (attr.Length == 0)
                 return new Attributes();
 
-            var hash = attr[0] is Attributes full ? full.Inner :
-                attr[0] is null ? new Hash() : Hash.FromAnonymousObject(attr[0], true);
+            var instance = attr[0];
+
+            var hash = instance is Attributes full ? full.Inner :
+                instance is null ? new Dictionary<string, object>() : ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
 
             for (var i = 1; i < attr.Length; i++)
             {
@@ -43,34 +45,37 @@ namespace Blowdart.UI.Web
                 {
                     case string _:
                         throw new HtmlException($"You provided a string literal for an attribute object. Did you mean new {{ @class = \"{attr[i]}\" }} ?");
+
                     case Attributes other:
-                        hash.Merge(other.Inner);
+                        hash = hash.Concat(other.Inner).ToDictionary(k => k.Key, v => v.Value);
                         break;
                     default:
-                        hash.Merge(CreateHash(attr[i]));
+                        hash = hash.Concat(CreateHash(attr[i])).ToDictionary(k => k.Key, v => v.Value);
                         break;
                 }
             }
             return new Attributes(hash);
         }
 
-        private static Hash CreateHash(object attr)
+        private static IReadOnlyDictionary<string, object> CreateHash(object attr)
         {
             if (attr == null)
-                return new Hash();
+                return new Dictionary<string, object>();
 
             var type = attr.GetType();
+            var accessor = ReadAccessor.Create(type);
+
+            var hash = accessor.AsReadOnlyDictionary(attr);
 
             // We can't hash anonymous objects from external assemblies, they must be merged in.
             if (type.Namespace != null)
-                return Hash.FromAnonymousObject(attr, true);
+                return hash;
 
             var result = new Dictionary<string, object>();
-            var accessor = TypeAccessor.Create(type);
-            foreach (var member in accessor.GetMembers())
+            foreach (var member in AccessorMembers.Create(type))
                 result[member.Name] = accessor[attr, member.Name];
 
-            return Hash.FromDictionary(result);
+            return result;
         }
         
         public override bool TryGetMember(GetMemberBinder binder, out object result)
