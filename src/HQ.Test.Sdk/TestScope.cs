@@ -23,12 +23,12 @@ using System.Linq;
 using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
-using FastMember;
 using HQ.Extensions.CodeGeneration;
 using HQ.Extensions.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;
+using TypeKitchen;
 
 namespace HQ.Test.Sdk
 {
@@ -115,7 +115,7 @@ namespace HQ.Test.Sdk
                 _parent = parent;
                 _child = child;
                 _memberNames =
-                    TypeAccessor.Create(typeof(TInterface)).GetMembers().Select(x => x.Name)
+                    AccessorMembers.Create(typeof(TInterface)).Select(x => x.Name)
                         .Concat(typeof(TInterface).GetMethods().Select(x => x.Name))
                         .ToImmutableHashSet();
             }
