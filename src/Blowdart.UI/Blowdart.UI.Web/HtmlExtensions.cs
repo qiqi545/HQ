@@ -155,8 +155,6 @@ namespace Blowdart.UI.Web
 
         #endregion
 
-        #region 
-
         #region input
 
         public static Ui Input(this Ui ui, InputType inputType, Attributes attr = null)
@@ -185,7 +183,7 @@ namespace Blowdart.UI.Web
 
         //public static bool Submit(this Ui ui, string label, Action onSubmit)
         //{
-            
+
         //}
 
         //public static Ui Submit(this Ui ui, InputType type, Attributes attr, Action onSubmit)
@@ -232,8 +230,6 @@ namespace Blowdart.UI.Web
         //    Scripts(ui).AppendEvent("click", id);
         //    return !ui.Clicked.Contains(id);
         //}
-
-        #endregion
 
         #endregion
 

@@ -2,6 +2,7 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
+using static InlineElements;
 
 namespace Demo
 {
@@ -14,7 +15,6 @@ namespace Demo
                 site.Title = "Demo";
                 site.System = new SemanticUi();
             };
-
             UiServer.AddHandler("/", "Home");
             UiServer.Start(args);
         }
@@ -22,7 +22,7 @@ namespace Demo
         [HandlerName("Home"), SemanticUi, Meta("title", "Demo")]
         public static void DefaultPage(Ui ui, string host, string firstName, string lastName)
         {
-            ui.P($"Hello, World from {host}!");
+            ui.P($"Hello, World from {strong(host)}!");
 
             ui.Form(new { method = "post" }, () =>
             {

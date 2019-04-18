@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.CodeAnalysis.Operations;
 using Newtonsoft.Json.Linq;
 
 namespace Blowdart.UI.Web.Internal
