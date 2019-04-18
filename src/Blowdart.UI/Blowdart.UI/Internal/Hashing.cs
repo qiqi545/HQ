@@ -3,7 +3,7 @@
 
 using System.Text;
 
-namespace Blowdart.UI
+namespace Blowdart.UI.Internal
 {
     internal class Hashing
     {

@@ -44,15 +44,16 @@ namespace Blowdart.UI.Web.Internal
 
         private static StringBuilder AppendAttributes(this StringBuilder sb, Attributes attributes)
         {
-            if (attributes == null)
+            if (attributes?.Inner == null)
                 return sb;
 
             foreach (var item in attributes.Inner) 
             {
+                if (item.Key == null || item.Value == null)
+                    continue;
+
                 sb.Append(" ");
                 sb.Append(item.Key);
-                if (item.Value == null)
-                    continue;
                 sb.Append("='");
                 sb.Append(item.Value);
                 sb.Append("'");

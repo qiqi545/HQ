@@ -12,7 +12,6 @@ using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
@@ -20,8 +19,6 @@ namespace Blowdart.UI.Web
 {
     public class HtmlSystem : UiSystem
     {
-        private static readonly ObjectPool<List<object>> ArgumentsPool = new DefaultObjectPool<List<object>>(new DefaultPooledObjectPolicy<List<object>>());
-
         private string _dom;
         private string _scripts;
 
@@ -60,7 +57,7 @@ namespace Blowdart.UI.Web
             return "<!-- STYLES -->";
         }
 
-        public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target)
+        public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
             var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
@@ -72,48 +69,85 @@ namespace Blowdart.UI.Web
             //
             // URI Resolution:
             var templateParameters = uriTemplate.GetParameters(requestUri);
+            var parameters = templateParameters ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            var parameters = templateParameters ?? 
-                             new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
-            //
-            // Header Resolution (overwrites URI):
-            if (request.Headers != null)
+            if (ui != null)
             {
-                foreach (var headerName in request.Headers.Keys)
+                //
+                // Header Resolution (overwrites URI):
+                foreach (var entry in ui.Context)
                 {
-                    if (request.Headers.TryGetValue(headerName, out var value))
-                        parameters[headerName.Replace("-", string.Empty)] = value;
+                    if (!entry.Key.StartsWith("bd.h:"))
+                        continue;
+                    parameters[entry.Key.Replace("bd.h:", string.Empty)] = entry.Value;
+                }
+
+                //
+                // Query Resolution (overwrites headers):
+                foreach (var entry in ui.Context)
+                {
+                    if (!entry.Key.StartsWith("bd.q:"))
+                        continue;
+                    parameters[entry.Key.Replace("bd.q:", string.Empty)] = entry.Value;
+                }
+
+                //
+                // Form Collection (overwrites queries):
+                foreach (var entry in ui.Context)
+                {
+                    if (!entry.Key.StartsWith("bd.f:"))
+                        continue;
+                    parameters[entry.Key.Replace("bd.f:", string.Empty)] = entry.Value;
                 }
             }
-
-            //
-            // Form Collection (overwrites headers):
-            if (request.HasFormContentType && request.Form != null)
+            else
             {
-                foreach (var parameterName in request.Form.Keys)
+                //
+                // Header Resolution (overwrites URI):
+                if (request.Headers != null)
                 {
-                    if (request.Form.TryGetValue(parameterName, out var value))
+                    foreach (var headerName in request.Headers.Keys)
                     {
-                        parameters[parameterName] = value;
+                        if (request.Headers.TryGetValue(headerName, out var value))
+                            parameters[headerName.Replace("-", string.Empty)] = value;
+                    }
+                }
+
+                //
+                // Query Resolution (overwrites headers):
+                foreach (var entry in request.Query)
+                    parameters[entry.Key] = entry.Value;
+
+                //
+                // Form Collection (overwrites queries):
+                if (request.HasFormContentType && request.Form != null)
+                {
+                    foreach (var parameterName in request.Form.Keys)
+                    {
+                        if (request.Form.TryGetValue(parameterName, out var value))
+                        {
+                            parameters[parameterName] = value;
+                        }
                     }
                 }
             }
 
             //
             // Routing:
-            action.MethodName = IsRootPath(requestUri, options) ? settings.DefaultMethodName : requestUri.Segments.FirstOrDefault();
-
+            action.MethodName = IsRootPath(requestUri, options) ? callee?.Name ?? settings.DefaultMethodName : requestUri.Segments.FirstOrDefault();
+            
             //
-            // Parameter Resolution (does not overwrite):
+            // Execution:
+            var targetType = callee?.DeclaringType ?? target.GetType();
             var parameterValues = parameters.Values.ToArray();
-            var executor = target.GetType().GetExecutor(action.MethodName, parameterValues);
+            var executor = targetType.GetExecutor(action.MethodName, parameterValues);
             if (executor.SameMethodParameters(parameterValues))
             {
                 action.Arguments = parameterValues;
                 return;
             }
-            var arguments = ArgumentsPool.Get();
+
+            var arguments = Pools.ArgumentsPool.Get();
             try
             {
                 foreach (var parameter in executor.MethodParameters)
@@ -139,6 +173,12 @@ namespace Blowdart.UI.Web
                         continue;
                     }
 
+                    if (parameter.ParameterType == typeof(Ui))
+                    {
+                        arguments.Add(ui ?? Ui.CreateNew(serviceProvider));
+                        continue;
+                    }
+
                     if (NotResolvableByContainer(parameter))
                     {
                         arguments.Add(null);
@@ -152,8 +192,7 @@ namespace Blowdart.UI.Web
             }
             finally
             {
-                arguments.Clear();
-                ArgumentsPool.Return(arguments);
+                Pools.ArgumentsPool.Return(arguments);
             }
         }
 

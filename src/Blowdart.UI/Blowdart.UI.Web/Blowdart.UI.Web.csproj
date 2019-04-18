@@ -33,8 +33,6 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Composite" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
-    <PackageReference Include="TypeKitchen" Version="0.0.5-pre" />
   </ItemGroup>
 
 </Project>

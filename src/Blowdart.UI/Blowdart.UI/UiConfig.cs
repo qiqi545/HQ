@@ -26,10 +26,12 @@ namespace Blowdart.UI
                     settings.AutoRegisterComponentAssemblies();
 
                 if (settings.System == null)
-                    settings.System = Activator.CreateInstance<TSystem>();
+                    settings.System = Pools.ActivatorPool.Create<TSystem>();
 
                 if (settings.Data == null)
                     settings.Data = new InvokeUiData(r, settings.ComponentAssemblies);
+
+                Pools.AutoResolver = new NoContainer(r, settings.ComponentAssemblies);
 
                 return settings;
             });
@@ -42,7 +44,7 @@ namespace Blowdart.UI
                 var componentTypes = ResolveComponentTypes(r);
                 var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
                 var byName = componentTypes
-                    .Select(x => autoResolver.GetService(x) as UiComponent ?? Activator.CreateInstance<UiComponent>())
+                    .Select(x => autoResolver.GetService(x) as UiComponent ?? Pools.ActivatorPool.Create<UiComponent>())
                     .ToDictionary(k => k.Name ?? k.GetType().Name, StringComparer.OrdinalIgnoreCase);
 
                 return byName;
@@ -54,7 +56,7 @@ namespace Blowdart.UI
                 var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
                 var byType = componentTypes.ToDictionary(k => k, v =>
                 {
-                    return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Activator.CreateInstance<UiComponent>());
+                    return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Pools.ActivatorPool.Create<UiComponent>());
                 });
                 return byType;
             });

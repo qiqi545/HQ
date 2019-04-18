@@ -3,6 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using Blowdart.UI.Internal;
+using Blowdart.UI.Internal.Execution;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Blowdart.UI
 {
@@ -15,6 +20,9 @@ namespace Blowdart.UI
 
         internal IDictionary<string, Action<Ui>> Handlers { get; } = new Dictionary<string, Action<Ui>>();
         internal IServiceProvider Services { get; }
+        public Action<Ui> Root => Handlers["/"];
+
+        #region Default
 
         public LayoutRoot Default(Action<Ui> view)
         {
@@ -30,6 +38,10 @@ namespace Blowdart.UI
         {
             return Template<TService, TModel>("/", view);
         }
+
+        #endregion
+
+        #region Template
 
         public LayoutRoot Template(string template, Action<Ui> view)
         {
@@ -55,6 +67,19 @@ namespace Blowdart.UI
             return this;
         }
 
-        public Action<Ui> Root => Handlers["/"];
+        #endregion
+        
+        #region Direct 
+
+        internal LayoutRoot AddHandler(string template, MethodInfo method)
+        {
+            return Template(template, ui =>
+            {
+                ui.Data.GetModel(template, method, ui); // invoke-only: view and the model are one (ImGui)
+            });
+        }
+
+        #endregion
+
     }
 }

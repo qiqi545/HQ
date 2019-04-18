@@ -26,10 +26,10 @@ ui.on("x", function (b, s) {
     initUi();
 });
 ui.on("l", function (id, e) {
-    console.log(id + " " + e);
+    console.log(`${id} ${e}`);
 });
 ui.on("e", function (id, e) {
-    console.error(id + " " + e);
+    console.error(`${id} ${e}`);
 });
 function maybeAddListener(id, eventType, el) {
     const attr = `data-event-${eventType}`;
@@ -38,7 +38,8 @@ function maybeAddListener(id, eventType, el) {
         var handler;
         el.addEventListener(eventType, handler = function (e) {
             el.removeEventListener(eventType, handler);
-            ui.invoke("e", window.location.toString(), id, eventType).catch(function (err) {
+            var data = JSON.stringify($(document.forms[0]).serializeArray());
+            ui.invoke("e", window.location.toString(), id, eventType, data).catch(function (err) {
                 return console.error(err.toString());
             });
             e.preventDefault();

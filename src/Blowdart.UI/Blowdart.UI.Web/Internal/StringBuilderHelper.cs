@@ -3,27 +3,26 @@
 
 using System;
 using System.Text;
+using Blowdart.UI.Internal;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Blowdart.UI.Web.Internal
 {
     internal static class StringBuilderHelper
     {
-        private static readonly ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPool<StringBuilder>(new StringBuilderPooledObjectPolicy());
-
         public static StringBuilder Get()
         {
-            return StringBuilderPool.Get();
+            return Pools.StringBuilderPool.Get();
         }
 
         public static void Return(StringBuilder sb)
         {
-            StringBuilderPool.Return(sb);
+            Pools.StringBuilderPool.Return(sb);
         }
 
         public static string BuildString(Action<StringBuilder> action)
         {
-            var sb = StringBuilderPool.Get();
+            var sb = Pools.StringBuilderPool.Get();
             try
             {
                 action(sb);
@@ -31,7 +30,7 @@ namespace Blowdart.UI.Web.Internal
             }
             finally
             {
-                StringBuilderPool.Return(sb);
+                Pools.StringBuilderPool.Return(sb);
             }
         }
     }

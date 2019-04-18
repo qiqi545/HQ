@@ -1,15 +1,22 @@
 ﻿// Copyright (c) Blowdart, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Linq;
+using Blowdart.UI.Internal;
 using TypeKitchen;
 
 namespace Blowdart.UI.Web
 {
     public class Attributes : DynamicObject
     {
+        internal static object[] NoAttributes = new object[0];
+        internal static Attributes Empty = new Attributes();
+        internal static IReadOnlyDictionary<string, object> EmptyHash = new Dictionary<string, object>();
+
         internal IReadOnlyDictionary<string, object> Inner { get; }
 
         private Attributes(IReadOnlyDictionary<string, object> inner)
@@ -21,36 +28,33 @@ namespace Blowdart.UI.Web
 
         public static Attributes Attr(object attr)
         {
+            if (attr == NoAttributes)
+                return Empty;
+
             if(attr is string)
                 throw new HtmlException($"You provided a string literal for an attribute object. Did you mean new {{ @class = \"{attr}\" }} ?");
 
-            var hash = CreateHash(attr);
-
-            return new Attributes(hash);
+            return new Attributes(CreateHash(attr));
         }
 
         public static Attributes Attr(params object[] attr)
         {
             if (attr.Length == 0)
-                return new Attributes();
+                return Empty;
 
             var instance = attr[0];
-
-            var hash = instance is Attributes full ? full.Inner :
-                instance is null ? new Dictionary<string, object>() : ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
-
+            var hash = instance is Attributes toMerge ? toMerge.Inner : CreateAccessor(instance.GetType()).AsReadOnlyDictionary(instance);
             for (var i = 1; i < attr.Length; i++)
             {
                 switch (attr[i])
                 {
                     case string _:
                         throw new HtmlException($"You provided a string literal for an attribute object. Did you mean new {{ @class = \"{attr[i]}\" }} ?");
-
                     case Attributes other:
-                        hash = hash.Concat(other.Inner).ToDictionary(k => k.Key, v => v.Value);
+                        hash = hash.Concat(other.Inner).ToDictionary(k => k.Key, v => v.Value); // TODO no
                         break;
                     default:
-                        hash = hash.Concat(CreateHash(attr[i])).ToDictionary(k => k.Key, v => v.Value);
+                        hash = hash.Concat(CreateHash(attr[i])).ToDictionary(k => k.Key, v => v.Value); // TODO no
                         break;
                 }
             }
@@ -60,24 +64,44 @@ namespace Blowdart.UI.Web
         private static IReadOnlyDictionary<string, object> CreateHash(object attr)
         {
             if (attr == null)
-                return new Dictionary<string, object>();
+                return EmptyHash;
 
-            var type = attr.GetType();
-            var accessor = ReadAccessor.Create(type);
+            var accessorType = attr.GetType();
+            var accessor = CreateAccessor(accessorType);
 
-            var hash = accessor.AsReadOnlyDictionary(attr);
+            if (!accessorType.IsAnonymous())
+                return accessor.AsReadOnlyDictionary(attr);
 
             // We can't hash anonymous objects from external assemblies, they must be merged in.
-            if (type.Namespace != null)
-                return hash;
-
+            // TODO custom iterator, don't allocate
             var result = new Dictionary<string, object>();
-            foreach (var member in AccessorMembers.Create(type))
-                result[member.Name] = accessor[attr, member.Name];
+            var members = AccessorMembers.Create(accessorType, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
+            foreach (var member in members)
+            {
+                if (!accessor.TryGetValue(attr, member.Name, out var value))
+                    continue; // unlikely, but defend against missing members in the accessor
+
+                if (!accessor.TryGetValue(attr, member.Name, out value))
+                    continue; // unlikely, but defend against missing members in the accessor
+
+                if (value == null)
+                    continue; // omit null values in the final hash
+
+                result[member.Name] = value;
+            }
 
             return result;
         }
-        
+
+        private static readonly object Sync = new object();
+        private static ITypeReadAccessor CreateAccessor(Type type)
+        {
+            lock (Sync)
+            {
+                return ReadAccessor.Create(type);
+            }
+        }
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             return Inner.TryGetValue(binder.Name, out result);

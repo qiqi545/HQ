@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json.Linq;
 
 namespace Blowdart.UI.Web.Internal
 {
@@ -37,9 +38,9 @@ namespace Blowdart.UI.Web.Internal
         }
 
         [HubMethodName("e")]
-        public async Task HandleEvent(string page, string id, string eventType)
+        public async Task HandleEvent(string page, string id, string eventType, string data)
         {
-            HandleEvent(_layoutRoot, page, id, eventType);
+            HandleEvent(_layoutRoot, page, id, eventType, data);
 
             if (!(_layoutRoot.Services.GetRequiredService<UiSystem>() is HtmlSystem system))
                 throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
@@ -48,11 +49,13 @@ namespace Blowdart.UI.Web.Internal
             await Clients.Caller.SendAsync(MessageTypes.Log, id, eventType);
         }
 
-        public void HandleEvent(LayoutRoot layout, string page, string id, string eventType)
+        public void HandleEvent(LayoutRoot layout, string page, string id, string eventType, string data)
         {
             var ui = Ui.CreateNew(layout.Services);
+            var json = JArray.Parse(data);
+            var context = WebUiContext.Build(this, json);
 
-            ui.Begin(WebUiContext.Build(this));
+            ui.Begin(context);
 
             switch (eventType)
             {

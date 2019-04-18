@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Blowdart.UI
 {
@@ -16,9 +17,9 @@ namespace Blowdart.UI
             Trace.WriteLine($"UI error: {errorMessage} {(exception == null ? "" : $"{exception}")}");
         }
 
-        public virtual void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target)
+        public virtual void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
-            action.MethodName = template ?? settings.DefaultMethodName;
+            action.MethodName = callee?.Name ?? template ?? settings.DefaultMethodName;
             action.Arguments = null;
         }
     }

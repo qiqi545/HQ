@@ -5,9 +5,9 @@ using Blowdart.UI.Web.SemanticUI;
 
 namespace Demo
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             UiConfig.Settings = site =>
             {
@@ -15,18 +15,33 @@ namespace Demo
                 site.System = new SemanticUi();
             };
 
-            UiServer.Start(args, layout =>
-            {
-                layout.Default(ui =>
-                {
-                    ui.P("Hello, World!");
+            UiServer.AddHandler("/", "Home");
+            UiServer.Start(args);
+        }
 
-                    if (ui.Button("Click Me!"))
-                    {
-                        Console.WriteLine("Foo");
-                    }
+        [HandlerName("Home"), SemanticUi, Meta("title", "Demo")]
+        public static void DefaultPage(Ui ui, string host, string firstName, string lastName)
+        {
+            ui.P($"Hello, World from {host}!");
+
+            ui.Form(new { method = "post" }, () =>
+            {
+                ui.Element("fieldset", null, () =>
+                {
+                    ui.Literal("First name: ").Break();
+                    ui.Input(InputType.Text, new { name = "firstname", value = firstName, placeholder = "Enter your first name:" }).Break();
+                    ui.Literal("Last name: ").Break();
+                    ui.Input(InputType.Text, new { name = "lastname", value = lastName, placeholder = "Enter your last name:" }).Break();
+                    ui.Submit("Post to Server");
                 });
             });
+
+            ui.Break();
+
+            if (ui.Button("Click Me"))
+            {
+                Console.WriteLine($"Clicked By {firstName} {lastName}!");
+            }
         }
     }
 }

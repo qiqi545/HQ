@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Blowdart.UI.Web.Internal;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Blowdart.UI.Web
 {
@@ -51,6 +52,11 @@ namespace Blowdart.UI.Web
             action();
             ui.EndElement(el);
             return ui;
+        }
+
+        public static Ui Element(this Ui ui, string el, object attr = null, Action action = null)
+        {
+            return ui.Element(el, Attr(attr), action);
         }
 
         public static Ui Element(this Ui ui, string el, Attributes attr = null, Action<Ui> action = null)
@@ -135,6 +141,12 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
+        public static Ui Form(this Ui ui, object attr = null, Action action = null)
+        {
+            ui.Element("form", attr, action);
+            return ui;
+        }
+
         public static Ui Form(this Ui ui, Attributes attr, Action<Ui> action)
         {
             ui.Element("form", attr, action);
@@ -147,10 +159,18 @@ namespace Blowdart.UI.Web
 
         #region input
 
-        public static Ui Input(this Ui ui, InputType type, Attributes attr = null)
+        public static Ui Input(this Ui ui, InputType inputType, Attributes attr = null)
         {
-            ui.Element("input", null, Attributes.Attr(new { type }, attr));
+            var attribute = Attributes.Attr(new { type = inputType.ToString().ToLowerInvariant() });
+            var attributes = attr == null ? attribute : Attributes.Attr(attribute, attr);
+            ui.Element("input", null, attributes);
             return ui;
+        }
+
+        public static Ui Input(this Ui ui, InputType inputType, object attr = null)
+        {
+            var attributes = attr == null ? Attributes.Empty : Attributes.Attr(attr);
+            return ui.Input(inputType, attributes);
         }
 
         #endregion
@@ -158,9 +178,9 @@ namespace Blowdart.UI.Web
         #region Submit
 
         // Handled by the browser, so no routing information is needed
-        public static Ui Submit(this Ui ui, string label = "Submit", Attributes attr = null)
+        public static Ui Submit(this Ui ui, string label = "Submit", object attr = null)
         {
-            return ui.Input(InputType.Submit, Attr(new { type = "submit", value = label }));
+            return ui.Input(InputType.Submit, Attr(new { value = label }));
         }
 
         //public static bool Submit(this Ui ui, string label, Action onSubmit)

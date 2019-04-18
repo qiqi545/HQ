@@ -5,21 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Blowdart.UI.Internal
 {
     public class InvokeUiData : UiData
     {
-        private static readonly ObjectPool<UiAction> ActionPool = new DefaultObjectPool<UiAction>(new DefaultPooledObjectPolicy<UiAction>());
-
         private readonly IServiceProvider _serviceProvider;
-        private readonly IServiceProvider _autoResolver;
-
+        
         public InvokeUiData(IServiceProvider serviceProvider, IEnumerable<Assembly> fallbackAssemblies)
         {
             _serviceProvider = serviceProvider;
-            _autoResolver = new NoContainer(serviceProvider, fallbackAssemblies);
         }
 
         public override TModel GetModel<TService, TModel>(string template)
@@ -32,24 +27,37 @@ namespace Blowdart.UI.Internal
 
         public override object GetModel<TService>(string template)
         {
+            return GetModel(template, typeof(TService));
+        }
+
+        public override object GetModel(string template, Type serviceType)
+        {
+            return PopulateAndExecute(template, serviceType, null, null);
+        }
+
+        public override object GetModel(string template, MethodInfo method, Ui ui)
+        {
+            return PopulateAndExecute(template, method.DeclaringType, method, ui);
+        }
+
+        private object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui)
+        {
             var settings = _serviceProvider.GetRequiredService<UiSettings>();
-            var target = _autoResolver.GetService<TService>();
-
-            var action = ActionPool.Get();
-
+            var target = Pools.AutoResolver.GetService(serviceType);
+            var action = Pools.ActionPool.Get();
             try
             {
-                settings.System.PopulateAction(settings, action, _autoResolver, template, target);
+                settings.System.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
 
-                return action.Arguments == null
+                var result = action.Arguments == null
                     ? target.ExecuteMethod(action.MethodName)
                     : target.ExecuteMethod(action.MethodName, action.Arguments);
+
+                return result;
             }
             finally
             {
-                action.Arguments = null;
-                action.MethodName = null;
-                ActionPool.Return(action);
+                Pools.ActionPool.Return(action);
             }
         }
     }

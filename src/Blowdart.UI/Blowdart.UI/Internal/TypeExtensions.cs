@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using TypeKitchen;
 
 namespace Blowdart.UI.Internal
 {
@@ -32,14 +34,15 @@ namespace Blowdart.UI.Internal
             }
 
             if (!Instances.TryGetValue(type, out var instance))
-                Instances.Add(type, instance = Activator.CreateInstance(type));
-
+                Instances.Add(type, instance = Pools.ActivatorPool.Create(type));
             return executor.Execute(instance, args);
         }
 
         public static object ExecuteMethod(this object instanceOfType, string name, params object[] args)
         {
-            var executor = GetExecutor(instanceOfType.GetType(), name, args);
+            var instanceType = instanceOfType.GetType();
+
+            var executor = GetExecutor(instanceType, name, args);
 
             if (!SameMethodParameters(executor, args))
             {
@@ -60,7 +63,7 @@ namespace Blowdart.UI.Internal
             {
                 var methodByName = type.GetMethod(name);
                 if (methodByName == null)
-                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'.");
+                    throw new ArgumentException($"No method on type '{type.FullName}' named '{name}'");
                 map.Add(name, executor = ObjectMethodExecutor.Create(methodByName, type.GetTypeInfo()));
             }
 
@@ -101,6 +104,11 @@ namespace Blowdart.UI.Internal
                 map.Add(cacheKey, executor = ObjectMethodExecutor.Create(getMethod(), type.GetTypeInfo()));
 
             return executor.Execute(instanceOfType, args);
+        }
+
+        public static bool IsAnonymous(this Type type)
+        {
+            return type.Namespace == null && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute));
         }
     }
 }

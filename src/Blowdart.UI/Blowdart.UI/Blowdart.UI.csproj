@@ -11,13 +11,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Extensions.ObjectPool">
-      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.extensions.objectpool\2.2.0\lib\netstandard2.0\Microsoft.Extensions.ObjectPool.dll</HintPath>
-    </Reference>
+    <PackageReference Include="TypeKitchen" Version="0.0.9-pre" />
   </ItemGroup>
 
 </Project>
