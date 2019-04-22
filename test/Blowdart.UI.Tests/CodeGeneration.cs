@@ -26,8 +26,7 @@ namespace Blowdart.UI.Tests
 			sb.AppendLine("// ReSharper disable InconsistentNaming");
 			sb.AppendLine("// ReSharper disable CheckNamespace");
 			sb.AppendLine();
-			sb.AppendLine("/// <summary>Use <code>using static InlineElements</code> to enable inline elements anywhere they are not implicitly available.</summary>");
-			sb.AppendLine("public static class InlineElements");
+			sb.AppendLine("public static partial class HtmlElementExtensions");
 			sb.AppendLine("{");
 			foreach (Match match in Regex.Matches(elements, "<\\w+>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
 			{
@@ -41,6 +40,41 @@ namespace Blowdart.UI.Tests
 			}
 			sb.AppendLine("}");
 			
+			_console.WriteLine(sb.ToString());
+		}
+
+		[Fact]
+		public void Generate_block_elements_begin_end()
+		{
+			const string elements = @"<address><article><aside><blockquote><canvas><dd><div><dl><dt><fieldset><figcaption><figure><footer><form><h1><h2><h3><h4><h5><h6><header><hr><li><main><nav><noscript><ol><p><pre><section><table><tfoot><ul><video>";
+
+			var sb = new StringBuilder();
+			sb.AppendLine("// Copyright (c) Blowdart, Inc. All rights reserved.");
+			sb.AppendLine("// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.");
+			sb.AppendLine();
+			sb.AppendLine("namespace Blowdart.UI.Web");
+			sb.AppendLine("{");
+			sb.AppendLine();
+			sb.AppendLine("\tpublic static partial class HtmlExtensions");
+			sb.AppendLine("\t{");
+			foreach (Match match in Regex.Matches(elements, "<\\w+>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
+			{
+				var element = match.Value.TrimStart('<').TrimEnd('>');
+
+				sb.AppendLine();
+				sb.AppendLine($"\t\tpublic static Ui Begin{char.ToUpperInvariant(element[0]) + element.Substring(1)}(this Ui ui, object attr = null)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attr != null ? new Attributes(attr) : null);");
+				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\tpublic static Ui End{char.ToUpperInvariant(element[0]) + element.Substring(1)}(this Ui ui)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.EndElement(\"{element}\");");
+				sb.AppendLine($"\t\t}}");
+			}
+			sb.AppendLine("\t}");
+			sb.AppendLine("}");
+
 			_console.WriteLine(sb.ToString());
 		}
 	}

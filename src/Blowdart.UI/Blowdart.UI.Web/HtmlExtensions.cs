@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Blowdart.UI.Web.Internal;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Blowdart.UI.Web
 {
@@ -128,13 +127,7 @@ namespace Blowdart.UI.Web
             ui.BeginElement("form", attr);
             return ui;
         }
-
-        public static Ui EndForm(this Ui ui)
-        {
-            ui.EndElement("form");
-            return ui;
-        }
-
+		
         public static Ui Form(this Ui ui, Attributes attr = null, Action action = null)
         {
             ui.Element("form", attr, action);
