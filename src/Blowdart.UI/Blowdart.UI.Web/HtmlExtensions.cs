@@ -27,10 +27,10 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        public static Ui BeginElement(this Ui ui, string el, Attributes attr = null)
+        public static Ui BeginElement(this Ui ui, string el, object attr = null)
         {
             Dom(ui).Tab();
-            Dom(ui).OpenBlock(el, attr);
+            Dom(ui).OpenBlock(el, attr == null ? null : Attr(attr));
             _indentLevel++;
             Elements.Push(el);
             return ui;
@@ -55,12 +55,12 @@ namespace Blowdart.UI.Web
 
         public static Ui Element(this Ui ui, string el, object attr = null, Action action = null)
         {
-            return ui.Element(el, Attr(attr), action);
+            return ui.Element(el, attr == null ? null : Attr(attr), action);
         }
 
-        public static Ui Element(this Ui ui, string el, Attributes attr = null, Action<Ui> action = null)
+        public static Ui Element(this Ui ui, string el, object attr = null, Action<Ui> action = null)
         {
-            ui.Element(el, attr, () => action?.Invoke(ui));
+	        ui.Element(el, attr == null ? null : Attr(attr), () => action?.Invoke(ui));
             return ui;
         }
 

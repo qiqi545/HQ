@@ -61,15 +61,29 @@ namespace Blowdart.UI.Tests
 			{
 				var element = match.Value.TrimStart('<').TrimEnd('>');
 
+				var casedName = char.ToUpperInvariant(element[0]) + element.Substring(1);
+
 				sb.AppendLine();
-				sb.AppendLine($"\t\tpublic static Ui Begin{char.ToUpperInvariant(element[0]) + element.Substring(1)}(this Ui ui, object attr = null)");
+				sb.AppendLine($"\t\tpublic static Ui Begin{casedName}(this Ui ui, object attr = null)");
 				sb.AppendLine($"\t\t{{");
-				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attr != null ? new Attributes(attr) : null);");
+				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attr);");
 				sb.AppendLine($"\t\t}}");
 				sb.AppendLine();
-				sb.AppendLine($"\t\tpublic static Ui End{char.ToUpperInvariant(element[0]) + element.Substring(1)}(this Ui ui)");
+				sb.AppendLine($"\t\tpublic static Ui End{casedName}(this Ui ui)");
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.EndElement(\"{element}\");");
+				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction();\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object[] attr = null, Action action = null)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", attr, action);");
+				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction(ui);\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object[] attr = null, Action<Ui> action = null)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", attr, action);");
 				sb.AppendLine($"\t\t}}");
 			}
 			sb.AppendLine("\t}");
