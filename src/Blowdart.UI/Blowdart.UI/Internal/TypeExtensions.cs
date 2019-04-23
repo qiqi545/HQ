@@ -111,7 +111,72 @@ namespace Blowdart.UI.Internal
             return type.Namespace == null && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute));
         }
 
-        public static bool IsValueTypeOrNullableValueType(this Type type)
+        public static string GetPreferredTypeName(this Type type)
+        {
+	        string typeName;
+
+			//
+			// Aliases:
+	        if (type == typeof(string))
+		        typeName = "string";
+	        else if (type == typeof(byte))
+		        typeName = "byte";
+	        else if (type == typeof(byte?))
+		        typeName = "byte?";
+			else if (type == typeof(bool))
+		        typeName = "bool";
+	        else if (type == typeof(bool?))
+		        typeName = "bool?";
+	        else if (type == typeof(short))
+		        typeName = "short";
+	        else if (type == typeof(short?))
+		        typeName = "short?";
+	        else if (type == typeof(ushort))
+		        typeName = "ushort";
+	        else if (type == typeof(ushort?))
+		        typeName = "ushort?";
+			else if (type == typeof(int))
+		        typeName = "int";
+	        else if (type == typeof(int?))
+		        typeName = "int?";
+	        else if (type == typeof(uint))
+		        typeName = "uint";
+	        else if (type == typeof(uint?))
+		        typeName = "uint?";
+	        else if (type == typeof(long))
+		        typeName = "long";
+	        else if (type == typeof(long?))
+		        typeName = "long?";
+	        else if (type == typeof(ulong))
+		        typeName = "ulong";
+	        else if (type == typeof(ulong?))
+		        typeName = "ulong?";
+	        else if (type == typeof(float))
+		        typeName = "float";
+			else if (type == typeof(float?))
+		        typeName = "float?";
+	        else if (type == typeof(double))
+		        typeName = "double";
+	        else if (type == typeof(double?))
+		        typeName = "double?";
+	        else if (type == typeof(decimal))
+		        typeName = "decimal";
+	        else if (type == typeof(decimal?))
+		        typeName = "decimal?";
+			
+			//
+			// Value Types:
+			else if (type.IsValueType())
+		        typeName = type.Name;
+	        else if (type.IsNullableValueType())
+		        typeName = $"{type.Name}?";
+	        else
+		        typeName = type.Name;
+
+	        return typeName;
+        }
+
+		public static bool IsValueTypeOrNullableValueType(this Type type)
         {
 			return type.IsPrimitiveOrNullablePrimitive() || 
 			       type == typeof(StringValues) ||

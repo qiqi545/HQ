@@ -183,7 +183,7 @@ namespace Blowdart.UI.Tests
 				if (i != 0)
 					sb.Append(", ");
 
-				var typeName = GetTypeName(type);
+				var typeName = type.GetPreferredTypeName();
 
 				sb.Append(typeName);
 				sb.Append(' ');
@@ -191,29 +191,6 @@ namespace Blowdart.UI.Tests
 				sb.Append(Nullable.GetUnderlyingType(type) != null ? " = null" : $" = default({typeName})");
 			}
 		}
-		private static string GetTypeName(Type type)
-		{
-			// todo replace with type switch
-			string typeName;
-			if (type == typeof(string))
-				typeName = "string";
-			else if (type == typeof(bool))
-				typeName = "bool";
-			else if (type == typeof(bool?))
-				typeName = "bool?";
-			else if (type.IsNullablePrimitive())
-				typeName = Nullable.GetUnderlyingType(type).Name.ToLowerInvariant();
-			else if (type.IsValueType())
-				typeName = type.Name;
-			else if (type.IsNullableValueType())
-				typeName = $"{type.Name}?";
-			else if (type.IsPrimitive)
-				typeName = type.Name.ToLowerInvariant();
-			else
-				typeName = type.Name;
-			return typeName;
-		}
-
 		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 		public Dictionary<string, List<KeyValuePair<string, Type>>> GenerateAttributeMap()

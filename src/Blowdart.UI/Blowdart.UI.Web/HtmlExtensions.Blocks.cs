@@ -19,11 +19,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("address", attributes);
 		}
 
-		public static Ui BeginAddress(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginAddress(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("address", new { contenteditable, draggable });
+			return ui.BeginElement("address", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginAddress(this Ui ui, object attr = null)
 		{
@@ -92,11 +91,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("article", attributes);
 		}
 
-		public static Ui BeginArticle(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginArticle(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("article", new { contenteditable, draggable });
+			return ui.BeginElement("article", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginArticle(this Ui ui, object attr = null)
 		{
@@ -165,11 +163,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("aside", attributes);
 		}
 
-		public static Ui BeginAside(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginAside(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("aside", new { contenteditable, draggable });
+			return ui.BeginElement("aside", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginAside(this Ui ui, object attr = null)
 		{
@@ -238,11 +235,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("blockquote", attributes);
 		}
 
-		public static Ui BeginBlockquote(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginBlockquote(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("blockquote", new { contenteditable, draggable });
+			return ui.BeginElement("blockquote", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginBlockquote(this Ui ui, object attr = null)
 		{
@@ -311,11 +307,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("canvas", attributes);
 		}
 
-		public static Ui BeginCanvas(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginCanvas(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("canvas", new { contenteditable, draggable });
+			return ui.BeginElement("canvas", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginCanvas(this Ui ui, object attr = null)
 		{
@@ -384,11 +379,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dd", attributes);
 		}
 
-		public static Ui BeginDd(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginDd(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("dd", new { contenteditable, draggable });
+			return ui.BeginElement("dd", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginDd(this Ui ui, object attr = null)
 		{
@@ -457,11 +451,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("div", attributes);
 		}
 
-		public static Ui BeginDiv(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginDiv(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("div", new { contenteditable, draggable });
+			return ui.BeginElement("div", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginDiv(this Ui ui, object attr = null)
 		{
@@ -530,11 +523,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dl", attributes);
 		}
 
-		public static Ui BeginDl(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginDl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("dl", new { contenteditable, draggable });
+			return ui.BeginElement("dl", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginDl(this Ui ui, object attr = null)
 		{
@@ -603,11 +595,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dt", attributes);
 		}
 
-		public static Ui BeginDt(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginDt(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("dt", new { contenteditable, draggable });
+			return ui.BeginElement("dt", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginDt(this Ui ui, object attr = null)
 		{
@@ -676,11 +667,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("fieldset", attributes);
 		}
 
-		public static Ui BeginFieldset(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginFieldset(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("fieldset", new { contenteditable, draggable });
+			return ui.BeginElement("fieldset", new { disabled, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginFieldset(this Ui ui, object attr = null)
 		{
@@ -749,11 +739,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("figcaption", attributes);
 		}
 
-		public static Ui BeginFigcaption(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginFigcaption(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("figcaption", new { contenteditable, draggable });
+			return ui.BeginElement("figcaption", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginFigcaption(this Ui ui, object attr = null)
 		{
@@ -822,11 +811,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("figure", attributes);
 		}
 
-		public static Ui BeginFigure(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginFigure(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("figure", new { contenteditable, draggable });
+			return ui.BeginElement("figure", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginFigure(this Ui ui, object attr = null)
 		{
@@ -895,11 +883,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("footer", attributes);
 		}
 
-		public static Ui BeginFooter(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginFooter(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("footer", new { contenteditable, draggable });
+			return ui.BeginElement("footer", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginFooter(this Ui ui, object attr = null)
 		{
@@ -968,11 +955,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("form", attributes);
 		}
 
-		public static Ui BeginForm(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginForm(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("form", new { contenteditable, draggable });
+			return ui.BeginElement("form", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginForm(this Ui ui, object attr = null)
 		{
@@ -1041,11 +1027,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h1", attributes);
 		}
 
-		public static Ui BeginH1(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH1(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h1", new { contenteditable, draggable });
+			return ui.BeginElement("h1", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH1(this Ui ui, object attr = null)
 		{
@@ -1114,11 +1099,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h2", attributes);
 		}
 
-		public static Ui BeginH2(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH2(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h2", new { contenteditable, draggable });
+			return ui.BeginElement("h2", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH2(this Ui ui, object attr = null)
 		{
@@ -1187,11 +1171,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h3", attributes);
 		}
 
-		public static Ui BeginH3(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH3(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h3", new { contenteditable, draggable });
+			return ui.BeginElement("h3", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH3(this Ui ui, object attr = null)
 		{
@@ -1260,11 +1243,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h4", attributes);
 		}
 
-		public static Ui BeginH4(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH4(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h4", new { contenteditable, draggable });
+			return ui.BeginElement("h4", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH4(this Ui ui, object attr = null)
 		{
@@ -1333,11 +1315,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h5", attributes);
 		}
 
-		public static Ui BeginH5(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH5(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h5", new { contenteditable, draggable });
+			return ui.BeginElement("h5", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH5(this Ui ui, object attr = null)
 		{
@@ -1406,11 +1387,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h6", attributes);
 		}
 
-		public static Ui BeginH6(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginH6(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("h6", new { contenteditable, draggable });
+			return ui.BeginElement("h6", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginH6(this Ui ui, object attr = null)
 		{
@@ -1479,11 +1459,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("header", attributes);
 		}
 
-		public static Ui BeginHeader(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginHeader(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("header", new { contenteditable, draggable });
+			return ui.BeginElement("header", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginHeader(this Ui ui, object attr = null)
 		{
@@ -1552,11 +1531,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("hr", attributes);
 		}
 
-		public static Ui BeginHr(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginHr(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("hr", new { contenteditable, draggable });
+			return ui.BeginElement("hr", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginHr(this Ui ui, object attr = null)
 		{
@@ -1625,11 +1603,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("li", attributes);
 		}
 
-		public static Ui BeginLi(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginLi(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("li", new { contenteditable, draggable });
+			return ui.BeginElement("li", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginLi(this Ui ui, object attr = null)
 		{
@@ -1698,11 +1675,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("main", attributes);
 		}
 
-		public static Ui BeginMain(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginMain(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("main", new { contenteditable, draggable });
+			return ui.BeginElement("main", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginMain(this Ui ui, object attr = null)
 		{
@@ -1771,11 +1747,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("nav", attributes);
 		}
 
-		public static Ui BeginNav(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginNav(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("nav", new { contenteditable, draggable });
+			return ui.BeginElement("nav", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginNav(this Ui ui, object attr = null)
 		{
@@ -1844,11 +1819,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("noscript", attributes);
 		}
 
-		public static Ui BeginNoscript(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginNoscript(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("noscript", new { contenteditable, draggable });
+			return ui.BeginElement("noscript", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginNoscript(this Ui ui, object attr = null)
 		{
@@ -1917,11 +1891,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("ol", attributes);
 		}
 
-		public static Ui BeginOl(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginOl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool reversed = default(bool), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("ol", new { contenteditable, draggable });
+			return ui.BeginElement("ol", new { reversed, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginOl(this Ui ui, object attr = null)
 		{
@@ -1990,11 +1963,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("p", attributes);
 		}
 
-		public static Ui BeginP(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginP(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("p", new { contenteditable, draggable });
+			return ui.BeginElement("p", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginP(this Ui ui, object attr = null)
 		{
@@ -2063,11 +2035,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("pre", attributes);
 		}
 
-		public static Ui BeginPre(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginPre(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("pre", new { contenteditable, draggable });
+			return ui.BeginElement("pre", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginPre(this Ui ui, object attr = null)
 		{
@@ -2136,11 +2107,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("section", attributes);
 		}
 
-		public static Ui BeginSection(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginSection(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("section", new { contenteditable, draggable });
+			return ui.BeginElement("section", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginSection(this Ui ui, object attr = null)
 		{
@@ -2209,11 +2179,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("table", attributes);
 		}
 
-		public static Ui BeginTable(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginTable(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("table", new { contenteditable, draggable });
+			return ui.BeginElement("table", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginTable(this Ui ui, object attr = null)
 		{
@@ -2282,11 +2251,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("tfoot", attributes);
 		}
 
-		public static Ui BeginTfoot(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginTfoot(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("tfoot", new { contenteditable, draggable });
+			return ui.BeginElement("tfoot", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginTfoot(this Ui ui, object attr = null)
 		{
@@ -2355,11 +2323,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("ul", attributes);
 		}
 
-		public static Ui BeginUl(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginUl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("ul", new { contenteditable, draggable });
+			return ui.BeginElement("ul", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginUl(this Ui ui, object attr = null)
 		{
@@ -2428,11 +2395,10 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("video", attributes);
 		}
 
-		public static Ui BeginVideo(this Ui ui, bool contenteditable = default(bool), bool draggable = default(bool))
+		public static Ui BeginVideo(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), bool controls = default(bool), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool loop = default(bool), bool muted = default(bool), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("video", new { contenteditable, draggable });
+			return ui.BeginElement("video", new { controls, loop, muted, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
-
 
 		public static Ui BeginVideo(this Ui ui, object attr = null)
 		{
@@ -2495,3 +2461,4 @@ namespace Blowdart.UI.Web
 		#endregion
 	}
 }
+
