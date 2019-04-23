@@ -80,7 +80,7 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction();\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
 				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, Action action)");
 				sb.AppendLine($"\t\t{{");
-				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", null, action);");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", action);");
 				sb.AppendLine($"\t\t}}");
 				sb.AppendLine();
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}(attr);\r\n\t\t///\t\taction();\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
@@ -92,7 +92,7 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction(ui);\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
 				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, Action<Ui> action)");
 				sb.AppendLine($"\t\t{{");
-				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", null, action);");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", action);");
 				sb.AppendLine($"\t\t}}");
 				sb.AppendLine();
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}(attr);\r\n\t\t///\t\taction(ui);\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");

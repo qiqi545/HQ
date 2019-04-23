@@ -3,6 +3,7 @@
 
 using System;
 using Blowdart.UI;
+using Blowdart.UI.Web;
 using Blowdart.UI.Web.Internal;
 
 namespace Blowgun.Web.SemanticUi
@@ -20,7 +21,7 @@ namespace Blowgun.Web.SemanticUi
                 sb.Append("ui button");
             });
 
-            return Clickable(ui, "button", text, Attr(new { @class }));
+            return Clickable(ui, "button", text, Attributes.Attr(new { @class }));
         }
     }
 }

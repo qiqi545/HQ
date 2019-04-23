@@ -5,17 +5,11 @@ namespace Blowdart.UI.Web
 {
     public abstract class HtmlComponent : UiComponent
     {
-        public Attributes Attr(object attr)
-        {
-            return Attributes.Attr(attr);
-        }
+
     }
 
     public abstract class HtmlComponent<TModel> : UiComponent<TModel>
     {
-        public Attributes Attr(object attr)
-        {
-            return Attributes.Attr(attr);
-        }
+
     }
 }

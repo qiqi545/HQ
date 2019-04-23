@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Linq;
 using Blowdart.UI.Internal;
@@ -11,7 +10,7 @@ using TypeKitchen;
 
 namespace Blowdart.UI.Web
 {
-    public class Attributes : DynamicObject
+	internal class Attributes : DynamicObject
     {
         internal static object[] NoAttributes = new object[0];
         internal static Attributes Empty = new Attributes();

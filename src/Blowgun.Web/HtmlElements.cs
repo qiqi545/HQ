@@ -23,13 +23,8 @@ namespace Blowgun.Web
             ui.NextId();
             return Clickable(ui, "button", text);
         }
-
-        public static Attributes Attr(object attr)
-        {
-            return Attributes.Attr(attr);
-        }
-
-        protected bool Clickable(Ui ui, string el, string text, Attributes attr = null)
+		
+        protected bool Clickable(Ui ui, string el, string text, object attr = null)
         {
             var id = ui.NextIdHash;
             _html.Dom.AppendTag(el, id, text);

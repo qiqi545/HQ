@@ -36,35 +36,50 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        public static Ui Element(this Ui ui, string el, Attributes attr = null, Action action = null)
+        public static Ui Element(this Ui ui, string el)
         {
-            if (action == null)
-            {
-                ui.Element(el, null, attr);
-                return ui;
-            }
+	        return ui.Element(el, attr: null);
+        }
 
+		public static Ui Element(this Ui ui, string el, object attr)
+        {
             Dom(ui).Tab();
-            Dom(ui).OpenBlock(el, attr);
+            Dom(ui).OpenBlock(el, attr == null ? null : Attr(attr));
             _indentLevel++;
             Elements.Push(el);
-            action();
             ui.EndElement(el);
             return ui;
         }
 
-        public static Ui Element(this Ui ui, string el, object attr = null, Action action = null)
+        public static Ui Element(this Ui ui, string el, Action action)
         {
-            return ui.Element(el, attr == null ? null : Attr(attr), action);
+	        return ui.Element(el, null, action: action);
         }
 
-        public static Ui Element(this Ui ui, string el, object attr = null, Action<Ui> action = null)
+        public static Ui Element(this Ui ui, string el, object attr, Action action)
         {
-	        ui.Element(el, attr == null ? null : Attr(attr), () => action?.Invoke(ui));
+	        Dom(ui).Tab();
+	        Dom(ui).OpenBlock(el, attr == null ? null : Attr(attr));
+	        _indentLevel++;
+	        Elements.Push(el);
+	        action();
+	        ui.EndElement(el);
+	        return ui;
+        }
+
+		public static Ui Element(this Ui ui, string el, Action<Ui> action)
+        {
+	        ui.Element(el, null, () => action?.Invoke(ui));
             return ui;
         }
 
-        public static Ui EndElement(this Ui ui, string el)
+		public static Ui Element(this Ui ui, string el, object attr, Action<Ui> action)
+		{
+			ui.Element(el, attr, () => action?.Invoke(ui));
+			return ui;
+		}
+
+		public static Ui EndElement(this Ui ui, string el)
         {
             if (Elements.Count == 0)
                 throw new HtmlException($"Attempted to close a {el} without any open elements. You have a nesting issue somewhere.");
@@ -77,10 +92,10 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        public static Ui Element(this Ui ui, string el, string innerText, Attributes attr = null)
+        public static Ui Element(this Ui ui, string el, string innerText, object attr = null)
         {
             Dom(ui).Tab();
-            Dom(ui).AppendTag(el, innerText, attr);
+            Dom(ui).AppendTag(el, innerText, attr == null ? null : Attr(attr));
             return ui;
         }
 
@@ -106,7 +121,7 @@ namespace Blowdart.UI.Web
 	        return attr is Attributes direct ? direct : Attributes.Attr(attr);
         }
 
-        public static Attributes Attr(params object[] attr)
+        internal static Attributes Attr(params object[] attr)
         {
             return Attributes.Attr(attr);
         }
@@ -119,43 +134,15 @@ namespace Blowdart.UI.Web
         }
 
         #region Element Helpers
-
-        #region form
-
-        public static Ui BeginForm(this Ui ui, Attributes attr = null)
-        {
-            ui.BeginElement("form", attr);
-            return ui;
-        }
 		
-        public static Ui Form(this Ui ui, Attributes attr = null, Action action = null)
-        {
-            ui.Element("form", attr, action);
-            return ui;
-        }
-		
-        public static Ui Form(this Ui ui, Attributes attr, Action<Ui> action)
-        {
-            ui.Element("form", attr, action);
-            return ui;
-        }
-
-        #endregion
-
         #region input
 
-        public static Ui Input(this Ui ui, InputType inputType, Attributes attr = null)
+        public static Ui Input(this Ui ui, InputType inputType, object attr = null)
         {
             var attribute = Attributes.Attr(new { type = inputType.ToString().ToLowerInvariant() });
             var attributes = attr == null ? attribute : Attributes.Attr(attribute, attr);
             ui.Element("input", null, attributes);
             return ui;
-        }
-
-        public static Ui Input(this Ui ui, InputType inputType, object attr = null)
-        {
-            var attributes = attr == null ? Attributes.Empty : Attributes.Attr(attr);
-            return ui.Input(inputType, attributes);
         }
 
         #endregion
@@ -236,13 +223,13 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        public static Ui Div(this Ui ui, string @class, Attributes attr, Action action)
+        public static Ui Div(this Ui ui, string @class, object attr, Action action)
         {
             ui.Div(Attributes.Attr(new { @class }, attr), action);
             return ui;
         }
 
-        public static Ui Div(this Ui ui, string @class, Attributes attr, Action<Ui> action)
+        public static Ui Div(this Ui ui, string @class, object attr, Action<Ui> action)
         {
             ui.Div(Attributes.Attr(new { @class }, attr), action);
             return ui;
@@ -250,7 +237,7 @@ namespace Blowdart.UI.Web
 
         public static Ui A(this Ui ui, string href, Action action = null)
         {
-            ui.Div(Attributes.Attr(new { href }), action);
+            ui.Div(new { href }, action);
             return ui;
         }
 
