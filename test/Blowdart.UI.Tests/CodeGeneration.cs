@@ -187,20 +187,19 @@ namespace Blowdart.UI.Tests
 
 				sb.Append(typeName);
 				sb.Append(' ');
-				sb.Append(key);
+				sb.Append(NormalizeKey(key));
 				sb.Append(Nullable.GetUnderlyingType(type) != null ? " = null" : $" = default({typeName})");
 			}
 		}
+
 		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
 		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 		public Dictionary<string, List<KeyValuePair<string, Type>>> GenerateAttributeMap()
 		{
-			// TODO typing (src = URL, etc.)
 			// TODO strong typing "type"?
 			// TODO IDL validation? (type=foo => type=text)
 			// TODO data-*
-
-
+			
 			var map = new Dictionary<string, List<KeyValuePair<string, Type>>>();
 
 			//
@@ -221,7 +220,7 @@ wrap:textarea
 ".Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
 			{
 				var tokens = line.Split(":");
-				var attributeName = tokens[0];
+				var attributeName = NormalizeKey(tokens[0]);
 				var affectedElements = tokens[1].Split(",", StringSplitOptions.RemoveEmptyEntries);
 
 				foreach (var element in affectedElements)
@@ -255,29 +254,21 @@ translate
 ".Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
 			{
 				var tokens = line.Split("|", StringSplitOptions.RemoveEmptyEntries);
-				var attributeName = tokens[0];
+				var attributeName = NormalizeKey(tokens[0]);
 
-				switch (attributeName)
-				{
-					case "class":
-						attributeName = $"@{attributeName}";
-						break;
-				}
-
-				Type type = typeof(string);
+				var type = typeof(string);
 				if (tokens.Length > 1)
 					type = GetAttributeType(tokens);
+
 				if (!map.TryGetValue("*", out var list))
 					map.Add("*", list = new List<KeyValuePair<string, Type>>());
+
 				list.Add(new KeyValuePair<string, Type>(attributeName, type));
 			}
 
-			return map;
-
-			
-
-
-			const string regular = @"
+			//
+			// Element-Specific Attributes:
+			foreach (var line in @"
 accept:form,input
 accept-charset:form
 action:form,
@@ -360,7 +351,7 @@ shape:a,area
 size:input,select
 sizes:link,img,source
 span:col,colgroup
-src:audio,embed,iframe,img,input,script,source,track,video
+src|Uri:audio,embed,iframe,img,input,script,source,track,video
 srcdoc:iframe
 srclang:track
 srcset:img,source
@@ -372,15 +363,53 @@ type:button,input,command,embed,object,script,source,style,menu
 usemap:img,input,object
 value:button,data,input,li,meter,option,progress,param
 width:canvas,embed,iframe,img,input,object,video
-";
-			var sb = new StringBuilder();
+".Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var tokens = line.Split(":");
+				var attributeName = NormalizeKey(tokens[0]);
 
-			
+				var meta = attributeName.Split("|", StringSplitOptions.RemoveEmptyEntries);
+				var type = typeof(string);
+				if (meta.Length > 1)
+				{
+					type = GetAttributeType(meta);
+					attributeName = NormalizeKey(meta[0]);
+				}
 
-			_console.WriteLine(sb.ToString());
+				var affectedElements = tokens[1].Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+				foreach (var element in affectedElements)
+				{
+					if (!map.TryGetValue(element, out var list))
+						map.Add(element, list = new List<KeyValuePair<string, Type>>());
+
+					list.Add(new KeyValuePair<string, Type>(attributeName, type));
+				}
+			}
+
+			return map;
 		}
 
-		private static Type GetAttributeType(string[] tokens)
+		private static string NormalizeKey(string key)
+		{
+			switch (key)
+			{
+				case "class":
+				case "for":
+					key = $"@{key}";
+					break;
+			}
+
+			// accept-charset = acceptCharset
+			var words = key.Split('-');
+			if (words.Length == 1)
+				return words[0];
+
+			var pascal = string.Concat(words.Select(x => char.ToUpperInvariant(x[0]) + x.Substring(1)));
+			return char.ToLowerInvariant(pascal[0]) + pascal.Substring(1);
+		}
+
+		private static Type GetAttributeType(IReadOnlyList<string> tokens)
 		{
 			var typeName = tokens[1];
 
@@ -394,14 +423,11 @@ width:canvas,embed,iframe,img,input,object,video
 					return typeof(int);
 				case "int?":
 					return typeof(int?);
+				case "Uri":
+					return typeof(Uri);
+				default:
+					throw new Exception("derp");
 			}
-
-			var type = Type.GetType(typeName);
-			if (type == null)
-				throw new Exception("derp");
-
-			var maybeNullable = Nullable.GetUnderlyingType(type);
-			return maybeNullable != null ? maybeNullable : type;
 		}
 	}
 }

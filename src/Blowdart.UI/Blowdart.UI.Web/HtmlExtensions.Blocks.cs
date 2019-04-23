@@ -235,9 +235,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("blockquote", attributes);
 		}
 
-		public static Ui BeginBlockquote(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginBlockquote(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), string cite = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("blockquote", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("blockquote", new { cite, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginBlockquote(this Ui ui, object attr = null)
@@ -307,9 +307,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("canvas", attributes);
 		}
 
-		public static Ui BeginCanvas(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginCanvas(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string width = default(string))
 		{
-			return ui.BeginElement("canvas", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("canvas", new { height, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginCanvas(this Ui ui, object attr = null)
@@ -667,9 +667,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("fieldset", attributes);
 		}
 
-		public static Ui BeginFieldset(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginFieldset(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("fieldset", new { disabled, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("fieldset", new { disabled, @for, name, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginFieldset(this Ui ui, object attr = null)
@@ -955,9 +955,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("form", attributes);
 		}
 
-		public static Ui BeginForm(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginForm(this Ui ui, string @class = default(string), string accept = default(string), string acceptCharset = default(string), string accesskey = default(string), string action = default(string), string autocapitalize = default(string), string autocomplete = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string enctype = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string method = default(string), string name = default(string), string novalidate = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string target = default(string), string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("form", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("form", new { accept, acceptCharset, action, autocomplete, enctype, method, name, novalidate, target, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginForm(this Ui ui, object attr = null)
@@ -1531,9 +1531,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("hr", attributes);
 		}
 
-		public static Ui BeginHr(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginHr(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), string color = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("hr", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("hr", new { align, color, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginHr(this Ui ui, object attr = null)
@@ -1603,9 +1603,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("li", attributes);
 		}
 
-		public static Ui BeginLi(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginLi(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string value = default(string))
 		{
-			return ui.BeginElement("li", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("li", new { value, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginLi(this Ui ui, object attr = null)
@@ -1891,9 +1891,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("ol", attributes);
 		}
 
-		public static Ui BeginOl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool reversed = default(bool), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginOl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool reversed = default(bool), string slot = default(string), string spellcheck = default(string), string start = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("ol", new { reversed, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("ol", new { reversed, start, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginOl(this Ui ui, object attr = null)
@@ -2179,9 +2179,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("table", attributes);
 		}
 
-		public static Ui BeginTable(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginTable(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), string summary = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("table", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("table", new { align, summary, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginTable(this Ui ui, object attr = null)
@@ -2251,9 +2251,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("tfoot", attributes);
 		}
 
-		public static Ui BeginTfoot(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginTfoot(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
-			return ui.BeginElement("tfoot", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("tfoot", new { align, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginTfoot(this Ui ui, object attr = null)
@@ -2395,9 +2395,9 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("video", attributes);
 		}
 
-		public static Ui BeginVideo(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), bool controls = default(bool), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool loop = default(bool), bool muted = default(bool), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		public static Ui BeginVideo(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), string autoplay = default(string), string buffered = default(string), bool contenteditable = default(bool), string contextmenu = default(string), bool controls = default(bool), string crossorigin = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool loop = default(bool), bool muted = default(bool), string poster = default(string), string preload = default(string), string slot = default(string), string spellcheck = default(string), Uri src = default(Uri), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string width = default(string))
 		{
-			return ui.BeginElement("video", new { controls, loop, muted, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+			return ui.BeginElement("video", new { controls, loop, muted, autoplay, buffered, crossorigin, height, poster, preload, src, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
 		}
 
 		public static Ui BeginVideo(this Ui ui, object attr = null)

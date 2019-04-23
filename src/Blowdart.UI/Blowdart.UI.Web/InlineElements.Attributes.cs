@@ -7,6 +7,8 @@
 /// <summary>Use <code>using static InlineElements</code> to enable inline elements anywhere they are not implicitly available.</summary>
 public static partial class InlineElements
 {
+	//
+	// Global Boolean Attributes:
 	public const bool contenteditable = true;
 	public const bool draggable = true;
 }
