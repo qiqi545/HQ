@@ -20,7 +20,8 @@ using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web
 {
-    public static class Installer
+
+	public static class Installer
     {
         internal static CompositeFileProvider ProviderContainer;
 

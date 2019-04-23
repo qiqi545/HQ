@@ -196,35 +196,9 @@ namespace Blowdart.UI.Web
             }
         }
 
-        private static bool NotResolvableByContainer(ParameterInfo parameter)
+        private bool NotResolvableByContainer(ParameterInfo parameter)
         {
-            return parameter.ParameterType == typeof(string) || 
-                   parameter.ParameterType == typeof(StringValues) ||
-                   parameter.ParameterType == typeof(StringValues?) ||
-                   parameter.ParameterType == typeof(byte) ||
-                   parameter.ParameterType == typeof(byte?) ||
-                   parameter.ParameterType == typeof(bool) ||
-                   parameter.ParameterType == typeof(bool?) ||
-                   parameter.ParameterType == typeof(short) ||
-                   parameter.ParameterType == typeof(short?) ||
-                   parameter.ParameterType == typeof(int) ||
-                   parameter.ParameterType == typeof(int?) ||
-                   parameter.ParameterType == typeof(long) ||
-                   parameter.ParameterType == typeof(long?) ||
-                   parameter.ParameterType == typeof(float) ||
-                   parameter.ParameterType == typeof(float?) ||
-                   parameter.ParameterType == typeof(double) ||
-                   parameter.ParameterType == typeof(double?) ||
-                   parameter.ParameterType == typeof(decimal) ||
-                   parameter.ParameterType == typeof(decimal?) ||
-                   parameter.ParameterType == typeof(DateTime) ||
-                   parameter.ParameterType == typeof(DateTime?) ||
-                   parameter.ParameterType == typeof(DateTimeOffset) ||
-                   parameter.ParameterType == typeof(DateTimeOffset?) ||
-                   parameter.ParameterType == typeof(TimeSpan) ||
-                   parameter.ParameterType == typeof(TimeSpan?) ||
-                   parameter.ParameterType == typeof(Guid) ||
-                   parameter.ParameterType == typeof(Guid?);
+	        return parameter.ParameterType.IsValueTypeOrNullableValueType();
         }
 
         private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)

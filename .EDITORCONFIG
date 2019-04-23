@@ -79,7 +79,7 @@ indent_style = tab
 tab_width = 4
 insert_final_newline = false
 
-[InlineElements.cs]
+[InlineElements*.cs]
 end_of_line = crlf
 indent_size = 4
 indent_style = tab

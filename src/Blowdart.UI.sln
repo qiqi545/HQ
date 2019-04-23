@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blowdart.UI.Web.SemanticUI"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A029D8DE-27BA-4A99-9EF4-7709C5AB8A9B}"
 	ProjectSection(SolutionItems) = preProject
+		..\.EDITORCONFIG = ..\.EDITORCONFIG
 		..\LICENSE = ..\LICENSE
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
@@ -36,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blowgun.Web.SemanticUi", "B
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7E10C7F2-F125-4D81-8603-C91857725793}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Blowdart.UI.Tests", "..\test\Blowdart.UI.Tests\Blowdart.UI.Tests.csproj", "{5B79EE1B-38F0-438F-957B-0BFDE3BB533E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blowdart.UI.Tests", "..\test\Blowdart.UI.Tests\Blowdart.UI.Tests.csproj", "{5B79EE1B-38F0-438F-957B-0BFDE3BB533E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

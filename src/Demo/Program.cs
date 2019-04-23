@@ -2,6 +2,7 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
+
 using static InlineElements;
 
 namespace Demo
@@ -26,7 +27,7 @@ namespace Demo
 
             ui.Form(new { method = "post" }, () =>
             {
-                ui.Element("fieldset", null, () =>
+                ui.Fieldset(() =>
                 {
                     ui.Literal("First name: ").Break();
                     ui.Input(InputType.Text, new { name = "firstname", value = firstName, placeholder = "Enter your first name:" }).Break();
@@ -36,7 +37,7 @@ namespace Demo
                 });
             });
 
-            ui.Break();
+            br();
 
             if (ui.Button("Click Me"))
             {

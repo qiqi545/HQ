@@ -6,9 +6,8 @@
 // ReSharper disable CheckNamespace
 
 /// <summary>Use <code>using static InlineElements</code> to enable inline elements anywhere they are not implicitly available.</summary>
-public static class InlineElements
+public static partial class InlineElements
 {
-
 	public static string @a(string value)
 	{
 		return $"<a>{value}</a>";

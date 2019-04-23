@@ -214,9 +214,7 @@ namespace Blowdart.UI.Web
                 webHost.StopAsync(token).GetAwaiter().GetResult();
             }
         }
-
-        
-
+		
         private static void OnStarted(IWebHost webHost, IConfiguration config)
         {
             var feature = webHost.ServerFeatures.Get<IServerAddressesFeature>();
@@ -236,7 +234,7 @@ namespace Blowdart.UI.Web
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 startInfo.FileName = "cmd";
-                startInfo.Arguments = ("/C start " + url);
+                startInfo.Arguments = "/C start " + url;
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {

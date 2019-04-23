@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using TypeKitchen;
+using Microsoft.Extensions.Primitives;
 
 namespace Blowdart.UI.Internal
 {
@@ -110,5 +110,70 @@ namespace Blowdart.UI.Internal
         {
             return type.Namespace == null && Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute));
         }
-    }
+
+        public static bool IsValueTypeOrNullableValueType(this Type type)
+        {
+			return type.IsPrimitiveOrNullablePrimitive() || 
+			       type == typeof(StringValues) ||
+			       type == typeof(StringValues?) ||
+				   type == typeof(DateTime) ||
+			       type == typeof(DateTime?) ||
+			       type == typeof(DateTimeOffset) ||
+			       type == typeof(DateTimeOffset?) ||
+			       type == typeof(TimeSpan) ||
+			       type == typeof(TimeSpan?) ||
+			       type == typeof(Guid) ||
+			       type == typeof(Guid?);
+		}
+
+        public static bool IsValueType(this Type type)
+        {
+	        return type.IsPrimitive() ||
+	               type == typeof(StringValues) ||
+	               type == typeof(DateTime) ||
+	               type == typeof(DateTimeOffset) ||
+	               type == typeof(TimeSpan) ||
+	               type == typeof(Guid);
+        }
+
+        public static bool IsNullableValueType(this Type type)
+        {
+	        return type.IsNullablePrimitive() ||
+	               type == typeof(StringValues?) ||
+	               type == typeof(DateTime?) ||
+	               type == typeof(DateTimeOffset?) ||
+	               type == typeof(TimeSpan?) ||
+	               type == typeof(Guid?);
+        }
+
+		public static bool IsPrimitiveOrNullablePrimitive(this Type type)
+        {
+	        return type.IsPrimitive() || type.IsNullablePrimitive();
+        }
+
+        public static bool IsPrimitive(this Type type)
+        {
+	        return type == typeof(string) ||
+	               type == typeof(byte) ||
+	               type == typeof(bool) ||
+	               type == typeof(short) ||
+	               type == typeof(int) ||
+	               type == typeof(long) ||
+	               type == typeof(float) ||
+	               type == typeof(double) ||
+	               type == typeof(decimal);
+        }
+
+		public static bool IsNullablePrimitive(this Type type)
+        {
+	        return type == typeof(byte?) ||
+	               type == typeof(bool?) ||
+	               type == typeof(short?) ||
+	               type == typeof(int?) ||
+	               type == typeof(long?) ||
+	               type == typeof(float?) ||
+	               type == typeof(double?) ||
+	               type == typeof(decimal?);
+        }
+	}
 }

@@ -12,7 +12,7 @@ namespace Blowdart.UI.Web
 
 		#region address
 
-		public static Ui BeginAddress(this Ui ui, object attr = null)
+		public static Ui BeginAddress(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("address", attr);
 		}
@@ -31,7 +31,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Address(this Ui ui, Action action)
 		{
-			return ui.Element("address", attr: null, action: action);
+			return ui.Element("address", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -55,7 +55,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Address(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("address", attr: null, action: action);
+			return ui.Element("address", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -74,7 +74,7 @@ namespace Blowdart.UI.Web
 
 		#region article
 
-		public static Ui BeginArticle(this Ui ui, object attr = null)
+		public static Ui BeginArticle(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("article", attr);
 		}
@@ -93,7 +93,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Article(this Ui ui, Action action)
 		{
-			return ui.Element("article", attr: null, action: action);
+			return ui.Element("article", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -117,7 +117,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Article(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("article", attr: null, action: action);
+			return ui.Element("article", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -136,7 +136,7 @@ namespace Blowdart.UI.Web
 
 		#region aside
 
-		public static Ui BeginAside(this Ui ui, object attr = null)
+		public static Ui BeginAside(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("aside", attr);
 		}
@@ -155,7 +155,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Aside(this Ui ui, Action action)
 		{
-			return ui.Element("aside", attr: null, action: action);
+			return ui.Element("aside", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -179,7 +179,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Aside(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("aside", attr: null, action: action);
+			return ui.Element("aside", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -198,7 +198,7 @@ namespace Blowdart.UI.Web
 
 		#region blockquote
 
-		public static Ui BeginBlockquote(this Ui ui, object attr = null)
+		public static Ui BeginBlockquote(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("blockquote", attr);
 		}
@@ -217,7 +217,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Blockquote(this Ui ui, Action action)
 		{
-			return ui.Element("blockquote", attr: null, action: action);
+			return ui.Element("blockquote", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -241,7 +241,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Blockquote(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("blockquote", attr: null, action: action);
+			return ui.Element("blockquote", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -260,7 +260,7 @@ namespace Blowdart.UI.Web
 
 		#region canvas
 
-		public static Ui BeginCanvas(this Ui ui, object attr = null)
+		public static Ui BeginCanvas(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("canvas", attr);
 		}
@@ -279,7 +279,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Canvas(this Ui ui, Action action)
 		{
-			return ui.Element("canvas", attr: null, action: action);
+			return ui.Element("canvas", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -303,7 +303,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Canvas(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("canvas", attr: null, action: action);
+			return ui.Element("canvas", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -322,7 +322,7 @@ namespace Blowdart.UI.Web
 
 		#region dd
 
-		public static Ui BeginDd(this Ui ui, object attr = null)
+		public static Ui BeginDd(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("dd", attr);
 		}
@@ -341,7 +341,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dd(this Ui ui, Action action)
 		{
-			return ui.Element("dd", attr: null, action: action);
+			return ui.Element("dd", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -365,7 +365,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dd(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("dd", attr: null, action: action);
+			return ui.Element("dd", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -384,7 +384,7 @@ namespace Blowdart.UI.Web
 
 		#region div
 
-		public static Ui BeginDiv(this Ui ui, object attr = null)
+		public static Ui BeginDiv(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("div", attr);
 		}
@@ -403,7 +403,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Div(this Ui ui, Action action)
 		{
-			return ui.Element("div", attr: null, action: action);
+			return ui.Element("div", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -427,7 +427,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Div(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("div", attr: null, action: action);
+			return ui.Element("div", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -446,7 +446,7 @@ namespace Blowdart.UI.Web
 
 		#region dl
 
-		public static Ui BeginDl(this Ui ui, object attr = null)
+		public static Ui BeginDl(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("dl", attr);
 		}
@@ -465,7 +465,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dl(this Ui ui, Action action)
 		{
-			return ui.Element("dl", attr: null, action: action);
+			return ui.Element("dl", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -489,7 +489,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dl(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("dl", attr: null, action: action);
+			return ui.Element("dl", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -508,7 +508,7 @@ namespace Blowdart.UI.Web
 
 		#region dt
 
-		public static Ui BeginDt(this Ui ui, object attr = null)
+		public static Ui BeginDt(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("dt", attr);
 		}
@@ -527,7 +527,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dt(this Ui ui, Action action)
 		{
-			return ui.Element("dt", attr: null, action: action);
+			return ui.Element("dt", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -551,7 +551,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Dt(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("dt", attr: null, action: action);
+			return ui.Element("dt", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -570,7 +570,7 @@ namespace Blowdart.UI.Web
 
 		#region fieldset
 
-		public static Ui BeginFieldset(this Ui ui, object attr = null)
+		public static Ui BeginFieldset(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("fieldset", attr);
 		}
@@ -589,7 +589,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Fieldset(this Ui ui, Action action)
 		{
-			return ui.Element("fieldset", attr: null, action: action);
+			return ui.Element("fieldset", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -613,7 +613,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Fieldset(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("fieldset", attr: null, action: action);
+			return ui.Element("fieldset", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -632,7 +632,7 @@ namespace Blowdart.UI.Web
 
 		#region figcaption
 
-		public static Ui BeginFigcaption(this Ui ui, object attr = null)
+		public static Ui BeginFigcaption(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("figcaption", attr);
 		}
@@ -651,7 +651,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Figcaption(this Ui ui, Action action)
 		{
-			return ui.Element("figcaption", attr: null, action: action);
+			return ui.Element("figcaption", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -675,7 +675,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Figcaption(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("figcaption", attr: null, action: action);
+			return ui.Element("figcaption", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -694,7 +694,7 @@ namespace Blowdart.UI.Web
 
 		#region figure
 
-		public static Ui BeginFigure(this Ui ui, object attr = null)
+		public static Ui BeginFigure(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("figure", attr);
 		}
@@ -713,7 +713,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Figure(this Ui ui, Action action)
 		{
-			return ui.Element("figure", attr: null, action: action);
+			return ui.Element("figure", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -737,7 +737,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Figure(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("figure", attr: null, action: action);
+			return ui.Element("figure", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -756,7 +756,7 @@ namespace Blowdart.UI.Web
 
 		#region footer
 
-		public static Ui BeginFooter(this Ui ui, object attr = null)
+		public static Ui BeginFooter(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("footer", attr);
 		}
@@ -775,7 +775,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Footer(this Ui ui, Action action)
 		{
-			return ui.Element("footer", attr: null, action: action);
+			return ui.Element("footer", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -799,7 +799,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Footer(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("footer", attr: null, action: action);
+			return ui.Element("footer", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -818,7 +818,7 @@ namespace Blowdart.UI.Web
 
 		#region form
 
-		public static Ui BeginForm(this Ui ui, object attr = null)
+		public static Ui BeginForm(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("form", attr);
 		}
@@ -837,7 +837,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Form(this Ui ui, Action action)
 		{
-			return ui.Element("form", attr: null, action: action);
+			return ui.Element("form", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -861,7 +861,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Form(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("form", attr: null, action: action);
+			return ui.Element("form", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -880,7 +880,7 @@ namespace Blowdart.UI.Web
 
 		#region h1
 
-		public static Ui BeginH1(this Ui ui, object attr = null)
+		public static Ui BeginH1(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h1", attr);
 		}
@@ -899,7 +899,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H1(this Ui ui, Action action)
 		{
-			return ui.Element("h1", attr: null, action: action);
+			return ui.Element("h1", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -923,7 +923,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H1(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h1", attr: null, action: action);
+			return ui.Element("h1", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -942,7 +942,7 @@ namespace Blowdart.UI.Web
 
 		#region h2
 
-		public static Ui BeginH2(this Ui ui, object attr = null)
+		public static Ui BeginH2(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h2", attr);
 		}
@@ -961,7 +961,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H2(this Ui ui, Action action)
 		{
-			return ui.Element("h2", attr: null, action: action);
+			return ui.Element("h2", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -985,7 +985,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H2(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h2", attr: null, action: action);
+			return ui.Element("h2", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1004,7 +1004,7 @@ namespace Blowdart.UI.Web
 
 		#region h3
 
-		public static Ui BeginH3(this Ui ui, object attr = null)
+		public static Ui BeginH3(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h3", attr);
 		}
@@ -1023,7 +1023,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H3(this Ui ui, Action action)
 		{
-			return ui.Element("h3", attr: null, action: action);
+			return ui.Element("h3", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1047,7 +1047,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H3(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h3", attr: null, action: action);
+			return ui.Element("h3", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1066,7 +1066,7 @@ namespace Blowdart.UI.Web
 
 		#region h4
 
-		public static Ui BeginH4(this Ui ui, object attr = null)
+		public static Ui BeginH4(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h4", attr);
 		}
@@ -1085,7 +1085,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H4(this Ui ui, Action action)
 		{
-			return ui.Element("h4", attr: null, action: action);
+			return ui.Element("h4", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1109,7 +1109,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H4(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h4", attr: null, action: action);
+			return ui.Element("h4", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1128,7 +1128,7 @@ namespace Blowdart.UI.Web
 
 		#region h5
 
-		public static Ui BeginH5(this Ui ui, object attr = null)
+		public static Ui BeginH5(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h5", attr);
 		}
@@ -1147,7 +1147,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H5(this Ui ui, Action action)
 		{
-			return ui.Element("h5", attr: null, action: action);
+			return ui.Element("h5", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1171,7 +1171,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H5(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h5", attr: null, action: action);
+			return ui.Element("h5", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1190,7 +1190,7 @@ namespace Blowdart.UI.Web
 
 		#region h6
 
-		public static Ui BeginH6(this Ui ui, object attr = null)
+		public static Ui BeginH6(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("h6", attr);
 		}
@@ -1209,7 +1209,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H6(this Ui ui, Action action)
 		{
-			return ui.Element("h6", attr: null, action: action);
+			return ui.Element("h6", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1233,7 +1233,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui H6(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("h6", attr: null, action: action);
+			return ui.Element("h6", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1252,7 +1252,7 @@ namespace Blowdart.UI.Web
 
 		#region header
 
-		public static Ui BeginHeader(this Ui ui, object attr = null)
+		public static Ui BeginHeader(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("header", attr);
 		}
@@ -1271,7 +1271,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Header(this Ui ui, Action action)
 		{
-			return ui.Element("header", attr: null, action: action);
+			return ui.Element("header", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1295,7 +1295,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Header(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("header", attr: null, action: action);
+			return ui.Element("header", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1314,7 +1314,7 @@ namespace Blowdart.UI.Web
 
 		#region hr
 
-		public static Ui BeginHr(this Ui ui, object attr = null)
+		public static Ui BeginHr(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("hr", attr);
 		}
@@ -1333,7 +1333,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Hr(this Ui ui, Action action)
 		{
-			return ui.Element("hr", attr: null, action: action);
+			return ui.Element("hr", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1357,7 +1357,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Hr(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("hr", attr: null, action: action);
+			return ui.Element("hr", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1376,7 +1376,7 @@ namespace Blowdart.UI.Web
 
 		#region li
 
-		public static Ui BeginLi(this Ui ui, object attr = null)
+		public static Ui BeginLi(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("li", attr);
 		}
@@ -1395,7 +1395,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Li(this Ui ui, Action action)
 		{
-			return ui.Element("li", attr: null, action: action);
+			return ui.Element("li", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1419,7 +1419,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Li(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("li", attr: null, action: action);
+			return ui.Element("li", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1438,7 +1438,7 @@ namespace Blowdart.UI.Web
 
 		#region main
 
-		public static Ui BeginMain(this Ui ui, object attr = null)
+		public static Ui BeginMain(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("main", attr);
 		}
@@ -1457,7 +1457,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Main(this Ui ui, Action action)
 		{
-			return ui.Element("main", attr: null, action: action);
+			return ui.Element("main", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1481,7 +1481,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Main(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("main", attr: null, action: action);
+			return ui.Element("main", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1500,7 +1500,7 @@ namespace Blowdart.UI.Web
 
 		#region nav
 
-		public static Ui BeginNav(this Ui ui, object attr = null)
+		public static Ui BeginNav(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("nav", attr);
 		}
@@ -1519,7 +1519,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Nav(this Ui ui, Action action)
 		{
-			return ui.Element("nav", attr: null, action: action);
+			return ui.Element("nav", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1543,7 +1543,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Nav(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("nav", attr: null, action: action);
+			return ui.Element("nav", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1562,7 +1562,7 @@ namespace Blowdart.UI.Web
 
 		#region noscript
 
-		public static Ui BeginNoscript(this Ui ui, object attr = null)
+		public static Ui BeginNoscript(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("noscript", attr);
 		}
@@ -1581,7 +1581,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Noscript(this Ui ui, Action action)
 		{
-			return ui.Element("noscript", attr: null, action: action);
+			return ui.Element("noscript", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1605,7 +1605,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Noscript(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("noscript", attr: null, action: action);
+			return ui.Element("noscript", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1624,7 +1624,7 @@ namespace Blowdart.UI.Web
 
 		#region ol
 
-		public static Ui BeginOl(this Ui ui, object attr = null)
+		public static Ui BeginOl(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("ol", attr);
 		}
@@ -1643,7 +1643,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Ol(this Ui ui, Action action)
 		{
-			return ui.Element("ol", attr: null, action: action);
+			return ui.Element("ol", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1667,7 +1667,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Ol(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("ol", attr: null, action: action);
+			return ui.Element("ol", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1686,7 +1686,7 @@ namespace Blowdart.UI.Web
 
 		#region p
 
-		public static Ui BeginP(this Ui ui, object attr = null)
+		public static Ui BeginP(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("p", attr);
 		}
@@ -1705,7 +1705,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui P(this Ui ui, Action action)
 		{
-			return ui.Element("p", attr: null, action: action);
+			return ui.Element("p", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1729,7 +1729,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui P(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("p", attr: null, action: action);
+			return ui.Element("p", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1748,7 +1748,7 @@ namespace Blowdart.UI.Web
 
 		#region pre
 
-		public static Ui BeginPre(this Ui ui, object attr = null)
+		public static Ui BeginPre(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("pre", attr);
 		}
@@ -1767,7 +1767,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Pre(this Ui ui, Action action)
 		{
-			return ui.Element("pre", attr: null, action: action);
+			return ui.Element("pre", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1791,7 +1791,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Pre(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("pre", attr: null, action: action);
+			return ui.Element("pre", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1810,7 +1810,7 @@ namespace Blowdart.UI.Web
 
 		#region section
 
-		public static Ui BeginSection(this Ui ui, object attr = null)
+		public static Ui BeginSection(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("section", attr);
 		}
@@ -1829,7 +1829,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Section(this Ui ui, Action action)
 		{
-			return ui.Element("section", attr: null, action: action);
+			return ui.Element("section", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1853,7 +1853,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Section(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("section", attr: null, action: action);
+			return ui.Element("section", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1872,7 +1872,7 @@ namespace Blowdart.UI.Web
 
 		#region table
 
-		public static Ui BeginTable(this Ui ui, object attr = null)
+		public static Ui BeginTable(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("table", attr);
 		}
@@ -1891,7 +1891,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Table(this Ui ui, Action action)
 		{
-			return ui.Element("table", attr: null, action: action);
+			return ui.Element("table", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1915,7 +1915,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Table(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("table", attr: null, action: action);
+			return ui.Element("table", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1934,7 +1934,7 @@ namespace Blowdart.UI.Web
 
 		#region tfoot
 
-		public static Ui BeginTfoot(this Ui ui, object attr = null)
+		public static Ui BeginTfoot(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("tfoot", attr);
 		}
@@ -1953,7 +1953,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Tfoot(this Ui ui, Action action)
 		{
-			return ui.Element("tfoot", attr: null, action: action);
+			return ui.Element("tfoot", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1977,7 +1977,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Tfoot(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("tfoot", attr: null, action: action);
+			return ui.Element("tfoot", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1996,7 +1996,7 @@ namespace Blowdart.UI.Web
 
 		#region ul
 
-		public static Ui BeginUl(this Ui ui, object attr = null)
+		public static Ui BeginUl(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("ul", attr);
 		}
@@ -2015,7 +2015,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Ul(this Ui ui, Action action)
 		{
-			return ui.Element("ul", attr: null, action: action);
+			return ui.Element("ul", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2039,7 +2039,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Ul(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("ul", attr: null, action: action);
+			return ui.Element("ul", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2058,7 +2058,7 @@ namespace Blowdart.UI.Web
 
 		#region video
 
-		public static Ui BeginVideo(this Ui ui, object attr = null)
+		public static Ui BeginVideo(this Ui ui, bool? contenteditable = null, bool? draggable = null, object attr = null)
 		{
 			return ui.BeginElement("video", attr);
 		}
@@ -2077,7 +2077,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Video(this Ui ui, Action action)
 		{
-			return ui.Element("video", attr: null, action: action);
+			return ui.Element("video", action);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2101,7 +2101,7 @@ namespace Blowdart.UI.Web
 		/// </summary>
 		public static Ui Video(this Ui ui, Action<Ui> action)
 		{
-			return ui.Element("video", attr: null, action: action);
+			return ui.Element("video", action);
 		}
 
 		/// <summary> This call is equivalent to: 
