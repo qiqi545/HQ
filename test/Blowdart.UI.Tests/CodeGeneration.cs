@@ -73,27 +73,31 @@ namespace Blowdart.UI.Tests
 			var matches = Regex.Matches(elements, "<\\w+>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 			for (var i = 0; i < matches.Count; i++)
 			{
-				Match match = matches[i];
+				var match = matches[i];
 				var element = match.Value.TrimStart('<').TrimEnd('>');
 				var elementName = char.ToUpperInvariant(element[0]) + element.Substring(1);
 
 				var qsb = new StringBuilder();
 
 				var names = new HashSet<string>();
+				var parameters = new List<KeyValuePair<string, Type>>();
 
 				if (map.TryGetValue(element, out var value))
 				{
 					foreach(var entry in value)
 						names.Add(entry.Key);
-					AppendAttributeParameter(value, qsb);
+					parameters.AddRange(value);
 				}
 
 				if (map.TryGetValue("*", out value))
 				{
 					foreach (var entry in value)
 						names.Add(entry.Key);
-					AppendAttributeParameter(value, qsb);
+					parameters.AddRange(value);
 				}
+
+				parameters.Sort((x, y) => string.Compare(x.Key, y.Key, StringComparison.Ordinal));
+				AppendAttributeParameters(parameters, qsb);
 
 				var qualified = qsb.ToString();
 
@@ -115,7 +119,6 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", new {{ {string.Join(", ", names)} }});");
 				sb.AppendLine($"\t\t}}");
-				sb.AppendLine();
 
 				//
 				// Anonymous Declaration:
@@ -169,7 +172,7 @@ namespace Blowdart.UI.Tests
 			_console.WriteLine(sb.ToString());
 		}
 
-		private static void AppendAttributeParameter(IEnumerable<KeyValuePair<string, Type>> value, StringBuilder sb)
+		private static void AppendAttributeParameters(IEnumerable<KeyValuePair<string, Type>> value, StringBuilder sb)
 		{
 			var list = value.ToList();
 			for (var i = 0; i < list.Count; i++)
@@ -180,22 +183,7 @@ namespace Blowdart.UI.Tests
 				if (i != 0)
 					sb.Append(", ");
 
-				// todo replace with type switch
-				string typeName;
-				if (type == typeof(bool))
-					typeName = "bool";
-				else if (type == typeof(bool?))
-					typeName = "bool?";
-				else if (type.IsNullablePrimitive())
-					typeName = Nullable.GetUnderlyingType(type).Name.ToLowerInvariant();
-				else if (type.IsValueType())
-					typeName = type.Name;
-				else if (type.IsNullableValueType())
-					typeName = $"{type.Name}?";
-				else if (type.IsPrimitive)
-					typeName = type.Name.ToLowerInvariant();
-				else
-					typeName = type.Name;
+				var typeName = GetTypeName(type);
 
 				sb.Append(typeName);
 				sb.Append(' ');
@@ -203,8 +191,31 @@ namespace Blowdart.UI.Tests
 				sb.Append(Nullable.GetUnderlyingType(type) != null ? " = null" : $" = default({typeName})");
 			}
 		}
+		private static string GetTypeName(Type type)
+		{
+			// todo replace with type switch
+			string typeName;
+			if (type == typeof(string))
+				typeName = "string";
+			else if (type == typeof(bool))
+				typeName = "bool";
+			else if (type == typeof(bool?))
+				typeName = "bool?";
+			else if (type.IsNullablePrimitive())
+				typeName = Nullable.GetUnderlyingType(type).Name.ToLowerInvariant();
+			else if (type.IsValueType())
+				typeName = type.Name;
+			else if (type.IsNullableValueType())
+				typeName = $"{type.Name}?";
+			else if (type.IsPrimitive)
+				typeName = type.Name.ToLowerInvariant();
+			else
+				typeName = type.Name;
+			return typeName;
+		}
 
 		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
+		// reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes
 		public Dictionary<string, List<KeyValuePair<string, Type>>> GenerateAttributeMap()
 		{
 			// TODO typing (src = URL, etc.)
@@ -213,40 +224,80 @@ namespace Blowdart.UI.Tests
 			// TODO data-*
 
 
-			var map = new Dictionary<string, List<KeyValuePair<string, Type>>>
-			{
-				{		
-					//
-					// Global Boolean Attributes:
-					"*", new List<KeyValuePair<string, Type>>
-					{
-						new KeyValuePair<string, Type>("contenteditable", typeof(bool)),
-						new KeyValuePair<string, Type>("draggable", typeof(bool)),
-					}
-				}
-			};
-			
-			return map;
+			var map = new Dictionary<string, List<KeyValuePair<string, Type>>>();
 
-			const string globals = @"
-accesskey,
-autocapitalize,
-class,
-contextmenu,
-dir,
+			//
+			// Boolean Attributes:
+			foreach (var line in @"
+contenteditable:*
+draggable:*
+checked:command,input
+controls:audio,video
+disabled:button,command,fieldset,input,keygen,optgroup,option,select,textarea
+formnovalidate:button
+loop:audio,bgsound,marquee,video
+muted:audio,video
+open:details
+readonly:input,textarea
+reversed:ol
+wrap:textarea
+".Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var tokens = line.Split(":");
+				var attributeName = tokens[0];
+				var affectedElements = tokens[1].Split(",", StringSplitOptions.RemoveEmptyEntries);
+
+				foreach (var element in affectedElements)
+				{
+					if(!map.TryGetValue(element, out var list))
+						map.Add(element, list = new List<KeyValuePair<string, Type>>());
+
+					list.Add(new KeyValuePair<string, Type>(attributeName, typeof(bool)));
+				}
+			}
+
+			//
+			// Global Attributes:
+			foreach (var line in @"
+accesskey
+autocapitalize
+class
+contextmenu
+dir
 dropzone
-hidden,
+hidden|bool
 id
 itemprop
 lang
 slot
 spellcheck
 style
-tabindex
+tabindex|int?
 title
 translate
-";
+".Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var tokens = line.Split("|", StringSplitOptions.RemoveEmptyEntries);
+				var attributeName = tokens[0];
 
+				switch (attributeName)
+				{
+					case "class":
+						attributeName = $"@{attributeName}";
+						break;
+				}
+
+				Type type = typeof(string);
+				if (tokens.Length > 1)
+					type = GetAttributeType(tokens);
+				if (!map.TryGetValue("*", out var list))
+					map.Add("*", list = new List<KeyValuePair<string, Type>>());
+				list.Add(new KeyValuePair<string, Type>(attributeName, type));
+			}
+
+			return map;
+
+			
 
 
 			const string regular = @"
@@ -347,22 +398,33 @@ width:canvas,embed,iframe,img,input,object,video
 ";
 			var sb = new StringBuilder();
 
-			const string boolAttribs = @"
-checked:command,input
-controls:audio,video
-disabled:button,command,fieldset,input,keygen,optgroup,option,select,textarea
-formnovalidate:button
-loop:audio,bgsound,marquee,video
-muted:audio,video
-open:details
-readonly:input,textarea
-reversed:ol
-wrap:textarea
-";
-
 			
 
 			_console.WriteLine(sb.ToString());
+		}
+
+		private static Type GetAttributeType(string[] tokens)
+		{
+			var typeName = tokens[1];
+
+			switch (typeName)
+			{
+				case "bool":
+					return typeof(bool);
+				case "bool?":
+					return typeof(bool?);
+				case "int":
+					return typeof(int);
+				case "int?":
+					return typeof(int?);
+			}
+
+			var type = Type.GetType(typeName);
+			if (type == null)
+				throw new Exception("derp");
+
+			var maybeNullable = Nullable.GetUnderlyingType(type);
+			return maybeNullable != null ? maybeNullable : type;
 		}
 	}
 }
