@@ -103,7 +103,7 @@ namespace Blowdart.UI.Web
 
         private static Attributes Attr(object attr)
         {
-            return Attributes.Attr(attr);
+	        return attr is Attributes direct ? direct : Attributes.Attr(attr);
         }
 
         public static Attributes Attr(params object[] attr)
@@ -133,13 +133,7 @@ namespace Blowdart.UI.Web
             ui.Element("form", attr, action);
             return ui;
         }
-
-        public static Ui Form(this Ui ui, object attr = null, Action action = null)
-        {
-            ui.Element("form", attr, action);
-            return ui;
-        }
-
+		
         public static Ui Form(this Ui ui, Attributes attr, Action<Ui> action)
         {
             ui.Element("form", attr, action);

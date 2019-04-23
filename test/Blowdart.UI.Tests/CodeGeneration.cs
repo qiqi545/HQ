@@ -52,6 +52,8 @@ namespace Blowdart.UI.Tests
 			sb.AppendLine("// Copyright (c) Blowdart, Inc. All rights reserved.");
 			sb.AppendLine("// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.");
 			sb.AppendLine();
+			sb.AppendLine("using System;");
+			sb.AppendLine();
 			sb.AppendLine("namespace Blowdart.UI.Web");
 			sb.AppendLine("{");
 			sb.AppendLine();
@@ -60,9 +62,10 @@ namespace Blowdart.UI.Tests
 			foreach (Match match in Regex.Matches(elements, "<\\w+>", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline))
 			{
 				var element = match.Value.TrimStart('<').TrimEnd('>');
-
 				var casedName = char.ToUpperInvariant(element[0]) + element.Substring(1);
 
+				sb.AppendLine();
+				sb.AppendLine($"\t\t#region {element}");
 				sb.AppendLine();
 				sb.AppendLine($"\t\tpublic static Ui Begin{casedName}(this Ui ui, object attr = null)");
 				sb.AppendLine($"\t\t{{");
@@ -75,16 +78,30 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t}}");
 				sb.AppendLine();
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction();\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
-				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object[] attr = null, Action action = null)");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, Action action)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", null, action);");
+				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}(attr);\r\n\t\t///\t\taction();\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object attr, Action action)");
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", attr, action);");
 				sb.AppendLine($"\t\t}}");
 				sb.AppendLine();
 				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}();\r\n\t\t///\t\taction(ui);\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
-				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object[] attr = null, Action<Ui> action = null)");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, Action<Ui> action)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", null, action);");
+				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\t/// <summary> This call is equivalent to: \r\n\t\t///\t<code>\r\n\t\t///\t\tui.Begin{casedName}(attr);\r\n\t\t///\t\taction(ui);\r\n\t\t///\t\tui.End{casedName}();\r\n\t\t///\t</code>\r\n\t\t/// </summary>");
+				sb.AppendLine($"\t\tpublic static Ui {casedName}(this Ui ui, object attr, Action<Ui> action)");
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", attr, action);");
 				sb.AppendLine($"\t\t}}");
+				sb.AppendLine();
+				sb.AppendLine($"\t\t#endregion");
 			}
 			sb.AppendLine("\t}");
 			sb.AppendLine("}");

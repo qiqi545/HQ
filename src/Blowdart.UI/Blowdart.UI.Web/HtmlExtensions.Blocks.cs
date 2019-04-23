@@ -10,6 +10,8 @@ namespace Blowdart.UI.Web
 	public static partial class HtmlExtensions
 	{
 
+		#region address
+
 		public static Ui BeginAddress(this Ui ui, object attr = null)
 		{
 			return ui.BeginElement("address", attr);
@@ -27,7 +29,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndAddress();
 		///	</code>
 		/// </summary>
-		public static Ui Address(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Address(this Ui ui, Action action)
+		{
+			return ui.Element("address", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAddress(attr);
+		///		action();
+		///		ui.EndAddress();
+		///	</code>
+		/// </summary>
+		public static Ui Address(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("address", attr, action);
 		}
@@ -39,10 +53,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndAddress();
 		///	</code>
 		/// </summary>
-		public static Ui Address(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Address(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("address", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAddress(attr);
+		///		action(ui);
+		///		ui.EndAddress();
+		///	</code>
+		/// </summary>
+		public static Ui Address(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("address", attr, action);
 		}
+
+		#endregion
+
+		#region article
 
 		public static Ui BeginArticle(this Ui ui, object attr = null)
 		{
@@ -61,7 +91,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndArticle();
 		///	</code>
 		/// </summary>
-		public static Ui Article(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Article(this Ui ui, Action action)
+		{
+			return ui.Element("article", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginArticle(attr);
+		///		action();
+		///		ui.EndArticle();
+		///	</code>
+		/// </summary>
+		public static Ui Article(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("article", attr, action);
 		}
@@ -73,10 +115,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndArticle();
 		///	</code>
 		/// </summary>
-		public static Ui Article(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Article(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("article", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginArticle(attr);
+		///		action(ui);
+		///		ui.EndArticle();
+		///	</code>
+		/// </summary>
+		public static Ui Article(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("article", attr, action);
 		}
+
+		#endregion
+
+		#region aside
 
 		public static Ui BeginAside(this Ui ui, object attr = null)
 		{
@@ -95,7 +153,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndAside();
 		///	</code>
 		/// </summary>
-		public static Ui Aside(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Aside(this Ui ui, Action action)
+		{
+			return ui.Element("aside", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAside(attr);
+		///		action();
+		///		ui.EndAside();
+		///	</code>
+		/// </summary>
+		public static Ui Aside(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("aside", attr, action);
 		}
@@ -107,10 +177,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndAside();
 		///	</code>
 		/// </summary>
-		public static Ui Aside(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Aside(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("aside", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAside(attr);
+		///		action(ui);
+		///		ui.EndAside();
+		///	</code>
+		/// </summary>
+		public static Ui Aside(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("aside", attr, action);
 		}
+
+		#endregion
+
+		#region blockquote
 
 		public static Ui BeginBlockquote(this Ui ui, object attr = null)
 		{
@@ -129,7 +215,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndBlockquote();
 		///	</code>
 		/// </summary>
-		public static Ui Blockquote(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Blockquote(this Ui ui, Action action)
+		{
+			return ui.Element("blockquote", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBlockquote(attr);
+		///		action();
+		///		ui.EndBlockquote();
+		///	</code>
+		/// </summary>
+		public static Ui Blockquote(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("blockquote", attr, action);
 		}
@@ -141,10 +239,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndBlockquote();
 		///	</code>
 		/// </summary>
-		public static Ui Blockquote(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Blockquote(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("blockquote", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBlockquote(attr);
+		///		action(ui);
+		///		ui.EndBlockquote();
+		///	</code>
+		/// </summary>
+		public static Ui Blockquote(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("blockquote", attr, action);
 		}
+
+		#endregion
+
+		#region canvas
 
 		public static Ui BeginCanvas(this Ui ui, object attr = null)
 		{
@@ -163,7 +277,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndCanvas();
 		///	</code>
 		/// </summary>
-		public static Ui Canvas(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Canvas(this Ui ui, Action action)
+		{
+			return ui.Element("canvas", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCanvas(attr);
+		///		action();
+		///		ui.EndCanvas();
+		///	</code>
+		/// </summary>
+		public static Ui Canvas(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("canvas", attr, action);
 		}
@@ -175,10 +301,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndCanvas();
 		///	</code>
 		/// </summary>
-		public static Ui Canvas(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Canvas(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("canvas", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCanvas(attr);
+		///		action(ui);
+		///		ui.EndCanvas();
+		///	</code>
+		/// </summary>
+		public static Ui Canvas(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("canvas", attr, action);
 		}
+
+		#endregion
+
+		#region dd
 
 		public static Ui BeginDd(this Ui ui, object attr = null)
 		{
@@ -197,7 +339,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndDd();
 		///	</code>
 		/// </summary>
-		public static Ui Dd(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Dd(this Ui ui, Action action)
+		{
+			return ui.Element("dd", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDd(attr);
+		///		action();
+		///		ui.EndDd();
+		///	</code>
+		/// </summary>
+		public static Ui Dd(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("dd", attr, action);
 		}
@@ -209,10 +363,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndDd();
 		///	</code>
 		/// </summary>
-		public static Ui Dd(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Dd(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("dd", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDd(attr);
+		///		action(ui);
+		///		ui.EndDd();
+		///	</code>
+		/// </summary>
+		public static Ui Dd(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("dd", attr, action);
 		}
+
+		#endregion
+
+		#region div
 
 		public static Ui BeginDiv(this Ui ui, object attr = null)
 		{
@@ -231,7 +401,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndDiv();
 		///	</code>
 		/// </summary>
-		public static Ui Div(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Div(this Ui ui, Action action)
+		{
+			return ui.Element("div", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDiv(attr);
+		///		action();
+		///		ui.EndDiv();
+		///	</code>
+		/// </summary>
+		public static Ui Div(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("div", attr, action);
 		}
@@ -243,10 +425,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndDiv();
 		///	</code>
 		/// </summary>
-		public static Ui Div(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Div(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("div", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDiv(attr);
+		///		action(ui);
+		///		ui.EndDiv();
+		///	</code>
+		/// </summary>
+		public static Ui Div(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("div", attr, action);
 		}
+
+		#endregion
+
+		#region dl
 
 		public static Ui BeginDl(this Ui ui, object attr = null)
 		{
@@ -265,7 +463,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndDl();
 		///	</code>
 		/// </summary>
-		public static Ui Dl(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Dl(this Ui ui, Action action)
+		{
+			return ui.Element("dl", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDl(attr);
+		///		action();
+		///		ui.EndDl();
+		///	</code>
+		/// </summary>
+		public static Ui Dl(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("dl", attr, action);
 		}
@@ -277,10 +487,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndDl();
 		///	</code>
 		/// </summary>
-		public static Ui Dl(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Dl(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("dl", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDl(attr);
+		///		action(ui);
+		///		ui.EndDl();
+		///	</code>
+		/// </summary>
+		public static Ui Dl(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("dl", attr, action);
 		}
+
+		#endregion
+
+		#region dt
 
 		public static Ui BeginDt(this Ui ui, object attr = null)
 		{
@@ -299,7 +525,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndDt();
 		///	</code>
 		/// </summary>
-		public static Ui Dt(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Dt(this Ui ui, Action action)
+		{
+			return ui.Element("dt", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDt(attr);
+		///		action();
+		///		ui.EndDt();
+		///	</code>
+		/// </summary>
+		public static Ui Dt(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("dt", attr, action);
 		}
@@ -311,10 +549,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndDt();
 		///	</code>
 		/// </summary>
-		public static Ui Dt(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Dt(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("dt", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDt(attr);
+		///		action(ui);
+		///		ui.EndDt();
+		///	</code>
+		/// </summary>
+		public static Ui Dt(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("dt", attr, action);
 		}
+
+		#endregion
+
+		#region fieldset
 
 		public static Ui BeginFieldset(this Ui ui, object attr = null)
 		{
@@ -333,7 +587,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndFieldset();
 		///	</code>
 		/// </summary>
-		public static Ui Fieldset(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Fieldset(this Ui ui, Action action)
+		{
+			return ui.Element("fieldset", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFieldset(attr);
+		///		action();
+		///		ui.EndFieldset();
+		///	</code>
+		/// </summary>
+		public static Ui Fieldset(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("fieldset", attr, action);
 		}
@@ -345,10 +611,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndFieldset();
 		///	</code>
 		/// </summary>
-		public static Ui Fieldset(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Fieldset(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("fieldset", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFieldset(attr);
+		///		action(ui);
+		///		ui.EndFieldset();
+		///	</code>
+		/// </summary>
+		public static Ui Fieldset(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("fieldset", attr, action);
 		}
+
+		#endregion
+
+		#region figcaption
 
 		public static Ui BeginFigcaption(this Ui ui, object attr = null)
 		{
@@ -367,7 +649,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndFigcaption();
 		///	</code>
 		/// </summary>
-		public static Ui Figcaption(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Figcaption(this Ui ui, Action action)
+		{
+			return ui.Element("figcaption", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFigcaption(attr);
+		///		action();
+		///		ui.EndFigcaption();
+		///	</code>
+		/// </summary>
+		public static Ui Figcaption(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("figcaption", attr, action);
 		}
@@ -379,10 +673,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndFigcaption();
 		///	</code>
 		/// </summary>
-		public static Ui Figcaption(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Figcaption(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("figcaption", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFigcaption(attr);
+		///		action(ui);
+		///		ui.EndFigcaption();
+		///	</code>
+		/// </summary>
+		public static Ui Figcaption(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("figcaption", attr, action);
 		}
+
+		#endregion
+
+		#region figure
 
 		public static Ui BeginFigure(this Ui ui, object attr = null)
 		{
@@ -401,7 +711,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndFigure();
 		///	</code>
 		/// </summary>
-		public static Ui Figure(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Figure(this Ui ui, Action action)
+		{
+			return ui.Element("figure", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFigure(attr);
+		///		action();
+		///		ui.EndFigure();
+		///	</code>
+		/// </summary>
+		public static Ui Figure(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("figure", attr, action);
 		}
@@ -413,10 +735,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndFigure();
 		///	</code>
 		/// </summary>
-		public static Ui Figure(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Figure(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("figure", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFigure(attr);
+		///		action(ui);
+		///		ui.EndFigure();
+		///	</code>
+		/// </summary>
+		public static Ui Figure(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("figure", attr, action);
 		}
+
+		#endregion
+
+		#region footer
 
 		public static Ui BeginFooter(this Ui ui, object attr = null)
 		{
@@ -435,7 +773,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndFooter();
 		///	</code>
 		/// </summary>
-		public static Ui Footer(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Footer(this Ui ui, Action action)
+		{
+			return ui.Element("footer", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFooter(attr);
+		///		action();
+		///		ui.EndFooter();
+		///	</code>
+		/// </summary>
+		public static Ui Footer(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("footer", attr, action);
 		}
@@ -447,10 +797,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndFooter();
 		///	</code>
 		/// </summary>
-		public static Ui Footer(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Footer(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("footer", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginFooter(attr);
+		///		action(ui);
+		///		ui.EndFooter();
+		///	</code>
+		/// </summary>
+		public static Ui Footer(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("footer", attr, action);
 		}
+
+		#endregion
+
+		#region form
 
 		public static Ui BeginForm(this Ui ui, object attr = null)
 		{
@@ -469,7 +835,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndForm();
 		///	</code>
 		/// </summary>
-		public static Ui Form(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Form(this Ui ui, Action action)
+		{
+			return ui.Element("form", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginForm(attr);
+		///		action();
+		///		ui.EndForm();
+		///	</code>
+		/// </summary>
+		public static Ui Form(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("form", attr, action);
 		}
@@ -481,10 +859,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndForm();
 		///	</code>
 		/// </summary>
-		public static Ui Form(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Form(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("form", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginForm(attr);
+		///		action(ui);
+		///		ui.EndForm();
+		///	</code>
+		/// </summary>
+		public static Ui Form(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("form", attr, action);
 		}
+
+		#endregion
+
+		#region h1
 
 		public static Ui BeginH1(this Ui ui, object attr = null)
 		{
@@ -503,7 +897,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH1();
 		///	</code>
 		/// </summary>
-		public static Ui H1(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H1(this Ui ui, Action action)
+		{
+			return ui.Element("h1", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH1(attr);
+		///		action();
+		///		ui.EndH1();
+		///	</code>
+		/// </summary>
+		public static Ui H1(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h1", attr, action);
 		}
@@ -515,10 +921,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH1();
 		///	</code>
 		/// </summary>
-		public static Ui H1(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H1(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h1", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH1(attr);
+		///		action(ui);
+		///		ui.EndH1();
+		///	</code>
+		/// </summary>
+		public static Ui H1(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h1", attr, action);
 		}
+
+		#endregion
+
+		#region h2
 
 		public static Ui BeginH2(this Ui ui, object attr = null)
 		{
@@ -537,7 +959,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH2();
 		///	</code>
 		/// </summary>
-		public static Ui H2(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H2(this Ui ui, Action action)
+		{
+			return ui.Element("h2", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH2(attr);
+		///		action();
+		///		ui.EndH2();
+		///	</code>
+		/// </summary>
+		public static Ui H2(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h2", attr, action);
 		}
@@ -549,10 +983,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH2();
 		///	</code>
 		/// </summary>
-		public static Ui H2(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H2(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h2", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH2(attr);
+		///		action(ui);
+		///		ui.EndH2();
+		///	</code>
+		/// </summary>
+		public static Ui H2(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h2", attr, action);
 		}
+
+		#endregion
+
+		#region h3
 
 		public static Ui BeginH3(this Ui ui, object attr = null)
 		{
@@ -571,7 +1021,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH3();
 		///	</code>
 		/// </summary>
-		public static Ui H3(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H3(this Ui ui, Action action)
+		{
+			return ui.Element("h3", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH3(attr);
+		///		action();
+		///		ui.EndH3();
+		///	</code>
+		/// </summary>
+		public static Ui H3(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h3", attr, action);
 		}
@@ -583,10 +1045,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH3();
 		///	</code>
 		/// </summary>
-		public static Ui H3(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H3(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h3", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH3(attr);
+		///		action(ui);
+		///		ui.EndH3();
+		///	</code>
+		/// </summary>
+		public static Ui H3(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h3", attr, action);
 		}
+
+		#endregion
+
+		#region h4
 
 		public static Ui BeginH4(this Ui ui, object attr = null)
 		{
@@ -605,7 +1083,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH4();
 		///	</code>
 		/// </summary>
-		public static Ui H4(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H4(this Ui ui, Action action)
+		{
+			return ui.Element("h4", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH4(attr);
+		///		action();
+		///		ui.EndH4();
+		///	</code>
+		/// </summary>
+		public static Ui H4(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h4", attr, action);
 		}
@@ -617,10 +1107,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH4();
 		///	</code>
 		/// </summary>
-		public static Ui H4(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H4(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h4", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH4(attr);
+		///		action(ui);
+		///		ui.EndH4();
+		///	</code>
+		/// </summary>
+		public static Ui H4(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h4", attr, action);
 		}
+
+		#endregion
+
+		#region h5
 
 		public static Ui BeginH5(this Ui ui, object attr = null)
 		{
@@ -639,7 +1145,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH5();
 		///	</code>
 		/// </summary>
-		public static Ui H5(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H5(this Ui ui, Action action)
+		{
+			return ui.Element("h5", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH5(attr);
+		///		action();
+		///		ui.EndH5();
+		///	</code>
+		/// </summary>
+		public static Ui H5(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h5", attr, action);
 		}
@@ -651,10 +1169,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH5();
 		///	</code>
 		/// </summary>
-		public static Ui H5(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H5(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h5", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH5(attr);
+		///		action(ui);
+		///		ui.EndH5();
+		///	</code>
+		/// </summary>
+		public static Ui H5(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h5", attr, action);
 		}
+
+		#endregion
+
+		#region h6
 
 		public static Ui BeginH6(this Ui ui, object attr = null)
 		{
@@ -673,7 +1207,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndH6();
 		///	</code>
 		/// </summary>
-		public static Ui H6(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui H6(this Ui ui, Action action)
+		{
+			return ui.Element("h6", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH6(attr);
+		///		action();
+		///		ui.EndH6();
+		///	</code>
+		/// </summary>
+		public static Ui H6(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("h6", attr, action);
 		}
@@ -685,10 +1231,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndH6();
 		///	</code>
 		/// </summary>
-		public static Ui H6(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui H6(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("h6", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginH6(attr);
+		///		action(ui);
+		///		ui.EndH6();
+		///	</code>
+		/// </summary>
+		public static Ui H6(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("h6", attr, action);
 		}
+
+		#endregion
+
+		#region header
 
 		public static Ui BeginHeader(this Ui ui, object attr = null)
 		{
@@ -707,7 +1269,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndHeader();
 		///	</code>
 		/// </summary>
-		public static Ui Header(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Header(this Ui ui, Action action)
+		{
+			return ui.Element("header", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginHeader(attr);
+		///		action();
+		///		ui.EndHeader();
+		///	</code>
+		/// </summary>
+		public static Ui Header(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("header", attr, action);
 		}
@@ -719,10 +1293,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndHeader();
 		///	</code>
 		/// </summary>
-		public static Ui Header(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Header(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("header", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginHeader(attr);
+		///		action(ui);
+		///		ui.EndHeader();
+		///	</code>
+		/// </summary>
+		public static Ui Header(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("header", attr, action);
 		}
+
+		#endregion
+
+		#region hr
 
 		public static Ui BeginHr(this Ui ui, object attr = null)
 		{
@@ -741,7 +1331,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndHr();
 		///	</code>
 		/// </summary>
-		public static Ui Hr(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Hr(this Ui ui, Action action)
+		{
+			return ui.Element("hr", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginHr(attr);
+		///		action();
+		///		ui.EndHr();
+		///	</code>
+		/// </summary>
+		public static Ui Hr(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("hr", attr, action);
 		}
@@ -753,10 +1355,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndHr();
 		///	</code>
 		/// </summary>
-		public static Ui Hr(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Hr(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("hr", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginHr(attr);
+		///		action(ui);
+		///		ui.EndHr();
+		///	</code>
+		/// </summary>
+		public static Ui Hr(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("hr", attr, action);
 		}
+
+		#endregion
+
+		#region li
 
 		public static Ui BeginLi(this Ui ui, object attr = null)
 		{
@@ -775,7 +1393,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndLi();
 		///	</code>
 		/// </summary>
-		public static Ui Li(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Li(this Ui ui, Action action)
+		{
+			return ui.Element("li", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLi(attr);
+		///		action();
+		///		ui.EndLi();
+		///	</code>
+		/// </summary>
+		public static Ui Li(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("li", attr, action);
 		}
@@ -787,10 +1417,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndLi();
 		///	</code>
 		/// </summary>
-		public static Ui Li(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Li(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("li", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLi(attr);
+		///		action(ui);
+		///		ui.EndLi();
+		///	</code>
+		/// </summary>
+		public static Ui Li(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("li", attr, action);
 		}
+
+		#endregion
+
+		#region main
 
 		public static Ui BeginMain(this Ui ui, object attr = null)
 		{
@@ -809,7 +1455,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndMain();
 		///	</code>
 		/// </summary>
-		public static Ui Main(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Main(this Ui ui, Action action)
+		{
+			return ui.Element("main", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMain(attr);
+		///		action();
+		///		ui.EndMain();
+		///	</code>
+		/// </summary>
+		public static Ui Main(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("main", attr, action);
 		}
@@ -821,10 +1479,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndMain();
 		///	</code>
 		/// </summary>
-		public static Ui Main(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Main(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("main", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMain(attr);
+		///		action(ui);
+		///		ui.EndMain();
+		///	</code>
+		/// </summary>
+		public static Ui Main(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("main", attr, action);
 		}
+
+		#endregion
+
+		#region nav
 
 		public static Ui BeginNav(this Ui ui, object attr = null)
 		{
@@ -843,7 +1517,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndNav();
 		///	</code>
 		/// </summary>
-		public static Ui Nav(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Nav(this Ui ui, Action action)
+		{
+			return ui.Element("nav", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginNav(attr);
+		///		action();
+		///		ui.EndNav();
+		///	</code>
+		/// </summary>
+		public static Ui Nav(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("nav", attr, action);
 		}
@@ -855,10 +1541,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndNav();
 		///	</code>
 		/// </summary>
-		public static Ui Nav(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Nav(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("nav", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginNav(attr);
+		///		action(ui);
+		///		ui.EndNav();
+		///	</code>
+		/// </summary>
+		public static Ui Nav(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("nav", attr, action);
 		}
+
+		#endregion
+
+		#region noscript
 
 		public static Ui BeginNoscript(this Ui ui, object attr = null)
 		{
@@ -877,7 +1579,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndNoscript();
 		///	</code>
 		/// </summary>
-		public static Ui Noscript(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Noscript(this Ui ui, Action action)
+		{
+			return ui.Element("noscript", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginNoscript(attr);
+		///		action();
+		///		ui.EndNoscript();
+		///	</code>
+		/// </summary>
+		public static Ui Noscript(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("noscript", attr, action);
 		}
@@ -889,10 +1603,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndNoscript();
 		///	</code>
 		/// </summary>
-		public static Ui Noscript(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Noscript(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("noscript", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginNoscript(attr);
+		///		action(ui);
+		///		ui.EndNoscript();
+		///	</code>
+		/// </summary>
+		public static Ui Noscript(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("noscript", attr, action);
 		}
+
+		#endregion
+
+		#region ol
 
 		public static Ui BeginOl(this Ui ui, object attr = null)
 		{
@@ -911,7 +1641,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndOl();
 		///	</code>
 		/// </summary>
-		public static Ui Ol(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Ol(this Ui ui, Action action)
+		{
+			return ui.Element("ol", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOl(attr);
+		///		action();
+		///		ui.EndOl();
+		///	</code>
+		/// </summary>
+		public static Ui Ol(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("ol", attr, action);
 		}
@@ -923,10 +1665,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndOl();
 		///	</code>
 		/// </summary>
-		public static Ui Ol(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Ol(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("ol", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOl(attr);
+		///		action(ui);
+		///		ui.EndOl();
+		///	</code>
+		/// </summary>
+		public static Ui Ol(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("ol", attr, action);
 		}
+
+		#endregion
+
+		#region p
 
 		public static Ui BeginP(this Ui ui, object attr = null)
 		{
@@ -945,7 +1703,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndP();
 		///	</code>
 		/// </summary>
-		public static Ui P(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui P(this Ui ui, Action action)
+		{
+			return ui.Element("p", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginP(attr);
+		///		action();
+		///		ui.EndP();
+		///	</code>
+		/// </summary>
+		public static Ui P(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("p", attr, action);
 		}
@@ -957,10 +1727,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndP();
 		///	</code>
 		/// </summary>
-		public static Ui P(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui P(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("p", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginP(attr);
+		///		action(ui);
+		///		ui.EndP();
+		///	</code>
+		/// </summary>
+		public static Ui P(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("p", attr, action);
 		}
+
+		#endregion
+
+		#region pre
 
 		public static Ui BeginPre(this Ui ui, object attr = null)
 		{
@@ -979,7 +1765,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndPre();
 		///	</code>
 		/// </summary>
-		public static Ui Pre(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Pre(this Ui ui, Action action)
+		{
+			return ui.Element("pre", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginPre(attr);
+		///		action();
+		///		ui.EndPre();
+		///	</code>
+		/// </summary>
+		public static Ui Pre(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("pre", attr, action);
 		}
@@ -991,10 +1789,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndPre();
 		///	</code>
 		/// </summary>
-		public static Ui Pre(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Pre(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("pre", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginPre(attr);
+		///		action(ui);
+		///		ui.EndPre();
+		///	</code>
+		/// </summary>
+		public static Ui Pre(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("pre", attr, action);
 		}
+
+		#endregion
+
+		#region section
 
 		public static Ui BeginSection(this Ui ui, object attr = null)
 		{
@@ -1013,7 +1827,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndSection();
 		///	</code>
 		/// </summary>
-		public static Ui Section(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Section(this Ui ui, Action action)
+		{
+			return ui.Element("section", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSection(attr);
+		///		action();
+		///		ui.EndSection();
+		///	</code>
+		/// </summary>
+		public static Ui Section(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("section", attr, action);
 		}
@@ -1025,10 +1851,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndSection();
 		///	</code>
 		/// </summary>
-		public static Ui Section(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Section(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("section", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSection(attr);
+		///		action(ui);
+		///		ui.EndSection();
+		///	</code>
+		/// </summary>
+		public static Ui Section(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("section", attr, action);
 		}
+
+		#endregion
+
+		#region table
 
 		public static Ui BeginTable(this Ui ui, object attr = null)
 		{
@@ -1047,7 +1889,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndTable();
 		///	</code>
 		/// </summary>
-		public static Ui Table(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Table(this Ui ui, Action action)
+		{
+			return ui.Element("table", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTable(attr);
+		///		action();
+		///		ui.EndTable();
+		///	</code>
+		/// </summary>
+		public static Ui Table(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("table", attr, action);
 		}
@@ -1059,10 +1913,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndTable();
 		///	</code>
 		/// </summary>
-		public static Ui Table(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Table(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("table", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTable(attr);
+		///		action(ui);
+		///		ui.EndTable();
+		///	</code>
+		/// </summary>
+		public static Ui Table(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("table", attr, action);
 		}
+
+		#endregion
+
+		#region tfoot
 
 		public static Ui BeginTfoot(this Ui ui, object attr = null)
 		{
@@ -1081,7 +1951,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndTfoot();
 		///	</code>
 		/// </summary>
-		public static Ui Tfoot(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Tfoot(this Ui ui, Action action)
+		{
+			return ui.Element("tfoot", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTfoot(attr);
+		///		action();
+		///		ui.EndTfoot();
+		///	</code>
+		/// </summary>
+		public static Ui Tfoot(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("tfoot", attr, action);
 		}
@@ -1093,10 +1975,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndTfoot();
 		///	</code>
 		/// </summary>
-		public static Ui Tfoot(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Tfoot(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("tfoot", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTfoot(attr);
+		///		action(ui);
+		///		ui.EndTfoot();
+		///	</code>
+		/// </summary>
+		public static Ui Tfoot(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("tfoot", attr, action);
 		}
+
+		#endregion
+
+		#region ul
 
 		public static Ui BeginUl(this Ui ui, object attr = null)
 		{
@@ -1115,7 +2013,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndUl();
 		///	</code>
 		/// </summary>
-		public static Ui Ul(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Ul(this Ui ui, Action action)
+		{
+			return ui.Element("ul", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginUl(attr);
+		///		action();
+		///		ui.EndUl();
+		///	</code>
+		/// </summary>
+		public static Ui Ul(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("ul", attr, action);
 		}
@@ -1127,10 +2037,26 @@ namespace Blowdart.UI.Web
 		///		ui.EndUl();
 		///	</code>
 		/// </summary>
-		public static Ui Ul(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Ul(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("ul", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginUl(attr);
+		///		action(ui);
+		///		ui.EndUl();
+		///	</code>
+		/// </summary>
+		public static Ui Ul(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("ul", attr, action);
 		}
+
+		#endregion
+
+		#region video
 
 		public static Ui BeginVideo(this Ui ui, object attr = null)
 		{
@@ -1149,7 +2075,19 @@ namespace Blowdart.UI.Web
 		///		ui.EndVideo();
 		///	</code>
 		/// </summary>
-		public static Ui Video(this Ui ui, object[] attr = null, Action action = null)
+		public static Ui Video(this Ui ui, Action action)
+		{
+			return ui.Element("video", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVideo(attr);
+		///		action();
+		///		ui.EndVideo();
+		///	</code>
+		/// </summary>
+		public static Ui Video(this Ui ui, object attr, Action action)
 		{
 			return ui.Element("video", attr, action);
 		}
@@ -1161,10 +2099,24 @@ namespace Blowdart.UI.Web
 		///		ui.EndVideo();
 		///	</code>
 		/// </summary>
-		public static Ui Video(this Ui ui, object[] attr = null, Action<Ui> action = null)
+		public static Ui Video(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("video", null, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVideo(attr);
+		///		action(ui);
+		///		ui.EndVideo();
+		///	</code>
+		/// </summary>
+		public static Ui Video(this Ui ui, object attr, Action<Ui> action)
 		{
 			return ui.Element("video", attr, action);
 		}
+
+		#endregion
 	}
 }
 
