@@ -42,7 +42,6 @@ namespace Blowdart.UI.Internal
         private object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui)
         {
             var settings = _serviceProvider.GetRequiredService<UiSettings>();
-
             var layoutRoot = _serviceProvider.GetRequiredService<LayoutRoot>();
 			
 			var target = Pools.AutoResolver.GetService(serviceType);

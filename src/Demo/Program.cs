@@ -14,16 +14,11 @@ namespace Demo
 	// todo prune literal inline element list?
 	// todo auto-localization
 	// todo order of first few qualified variables should be usage based (i.e. class/style always first and second, etc.) before switching to alphabetic
-	// todo remove need to call UiServer.Start explicitly?
-
-	[SemanticUi]
-	[Meta("title", "Blowdart UI Demo")]
+	
+	[SemanticUi, Meta("title", "Blowdart UI Demo")]
 	internal class Program
     {
-        private static void Main(string[] args)
-        {
-            UiServer.Start(args);
-        }
+        private static void Main(string[] args) => UiServer.Start(args);
 
         public static void Index(string host, string firstName, string lastName)
         {
