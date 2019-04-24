@@ -72,7 +72,7 @@ namespace Blowdart.UI
             where TModel : class
         {
             var settings = _serviceProvider.GetRequiredService<UiSettings>();
-            var model = Data.GetModel<TService, TModel>(settings.DefaultMethodName);
+            var model = Data.GetModel<TService, TModel>(settings.DefaultPageMethodName);
             var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {

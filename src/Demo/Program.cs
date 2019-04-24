@@ -16,10 +16,8 @@ namespace Demo
 	// todo named/configurable defaults for things like <form method='post'>?
 	// todo prune literal inline element list?
 	// todo auto-localization
-	// todo remove need to capture Ui variable in IMGUI handlers
 	// todo order of first few qualified variables should be usage based (i.e. class/style always first and second, etc.) before switching to alphabetic
 	// todo remove need to call UiServer.Start explicitly?
-	// todo conventional first/only/Default method handler scanning
 
 	internal class Program
     {
@@ -30,12 +28,12 @@ namespace Demo
                 site.Title = "Demo";
                 site.System = new SemanticUi();
             };
-            UiServer.AddHandler("/", "Home");
             UiServer.Start(args);
         }
 		
-		[HandlerName("Home"), SemanticUi, Meta("title", "Demo")]
-        public static void Default(string host, string firstName, string lastName)
+		[SemanticUi]
+		[Meta("title", "Demo")]
+        public static void Index(string host, string firstName, string lastName)
         {
             p($"Hello, World from {strong(host)}!");
 

@@ -19,7 +19,7 @@ namespace Blowdart.UI
 
         public virtual void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
-            action.MethodName = callee?.Name ?? template ?? settings.DefaultMethodName;
+            action.MethodName = callee?.Name ?? template ?? settings.DefaultPageMethodName;
             action.Arguments = null;
         }
     }

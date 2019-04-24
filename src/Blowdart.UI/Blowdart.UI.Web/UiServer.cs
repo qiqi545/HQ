@@ -82,21 +82,35 @@ namespace Blowdart.UI.Web
             _startup?.ExecuteMethod(nameof(Configure), app, env);
         }
 
-        public static void Start<TStartup>(string[] args, Action<LayoutRoot> layout)
+		#region Start Methods
+
+		public static void Start<TStartup>(string[] args, Action<LayoutRoot> layout)
         {
-            _startup = typeof(TStartup);
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			_startup = typeof(TStartup);
             Start(args, layout);
         }
 
         public static void Start<TStartup>(string[] args, string filePath = "ui.csx")
         {
-            _startup = typeof(TStartup);
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			_startup = typeof(TStartup);
             Start(args, filePath);
         }
 
         public static void Start<TStartup, TService, TComponent>(string[] args) where TComponent : UiComponent
         {
-            Start<TStartup>(args, site =>
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			Start<TStartup>(args, site =>
             {
                 site.Default<TService>((ui, model) =>
                 {
@@ -107,7 +121,11 @@ namespace Blowdart.UI.Web
 
         public static void Start<TStartup, TService, TComponent, TModel>(string[] args) where TComponent : UiComponent<TModel>
         {
-            Start<TStartup>(args, site =>
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			Start<TStartup>(args, site =>
             {
                 site.Default<TService>((ui, model) =>
                 {
@@ -118,13 +136,21 @@ namespace Blowdart.UI.Web
 
         public static void Start(string[] args, Action<LayoutRoot> layout)
         {
-            _layout = layout;
-            StartServer(args);
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			_layout = layout;
+			StartServer(args);
         }
 
         public static void Start(string[] args, string filePath /*= "ui.csx"*/)
         {
-            if (!string.IsNullOrWhiteSpace(filePath))
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			if (!string.IsNullOrWhiteSpace(filePath))
             {
                 _layout = layout =>
                 {
@@ -143,14 +169,18 @@ namespace Blowdart.UI.Web
 
         public static void Start(string[] args)
         {
-            StartServer(args);
+			_callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+			if (_callerType == null)
+				throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			StartServer(args);
         }
 
-        private static void StartServer(string[] args)
+		#endregion
+
+		private static void StartServer(string[] args)
         {
-            AddImplicitHandlers();
-            
-            Masthead();
+	        Masthead();
 
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
@@ -175,14 +205,17 @@ namespace Blowdart.UI.Web
                 .AddCommandLine(args).Build());
 
             builder.UseStartup<UiServer>();
+
             var webHost = builder.Build();
 
-            var token = new CancellationToken();
+            AddImplicitHandlers(webHost.Services);
+
+			var cancellationToken = new CancellationToken();
             
             // webHost.Run(); 
             using (webHost)
             {
-                webHost.StartAsync(token).GetAwaiter().GetResult();
+                webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
                 var serviceProvider = webHost.Services;
 
                 var layout = serviceProvider.GetRequiredService<LayoutRoot>();
@@ -207,11 +240,11 @@ namespace Blowdart.UI.Web
                 OnStarted(webHost, config);
 
                 var appLifetime = serviceProvider.GetService<IApplicationLifetime>();
-                token.Register(state => ((IApplicationLifetime)state).StopApplication(), appLifetime);
+                cancellationToken.Register(state => ((IApplicationLifetime)state).StopApplication(), appLifetime);
                 var completionSource = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
                 appLifetime.ApplicationStopping.Register(obj => ((TaskCompletionSource<object>)obj).TrySetResult(null), completionSource);
                 completionSource.Task.GetAwaiter().GetResult();
-                webHost.StopAsync(token).GetAwaiter().GetResult();
+                webHost.StopAsync(cancellationToken).GetAwaiter().GetResult();
             }
         }
 		
@@ -272,13 +305,22 @@ namespace Blowdart.UI.Web
 
         private static readonly Dictionary<string, MethodInfo> Handlers = new Dictionary<string, MethodInfo>();
         
-        private static void AddImplicitHandlers()
+        private static void AddImplicitHandlers(IServiceProvider serviceProvider)
         {
             HandlersAreNotFinished();
 
+			//
+			// Annotated:
             foreach (var handler in IntrospectHandlers())
                 AddHandler(handler.Key, handler.Value);
-        }
+
+			//
+			// Conventional Default (entry class has a default method):
+			_callerMethods = _callerMethods ?? IntrospectHostMethods();
+			var settings = serviceProvider.GetRequiredService<UiSettings>();
+			if (_callerMethods.TryGetValue(settings.DefaultPageMethodName, out var method))
+				AddHandler("/", method);
+		}
 
         private static void HandlersAreFinished()
         {
@@ -306,7 +348,7 @@ namespace Blowdart.UI.Web
 
             if (Handlers.ContainsKey(template))
             {
-                Trace.TraceWarning($"Replacing existing handler for template '{template}'. Defer adding handlers until they represent a canonical set, to avoid this message.");
+                Trace.TraceWarning($"Replacing existing handler for template '{template}'. Defer adding handlers until they represent a canonical set, to avoid this warning.");
                 Handlers.Remove(template);
             }
 
@@ -324,16 +366,16 @@ namespace Blowdart.UI.Web
                 AddHandler(template, method);
                 return;
             }
-           
-            // resort to matching the method by stack frame
-            _callerMethods = _callerMethods ?? IntrospectHostMethods();
-            if (_callerMethods.TryGetValue(handlerNameOrMethodName, out method))
-            {
-                // there are less error-prone ways to do this, educate!
-                Trace.TraceWarning($"Handler '{handlerNameOrMethodName}' was added by stack frame. You can explicitly define the handler name via HandlerNameAttribute, or the complete Handler definition via HandlerAttribute, to avoid this message.");
 
-                AddHandler(template, method);
-            }
+			// resort to matching the method by stack frame
+            _callerMethods = _callerMethods ?? IntrospectHostMethods();
+            if (!_callerMethods.TryGetValue(handlerNameOrMethodName, out method))
+	            return;
+
+            // there are less error-prone ways to do this, educate!
+            Trace.TraceWarning($"Handler '{handlerNameOrMethodName}' was added by stack frame. You can explicitly define the handler name via HandlerNameAttribute, or the complete Handler definition via HandlerAttribute, to avoid this message.");
+
+            AddHandler(template, method);
         }
 
         private static ImmutableHashSet<MethodInfo> _methods;
@@ -344,15 +386,15 @@ namespace Blowdart.UI.Web
             return methods.ToImmutableHashSet();
         }
 
+        private static Type _callerType;
         private static Dictionary<string, MethodInfo> _callerMethods;
         private static Dictionary<string, MethodInfo> IntrospectHostMethods()
         {
-            var frame = new StackFrame(1);
-            var type = frame.GetMethod().DeclaringType;
-            if (type == null)
-                throw new ArgumentException("You cannot add a handler in this way from an anonymous method.");
+	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+	        if (_callerType == null)
+		        throw new ArgumentException("You cannot add a handler in this way from an anonymous method.");
 
-            return type.GetMethods()
+			return _callerType.GetMethods()
                 .Select(x => new KeyValuePair<string, MethodInfo>(x.Name, x))
                 .ToDictionary(k => k.Key, v => v.Value);
         }
