@@ -3,11 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Reflection;
-using Blowdart.UI.Internal;
-using Blowdart.UI.Internal.Execution;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Blowdart.UI
 {
@@ -75,7 +71,7 @@ namespace Blowdart.UI
         {
             return Template(template, ui =>
             {
-                ui.Data.GetModel(template, method, ui); // invoke-only: view and the model are one (ImGui)
+				ui.Data.GetModel(template, method, ui); // invoke-only: view and the model are one (IMGUI)
             });
         }
 

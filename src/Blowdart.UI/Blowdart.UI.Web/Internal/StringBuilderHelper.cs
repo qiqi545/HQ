@@ -4,7 +4,6 @@
 using System;
 using System.Text;
 using Blowdart.UI.Internal;
-using Microsoft.Extensions.ObjectPool;
 
 namespace Blowdart.UI.Web.Internal
 {

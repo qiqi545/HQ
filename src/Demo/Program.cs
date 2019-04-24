@@ -7,7 +7,21 @@ using static InlineElements;
 
 namespace Demo
 {
-    internal class Program
+	// todo remove site.Title/site.System
+	// todo chainable lowercase, i.e. input().br();
+	// todo generate innerText/attr pathway
+	// todo generate all indirection helpers (including qualified)
+	// todo make UiSystem hierarchical (app => class => method)
+	// todo implement Meta
+	// todo named/configurable defaults for things like <form method='post'>?
+	// todo prune literal inline element list?
+	// todo auto-localization
+	// todo remove need to capture Ui variable in IMGUI handlers
+	// todo order of first few qualified variables should be usage based (i.e. class/style always first and second, etc.) before switching to alphabetic
+	// todo remove need to call UiServer.Start explicitly?
+	// todo conventional first/only/Default method handler scanning
+
+	internal class Program
     {
         private static void Main(string[] args)
         {
@@ -19,27 +33,27 @@ namespace Demo
             UiServer.AddHandler("/", "Home");
             UiServer.Start(args);
         }
-
-        [HandlerName("Home"), SemanticUi, Meta("title", "Demo")]
-        public static void DefaultPage(Ui ui, string host, string firstName, string lastName)
+		
+		[HandlerName("Home"), SemanticUi, Meta("title", "Demo")]
+        public static void Default(string host, string firstName, string lastName)
         {
-            ui.P($"Hello, World from {strong(host)}!");
+            p($"Hello, World from {strong(host)}!");
 
-            ui.Form(new { method = "post" }, () =>
+            form(new { method = "post" }, () =>
             {
-                ui.Fieldset(() =>
+                fieldset(() =>
                 {
-                    ui.Literal("First name: ").Break();
-                    ui.Input(InputType.Text, new { name = "firstname", value = firstName, placeholder = "Enter your first name:" }).Break();
-                    ui.Literal("Last name: ").Break();
-                    ui.Input(InputType.Text, new { name = "lastname", value = lastName, placeholder = "Enter your last name:" }).Break();
-                    ui.Submit("Post to Server");
+	                literal("First name: ").Break();
+                    input(InputType.Text, new { name = "firstname", value = firstName, placeholder = "Enter your first name:" }).Break();
+                    literal("Last name: ").Break();
+                    input(InputType.Text, new { name = "lastname", value = lastName, placeholder = "Enter your last name:" }).Break();
+                    submit("Post to Server");
                 });
             });
 
-            br();
-			
-            if (ui.Button("Click Me"))
+			br();
+
+            if (button("Click Me"))
             {
                 Console.WriteLine($"Clicked By {firstName} {lastName}!");
             }

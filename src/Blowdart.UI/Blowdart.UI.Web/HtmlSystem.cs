@@ -59,7 +59,10 @@ namespace Blowdart.UI.Web
 
         public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
-            var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+	        if (ui != null)
+				InlineElements.SetUi(ui);
+
+			var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
             
             var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
@@ -175,7 +178,11 @@ namespace Blowdart.UI.Web
 
                     if (parameter.ParameterType == typeof(Ui))
                     {
-                        arguments.Add(ui ?? Ui.CreateNew(serviceProvider));
+	                    ui = ui ?? Ui.CreateNew(serviceProvider);
+	                    arguments.Add(ui);
+
+	                    // upgrade now, since we've already guaranteed an instance for the method
+						InlineElements.SetUi(ui); 
                         continue;
                     }
 
@@ -196,7 +203,7 @@ namespace Blowdart.UI.Web
             }
         }
 
-        private bool NotResolvableByContainer(ParameterInfo parameter)
+        private static bool NotResolvableByContainer(ParameterInfo parameter)
         {
 	        return parameter.ParameterType.IsValueTypeOrNullableValueType();
         }

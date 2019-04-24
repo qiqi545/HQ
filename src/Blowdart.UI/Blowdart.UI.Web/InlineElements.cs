@@ -43,11 +43,6 @@ public static partial class InlineElements
 		return $"<br>{value}</br>";
 	}
 
-	public static string @button(string value)
-	{
-		return $"<button>{value}</button>";
-	}
-
 	public static string @cite(string value)
 	{
 		return $"<cite>{value}</cite>";
