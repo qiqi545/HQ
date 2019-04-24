@@ -10,10 +10,10 @@ using Blowdart.UI.Web;
 
 public static partial class InlineElements
 {
-	// TODO this is almost certainly not the right thing: need affinity to be wherever the request/user is
 	[ThreadStatic] private static Ui ui;
 	internal static void SetUi(Ui threadUi) => ui = threadUi;
-	
+	internal static Ui GetUi() => ui;
+
 	// 
 	// Indirection Helpers:
 	public static Ui br() { return ui.Break(); }

@@ -2,7 +2,7 @@
 
 namespace Blowdart.UI
 {
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = true)]
     public class MetaAttribute : Attribute
     {
         public string Name { get; }

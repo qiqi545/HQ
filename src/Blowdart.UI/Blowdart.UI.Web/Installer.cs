@@ -20,7 +20,6 @@ using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web
 {
-
 	public static class Installer
     {
         internal static CompositeFileProvider ProviderContainer;
@@ -116,8 +115,7 @@ namespace Blowdart.UI.Web
 
             app.Use(async (context, next) =>
             {
-                await ServerSideRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template,
-                    context, next);
+                await ServerSideRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next);
             });
         }
     }

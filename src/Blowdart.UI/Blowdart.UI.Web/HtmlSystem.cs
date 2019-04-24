@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Internal.UriTemplates;
-using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,22 +18,25 @@ namespace Blowdart.UI.Web
 {
     public class HtmlSystem : UiSystem
     {
-        private string _dom;
-        private string _scripts;
-
-        public StringBuilder Dom;
+	    private string _dom;
+	    private string _scripts;
+	    
+		public StringBuilder Dom;
         public StringBuilder Scripts;
-
-        public string RenderDom => _dom ?? Dom?.ToString();
+        
+		public string RenderDom => _dom ?? Dom?.ToString();
         public string RenderScripts => _scripts ?? Scripts?.ToString();
-        public IDictionary<string, object> Request { get; private set; }
+        
+		public IDictionary<string, object> Request { get; private set; }
 
         public override void Begin(UiContext context = null)
         {
             _dom = null;
             _scripts = null;
-            Dom = StringBuilderHelper.Get();
-            Scripts = StringBuilderHelper.Get();
+
+            Dom = Pools.StringBuilderPool.Get();
+            Scripts = Pools.StringBuilderPool.Get();
+            
             Request = context;
         }
 
@@ -42,12 +44,14 @@ namespace Blowdart.UI.Web
         {
             _dom = RenderDom;
             _scripts = RenderScripts;
-            StringBuilderHelper.Return(Dom);
-            StringBuilderHelper.Return(Scripts);
+
+            Pools.StringBuilderPool.Return(Dom);
+            Pools.StringBuilderPool.Return(Scripts);
+			
             Request.Clear();
         }
-        
-        public virtual string ScriptsSection()
+		
+		public virtual string ScriptsSection()
         {
             return "<!-- SCRIPTS -->";
         }
@@ -59,10 +63,7 @@ namespace Blowdart.UI.Web
 
         public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
-	        if (ui != null)
-				InlineElements.SetUi(ui);
-
-			var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+	        var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
             
             var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
@@ -178,11 +179,10 @@ namespace Blowdart.UI.Web
 
                     if (parameter.ParameterType == typeof(Ui))
                     {
-	                    ui = ui ?? Ui.CreateNew(serviceProvider);
-	                    arguments.Add(ui);
+	                    ui = ui ?? InlineElements.GetUi() ?? throw new ArgumentNullException(nameof(ui), 
+		                         $"No UI instance passed to {nameof(PopulateAction)} or found in this synchronization context");
 
-	                    // upgrade now, since we've already guaranteed an instance for the method
-						InlineElements.SetUi(ui); 
+	                    arguments.Add(ui);
                         continue;
                     }
 

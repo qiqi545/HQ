@@ -3,18 +3,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Reflection;
 
 namespace Blowdart.UI
 {
     public class LayoutRoot
     {
-        public LayoutRoot(IServiceProvider serviceProvider)
+	    private readonly Dictionary<string, NameValueCollection> _meta = new Dictionary<string, NameValueCollection>();
+	    private readonly Dictionary<string, Action<Ui>> _handlers = new Dictionary<string, Action<Ui>>();
+
+	    public LayoutRoot(IServiceProvider serviceProvider)
         {
             Services = serviceProvider;
         }
 
-        internal IDictionary<string, Action<Ui>> Handlers { get; } = new Dictionary<string, Action<Ui>>();
+        internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
+		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
         internal IServiceProvider Services { get; }
         public Action<Ui> Root => Handlers["/"];
 
@@ -41,13 +46,13 @@ namespace Blowdart.UI
 
         public LayoutRoot Template(string template, Action<Ui> view)
         {
-            Handlers.Add(template, view);
+            _handlers.Add(template, view);
             return this;
         }
 
         public LayoutRoot Template<TService>(string template, Action<Ui, dynamic> view)
         {
-            Handlers.Add(template, ui =>
+	        _handlers.Add(template, ui =>
             {
                 view(ui, ui.Data.GetModel<TService>(template));
             });
@@ -56,26 +61,27 @@ namespace Blowdart.UI
 
         public LayoutRoot Template<TService, TModel>(string template, Action<Ui, TModel> view) where TModel : class
         {
-            Handlers.Add(template, ui =>
+	        _handlers.Add(template, ui =>
             {
                 view(ui, ui.Data.GetModel<TService, TModel>(template));
             });
             return this;
         }
 
-        #endregion
-        
-        #region Direct 
+		#endregion
 
-        internal LayoutRoot AddHandler(string template, MethodInfo method)
-        {
-            return Template(template, ui =>
-            {
+		internal LayoutRoot AddHandler(string template, MethodInfo method)
+		{
+			return Template(template, ui =>
+			{
 				ui.Data.GetModel(template, method, ui); // invoke-only: view and the model are one (IMGUI)
-            });
-        }
+			});
+		}
 
-        #endregion
-
-    }
+		internal LayoutRoot AddMeta(string template, NameValueCollection meta)
+		{
+			_meta.Add(template, meta);
+			return this;
+		}
+	}
 }

@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -219,22 +218,27 @@ namespace Blowdart.UI.Web
                 var serviceProvider = webHost.Services;
 
                 var layout = serviceProvider.GetRequiredService<LayoutRoot>();
-                foreach (var handler in Handlers)
-                    layout.AddHandler(handler.Key, handler.Value);
-                HandlersAreFinished();
+                var meta = Caches.Introspection.IntrospectMeta();
 
+				foreach (var handler in Handlers)
+                {
+	                layout.AddHandler(handler.Key, handler.Value);
+	                layout.AddMeta(handler.Key, meta[handler.Value]);
+                }
+
+				HandlersAreFinished();
+				
                 var service = serviceProvider.GetService<IHostingEnvironment>();
                 if (!serviceProvider.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
                 {
                     Console.WriteLine($"Hosting environment: {service.EnvironmentName}");
                     Console.WriteLine($"Content root path: {service.ContentRootPath}");
-                    ICollection<string> addresses = webHost.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses;
+                    var addresses = webHost.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses;
                     if (addresses != null)
-                    {
-                        foreach (var address in addresses)
-                            Console.WriteLine($"Now listening on: {address}");
-                    }
-                    Console.WriteLine("Application started. Press Ctrl+C to shut down.");
+						foreach (var address in addresses)
+							Console.WriteLine($"Now listening on: {address}");
+
+					Console.WriteLine("Application started. Press Ctrl+C to shut down.");
                 }
                 
                 OnStarted(webHost, config);
@@ -311,7 +315,7 @@ namespace Blowdart.UI.Web
 
 			//
 			// Annotated:
-            foreach (var handler in IntrospectHandlers())
+            foreach (var handler in Caches.Introspection.IntrospectHandlers())
                 AddHandler(handler.Key, handler.Value);
 
 			//
@@ -329,8 +333,8 @@ namespace Blowdart.UI.Web
 
             Handlers.Clear();
 
-            _methods.Clear();
-            _handlerMethodsWithName?.Clear();
+            Caches.Introspection.Clear();
+            
             _callerMethods?.Clear();
 
             _finishedAddingHandlers = true;
@@ -360,8 +364,8 @@ namespace Blowdart.UI.Web
             HandlersAreNotFinished();
 
             // first look for non-template qualified handler disambiguation
-            _handlerMethodsWithName = _handlerMethodsWithName ?? IntrospectHandlerNames();
-            if (_handlerMethodsWithName.TryGetValue(handlerNameOrMethodName, out var method))
+            var handlerMethodsWithName = Caches.Introspection.IntrospectHandlerNames();
+            if (handlerMethodsWithName.TryGetValue(handlerNameOrMethodName, out var method))
             {
                 AddHandler(template, method);
                 return;
@@ -378,14 +382,6 @@ namespace Blowdart.UI.Web
             AddHandler(template, method);
         }
 
-        private static ImmutableHashSet<MethodInfo> _methods;
-        private static ImmutableHashSet<MethodInfo> IntrospectMethods()
-        {
-            var types = AppDomain.CurrentDomain.GetAssemblies().SelectMany(x => x.GetTypes().OrderByDescending(t => t.IsPublic));
-            var methods = types.SelectMany(x => x.GetMethods());
-            return methods.ToImmutableHashSet();
-        }
-
         private static Type _callerType;
         private static Dictionary<string, MethodInfo> _callerMethods;
         private static Dictionary<string, MethodInfo> IntrospectHostMethods()
@@ -399,54 +395,10 @@ namespace Blowdart.UI.Web
                 .ToDictionary(k => k.Key, v => v.Value);
         }
 
-        private static Dictionary<string, MethodInfo> _handlerMethodsWithName;
-        private static Dictionary<string, MethodInfo> IntrospectHandlerNames()
-        {
-            _methods = _methods ?? IntrospectMethods();
-
-            var methodsWithAttribute = _methods.Where(x => Attribute.IsDefined(x, typeof(HandlerNameAttribute))).ToList();
-            var kvp = methodsWithAttribute.Select(x =>
-            {
-                var handlerName = (HandlerNameAttribute) Attribute.GetCustomAttribute(x, typeof(HandlerNameAttribute));
-                return new KeyValuePair<string, MethodInfo>(handlerName.Name, x);
-            }).ToList();
-
-            var duplicates = kvp.ToLookup(x => x.Value, x => x.Key).Where(x => x.Count() > 1);
-            foreach (var duplicate in duplicates)
-            {
-                var values = duplicate.Aggregate(string.Empty, (s, v) => $"{s}, {v}");
-                var message = $"Duplicate entries found for handlers with name \"{duplicate.Key}\":{values}.";
-                Trace.TraceWarning(message);
-            }
-
-            return kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
-        }
-
-        private static Dictionary<string, MethodInfo> IntrospectHandlers()
-        {
-            _methods = _methods ?? IntrospectMethods();
-
-            var kvp = _methods.Where(x => Attribute.IsDefined(x, typeof(HandlerAttribute))).Select(x =>
-            {
-                var handlerName = (HandlerAttribute) Attribute.GetCustomAttribute(x, typeof(HandlerAttribute));
-                return new KeyValuePair<string, MethodInfo>(handlerName.Template, x);
-            }).ToList();
-
-            var duplicates = kvp.ToLookup(x => x.Value, x => x.Key).Where(x => x.Count() > 1);
-            foreach (var duplicate in duplicates)
-            {
-                var values = duplicate.Aggregate(string.Empty, (s, v) => $"{s}, {v}");
-                var message = $"Duplicate entries found for handlers with template \"{duplicate.Key}\":{values}";
-                Trace.TraceWarning(message);
-            }
-
-            return kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
-        }
-
         private static void AddUiResources(IServiceCollection services)
         {
-            _methods = _methods ?? IntrospectMethods();
-            var kvp = _methods.Where(x => Attribute.IsDefined(x, typeof(UiSystemAttribute))).Select(x => (UiSystemAttribute) Attribute.GetCustomAttribute(x, typeof(UiSystemAttribute))).Distinct();
+			var methods = Caches.Introspection.IntrospectMethods();
+			var kvp = methods.Where(x => Attribute.IsDefined(x, typeof(UiSystemAttribute))).Select(x => (UiSystemAttribute) Attribute.GetCustomAttribute(x, typeof(UiSystemAttribute))).Distinct();
             foreach (var entry in kvp)
                 services.AddUiResources(entry.Type.Assembly);
         }

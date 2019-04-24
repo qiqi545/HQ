@@ -2,9 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Text;
 using Blowdart.UI;
+using Blowdart.UI.Internal;
 using Blowdart.UI.Web;
-using Blowdart.UI.Web.Internal;
 
 namespace Blowgun.Web.SemanticUi
 {
@@ -16,12 +17,26 @@ namespace Blowgun.Web.SemanticUi
         {
             ui.NextId();
 
-            var @class = StringBuilderHelper.BuildString(sb =>
+            var @class = BuildString(sb =>
             { 
                 sb.Append("ui button");
             });
 
             return Clickable(ui, "button", text, Attributes.Attr(new { @class }));
         }
-    }
+
+        public static string BuildString(Action<StringBuilder> action)
+        {
+	        var sb = Pools.StringBuilderPool.Get();
+	        try
+	        {
+		        action(sb);
+		        return sb.ToString();
+	        }
+	        finally
+	        {
+		        Pools.StringBuilderPool.Return(sb);
+	        }
+        }
+	}
 }

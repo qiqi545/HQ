@@ -11,20 +11,21 @@ namespace Blowdart.UI
     {
         public UiSettings(IServiceProvider serviceProvider)
         {
-            Title = "My Blowdart UI";
             Services = serviceProvider;
             DefaultPageMethodName = "Index";
-        }
+			DefaultPageTitle = "My Application";
+		}
 
         public IServiceProvider Services { get; }
 
-        public string Title { get; set; }
         public UiSystem System { get; set; }
         public UiData Data { get; set; }
         public Assembly[] ComponentAssemblies { get; set; }
-        public string DefaultPageMethodName { get; set; }
 
-        public void AutoRegisterComponentAssemblies()
+        public string DefaultPageMethodName { get; set; }
+		public string DefaultPageTitle { get; set; }
+
+		public void AutoRegisterComponentAssemblies()
         {
             var list = new List<Assembly>();
             if(ComponentAssemblies != null)

@@ -34,7 +34,7 @@ namespace Blowdart.UI.Internal
             }
 
             if (!Instances.TryGetValue(type, out var instance))
-                Instances.Add(type, instance = Pools.ActivatorPool.Create(type));
+                Instances.Add(type, instance = Caches.ActivatorCache.Create(type));
             return executor.Execute(instance, args);
         }
 
