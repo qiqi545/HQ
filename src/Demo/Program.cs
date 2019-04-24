@@ -7,8 +7,6 @@ using static InlineElements;
 
 namespace Demo
 {
-	// todo site.System
-	// todo make UiSystem hierarchical (app => class => method)	
 	// todo chainable lowercase, i.e. input().br();
 	// todo generate innerText/attr pathway
 	// todo generate all indirection helpers (including qualified)
@@ -24,10 +22,6 @@ namespace Demo
     {
         private static void Main(string[] args)
         {
-            UiConfig.Settings = site =>
-            {
-                site.System = new SemanticUi();
-            };
             UiServer.Start(args);
         }
 

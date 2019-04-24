@@ -25,17 +25,17 @@ namespace Blowdart.UI
                 if (settings.ComponentAssemblies == null)
                     settings.AutoRegisterComponentAssemblies();
 
-                if (settings.System == null)
-                    settings.System = Caches.ActivatorCache.Create<TSystem>();
+                if (settings.DefaultSystem == null)
+                    settings.DefaultSystem = Caches.ActivatorCache.Create<TSystem>();
 
                 if (settings.Data == null)
-                    settings.Data = new InvokeUiData(r, settings.ComponentAssemblies);
+                    settings.Data = new InvokeUiData(r);
 
                 Pools.AutoResolver = new NoContainer(r, settings.ComponentAssemblies);
 
                 return settings;
             });
-            services.AddSingleton(r => r.GetRequiredService<UiSettings>().System);
+            services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
             services.AddSingleton(r => new LayoutRoot(r));
             services.AddSingleton(r =>

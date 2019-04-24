@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Blowdart.UI.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -77,17 +78,36 @@ namespace Blowdart.UI.Web.Internal
                 if (!template.Contains(bodySlug) || !template.Contains(scriptSlug))
                     throw new Exception();
 #endif
+				const string titleKey = "title";
 
-	            string title;
-	            if (!layout.Meta.TryGetValue(pageKey, out var meta))
-		            title = settings.DefaultPageTitle;
-	            else
-		            title = meta["title"] ?? settings.DefaultPageTitle;
+				var hasMeta = layout.Meta.TryGetValue(pageKey, out var meta);
+	            var title = !hasMeta ? settings.DefaultPageTitle : meta[titleKey] ?? settings.DefaultPageTitle;
+
+	            string metaString;
+				var metaBuilder = Pools.StringBuilderPool.Get();
+				try
+				{
+					metaBuilder.Append("<title>").Append(title).Append("</title>").AppendLine();
+					if (hasMeta)
+					{
+						foreach (string name in meta.Keys)
+						{
+							if (name.Equals(titleKey, StringComparison.OrdinalIgnoreCase))
+								continue;
+							metaBuilder.AppendLine($"<meta name=\"{name}\" content=\"{meta[name]}\" />");
+						}
+					}
+					metaString = metaBuilder.ToString();
+				}
+				finally
+				{
+					Pools.StringBuilderPool.Return(metaBuilder);
+				}
 
 				html = template
                         .Replace(bodySlug, bodySlug + system.RenderDom)
                         .Replace(scriptSlug, $"{scriptOpen}function initUi() {{{system.RenderScripts}}};{scriptClose}")
-                        .Replace("<!-- META -->", $"<title>{title}</title>")
+                        .Replace("<!-- META -->", metaString)
 						.Replace("<!-- STYLES -->", system.StylesSection())
                         .Replace("<!-- SCRIPTS -->", system.ScriptsSection())
                     ;

@@ -18,11 +18,11 @@ namespace Blowdart.UI
 
         public IServiceProvider Services { get; }
 
-        public UiSystem System { get; set; }
         public UiData Data { get; set; }
         public Assembly[] ComponentAssemblies { get; set; }
 
-        public string DefaultPageMethodName { get; set; }
+        public UiSystem DefaultSystem { get; set; }
+		public string DefaultPageMethodName { get; set; }
 		public string DefaultPageTitle { get; set; }
 
 		public void AutoRegisterComponentAssemblies()

@@ -2,7 +2,7 @@
 
 namespace Blowdart.UI
 {
-    [AttributeUsage(AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class UiSystemAttribute : Attribute
     {
         public Type Type { get; }

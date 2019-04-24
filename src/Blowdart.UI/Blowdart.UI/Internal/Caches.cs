@@ -126,15 +126,42 @@ namespace Blowdart.UI.Internal
 				
 				return result;
 			}
-		}
 
+			public static Dictionary<MethodInfo, UiSystem> IntrospectSystems()
+			{
+				var methods = IntrospectMethods();
+
+				var result = new Dictionary<MethodInfo, UiSystem>();
+
+				//
+				// Parent:
+				foreach (var child in methods.Where(x => x.DeclaringType != null && Attribute.IsDefined(x.DeclaringType, typeof(UiSystemAttribute))))
+				{
+					var parent = child.DeclaringType;
+					if (parent == null)
+						continue;
+					var attribute = (UiSystemAttribute) Attribute.GetCustomAttribute(parent, typeof(UiSystemAttribute));
+					result[child] = (UiSystem) ActivatorCache.Create(attribute.Type);
+				}
+
+				//
+				// Child (overwrites parent):
+				foreach (var child in methods.Where(x => Attribute.IsDefined(x, typeof(UiSystemAttribute))))
+				{
+					var attribute = (UiSystemAttribute) Attribute.GetCustomAttribute(child, typeof(UiSystemAttribute));
+					result[child] = (UiSystem) ActivatorCache.Create(attribute.Type);
+				}
+
+				return result;
+			}
+		}
 
 		public static class ActivatorCache
 		{
 			public static readonly Dictionary<Type, CreateInstance> Factory = new Dictionary<Type, CreateInstance>();
 
 			public static T Create<T>() => (T) GetOrBuildActivator<T>()();
-			public static object Create(Type type) => GetOrBuildActivator(type);
+			public static object Create(Type type) => GetOrBuildActivator(type)();
 
 			private static CreateInstance GetOrBuildActivator<T>() => GetOrBuildActivator(typeof(T));
 			private static CreateInstance GetOrBuildActivator(Type type)

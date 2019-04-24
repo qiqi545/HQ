@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +11,7 @@ namespace Blowdart.UI.Internal
     {
         private readonly IServiceProvider _serviceProvider;
         
-        public InvokeUiData(IServiceProvider serviceProvider, IEnumerable<Assembly> fallbackAssemblies)
+        public InvokeUiData(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -43,11 +42,17 @@ namespace Blowdart.UI.Internal
         private object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui)
         {
             var settings = _serviceProvider.GetRequiredService<UiSettings>();
-            var target = Pools.AutoResolver.GetService(serviceType);
+
+            var layoutRoot = _serviceProvider.GetRequiredService<LayoutRoot>();
+			
+			var target = Pools.AutoResolver.GetService(serviceType);
             var action = Pools.ActionPool.Get();
             try
             {
-				settings.System.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
+	            var system = layoutRoot.Systems[template] ?? settings.DefaultSystem ??
+	                         throw new ArgumentException("No registered system for the given template, and no default system to fall back on");
+
+	            system.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
 
                 var result = action.Arguments == null
                     ? target.ExecuteMethod(action.MethodName)

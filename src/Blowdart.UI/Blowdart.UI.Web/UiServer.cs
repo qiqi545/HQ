@@ -219,11 +219,13 @@ namespace Blowdart.UI.Web
 
                 var layout = serviceProvider.GetRequiredService<LayoutRoot>();
                 var meta = Caches.Introspection.IntrospectMeta();
+                var systems = Caches.Introspection.IntrospectSystems();
 
 				foreach (var handler in Handlers)
                 {
 	                layout.AddHandler(handler.Key, handler.Value);
 	                layout.AddMeta(handler.Key, meta[handler.Value]);
+	                layout.AddSystem(handler.Key, systems[handler.Value]);
                 }
 
 				HandlersAreFinished();
