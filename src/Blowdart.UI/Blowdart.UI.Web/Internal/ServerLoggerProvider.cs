@@ -6,18 +6,18 @@ using Microsoft.Extensions.Logging;
 
 namespace Blowdart.UI.Web.Internal
 {
-    internal class ServerSideLoggerProvider : ILoggerProvider
+    internal class ServerLoggerProvider : ILoggerProvider
     {
         private readonly IHubContext<LoggingHub> _context;
 
-        public ServerSideLoggerProvider(IHubContext<LoggingHub> context)
+        public ServerLoggerProvider(IHubContext<LoggingHub> context)
         {
             _context = context;
         }
 
         public ILogger CreateLogger(string categoryName)
         {
-            return new ServerSideLogger(_context);
+            return new ServerLogger(_context);
         }
 
         public void Dispose() { }

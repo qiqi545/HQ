@@ -13,8 +13,8 @@ namespace Blowdart.UI.Web
         public string ContentType { get; set; } = "text/html";
         public string BodyElementId { get; set; } = "ui-body";
         public string ScriptElementId { get; set; } = "ui-scripts";
-        public bool UseServerSideRendering { get; set; } = true;
-        public bool UseServerSideLogging { get; set; } = true;
+        public bool UsePrerendering { get; set; } = true;
+        public bool UseLogging { get; set; } = true;
         public ServerTransport MessagingModel { get; set; } = ServerTransport.All;
     }
 }

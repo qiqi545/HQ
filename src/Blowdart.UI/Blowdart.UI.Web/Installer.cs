@@ -88,8 +88,8 @@ namespace Blowdart.UI.Web
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
 
             var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-            if (options.Value.UseServerSideRendering)
-                loggerFactory?.AddProvider(new ServerSideLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
+            if (options.Value.UsePrerendering)
+                loggerFactory?.AddProvider(new ServerLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
 
             app.UseStaticFiles();
             app.Map("/~", x =>
@@ -106,16 +106,16 @@ namespace Blowdart.UI.Web
                     o.Transports = (HttpTransportType) options.Value.MessagingModel;
                 }
                 r.MapHub<HtmlHub>(options.Value.HubPath, SetMessagingModel);
-                if(options.Value.UseServerSideLogging)
+                if(options.Value.UseLogging)
                     r.MapHub<LoggingHub>(options.Value.LoggingPath, SetMessagingModel);
             });
 
-            var template = ServerSideRenderer.LoadPageTemplate(serviceProvider, options);
+            var template = WebRenderer.LoadPageTemplate(serviceProvider, options);
             layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
 
             app.Use(async (context, next) =>
             {
-                await ServerSideRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next);
+                await WebRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next);
             });
         }
     }

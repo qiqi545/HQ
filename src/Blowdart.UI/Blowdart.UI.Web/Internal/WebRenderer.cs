@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web.Internal
 {
-    internal static class ServerSideRenderer
+    internal static class WebRenderer
     {
         public static async Task BuildUi(LayoutRoot layout, string template, HttpContext context, Func<Task> next)
         {
@@ -24,6 +24,7 @@ namespace Blowdart.UI.Web.Internal
 	        var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
             var settings = serviceProvider.GetRequiredService<UiSettings>();
 
+			// todo this assumes that every request is in a dedicated thread, which is false
             var ui = new ThreadLocal<Ui>(() =>
             {
 	            var instance = Ui.CreateNew(serviceProvider);
@@ -60,7 +61,7 @@ namespace Blowdart.UI.Web.Internal
         private static string RenderToTarget(Ui renderTarget, string pageKey, Action<Ui> renderAction, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
         {
             string html;
-            if (options.UseServerSideRendering)
+            if (options.UsePrerendering)
             {
                 renderTarget.Begin(WebUiContext.Build(context));
                 renderAction(renderTarget);

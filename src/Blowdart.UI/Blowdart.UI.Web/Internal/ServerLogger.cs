@@ -7,11 +7,11 @@ using Microsoft.Extensions.Logging;
 
 namespace Blowdart.UI.Web.Internal
 {
-    internal class ServerSideLogger : ILogger
+    internal class ServerLogger : ILogger
     {
         private readonly IHubContext<LoggingHub> _context;
 
-        public ServerSideLogger(IHubContext<LoggingHub> context)
+        public ServerLogger(IHubContext<LoggingHub> context)
         {
             _context = context;
         }

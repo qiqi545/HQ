@@ -25,7 +25,7 @@ namespace Blowdart.UI.Web.Internal
         {
             await base.OnConnectedAsync();
 
-            if (!_options.Value.UseServerSideRendering)
+            if (!_options.Value.UsePrerendering)
             {
                 var ui = Ui.CreateNew(_layoutRoot.Services);
                 ui.Begin(WebUiContext.Build(this));
