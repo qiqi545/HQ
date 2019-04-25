@@ -8,14 +8,15 @@ using static InlineElements;
 namespace Demo
 {
 	// todo chainable lowercase, i.e. input().br();
-	// todo generate innerText/attr pathway
 	// todo generate all indirection helpers (including qualified)
-	// todo named/configurable defaults for things like <form method='post'>?
+	// todo named/configurable/sensible defaults for things like <form method='post'>?
 	// todo prune literal inline element list?
-	// todo auto-localization
+	// todo auto-localization (gather strings and PO them)
 	// todo order of first few qualified variables should be usage based (i.e. class/style always first and second, etc.) before switching to alphabetic
-	
-	[SemanticUi, Meta("title", "Blowdart UI Demo")]
+	// todo replace anonymous class attribute declarations with inlined imgui-style invocations inside the closure (also, avoid making it easy to capture data)
+
+	[SemanticUi]
+	[Meta("title", "Blowdart UI Demo")]
 	internal class Program
     {
         private static void Main(string[] args) => UiServer.Start(args);

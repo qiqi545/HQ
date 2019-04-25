@@ -32,6 +32,7 @@ namespace Blowdart.UI.Web
         private static Type _startup;
         private readonly IHostingEnvironment _env;
 
+		// Called by ASP.NET Core via reflection
         public UiServer(IHostingEnvironment env, IConfiguration configuration)
         {
             _env = env;

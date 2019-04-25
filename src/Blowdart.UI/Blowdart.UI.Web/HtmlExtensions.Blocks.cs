@@ -14,11 +14,6 @@ namespace Blowdart.UI.Web
 
 		#region address
 
-		public static Ui BeginAddress(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("address", attributes);
-		}
-
 		public static Ui BeginAddress(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("address", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -29,9 +24,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("address", attr);
 		}
 
+		public static Ui BeginAddress(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("address", attributes);
+		}
+
 		public static Ui EndAddress(this Ui ui)
 		{
 			return ui.EndElement("address");
+		}
+
+		public static Ui Address(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("address", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -86,11 +91,6 @@ namespace Blowdart.UI.Web
 
 		#region article
 
-		public static Ui BeginArticle(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("article", attributes);
-		}
-
 		public static Ui BeginArticle(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("article", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -101,9 +101,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("article", attr);
 		}
 
+		public static Ui BeginArticle(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("article", attributes);
+		}
+
 		public static Ui EndArticle(this Ui ui)
 		{
 			return ui.EndElement("article");
+		}
+
+		public static Ui Article(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("article", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -158,11 +168,6 @@ namespace Blowdart.UI.Web
 
 		#region aside
 
-		public static Ui BeginAside(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("aside", attributes);
-		}
-
 		public static Ui BeginAside(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("aside", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -173,9 +178,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("aside", attr);
 		}
 
+		public static Ui BeginAside(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("aside", attributes);
+		}
+
 		public static Ui EndAside(this Ui ui)
 		{
 			return ui.EndElement("aside");
+		}
+
+		public static Ui Aside(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("aside", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -230,11 +245,6 @@ namespace Blowdart.UI.Web
 
 		#region blockquote
 
-		public static Ui BeginBlockquote(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("blockquote", attributes);
-		}
-
 		public static Ui BeginBlockquote(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), string cite = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("blockquote", new { cite, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -245,9 +255,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("blockquote", attr);
 		}
 
+		public static Ui BeginBlockquote(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("blockquote", attributes);
+		}
+
 		public static Ui EndBlockquote(this Ui ui)
 		{
 			return ui.EndElement("blockquote");
+		}
+
+		public static Ui Blockquote(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("blockquote", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -302,11 +322,6 @@ namespace Blowdart.UI.Web
 
 		#region canvas
 
-		public static Ui BeginCanvas(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("canvas", attributes);
-		}
-
 		public static Ui BeginCanvas(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string width = default(string))
 		{
 			return ui.BeginElement("canvas", new { height, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -317,9 +332,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("canvas", attr);
 		}
 
+		public static Ui BeginCanvas(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("canvas", attributes);
+		}
+
 		public static Ui EndCanvas(this Ui ui)
 		{
 			return ui.EndElement("canvas");
+		}
+
+		public static Ui Canvas(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("canvas", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -374,11 +399,6 @@ namespace Blowdart.UI.Web
 
 		#region dd
 
-		public static Ui BeginDd(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("dd", attributes);
-		}
-
 		public static Ui BeginDd(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("dd", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -389,9 +409,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dd", attr);
 		}
 
+		public static Ui BeginDd(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("dd", attributes);
+		}
+
 		public static Ui EndDd(this Ui ui)
 		{
 			return ui.EndElement("dd");
+		}
+
+		public static Ui Dd(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("dd", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -446,11 +476,6 @@ namespace Blowdart.UI.Web
 
 		#region div
 
-		public static Ui BeginDiv(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("div", attributes);
-		}
-
 		public static Ui BeginDiv(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("div", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -461,9 +486,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("div", attr);
 		}
 
+		public static Ui BeginDiv(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("div", attributes);
+		}
+
 		public static Ui EndDiv(this Ui ui)
 		{
 			return ui.EndElement("div");
+		}
+
+		public static Ui Div(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("div", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -518,11 +553,6 @@ namespace Blowdart.UI.Web
 
 		#region dl
 
-		public static Ui BeginDl(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("dl", attributes);
-		}
-
 		public static Ui BeginDl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("dl", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -533,9 +563,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dl", attr);
 		}
 
+		public static Ui BeginDl(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("dl", attributes);
+		}
+
 		public static Ui EndDl(this Ui ui)
 		{
 			return ui.EndElement("dl");
+		}
+
+		public static Ui Dl(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("dl", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -590,11 +630,6 @@ namespace Blowdart.UI.Web
 
 		#region dt
 
-		public static Ui BeginDt(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("dt", attributes);
-		}
-
 		public static Ui BeginDt(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("dt", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -605,9 +640,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("dt", attr);
 		}
 
+		public static Ui BeginDt(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("dt", attributes);
+		}
+
 		public static Ui EndDt(this Ui ui)
 		{
 			return ui.EndElement("dt");
+		}
+
+		public static Ui Dt(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("dt", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -662,11 +707,6 @@ namespace Blowdart.UI.Web
 
 		#region fieldset
 
-		public static Ui BeginFieldset(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("fieldset", attributes);
-		}
-
 		public static Ui BeginFieldset(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("fieldset", new { disabled, @for, name, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -677,9 +717,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("fieldset", attr);
 		}
 
+		public static Ui BeginFieldset(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("fieldset", attributes);
+		}
+
 		public static Ui EndFieldset(this Ui ui)
 		{
 			return ui.EndElement("fieldset");
+		}
+
+		public static Ui Fieldset(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("fieldset", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -734,11 +784,6 @@ namespace Blowdart.UI.Web
 
 		#region figcaption
 
-		public static Ui BeginFigcaption(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("figcaption", attributes);
-		}
-
 		public static Ui BeginFigcaption(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("figcaption", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -749,9 +794,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("figcaption", attr);
 		}
 
+		public static Ui BeginFigcaption(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("figcaption", attributes);
+		}
+
 		public static Ui EndFigcaption(this Ui ui)
 		{
 			return ui.EndElement("figcaption");
+		}
+
+		public static Ui Figcaption(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("figcaption", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -806,11 +861,6 @@ namespace Blowdart.UI.Web
 
 		#region figure
 
-		public static Ui BeginFigure(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("figure", attributes);
-		}
-
 		public static Ui BeginFigure(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("figure", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -821,9 +871,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("figure", attr);
 		}
 
+		public static Ui BeginFigure(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("figure", attributes);
+		}
+
 		public static Ui EndFigure(this Ui ui)
 		{
 			return ui.EndElement("figure");
+		}
+
+		public static Ui Figure(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("figure", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -878,11 +938,6 @@ namespace Blowdart.UI.Web
 
 		#region footer
 
-		public static Ui BeginFooter(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("footer", attributes);
-		}
-
 		public static Ui BeginFooter(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("footer", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -893,9 +948,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("footer", attr);
 		}
 
+		public static Ui BeginFooter(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("footer", attributes);
+		}
+
 		public static Ui EndFooter(this Ui ui)
 		{
 			return ui.EndElement("footer");
+		}
+
+		public static Ui Footer(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("footer", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -950,11 +1015,6 @@ namespace Blowdart.UI.Web
 
 		#region form
 
-		public static Ui BeginForm(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("form", attributes);
-		}
-
 		public static Ui BeginForm(this Ui ui, string @class = default(string), string accept = default(string), string acceptCharset = default(string), string accesskey = default(string), string action = default(string), string autocapitalize = default(string), string autocomplete = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string enctype = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string method = default(string), string name = default(string), string novalidate = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string target = default(string), string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("form", new { accept, acceptCharset, action, autocomplete, enctype, method, name, novalidate, target, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -965,9 +1025,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("form", attr);
 		}
 
+		public static Ui BeginForm(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("form", attributes);
+		}
+
 		public static Ui EndForm(this Ui ui)
 		{
 			return ui.EndElement("form");
+		}
+
+		public static Ui Form(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("form", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1022,11 +1092,6 @@ namespace Blowdart.UI.Web
 
 		#region h1
 
-		public static Ui BeginH1(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h1", attributes);
-		}
-
 		public static Ui BeginH1(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h1", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1037,9 +1102,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h1", attr);
 		}
 
+		public static Ui BeginH1(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h1", attributes);
+		}
+
 		public static Ui EndH1(this Ui ui)
 		{
 			return ui.EndElement("h1");
+		}
+
+		public static Ui H1(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h1", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1094,11 +1169,6 @@ namespace Blowdart.UI.Web
 
 		#region h2
 
-		public static Ui BeginH2(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h2", attributes);
-		}
-
 		public static Ui BeginH2(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h2", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1109,9 +1179,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h2", attr);
 		}
 
+		public static Ui BeginH2(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h2", attributes);
+		}
+
 		public static Ui EndH2(this Ui ui)
 		{
 			return ui.EndElement("h2");
+		}
+
+		public static Ui H2(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h2", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1166,11 +1246,6 @@ namespace Blowdart.UI.Web
 
 		#region h3
 
-		public static Ui BeginH3(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h3", attributes);
-		}
-
 		public static Ui BeginH3(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h3", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1181,9 +1256,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h3", attr);
 		}
 
+		public static Ui BeginH3(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h3", attributes);
+		}
+
 		public static Ui EndH3(this Ui ui)
 		{
 			return ui.EndElement("h3");
+		}
+
+		public static Ui H3(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h3", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1238,11 +1323,6 @@ namespace Blowdart.UI.Web
 
 		#region h4
 
-		public static Ui BeginH4(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h4", attributes);
-		}
-
 		public static Ui BeginH4(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h4", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1253,9 +1333,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h4", attr);
 		}
 
+		public static Ui BeginH4(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h4", attributes);
+		}
+
 		public static Ui EndH4(this Ui ui)
 		{
 			return ui.EndElement("h4");
+		}
+
+		public static Ui H4(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h4", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1310,11 +1400,6 @@ namespace Blowdart.UI.Web
 
 		#region h5
 
-		public static Ui BeginH5(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h5", attributes);
-		}
-
 		public static Ui BeginH5(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h5", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1325,9 +1410,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h5", attr);
 		}
 
+		public static Ui BeginH5(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h5", attributes);
+		}
+
 		public static Ui EndH5(this Ui ui)
 		{
 			return ui.EndElement("h5");
+		}
+
+		public static Ui H5(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h5", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1382,11 +1477,6 @@ namespace Blowdart.UI.Web
 
 		#region h6
 
-		public static Ui BeginH6(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("h6", attributes);
-		}
-
 		public static Ui BeginH6(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("h6", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1397,9 +1487,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("h6", attr);
 		}
 
+		public static Ui BeginH6(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("h6", attributes);
+		}
+
 		public static Ui EndH6(this Ui ui)
 		{
 			return ui.EndElement("h6");
+		}
+
+		public static Ui H6(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("h6", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1454,11 +1554,6 @@ namespace Blowdart.UI.Web
 
 		#region header
 
-		public static Ui BeginHeader(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("header", attributes);
-		}
-
 		public static Ui BeginHeader(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("header", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1469,9 +1564,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("header", attr);
 		}
 
+		public static Ui BeginHeader(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("header", attributes);
+		}
+
 		public static Ui EndHeader(this Ui ui)
 		{
 			return ui.EndElement("header");
+		}
+
+		public static Ui Header(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("header", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1526,11 +1631,6 @@ namespace Blowdart.UI.Web
 
 		#region hr
 
-		public static Ui BeginHr(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("hr", attributes);
-		}
-
 		public static Ui BeginHr(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), string color = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("hr", new { align, color, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1541,9 +1641,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("hr", attr);
 		}
 
+		public static Ui BeginHr(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("hr", attributes);
+		}
+
 		public static Ui EndHr(this Ui ui)
 		{
 			return ui.EndElement("hr");
+		}
+
+		public static Ui Hr(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("hr", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1598,11 +1708,6 @@ namespace Blowdart.UI.Web
 
 		#region li
 
-		public static Ui BeginLi(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("li", attributes);
-		}
-
 		public static Ui BeginLi(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string value = default(string))
 		{
 			return ui.BeginElement("li", new { value, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1613,9 +1718,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("li", attr);
 		}
 
+		public static Ui BeginLi(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("li", attributes);
+		}
+
 		public static Ui EndLi(this Ui ui)
 		{
 			return ui.EndElement("li");
+		}
+
+		public static Ui Li(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("li", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1670,11 +1785,6 @@ namespace Blowdart.UI.Web
 
 		#region main
 
-		public static Ui BeginMain(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("main", attributes);
-		}
-
 		public static Ui BeginMain(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("main", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1685,9 +1795,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("main", attr);
 		}
 
+		public static Ui BeginMain(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("main", attributes);
+		}
+
 		public static Ui EndMain(this Ui ui)
 		{
 			return ui.EndElement("main");
+		}
+
+		public static Ui Main(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("main", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1742,11 +1862,6 @@ namespace Blowdart.UI.Web
 
 		#region nav
 
-		public static Ui BeginNav(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("nav", attributes);
-		}
-
 		public static Ui BeginNav(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("nav", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1757,9 +1872,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("nav", attr);
 		}
 
+		public static Ui BeginNav(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("nav", attributes);
+		}
+
 		public static Ui EndNav(this Ui ui)
 		{
 			return ui.EndElement("nav");
+		}
+
+		public static Ui Nav(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("nav", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1814,11 +1939,6 @@ namespace Blowdart.UI.Web
 
 		#region noscript
 
-		public static Ui BeginNoscript(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("noscript", attributes);
-		}
-
 		public static Ui BeginNoscript(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("noscript", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1829,9 +1949,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("noscript", attr);
 		}
 
+		public static Ui BeginNoscript(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("noscript", attributes);
+		}
+
 		public static Ui EndNoscript(this Ui ui)
 		{
 			return ui.EndElement("noscript");
+		}
+
+		public static Ui Noscript(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("noscript", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1886,11 +2016,6 @@ namespace Blowdart.UI.Web
 
 		#region ol
 
-		public static Ui BeginOl(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("ol", attributes);
-		}
-
 		public static Ui BeginOl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool reversed = default(bool), string slot = default(string), string spellcheck = default(string), string start = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("ol", new { reversed, start, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1901,9 +2026,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("ol", attr);
 		}
 
+		public static Ui BeginOl(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("ol", attributes);
+		}
+
 		public static Ui EndOl(this Ui ui)
 		{
 			return ui.EndElement("ol");
+		}
+
+		public static Ui Ol(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("ol", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1958,11 +2093,6 @@ namespace Blowdart.UI.Web
 
 		#region p
 
-		public static Ui BeginP(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("p", attributes);
-		}
-
 		public static Ui BeginP(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("p", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -1973,9 +2103,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("p", attr);
 		}
 
+		public static Ui BeginP(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("p", attributes);
+		}
+
 		public static Ui EndP(this Ui ui)
 		{
 			return ui.EndElement("p");
+		}
+
+		public static Ui P(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("p", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2030,11 +2170,6 @@ namespace Blowdart.UI.Web
 
 		#region pre
 
-		public static Ui BeginPre(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("pre", attributes);
-		}
-
 		public static Ui BeginPre(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("pre", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2045,9 +2180,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("pre", attr);
 		}
 
+		public static Ui BeginPre(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("pre", attributes);
+		}
+
 		public static Ui EndPre(this Ui ui)
 		{
 			return ui.EndElement("pre");
+		}
+
+		public static Ui Pre(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("pre", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2102,11 +2247,6 @@ namespace Blowdart.UI.Web
 
 		#region section
 
-		public static Ui BeginSection(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("section", attributes);
-		}
-
 		public static Ui BeginSection(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("section", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2117,9 +2257,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("section", attr);
 		}
 
+		public static Ui BeginSection(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("section", attributes);
+		}
+
 		public static Ui EndSection(this Ui ui)
 		{
 			return ui.EndElement("section");
+		}
+
+		public static Ui Section(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("section", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2174,11 +2324,6 @@ namespace Blowdart.UI.Web
 
 		#region table
 
-		public static Ui BeginTable(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("table", attributes);
-		}
-
 		public static Ui BeginTable(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), string summary = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("table", new { align, summary, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2189,9 +2334,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("table", attr);
 		}
 
+		public static Ui BeginTable(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("table", attributes);
+		}
+
 		public static Ui EndTable(this Ui ui)
 		{
 			return ui.EndElement("table");
+		}
+
+		public static Ui Table(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("table", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2246,11 +2401,6 @@ namespace Blowdart.UI.Web
 
 		#region tfoot
 
-		public static Ui BeginTfoot(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("tfoot", attributes);
-		}
-
 		public static Ui BeginTfoot(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("tfoot", new { align, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2261,9 +2411,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("tfoot", attr);
 		}
 
+		public static Ui BeginTfoot(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("tfoot", attributes);
+		}
+
 		public static Ui EndTfoot(this Ui ui)
 		{
 			return ui.EndElement("tfoot");
+		}
+
+		public static Ui Tfoot(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("tfoot", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2318,11 +2478,6 @@ namespace Blowdart.UI.Web
 
 		#region ul
 
-		public static Ui BeginUl(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("ul", attributes);
-		}
-
 		public static Ui BeginUl(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
 		{
 			return ui.BeginElement("ul", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2333,9 +2488,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("ul", attr);
 		}
 
+		public static Ui BeginUl(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("ul", attributes);
+		}
+
 		public static Ui EndUl(this Ui ui)
 		{
 			return ui.EndElement("ul");
+		}
+
+		public static Ui Ul(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("ul", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2390,11 +2555,6 @@ namespace Blowdart.UI.Web
 
 		#region video
 
-		public static Ui BeginVideo(this Ui ui, params object[] attributes)
-		{
-			return ui.BeginElement("video", attributes);
-		}
-
 		public static Ui BeginVideo(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), string autoplay = default(string), string buffered = default(string), bool contenteditable = default(bool), string contextmenu = default(string), bool controls = default(bool), string crossorigin = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), bool loop = default(bool), bool muted = default(bool), string poster = default(string), string preload = default(string), string slot = default(string), string spellcheck = default(string), Uri src = default(Uri), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string width = default(string))
 		{
 			return ui.BeginElement("video", new { controls, loop, muted, autoplay, buffered, crossorigin, height, poster, preload, src, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
@@ -2405,9 +2565,19 @@ namespace Blowdart.UI.Web
 			return ui.BeginElement("video", attr);
 		}
 
+		public static Ui BeginVideo(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("video", attributes);
+		}
+
 		public static Ui EndVideo(this Ui ui)
 		{
 			return ui.EndElement("video");
+		}
+
+		public static Ui Video(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("video", innerText, attr);
 		}
 
 		/// <summary> This call is equivalent to: 

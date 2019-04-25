@@ -57,26 +57,6 @@ namespace Blowdart.UI.Web
 
         #endregion
 
-        #region div
-		
-        public static Ui Div(this Ui ui, string innerText, object attr = null)
-        {
-            ui.Element("div", innerText, attr);
-            return ui;
-        }
-
-        #endregion
-
-        #region p 
-
-        public static Ui P(this Ui ui, string innerText, object attr = null)
-        {
-            ui.Element("p", innerText, attr);
-            return ui;
-        }
-
-        #endregion
-
         #region a 
 
         public static Ui BeginA(this Ui ui, object attr = null)
@@ -140,16 +120,6 @@ namespace Blowdart.UI.Web
         public static Ui Img(this Ui ui, string innerText, object attr = null)
         {
             ui.Element("img", innerText, attr);
-            return ui;
-        }
-
-        #endregion
-
-        #region pre
-
-        public static Ui Pre(this Ui ui, string innerText, object attr = null)
-        {
-            ui.Element("pre", innerText, attr);
             return ui;
         }
 

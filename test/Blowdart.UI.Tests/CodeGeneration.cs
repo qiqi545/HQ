@@ -105,14 +105,6 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t#region {element}");
 
 				//
-				// Inline Declaration:
-				sb.AppendLine();
-				sb.AppendLine($"\t\tpublic static Ui Begin{elementName}(this Ui ui, params object[] attributes)");
-				sb.AppendLine($"\t\t{{");
-				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attributes);");
-				sb.AppendLine($"\t\t}}");
-
-				//
 				// Qualified Declaration:
 				sb.AppendLine();
 				sb.AppendLine($"\t\tpublic static Ui Begin{elementName}(this Ui ui, {qualified})");
@@ -127,14 +119,31 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attr);");
 				sb.AppendLine($"\t\t}}");
+
+				//
+				// Inline Declaration:
 				sb.AppendLine();
+				sb.AppendLine($"\t\tpublic static Ui Begin{elementName}(this Ui ui, params object[] attributes)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.BeginElement(\"{element}\", attributes);");
+				sb.AppendLine($"\t\t}}");
 
-
+				//
+				// End:
+				sb.AppendLine();
 				sb.AppendLine($"\t\tpublic static Ui End{elementName}(this Ui ui)");
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.EndElement(\"{element}\");");
 				sb.AppendLine($"\t\t}}");
 
+				//
+				// InnerText Declaration:
+				sb.AppendLine();
+				sb.AppendLine($"\t\tpublic static Ui {elementName}(this Ui ui, string innerText, object attr = null)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", innerText, attr);");
+				sb.AppendLine($"\t\t}}");
+				
 				//
 				// Scoped:
 				sb.AppendLine();
