@@ -127,10 +127,13 @@ namespace Blowdart.UI.Internal
 				return result;
 			}
 
+			private static Dictionary<MethodInfo, UiSystem> _systems;
 			public static Dictionary<MethodInfo, UiSystem> IntrospectSystems()
 			{
-				var methods = IntrospectMethods();
+				if (_systems != null)
+					return _systems;
 
+				var methods = IntrospectMethods();
 				var result = new Dictionary<MethodInfo, UiSystem>();
 
 				//
@@ -152,6 +155,7 @@ namespace Blowdart.UI.Internal
 					result[child] = (UiSystem) ActivatorCache.Create(attribute.Type);
 				}
 
+				_systems = result;
 				return result;
 			}
 		}

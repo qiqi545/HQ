@@ -17,11 +17,10 @@ namespace Blowdart.UI
         protected Ui(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            System = serviceProvider.GetRequiredService<UiSystem>();
             Data = serviceProvider.GetRequiredService<UiData>();
         }
 
-        internal UiSystem System { get; }
+        internal UiSystem System { get; private set; }
         internal UiData Data { get; set; }
 
         public static Ui CreateNew(IServiceProvider serviceProvider)
@@ -93,11 +92,12 @@ namespace Blowdart.UI
         internal readonly HashSet<Value128> Clicked = new HashSet<Value128>();
         public UiContext Context { get; private set; }
 
-        public void Begin(UiContext context = null)
+        public void Begin(UiSystem system, UiContext context)
         {
             _count = 0;
             Context = context;
             Clicked.Clear();
+            System = system;
             System.Begin(context);
         }
 

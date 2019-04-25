@@ -24,15 +24,16 @@ namespace Blowdart.UI.Web.Internal
 	        var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
             var settings = serviceProvider.GetRequiredService<UiSettings>();
 
+            var path = context.Request.Path;
+
 			// todo this assumes that every request is in a dedicated thread, which is false
-            var ui = new ThreadLocal<Ui>(() =>
+			var ui = new ThreadLocal<Ui>(() =>
             {
 	            var instance = Ui.CreateNew(serviceProvider);
 				InlineElements.SetUi(instance);
 				return instance;
             });
-
-            var path = context.Request.Path;
+			
             if (path == "/")
             {
                 await Response(ui.Value, path, layout.Root, layout, template, context, options.Value, settings);
@@ -63,12 +64,14 @@ namespace Blowdart.UI.Web.Internal
             string html;
             if (options.UsePrerendering)
             {
-                renderTarget.Begin(WebUiContext.Build(context));
-                renderAction(renderTarget);
-                renderTarget.End();
+	            if (!layout.Systems.TryGetValue(pageKey, out var system))
+		            system = layout.Services.GetRequiredService<UiSystem>();
+	            if (!(system is HtmlSystem htmlSystem))
+		            throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
-                if (!(layout.Services.GetRequiredService<UiSystem>() is HtmlSystem system))
-                    throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+				renderTarget.Begin(htmlSystem, WebUiContext.Build(context));
+				renderAction(renderTarget);
+                renderTarget.End();
 
                 var bodySlug = $"<div id=\"{options.BodyElementId}\">";
                 var scriptOpen = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">";
@@ -105,12 +108,15 @@ namespace Blowdart.UI.Web.Internal
 					Pools.StringBuilderPool.Return(metaBuilder);
 				}
 
+				var stylesSection = htmlSystem.StylesSection();
+				var scriptsSection = htmlSystem.ScriptsSection();
+
 				html = template
-                        .Replace(bodySlug, bodySlug + system.RenderDom)
-                        .Replace(scriptSlug, $"{scriptOpen}function initUi() {{{system.RenderScripts}}};{scriptClose}")
+                        .Replace(bodySlug, bodySlug + htmlSystem.RenderDom)
+                        .Replace(scriptSlug, $"{scriptOpen}function initUi() {{{htmlSystem.RenderScripts}}};{scriptClose}")
                         .Replace("<!-- META -->", metaString)
-						.Replace("<!-- STYLES -->", system.StylesSection())
-                        .Replace("<!-- SCRIPTS -->", system.ScriptsSection())
+						.Replace("<!-- STYLES -->", stylesSection)
+                        .Replace("<!-- SCRIPTS -->", scriptsSection)
                     ;
             }
             else

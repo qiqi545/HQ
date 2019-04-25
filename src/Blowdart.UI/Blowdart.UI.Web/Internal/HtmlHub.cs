@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Blowdart.UI.Internal.UriTemplates;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -28,7 +29,7 @@ namespace Blowdart.UI.Web.Internal
             if (!_options.Value.UsePrerendering)
             {
                 var ui = Ui.CreateNew(_layoutRoot.Services);
-                ui.Begin(WebUiContext.Build(this));
+                ui.Begin(_layoutRoot.Systems["/"], WebUiContext.Build(this));
                 _layoutRoot.Root(ui);
                 ui.End();
 
@@ -40,36 +41,37 @@ namespace Blowdart.UI.Web.Internal
         [HubMethodName("e")]
         public async Task HandleEvent(string page, string id, string eventType, string data)
         {
-            HandleEvent(_layoutRoot, page, id, eventType, data);
+			var ui = Ui.CreateNew(_layoutRoot.Services);
+			InlineElements.SetUi(ui);
 
-            if (!(_layoutRoot.Services.GetRequiredService<UiSystem>() is HtmlSystem system))
-                throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+			var json = JArray.Parse(data);
+			var context = WebUiContext.Build(this, json);
 
-            await Clients.Caller.SendAsync(MessageTypes.Replace, system.RenderDom, system.RenderScripts);
+			var pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
+
+			if (!_layoutRoot.Systems.TryGetValue(pageKey, out var system))
+				system = _layoutRoot.Services.GetRequiredService<UiSystem>();
+			if (!(system is HtmlSystem htmlSystem))
+				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+
+			ui.Begin(system, context);
+
+			switch (eventType)
+			{
+				case "click":
+				{
+					ui.Clicked.Add(id);
+					break;
+				}
+				default:
+					throw new NotSupportedException(eventType);
+			}
+
+			_layoutRoot.Root(ui);
+			ui.End();
+
+			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
             await Clients.Caller.SendAsync(MessageTypes.Log, id, eventType);
-        }
-
-        public void HandleEvent(LayoutRoot layout, string page, string id, string eventType, string data)
-        {
-            var ui = Ui.CreateNew(layout.Services);
-            var json = JArray.Parse(data);
-            var context = WebUiContext.Build(this, json);
-
-            ui.Begin(context);
-
-            switch (eventType)
-            {
-                case "click":
-                {
-                    ui.Clicked.Add(id);
-                    break;
-                }
-                default:
-                    throw new NotSupportedException(eventType);
-            }
-
-            layout.Root(ui);
-            ui.End();
         }
     }
 }

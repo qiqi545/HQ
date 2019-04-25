@@ -60,8 +60,13 @@ namespace Blowdart.UI.Web
 
             if (ProviderContainer == null)
                 fileProviders.Add(RegisterUiAssembly(typeof(UiServer).Assembly));
-            
-            fileProviders.AddRange(uiAssemblies.Select(RegisterUiAssembly));
+
+            foreach (var uiAssembly in uiAssemblies)
+            {
+	            if (uiAssembly == null)
+		            continue;
+	            fileProviders.Add(RegisterUiAssembly(uiAssembly));
+            }
             
             if (ProviderContainer == null)
             {

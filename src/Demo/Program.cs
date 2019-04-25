@@ -6,7 +6,7 @@ using static InlineElements;
 
 namespace Demo
 {
-	[Title("Blowdart UI Demo"), SemanticUi]
+	[SemanticUi, Title("Blowdart UI Demo")]
 	internal class Program
     {
         private static void Main(string[] args) => UiServer.Start(args);

@@ -58,9 +58,22 @@ namespace Blowdart.UI.Web
                 services.AddResponseCompression(o => { o.EnableForHttps = false; });
                 services.AddHttpsRedirection(o => { });
             }
-            services.AddBlowdartUi(_env);
-            AddUiResources(services);
-            _startup?.ExecuteMethod(nameof(ConfigureServices), services);
+
+            var systems = Caches.Introspection.IntrospectSystems();
+            var uiAssemblies = Pools.AssemblyPool.Rent(systems.Count);
+			try
+            {
+	            for (var i = 0; i < systems.Count; i++)
+	            {
+		            uiAssemblies[i] = systems.Values.ElementAt(i).GetType().Assembly;
+	            }
+			}
+            finally
+            {
+	            Pools.AssemblyPool.Return(uiAssemblies);
+            }
+			services.AddBlowdartUi(_env, uiAssemblies);
+			_startup?.ExecuteMethod(nameof(ConfigureServices), services);
         }
 
         private static bool Standalone => _startup == null;
@@ -405,14 +418,6 @@ namespace Blowdart.UI.Web
 			return _callerType.GetMethods()
                 .Select(x => new KeyValuePair<string, MethodInfo>(x.Name, x))
                 .ToDictionary(k => k.Key, v => v.Value);
-        }
-
-        private static void AddUiResources(IServiceCollection services)
-        {
-			var methods = Caches.Introspection.IntrospectMethods();
-			var kvp = methods.Where(x => Attribute.IsDefined(x, typeof(UiSystemAttribute))).Select(x => (UiSystemAttribute) Attribute.GetCustomAttribute(x, typeof(UiSystemAttribute))).Distinct();
-            foreach (var entry in kvp)
-                services.AddUiResources(entry.Type.Assembly);
         }
 
         #endregion

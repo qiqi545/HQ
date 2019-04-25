@@ -1,13 +1,16 @@
-﻿using System.Collections;
+﻿using System.Buffers;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.ObjectPool;
 
 namespace Blowdart.UI.Internal
 {
 	internal static class Pools
-    {
-        public static readonly ObjectPool<UiAction> ActionPool = new DefaultObjectPool<UiAction>(new ActionPoolPolicy());
+	{
+		public static readonly ArrayPool<Assembly> AssemblyPool = ArrayPool<Assembly>.Create();
+		public static readonly ObjectPool<UiAction> ActionPool = new DefaultObjectPool<UiAction>(new ActionPoolPolicy());
         public static readonly ObjectPool<List<object>> ArgumentsPool = new DefaultObjectPool<List<object>>(new ListObjectPolicy<List<object>>());
         public static readonly ObjectPool<StringBuilder> StringBuilderPool = new DefaultObjectPool<StringBuilder>(new StringBuilderPooledObjectPolicy());
 
