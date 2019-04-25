@@ -226,7 +226,16 @@ namespace Blowdart.UI.Web
                 {
 	                layout.AddHandler(handler.Key, handler.Value);
 	                layout.AddMeta(handler.Key, meta[handler.Value]);
-	                layout.AddSystem(handler.Key, systems[handler.Value]);
+
+	                if (!systems.TryGetValue(handler.Value, out var system))
+	                {
+		                if (!(serviceProvider.GetRequiredService<UiSystem>() is HtmlSystem html))
+			                throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+
+		                system = html;
+	                }
+
+	                layout.AddSystem(handler.Key, system);
                 }
 
 				HandlersAreFinished();

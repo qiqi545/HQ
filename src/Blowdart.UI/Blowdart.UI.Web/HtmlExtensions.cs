@@ -15,19 +15,30 @@ namespace Blowdart.UI.Web
 
         public static Ui Literal(this Ui ui, string text)
         {
-            Dom(ui).Tab();
-            Dom(ui).Append(text);
-            return ui;
-        }
-        
-        public static Ui Break(this Ui ui)
-        {
-            Dom(ui).Tab();
-            Dom(ui).AppendTag("br");
-            return ui;
+	        return ui._(text);
         }
 
-        public static Ui BeginElement(this Ui ui, string el, object attr = null)
+        public static Ui _(this Ui ui, string text)
+        {
+	        Dom(ui).Tab();
+	        Dom(ui).Append(text);
+	        return ui;
+        }
+
+		public static Ui Break(this Ui ui)
+		{
+			return ui.br();
+		}
+
+		// ReSharper disable once InconsistentNaming
+		public static Ui br(this Ui ui)
+        {
+	        Dom(ui).Tab();
+	        Dom(ui).AppendTag("br");
+	        return ui;
+        }
+
+		public static Ui BeginElement(this Ui ui, string el, object attr = null)
         {
             Dom(ui).Tab();
             Dom(ui).OpenBlock(el, attr == null ? null : Attr(attr));

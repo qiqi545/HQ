@@ -14,10 +14,12 @@ public static partial class InlineElements
 	internal static void SetUi(Ui threadUi) => ui = threadUi;
 	internal static Ui GetUi() => ui;
 
-	// 
-	// Indirection Helpers:
 	public static Ui br() { return ui.Break(); }
 	public static Ui literal(string text) { return ui.Literal(text); }
+	public static Ui _(string text) { return ui._(text); }
+
+	// 
+	// Indirection Helpers:
 	public static Ui input(InputType type, object attr = null) { return ui.Input(type, attr); }
 	public static Ui submit(string label = "Submit", object attr = null) { return ui.Submit(label, attr); }
 	public static Ui fieldset(Action action) { return ui.Fieldset(action); }
