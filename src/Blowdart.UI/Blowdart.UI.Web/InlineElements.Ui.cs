@@ -23,7 +23,7 @@ public static partial class InlineElements
 	public static Ui input(InputType type, object attr = null) { return ui.Input(type, attr); }
 	public static Ui submit(string label = "Submit", object attr = null) { return ui.Submit(label, attr); }
 	public static Ui fieldset(Action action) { return ui.Fieldset(action); }
-	public static Ui form(object attr, Action action) { return ui.Form(attr, action); }
+	public static Ui form(Action<HtmlExtensions.FormAttributes> action) { return ui.Form(action); }
 	public static Ui p(string innerText) { return ui.P(innerText); }
 	public static bool button(string innerText) { return ui.Button(innerText); }
 }

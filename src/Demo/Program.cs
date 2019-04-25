@@ -2,20 +2,11 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
-
 using static InlineElements;
 
 namespace Demo
 {
-	// todo chainable lowercase, i.e. input().br();
-	// todo generate all indirection helpers (including qualified)
-	// todo named/configurable/sensible defaults for things like <form method='post'>?
-	// todo prune literal inline element list?
-	// todo auto-localization (gather strings and PO them)
-	// todo order of first few qualified variables should be usage based (i.e. class/style always first and second, etc.) before switching to alphabetic
-	// todo replace anonymous class attribute declarations with inlined imgui-style invocations inside the closure (also, avoid making it easy to capture data)
-
-	[Title("Blowdart UI Demo")]
+	[Title("Blowdart UI Demo"), SemanticUi]
 	internal class Program
     {
         private static void Main(string[] args) => UiServer.Start(args);
@@ -24,8 +15,10 @@ namespace Demo
         {
             p($"Hello, World from {strong(host)}!");
 
-            form(new { method = "post" }, () =>
+            form(x =>
             {
+	            x.method = "post";
+
 				fieldset(() =>
                 {
 	                _("First name: ").br();
