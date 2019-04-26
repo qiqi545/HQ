@@ -1,25 +1,7 @@
 ﻿using System;
-using Blowdart.UI.Web.Internal;
 
 namespace Blowdart.UI.Web
 {
-    partial class HtmlExtensions
-    {
-        public static bool Button(this Ui ui, string text, object attr = null)
-        {
-            return Clickable(ui, "button", text, attr);
-        }
-
-        internal static bool Clickable(Ui ui, string el, string text, object attr = null)
-        {
-            ui.NextId();
-            var id = ui.NextIdHash;
-            Dom(ui).AppendTag(el, id, text, attr == null ? null : Attr(attr));
-            Scripts(ui).AppendEvent("click", id);
-            return ui.Clicked.Contains(id);
-        }
-    }
-
     // This should be code-genned.
     partial class HtmlExtensions
     {

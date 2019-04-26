@@ -90,7 +90,8 @@ namespace Blowdart.UI
 
         private int _count;
         internal readonly HashSet<Value128> Clicked = new HashSet<Value128>();
-        public UiContext Context { get; private set; }
+        internal readonly Dictionary<Value128, int> InputValues = new Dictionary<Value128, int>();
+		public UiContext Context { get; private set; }
 
         public void Begin(UiSystem system, UiContext context)
         {

@@ -144,156 +144,44 @@ namespace Blowdart.UI.Web
                 dom.Append('\t');
         }
 
-        #region Element Helpers
-		
-        #region input
+		public static Ui Input(this Ui ui, InputType inputType, object attr = null)
+		{
+			var attribute = Attributes.Attr(new { type = inputType.ToString().ToLowerInvariant() });
+			var attributes = attr == null ? attribute : Attributes.Attr(attribute, attr);
+			ui.Element("input", null, attributes);
+			return ui;
+		}
 
-        public static Ui Input(this Ui ui, InputType inputType, object attr = null)
-        {
-            var attribute = Attributes.Attr(new { type = inputType.ToString().ToLowerInvariant() });
-            var attributes = attr == null ? attribute : Attributes.Attr(attribute, attr);
-            ui.Element("input", null, attributes);
-            return ui;
-        }
+		public static int Range(this Ui ui, int min, int max, int defaultValue, object attr = null)
+		{
+			var attribute = Attributes.Attr(new { type = "range" });
+			ui.NextId();
+			var id = ui.NextIdHash;
+			Dom(ui).AppendTag("input", id, null, attr == null ? attribute : Attributes.Attr(attribute, attr));
+			Scripts(ui).AppendEvent("input", id);
 
-        #endregion
+			return ui.InputValues.TryGetValue(id, out var newValue)
+				? ui.InputValues[id] = newValue
+				: ui.InputValues[id] = defaultValue;
+		}
 
-        #region Submit
+		public static Ui Submit(this Ui ui, string label = "Submit", object attr = null)
+		{
+			return ui.Input(InputType.Submit, Attr(new { value = label }));
+		}
 
-        // Handled by the browser, so no routing information is needed
-        public static Ui Submit(this Ui ui, string label = "Submit", object attr = null)
-        {
-            return ui.Input(InputType.Submit, Attr(new { value = label }));
-        }
+		public static bool Button(this Ui ui, string text, object attr = null)
+		{
+			return Clickable(ui, "button", text, attr);
+		}
 
-        //public static bool Submit(this Ui ui, string label, Action onSubmit)
-        //{
-
-        //}
-
-        //public static Ui Submit(this Ui ui, InputType type, Attributes attr, Action onSubmit)
-        //{
-        //    if (onSubmit == null)
-        //        return ui.Input(InputType.Submit, Attr(new { value = label ?? "Submit" }));
-        //    if (!PreSubmit(ui, label, attr, out var template))
-        //        return ui;
-        //    onSubmit.Invoke();
-        //    return ui;
-        //}
-
-        //public static Ui Submit<TService>(this Ui ui, string label, Action<dynamic> onSubmit)
-        //{
-        //    if (onSubmit == null)
-        //        return ui.Input(InputType.Submit, Attr(new { value = label ?? "Submit" }));
-        //    if (!PreSubmit(ui, label, attr, out var template))
-        //        return ui;
-        //    onSubmit(ui.Data.GetModel<TService>(template));
-        //    return ui;
-        //}
-
-        //public static Ui Submit<TService, TModel>(this Ui ui, string label, Attributes attr = null, Action<TModel> onSubmit)
-        //{
-        //    if (onSubmit == null)
-        //        return ui.Input(InputType.Submit, Attr(new { value = label ?? "Submit" }));
-        //    if (!PreSubmit(ui, label, attr, out var template))
-        //        return ui;
-        //    onSubmit(ui.Data.GetModel<TService, TModel>(template));
-        //    return ui;
-        //}
-
-        //private static bool PreSubmit(Ui ui, string label, Attributes attr, out string template)
-        //{
-        //    var value = label ?? "Submit";
-
-        //    var inputAttr = Attr(new { type = "submit", value });
-        //    var attributes = attr == null ? inputAttr : Attributes.Attr(attr, inputAttr);
-        //    attributes.Inner.TryGetValue("action", out var action);
-        //    template = action?.ToString() ?? string.Empty;
-
-        //    var id = ui.NextIdHash;
-        //    Dom(ui).AppendTag("input", id, null, attributes);
-        //    Scripts(ui).AppendEvent("click", id);
-        //    return !ui.Clicked.Contains(id);
-        //}
-
-        #endregion
-
-        #endregion
-
-        #region Usage Helpers
-
-        public static Ui Div(this Ui ui, string @class, Action action)
-        {
-            ui.Div(Attributes.Attr(new { @class }), action);
-            return ui;
-        }
-
-        public static Ui Div(this Ui ui, string @class, Action<Ui> action)
-        {
-            ui.Div(Attributes.Attr(new { @class }), action);
-            return ui;
-        }
-
-        public static Ui Div(this Ui ui, string @class, object attr, Action action)
-        {
-            ui.Div(Attributes.Attr(new { @class }, attr), action);
-            return ui;
-        }
-
-        public static Ui Div(this Ui ui, string @class, object attr, Action<Ui> action)
-        {
-            ui.Div(Attributes.Attr(new { @class }, attr), action);
-            return ui;
-        }
-
-        public static Ui A(this Ui ui, string href, Action action = null)
-        {
-            ui.Div(new { href }, action);
-            return ui;
-        }
-
-        public static Ui A(this Ui ui, string href, Action<Ui> action)
-        {
-            ui.Div(Attributes.Attr(new { href }), action);
-            return ui;
-        }
-
-        public static Ui A(this Ui ui, string href, string @class, Action action = null)
-        {
-            ui.A(Attributes.Attr(new { href, @class }), action);
-            return ui;
-        }
-
-        public static Ui A(this Ui ui, string href, string @class, Action<Ui> action)
-        {
-            ui.A(Attributes.Attr(new { href, @class }), action);
-            return ui;
-        }
-
-        public static Ui Img(this Ui ui, string src, Action action = null)
-        {
-            ui.Img(Attributes.Attr(new { src }), action);
-            return ui;
-        }
-
-        public static Ui Img(this Ui ui, string src, Action<Ui> action)
-        {
-            ui.Img(Attributes.Attr(new { src }), action);
-            return ui;
-        }
-
-        public static Ui Img(this Ui ui, string src, string @class, Action action = null)
-        {
-            ui.Img(Attributes.Attr(new { src, @class }), action);
-            return ui;
-        }
-
-        public static Ui Img(this Ui ui, string src, string @class, Action<Ui> action)
-        {
-            ui.Img(Attributes.Attr(new { src, @class }), action);
-            return ui;
-        }
-
-        #endregion
-    }
+		internal static bool Clickable(Ui ui, string el, string text, object attr = null)
+		{
+			ui.NextId();
+			var id = ui.NextIdHash;
+			Dom(ui).AppendTag(el, id, text, attr == null ? null : Attr(attr));
+			Scripts(ui).AppendEvent("click", id);
+			return ui.Clicked.Contains(id);
+		}
+	}
 }

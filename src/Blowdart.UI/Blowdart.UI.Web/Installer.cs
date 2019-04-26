@@ -93,7 +93,7 @@ namespace Blowdart.UI.Web
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
 
             var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-            if (options.Value.UsePrerendering)
+            if (options.Value.UseLogging)
                 loggerFactory?.AddProvider(new ServerLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
 
             app.UseStaticFiles();

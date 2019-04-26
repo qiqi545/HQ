@@ -72,7 +72,7 @@ namespace Blowdart.UI.Web.Internal
         public static StringBuilder AppendEvent(this StringBuilder sb, string eventType, Value128 id)
         {
             sb.AppendLine();
-            return sb.AppendLine($"maybeAddListener(\"{id}\", \"click\", document.getElementById(\"{id}\")); ");
+            return sb.AppendLine($"maybeAddListener(\"{id}\", \"{eventType}\", document.getElementById(\"{id}\")); ");
         }
     }
 }

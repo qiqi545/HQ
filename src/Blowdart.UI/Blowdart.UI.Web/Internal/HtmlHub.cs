@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Blowdart.UI.Internal.UriTemplates;
 using Microsoft.AspNetCore.SignalR;
@@ -39,7 +40,7 @@ namespace Blowdart.UI.Web.Internal
         }
 
         [HubMethodName("e")]
-        public async Task HandleEvent(string page, string id, string eventType, string data)
+        public async Task HandleEvent(string page, string id, string eventType, string data, string value)
         {
 			var ui = Ui.CreateNew(_layoutRoot.Services);
 			InlineElements.SetUi(ui);
@@ -56,11 +57,38 @@ namespace Blowdart.UI.Web.Internal
 
 			ui.Begin(system, context);
 
+			//
+			// Input State:
+			foreach (var token in JToken.Parse(data))
+			{
+				var hash = token["id"].Value<string>();
+				if (hash == id)
+					continue; // handled in the event switch
+
+				var type = token["type"].Value<string>();
+				switch (type)
+				{
+					case "range":
+						int.TryParse(token["value"].Value<string>().Trim('"'), out var v);
+						ui.InputValues.Add(hash, v);
+						break;
+				}
+			}
+
+			//
+			// Event State:
 			switch (eventType)
 			{
 				case "click":
 				{
 					ui.Clicked.Add(id);
+					break;
+				}
+				case "input":
+				{
+					value = value.Trim('"');
+					int.TryParse(value, out var v);
+					ui.InputValues.Add(id, v);
 					break;
 				}
 				default:
@@ -70,6 +98,7 @@ namespace Blowdart.UI.Web.Internal
 			_layoutRoot.Root(ui);
 			ui.End();
 
+			Console.WriteLine($"HandleEvent: {page}|{id}|{eventType}");
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
             await Clients.Caller.SendAsync(MessageTypes.Log, id, eventType);
         }

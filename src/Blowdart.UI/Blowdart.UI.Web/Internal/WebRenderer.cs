@@ -113,7 +113,7 @@ namespace Blowdart.UI.Web.Internal
 
 				html = template
                         .Replace(bodySlug, bodySlug + htmlSystem.RenderDom)
-                        .Replace(scriptSlug, $"{scriptOpen}function initUi() {{{htmlSystem.RenderScripts}}};{scriptClose}")
+                        .Replace(scriptSlug, $"{scriptOpen}document.addEventListener(\"DOMContentLoaded\", function (event) {{{htmlSystem.RenderScripts}}});{scriptClose}")
                         .Replace("<!-- META -->", metaString)
 						.Replace("<!-- STYLES -->", stylesSection)
                         .Replace("<!-- SCRIPTS -->", scriptsSection)

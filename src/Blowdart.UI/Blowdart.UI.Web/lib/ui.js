@@ -15,15 +15,8 @@ ui.on("x", function (b, s) {
     wb.id = "ui-body";
     wb.innerHTML = b;
     window.setDOM(document.getElementById(bodyId), wb);
-
-    const scriptsId = "ui-scripts";
-    const ws = document.createElement('script');
-    ws.id = "ui-scripts";
-    ws.type = "text/javascript";
-    ws.innerHTML = `function initUi() {${s}};`;
-    window.setDOM(document.getElementById(scriptsId), ws);
-
-    initUi();
+    var func = Function(s);
+    func();
 });
 ui.on("l", function (id, e) {
     console.log(`${id} ${e}`);
@@ -38,12 +31,16 @@ function maybeAddListener(id, eventType, el) {
         var handler;
         el.addEventListener(eventType, handler = function (e) {
             el.removeEventListener(eventType, handler);
-            var data = JSON.stringify($(document.forms[0]).serializeArray());
-            ui.invoke("e", window.location.toString(), id, eventType, data).catch(function (err) {
+            var tracked = document.querySelectorAll('input[id]:not([id=""])');
+            var ctx = [];
+            for (var i = 0; i < tracked.length; i++) {
+                ctx.push({ id: tracked[i].id, type: tracked[i].type, value: tracked[i].value });
+            }
+            var data = JSON.stringify(ctx);
+            ui.invoke("e", window.location.toString(), id, eventType, data, JSON.stringify(el.value)).catch(function (err) {
                 return console.error(err.toString());
             });
             e.preventDefault();
         }, false);
     }
 }
-document.addEventListener("DOMContentLoaded", function (event) { initUi(); });

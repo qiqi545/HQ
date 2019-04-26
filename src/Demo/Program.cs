@@ -2,6 +2,7 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
+
 using static InlineElements;
 
 namespace Demo
@@ -11,7 +12,7 @@ namespace Demo
     {
         private static void Main(string[] args) => UiServer.Start(args);
 
-        public static void Index(string host, string firstName, string lastName)
+        public static void Index(Ui ui, string host, string firstName, string lastName)
         {
             p($"Hello, World from {strong(host)}!");
 
@@ -23,18 +24,23 @@ namespace Demo
                 {
 	                _("First name: ").br();
                     input(InputType.Text, new { name = "firstname", value = firstName, placeholder = "Enter your first name:" }).br();
+
                     _("Last name: ").br();
                     input(InputType.Text, new { name = "lastname", value = lastName, placeholder = "Enter your last name:" }).br();
+
                     submit("Post to Server");
                 });
             });
 
 			br();
-
-            if (button("Click Me"))
+			 
+            if(ui.Range(1, 100, 50) > 80)
             {
-                Console.WriteLine($"Clicked By {firstName} {lastName}!");
+	            if (button("Secret Button"))
+	            {
+		            Console.WriteLine($"Clicked By {firstName} {lastName}!");
+				}
             }
-        }
+		}
     }
 }
