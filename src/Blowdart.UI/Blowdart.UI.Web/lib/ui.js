@@ -8,7 +8,7 @@ ui.start().then(function() {
 });
 ui.on("f", function (b, s) {
     document.getElementById("ui-body").innerHTML = b;
-    document.getElementById("ui-scripts").innerHTML = `function initUi() {${s}};`;
+    Function(s)();
 });
 ui.on("x", function (b, s) {
     const bodyId = "ui-body";
