@@ -8,7 +8,7 @@ using Blowdart.UI.Web.Internal;
 
 namespace Blowdart.UI.Web
 {
-    public static partial class HtmlExtensions
+	public static partial class HtmlExtensions
     {
         private static byte _indentLevel;
         private static readonly Stack<string> Elements = new Stack<string>();
@@ -170,18 +170,53 @@ namespace Blowdart.UI.Web
 			return ui.Input(InputType.Submit, Attr(new { value = label }));
 		}
 
-		public static bool Button(this Ui ui, string text, object attr = null)
-		{
-			return Clickable(ui, "button", text, attr);
-		}
-
-		internal static bool Clickable(Ui ui, string el, string text, object attr = null)
+		public static bool Button(this Ui ui, string innerText, object attr = null)
 		{
 			ui.NextId();
 			var id = ui.NextIdHash;
-			Dom(ui).AppendTag(el, id, text, attr == null ? null : Attr(attr));
-			Scripts(ui).AppendEvent("click", id);
+			Dom(ui).AppendTag("button", id, innerText, attr == null ? null : Attr(attr));
+			Scripts(ui).AppendEvent(Events.click, id);
+			return ui.Clicked.Contains(id);
+		}
+
+		public static bool Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events)
+		{
+			ui.NextId();
+			var id = ui.NextIdHash;
+
+			if (events != null)
+			{
+				var e = new ButtonEvents();
+				var a = new ButtonAttributes();
+
+				events(e, a);
+				if (ui.MouseOver.Contains(id))
+					e.mouseover?.Invoke();
+
+				if(ui.MouseOut.Contains(id))
+					e.mouseout?.Invoke();
+
+				if (a.innerText != null)
+					innerText = a.innerText;
+
+				Scripts(ui).AppendEvent(Events.mouseover, id);
+				Scripts(ui).AppendEvent(Events.mouseout, id);
+			}
+
+			Dom(ui).AppendTag("button", id, innerText, attributes: null);
+			Scripts(ui).AppendEvent(Events.click, id);
 			return ui.Clicked.Contains(id);
 		}
 	}
+
+    public class ButtonEvents
+    {
+	    public Action mouseover;
+	    public Action mouseout;
+	}
+
+    public class ButtonAttributes
+    {
+	    public string innerText;
+    }
 }

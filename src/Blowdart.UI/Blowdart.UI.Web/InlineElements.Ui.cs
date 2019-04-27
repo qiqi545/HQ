@@ -26,4 +26,5 @@ public static partial class InlineElements
 	public static Ui form(Action<HtmlExtensions.FormAttributes> action) { return ui.Form(action); }
 	public static Ui p(string innerText) { return ui.P(innerText); }
 	public static bool button(string innerText) { return ui.Button(innerText); }
+	public static bool button(string innerText, Action<ButtonEvents, ButtonAttributes> events) { return ui.Button(innerText, events); }
 }

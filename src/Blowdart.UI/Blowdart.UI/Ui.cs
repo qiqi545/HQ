@@ -89,15 +89,21 @@ namespace Blowdart.UI
         #region Lifecycle
 
         private int _count;
-        internal readonly HashSet<Value128> Clicked = new HashSet<Value128>();
+        internal readonly HashSet<Value128> MouseOut = new HashSet<Value128>();
+		internal readonly HashSet<Value128> MouseOver = new HashSet<Value128>();
+		internal readonly HashSet<Value128> Clicked = new HashSet<Value128>();
         internal readonly Dictionary<Value128, int> InputValues = new Dictionary<Value128, int>();
+
 		public UiContext Context { get; private set; }
 
         public void Begin(UiSystem system, UiContext context)
         {
             _count = 0;
             Context = context;
-            Clicked.Clear();
+            MouseOver.Clear();
+            MouseOut.Clear();
+			Clicked.Clear();
+			InputValues.Clear();
             System = system;
             System.Begin(context);
         }

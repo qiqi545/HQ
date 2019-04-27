@@ -2,7 +2,7 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
-
+using Microsoft.AspNetCore.Builder;
 using static InlineElements;
 
 namespace Demo
@@ -36,7 +36,10 @@ namespace Demo
 			 
             if(ui.Range(1, 100, 50) > 80)
             {
-	            if (button("Secret Button"))
+				if (button("Secret Button", (e, a) =>
+				{
+					e.mouseover = () => a.innerText = "Secret Button Hovered";
+				}))
 	            {
 		            Console.WriteLine($"Clicked By {firstName} {lastName}!");
 				}

@@ -2,9 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Specialized;
 using System.Threading.Tasks;
-using Blowdart.UI.Internal.UriTemplates;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -48,7 +46,7 @@ namespace Blowdart.UI.Web.Internal
 			var json = JArray.Parse(data);
 			var context = WebUiContext.Build(this, json);
 
-			var pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
+			const string pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
 
 			if (!_layoutRoot.Systems.TryGetValue(pageKey, out var system))
 				system = _layoutRoot.Services.GetRequiredService<UiSystem>();
@@ -56,51 +54,64 @@ namespace Blowdart.UI.Web.Internal
 				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
 			ui.Begin(system, context);
-
-			//
-			// Input State:
-			foreach (var token in JToken.Parse(data))
-			{
-				var hash = token["id"].Value<string>();
-				if (hash == id)
-					continue; // handled in the event switch
-
-				var type = token["type"].Value<string>();
-				switch (type)
-				{
-					case "range":
-						int.TryParse(token["value"].Value<string>().Trim('"'), out var v);
-						ui.InputValues.Add(hash, v);
-						break;
-				}
-			}
-
-			//
-			// Event State:
-			switch (eventType)
-			{
-				case "click":
-				{
-					ui.Clicked.Add(id);
-					break;
-				}
-				case "input":
-				{
-					value = value.Trim('"');
-					int.TryParse(value, out var v);
-					ui.InputValues.Add(id, v);
-					break;
-				}
-				default:
-					throw new NotSupportedException(eventType);
-			}
-
-			_layoutRoot.Root(ui);
+			Layout(id, eventType, data, value, ui);
 			ui.End();
 
 			Console.WriteLine($"HandleEvent: {page}|{id}|{eventType}");
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
-            await Clients.Caller.SendAsync(MessageTypes.Log, id, eventType);
+        }
+
+        private void Layout(string id, string eventType, string data, string value, Ui ui)
+        {
+			//
+	        // Input State:
+	        foreach (var token in JToken.Parse(data))
+	        {
+		        var hash = token["id"].Value<string>();
+		        if (hash == id)
+			        continue; // handled in the event switch
+
+		        var type = token["type"].Value<string>();
+		        switch (type)
+		        {
+			        case "range":
+				        int.TryParse(token["value"].Value<string>().Trim('"'), out var v);
+				        ui.InputValues.Add(hash, v);
+				        break;
+		        }
+	        }
+
+	        //
+	        // Event State:
+	        switch (eventType)
+	        {
+		        case Events.mouseover:
+		        {
+			        ui.MouseOver.Add(id);
+			        break;
+		        }
+				case Events.mouseout:
+		        {
+			        ui.MouseOut.Add(id);
+			        break;
+		        }
+				case Events.click:
+		        {
+			        ui.Clicked.Add(id);
+			        break;
+		        }
+		        case Events.input:
+		        {
+			        value = value.Trim('"');
+			        int.TryParse(value, out var v);
+			        ui.InputValues.Add(id, v);
+			        break;
+		        }
+		        default:
+			        throw new NotSupportedException(eventType);
+	        }
+
+	        _layoutRoot.Root(ui);
         }
     }
 }
