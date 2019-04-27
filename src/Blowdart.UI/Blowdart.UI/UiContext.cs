@@ -7,11 +7,13 @@ namespace Blowdart.UI
 {
     public class UiContext
     {
+		public string TraceIdentifier { get; internal set; }
 	    public ClaimsPrincipal User { get; internal set; }
 
 	    public virtual void Clear()
 	    {
 		    User = null;
+		    TraceIdentifier = default;
 	    }
     }
 }

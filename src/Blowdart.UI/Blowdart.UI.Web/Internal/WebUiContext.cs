@@ -3,11 +3,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Blowdart.UI.Web.Internal
@@ -20,6 +25,7 @@ namespace Blowdart.UI.Web.Internal
 	    public IFormCollection Form { get; }
 	    public IHeaderDictionary Headers { get; }
 		public QueryCollection Query { get; }
+		public ImmutableArray<InputState> InputState { get; set; }
 
 		private WebUiContext()
 		{
@@ -39,22 +45,26 @@ namespace Blowdart.UI.Web.Internal
 			Headers.Clear();
 			_formFields.Clear();
 			_queryStore.Clear();
+			InputState = default;
 		}
 
-		public static WebUiContext Build(Hub hub, JArray data = null)
+		private static readonly Dictionary<string, List<InputState>> InputStateLookup = new Dictionary<string, List<InputState>>();
+
+		public static WebUiContext Build(Hub hub, JsonPatchDocument data = null)
         {
             return Build(hub.Context.GetHttpContext(), data);
         }
 
-        public static WebUiContext Build(HttpContext http, JArray data = null)
+        public static WebUiContext Build(HttpContext http, JsonPatchDocument data = null)
         {
             var request = http?.Request;
             if (request == null)
                 return null;
 
-            var context = new WebUiContext
+			var context = new WebUiContext
             {
-	            User = http.User
+	            TraceIdentifier = http.TraceIdentifier,
+				User = http.User
             };
 
 			if (request.Headers != null)
@@ -80,16 +90,25 @@ namespace Blowdart.UI.Web.Internal
 			}
             else if(data != null)
             {
-                foreach (var element in data.Cast<JObject>())
-                {
-                    var name = element["name"]?.Value<string>();
-                    if (name == null)
-	                    continue;
+				var affinity = context.User.Identity.Name ?? context.TraceIdentifier;
 
-                    var v = element["value"]?.Value<string>();
-                    var value = string.IsNullOrWhiteSpace(v) ? null : v; // normalize on null
+				if (!InputStateLookup.TryGetValue(affinity, out var inputState))
+					InputStateLookup.Add(affinity, inputState = new List<InputState>());
+
+				data.ApplyTo(inputState);
+
+				foreach (var input in JArray.Parse(JsonConvert.SerializeObject(inputState)).Children())
+				{
+					var name = input["name"]?.Value<string>();
+					if (name == null)
+						continue;
+
+					var v = input["value"]?.Value<string>();
+					var value = string.IsNullOrWhiteSpace(v) ? null : v; // normalize on null
 					context._formFields.Add(name, value);
-                }
+				}
+
+				context.InputState = inputState.ToImmutableArray();
             }
             
             return context;

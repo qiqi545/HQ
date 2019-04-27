@@ -3,13 +3,22 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Blowdart.UI.Web.Internal
 {
+	internal class InputState
+	{
+		public string id { get; set; }
+		public string type { get; set; }
+		public string value { get; set; }
+	}
+
     internal class HtmlHub : Hub
     {
         private readonly LayoutRoot _layoutRoot;
@@ -37,14 +46,14 @@ namespace Blowdart.UI.Web.Internal
             }
         }
 
-        [HubMethodName("e")]
+		[HubMethodName("e")]
         public async Task HandleEvent(string page, string id, string eventType, string data, string value)
         {
 			var ui = Ui.CreateNew(_layoutRoot.Services);
 			InlineElements.SetUi(ui);
 
-			var json = JArray.Parse(data);
-			var context = WebUiContext.Build(this, json);
+			var patch = JsonConvert.DeserializeObject<JsonPatchDocument>(data);
+			var context = WebUiContext.Build(this, patch);
 
 			const string pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
 
@@ -54,29 +63,28 @@ namespace Blowdart.UI.Web.Internal
 				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
 			ui.Begin(system, context);
-			Layout(id, eventType, data, value, ui);
+			Layout(id, eventType, context, value, ui);
 			ui.End();
 
 			Console.WriteLine($"HandleEvent: {page}|{id}|{eventType}");
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
         }
 
-        private void Layout(string id, string eventType, string data, string value, Ui ui)
+        private void Layout(string id, string eventType, WebUiContext context, string value, Ui ui)
         {
+			// TODO do this earlier on (when building UI?)
 			//
 	        // Input State:
-	        foreach (var token in JToken.Parse(data))
+	        foreach (var inputState in context.InputState)
 	        {
-		        var hash = token["id"].Value<string>();
-		        if (hash == id)
-			        continue; // handled in the event switch
+		        if (id == inputState.id)
+			        continue; // handled in the event state
 
-		        var type = token["type"].Value<string>();
-		        switch (type)
+		        switch (inputState.type)
 		        {
 			        case "range":
-				        int.TryParse(token["value"].Value<string>().Trim('"'), out var v);
-				        ui.InputValues.Add(hash, v);
+				        int.TryParse(inputState.value.Trim('"'), out var v);
+				        ui.InputValues.Add(inputState.id, v);
 				        break;
 		        }
 	        }
@@ -100,7 +108,7 @@ namespace Blowdart.UI.Web.Internal
 			        ui.Clicked.Add(id);
 			        break;
 		        }
-		        case MouseEvents.input:
+		        case InputEvents.input:
 		        {
 			        value = value.Trim('"');
 			        int.TryParse(value, out var v);

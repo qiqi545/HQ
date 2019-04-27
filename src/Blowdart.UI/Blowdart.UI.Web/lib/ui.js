@@ -39,13 +39,7 @@ function maybeAddListener(id, eventType, el) {
             handler = function(e) {
                 el.removeEventListener(eventType, handler);
                 console.log(`${attr} invoked and removed on ${id}`);
-                var tracked = document.querySelectorAll('input[id]:not([id=""])');
-                var ctx = [];
-                for (var i = 0; i < tracked.length; i++) {
-                    ctx.push({ id: tracked[i].id, type: tracked[i].type, value: tracked[i].value });
-                }
-                var data = JSON.stringify(ctx);
-                ui.invoke("e", window.location.toString(), id, eventType, data, JSON.stringify(el.value)).catch(
+                ui.invoke("e", window.location.toString(), id, eventType, getInputState(), JSON.stringify(el.value)).catch(
                     function(err) {
                         return console.error(err.toString());
                     });
@@ -57,4 +51,15 @@ function maybeAddListener(id, eventType, el) {
     } else {
         console.log(`${attr} already registered on ${id}`);
     }
+}
+var lastInputState = {};
+function getInputState() {
+    var all = document.querySelectorAll('input');
+    var inputState = [];
+    for (var i = 0; i < all.length; i++) {
+        inputState.push({ id: all[i].id, type: all[i].type, value: all[i].value });
+    }
+    var delta = jsonpatch.compare(lastInputState, inputState);
+    lastInputState = inputState;
+    return JSON.stringify(delta);
 }
