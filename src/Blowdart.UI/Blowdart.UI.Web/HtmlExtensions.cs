@@ -175,7 +175,7 @@ namespace Blowdart.UI.Web
 			ui.NextId();
 			var id = ui.NextIdHash;
 			Dom(ui).AppendTag("button", id, innerText, attr == null ? null : Attr(attr));
-			Scripts(ui).AppendEvent(Events.click, id);
+			Scripts(ui).AppendEvent(MouseEvents.click, id);
 			return ui.Clicked.Contains(id);
 		}
 
@@ -199,12 +199,12 @@ namespace Blowdart.UI.Web
 				if (a.innerText != null)
 					innerText = a.innerText;
 
-				Scripts(ui).AppendEvent(Events.mouseover, id);
-				Scripts(ui).AppendEvent(Events.mouseout, id);
+				Scripts(ui).AppendEvent(MouseEvents.mouseover, id);
+				Scripts(ui).AppendEvent(MouseEvents.mouseout, id);
 			}
 
 			Dom(ui).AppendTag("button", id, innerText, attributes: null);
-			Scripts(ui).AppendEvent(Events.click, id);
+			Scripts(ui).AppendEvent(MouseEvents.click, id);
 			return ui.Clicked.Contains(id);
 		}
 	}

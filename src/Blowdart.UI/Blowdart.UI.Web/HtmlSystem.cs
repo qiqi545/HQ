@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Internal.UriTemplates;
+using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,17 +28,13 @@ namespace Blowdart.UI.Web
 		public string RenderDom => _dom ?? Dom?.ToString();
         public string RenderScripts => _scripts ?? Scripts?.ToString();
         
-		public IDictionary<string, object> Request { get; private set; }
-
-        public override void Begin(UiContext context = null)
+		public override void Begin(UiContext context = null)
         {
             _dom = null;
             _scripts = null;
 
             Dom = Pools.StringBuilderPool.Get();
             Scripts = Pools.StringBuilderPool.Get();
-            
-            Request = context;
         }
 
         public override void End()
@@ -47,8 +44,6 @@ namespace Blowdart.UI.Web
 
             Pools.StringBuilderPool.Return(Dom);
             Pools.StringBuilderPool.Return(Scripts);
-			
-            Request.Clear();
         }
 		
 		public virtual string ScriptsSection()
@@ -75,35 +70,23 @@ namespace Blowdart.UI.Web
             var templateParameters = uriTemplate.GetParameters(requestUri);
             var parameters = templateParameters ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            if (ui != null)
+            if (ui?.Context is WebUiContext context)
             {
                 //
                 // Header Resolution (overwrites URI):
-                foreach (var entry in ui.Context)
-                {
-                    if (!entry.Key.StartsWith("bd.h:"))
-                        continue;
-                    parameters[entry.Key.Replace("bd.h:", string.Empty)] = entry.Value;
-                }
+                foreach (var entry in context.Headers)
+					parameters[entry.Key] = entry.Value;
 
-                //
-                // Query Resolution (overwrites headers):
-                foreach (var entry in ui.Context)
-                {
-                    if (!entry.Key.StartsWith("bd.q:"))
-                        continue;
-                    parameters[entry.Key.Replace("bd.q:", string.Empty)] = entry.Value;
-                }
+				//
+				// Query Resolution (overwrites headers):
+				foreach (var entry in context.Query)
+					parameters[entry.Key] = entry.Value;
 
-                //
-                // Form Collection (overwrites queries):
-                foreach (var entry in ui.Context)
-                {
-                    if (!entry.Key.StartsWith("bd.f:"))
-                        continue;
-                    parameters[entry.Key.Replace("bd.f:", string.Empty)] = entry.Value;
-                }
-            }
+				//
+				// Form Collection (overwrites queries):
+				foreach (var entry in context.Form)
+					parameters[entry.Key] = entry.Value;
+			}
             else
             {
                 //

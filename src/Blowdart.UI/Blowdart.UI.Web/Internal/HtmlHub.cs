@@ -85,22 +85,22 @@ namespace Blowdart.UI.Web.Internal
 	        // Event State:
 	        switch (eventType)
 	        {
-		        case Events.mouseover:
+		        case MouseEvents.mouseover:
 		        {
 			        ui.MouseOver.Add(id);
 			        break;
 		        }
-				case Events.mouseout:
+				case MouseEvents.mouseout:
 		        {
 			        ui.MouseOut.Add(id);
 			        break;
 		        }
-				case Events.click:
+				case MouseEvents.click:
 		        {
 			        ui.Clicked.Add(id);
 			        break;
 		        }
-		        case Events.input:
+		        case MouseEvents.input:
 		        {
 			        value = value.Trim('"');
 			        int.TryParse(value, out var v);
