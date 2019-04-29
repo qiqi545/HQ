@@ -11,7 +11,7 @@ namespace Demo
     {
         private static void Main(string[] args) => UiServer.Start(args);
 
-        public static void Index(Ui ui, string host, string firstName, string lastName)
+        public static void Index(string host, string firstName, string lastName)
         {
             p($"Hello, World from {strong(host)}!");
 
@@ -33,7 +33,7 @@ namespace Demo
 
 			br();
 			 
-            if(ui.Range(1, 100, 50) > 80)
+            if(range(1, 100, 50) > 80)
             {
 				if (button("Secret Button", (e, a) =>
 				{
