@@ -2,7 +2,6 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
-using Microsoft.AspNetCore.Builder;
 using static InlineElements;
 
 namespace Demo

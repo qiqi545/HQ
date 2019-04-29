@@ -4,12 +4,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Net.Mime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
@@ -50,12 +47,12 @@ namespace Blowdart.UI.Web.Internal
 
 		private static readonly Dictionary<string, List<InputState>> InputStateLookup = new Dictionary<string, List<InputState>>();
 
-		public static WebUiContext Build(Hub hub, JsonPatchDocument data = null)
+		public static WebUiContext Build(Hub hub, JsonPatchDocument stateDelta = null)
         {
-            return Build(hub.Context.GetHttpContext(), data);
+            return Build(hub.Context.GetHttpContext(), stateDelta);
         }
 
-        public static WebUiContext Build(HttpContext http, JsonPatchDocument data = null)
+        public static WebUiContext Build(HttpContext http, JsonPatchDocument stateDelta = null)
         {
             var request = http?.Request;
             if (request == null)
@@ -79,28 +76,27 @@ namespace Blowdart.UI.Web.Internal
 					context._queryStore.Add(value.Key, value.Value);
 			}
             
+			// TODO using the form values directly is likely obsolete now and should be removed
 			var hasFormData = request.HasFormContentType && request.Form != null;
             if (hasFormData)
             {
-                if (data != null)
+                if (stateDelta != null)
                     throw new ArgumentException("Library developer error: received the same data from multiple sources");
 
                 foreach (var value in request.Form)
 					context._formFields.Add(value.Key, value.Value);
 			}
-            else if(data != null)
+            else
             {
-				var affinity = context.User.Identity.Name ?? context.TraceIdentifier;
+				var inputState = context.GetInputState();
 
-				if (!InputStateLookup.TryGetValue(affinity, out var inputState))
-					InputStateLookup.Add(affinity, inputState = new List<InputState>());
+				stateDelta?.ApplyTo(inputState);
 
-				data.ApplyTo(inputState);
-
-				foreach (var input in JArray.Parse(JsonConvert.SerializeObject(inputState)).Children())
+				var gross = JArray.Parse(JsonConvert.SerializeObject(inputState)).Children();
+				foreach (var input in gross)
 				{
 					var name = input["name"]?.Value<string>();
-					if (name == null)
+					if (string.IsNullOrWhiteSpace(name))
 						continue;
 
 					var v = input["value"]?.Value<string>();
@@ -112,6 +108,21 @@ namespace Blowdart.UI.Web.Internal
             }
             
             return context;
+        }
+
+        internal List<InputState> GetInputState()
+        {
+	        var stateKey = GetInputStateKey();
+	        if (!InputStateLookup.TryGetValue(stateKey, out var inputState))
+		        InputStateLookup.Add(stateKey, inputState = new List<InputState>());
+	        return inputState;
+        }
+
+        private string GetInputStateKey()
+        {
+			// TODO this is super wrong, needs dedicated middleware to harmonize multiple correlation IDs (i.e. anonymous, authenticated, converted, connection/client)
+	        var affinity = User.Identity.Name ?? TraceIdentifier;
+	        return affinity;
         }
     }
 }

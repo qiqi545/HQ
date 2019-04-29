@@ -145,7 +145,7 @@ namespace Blowdart.UI.Web
                         {
                             if (parameter.ParameterType == typeof(string))
                             {
-                                arguments.Add(string.Join(",", multiString));
+	                            arguments.Add(string.IsNullOrWhiteSpace(multiString) ? null : string.Join(",", multiString));
                             }
                             else
                             {

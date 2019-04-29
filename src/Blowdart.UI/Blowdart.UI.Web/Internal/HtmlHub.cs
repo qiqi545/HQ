@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.SignalR;
@@ -15,6 +16,7 @@ namespace Blowdart.UI.Web.Internal
 	internal class InputState
 	{
 		public string id { get; set; }
+		public string name { get; set; }
 		public string type { get; set; }
 		public string value { get; set; }
 	}
@@ -47,13 +49,12 @@ namespace Blowdart.UI.Web.Internal
         }
 
 		[HubMethodName("e")]
-        public async Task HandleEvent(string page, string id, string eventType, string data, string value)
+        public async Task HandleEvent(string page, string id, string eventType, byte[] data, string value)
         {
+	        var delta = DeserializeInputStateDelta(data);
+	        var context = WebUiContext.Build(this, delta);
 			var ui = Ui.CreateNew(_layoutRoot.Services);
 			InlineElements.SetUi(ui);
-
-			var patch = JsonConvert.DeserializeObject<JsonPatchDocument>(data);
-			var context = WebUiContext.Build(this, patch);
 
 			const string pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
 
@@ -63,17 +64,87 @@ namespace Blowdart.UI.Web.Internal
 				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
 			ui.Begin(system, context);
-			Layout(id, eventType, context, value, ui);
+			UpdateInputState(context, id, eventType, value, ui);
+			_layoutRoot.Root(ui);
 			ui.End();
 
-			Console.WriteLine($"HandleEvent: {page}|{id}|{eventType}");
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
         }
-
-        private void Layout(string id, string eventType, WebUiContext context, string value, Ui ui)
+		
+        private static JsonPatchDocument DeserializeInputStateDelta(byte[] data)
         {
-			// TODO do this earlier on (when building UI?)
-			//
+	        Console.WriteLine($"side channel buffer size: {data?.Length ?? 0}");
+
+	        var patch = data?.Length > 0 ? new JsonPatchDocument() : null;
+	        if (patch == null)
+		        return null;
+
+	        using (var ms = new MemoryStream(data))
+	        {
+		        using (var br = new BinaryReader(ms))
+		        {
+			        while (ms.Position < data.Length)
+			        {
+				        var op = br.ReadByte();
+				        switch (op)
+				        {
+					        case 0: // add
+					        {
+						        var index = br.ReadByte();
+						        patch.Add($"/{index}", new InputState
+						        {
+							        id = br.ReadString(),
+							        name = br.ReadString(),
+							        type = ((InputType) br.ReadByte()).ToString().ToLowerInvariant(),
+							        value = br.ReadString()
+						        });
+						        break;
+					        }
+					        case 1: // replace
+					        {
+						        var index = br.ReadByte();
+						        switch (br.ReadByte())
+						        {
+							        case 0:
+								        var patchId = br.ReadString();
+								        patch.Replace($"/{index}/id", patchId);
+								        break;
+							        case 1:
+								        var patchName = br.ReadString();
+								        patch.Replace($"/{index}/name", patchName);
+								        break;
+							        case 2:
+								        var patchType = ((InputType) br.ReadByte()).ToString().ToLowerInvariant();
+								        patch.Replace($"/{index}/type", patchType);
+								        break;
+							        case 3:
+								        var patchValue = br.ReadString();
+								        patch.Replace($"/{index}/value", patchValue);
+								        break;
+							        default:
+								        throw new ArgumentException();
+						        }
+						        break;
+					        }
+					        case 2: // remove
+					        {
+						        var path = br.ReadString();
+						        patch.Remove(path);
+						        break;
+					        }
+					        default:
+						        throw new ArgumentException();
+				        }
+			        }
+		        }
+	        }
+
+	        return patch;
+        }
+
+        private void UpdateInputState(WebUiContext context, string id, string eventType, string value, Ui ui)
+        {
+	        //
 	        // Input State:
 	        foreach (var inputState in context.InputState)
 	        {
@@ -87,10 +158,8 @@ namespace Blowdart.UI.Web.Internal
 				        ui.InputValues.Add(inputState.id, v);
 				        break;
 		        }
-	        }
+			}
 
-	        //
-	        // Event State:
 	        switch (eventType)
 	        {
 		        case MouseEvents.mouseover:
@@ -111,15 +180,13 @@ namespace Blowdart.UI.Web.Internal
 		        case InputEvents.input:
 		        {
 			        value = value.Trim('"');
-			        int.TryParse(value, out var v);
-			        ui.InputValues.Add(id, v);
+			        int.TryParse(value, out var val);
+			        ui.InputValues[id] = val;
 			        break;
 		        }
 		        default:
 			        throw new NotSupportedException(eventType);
 	        }
-
-	        _layoutRoot.Root(ui);
         }
     }
 }
