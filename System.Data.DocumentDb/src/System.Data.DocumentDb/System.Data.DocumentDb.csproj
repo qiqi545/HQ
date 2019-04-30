@@ -19,15 +19,12 @@
     <Description>An ADO.NET provider for DocumentDb.</Description>
     <PackageTags>azure cosmosdb documentdb sdk ado-net</PackageTags>
     <PackageId>DocumentDbProvider</PackageId>
-    <Version>1.0.0-pre7</Version>
+    <Version>1.0.0-pre8</Version>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.2.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\_FORKS\fast-member\FastMember\FastMember.csproj" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.3.0" />
+    <PackageReference Include="TypeKitchen" Version="0.0.11-pre" />
   </ItemGroup>
 
   <!-- Push PackageId.Version.nupkg -->

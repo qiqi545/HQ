@@ -6,13 +6,13 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
-using FastMember;
+using TypeKitchen;
 
 namespace System.Data.DocumentDb
 {
     public sealed class DocumentDbDataReader<TRow> : DbDataReader where TRow : IDictionary<string, object>
     {
-        private readonly Dictionary<string, Member> _members;
+        private readonly AccessorMembers _members;
         private readonly IResultSet<TRow> _resultSet;
         private bool _closed;
         private int _index = -1;
@@ -20,7 +20,7 @@ namespace System.Data.DocumentDb
         public DocumentDbDataReader(IResultSet<TRow> resultSet, Type type)
         {
             _resultSet = resultSet;
-            _members = TypeAccessor.Create(type).GetMembers().ToDictionary(k => k.Name, v => v);
+            _members = AccessorMembers.Create(type);
         }
 
         private TRow CurrentRow
