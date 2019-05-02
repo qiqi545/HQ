@@ -76,6 +76,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common", "..\..\HQ.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.Tests", "HQ.Extensions.Metrics\test\HQ.Extensions.Metrics.Tests\HQ.Extensions.Metrics.Tests.csproj", "{5369398F-E92F-49C7-A79B-B71B7A580A80}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PackagePrep", "..\package\PackagePrep\PackagePrep.csproj", "{9C99A151-0448-4402-8EF1-9936CDF30A2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -239,6 +241,12 @@ Global
 		{5369398F-E92F-49C7-A79B-B71B7A580A80}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{5369398F-E92F-49C7-A79B-B71B7A580A80}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5369398F-E92F-49C7-A79B-B71B7A580A80}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -270,6 +278,7 @@ Global
 		{65E82CA8-FA24-4860-B949-85DD737BB816} = {CF1214E4-902E-4B18-984D-0F6495FB38C9}
 		{5E45FD11-FCB3-47BE-8E34-E452E2AEDFC0} = {9F6392BF-9411-434A-A9DC-7C60D590DAD9}
 		{5369398F-E92F-49C7-A79B-B71B7A580A80} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
+		{9C99A151-0448-4402-8EF1-9936CDF30A2B} = {B5D1C9BE-0BF9-4B78-AD38-009E10499C7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3021A61F-9383-4C4A-B162-D1C4C186AB90}
