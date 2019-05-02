@@ -229,7 +229,7 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
-    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta07" />
+    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta09" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NSec.Cryptography" Version="18.6.0" />
     <PackageReference Include="Sodium.Core" Version="1.2.0" />

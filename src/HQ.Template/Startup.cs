@@ -32,10 +32,6 @@ namespace HQ.Template
             services.AddHq(DatabaseType.SqlServer, _configuration.GetSection("HQ"))
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<SqlServerOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
-#elif (MySql)
-            services.AddHq(DatabaseType.MySql, _configuration.GetSection("HQ"))
-                .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
-                .AddGenerated<MySqlOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #else
             services.AddHq(DatabaseType.Sqlite, _configuration.GetSection("HQ"))
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
