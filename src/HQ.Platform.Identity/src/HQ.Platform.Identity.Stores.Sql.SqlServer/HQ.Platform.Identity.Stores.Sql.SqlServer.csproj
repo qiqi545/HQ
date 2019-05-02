@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
   </ItemGroup>
 
   <ItemGroup>
