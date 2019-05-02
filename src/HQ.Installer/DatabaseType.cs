@@ -21,7 +21,6 @@ namespace HQ.Installer
     {
         DocumentDb,
         SqlServer,
-        MySql,
         Sqlite
     }
 }

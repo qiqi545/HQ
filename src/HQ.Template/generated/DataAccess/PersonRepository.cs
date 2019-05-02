@@ -5,21 +5,19 @@
 */
 
 using System;
-using System.Net;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 using System.Diagnostics;
-using Dapper;
-using HQ.Common.Models;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
-using HQ.Data.Sql.Queries.Rosetta;
 using HQ.Data.Sql.Queries;
+using Dapper;
 
 namespace HQ.Template
 {

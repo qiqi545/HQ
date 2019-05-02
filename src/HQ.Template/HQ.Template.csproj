@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.4" />
     <PackageReference Include="HQ" Version="1.0.70" />
     <!--#if(Azure)-->
     <PackageReference Include="HQ.Azure" Version="1.0.70" />
@@ -31,6 +31,7 @@
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\_LABS\src\HQ.Platform.Runtime\src\HQ.Platform.Runtime\HQ.Platform.Runtime.csproj" />
     <ProjectReference Include="..\HQ\HQ.csproj" />
     <ProjectReference Include="..\HQ.Azure\HQ.Azure.csproj" />
     <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />

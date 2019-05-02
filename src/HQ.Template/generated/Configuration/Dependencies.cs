@@ -5,11 +5,9 @@
 */
 
 using System;
-using System.Net;
-using System.Collections.Generic;
+using HQ.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using HQ.Common.Models;
 using HQ.Data.Contracts;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;

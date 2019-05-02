@@ -91,8 +91,6 @@ namespace HQ.Installer
 
             UiConfig.Settings = settings =>
             {
-                settings.Title = title;
-                settings.System = new SemanticUi();
                 settings.ComponentAssemblies = new[]
                 {
                     typeof(UiComponent).Assembly,       // Blowdart.UI

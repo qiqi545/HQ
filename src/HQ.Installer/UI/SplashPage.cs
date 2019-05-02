@@ -188,7 +188,7 @@ namespace HQ.Installer.UI
                     }
                     ui.EndDiv();
 
-                    ui.Div(attr: new { @class = "ui inverted section divider"});
+                    ui.Element("div", attr: new { @class = "ui inverted section divider"});
                     ui.Element("img", attr: new { src = "assets/images/logo.png", @class = "ui centered mini image"});
                     ui.BeginDiv(new { @class = "ui horizontal inverted small divided link list"});
                     {
@@ -200,7 +200,6 @@ namespace HQ.Installer.UI
                             ui.Element("i", "", new { @class = "github icon"});
                         }
                         ui.EndElement("a");
-
                     }
                     ui.EndDiv();
                 }
