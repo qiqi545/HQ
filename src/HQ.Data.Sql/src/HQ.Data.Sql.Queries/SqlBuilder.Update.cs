@@ -19,10 +19,10 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using DotLiquid;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -36,10 +36,10 @@ namespace HQ.Data.Sql.Queries
             var descriptor = GetDescriptor<T>();
             var set = Dialect.ResolveColumnNames(descriptor, ColumnScope.Updated).ToList();
 
-            IDictionary<string, object> hash = Hash.FromAnonymousObject(instance, true);
+            IReadOnlyDictionary<string, object> hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
-            IDictionary<string, object> whereHash;
+            IReadOnlyDictionary<string, object> whereHash;
             List<string> whereFilter;
             if (where == null)
             {
@@ -51,9 +51,8 @@ namespace HQ.Data.Sql.Queries
             else
             {
                 // WHERE is explicitly provided 
-                whereHash = Hash.FromAnonymousObject(where, true);
-                var whereHashKeysRewrite =
-                    whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+                whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
+                var whereHashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
                 whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToList();
             }
 
@@ -73,7 +72,7 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Update(IDataDescriptor descriptor, object instance)
         {
-            IDictionary<string, object> hash = Hash.FromAnonymousObject(instance, true);
+            var hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
             var setFilter = descriptor.Updated.Select(c => c.ColumnName).Intersect(hash.Keys).ToList();
             var whereFilter = descriptor.Keys.Select(c => c.ColumnName).Intersect(hash.Keys).ToList();
 
@@ -82,10 +81,10 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Update(IDataDescriptor descriptor, dynamic set, dynamic where = null)
         {
-            IDictionary<string, object> setHash = Hash.FromAnonymousObject(set, true);
+            IReadOnlyDictionary<string, object> setHash = ReadAccessor.Create(set.GetType()).ToReadOnlyDictionary(set);
             var setFilter = descriptor.Updated.Select(c => c.ColumnName).Intersect(setHash.Keys).ToList();
 
-            IDictionary<string, object> whereHash = Hash.FromAnonymousObject(where, true);
+            IReadOnlyDictionary<string, object> whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
             var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToList();
 
             return Update(descriptor, setFilter, whereFilter, setHash, whereHash);
@@ -110,7 +109,7 @@ namespace HQ.Data.Sql.Queries
         }
 
         private static Query Update(IDataDescriptor descriptor, List<string> setFilter, List<string> whereFilter,
-            IDictionary<string, object> setHash, IDictionary<string, object> whereHash)
+            IReadOnlyDictionary<string, object> setHash, IReadOnlyDictionary<string, object> whereHash)
         {
             var setHashKeyRewrite = setHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var whereHashKeyRewrite = RuntimeHelpers.Equals(setHash, whereHash)
@@ -129,9 +128,9 @@ namespace HQ.Data.Sql.Queries
             var sql = Dialect.Update(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, setFilter,
                 whereFilter, setParameters, whereParameters, Dialect.SetSuffix);
 
-            var parameters = Hash.FromDictionary(setParams.ToDictionary(k => k.Key + Dialect.SetSuffix, v => v.Value));
-            parameters.Merge(whereParams);
-
+            var parameters = setParams.ToDictionary(k => k.Key + Dialect.SetSuffix, v => v.Value);
+            foreach (var entry in whereParams)
+                parameters[entry.Key] = entry.Value;
             return new Query(sql, parameters);
         }
     }

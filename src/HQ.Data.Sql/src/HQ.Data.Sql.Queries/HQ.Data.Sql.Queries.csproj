@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotLiquid" Version="2.0.298" />
+    <PackageReference Include="TypeKitchen" Version="0.0.11-pre" />
   </ItemGroup>
 
   <ItemGroup>

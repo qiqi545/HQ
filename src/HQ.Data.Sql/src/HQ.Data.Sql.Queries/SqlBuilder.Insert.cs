@@ -16,10 +16,10 @@
 #endregion
 
 using System.Linq;
-using DotLiquid;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -48,7 +48,7 @@ namespace HQ.Data.Sql.Queries
             var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
             var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns,
                 false);
-            var hash = Hash.FromAnonymousObject(instance, true);
+            var hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var keys = columns.Intersect(hashKeysRewrite.Keys);
             var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[hashKeysRewrite[key]]);

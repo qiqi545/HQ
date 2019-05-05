@@ -25,14 +25,14 @@ namespace HQ.Data.Sql.Queries
         {
         }
 
-        public Query(string sql, IDictionary<string, object> parameters)
+        public Query(string sql, IReadOnlyDictionary<string, object> parameters)
         {
             Sql = sql;
             Parameters = parameters;
         }
 
         public string Sql { get; set; }
-        public IDictionary<string, object> Parameters { get; set; }
+        public IReadOnlyDictionary<string, object> Parameters { get; set; }
 
         public override string ToString()
         {

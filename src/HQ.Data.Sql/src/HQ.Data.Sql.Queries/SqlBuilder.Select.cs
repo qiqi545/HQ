@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using DotLiquid;
 using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -227,7 +227,7 @@ namespace HQ.Data.Sql.Queries
         private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
             List<string> columnFilter, dynamic where)
         {
-            IDictionary<string, object> whereHash = Hash.FromAnonymousObject(where);
+            IDictionary<string, object> whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
             var tableName = Dialect.ResolveTableName(descriptor);

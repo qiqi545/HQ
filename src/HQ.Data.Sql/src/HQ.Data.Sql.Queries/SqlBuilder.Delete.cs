@@ -17,9 +17,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using DotLiquid;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -34,10 +34,10 @@ namespace HQ.Data.Sql.Queries
         {
             var descriptor = GetDescriptor<T>();
 
-            IDictionary<string, object> hash = Hash.FromAnonymousObject(instance, true);
+            var hash = ReadAccessor.Create(instance?.GetType()).AsReadOnlyDictionary(instance);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
-            IDictionary<string, object> whereHash;
+            IReadOnlyDictionary<string, object> whereHash;
             List<string> whereFilter;
             if (where == null)
             {
@@ -49,7 +49,7 @@ namespace HQ.Data.Sql.Queries
             else
             {
                 // WHERE is explicitly provided 
-                whereHash = Hash.FromAnonymousObject(where, true);
+                whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
                 var whereHashKeysRewrite =
                     whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
                 whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToList();
@@ -65,7 +65,7 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Delete(IDataDescriptor descriptor, object instance)
         {
-            IDictionary<string, object> whereHash = Hash.FromAnonymousObject(instance, true);
+            var whereHash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
             var whereHashKeyRewrite =
                 whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeyRewrite.Keys).ToList();
@@ -74,7 +74,7 @@ namespace HQ.Data.Sql.Queries
         }
 
         private static Query Delete(IDataDescriptor descriptor, List<string> whereFilter,
-            IDictionary<string, object> whereHash)
+            IReadOnlyDictionary<string, object> whereHash)
         {
             var whereHashKeyRewrite =
                 whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
@@ -84,7 +84,7 @@ namespace HQ.Data.Sql.Queries
 
             var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter,
                 whereParameters);
-            var @params = Hash.FromDictionary(whereParams);
+            var @params = ReadAccessor.Create(whereParams.GetType()).AsReadOnlyDictionary(whereParams);
 
             return new Query(sql, @params);
         }

@@ -19,10 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using DotLiquid;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -44,7 +44,7 @@ namespace HQ.Data.Sql.Queries
             var columns = columnFilter ?? Dialect.ResolveColumnNames(descriptor).ToList();
             var sql = Dialect.Query(descriptor.Table, descriptor.Schema, columns, filters, projections, orderBy);
 
-            IDictionary<string, object> whereHash = Hash.FromAnonymousObject(data);
+            IDictionary<string, object> whereHash = ReadAccessor.Create(data.GetType()).AsReadOnlyDictionary(data);
             var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToList();
             var parameters = whereFilter.ToDictionary(key => $"{Dialect.Parameter}{key}", key => whereHash[key]);
 
