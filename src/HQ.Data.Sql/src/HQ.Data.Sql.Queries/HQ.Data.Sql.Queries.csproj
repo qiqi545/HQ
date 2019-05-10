@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TypeKitchen" Version="0.0.11-pre" />
+    <PackageReference Include="TypeKitchen" Version="0.0.12-pre" />
   </ItemGroup>
 
   <ItemGroup>
