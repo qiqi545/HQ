@@ -51,14 +51,16 @@ namespace HQ.Common
                 return false;
             }
 
-            var featureType = AccessorMembers.Create(o.Value.GetType()).SingleOrDefault(x => x.Type == typeof(TFeature));
+            var type = o.Value.GetType();
+            var members = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
+            var featureType = members.SingleOrDefault(x => x.Type == typeof(TFeature));
             if (featureType == null)
             {
                 feature = default;
                 return false;
             }
 
-            var accessor = ReadAccessor.Create(featureType.Type);
+            var accessor = ReadAccessor.Create(type);
             feature = accessor[o.Value, featureType.Name] as TFeature;
             return feature != null && feature.Enabled;
         }
