@@ -15,7 +15,7 @@ namespace HQ.Platform.Identity.Tests.Sqlite
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended>(options =>
+            services.AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(options =>
                 {
                     options.User.RequirePhoneNumber = false;
                     options.User.RequireEmail = false;

@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations.Models
 {
-    class DevOpsMetaProvider : IMetaProvider
+    internal class DevOpsMetaProvider : IMetaProvider
     {
         private readonly IOptions<DevOpsApiOptions> _options;
         private readonly IOptions<PublicApiOptions> _api;
@@ -37,7 +37,7 @@ namespace HQ.Platform.Operations.Models
 
             if (options.EnableRouteDebugging)
             {
-                var path = options.RouteDebuggingPath;
+                var path = options.RouteDebuggingPath.TrimStart('/');
 
                 var item = new
                 {
@@ -84,7 +84,7 @@ namespace HQ.Platform.Operations.Models
             
             if (options.EnableEnvironmentEndpoint)
             {
-                var path = options.EnvironmentEndpointPath;
+                var path = options.EnvironmentEndpointPath.TrimStart('/');
 
                 var item = new
                 {

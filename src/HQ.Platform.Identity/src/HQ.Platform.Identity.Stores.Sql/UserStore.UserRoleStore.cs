@@ -95,9 +95,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (roleMapping.Any())
             {
                 var descriptor = SqlBuilder.GetDescriptor<TRole>();
-                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new {TenantId = _tenantId});
-                roleQuery.Sql += $" AND {descriptor.Table}.Id IN @RoleIds";
-                roleQuery.Parameters.Add("@RoleIds", roleMapping.Select(x => x.RoleId));
+                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId) });
                 _connection.SetTypeInfo(typeof(TRole));
 
                 var roles = await _connection.Current.QueryAsync<TRole>(roleQuery.Sql, roleQuery.Parameters);

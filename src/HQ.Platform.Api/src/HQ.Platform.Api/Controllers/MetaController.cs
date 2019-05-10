@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using System.Net;
-using System.Net.Http;
 using HQ.Platform.Api.Models;
 
 namespace HQ.Platform.Api.Controllers
@@ -67,6 +66,8 @@ namespace HQ.Platform.Api.Controllers
 
             foreach(var provider in _providers)
                 provider.Populate(baseUri, collection);
+
+            Response.Headers.Add("X-Postman-Version", "2.1.0");
 
             return Ok(collection);
         }
