@@ -34,8 +34,6 @@ namespace HQ.Platform.Api
     {
         public static IApplicationBuilder UsePublicApi(this IApplicationBuilder app, bool snapshot = true)
         {
-            Bootstrap.EnsureInitialized();
-
             app.UseCors();
             app.UseResponseCompression();
 

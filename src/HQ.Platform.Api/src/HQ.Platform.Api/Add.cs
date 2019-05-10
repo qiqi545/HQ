@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO.Compression;
+using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
@@ -40,6 +41,8 @@ namespace HQ.Platform.Api
     {
         public static IServiceCollection AddPublicApi(this IServiceCollection services, IConfiguration config)
         {
+            Bootstrap.EnsureInitialized();
+
             services.Configure<PublicApiOptions>(config);
 
             services.AddCors();
@@ -126,8 +129,7 @@ namespace HQ.Platform.Api
             services.AddInProcessCache();
             services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
             services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());
-            services.AddScoped<ITenantContext<TTenant>>(r =>
-                new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
+            services.AddScoped<ITenantContext<TTenant>>(r => new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
 
             return services;
         }
