@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Extensions.Cryptography.Internal;
+using Sodium;
 using Random = HQ.Extensions.Cryptography.Internal.Random;
 
 namespace HQ.Extensions.Cryptography
