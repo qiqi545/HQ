@@ -15,7 +15,10 @@
 
 #endregion
 
+using HQ.Common;
+using HQ.Platform.Api.Models;
 using HQ.Platform.Operations.Configuration;
+using HQ.Platform.Operations.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,6 +28,9 @@ namespace HQ.Platform.Operations
     {
         public static IServiceCollection AddDevOpsApi(this IServiceCollection services, IConfiguration config)
         {
+            Bootstrap.EnsureInitialized();
+
+            services.AddScoped<IMetaProvider, DevOpsMetaProvider>();
             services.Configure<DevOpsApiOptions>(config);
             services.AddSingleton(config);
             return services;

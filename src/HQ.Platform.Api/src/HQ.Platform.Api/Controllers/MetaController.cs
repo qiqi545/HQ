@@ -1,28 +1,26 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using System.Net;
+using System.Net.Http;
+using HQ.Platform.Api.Models;
 
 namespace HQ.Platform.Api.Controllers
 {
     [Route("meta")]
     public class MetaController : Controller
     {
-        private readonly IApiDescriptionGroupCollectionProvider _explorer;
         private readonly IOptions<PublicApiOptions> _options;
+        private readonly IEnumerable<IMetaProvider> _providers;
 
-        public MetaController(IApiDescriptionGroupCollectionProvider apiExplorer,
-            IOptions<PublicApiOptions> options)
+        public MetaController(IOptions<PublicApiOptions> options, IEnumerable<IMetaProvider> providers)
         {
-            _explorer = apiExplorer;
             _options = options;
+            _providers = providers;
         }
 
         [HttpGet("postman")]
@@ -45,7 +43,7 @@ namespace HQ.Platform.Api.Controllers
             }
 
             // See: https://schema.getpostman.com/json/collection/v2.1.0/docs/index.html
-            var collection = new
+            var collection = new MetaCollection
             {
                 info = new
                 {
@@ -67,75 +65,20 @@ namespace HQ.Platform.Api.Controllers
                 protocolProfileBehavior = new { }
             };
 
-            var descriptions = _explorer.ApiDescriptionGroups.Items.SelectMany(x => x.Items);
-
-            var manifest = descriptions.GroupBy(x => ((ControllerActionDescriptor)x.ActionDescriptor).ControllerTypeInfo);
-
-            foreach (var group in manifest)
-            {
-                var controllerName = group.Key.Name.Replace(nameof(Controller), string.Empty);
-
-                var folder = new
-                {
-                    name = controllerName,
-                    description = "",
-                    variable = new List<dynamic>(),
-                    item = new List<dynamic>(),
-                    @event = new List<dynamic>(),
-                    auth = "bearer",
-                    protocolProfileBehavior = new { }
-                };
-
-                foreach (var operation in group.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
-                {
-                    var url = $"{baseUri}/{operation.RelativePath}";
-
-                    var item = new
-                    {
-                        id = Guid.NewGuid(),
-                        name = operation.RelativePath,
-                        description = "",
-                        variable = new List<dynamic>(),
-                        @event = new List<dynamic>(),
-                        request = new
-                        {
-                            url,
-                            auth = "bearer",
-                            proxy = new { },
-                            certificate = new { },
-                            method = operation.HttpMethod,
-                            description = new
-                            {
-                                content = "",
-                                type = "text/markdown",
-                                version = _options.Value.ApiVersion
-                            },
-                            header = new List<dynamic>
-                            {
-                                new
-                                {
-                                    key = "Content-Type",
-                                    value = "application/json",
-                                    disabled = false,
-                                    description = new
-                                    {
-                                        content = "",
-                                        type = "text/markdown",
-                                        version = _options.Value.ApiVersion
-                                    },
-                                }
-                            },
-                            body = default(object)
-                        },
-                        response = new List<dynamic>(),
-                        protocolProfileBehavior = new { }
-                    };
-                    folder.item.Add(item);
-                }
-                collection.item.Add(folder);
-            }
+            foreach(var provider in _providers)
+                provider.Populate(baseUri, collection);
 
             return Ok(collection);
         }
+    }
+
+    public class MetaCollection
+    {
+        public dynamic info;
+        public string auth;
+        public dynamic protocolProfileBehavior;
+        public List<dynamic> item = new List<dynamic>();
+        public List<dynamic> @event = new List<dynamic>();
+        public List<dynamic> variable = new List<dynamic>();
     }
 }

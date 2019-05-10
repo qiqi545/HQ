@@ -45,8 +45,6 @@ namespace HQ.Platform.Operations
     {
         public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app)
         {
-            Bootstrap.EnsureInitialized();
-
             app.UseRequestProfiling();
             app.UseEnvironmentEndpoint();
 

@@ -21,6 +21,7 @@ using System.IO.Compression;
 using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Controllers;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
@@ -43,6 +44,7 @@ namespace HQ.Platform.Api
         {
             Bootstrap.EnsureInitialized();
 
+            services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
             services.Configure<PublicApiOptions>(config);
 
             services.AddCors();
