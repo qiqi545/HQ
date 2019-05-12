@@ -38,38 +38,40 @@ namespace Blowdart.UI
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
             services.AddSingleton(r => new LayoutRoot(r));
-            services.AddSingleton(r =>
-            {
-                var settings = r.GetRequiredService<UiSettings>();
-                var componentTypes = ResolveComponentTypes(r);
-                var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
-                var byName = componentTypes
-                    .Select(x => autoResolver.GetService(x) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>())
-                    .ToDictionary(k => k.Name ?? k.GetType().Name, StringComparer.OrdinalIgnoreCase);
-
-                return byName;
-            });
-            services.AddSingleton(r =>
-            {
-                var settings = r.GetRequiredService<UiSettings>();
-                var componentTypes = ResolveComponentTypes(r);
-                var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
-                var byType = componentTypes.ToDictionary(k => k, v =>
-                {
-                    return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>());
-                });
-                return byType;
-            });
+            services.AddSingleton(RegisterComponentsByName);
+            services.AddSingleton(RegisterComponentsByType);
 
             ConfigureServices?.Invoke(services);
+        }
+
+        private static Dictionary<Type, Func<UiComponent>> RegisterComponentsByType(IServiceProvider r)
+        {
+	        var settings = r.GetRequiredService<UiSettings>();
+	        var componentTypes = ResolveComponentTypes(r);
+	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+	        var byType = componentTypes.ToDictionary(k => k, v =>
+	        {
+		        return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>());
+	        });
+	        return byType;
+        }
+
+        private static Dictionary<string, Func<UiComponent>> RegisterComponentsByName(IServiceProvider r)
+        {
+	        var settings = r.GetRequiredService<UiSettings>();
+	        var componentTypes = ResolveComponentTypes(r);
+	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+			var byName = componentTypes
+		        .Select(x => new { Key = x.Name, Value = new Func<UiComponent>(() => autoResolver.GetService(x) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>()) })
+		        .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
+			return byName;
         }
 
         private static IEnumerable<Type> ResolveComponentTypes(IServiceProvider r)
         {
             var settings = r.GetRequiredService<UiSettings>();
             var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
-            var componentTypes = exportedTypes
-                .Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
+            var componentTypes = exportedTypes.Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
             return componentTypes;
         }
     }

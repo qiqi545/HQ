@@ -143,7 +143,15 @@ namespace Blowdart.UI.Tests
 				sb.AppendLine($"\t\t{{");
 				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", innerText, attr);");
 				sb.AppendLine($"\t\t}}");
-				
+
+				//
+				// Empty Declaration:
+				sb.AppendLine();
+				sb.AppendLine($"\t\tpublic static Ui {elementName}(this Ui ui, object attr)");
+				sb.AppendLine($"\t\t{{");
+				sb.AppendLine($"\t\t\treturn ui.Element(\"{element}\", null, attr);");
+				sb.AppendLine($"\t\t}}");
+
 				//
 				// Scoped:
 				sb.AppendLine();

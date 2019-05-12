@@ -2,12 +2,31 @@
 
 namespace Blowdart.UI.Web
 {
+
     // This should be code-genned.
     partial class HtmlExtensions
     {
-        #region span
+	    public static Ui Form(this Ui ui, Action<FormAttributes> action)
+	    {
+		    return ui.Element("form", new { }, x =>
+		    {
+			    var attributes = new FormAttributes();
+			    attributes.method = "post";
+			    action(attributes);
+		    });
+	    }
 
-        public static Ui BeginSpan(this Ui ui, object attr = null)
+	    public struct FormAttributes
+	    {
+		    public string method;
+	    }
+
+
+
+
+		#region span
+
+		public static Ui BeginSpan(this Ui ui, object attr = null)
         {
             ui.BeginElement("span", attr);
             return ui;

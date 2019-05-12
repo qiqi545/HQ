@@ -39,6 +39,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("address", innerText, attr);
 		}
 
+		public static Ui Address(this Ui ui, object attr)
+		{
+			return ui.Element("address", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginAddress();
@@ -114,6 +119,11 @@ namespace Blowdart.UI.Web
 		public static Ui Article(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("article", innerText, attr);
+		}
+
+		public static Ui Article(this Ui ui, object attr)
+		{
+			return ui.Element("article", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -193,6 +203,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("aside", innerText, attr);
 		}
 
+		public static Ui Aside(this Ui ui, object attr)
+		{
+			return ui.Element("aside", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginAside();
@@ -268,6 +283,11 @@ namespace Blowdart.UI.Web
 		public static Ui Blockquote(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("blockquote", innerText, attr);
+		}
+
+		public static Ui Blockquote(this Ui ui, object attr)
+		{
+			return ui.Element("blockquote", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -347,6 +367,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("canvas", innerText, attr);
 		}
 
+		public static Ui Canvas(this Ui ui, object attr)
+		{
+			return ui.Element("canvas", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginCanvas();
@@ -422,6 +447,11 @@ namespace Blowdart.UI.Web
 		public static Ui Dd(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("dd", innerText, attr);
+		}
+
+		public static Ui Dd(this Ui ui, object attr)
+		{
+			return ui.Element("dd", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -501,6 +531,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("div", innerText, attr);
 		}
 
+		public static Ui Div(this Ui ui, object attr)
+		{
+			return ui.Element("div", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginDiv();
@@ -576,6 +611,11 @@ namespace Blowdart.UI.Web
 		public static Ui Dl(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("dl", innerText, attr);
+		}
+
+		public static Ui Dl(this Ui ui, object attr)
+		{
+			return ui.Element("dl", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -655,6 +695,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("dt", innerText, attr);
 		}
 
+		public static Ui Dt(this Ui ui, object attr)
+		{
+			return ui.Element("dt", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginDt();
@@ -730,6 +775,11 @@ namespace Blowdart.UI.Web
 		public static Ui Fieldset(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("fieldset", innerText, attr);
+		}
+
+		public static Ui Fieldset(this Ui ui, object attr)
+		{
+			return ui.Element("fieldset", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -809,6 +859,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("figcaption", innerText, attr);
 		}
 
+		public static Ui Figcaption(this Ui ui, object attr)
+		{
+			return ui.Element("figcaption", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginFigcaption();
@@ -884,6 +939,11 @@ namespace Blowdart.UI.Web
 		public static Ui Figure(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("figure", innerText, attr);
+		}
+
+		public static Ui Figure(this Ui ui, object attr)
+		{
+			return ui.Element("figure", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -963,6 +1023,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("footer", innerText, attr);
 		}
 
+		public static Ui Footer(this Ui ui, object attr)
+		{
+			return ui.Element("footer", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginFooter();
@@ -1040,6 +1105,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("form", innerText, attr);
 		}
 
+		public static Ui Form(this Ui ui, object attr)
+		{
+			return ui.Element("form", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginForm();
@@ -1063,22 +1133,6 @@ namespace Blowdart.UI.Web
 		{
 			return ui.Element("form", attr, action);
 		}
-
-		public static Ui Form(this Ui ui, Action<FormAttributes> action)
-		{
-			return ui.Element("form", new { }, x =>
-			{
-				var attributes = new FormAttributes();
-				attributes.method = "post";
-				action(attributes);
-			});
-		}
-
-		public struct FormAttributes
-		{
-			public string method;
-		}
-		
 
 		/// <summary> This call is equivalent to: 
 		///	<code>
@@ -1131,6 +1185,11 @@ namespace Blowdart.UI.Web
 		public static Ui H1(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("h1", innerText, attr);
+		}
+
+		public static Ui H1(this Ui ui, object attr)
+		{
+			return ui.Element("h1", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1210,6 +1269,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("h2", innerText, attr);
 		}
 
+		public static Ui H2(this Ui ui, object attr)
+		{
+			return ui.Element("h2", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginH2();
@@ -1285,6 +1349,11 @@ namespace Blowdart.UI.Web
 		public static Ui H3(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("h3", innerText, attr);
+		}
+
+		public static Ui H3(this Ui ui, object attr)
+		{
+			return ui.Element("h3", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1364,6 +1433,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("h4", innerText, attr);
 		}
 
+		public static Ui H4(this Ui ui, object attr)
+		{
+			return ui.Element("h4", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginH4();
@@ -1439,6 +1513,11 @@ namespace Blowdart.UI.Web
 		public static Ui H5(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("h5", innerText, attr);
+		}
+
+		public static Ui H5(this Ui ui, object attr)
+		{
+			return ui.Element("h5", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1518,6 +1597,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("h6", innerText, attr);
 		}
 
+		public static Ui H6(this Ui ui, object attr)
+		{
+			return ui.Element("h6", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginH6();
@@ -1593,6 +1677,11 @@ namespace Blowdart.UI.Web
 		public static Ui Header(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("header", innerText, attr);
+		}
+
+		public static Ui Header(this Ui ui, object attr)
+		{
+			return ui.Element("header", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1672,6 +1761,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("hr", innerText, attr);
 		}
 
+		public static Ui Hr(this Ui ui, object attr)
+		{
+			return ui.Element("hr", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginHr();
@@ -1747,6 +1841,11 @@ namespace Blowdart.UI.Web
 		public static Ui Li(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("li", innerText, attr);
+		}
+
+		public static Ui Li(this Ui ui, object attr)
+		{
+			return ui.Element("li", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1826,6 +1925,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("main", innerText, attr);
 		}
 
+		public static Ui Main(this Ui ui, object attr)
+		{
+			return ui.Element("main", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginMain();
@@ -1901,6 +2005,11 @@ namespace Blowdart.UI.Web
 		public static Ui Nav(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("nav", innerText, attr);
+		}
+
+		public static Ui Nav(this Ui ui, object attr)
+		{
+			return ui.Element("nav", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -1980,6 +2089,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("noscript", innerText, attr);
 		}
 
+		public static Ui Noscript(this Ui ui, object attr)
+		{
+			return ui.Element("noscript", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginNoscript();
@@ -2055,6 +2169,11 @@ namespace Blowdart.UI.Web
 		public static Ui Ol(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("ol", innerText, attr);
+		}
+
+		public static Ui Ol(this Ui ui, object attr)
+		{
+			return ui.Element("ol", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2134,6 +2253,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("p", innerText, attr);
 		}
 
+		public static Ui P(this Ui ui, object attr)
+		{
+			return ui.Element("p", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginP();
@@ -2209,6 +2333,11 @@ namespace Blowdart.UI.Web
 		public static Ui Pre(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("pre", innerText, attr);
+		}
+
+		public static Ui Pre(this Ui ui, object attr)
+		{
+			return ui.Element("pre", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2288,6 +2417,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("section", innerText, attr);
 		}
 
+		public static Ui Section(this Ui ui, object attr)
+		{
+			return ui.Element("section", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginSection();
@@ -2363,6 +2497,11 @@ namespace Blowdart.UI.Web
 		public static Ui Table(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("table", innerText, attr);
+		}
+
+		public static Ui Table(this Ui ui, object attr)
+		{
+			return ui.Element("table", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
@@ -2442,6 +2581,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("tfoot", innerText, attr);
 		}
 
+		public static Ui Tfoot(this Ui ui, object attr)
+		{
+			return ui.Element("tfoot", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginTfoot();
@@ -2519,6 +2663,11 @@ namespace Blowdart.UI.Web
 			return ui.Element("ul", innerText, attr);
 		}
 
+		public static Ui Ul(this Ui ui, object attr)
+		{
+			return ui.Element("ul", null, attr);
+		}
+
 		/// <summary> This call is equivalent to: 
 		///	<code>
 		///		ui.BeginUl();
@@ -2594,6 +2743,11 @@ namespace Blowdart.UI.Web
 		public static Ui Video(this Ui ui, string innerText, object attr = null)
 		{
 			return ui.Element("video", innerText, attr);
+		}
+
+		public static Ui Video(this Ui ui, object attr)
+		{
+			return ui.Element("video", null, attr);
 		}
 
 		/// <summary> This call is equivalent to: 
