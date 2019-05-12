@@ -24,11 +24,11 @@ namespace HQ.Template
 
         public void ConfigureServices(IServiceCollection services)
         {
-#if (DocumentDb)
+#if DocumentDb
             services.AddHq(DatabaseType.DocumentDb, _configuration.GetSection("HQ"))
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<DocumentDbBatchOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
-#elif (SqlServer)
+#elif SqlServer
             services.AddHq(DatabaseType.SqlServer, _configuration.GetSection("HQ"))
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<SqlServerOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
@@ -37,6 +37,11 @@ namespace HQ.Template
                 .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #endif
+
+#if AppInsights
+                .AddApplicationInsightsTelemetry(_configuration.GetSection("HQ").GetSection("AppInsights"))
+#endif
+
                 .AddUi();
         }
 

@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(SolutionDir)..\build\package.props" />
-  <Import Project="$(SolutionDir)..\build\build.props" />
-  <Import Project="$(SolutionDir)..\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.io.</Description>
@@ -241,10 +241,6 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="TypeKitchen" Version="0.0.11-pre" />
     <PackageReference Include="xunit" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\_FORKS\fast-member\FastMember\FastMember.csproj" />
   </ItemGroup>
 
   <ItemGroup>

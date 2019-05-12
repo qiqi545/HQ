@@ -59,6 +59,13 @@
       "replaces": "7070",
       "description": "The port to use for HTTPS communication. The default is 7070."
     },
+    "appInsightsKey": {
+      "type": "parameter",
+      "datatype": "string",
+      "isRequired": false,
+      "replaces": "APP-INSIGHTS-KEY-REPLACE-ME",
+      "description": "This is your Azure AppInsights key. This will be used to configure the node with AppInsights telemetry."
+    },
     "DocumentDb": {
       "type": "computed",
       "value": "(db == \"cosmos-db\")"
@@ -78,6 +85,10 @@
     "Sqlite": {
       "type": "computed",
       "value": "(db == \"sqlite\")"
-    }
+    },
+    "AppInsights": {
+      "type": "computed",
+      "value":  "(appInsightsKey != null)" 
+    } 
   }
 }
