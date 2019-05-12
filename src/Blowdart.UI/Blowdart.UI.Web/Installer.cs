@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Builder;
@@ -26,6 +25,11 @@ namespace Blowdart.UI.Web
 
         public static IServiceCollection AddBlowdartUi(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
         {
+	        return AddBlowdartUi(services, env, false, uiAssemblies);
+        }
+
+        internal static IServiceCollection AddBlowdartUi(this IServiceCollection services, IHostingEnvironment env, bool standalone, params Assembly[] uiAssemblies)
+        {
             AddUiResources(services, env, uiAssemblies);
 
             services.AddHttpContextAccessor();
@@ -33,8 +37,8 @@ namespace Blowdart.UI.Web
 
             UiConfig.Initialize<HtmlSystem>(services);
             UiConfig.ConfigureServices?.Invoke(services);
-
-            return services;
+			
+			return services;
         }
 
         internal static IServiceCollection AddUiResources(this IServiceCollection services, params Assembly[] uiAssemblies)
@@ -89,6 +93,11 @@ namespace Blowdart.UI.Web
 
         public static void UseBlowdartUi(this IApplicationBuilder app, Action<LayoutRoot> layout)
         {
+			app.UseBlowdartUi(layout, false);
+        }
+
+        internal static void UseBlowdartUi(this IApplicationBuilder app, Action<LayoutRoot> layout, bool standalone)
+        {
             var serviceProvider = app.ApplicationServices;
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
 
@@ -96,7 +105,10 @@ namespace Blowdart.UI.Web
             if (options.Value.UseLogging)
                 loggerFactory?.AddProvider(new ServerLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
 
-            app.UseStaticFiles();
+            if (!standalone)
+				UiServer.BeforeStart(serviceProvider);
+
+			app.UseStaticFiles();
             app.Map("/~", x =>
             {
                 x.UseStaticFiles(new StaticFileOptions(new SharedOptions

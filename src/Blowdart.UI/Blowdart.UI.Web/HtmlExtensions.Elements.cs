@@ -124,6 +124,12 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        #endregion
-    }
+        public static Ui Img(this Ui ui, object attr)
+        {
+	        ui.Element("img", null, attr);
+	        return ui;
+        }
+
+		#endregion
+	}
 }

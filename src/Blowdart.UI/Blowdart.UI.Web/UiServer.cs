@@ -72,7 +72,7 @@ namespace Blowdart.UI.Web
             {
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
-			services.AddBlowdartUi(_env, uiAssemblies);
+			services.AddBlowdartUi(_env, Standalone, uiAssemblies);
 			_startup?.ExecuteMethod(nameof(ConfigureServices), services);
         }
 
@@ -91,7 +91,7 @@ namespace Blowdart.UI.Web
                 app.UseHttpsRedirection();
             }
            
-            app.UseBlowdartUi(_layout);
+            app.UseBlowdartUi(_layout, Standalone);
             _startup?.ExecuteMethod(nameof(Configure), app, env);
         }
 
@@ -228,32 +228,12 @@ namespace Blowdart.UI.Web
             // webHost.Run(); 
             using (webHost)
             {
-                webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
-                var serviceProvider = webHost.Services;
+	            var serviceProvider = webHost.Services;
+	            BeforeStart(serviceProvider);
 
-                var layout = serviceProvider.GetRequiredService<LayoutRoot>();
-                var meta = Caches.Introspection.IntrospectMeta();
-                var systems = Caches.Introspection.IntrospectSystems();
-
-				foreach (var handler in Handlers)
-                {
-	                layout.AddHandler(handler.Key, handler.Value);
-	                layout.AddMeta(handler.Key, meta[handler.Value]);
-
-	                if (!systems.TryGetValue(handler.Value, out var system))
-	                {
-		                if (!(serviceProvider.GetRequiredService<UiSystem>() is HtmlSystem html))
-			                throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
-
-		                system = html;
-	                }
-
-	                layout.AddSystem(handler.Key, system);
-                }
-
-				HandlersAreFinished();
-				
-                var service = serviceProvider.GetService<IHostingEnvironment>();
+				webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
+                
+				var service = serviceProvider.GetService<IHostingEnvironment>();
                 if (!serviceProvider.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
                 {
                     Console.WriteLine($"Hosting environment: {service.EnvironmentName}");
@@ -276,8 +256,49 @@ namespace Blowdart.UI.Web
                 webHost.StopAsync(cancellationToken).GetAwaiter().GetResult();
             }
         }
-		
-        private static void OnStarted(IWebHost webHost, IConfiguration config)
+
+		internal static void BeforeStart(IServiceProvider serviceProvider)
+		{
+			HandlersAreNotFinished();
+
+			var layout = serviceProvider.GetRequiredService<LayoutRoot>();
+			var meta = Caches.Introspection.IntrospectMeta();
+			var systems = Caches.Introspection.IntrospectSystems();
+
+			//
+			// IMGUI:
+			foreach (var handler in Handlers)
+			{
+				layout.AddHandler(handler.Key, handler.Value);
+				layout.AddMeta(handler.Key, meta[handler.Value]);
+
+				if (!systems.TryGetValue(handler.Value, out var system))
+				{
+					if (!(serviceProvider.GetRequiredService<UiSystem>() is HtmlSystem html))
+						throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+					system = html;
+				}
+
+				layout.AddSystem(handler.Key, system);
+			}
+
+			//
+			// Components:
+			foreach (var system in systems)
+			{
+				if (system.Key.DeclaringType == null)
+					continue;
+
+				if (system.Key.DeclaringType.IsSubclassOf(typeof(UiComponent)))
+				{
+					layout.AddSystem($"{nameof(UiComponent)}:{system.Key.DeclaringType.Name}", system.Value);
+				}
+			}
+			
+			HandlersAreFinished();
+		}
+
+		private static void OnStarted(IWebHost webHost, IConfiguration config)
         {
             var feature = webHost.ServerFeatures.Get<IServerAddressesFeature>();
             

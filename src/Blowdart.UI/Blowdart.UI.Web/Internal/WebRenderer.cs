@@ -69,7 +69,7 @@ namespace Blowdart.UI.Web.Internal
 	            if (!(system is HtmlSystem htmlSystem))
 		            throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
-				renderTarget.Begin(htmlSystem, WebUiContext.Build(context));
+				renderTarget.Begin(system, WebUiContext.Build(context));
 				renderAction(renderTarget);
                 renderTarget.End();
 
