@@ -9,7 +9,7 @@ namespace Blowdart.UI.Web.Bootstrap
         {
             const string components = @"
 <!-- Bootstrap -->
-<link rel=""stylesheet"" type=""text/css"" href=""~/lib/bootstrap/bootstrap-min.css"">";
+<link rel=""stylesheet"" type=""text/css"" href=""~/lib/bootstrap/dist/css/bootstrap.min.css"">";
             return components;
         }
 
@@ -17,7 +17,7 @@ namespace Blowdart.UI.Web.Bootstrap
         {
 	        const string scripts = @"
 <!-- Bootstrap -->
-<script type=""text/javascript"" src=""~/lib/bootstrap/dist/bootstrap.min.js""></script>";
+<script type=""text/javascript"" src=""~/lib/bootstrap/dist/js/bootstrap.min.js""></script>";
             return scripts;
         }
     }

@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Web.Internal;
 using Microsoft.AspNetCore.Builder;
@@ -65,7 +66,7 @@ namespace Blowdart.UI.Web
             if (ProviderContainer == null)
                 fileProviders.Add(RegisterUiAssembly(typeof(UiServer).Assembly));
 
-            foreach (var uiAssembly in uiAssemblies)
+            foreach (var uiAssembly in uiAssemblies.Distinct())
             {
 	            if (uiAssembly == null)
 		            continue;
