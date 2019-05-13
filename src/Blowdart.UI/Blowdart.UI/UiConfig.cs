@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using TypeKitchen;
 
 namespace Blowdart.UI
 {
@@ -26,7 +27,7 @@ namespace Blowdart.UI
                     settings.AutoRegisterComponentAssemblies();
 
                 if (settings.DefaultSystem == null)
-                    settings.DefaultSystem = Caches.ActivatorCache.Create<TSystem>();
+                    settings.DefaultSystem = Instancing.CreateInstance<TSystem>();
 
                 if (settings.Data == null)
                     settings.Data = new InvokeUiData(r);
@@ -51,7 +52,7 @@ namespace Blowdart.UI
 	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
 	        var byType = componentTypes.ToDictionary(k => k, v =>
 	        {
-		        return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>());
+		        return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Instancing.CreateInstance<UiComponent>());
 	        });
 	        return byType;
         }
@@ -62,7 +63,7 @@ namespace Blowdart.UI
 	        var componentTypes = ResolveComponentTypes(r);
 	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
 			var byName = componentTypes
-		        .Select(x => new { Key = x.Name, Value = new Func<UiComponent>(() => autoResolver.GetService(x) as UiComponent ?? Caches.ActivatorCache.Create<UiComponent>()) })
+		        .Select(x => new { Key = x.Name, Value = new Func<UiComponent>(() => autoResolver.GetService(x) as UiComponent ?? Instancing.CreateInstance<UiComponent>()) })
 		        .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
 			return byName;
         }

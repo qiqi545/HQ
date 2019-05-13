@@ -502,13 +502,13 @@ namespace Blowdart.UI.Internal
         {
             _container = container;
         }
-        public object Create(ActionContext context, Type controllerType)
+        public object CreateInstance(ActionContext context, Type controllerType)
         {
             var controller = _container.Resolve(controllerType);
             return controller;
         }
 
-        public object Create(ControllerContext context)
+        public object CreateInstance(ControllerContext context)
         {
             var controllerType = context.ActionDescriptor.ControllerTypeInfo.AsType();
             var controller = _container.Resolve(controllerType);

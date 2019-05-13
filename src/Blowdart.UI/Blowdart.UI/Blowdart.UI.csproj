@@ -14,7 +14,10 @@
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.2.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-    <PackageReference Include="TypeKitchen" Version="0.0.14-pre" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

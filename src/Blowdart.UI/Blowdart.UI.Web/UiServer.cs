@@ -73,10 +73,11 @@ namespace Blowdart.UI.Web
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
 			services.AddBlowdartUi(_env, Standalone, uiAssemblies);
-			_startup?.ExecuteMethod(nameof(ConfigureServices), services);
+
+			_startup?.ExecuteMethod(services.BuildServiceProvider(), nameof(ConfigureServices), services);
         }
 
-        private static bool Standalone => _startup == null;
+        private static bool Standalone;
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -92,7 +93,7 @@ namespace Blowdart.UI.Web
             }
            
             app.UseBlowdartUi(_layout, Standalone);
-            _startup?.ExecuteMethod(nameof(Configure), app, env);
+            _startup?.ExecuteMethod(app.ApplicationServices, nameof(Configure), app, env);
         }
 
 		#region Start Methods
@@ -107,7 +108,17 @@ namespace Blowdart.UI.Web
             Start(args, layout);
         }
 
-        public static void Start<TStartup>(string[] args, string filePath = "ui.csx")
+		public static void Start<TStartup>(string[] args)
+		{
+			_callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+			if (_callerType == null)
+				throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			_startup = typeof(TStartup);
+			Start(args);
+		}
+
+		public static void Start<TStartup>(string[] args, string filePath = "ui.csx")
         {
 	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
 	        if (_callerType == null)
@@ -192,7 +203,9 @@ namespace Blowdart.UI.Web
 		#endregion
 
 		private static void StartServer(string[] args)
-        {
+		{
+			Standalone = true;
+
 	        Masthead();
 
             var config = new ConfigurationBuilder()

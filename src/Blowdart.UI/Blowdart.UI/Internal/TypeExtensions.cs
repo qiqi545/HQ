@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Primitives;
+using TypeKitchen;
 
 namespace Blowdart.UI.Internal
 {
@@ -22,20 +23,12 @@ namespace Blowdart.UI.Internal
             Instances = new Dictionary<Type, object>();
         }
 
-        public static object ExecuteMethod(this Type type, string name, params object[] args)
+        public static object ExecuteMethod(this Type type, IServiceProvider serviceProvider, string name, params object[] args)
         {
-            var executor = GetExecutor(type, name, args);
-
-            if (!SameMethodParameters(executor, args))
-            {
-                throw new InvalidOperationException(
-                    $"The intended method was '{name}({string.Join(", ", args.Select(x => x.GetType().Name))})' but " +
-                    $"the provided instance's method is '{name}({string.Join(", ", executor.MethodParameters.Select(x => x.ParameterType.Name))})' ");
-            }
-
             if (!Instances.TryGetValue(type, out var instance))
-                Instances.Add(type, instance = Caches.ActivatorCache.Create(type));
-            return executor.Execute(instance, args);
+				Instances.Add(type, instance = Instancing.CreateInstance(type, serviceProvider));
+
+			return instance.ExecuteMethod(name, args);
         }
 
         public static object ExecuteMethod(this object instanceOfType, string name, params object[] args)
