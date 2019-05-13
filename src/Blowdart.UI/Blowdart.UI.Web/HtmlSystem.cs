@@ -121,7 +121,7 @@ namespace Blowdart.UI.Web
 
             //
             // Routing:
-            action.MethodName = IsRootPath(requestUri, options) ? callee?.Name ?? settings.DefaultPageMethodName : requestUri.Segments.FirstOrDefault();
+            action.MethodName = IsRootPath(requestUri, options) ? callee?.Name ?? settings.DefaultPageMethodName : requestUri.Segments.LastOrDefault();
             
             //
             // Execution:

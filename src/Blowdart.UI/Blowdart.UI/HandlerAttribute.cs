@@ -6,12 +6,10 @@ namespace Blowdart.UI
     public class HandlerAttribute : Attribute
     {
         public string Template { get; }
-        public string Name { get; }
         
-        public HandlerAttribute(string template, string name)
+        public HandlerAttribute(string template)
         {
             Template = template;
-            Name = name;
         }
-    }
+	}
 }
