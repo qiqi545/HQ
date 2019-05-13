@@ -2799,6 +2799,2714 @@ namespace Blowdart.UI.Web
 		}
 
 		#endregion
+
+		#region a
+
+		public static Ui BeginA(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), string download = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string href = default(string), string hreflang = default(string), string id = default(string), string itemprop = default(string), string lang = default(string), string media = default(string), string ping = default(string), string referrerpolicy = default(string), string rel = default(string), string shape = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string target = default(string), string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("a", new { download, href, hreflang, media, ping, referrerpolicy, rel, shape, target, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginA(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("a", attr);
+		}
+
+		public static Ui BeginA(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("a", attributes);
+		}
+
+		public static Ui EndA(this Ui ui)
+		{
+			return ui.EndElement("a");
+		}
+
+		public static Ui A(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("a", innerText, attr);
+		}
+
+		public static Ui A(this Ui ui, object attr)
+		{
+			return ui.Element("a", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginA();
+		///		action();
+		///		ui.EndA();
+		///	</code>
+		/// </summary>
+		public static Ui A(this Ui ui, Action action)
+		{
+			return ui.Element("a", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginA(attr);
+		///		action();
+		///		ui.EndA();
+		///	</code>
+		/// </summary>
+		public static Ui A(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("a", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginA();
+		///		action(ui);
+		///		ui.EndA();
+		///	</code>
+		/// </summary>
+		public static Ui A(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("a", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginA(attr);
+		///		action(ui);
+		///		ui.EndA();
+		///	</code>
+		/// </summary>
+		public static Ui A(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("a", attr, action);
+		}
+
+		#endregion
+
+		#region abbr
+
+		public static Ui BeginAbbr(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("abbr", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginAbbr(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("abbr", attr);
+		}
+
+		public static Ui BeginAbbr(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("abbr", attributes);
+		}
+
+		public static Ui EndAbbr(this Ui ui)
+		{
+			return ui.EndElement("abbr");
+		}
+
+		public static Ui Abbr(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("abbr", innerText, attr);
+		}
+
+		public static Ui Abbr(this Ui ui, object attr)
+		{
+			return ui.Element("abbr", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAbbr();
+		///		action();
+		///		ui.EndAbbr();
+		///	</code>
+		/// </summary>
+		public static Ui Abbr(this Ui ui, Action action)
+		{
+			return ui.Element("abbr", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAbbr(attr);
+		///		action();
+		///		ui.EndAbbr();
+		///	</code>
+		/// </summary>
+		public static Ui Abbr(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("abbr", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAbbr();
+		///		action(ui);
+		///		ui.EndAbbr();
+		///	</code>
+		/// </summary>
+		public static Ui Abbr(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("abbr", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAbbr(attr);
+		///		action(ui);
+		///		ui.EndAbbr();
+		///	</code>
+		/// </summary>
+		public static Ui Abbr(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("abbr", attr, action);
+		}
+
+		#endregion
+
+		#region acronym
+
+		public static Ui BeginAcronym(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("acronym", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginAcronym(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("acronym", attr);
+		}
+
+		public static Ui BeginAcronym(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("acronym", attributes);
+		}
+
+		public static Ui EndAcronym(this Ui ui)
+		{
+			return ui.EndElement("acronym");
+		}
+
+		public static Ui Acronym(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("acronym", innerText, attr);
+		}
+
+		public static Ui Acronym(this Ui ui, object attr)
+		{
+			return ui.Element("acronym", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAcronym();
+		///		action();
+		///		ui.EndAcronym();
+		///	</code>
+		/// </summary>
+		public static Ui Acronym(this Ui ui, Action action)
+		{
+			return ui.Element("acronym", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAcronym(attr);
+		///		action();
+		///		ui.EndAcronym();
+		///	</code>
+		/// </summary>
+		public static Ui Acronym(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("acronym", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAcronym();
+		///		action(ui);
+		///		ui.EndAcronym();
+		///	</code>
+		/// </summary>
+		public static Ui Acronym(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("acronym", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginAcronym(attr);
+		///		action(ui);
+		///		ui.EndAcronym();
+		///	</code>
+		/// </summary>
+		public static Ui Acronym(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("acronym", attr, action);
+		}
+
+		#endregion
+
+		#region b
+
+		public static Ui BeginB(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("b", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginB(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("b", attr);
+		}
+
+		public static Ui BeginB(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("b", attributes);
+		}
+
+		public static Ui EndB(this Ui ui)
+		{
+			return ui.EndElement("b");
+		}
+
+		public static Ui B(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("b", innerText, attr);
+		}
+
+		public static Ui B(this Ui ui, object attr)
+		{
+			return ui.Element("b", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginB();
+		///		action();
+		///		ui.EndB();
+		///	</code>
+		/// </summary>
+		public static Ui B(this Ui ui, Action action)
+		{
+			return ui.Element("b", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginB(attr);
+		///		action();
+		///		ui.EndB();
+		///	</code>
+		/// </summary>
+		public static Ui B(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("b", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginB();
+		///		action(ui);
+		///		ui.EndB();
+		///	</code>
+		/// </summary>
+		public static Ui B(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("b", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginB(attr);
+		///		action(ui);
+		///		ui.EndB();
+		///	</code>
+		/// </summary>
+		public static Ui B(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("b", attr, action);
+		}
+
+		#endregion
+
+		#region bdo
+
+		public static Ui BeginBdo(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("bdo", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginBdo(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("bdo", attr);
+		}
+
+		public static Ui BeginBdo(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("bdo", attributes);
+		}
+
+		public static Ui EndBdo(this Ui ui)
+		{
+			return ui.EndElement("bdo");
+		}
+
+		public static Ui Bdo(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("bdo", innerText, attr);
+		}
+
+		public static Ui Bdo(this Ui ui, object attr)
+		{
+			return ui.Element("bdo", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBdo();
+		///		action();
+		///		ui.EndBdo();
+		///	</code>
+		/// </summary>
+		public static Ui Bdo(this Ui ui, Action action)
+		{
+			return ui.Element("bdo", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBdo(attr);
+		///		action();
+		///		ui.EndBdo();
+		///	</code>
+		/// </summary>
+		public static Ui Bdo(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("bdo", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBdo();
+		///		action(ui);
+		///		ui.EndBdo();
+		///	</code>
+		/// </summary>
+		public static Ui Bdo(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("bdo", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBdo(attr);
+		///		action(ui);
+		///		ui.EndBdo();
+		///	</code>
+		/// </summary>
+		public static Ui Bdo(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("bdo", attr, action);
+		}
+
+		#endregion
+
+		#region big
+
+		public static Ui BeginBig(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("big", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginBig(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("big", attr);
+		}
+
+		public static Ui BeginBig(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("big", attributes);
+		}
+
+		public static Ui EndBig(this Ui ui)
+		{
+			return ui.EndElement("big");
+		}
+
+		public static Ui Big(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("big", innerText, attr);
+		}
+
+		public static Ui Big(this Ui ui, object attr)
+		{
+			return ui.Element("big", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBig();
+		///		action();
+		///		ui.EndBig();
+		///	</code>
+		/// </summary>
+		public static Ui Big(this Ui ui, Action action)
+		{
+			return ui.Element("big", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBig(attr);
+		///		action();
+		///		ui.EndBig();
+		///	</code>
+		/// </summary>
+		public static Ui Big(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("big", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBig();
+		///		action(ui);
+		///		ui.EndBig();
+		///	</code>
+		/// </summary>
+		public static Ui Big(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("big", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBig(attr);
+		///		action(ui);
+		///		ui.EndBig();
+		///	</code>
+		/// </summary>
+		public static Ui Big(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("big", attr, action);
+		}
+
+		#endregion
+
+		#region br
+
+		public static Ui BeginBr(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("br", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginBr(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("br", attr);
+		}
+
+		public static Ui BeginBr(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("br", attributes);
+		}
+
+		public static Ui EndBr(this Ui ui)
+		{
+			return ui.EndElement("br");
+		}
+
+		public static Ui Br(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("br", innerText, attr);
+		}
+
+		public static Ui Br(this Ui ui, object attr)
+		{
+			return ui.Element("br", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBr();
+		///		action();
+		///		ui.EndBr();
+		///	</code>
+		/// </summary>
+		public static Ui Br(this Ui ui, Action action)
+		{
+			return ui.Element("br", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBr(attr);
+		///		action();
+		///		ui.EndBr();
+		///	</code>
+		/// </summary>
+		public static Ui Br(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("br", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBr();
+		///		action(ui);
+		///		ui.EndBr();
+		///	</code>
+		/// </summary>
+		public static Ui Br(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("br", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginBr(attr);
+		///		action(ui);
+		///		ui.EndBr();
+		///	</code>
+		/// </summary>
+		public static Ui Br(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("br", attr, action);
+		}
+
+		#endregion
+
+		#region button
+
+		public static Ui BeginButton(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), string autofocus = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), string formaction = default(string), bool formnovalidate = default(bool), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string type = default(string), string value = default(string))
+		{
+			return ui.BeginElement("button", new { disabled, formnovalidate, autofocus, @for, formaction, name, type, value, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginButton(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("button", attr);
+		}
+
+		public static Ui BeginButton(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("button", attributes);
+		}
+
+		public static Ui EndButton(this Ui ui)
+		{
+			return ui.EndElement("button");
+		}
+
+		/*
+		public static Ui Button(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("button", innerText, attr);
+		}
+		*/
+
+		public static Ui Button(this Ui ui, object attr)
+		{
+			return ui.Element("button", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginButton();
+		///		action();
+		///		ui.EndButton();
+		///	</code>
+		/// </summary>
+		public static Ui Button(this Ui ui, Action action)
+		{
+			return ui.Element("button", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginButton(attr);
+		///		action();
+		///		ui.EndButton();
+		///	</code>
+		/// </summary>
+		public static Ui Button(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("button", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginButton();
+		///		action(ui);
+		///		ui.EndButton();
+		///	</code>
+		/// </summary>
+		public static Ui Button(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("button", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginButton(attr);
+		///		action(ui);
+		///		ui.EndButton();
+		///	</code>
+		/// </summary>
+		public static Ui Button(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("button", attr, action);
+		}
+
+		#endregion
+
+		#region cite
+
+		public static Ui BeginCite(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("cite", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginCite(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("cite", attr);
+		}
+
+		public static Ui BeginCite(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("cite", attributes);
+		}
+
+		public static Ui EndCite(this Ui ui)
+		{
+			return ui.EndElement("cite");
+		}
+
+		public static Ui Cite(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("cite", innerText, attr);
+		}
+
+		public static Ui Cite(this Ui ui, object attr)
+		{
+			return ui.Element("cite", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCite();
+		///		action();
+		///		ui.EndCite();
+		///	</code>
+		/// </summary>
+		public static Ui Cite(this Ui ui, Action action)
+		{
+			return ui.Element("cite", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCite(attr);
+		///		action();
+		///		ui.EndCite();
+		///	</code>
+		/// </summary>
+		public static Ui Cite(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("cite", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCite();
+		///		action(ui);
+		///		ui.EndCite();
+		///	</code>
+		/// </summary>
+		public static Ui Cite(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("cite", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCite(attr);
+		///		action(ui);
+		///		ui.EndCite();
+		///	</code>
+		/// </summary>
+		public static Ui Cite(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("cite", attr, action);
+		}
+
+		#endregion
+
+		#region code
+
+		public static Ui BeginCode(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("code", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginCode(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("code", attr);
+		}
+
+		public static Ui BeginCode(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("code", attributes);
+		}
+
+		public static Ui EndCode(this Ui ui)
+		{
+			return ui.EndElement("code");
+		}
+
+		public static Ui Code(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("code", innerText, attr);
+		}
+
+		public static Ui Code(this Ui ui, object attr)
+		{
+			return ui.Element("code", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCode();
+		///		action();
+		///		ui.EndCode();
+		///	</code>
+		/// </summary>
+		public static Ui Code(this Ui ui, Action action)
+		{
+			return ui.Element("code", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCode(attr);
+		///		action();
+		///		ui.EndCode();
+		///	</code>
+		/// </summary>
+		public static Ui Code(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("code", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCode();
+		///		action(ui);
+		///		ui.EndCode();
+		///	</code>
+		/// </summary>
+		public static Ui Code(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("code", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginCode(attr);
+		///		action(ui);
+		///		ui.EndCode();
+		///	</code>
+		/// </summary>
+		public static Ui Code(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("code", attr, action);
+		}
+
+		#endregion
+
+		#region dfn
+
+		public static Ui BeginDfn(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("dfn", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginDfn(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("dfn", attr);
+		}
+
+		public static Ui BeginDfn(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("dfn", attributes);
+		}
+
+		public static Ui EndDfn(this Ui ui)
+		{
+			return ui.EndElement("dfn");
+		}
+
+		public static Ui Dfn(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("dfn", innerText, attr);
+		}
+
+		public static Ui Dfn(this Ui ui, object attr)
+		{
+			return ui.Element("dfn", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDfn();
+		///		action();
+		///		ui.EndDfn();
+		///	</code>
+		/// </summary>
+		public static Ui Dfn(this Ui ui, Action action)
+		{
+			return ui.Element("dfn", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDfn(attr);
+		///		action();
+		///		ui.EndDfn();
+		///	</code>
+		/// </summary>
+		public static Ui Dfn(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("dfn", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDfn();
+		///		action(ui);
+		///		ui.EndDfn();
+		///	</code>
+		/// </summary>
+		public static Ui Dfn(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("dfn", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginDfn(attr);
+		///		action(ui);
+		///		ui.EndDfn();
+		///	</code>
+		/// </summary>
+		public static Ui Dfn(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("dfn", attr, action);
+		}
+
+		#endregion
+
+		#region em
+
+		public static Ui BeginEm(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("em", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginEm(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("em", attr);
+		}
+
+		public static Ui BeginEm(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("em", attributes);
+		}
+
+		public static Ui EndEm(this Ui ui)
+		{
+			return ui.EndElement("em");
+		}
+
+		public static Ui Em(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("em", innerText, attr);
+		}
+
+		public static Ui Em(this Ui ui, object attr)
+		{
+			return ui.Element("em", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginEm();
+		///		action();
+		///		ui.EndEm();
+		///	</code>
+		/// </summary>
+		public static Ui Em(this Ui ui, Action action)
+		{
+			return ui.Element("em", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginEm(attr);
+		///		action();
+		///		ui.EndEm();
+		///	</code>
+		/// </summary>
+		public static Ui Em(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("em", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginEm();
+		///		action(ui);
+		///		ui.EndEm();
+		///	</code>
+		/// </summary>
+		public static Ui Em(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("em", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginEm(attr);
+		///		action(ui);
+		///		ui.EndEm();
+		///	</code>
+		/// </summary>
+		public static Ui Em(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("em", attr, action);
+		}
+
+		#endregion
+
+		#region i
+
+		public static Ui BeginI(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("i", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginI(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("i", attr);
+		}
+
+		public static Ui BeginI(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("i", attributes);
+		}
+
+		public static Ui EndI(this Ui ui)
+		{
+			return ui.EndElement("i");
+		}
+
+		public static Ui I(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("i", innerText, attr);
+		}
+
+		public static Ui I(this Ui ui, object attr)
+		{
+			return ui.Element("i", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginI();
+		///		action();
+		///		ui.EndI();
+		///	</code>
+		/// </summary>
+		public static Ui I(this Ui ui, Action action)
+		{
+			return ui.Element("i", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginI(attr);
+		///		action();
+		///		ui.EndI();
+		///	</code>
+		/// </summary>
+		public static Ui I(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("i", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginI();
+		///		action(ui);
+		///		ui.EndI();
+		///	</code>
+		/// </summary>
+		public static Ui I(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("i", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginI(attr);
+		///		action(ui);
+		///		ui.EndI();
+		///	</code>
+		/// </summary>
+		public static Ui I(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("i", attr, action);
+		}
+
+		#endregion
+
+		#region img
+
+		public static Ui BeginImg(this Ui ui, string @class = default(string), string accesskey = default(string), string align = default(string), string alt = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string crossorigin = default(string), string decoding = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string importance = default(string), string intrinsicsize = default(string), string itemprop = default(string), string lang = default(string), string loading = default(string), string referrerpolicy = default(string), string sizes = default(string), string slot = default(string), string spellcheck = default(string), Uri src = default(Uri), string srcset = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string usemap = default(string), string width = default(string))
+		{
+			return ui.BeginElement("img", new { align, alt, crossorigin, decoding, height, importance, intrinsicsize, loading, referrerpolicy, sizes, src, srcset, usemap, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginImg(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("img", attr);
+		}
+
+		public static Ui BeginImg(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("img", attributes);
+		}
+
+		public static Ui EndImg(this Ui ui)
+		{
+			return ui.EndElement("img");
+		}
+
+		public static Ui Img(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("img", innerText, attr);
+		}
+
+		public static Ui Img(this Ui ui, object attr)
+		{
+			return ui.Element("img", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginImg();
+		///		action();
+		///		ui.EndImg();
+		///	</code>
+		/// </summary>
+		public static Ui Img(this Ui ui, Action action)
+		{
+			return ui.Element("img", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginImg(attr);
+		///		action();
+		///		ui.EndImg();
+		///	</code>
+		/// </summary>
+		public static Ui Img(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("img", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginImg();
+		///		action(ui);
+		///		ui.EndImg();
+		///	</code>
+		/// </summary>
+		public static Ui Img(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("img", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginImg(attr);
+		///		action(ui);
+		///		ui.EndImg();
+		///	</code>
+		/// </summary>
+		public static Ui Img(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("img", attr, action);
+		}
+
+		#endregion
+
+		#region input
+
+		public static Ui BeginInput(this Ui ui, bool @checked = default(bool), string @class = default(string), string @for = default(string), bool @readonly = default(bool), string accept = default(string), string accesskey = default(string), string alt = default(string), string autocapitalize = default(string), string autocomplete = default(string), string autofocus = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), string dirname = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), string formaction = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string list = default(string), string max = default(string), string maxlength = default(string), string min = default(string), string minlength = default(string), string multiple = default(string), string name = default(string), string pattern = default(string), string placeholder = default(string), string required = default(string), string size = default(string), string slot = default(string), string spellcheck = default(string), Uri src = default(Uri), string step = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string type = default(string), string usemap = default(string), string value = default(string), string width = default(string))
+		{
+			return ui.BeginElement("input", new { @checked, disabled, @readonly, accept, alt, autocomplete, autofocus, dirname, @for, formaction, height, list, max, maxlength, minlength, min, multiple, name, pattern, placeholder, required, size, src, step, type, usemap, value, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginInput(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("input", attr);
+		}
+
+		public static Ui BeginInput(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("input", attributes);
+		}
+
+		public static Ui EndInput(this Ui ui)
+		{
+			return ui.EndElement("input");
+		}
+
+		public static Ui Input(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("input", innerText, attr);
+		}
+
+		public static Ui Input(this Ui ui, object attr)
+		{
+			return ui.Element("input", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginInput();
+		///		action();
+		///		ui.EndInput();
+		///	</code>
+		/// </summary>
+		public static Ui Input(this Ui ui, Action action)
+		{
+			return ui.Element("input", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginInput(attr);
+		///		action();
+		///		ui.EndInput();
+		///	</code>
+		/// </summary>
+		public static Ui Input(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("input", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginInput();
+		///		action(ui);
+		///		ui.EndInput();
+		///	</code>
+		/// </summary>
+		public static Ui Input(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("input", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginInput(attr);
+		///		action(ui);
+		///		ui.EndInput();
+		///	</code>
+		/// </summary>
+		public static Ui Input(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("input", attr, action);
+		}
+
+		#endregion
+
+		#region kbd
+
+		public static Ui BeginKbd(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("kbd", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginKbd(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("kbd", attr);
+		}
+
+		public static Ui BeginKbd(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("kbd", attributes);
+		}
+
+		public static Ui EndKbd(this Ui ui)
+		{
+			return ui.EndElement("kbd");
+		}
+
+		public static Ui Kbd(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("kbd", innerText, attr);
+		}
+
+		public static Ui Kbd(this Ui ui, object attr)
+		{
+			return ui.Element("kbd", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginKbd();
+		///		action();
+		///		ui.EndKbd();
+		///	</code>
+		/// </summary>
+		public static Ui Kbd(this Ui ui, Action action)
+		{
+			return ui.Element("kbd", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginKbd(attr);
+		///		action();
+		///		ui.EndKbd();
+		///	</code>
+		/// </summary>
+		public static Ui Kbd(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("kbd", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginKbd();
+		///		action(ui);
+		///		ui.EndKbd();
+		///	</code>
+		/// </summary>
+		public static Ui Kbd(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("kbd", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginKbd(attr);
+		///		action(ui);
+		///		ui.EndKbd();
+		///	</code>
+		/// </summary>
+		public static Ui Kbd(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("kbd", attr, action);
+		}
+
+		#endregion
+
+		#region label
+
+		public static Ui BeginLabel(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("label", new { @for, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginLabel(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("label", attr);
+		}
+
+		public static Ui BeginLabel(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("label", attributes);
+		}
+
+		public static Ui EndLabel(this Ui ui)
+		{
+			return ui.EndElement("label");
+		}
+
+		public static Ui Label(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("label", innerText, attr);
+		}
+
+		public static Ui Label(this Ui ui, object attr)
+		{
+			return ui.Element("label", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLabel();
+		///		action();
+		///		ui.EndLabel();
+		///	</code>
+		/// </summary>
+		public static Ui Label(this Ui ui, Action action)
+		{
+			return ui.Element("label", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLabel(attr);
+		///		action();
+		///		ui.EndLabel();
+		///	</code>
+		/// </summary>
+		public static Ui Label(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("label", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLabel();
+		///		action(ui);
+		///		ui.EndLabel();
+		///	</code>
+		/// </summary>
+		public static Ui Label(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("label", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginLabel(attr);
+		///		action(ui);
+		///		ui.EndLabel();
+		///	</code>
+		/// </summary>
+		public static Ui Label(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("label", attr, action);
+		}
+
+		#endregion
+
+		#region map
+
+		public static Ui BeginMap(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("map", new { name, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginMap(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("map", attr);
+		}
+
+		public static Ui BeginMap(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("map", attributes);
+		}
+
+		public static Ui EndMap(this Ui ui)
+		{
+			return ui.EndElement("map");
+		}
+
+		public static Ui Map(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("map", innerText, attr);
+		}
+
+		public static Ui Map(this Ui ui, object attr)
+		{
+			return ui.Element("map", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMap();
+		///		action();
+		///		ui.EndMap();
+		///	</code>
+		/// </summary>
+		public static Ui Map(this Ui ui, Action action)
+		{
+			return ui.Element("map", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMap(attr);
+		///		action();
+		///		ui.EndMap();
+		///	</code>
+		/// </summary>
+		public static Ui Map(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("map", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMap();
+		///		action(ui);
+		///		ui.EndMap();
+		///	</code>
+		/// </summary>
+		public static Ui Map(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("map", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginMap(attr);
+		///		action(ui);
+		///		ui.EndMap();
+		///	</code>
+		/// </summary>
+		public static Ui Map(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("map", attr, action);
+		}
+
+		#endregion
+
+		#region object
+
+		public static Ui BeginObject(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string data = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), string height = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string type = default(string), string usemap = default(string), string width = default(string))
+		{
+			return ui.BeginElement("object", new { data, @for, height, name, type, usemap, width, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginObject(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("object", attr);
+		}
+
+		public static Ui BeginObject(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("object", attributes);
+		}
+
+		public static Ui EndObject(this Ui ui)
+		{
+			return ui.EndElement("object");
+		}
+
+		public static Ui Object(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("object", innerText, attr);
+		}
+
+		public static Ui Object(this Ui ui, object attr)
+		{
+			return ui.Element("object", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginObject();
+		///		action();
+		///		ui.EndObject();
+		///	</code>
+		/// </summary>
+		public static Ui Object(this Ui ui, Action action)
+		{
+			return ui.Element("object", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginObject(attr);
+		///		action();
+		///		ui.EndObject();
+		///	</code>
+		/// </summary>
+		public static Ui Object(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("object", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginObject();
+		///		action(ui);
+		///		ui.EndObject();
+		///	</code>
+		/// </summary>
+		public static Ui Object(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("object", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginObject(attr);
+		///		action(ui);
+		///		ui.EndObject();
+		///	</code>
+		/// </summary>
+		public static Ui Object(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("object", attr, action);
+		}
+
+		#endregion
+
+		#region output
+
+		public static Ui BeginOutput(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string name = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("output", new { @for, name, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginOutput(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("output", attr);
+		}
+
+		public static Ui BeginOutput(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("output", attributes);
+		}
+
+		public static Ui EndOutput(this Ui ui)
+		{
+			return ui.EndElement("output");
+		}
+
+		public static Ui Output(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("output", innerText, attr);
+		}
+
+		public static Ui Output(this Ui ui, object attr)
+		{
+			return ui.Element("output", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOutput();
+		///		action();
+		///		ui.EndOutput();
+		///	</code>
+		/// </summary>
+		public static Ui Output(this Ui ui, Action action)
+		{
+			return ui.Element("output", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOutput(attr);
+		///		action();
+		///		ui.EndOutput();
+		///	</code>
+		/// </summary>
+		public static Ui Output(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("output", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOutput();
+		///		action(ui);
+		///		ui.EndOutput();
+		///	</code>
+		/// </summary>
+		public static Ui Output(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("output", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginOutput(attr);
+		///		action(ui);
+		///		ui.EndOutput();
+		///	</code>
+		/// </summary>
+		public static Ui Output(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("output", attr, action);
+		}
+
+		#endregion
+
+		#region q
+
+		public static Ui BeginQ(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), string cite = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("q", new { cite, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginQ(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("q", attr);
+		}
+
+		public static Ui BeginQ(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("q", attributes);
+		}
+
+		public static Ui EndQ(this Ui ui)
+		{
+			return ui.EndElement("q");
+		}
+
+		public static Ui Q(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("q", innerText, attr);
+		}
+
+		public static Ui Q(this Ui ui, object attr)
+		{
+			return ui.Element("q", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginQ();
+		///		action();
+		///		ui.EndQ();
+		///	</code>
+		/// </summary>
+		public static Ui Q(this Ui ui, Action action)
+		{
+			return ui.Element("q", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginQ(attr);
+		///		action();
+		///		ui.EndQ();
+		///	</code>
+		/// </summary>
+		public static Ui Q(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("q", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginQ();
+		///		action(ui);
+		///		ui.EndQ();
+		///	</code>
+		/// </summary>
+		public static Ui Q(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("q", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginQ(attr);
+		///		action(ui);
+		///		ui.EndQ();
+		///	</code>
+		/// </summary>
+		public static Ui Q(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("q", attr, action);
+		}
+
+		#endregion
+
+		#region samp
+
+		public static Ui BeginSamp(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("samp", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSamp(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("samp", attr);
+		}
+
+		public static Ui BeginSamp(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("samp", attributes);
+		}
+
+		public static Ui EndSamp(this Ui ui)
+		{
+			return ui.EndElement("samp");
+		}
+
+		public static Ui Samp(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("samp", innerText, attr);
+		}
+
+		public static Ui Samp(this Ui ui, object attr)
+		{
+			return ui.Element("samp", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSamp();
+		///		action();
+		///		ui.EndSamp();
+		///	</code>
+		/// </summary>
+		public static Ui Samp(this Ui ui, Action action)
+		{
+			return ui.Element("samp", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSamp(attr);
+		///		action();
+		///		ui.EndSamp();
+		///	</code>
+		/// </summary>
+		public static Ui Samp(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("samp", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSamp();
+		///		action(ui);
+		///		ui.EndSamp();
+		///	</code>
+		/// </summary>
+		public static Ui Samp(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("samp", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSamp(attr);
+		///		action(ui);
+		///		ui.EndSamp();
+		///	</code>
+		/// </summary>
+		public static Ui Samp(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("samp", attr, action);
+		}
+
+		#endregion
+
+		#region script
+
+		public static Ui BeginScript(this Ui ui, string @class = default(string), string accesskey = default(string), string async = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string crossorigin = default(string), string defer = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string importance = default(string), string integrity = default(string), string itemprop = default(string), string lang = default(string), string language = default(string), string referrerpolicy = default(string), string slot = default(string), string spellcheck = default(string), Uri src = default(Uri), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), string type = default(string))
+		{
+			return ui.BeginElement("script", new { async, crossorigin, defer, importance, integrity, language, referrerpolicy, src, type, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginScript(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("script", attr);
+		}
+
+		public static Ui BeginScript(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("script", attributes);
+		}
+
+		public static Ui EndScript(this Ui ui)
+		{
+			return ui.EndElement("script");
+		}
+
+		public static Ui Script(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("script", innerText, attr);
+		}
+
+		public static Ui Script(this Ui ui, object attr)
+		{
+			return ui.Element("script", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginScript();
+		///		action();
+		///		ui.EndScript();
+		///	</code>
+		/// </summary>
+		public static Ui Script(this Ui ui, Action action)
+		{
+			return ui.Element("script", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginScript(attr);
+		///		action();
+		///		ui.EndScript();
+		///	</code>
+		/// </summary>
+		public static Ui Script(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("script", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginScript();
+		///		action(ui);
+		///		ui.EndScript();
+		///	</code>
+		/// </summary>
+		public static Ui Script(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("script", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginScript(attr);
+		///		action(ui);
+		///		ui.EndScript();
+		///	</code>
+		/// </summary>
+		public static Ui Script(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("script", attr, action);
+		}
+
+		#endregion
+
+		#region select
+
+		public static Ui BeginSelect(this Ui ui, string @class = default(string), string @for = default(string), string accesskey = default(string), string autocapitalize = default(string), string autofocus = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string multiple = default(string), string name = default(string), string required = default(string), string size = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("select", new { disabled, autofocus, @for, multiple, name, required, size, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSelect(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("select", attr);
+		}
+
+		public static Ui BeginSelect(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("select", attributes);
+		}
+
+		public static Ui EndSelect(this Ui ui)
+		{
+			return ui.EndElement("select");
+		}
+
+		public static Ui Select(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("select", innerText, attr);
+		}
+
+		public static Ui Select(this Ui ui, object attr)
+		{
+			return ui.Element("select", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSelect();
+		///		action();
+		///		ui.EndSelect();
+		///	</code>
+		/// </summary>
+		public static Ui Select(this Ui ui, Action action)
+		{
+			return ui.Element("select", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSelect(attr);
+		///		action();
+		///		ui.EndSelect();
+		///	</code>
+		/// </summary>
+		public static Ui Select(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("select", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSelect();
+		///		action(ui);
+		///		ui.EndSelect();
+		///	</code>
+		/// </summary>
+		public static Ui Select(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("select", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSelect(attr);
+		///		action(ui);
+		///		ui.EndSelect();
+		///	</code>
+		/// </summary>
+		public static Ui Select(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("select", attr, action);
+		}
+
+		#endregion
+
+		#region small
+
+		public static Ui BeginSmall(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("small", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSmall(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("small", attr);
+		}
+
+		public static Ui BeginSmall(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("small", attributes);
+		}
+
+		public static Ui EndSmall(this Ui ui)
+		{
+			return ui.EndElement("small");
+		}
+
+		public static Ui Small(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("small", innerText, attr);
+		}
+
+		public static Ui Small(this Ui ui, object attr)
+		{
+			return ui.Element("small", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSmall();
+		///		action();
+		///		ui.EndSmall();
+		///	</code>
+		/// </summary>
+		public static Ui Small(this Ui ui, Action action)
+		{
+			return ui.Element("small", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSmall(attr);
+		///		action();
+		///		ui.EndSmall();
+		///	</code>
+		/// </summary>
+		public static Ui Small(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("small", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSmall();
+		///		action(ui);
+		///		ui.EndSmall();
+		///	</code>
+		/// </summary>
+		public static Ui Small(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("small", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSmall(attr);
+		///		action(ui);
+		///		ui.EndSmall();
+		///	</code>
+		/// </summary>
+		public static Ui Small(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("small", attr, action);
+		}
+
+		#endregion
+
+		#region span
+
+		public static Ui BeginSpan(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("span", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSpan(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("span", attr);
+		}
+
+		public static Ui BeginSpan(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("span", attributes);
+		}
+
+		public static Ui EndSpan(this Ui ui)
+		{
+			return ui.EndElement("span");
+		}
+
+		public static Ui Span(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("span", innerText, attr);
+		}
+
+		public static Ui Span(this Ui ui, object attr)
+		{
+			return ui.Element("span", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSpan();
+		///		action();
+		///		ui.EndSpan();
+		///	</code>
+		/// </summary>
+		public static Ui Span(this Ui ui, Action action)
+		{
+			return ui.Element("span", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSpan(attr);
+		///		action();
+		///		ui.EndSpan();
+		///	</code>
+		/// </summary>
+		public static Ui Span(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("span", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSpan();
+		///		action(ui);
+		///		ui.EndSpan();
+		///	</code>
+		/// </summary>
+		public static Ui Span(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("span", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSpan(attr);
+		///		action(ui);
+		///		ui.EndSpan();
+		///	</code>
+		/// </summary>
+		public static Ui Span(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("span", attr, action);
+		}
+
+		#endregion
+
+		#region strong
+
+		public static Ui BeginStrong(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("strong", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginStrong(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("strong", attr);
+		}
+
+		public static Ui BeginStrong(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("strong", attributes);
+		}
+
+		public static Ui EndStrong(this Ui ui)
+		{
+			return ui.EndElement("strong");
+		}
+
+		public static Ui Strong(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("strong", innerText, attr);
+		}
+
+		public static Ui Strong(this Ui ui, object attr)
+		{
+			return ui.Element("strong", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginStrong();
+		///		action();
+		///		ui.EndStrong();
+		///	</code>
+		/// </summary>
+		public static Ui Strong(this Ui ui, Action action)
+		{
+			return ui.Element("strong", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginStrong(attr);
+		///		action();
+		///		ui.EndStrong();
+		///	</code>
+		/// </summary>
+		public static Ui Strong(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("strong", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginStrong();
+		///		action(ui);
+		///		ui.EndStrong();
+		///	</code>
+		/// </summary>
+		public static Ui Strong(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("strong", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginStrong(attr);
+		///		action(ui);
+		///		ui.EndStrong();
+		///	</code>
+		/// </summary>
+		public static Ui Strong(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("strong", attr, action);
+		}
+
+		#endregion
+
+		#region sub
+
+		public static Ui BeginSub(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("sub", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSub(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("sub", attr);
+		}
+
+		public static Ui BeginSub(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("sub", attributes);
+		}
+
+		public static Ui EndSub(this Ui ui)
+		{
+			return ui.EndElement("sub");
+		}
+
+		public static Ui Sub(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("sub", innerText, attr);
+		}
+
+		public static Ui Sub(this Ui ui, object attr)
+		{
+			return ui.Element("sub", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSub();
+		///		action();
+		///		ui.EndSub();
+		///	</code>
+		/// </summary>
+		public static Ui Sub(this Ui ui, Action action)
+		{
+			return ui.Element("sub", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSub(attr);
+		///		action();
+		///		ui.EndSub();
+		///	</code>
+		/// </summary>
+		public static Ui Sub(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("sub", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSub();
+		///		action(ui);
+		///		ui.EndSub();
+		///	</code>
+		/// </summary>
+		public static Ui Sub(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("sub", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSub(attr);
+		///		action(ui);
+		///		ui.EndSub();
+		///	</code>
+		/// </summary>
+		public static Ui Sub(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("sub", attr, action);
+		}
+
+		#endregion
+
+		#region sup
+
+		public static Ui BeginSup(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("sup", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginSup(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("sup", attr);
+		}
+
+		public static Ui BeginSup(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("sup", attributes);
+		}
+
+		public static Ui EndSup(this Ui ui)
+		{
+			return ui.EndElement("sup");
+		}
+
+		public static Ui Sup(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("sup", innerText, attr);
+		}
+
+		public static Ui Sup(this Ui ui, object attr)
+		{
+			return ui.Element("sup", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSup();
+		///		action();
+		///		ui.EndSup();
+		///	</code>
+		/// </summary>
+		public static Ui Sup(this Ui ui, Action action)
+		{
+			return ui.Element("sup", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSup(attr);
+		///		action();
+		///		ui.EndSup();
+		///	</code>
+		/// </summary>
+		public static Ui Sup(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("sup", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSup();
+		///		action(ui);
+		///		ui.EndSup();
+		///	</code>
+		/// </summary>
+		public static Ui Sup(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("sup", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginSup(attr);
+		///		action(ui);
+		///		ui.EndSup();
+		///	</code>
+		/// </summary>
+		public static Ui Sup(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("sup", attr, action);
+		}
+
+		#endregion
+
+		#region textarea
+
+		public static Ui BeginTextarea(this Ui ui, string @class = default(string), string @for = default(string), bool @readonly = default(bool), string accesskey = default(string), string autocapitalize = default(string), string autocomplete = default(string), string autofocus = default(string), string cols = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), string dirname = default(string), bool disabled = default(bool), bool draggable = default(bool), string dropzone = default(string), string enterkeyhint = default(string), bool hidden = default(bool), string id = default(string), string inputmode = default(string), string itemprop = default(string), string lang = default(string), string maxlength = default(string), string minlength = default(string), string name = default(string), string placeholder = default(string), string required = default(string), string rows = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string), bool wrap = default(bool))
+		{
+			return ui.BeginElement("textarea", new { disabled, @readonly, wrap, autocomplete, autofocus, cols, dirname, enterkeyhint, @for, inputmode, maxlength, minlength, name, placeholder, required, rows, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginTextarea(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("textarea", attr);
+		}
+
+		public static Ui BeginTextarea(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("textarea", attributes);
+		}
+
+		public static Ui EndTextarea(this Ui ui)
+		{
+			return ui.EndElement("textarea");
+		}
+
+		public static Ui Textarea(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("textarea", innerText, attr);
+		}
+
+		public static Ui Textarea(this Ui ui, object attr)
+		{
+			return ui.Element("textarea", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTextarea();
+		///		action();
+		///		ui.EndTextarea();
+		///	</code>
+		/// </summary>
+		public static Ui Textarea(this Ui ui, Action action)
+		{
+			return ui.Element("textarea", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTextarea(attr);
+		///		action();
+		///		ui.EndTextarea();
+		///	</code>
+		/// </summary>
+		public static Ui Textarea(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("textarea", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTextarea();
+		///		action(ui);
+		///		ui.EndTextarea();
+		///	</code>
+		/// </summary>
+		public static Ui Textarea(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("textarea", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTextarea(attr);
+		///		action(ui);
+		///		ui.EndTextarea();
+		///	</code>
+		/// </summary>
+		public static Ui Textarea(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("textarea", attr, action);
+		}
+
+		#endregion
+
+		#region time
+
+		public static Ui BeginTime(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string datetime = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("time", new { datetime, contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginTime(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("time", attr);
+		}
+
+		public static Ui BeginTime(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("time", attributes);
+		}
+
+		public static Ui EndTime(this Ui ui)
+		{
+			return ui.EndElement("time");
+		}
+
+		public static Ui Time(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("time", innerText, attr);
+		}
+
+		public static Ui Time(this Ui ui, object attr)
+		{
+			return ui.Element("time", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTime();
+		///		action();
+		///		ui.EndTime();
+		///	</code>
+		/// </summary>
+		public static Ui Time(this Ui ui, Action action)
+		{
+			return ui.Element("time", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTime(attr);
+		///		action();
+		///		ui.EndTime();
+		///	</code>
+		/// </summary>
+		public static Ui Time(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("time", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTime();
+		///		action(ui);
+		///		ui.EndTime();
+		///	</code>
+		/// </summary>
+		public static Ui Time(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("time", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTime(attr);
+		///		action(ui);
+		///		ui.EndTime();
+		///	</code>
+		/// </summary>
+		public static Ui Time(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("time", attr, action);
+		}
+
+		#endregion
+
+		#region tt
+
+		public static Ui BeginTt(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("tt", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginTt(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("tt", attr);
+		}
+
+		public static Ui BeginTt(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("tt", attributes);
+		}
+
+		public static Ui EndTt(this Ui ui)
+		{
+			return ui.EndElement("tt");
+		}
+
+		public static Ui Tt(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("tt", innerText, attr);
+		}
+
+		public static Ui Tt(this Ui ui, object attr)
+		{
+			return ui.Element("tt", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTt();
+		///		action();
+		///		ui.EndTt();
+		///	</code>
+		/// </summary>
+		public static Ui Tt(this Ui ui, Action action)
+		{
+			return ui.Element("tt", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTt(attr);
+		///		action();
+		///		ui.EndTt();
+		///	</code>
+		/// </summary>
+		public static Ui Tt(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("tt", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTt();
+		///		action(ui);
+		///		ui.EndTt();
+		///	</code>
+		/// </summary>
+		public static Ui Tt(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("tt", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginTt(attr);
+		///		action(ui);
+		///		ui.EndTt();
+		///	</code>
+		/// </summary>
+		public static Ui Tt(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("tt", attr, action);
+		}
+
+		#endregion
+
+		#region var
+
+		public static Ui BeginVar(this Ui ui, string @class = default(string), string accesskey = default(string), string autocapitalize = default(string), bool contenteditable = default(bool), string contextmenu = default(string), string dir = default(string), bool draggable = default(bool), string dropzone = default(string), bool hidden = default(bool), string id = default(string), string itemprop = default(string), string lang = default(string), string slot = default(string), string spellcheck = default(string), string style = default(string), int? tabindex = null, string title = default(string), string translate = default(string))
+		{
+			return ui.BeginElement("var", new { contenteditable, draggable, accesskey, autocapitalize, @class, contextmenu, dir, dropzone, hidden, id, itemprop, lang, slot, spellcheck, style, tabindex, title, translate });
+		}
+
+		public static Ui BeginVar(this Ui ui, object attr = null)
+		{
+			return ui.BeginElement("var", attr);
+		}
+
+		public static Ui BeginVar(this Ui ui, params object[] attributes)
+		{
+			return ui.BeginElement("var", attributes);
+		}
+
+		public static Ui EndVar(this Ui ui)
+		{
+			return ui.EndElement("var");
+		}
+
+		public static Ui Var(this Ui ui, string innerText, object attr = null)
+		{
+			return ui.Element("var", innerText, attr);
+		}
+
+		public static Ui Var(this Ui ui, object attr)
+		{
+			return ui.Element("var", null, attr);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVar();
+		///		action();
+		///		ui.EndVar();
+		///	</code>
+		/// </summary>
+		public static Ui Var(this Ui ui, Action action)
+		{
+			return ui.Element("var", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVar(attr);
+		///		action();
+		///		ui.EndVar();
+		///	</code>
+		/// </summary>
+		public static Ui Var(this Ui ui, object attr, Action action)
+		{
+			return ui.Element("var", attr, action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVar();
+		///		action(ui);
+		///		ui.EndVar();
+		///	</code>
+		/// </summary>
+		public static Ui Var(this Ui ui, Action<Ui> action)
+		{
+			return ui.Element("var", action);
+		}
+
+		/// <summary> This call is equivalent to: 
+		///	<code>
+		///		ui.BeginVar(attr);
+		///		action(ui);
+		///		ui.EndVar();
+		///	</code>
+		/// </summary>
+		public static Ui Var(this Ui ui, object attr, Action<Ui> action)
+		{
+			return ui.Element("var", attr, action);
+		}
+
+		#endregion
 	}
 }
 
