@@ -26,7 +26,7 @@ namespace HQ.Common
                 return value;
             }
 
-            if (char.IsUpper(value[0]))
+            if (!char.IsUpper(value[0]))
             {
                 return char.ToUpperInvariant(value[0]) + value.Substring(1);
             }

@@ -37,10 +37,5 @@ namespace HQ.Common
             _index++;
             return _inner != null && _inner.Count >= _index;
         }
-
-        public void Reset()
-        {
-            _index = 0;
-        }
     }
 }

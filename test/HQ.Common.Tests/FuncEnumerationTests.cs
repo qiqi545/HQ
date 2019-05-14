@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,41 +11,36 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-using System;
 using System.Collections.Generic;
+using Xunit;
 
-namespace HQ.Common
+namespace HQ.Common.Tests
 {
-    public struct PredicateEnumerator<T>
+    public class FuncEnumerationTests
     {
-        private readonly List<T> _inner;
-        private readonly Predicate<T> _predicate;
-        private int _index;
-
-        public PredicateEnumerator(List<T> inner, Predicate<T> predicate)
+        [Fact]
+        public void Can_enumerate()
         {
-            _inner = inner;
-            _predicate = predicate;
-            _index = 0;
+            var expected = new List<Outer> {new Outer {Value = "A"}, new Outer {Value = "B"}, new Outer {Value = "C"}};
+            var actual = new List<string>();
+
+            var enumerable = expected.Enumerate(outer => outer.Value);
+            foreach (var value in enumerable)
+                actual.Add(value);
+
+            actual.Clear();
+            foreach (var value in enumerable)
+                actual.Add(value);
+
+            Assert.NotEmpty(actual);
+            Assert.Equal(3, actual.Count);
         }
 
-        public T Current => GetCurrentValue();
-
-        private T GetCurrentValue()
+        public class Outer
         {
-            return _inner == null || _index == 0 ? default : _predicate(_inner[_index - 1]) ? _inner[_index - 1] : default;
-        }
-
-        public bool MoveNext()
-        {
-            _index++;
-            var more = _inner != null && _inner.Count >= _index;
-            while (more && !_predicate(_inner[_index - 1]))
-                MoveNext();
-            return more;
+            public string Value { get; set; }
         }
     }
 }

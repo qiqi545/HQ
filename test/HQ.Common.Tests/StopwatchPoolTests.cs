@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,41 +11,27 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
-using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
+using Xunit;
 
-namespace HQ.Common
+namespace HQ.Common.Tests
 {
-    public struct PredicateEnumerator<T>
+    public class StopwatchPoolTests
     {
-        private readonly List<T> _inner;
-        private readonly Predicate<T> _predicate;
-        private int _index;
-
-        public PredicateEnumerator(List<T> inner, Predicate<T> predicate)
+        [Fact]
+        public void Can_use_scoped_builder()
         {
-            _inner = inner;
-            _predicate = predicate;
-            _index = 0;
-        }
+            var elapsed = StopwatchPool.Scoped(x =>
+            {
+                Task.Delay(100).Wait();
+            });
 
-        public T Current => GetCurrentValue();
-
-        private T GetCurrentValue()
-        {
-            return _inner == null || _index == 0 ? default : _predicate(_inner[_index - 1]) ? _inner[_index - 1] : default;
-        }
-
-        public bool MoveNext()
-        {
-            _index++;
-            var more = _inner != null && _inner.Count >= _index;
-            while (more && !_predicate(_inner[_index - 1]))
-                MoveNext();
-            return more;
+            Assert.NotEqual(default(TimeSpan), elapsed);
+            Assert.True(elapsed.TotalMilliseconds >= 100, elapsed.ToString());
         }
     }
 }

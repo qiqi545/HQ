@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,41 +11,38 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
-namespace HQ.Common
+namespace HQ.Common.Tests
 {
-    public struct PredicateEnumerator<T>
+    public class EnumerableExtensionsTests
     {
-        private readonly List<T> _inner;
-        private readonly Predicate<T> _predicate;
-        private int _index;
-
-        public PredicateEnumerator(List<T> inner, Predicate<T> predicate)
+        [Fact]
+        public void Enumerable_is_already_a_list()
         {
-            _inner = inner;
-            _predicate = predicate;
-            _index = 0;
+            IEnumerable<string> enumerable = new List<string>();
+            var list = enumerable.MaybeList();
+            Assert.Equal(enumerable, list);
+            Assert.StrictEqual(enumerable, list);
         }
 
-        public T Current => GetCurrentValue();
-
-        private T GetCurrentValue()
+        [Fact]
+        public void Enumerable_is_not_a_list()
         {
-            return _inner == null || _index == 0 ? default : _predicate(_inner[_index - 1]) ? _inner[_index - 1] : default;
-        }
+            var enumerable = Enumerable.Repeat(1, 10);
 
-        public bool MoveNext()
-        {
-            _index++;
-            var more = _inner != null && _inner.Count >= _index;
-            while (more && !_predicate(_inner[_index - 1]))
-                MoveNext();
-            return more;
+            // ReSharper disable once PossibleMultipleEnumeration
+            var list = enumerable.MaybeList();
+
+            // ReSharper disable once PossibleMultipleEnumeration
+            Assert.Equal(enumerable, list);
+
+            // ReSharper disable once PossibleMultipleEnumeration
+            Assert.NotStrictEqual(enumerable, list);
         }
     }
 }
