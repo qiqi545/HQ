@@ -15,20 +15,14 @@
 
 #endregion
 
-using System.Reflection;
+using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class PublicApiOptions
+    public class CanonicalRoutesOptions : FeatureToggle
     {
-        public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
-        public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
-
-        public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
-        public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
-        public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
-        public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
-        public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
-        public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
+        public bool LowercaseUrls { get; set; } = true;
+        public bool LowercaseQueryStrings { get; set; } = false;
+        public bool AppendTrailingSlash { get; set; } = true;
     }
 }

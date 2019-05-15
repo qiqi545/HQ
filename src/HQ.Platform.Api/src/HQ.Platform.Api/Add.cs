@@ -21,7 +21,6 @@ using System.IO.Compression;
 using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Controllers;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
@@ -29,6 +28,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,9 +49,11 @@ namespace HQ.Platform.Api
 
             services.AddCors();
             services.AddHttpCaching();
+            services.AddCanonicalRoutes();
             services.AddGzipCompression();
-
+            
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
+            services.AddSingleton<IConfigureOptions<RouteOptions>, PublicApiRouteOptions>();
             services.AddSingleton<IConfigureOptions<MvcOptions>, PublicApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 
@@ -76,8 +78,13 @@ namespace HQ.Platform.Api
         {
             services.AddSingleton<IHttpCache>(r => new MemoryHttpCache(r.GetRequiredService<IMemoryCache>()));
             services.AddSingleton<IETagGenerator, WeakETagGenerator>();
-            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(),
-                r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
+            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(), r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
+            return services;
+        }
+
+        internal static IServiceCollection AddCanonicalRoutes(this IServiceCollection services)
+        {
+            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<PublicApiOptions>>()));
             return services;
         }
 

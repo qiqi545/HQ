@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
+using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -37,12 +38,48 @@ namespace HQ.Platform.Api
             app.UseCors();
             app.UseResponseCompression();
 
+            app.UseCanonicalRoutes(snapshot);
             app.UseMethodOverrides(snapshot);
             app.UseResourceRewriting(snapshot);
             app.UseRequestLimiting(snapshot);
             app.UseJsonMultiCase(snapshot);
 
             return app;
+        }
+
+        private static IApplicationBuilder UseCanonicalRoutes(this IApplicationBuilder app, bool snapshot)
+        {
+            if (snapshot)
+            {
+                if (app.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options))
+                {
+                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
+                }
+
+                return app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, CanonicalRoutesOptions o, Func<Task> next)
+            {
+                if (string.Equals(c.Request.Method, Constants.HttpVerbs.Get, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (!CanonicalRoutesResourceFilter.TryGetCanonicalRoute(c.Request, o, out var redirectToUrl))
+                    {
+                        c.Response.Redirect(redirectToUrl, true);
+                        return;
+                    }
+                }
+
+                await next();
+            }
         }
 
         private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app, bool snapshot)

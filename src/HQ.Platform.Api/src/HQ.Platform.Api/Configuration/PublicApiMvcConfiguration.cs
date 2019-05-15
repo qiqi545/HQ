@@ -21,6 +21,7 @@ using System.Xml;
 using HQ.Common;
 using HQ.Platform.Api.Conventions;
 using HQ.Platform.Api.Extensions;
+using HQ.Platform.Api.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -70,6 +71,7 @@ namespace HQ.Platform.Api.Configuration
             AddXml(options);
 
             options.Conventions.Add(new DynamicComponentConvention(_components));
+            options.Filters.Add(typeof(CanonicalRoutesResourceFilter));
         }
 
         private void AddXml(MvcOptions options)

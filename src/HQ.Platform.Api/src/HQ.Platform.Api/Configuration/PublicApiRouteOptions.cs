@@ -15,20 +15,25 @@
 
 #endregion
 
-using System.Reflection;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class PublicApiOptions
+    internal class PublicApiRouteOptions : IConfigureOptions<RouteOptions>
     {
-        public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
-        public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+        private readonly IOptions<PublicApiOptions> _options;
 
-        public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
-        public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
-        public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
-        public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
-        public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
-        public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
+        public PublicApiRouteOptions(IOptions<PublicApiOptions> options)
+        {
+            _options = options;
+        }
+
+        public void Configure(RouteOptions options)
+        {
+            options.AppendTrailingSlash = _options.Value.CanonicalRoutes.AppendTrailingSlash;
+            options.LowercaseUrls = _options.Value.CanonicalRoutes.LowercaseUrls;
+            options.LowercaseQueryStrings = _options.Value.CanonicalRoutes.LowercaseQueryStrings;
+        }
     }
 }
