@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -37,8 +38,10 @@ namespace Blowdart.UI
                 return settings;
             });
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
+			services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
             services.AddSingleton(r => new LayoutRoot(r));
+            services.AddSingleton(ResolveComponentTypes);
             services.AddSingleton(RegisterComponentsByName);
             services.AddSingleton(RegisterComponentsByType);
 
@@ -48,7 +51,7 @@ namespace Blowdart.UI
         private static Dictionary<Type, Func<UiComponent>> RegisterComponentsByType(IServiceProvider r)
         {
 	        var settings = r.GetRequiredService<UiSettings>();
-	        var componentTypes = ResolveComponentTypes(r);
+	        var componentTypes = r.GetRequiredService<ComponentTypes>();
 	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
 	        var byType = componentTypes.ToDictionary(k => k, v =>
 	        {
@@ -60,20 +63,40 @@ namespace Blowdart.UI
         private static Dictionary<string, Func<UiComponent>> RegisterComponentsByName(IServiceProvider r)
         {
 	        var settings = r.GetRequiredService<UiSettings>();
-	        var componentTypes = ResolveComponentTypes(r);
-	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+			var componentTypes = r.GetRequiredService<ComponentTypes>();
+			var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
 			var byName = componentTypes
 		        .Select(x => new { Key = x.Name, Value = new Func<UiComponent>(() => autoResolver.GetService(x) as UiComponent ?? Instancing.CreateInstance<UiComponent>()) })
 		        .ToDictionary(k => k.Key, v => v.Value, StringComparer.OrdinalIgnoreCase);
 			return byName;
         }
 
-        private static IEnumerable<Type> ResolveComponentTypes(IServiceProvider r)
+        private class ComponentTypes : IEnumerable<Type>
+        {
+	        private readonly IEnumerable<Type> _types;
+
+	        public ComponentTypes(IEnumerable<Type> types)
+	        {
+		        _types = types;
+	        }
+
+	        public IEnumerator<Type> GetEnumerator()
+	        {
+		        return _types.GetEnumerator();
+	        }
+
+	        IEnumerator IEnumerable.GetEnumerator()
+	        {
+		        return GetEnumerator();
+	        }
+        }
+
+        private static ComponentTypes ResolveComponentTypes(IServiceProvider r)
         {
             var settings = r.GetRequiredService<UiSettings>();
             var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
-            var componentTypes = exportedTypes.Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent)));
-            return componentTypes;
+            var componentTypes = exportedTypes.Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent))).Distinct();
+            return new ComponentTypes(componentTypes);
         }
     }
 }
