@@ -17,6 +17,9 @@
 
 namespace HQ.Platform.Api.Models
 {
+    /// <summary>
+    /// See: https://tools.ietf.org/html/rfc7232#section-2
+    /// </summary>
     public interface IETagGenerator
     {
         string GenerateFromBuffer(byte[] data);

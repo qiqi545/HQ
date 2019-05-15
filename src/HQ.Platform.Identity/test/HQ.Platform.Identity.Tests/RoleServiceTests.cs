@@ -15,7 +15,7 @@ namespace HQ.Platform.Identity.Tests
         [Test]
         public async Task Can_create_role()
         {
-            var service = serviceProvider.GetRequiredService<IRoleService<IdentityRoleExtended>>();
+            var service = ServiceProvider.GetRequiredService<IRoleService<IdentityRoleExtended>>();
             var role = await service.CreateAsync(new CreateRoleModel
             {
                 Name = "MyRole",

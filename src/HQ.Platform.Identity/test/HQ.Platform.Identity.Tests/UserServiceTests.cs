@@ -14,7 +14,7 @@ namespace HQ.Platform.Identity.Tests
         [Test]
         public async Task Can_create_user()
         {
-            var service = serviceProvider.GetRequiredService<IUserService<IdentityUserExtended>>();
+            var service = ServiceProvider.GetRequiredService<IUserService<IdentityUserExtended>>();
             var user = await service.CreateAsync(new CreateUserModel
             {
                 UserName = "MyUserName",

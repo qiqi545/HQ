@@ -33,12 +33,11 @@ namespace HQ.Platform.Identity.Configuration
 
         public bool RequireUniqueUsername { get; set; } = true;
         public bool RequireUniquePhoneNumber { get; set; } = false;
-
-        public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
-
         public bool RequireEmail { get; set; } = true;
         public bool RequirePhoneNumber { get; set; } = false;
         public bool RequireUsername { get; set; } = true;
         public bool RequireEmailPhoneNumberOrUsername { get; set; } = false;
+
+        public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
     }
 }
