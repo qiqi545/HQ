@@ -25,7 +25,6 @@ public static partial class InlineElements
 	public static Ui fieldset(Action action) { return ui.Fieldset(action); }
 	public static Ui form(Action<HtmlExtensions.FormAttributes> action) { return ui.Form(action); }
 	public static Ui p(string innerText) { return ui.P(innerText); }
-	public static bool button(string innerText) { return ui.Button(innerText); }
-	public static bool button(string innerText, Action<ButtonEvents, ButtonAttributes> events) { return ui.Button(innerText, events); }
+	public static Ui button(string innerText, Action<ButtonEvents, ButtonAttributes> events) { return ui.Button(innerText, events); }
 	public static int range(int min, int max, int defaultValue, object attr = null) { return ui.Range(min, max, defaultValue, attr); }
 }

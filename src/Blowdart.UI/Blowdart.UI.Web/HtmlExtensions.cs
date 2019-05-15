@@ -110,7 +110,62 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        private static HtmlSystem Html(this Ui ui)
+
+
+		#region DOM Events
+
+		public static bool Click(this Ui ui, string el, string innerText, object attr = null)
+        {
+	        ui.NextId();
+	        var id = ui.NextIdHash;
+	        Dom(ui).AppendTag(el, id, innerText, attr == null ? null : Attr(attr));
+	        Scripts(ui).AppendEvent(MouseEvents.click, id);
+	        return ui.Clicked.Contains(id);
+        }
+		
+		public static Ui Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events)
+		{
+			ui.NextId();
+			var id = ui.NextIdHash;
+
+			if (events != null)
+			{
+				var e = new ButtonEvents();
+				var a = new ButtonAttributes();
+				var d = new MouseEventData();
+				
+				events(e, a);
+
+				if (ui.Clicked.Contains(id))
+					e.click?.Invoke(d);
+
+				if (ui.MouseOver.Contains(id))
+					e.mouseover?.Invoke(d);
+
+				if (ui.MouseOut.Contains(id))
+					e.mouseout?.Invoke(d);
+
+				if (a.innerText != null)
+					innerText = a.innerText;
+
+				Scripts(ui).AppendEvent(MouseEvents.click, id);
+				Scripts(ui).AppendEvent(MouseEvents.mouseover, id);
+				Scripts(ui).AppendEvent(MouseEvents.mouseout, id);
+			}
+
+			Dom(ui).AppendTag("button", id, innerText, attributes: null);
+			return ui;
+		}
+
+		#endregion
+
+
+
+
+
+
+
+		private static HtmlSystem Html(this Ui ui)
         {
             if (!(ui.System is HtmlSystem system))
                 throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
@@ -170,53 +225,9 @@ namespace Blowdart.UI.Web
 			return ui.Input(InputType.Submit, Attr(new { value = label }));
 		}
 
-		public static bool Button(this Ui ui, string innerText, object attr = null)
-		{
-			ui.NextId();
-			var id = ui.NextIdHash;
-			Dom(ui).AppendTag("button", id, innerText, attr == null ? null : Attr(attr));
-			Scripts(ui).AppendEvent(MouseEvents.click, id);
-			return ui.Clicked.Contains(id);
-		}
+		
 
-		public static bool Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events)
-		{
-			ui.NextId();
-			var id = ui.NextIdHash;
-
-			if (events != null)
-			{
-				var e = new ButtonEvents();
-				var a = new ButtonAttributes();
-
-				events(e, a);
-				if (ui.MouseOver.Contains(id))
-					e.mouseover?.Invoke();
-
-				if(ui.MouseOut.Contains(id))
-					e.mouseout?.Invoke();
-
-				if (a.innerText != null)
-					innerText = a.innerText;
-
-				Scripts(ui).AppendEvent(MouseEvents.mouseover, id);
-				Scripts(ui).AppendEvent(MouseEvents.mouseout, id);
-			}
-
-			Dom(ui).AppendTag("button", id, innerText, attributes: null);
-			Scripts(ui).AppendEvent(MouseEvents.click, id);
-			return ui.Clicked.Contains(id);
-		}
+		
 	}
 
-    public class ButtonEvents
-    {
-	    public Action mouseover;
-	    public Action mouseout;
-	}
-
-    public class ButtonAttributes
-    {
-	    public string innerText;
-    }
 }
