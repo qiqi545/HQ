@@ -15,10 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="TypeKitchen" Version="0.0.14-pre" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\HQ.Data.Sql.Builders\HQ.Data.Sql.Builders.csproj" />
   </ItemGroup>
 
