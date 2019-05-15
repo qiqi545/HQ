@@ -24,24 +24,19 @@ namespace HQ.Data.Sql.Descriptor
 {
     public class PropertyAccessor
     {
-        private readonly AccessorMember _member;
         private readonly ITypeReadAccessor _reads;
         private readonly ITypeWriteAccessor _writes;
 
-        public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, Type type, string name)
+        public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, string name)
         {
-            Type = type;
+            var members = AccessorMembers.Create(reads.Type, AccessorMemberScope.All, AccessorMemberTypes.Properties);
+            Info = members.PropertyInfo.Single(m => m.Name == name);
+
+            Type = Info.PropertyType;
             Name = name;
 
             _reads = reads;
             _writes = writes;
-
-            var members = AccessorMembers.Create(type);
-            Info = members.PropertyInfo.SingleOrDefault(m => m.Name == name);
-
-            var member = members.SingleOrDefault(p => p.Name == name);
-            if (member == null) return;
-            _member = member;
         }
 
         public string Name { get; set; }

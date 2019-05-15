@@ -50,7 +50,7 @@ namespace HQ.Data.Sql.Descriptor
 
             var descriptors = TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>();
             var accessors = descriptors
-                .Select(property => new PropertyAccessor(reads, writes, property.PropertyType, property.Name))
+                .Select(property => new PropertyAccessor(reads, writes, property.Name))
                 .ToList();
 
             foreach (var property in accessors)

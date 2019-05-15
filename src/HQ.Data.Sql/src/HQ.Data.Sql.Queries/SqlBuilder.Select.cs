@@ -227,15 +227,16 @@ namespace HQ.Data.Sql.Queries
         private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
             List<string> columnFilter, dynamic where)
         {
-            IDictionary<string, object> whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
+            object instance = where;
+            var accessor = ReadAccessor.Create(instance.GetType());
+            var whereHash = accessor.AsReadOnlyDictionary(instance);
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
             var tableName = Dialect.ResolveTableName(descriptor);
             var columnNames = Dialect.ResolveColumnNames(descriptor).ToList();
 
             var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToList();
-            var parameters =
-                whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
+            var parameters = whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
             var parameterKeys = parameters.Keys.ToList();
 
             var columns = Dialect.SupportsSelectStar ? new List<string> {"*"} : columnNames;
