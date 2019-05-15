@@ -34,8 +34,8 @@ namespace HQ.Test.Sdk
 {
     public abstract class TestScope : ILogger
     {
-        protected readonly ILoggerFactory defaultLoggerFactory = new LoggerFactory();
-        protected IServiceProvider serviceProvider;
+        protected readonly ILoggerFactory DefaultLoggerFactory = new LoggerFactory();
+        protected IServiceProvider ServiceProvider;
 
         protected static ActionLoggerProvider CreateLoggerProvider()
         {
@@ -99,7 +99,7 @@ namespace HQ.Test.Sdk
         private TPrototype TryGetImplementation<TInterface, TPrototype>()
             where TPrototype : class, TInterface
         {
-            return serviceProvider?.GetService(typeof(TPrototype)) as TPrototype ??
+            return ServiceProvider?.GetService(typeof(TPrototype)) as TPrototype ??
                    InstanceFactory.Default.CreateInstance<TPrototype>() ??
                    Dummy<TPrototype>();
         }

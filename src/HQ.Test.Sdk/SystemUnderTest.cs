@@ -56,7 +56,7 @@ namespace HQ.Test.Sdk
 
         public virtual void Configure(IApplicationBuilder app)
         {
-            serviceProvider = app.ApplicationServices;
+            ServiceProvider = app.ApplicationServices;
 
             TryInstallLogging();
 
@@ -76,8 +76,8 @@ namespace HQ.Test.Sdk
 
         private void TryInstallLogging()
         {
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
-            loggerFactory = loggerFactory ?? defaultLoggerFactory;
+            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
+            loggerFactory = loggerFactory ?? DefaultLoggerFactory;
             loggerFactory.AddProvider(CreateLoggerProvider());
 
             _logger = loggerFactory.CreateLogger<SystemUnderTest<T>>();
@@ -85,7 +85,7 @@ namespace HQ.Test.Sdk
 
         private void TryInstallTracing()
         {
-            if (serviceProvider.GetService<TraceSourceLoggerProvider>() != null)
+            if (ServiceProvider.GetService<TraceSourceLoggerProvider>() != null)
                 return;
 
             Trace.Listeners.Add(new ActionTraceListener(message =>
@@ -99,7 +99,7 @@ namespace HQ.Test.Sdk
 
         public override ILogger GetLogger()
         {
-            return serviceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? _logger;
+            return ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? _logger;
         }
     }
 }

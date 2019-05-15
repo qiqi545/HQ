@@ -34,7 +34,7 @@ namespace HQ.Test.Sdk
         {
             InitializeServiceProvider();
 
-            TryInstallLogging(serviceProvider);
+            TryInstallLogging(ServiceProvider);
 
             Trace.Listeners.Add(new ActionTraceListener(message =>
             {
@@ -47,7 +47,7 @@ namespace HQ.Test.Sdk
 
         protected ServiceUnderTest(IServiceProvider serviceProvider)
         {
-            this.serviceProvider = serviceProvider;
+            ServiceProvider = serviceProvider;
 
             TryInstallLogging(serviceProvider);
 
@@ -64,7 +64,7 @@ namespace HQ.Test.Sdk
         {
             var services = new ServiceCollection();
             ConfigureServices(services);
-            serviceProvider = services.BuildServiceProvider();
+            ServiceProvider = services.BuildServiceProvider();
         }
 
         public virtual void ConfigureServices(IServiceCollection services) { }
@@ -78,7 +78,7 @@ namespace HQ.Test.Sdk
         private void TryInstallLogging(IServiceProvider serviceProvider)
         {
             var loggerFactory = serviceProvider?.GetService<ILoggerFactory>();
-            loggerFactory = loggerFactory ?? defaultLoggerFactory;
+            loggerFactory = loggerFactory ?? DefaultLoggerFactory;
             loggerFactory.AddProvider(CreateLoggerProvider());
             _logger = loggerFactory.CreateLogger<ServiceUnderTest>();
         }
@@ -92,7 +92,7 @@ namespace HQ.Test.Sdk
 
         public override ILogger GetLogger()
         {
-            return serviceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? _logger;
+            return ServiceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? _logger;
         }
 
         protected static IServiceProvider CreateServiceProvider(IServiceFixture fixture)
