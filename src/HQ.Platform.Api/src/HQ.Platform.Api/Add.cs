@@ -99,6 +99,42 @@ namespace HQ.Platform.Api
             return services;
         }
 
+        #region Versioning
+
+        public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
+        {
+            return services.AddVersioning(config.Bind);
+        }
+
+        public static IServiceCollection AddVersioning(this IServiceCollection services, Action<VersioningOptions> configureAction = null)
+        {
+            return services.AddVersioning<DefaultVersionContextResolver>(configureAction);
+        }
+
+        public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, IConfiguration config)
+            where TVersionResolver : class, IVersionContextResolver
+        {
+            return services.AddVersioning<TVersionResolver>(config.Bind);
+        }
+
+        public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
+        {
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            if (configureAction != null)
+            {
+                services.Configure(configureAction);
+            }
+
+            services.AddInProcessCache();
+            services.AddScoped<IVersionContextResolver, TVersionResolver>();
+            services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
+            return services;
+        }
+
+        #endregion
+
+
         #region Multi-Tenancy
 
         public static IServiceCollection AddMultiTenancy<TTenant>(this IServiceCollection services,

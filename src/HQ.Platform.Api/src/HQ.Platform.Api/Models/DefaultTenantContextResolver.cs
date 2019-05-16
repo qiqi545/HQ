@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http;
@@ -56,7 +57,7 @@ namespace HQ.Platform.Api.Models
                 return await _tenantContextStore.FindByKeyAsync(tenantKey);
             }
 
-            if (_tenantCache.Get(tenantKey) is TenantContext<TTenant> tenantContext)
+            if (_tenantCache.Get($"{Constants.ContextKeys.Tenant}:{tenantKey}") is TenantContext<TTenant> tenantContext)
             {
                 return tenantContext;
             }
@@ -69,7 +70,7 @@ namespace HQ.Platform.Api.Models
 
             foreach (var identifier in tenantContext.Identifiers ?? Enumerable.Empty<string>())
             {
-                _tenantCache.Set(identifier, tenantContext,
+                _tenantCache.Set($"{Constants.ContextKeys.Tenant}:{identifier}", tenantContext,
                     TimeSpan.FromSeconds(_options.Value.TenantLifetimeSeconds.Value));
             }
 

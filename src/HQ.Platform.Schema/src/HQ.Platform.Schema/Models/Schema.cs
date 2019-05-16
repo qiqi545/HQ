@@ -35,17 +35,12 @@ namespace HQ.Platform.Schema.Models
 
         [IgnoreDataMember] private string DebuggerDisplayName => this.FullTypeString();
 
-        #region ISelfDescribingSchema
-
-        public string Namespace { get; set; }
-
         public string Name { get; set; }
+        public string Namespace { get; set; }
 
         public IDictionary<string, Schema> GetMap(string ns)
         {
             return Scope.ToDictionary(k => k.Key, v => v.Value);
         }
-
-        #endregion
     }
 }

@@ -27,6 +27,7 @@ using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api
@@ -51,12 +52,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -86,12 +84,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -122,12 +117,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -168,12 +160,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -200,12 +189,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -238,9 +224,59 @@ namespace HQ.Platform.Api
                 await next();
             }
         }
+        
+        #region Versioning
 
-        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true)
-            where TTenant : class, ITenant<string>, new()
+        // See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
+
+        public static IApplicationBuilder UseVersioning(this IApplicationBuilder app, bool snapshot = true)
+        {
+            if (snapshot)
+            {
+                return app.FeatureEnabled<VersioningOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
+            }
+
+            return app.Use(async (context, next) =>
+            {
+                if (context.FeatureEnabled<VersioningOptions, PublicApiOptions>(out var options))
+                {
+                    await ExecuteFeature(context, options, next);
+                }
+            });
+
+            async Task ExecuteFeature(HttpContext c, VersioningOptions o, Func<Task> next)
+            {
+                var versionResolver = c.RequestServices.GetRequiredService<IVersionContextResolver>();
+                var versionContext = await versionResolver.ResolveAsync(c);
+                if (versionContext != null)
+                {
+                    c.SetVersionContext(versionContext);
+                }
+                else
+                {
+                    if (!o.RequireExplicitVersion)
+                    {
+                        c.SetVersionContext(VersionContext.None);
+                    }
+                    else
+                    {
+                        c.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                        return;
+                    }
+                }
+
+                await next();
+            }
+        }
+
+        #endregion
+
+
+        #region MultiTenancy
+
+        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<string>, new()
         {
             return app.UseMultiTenancy<TTenant, string>(snapshot);
         }
@@ -250,12 +286,9 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                if (app.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options))
-                {
-                    return app.Use(async (context, next) => { await ExecuteFeature(context, options, next); });
-                }
-
-                return app;
+                return app.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options)
+                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
+                    : app;
             }
 
             return app.Use(async (context, next) =>
@@ -281,16 +314,19 @@ namespace HQ.Platform.Api
                         if (!string.IsNullOrWhiteSpace(o.DefaultTenantId) &&
                             !string.IsNullOrWhiteSpace(o.DefaultTenantName))
                         {
-                            var tenant = new TTenant {Name = o.DefaultTenantName};
-                            tenantContext = new TenantContext<TTenant> {Tenant = tenant};
-                            tenant.Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey));
-
-                            c.SetTenantContext(tenantContext);
+                            c.SetTenantContext(new TenantContext<TTenant>
+                            {
+                                Tenant = new TTenant
+                                {
+                                    Name = o.DefaultTenantName,
+                                    Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey))
+                                }
+                            });
                         }
                     }
                     else
                     {
-                        c.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                        c.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                         return;
                     }
                 }
@@ -298,5 +334,7 @@ namespace HQ.Platform.Api
                 await next();
             }
         }
+
+        #endregion
     }
 }

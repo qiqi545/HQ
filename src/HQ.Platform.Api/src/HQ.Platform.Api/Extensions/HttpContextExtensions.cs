@@ -35,5 +35,17 @@ namespace HQ.Platform.Api.Extensions
                 ? tenantContext as TenantContext<TTenant>
                 : default;
         }
+
+        public static void SetVersionContext(this HttpContext context, VersionContext versionContext)
+        {
+            context.Items[Constants.ContextKeys.Version] = versionContext;
+        }
+
+        public static VersionContext GetVersionContext(this HttpContext context)
+        {
+            return context.Items.TryGetValue(Constants.ContextKeys.Version, out var versionContext)
+                ? versionContext as VersionContext
+                : default;
+        }
     }
 }
