@@ -75,11 +75,12 @@ namespace Blowdart.UI.Web
             {
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
+			services.AddBlowdartUi(_env, Standalone, uiAssemblies);
 
-			_startup?.ExecuteMethod(nameof(ConfigureServices), services);
+			_startup?.ExecuteMethod(services.BuildServiceProvider(), nameof(ConfigureServices), services);
         }
 
-        private static bool Standalone => _startup == null;
+        private static bool Standalone;
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
@@ -94,8 +95,8 @@ namespace Blowdart.UI.Web
                 app.UseHttpsRedirection();
             }
            
-            app.UseBlowdartUi(_layout);
-            _startup?.ExecuteMethod(nameof(Configure), app, env);
+            app.UseBlowdartUi(_layout, Standalone);
+            _startup?.ExecuteMethod(app.ApplicationServices, nameof(Configure), app, env);
         }
 
 		#region Start Methods
@@ -110,7 +111,17 @@ namespace Blowdart.UI.Web
             Start(args, layout);
         }
 
-        public static void Start<TStartup>(string[] args, string filePath = "ui.csx")
+		public static void Start<TStartup>(string[] args)
+		{
+			_callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
+			if (_callerType == null)
+				throw new ArgumentException("You cannot start a UiServer from an anonymous method.");
+
+			_startup = typeof(TStartup);
+			Start(args);
+		}
+
+		public static void Start<TStartup>(string[] args, string filePath = "ui.csx")
         {
 	        _callerType = _callerType ?? new StackFrame(1).GetMethod().DeclaringType;
 	        if (_callerType == null)
@@ -195,7 +206,9 @@ namespace Blowdart.UI.Web
 		#endregion
 
 		private static void StartServer(string[] args)
-        {
+		{
+			Standalone = true;
+
 	        Masthead();
 
             var config = new ConfigurationBuilder()
@@ -231,32 +244,9 @@ namespace Blowdart.UI.Web
             // webHost.Run(); 
             using (webHost)
             {
-                webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
-                var serviceProvider = webHost.Services;
+	            var serviceProvider = webHost.Services;
 
-                var layout = serviceProvider.GetRequiredService<LayoutRoot>();
-                var meta = Caches.Introspection.IntrospectMeta();
-                var systems = Caches.Introspection.IntrospectSystems();
-
-				foreach (var handler in Handlers)
-                {
-	                layout.AddHandler(handler.Key, handler.Value);
-	                layout.AddMeta(handler.Key, meta[handler.Value]);
-
-	                if (!systems.TryGetValue(handler.Value, out var system))
-	                {
-		                if (!(serviceProvider.GetRequiredService<UiSystem>() is HtmlSystem html))
-			                throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
-
-		                system = html;
-	                }
-
-	                layout.AddSystem(handler.Key, system);
-                }
-
-				HandlersAreFinished();
-
-				//
+                //
 				// Resolve deployment model (via attribute):
 				var settings = serviceProvider.GetRequiredService<UiSettings>();
 				foreach (var assembly in settings.ComponentAssemblies)
@@ -271,8 +261,12 @@ namespace Blowdart.UI.Web
 						options.Value.DeployTarget = deployOn.Target;
 					}
 				}
-				
-                var env = serviceProvider.GetService<IHostingEnvironment>();
+
+	            BeforeStart(serviceProvider);
+
+				webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
+                
+				var service = serviceProvider.GetService<IHostingEnvironment>();
                 if (!serviceProvider.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
                 {
                     Console.WriteLine($"Hosting environment: {env.EnvironmentName}");
@@ -295,8 +289,49 @@ namespace Blowdart.UI.Web
                 webHost.StopAsync(cancellationToken).GetAwaiter().GetResult();
             }
         }
-		
-        private static void OnStarted(IWebHost webHost, IConfiguration config)
+
+		internal static void BeforeStart(IServiceProvider serviceProvider)
+		{
+			HandlersAreNotFinished();
+
+			var layout = serviceProvider.GetRequiredService<LayoutRoot>();
+			var meta = Caches.Introspection.IntrospectMeta();
+			var systems = Caches.Introspection.IntrospectSystems();
+
+			//
+			// IMGUI:
+			foreach (var handler in Handlers)
+			{
+				layout.AddHandler(handler.Key, handler.Value);
+				layout.AddMeta(handler.Key, meta[handler.Value]);
+
+				if (!systems.TryGetValue(handler.Value, out var system))
+				{
+					if (!(serviceProvider.GetRequiredService<UiSystem>() is HtmlSystem html))
+						throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+					system = html;
+				}
+
+				layout.AddSystem(handler.Key, system);
+			}
+
+			//
+			// Components:
+			foreach (var system in systems)
+			{
+				if (system.Key.DeclaringType == null)
+					continue;
+
+				if (system.Key.DeclaringType.IsSubclassOf(typeof(UiComponent)))
+				{
+					layout.AddSystem($"{nameof(UiComponent)}:{system.Key.DeclaringType.Name}", system.Value);
+				}
+			}
+			
+			HandlersAreFinished();
+		}
+
+		private static void OnStarted(IWebHost webHost, IConfiguration config)
         {
             var feature = webHost.ServerFeatures.Get<IServerAddressesFeature>();
             

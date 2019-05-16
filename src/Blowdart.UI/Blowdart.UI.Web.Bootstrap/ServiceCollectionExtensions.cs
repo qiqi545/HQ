@@ -1,17 +1,18 @@
 ﻿// Copyright (c) Blowdart, Inc. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using Blowdart.UI.Theming;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Blowgun.Web
+namespace Blowdart.UI.Web.Bootstrap
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddBlowgun(this IServiceCollection services)
+        public static IServiceCollection AddBootstrap(this IServiceCollection services)
         {
-            services.AddSingleton<Elements>(r => new HtmlElements(r));
+            services.AddSingleton(r => UiTheme.Default);
 
-            return services;
+            return services.AddUiResources(typeof(Bootstrap).Assembly);
         }
     }
 }

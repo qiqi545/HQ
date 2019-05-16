@@ -32,8 +32,8 @@ namespace Blowdart.UI
 
         public void Component(string name)
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
-            if (components.TryGetValue(name, out var component))
+			var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
+			if (components.TryGetValue(name, out var component))
                 component().Render(this);
             else
                 Error($"MISSING COMPONENT '{name}'");
@@ -41,8 +41,8 @@ namespace Blowdart.UI
 
         public void Component(string name, dynamic model)
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
-            if (components.TryGetValue(name, out var component))
+			var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
+			if (components.TryGetValue(name, out var component))
                 component().Render(this, model);
             else
                 Error($"MISSING COMPONENT '{name}'");

@@ -156,7 +156,7 @@ namespace Blowdart.UI.Internal
 					if (parent == null)
 						continue;
 					var attribute = (UiSystemAttribute) Attribute.GetCustomAttribute(parent, typeof(UiSystemAttribute));
-					result[child] = (UiSystem) ActivatorCache.Create(attribute.Type);
+					result[child] = (UiSystem) Instancing.CreateInstance(attribute.Type);
 				}
 
 				//
@@ -164,35 +164,11 @@ namespace Blowdart.UI.Internal
 				foreach (var child in methods.Where(x => Attribute.IsDefined(x, typeof(UiSystemAttribute))))
 				{
 					var attribute = (UiSystemAttribute) Attribute.GetCustomAttribute(child, typeof(UiSystemAttribute));
-					result[child] = (UiSystem) ActivatorCache.Create(attribute.Type);
+					result[child] = (UiSystem) Instancing.CreateInstance(attribute.Type);
 				}
 
 				_systems = result;
 				return result;
-			}
-		}
-
-		public static class ActivatorCache
-		{
-			public static readonly Dictionary<Type, CreateInstance> Factory = new Dictionary<Type, CreateInstance>();
-
-			public static T Create<T>() => (T) GetOrBuildActivator<T>()();
-			public static object Create(Type type) => GetOrBuildActivator(type)();
-
-			private static CreateInstance GetOrBuildActivator<T>() => GetOrBuildActivator(typeof(T));
-			private static CreateInstance GetOrBuildActivator(Type type)
-			{
-				lock (Factory)
-				{
-					if (Factory.TryGetValue(type, out var activator))
-						return activator;
-					lock (Factory)
-					{
-						if (!Factory.TryGetValue(type, out activator))
-							Factory.Add(type, activator = Activation.DynamicMethodWeakTyped(type.GetConstructor(Type.EmptyTypes)));
-					}
-					return activator;
-				}
 			}
 		}
 	}

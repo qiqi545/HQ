@@ -4,8 +4,7 @@
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Blowdart.UI.Web.SemanticUI")]
-[assembly: InternalsVisibleTo("Blowgun.Web")]
-[assembly: InternalsVisibleTo("Blowgun.Web.SemanticUI")]
+[assembly: InternalsVisibleTo("Blowdart.UI.Web.Bootstrap")]
 
 namespace Blowdart.UI.Web.Internal
 {

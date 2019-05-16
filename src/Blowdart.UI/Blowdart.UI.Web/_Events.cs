@@ -4,6 +4,8 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable CheckNamespace
 
+using System;
+
 namespace Blowdart.UI.Web
 {
 	public static class Events
@@ -45,10 +47,7 @@ namespace Blowdart.UI.Web
 	public static class InputEvents
 	{
 		public const string input = "input";
-
-	
 		public const string change = "change";
-		
 		public const string invalid = "invalid";
 	}
 
@@ -57,5 +56,42 @@ namespace Blowdart.UI.Web
 		public const string copy = "copy";
 		public const string cut = "cut";
 		public const string paste = "paste";
+	}
+
+	public class ButtonEvents
+	{
+		public Action<MouseEventData> click;
+		public Action<MouseEventData> mouseover;
+		public Action<MouseEventData> mouseout;
+	}
+
+	/// <summary>
+	/// See: https://www.w3.org/TR/html5/dom.html#global-attributes
+	/// </summary>
+	public class GlobalAttributes
+	{
+		public char accesskey;
+		public string @class;
+		public bool contenteditable;
+		public string dir;
+		public bool draggable;
+		public bool hidden;
+		public string id;
+		public string lang;
+		public bool spellcheck;
+		public string style;
+		public int tabindex;
+		public string title;
+		public bool translate;
+	}
+
+	public class ButtonAttributes : GlobalAttributes
+	{
+		public string innerText;
+	}
+
+	public struct MouseEventData
+	{
+		public bool altKey;
 	}
 }

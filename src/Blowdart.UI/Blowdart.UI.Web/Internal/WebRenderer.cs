@@ -40,15 +40,20 @@ namespace Blowdart.UI.Web.Internal
             }
             else
             {
+				var found = false;
+
                 foreach (var page in layout.Handlers)
                 {
                     var pathString = new PathString(page.Key);
                     if (!pathString.StartsWithSegments(path))
                         continue;
+
+                    found = true;
                     await Response(ui.Value, page.Key, page.Value, layout, template, context, options.Value, settings);
                 }
 
-                await next();
+				if(!found)
+					await next();
             }
         }
 
@@ -69,7 +74,7 @@ namespace Blowdart.UI.Web.Internal
 	            if (!(system is HtmlSystem htmlSystem))
 		            throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
-				renderTarget.Begin(htmlSystem, WebUiContext.Build(context));
+				renderTarget.Begin(system, WebUiContext.Build(context));
 				renderAction(renderTarget);
                 renderTarget.End();
 

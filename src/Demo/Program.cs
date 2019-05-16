@@ -2,6 +2,7 @@
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
+
 using static InlineElements;
 
 namespace Demo
@@ -36,13 +37,12 @@ namespace Demo
 			 
             if(range(1, 100, 50) > 80)
             {
-				if (button("Secret Button", (e, a) =>
-				{
-					e.mouseover = () => a.innerText = "Secret Button Hovered";
-				}))
+				button("Secret Button", (e, a) =>
 	            {
-		            Console.WriteLine($"Clicked By {firstName} {lastName}!");
-				}
+		            e.click = d => Console.WriteLine($"Clicked By {firstName} {lastName}!");
+		            e.mouseover = d => a.innerText = "Secret Button Hovered";
+		            e.mouseout = d => a.innerText = "Secret Button Left";
+	            });
             }
 		}
     }
