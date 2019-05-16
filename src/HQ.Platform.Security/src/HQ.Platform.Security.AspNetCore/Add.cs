@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Common;
+using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,12 +35,13 @@ namespace HQ.Platform.Security.AspNetCore
             return AddSecurityPolicies(services, config.Bind);
         }
 
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, Action<SecurityOptions> configureAction = null)
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, Action<SecurityOptions> configureSecurityAction = null)
         {
             var options = new SecurityOptions();
-            configureAction?.Invoke(options);
+            configureSecurityAction?.Invoke(options);
+            services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
             
-            services.Configure<SecurityOptions>(o => { configureAction?.Invoke(o); });
+            services.ConfigureOptions<ConfigureWebServer>();
 
             if (options.Tokens.Enabled)
             {

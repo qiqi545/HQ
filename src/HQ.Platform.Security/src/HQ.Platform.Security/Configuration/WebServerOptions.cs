@@ -15,18 +15,12 @@
 
 #endregion
 
-using System.Net;
-
 namespace HQ.Platform.Security.Configuration
 {
-    public class SecurityOptions
+    public class WebServerOptions
     {
-        public SuperUserOptions SuperUser { get; set; } = new SuperUserOptions();
-        public ClaimOptions Claims { get; set; } = new ClaimOptions();
-        public TokenOptions Tokens { get; set; } = new TokenOptions();
-        public HttpsOptions Https { get; set; } = new HttpsOptions();
-        public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
-        public WebServerOptions WebServer { get; set; } = new WebServerOptions();
-        public HttpStatusCode? ForbidStatusCode { get; set; } = HttpStatusCode.Forbidden;
+        public int? MaxConcurrentConnections { get; set; } = 100;
+        public int? MaxConcurrentUpgradedConnections { get; set; } = 100;
+        public long? MaxRequestBodySize { get; set; } = 10240;
     }
 }
