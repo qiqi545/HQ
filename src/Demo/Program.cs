@@ -6,6 +6,7 @@ using static InlineElements;
 
 namespace Demo
 {
+	[DeployOn(DeployTarget.Client)]
 	[SemanticUi, Title("Blowdart UI Demo")]
 	internal class Program
     {

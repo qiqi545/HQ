@@ -8,20 +8,10 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Blowdart.UI.Web.Internal
 {
-	internal class InputState
-	{
-		public string id { get; set; }
-		public string name { get; set; }
-		public string type { get; set; }
-		public string value { get; set; }
-	}
-
-    internal class HtmlHub : Hub
+	internal class HtmlHub : Hub
     {
         private readonly LayoutRoot _layoutRoot;
         private readonly IOptions<UiServerOptions> _options;

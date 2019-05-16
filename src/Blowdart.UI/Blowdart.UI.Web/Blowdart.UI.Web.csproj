@@ -15,6 +15,7 @@
       <LogicalName>ErrorStrings.resx</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="lib\**\*" />
+    <EmbeddedResource Include="wasm\**\*" />
   </ItemGroup>
 
   <ItemGroup>

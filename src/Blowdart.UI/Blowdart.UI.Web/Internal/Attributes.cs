@@ -8,7 +8,7 @@ using System.Linq;
 using Blowdart.UI.Internal;
 using TypeKitchen;
 
-namespace Blowdart.UI.Web
+namespace Blowdart.UI.Web.Internal
 {
 	internal class Attributes : DynamicObject
     {

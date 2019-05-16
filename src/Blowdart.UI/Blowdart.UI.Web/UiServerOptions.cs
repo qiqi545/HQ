@@ -16,5 +16,6 @@ namespace Blowdart.UI.Web
         public bool UsePrerendering { get; set; } = true;
         public bool UseLogging { get; set; } = true;
         public ServerTransport MessagingModel { get; set; } = ServerTransport.All;
+        public DeployTarget DeployTarget { get; set; } = DeployTarget.Server;
     }
 }

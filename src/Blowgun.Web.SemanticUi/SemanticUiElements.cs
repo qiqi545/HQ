@@ -6,6 +6,7 @@ using System.Text;
 using Blowdart.UI;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Web;
+using Blowdart.UI.Web.Internal;
 
 namespace Blowgun.Web.SemanticUi
 {

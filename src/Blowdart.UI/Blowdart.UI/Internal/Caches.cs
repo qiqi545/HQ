@@ -18,16 +18,18 @@ namespace Blowdart.UI.Internal
 		{
 			public static void Clear()
 			{
+				_handlerNames?.Clear();
+				_handlers?.Clear();
 				_methods?.Clear();
-				_handlerMethodsWithName?.Clear();
+				_meta?.Clear();
+				_systems?.Clear();
 			}
 
-			private static Dictionary<string, MethodInfo> _handlerMethodsWithName;
-
+			private static Dictionary<string, MethodInfo> _handlerNames;
 			public static Dictionary<string, MethodInfo> IntrospectHandlerNames()
 			{
-				if (_handlerMethodsWithName != null)
-					return _handlerMethodsWithName;
+				if (_handlerNames != null)
+					return _handlerNames;
 
 				var methods = IntrospectMethods();
 				var methodsWithAttribute = methods.Where(x => Attribute.IsDefined(x, typeof(HandlerNameAttribute))).ToList();
@@ -45,12 +47,16 @@ namespace Blowdart.UI.Internal
 					Trace.TraceWarning(message);
 				}
 
-				_handlerMethodsWithName = kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
-				return _handlerMethodsWithName;
+				_handlerNames = kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
+				return _handlerNames;
 			}
 
+			private static Dictionary<string, MethodInfo> _handlers;
 			public static Dictionary<string, MethodInfo> IntrospectHandlers()
 			{
+				if (_handlers != null)
+					return _handlers;
+
 				var methods = IntrospectMethods();
 				var kvp = methods.Where(x => Attribute.IsDefined(x, typeof(HandlerAttribute))).Select(x =>
 				{
@@ -65,7 +71,8 @@ namespace Blowdart.UI.Internal
 					var message = $"Duplicate entries found for handlers with template \"{duplicate.Key}\":{values}";
 					Trace.TraceWarning(message);
 				}
-				return kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
+				_handlers = kvp.Distinct().ToDictionary(k => k.Key, v => v.Value);
+				return _handlers;
 			}
 
 			private static ImmutableHashSet<MethodInfo> _methods;
@@ -80,8 +87,12 @@ namespace Blowdart.UI.Internal
 				return _methods;
 			}
 
+			private static Dictionary<MethodInfo, NameValueCollection> _meta;
 			public static Dictionary<MethodInfo, NameValueCollection> IntrospectMeta()
 			{
+				if (_meta != null)
+					return _meta;
+
 				var methods = IntrospectMethods();
 
 				var result = new Dictionary<MethodInfo, NameValueCollection>();
@@ -124,7 +135,8 @@ namespace Blowdart.UI.Internal
 					}
 				}
 				
-				return result;
+				_meta = result;
+				return _meta;
 			}
 
 			private static Dictionary<MethodInfo, UiSystem> _systems;

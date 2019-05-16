@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Blowdart.UI.Theming\Blowdart.UI.Theming.csproj" />
-    <ProjectReference Include="..\..\Blowgun\Blowgun.csproj" />
     <ProjectReference Include="..\Blowdart.UI.Web\Blowdart.UI.Web.csproj" />
   </ItemGroup>
 

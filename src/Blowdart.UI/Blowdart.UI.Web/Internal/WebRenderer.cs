@@ -111,13 +111,32 @@ namespace Blowdart.UI.Web.Internal
 				var stylesSection = htmlSystem.StylesSection();
 				var scriptsSection = htmlSystem.ScriptsSection();
 
+				string wasmSection;
+				switch (options.DeployTarget)
+				{
+					case DeployTarget.Server:
+						wasmSection = "";
+						break;
+					case DeployTarget.Client:
+					case DeployTarget.Static:
+						wasmSection = @"<!-- WASM -->
+<script src=""~/wasm/mono.js""></script>
+<script src=""~/wasm/mono.wasm""></script>
+<script src=""~/wasm/wasm.js""></script>
+";
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+				
 				html = template
                         .Replace(bodySlug, bodySlug + htmlSystem.RenderDom)
                         .Replace(scriptSlug, $"{scriptOpen}document.addEventListener(\"DOMContentLoaded\", function (event) {{{htmlSystem.RenderScripts}}});{scriptClose}")
                         .Replace("<!-- META -->", metaString)
 						.Replace("<!-- STYLES -->", stylesSection)
                         .Replace("<!-- SCRIPTS -->", scriptsSection)
-                    ;
+                        .Replace("<!-- WASM -->", wasmSection)
+					;
             }
             else
             {

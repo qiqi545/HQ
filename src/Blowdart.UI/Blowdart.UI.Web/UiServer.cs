@@ -23,6 +23,7 @@ using Blowdart.UI.Internal;
 using Blowdart.UI.Scripting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.Options;
 
 namespace Blowdart.UI.Web
 {
@@ -67,12 +68,14 @@ namespace Blowdart.UI.Web
 	            {
 		            uiAssemblies[i] = systems.Values.ElementAt(i).GetType().Assembly;
 	            }
+
+				services.AddBlowdartUi(_env, uiAssemblies);
 			}
             finally
             {
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
-			services.AddBlowdartUi(_env, uiAssemblies);
+
 			_startup?.ExecuteMethod(nameof(ConfigureServices), services);
         }
 
@@ -252,12 +255,28 @@ namespace Blowdart.UI.Web
                 }
 
 				HandlersAreFinished();
+
+				//
+				// Resolve deployment model (via attribute):
+				var settings = serviceProvider.GetRequiredService<UiSettings>();
+				foreach (var assembly in settings.ComponentAssemblies)
+				{
+					var types = assembly.GetTypes();
+					foreach (var type in types)
+					{
+						if (!Attribute.IsDefined(type, typeof(DeployOnAttribute)))
+							continue;
+						var deployOn = (DeployOnAttribute) Attribute.GetCustomAttribute(type, typeof(DeployOnAttribute));
+						var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
+						options.Value.DeployTarget = deployOn.Target;
+					}
+				}
 				
-                var service = serviceProvider.GetService<IHostingEnvironment>();
+                var env = serviceProvider.GetService<IHostingEnvironment>();
                 if (!serviceProvider.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
                 {
-                    Console.WriteLine($"Hosting environment: {service.EnvironmentName}");
-                    Console.WriteLine($"Content root path: {service.ContentRootPath}");
+                    Console.WriteLine($"Hosting environment: {env.EnvironmentName}");
+                    Console.WriteLine($"Content root path: {env.ContentRootPath}");
                     var addresses = webHost.ServerFeatures.Get<IServerAddressesFeature>()?.Addresses;
                     if (addresses != null)
 						foreach (var address in addresses)
@@ -296,7 +315,7 @@ namespace Blowdart.UI.Web
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 startInfo.FileName = "cmd";
-                startInfo.Arguments = "/C start " + url;
+                startInfo.Arguments = $"/C start {url}";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
