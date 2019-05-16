@@ -41,6 +41,7 @@ namespace HQ.Common
             public const string CacheArgument = "cache";
             public const string CacheKeyArgument = "cacheKey";
             public const string Tenant = "tenant";
+            public const string Version = "version";
         }
 
         public static class PlatformRoutes
@@ -72,6 +73,15 @@ namespace HQ.Common
                 public const string ManageUsers = "ManageUsers";
                 public const string ManageRoles = "ManageRoles";
             }
+        }
+
+        public static class Versioning
+        {
+            public const string DefaultVersion = "1.0";
+            public const string VersionHeader = "X-Api-Version";
+            public const string VersionParameter = "api-version";
+            public const string VersionPathSegment = "v{0}";
+            public const string UserVersionClaim = "version";
         }
 
         public static class MultiTenancy
