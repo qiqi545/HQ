@@ -266,7 +266,7 @@ namespace Blowdart.UI.Web
 
 				webHost.StartAsync(cancellationToken).GetAwaiter().GetResult();
                 
-				var service = serviceProvider.GetService<IHostingEnvironment>();
+				var env = serviceProvider.GetService<IHostingEnvironment>();
                 if (!serviceProvider.GetRequiredService<WebHostOptions>().SuppressStatusMessages)
                 {
                     Console.WriteLine($"Hosting environment: {env.EnvironmentName}");
