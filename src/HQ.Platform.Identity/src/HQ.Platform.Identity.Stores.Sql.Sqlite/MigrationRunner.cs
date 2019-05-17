@@ -15,11 +15,13 @@
 
 #endregion
 
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
 using HQ.Data.Sql.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Identity.Stores.Sql.Sqlite
@@ -35,9 +37,18 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             _options = options;
         }
 
-        public Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
+        public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
         {
-            return Task.CompletedTask;
+            var builder = new SqliteConnectionStringBuilder(_connectionString)
+            {
+                Mode = SqliteOpenMode.ReadWriteCreate
+            };
+            if (!File.Exists(builder.DataSource))
+            {
+                var connection = new SqliteConnection(builder.ConnectionString);
+                await connection.OpenAsync(cancellationToken);
+                connection.Close();
+            }
         }
 
         public void MigrateUp(CancellationToken cancellationToken)
