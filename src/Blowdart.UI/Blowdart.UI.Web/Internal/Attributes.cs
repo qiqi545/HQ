@@ -77,14 +77,18 @@ namespace Blowdart.UI.Web.Internal
             var members = AccessorMembers.Create(accessorType, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
             foreach (var member in members)
             {
-                if (!accessor.TryGetValue(attr, member.Name, out var value))
-                    continue; // unlikely, but defend against missing members in the accessor
-
-                if (!accessor.TryGetValue(attr, member.Name, out value))
+                if (!accessor.TryGetValue(attr, member.Name, out object value))
                     continue; // unlikely, but defend against missing members in the accessor
 
                 if (value == null)
                     continue; // omit null values in the final hash
+
+                if (value is bool flag)
+                {
+					if(!flag)
+						continue;
+					value = "true";
+                }
 
                 result[member.Name] = value;
             }
