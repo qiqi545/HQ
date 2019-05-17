@@ -44,7 +44,7 @@ namespace Blowdart.UI.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-            if (Standalone)
+            if (_standalone)
             {
                 services.AddRouting(options =>
                 {
@@ -75,16 +75,16 @@ namespace Blowdart.UI.Web
             {
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
-			services.AddBlowdartUi(_env, Standalone, uiAssemblies);
+			services.AddBlowdartUi(_env, _standalone, uiAssemblies);
 
 			_startup?.ExecuteMethod(services.BuildServiceProvider(), nameof(ConfigureServices), services);
         }
 
-        private static bool Standalone;
+        private static bool _standalone;
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (Standalone)
+            if (_standalone)
             {
                 app.UseCors();
                 app.UseResponseCompression();
@@ -95,7 +95,7 @@ namespace Blowdart.UI.Web
                 app.UseHttpsRedirection();
             }
            
-            app.UseBlowdartUi(_layout, Standalone);
+            app.UseBlowdartUi(_layout, _standalone);
             _startup?.ExecuteMethod(app.ApplicationServices, nameof(Configure), app, env);
         }
 
@@ -207,7 +207,7 @@ namespace Blowdart.UI.Web
 
 		private static void StartServer(string[] args)
 		{
-			Standalone = true;
+			_standalone = true;
 
 	        Masthead();
 

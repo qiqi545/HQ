@@ -14,7 +14,7 @@ namespace Blowdart.UI.Web
         public string BodyElementId { get; set; } = "ui-body";
         public string ScriptElementId { get; set; } = "ui-scripts";
         public bool UsePrerendering { get; set; } = true;
-        public bool UseLogging { get; set; } = true;
+        public bool UseLogStreaming { get; set; } = true;
         public ServerTransport MessagingModel { get; set; } = ServerTransport.All;
         public DeployTarget DeployTarget { get; set; } = DeployTarget.Server;
     }
