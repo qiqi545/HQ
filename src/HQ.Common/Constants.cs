@@ -80,7 +80,7 @@ namespace HQ.Common
             public const string DefaultVersion = "1.0";
             public const string VersionHeader = "X-Api-Version";
             public const string VersionParameter = "api-version";
-            public const string VersionPathSegment = "v{0}";
+            public const string VersionPathPrefix = "v";
             public const string UserVersionClaim = "version";
         }
 

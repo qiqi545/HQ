@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Primitives;
 
 namespace HQ.Common
 {
@@ -108,6 +109,16 @@ namespace HQ.Common
         public static List<T> MaybeList<T>(this IEnumerable<T> enumerable)
         {
             return enumerable as List<T> ?? enumerable.ToList();
+        }
+
+        public static bool Contains(this StringValues stringValues, string input, StringComparison comparison = StringComparison.CurrentCulture)
+        {
+            foreach (var value in stringValues)
+            {
+                if (value.Equals(input, comparison))
+                    return true;
+            }
+            return false;
         }
     }
 }
