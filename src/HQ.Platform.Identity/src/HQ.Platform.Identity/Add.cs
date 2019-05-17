@@ -94,13 +94,7 @@ namespace HQ.Platform.Identity
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
             
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(options =>
-            {
-                configuration.Bind(options);
-            }, extended =>
-            {
-                configuration.Bind(extended);
-            });
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind, configuration.Bind);
         }
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
@@ -155,6 +149,7 @@ namespace HQ.Platform.Identity
             services.AddScoped<ITenantValidator<TTenant, TUser, TKey>, TenantValidator<TTenant, TUser, TKey>>();
 
             services.AddScoped<IUserService<TUser>, UserService<TUser, TKey>>();
+            services.AddScoped<IVersionService, IdentityVersionService>();
             services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();
             services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
             services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
@@ -168,6 +163,12 @@ namespace HQ.Platform.Identity
             where TTenant : IdentityTenant
         {
             services.AddScoped<ITenantContextStore<TTenant>, IdentityTenantContextStore<TTenant>>();
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityVersionContextStore(this IServiceCollection services)
+        {
+            services.AddScoped<IVersionContextStore, IdentityVersionContextStore>();
             return services;
         }
     }

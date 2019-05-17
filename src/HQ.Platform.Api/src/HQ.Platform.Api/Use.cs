@@ -29,6 +29,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Version = HQ.Platform.Api.Models.Version;
 
 namespace HQ.Platform.Api
 {
@@ -250,19 +251,19 @@ namespace HQ.Platform.Api
             {
                 var versionResolver = c.RequestServices.GetRequiredService<IVersionContextResolver>();
                 var versionContext = await versionResolver.ResolveAsync(c);
-                if (versionContext != null)
+                if (versionContext != null && versionContext != VersionContext.None)
                 {
                     c.SetVersionContext(versionContext);
                 }
                 else
                 {
-                    if (!o.RequireExplicitVersion)
+                    if (!o.RequireExplicitVersion || o.VersionAgnosticPaths.Contains(c.Request.Path, StringComparison.OrdinalIgnoreCase))
                     {
                         c.SetVersionContext(VersionContext.None);
                     }
                     else
                     {
-                        c.Response.StatusCode = (int) HttpStatusCode.Forbidden;
+                        c.Response.StatusCode = o.ExplicitVersionRequiredStatusCode;
                         return;
                     }
                 }

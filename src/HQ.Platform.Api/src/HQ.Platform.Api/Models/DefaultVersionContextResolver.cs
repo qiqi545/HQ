@@ -73,7 +73,7 @@ namespace HQ.Platform.Api.Models
                 if (_options.Value.EnableVersionParameter && !string.IsNullOrWhiteSpace(_options.Value.VersionParameter) && http.Request.QueryString.HasValue)
                     http.Request.Query.TryGetValue(_options.Value.VersionParameter, out versionKey);
 
-                if (_options.Value.EnableVersionPath && !string.IsNullOrWhiteSpace(_options.Value.VersionPathSegment) && http.Request.PathBase.HasValue)
+                if (_options.Value.EnableVersionPath && !string.IsNullOrWhiteSpace(_options.Value.VersionPathPrefix) && http.Request.PathBase.HasValue)
                     versionKey = http.Request.PathBase.Value;
             }
 
@@ -81,7 +81,7 @@ namespace HQ.Platform.Api.Models
             {
                 //
                 // Implicit Version:
-                if (_options.Value.EnableUserVersions && string.IsNullOrWhiteSpace(_options.Value.UserVersionClaim))
+                if (_options.Value.EnableUserVersions && !string.IsNullOrWhiteSpace(_options.Value.UserVersionClaim))
                 {
                     var claim = http.User.FindFirst(x => x.Type == ClaimTypes.Version);
                     if (claim != null)

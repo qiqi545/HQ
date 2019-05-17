@@ -34,6 +34,7 @@ namespace HQ.Platform.Security.AspNetCore.Configuration
         {
             options.AddServerHeader = false;
 
+            // See: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-2.2
             options.Limits.MaxConcurrentConnections = _options.Value.WebServer.MaxConcurrentConnections;
             options.Limits.MaxConcurrentUpgradedConnections = _options.Value.WebServer.MaxConcurrentUpgradedConnections;
             options.Limits.MaxRequestBodySize = _options.Value.WebServer.MaxRequestBodySize;

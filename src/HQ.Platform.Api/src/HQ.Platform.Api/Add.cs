@@ -134,7 +134,6 @@ namespace HQ.Platform.Api
 
         #endregion
 
-
         #region Multi-Tenancy
 
         public static IServiceCollection AddMultiTenancy<TTenant>(this IServiceCollection services,

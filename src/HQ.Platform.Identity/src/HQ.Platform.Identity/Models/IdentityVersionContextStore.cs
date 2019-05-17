@@ -15,8 +15,6 @@
 
 #endregion
 
-
-using System;
 using System.Threading.Tasks;
 using HQ.Platform.Api.Models;
 
@@ -33,7 +31,7 @@ namespace HQ.Platform.Identity.Models
 
         public Task<VersionContext> FindByKeyAsync(string versionKey)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(VersionContext.None);
         }
     }
 }

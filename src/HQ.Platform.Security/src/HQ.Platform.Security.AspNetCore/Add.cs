@@ -23,6 +23,7 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,7 +54,7 @@ namespace HQ.Platform.Security.AspNetCore
                 x.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUserExtended(services, options)
                     .Build();
-
+                
                 if (options.SuperUser.Enabled)
                 {
                     x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
@@ -79,7 +80,6 @@ namespace HQ.Platform.Security.AspNetCore
                     });
                 }
             }
-            
 
             return services;
         }

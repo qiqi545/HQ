@@ -16,13 +16,16 @@
 #endregion
 
 
+using System.Net;
 using HQ.Common;
+using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Configuration
 {
     public class VersioningOptions : FeatureToggle
     {
         public bool RequireExplicitVersion { get; set; } = true;
+        public int ExplicitVersionRequiredStatusCode = (int) HttpStatusCode.NotFound;
 
         public bool EnableVersionHeader { get; set; } = false;
         public string VersionHeader { get; set; } = Constants.Versioning.VersionHeader;
@@ -31,11 +34,13 @@ namespace HQ.Platform.Api.Configuration
         public string VersionParameter { get; set; } = Constants.Versioning.VersionParameter;
 
         public bool EnableVersionPath { get; set; } = true;
-        public string VersionPathSegment { get; set; } = Constants.Versioning.VersionPathSegment;
+        public string VersionPathPrefix { get; set; } = Constants.Versioning.VersionPathPrefix;
 
         public bool EnableUserVersions { get; set; } = true;
         public string UserVersionClaim { get; set; } = Constants.Versioning.UserVersionClaim;
 
         public int? VersionLifetimeSeconds { get; set; } = null;
+
+        public StringValues VersionAgnosticPaths { get; set; } = "/";
     }
 }
