@@ -12,7 +12,7 @@ namespace Blowdart.UI.Web.SemanticUI
 	{
 		private static readonly Dictionary<Enum, string> Interned = new Dictionary<Enum, string>();
 
-		public static Ui Icon<T>(this Ui ui, T icon, string label = null, bool active = false) where T : Enum
+		public static Ui Icon<T>(this Ui ui, T icon, bool active = false, string label = null) where T : Enum
 		{
 			var sb = Pools.StringBuilderPool.Get();
 			try
