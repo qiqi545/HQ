@@ -49,13 +49,13 @@ namespace Blowdart.UI
 
         public LayoutRoot Template(string template, Action<Ui> view)
         {
-            _handlers.Add(template, view);
+            _handlers.Add(Normalize(template), view);
             return this;
         }
 
         public LayoutRoot Template<TService>(string template, Action<Ui, dynamic> view)
         {
-	        _handlers.Add(template, ui =>
+			_handlers.Add(Normalize(template), ui =>
             {
                 view(ui, ui.Data.GetModel<TService>(template));
             });
@@ -64,11 +64,16 @@ namespace Blowdart.UI
 
         public LayoutRoot Template<TService, TModel>(string template, Action<Ui, TModel> view) where TModel : class
         {
-	        _handlers.Add(template, ui =>
+	        _handlers.Add(Normalize(template), ui =>
             {
                 view(ui, ui.Data.GetModel<TService, TModel>(template));
             });
             return this;
+        }
+
+        private static string Normalize(string template)
+        {
+	        return !template.StartsWith("/") ? $"/{template}" : template;
         }
 
 		#endregion
