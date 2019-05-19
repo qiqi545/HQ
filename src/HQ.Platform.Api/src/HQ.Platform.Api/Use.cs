@@ -27,9 +27,7 @@ using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Version = HQ.Platform.Api.Models.Version;
 
 namespace HQ.Platform.Api
 {
@@ -257,7 +255,7 @@ namespace HQ.Platform.Api
                 }
                 else
                 {
-                    if (!o.RequireExplicitVersion || o.VersionAgnosticPaths.Contains(c.Request.Path, StringComparison.OrdinalIgnoreCase))
+                    if (!o.RequireExplicitVersion || o.VersionAgnosticPaths.AnyStartWith(c.Request.Path, StringComparison.OrdinalIgnoreCase))
                     {
                         c.SetVersionContext(VersionContext.None);
                     }

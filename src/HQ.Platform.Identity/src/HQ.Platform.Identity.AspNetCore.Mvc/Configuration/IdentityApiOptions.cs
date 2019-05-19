@@ -19,6 +19,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Configuration
 {
     public class IdentityApiOptions
     {
-        public string RootPath { get; set; } = "api";
+        public string RootPath { get; set; } = "auth";
     }
 }
