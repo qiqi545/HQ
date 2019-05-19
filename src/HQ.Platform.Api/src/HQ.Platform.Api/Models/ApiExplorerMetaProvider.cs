@@ -70,8 +70,6 @@ namespace HQ.Platform.Api.Models
                             {
                                 new
                                 {
-                                    key = "Content-Type",
-                                    value = "application/json",
                                     disabled = false,
                                     description = new
                                     {
@@ -79,6 +77,8 @@ namespace HQ.Platform.Api.Models
                                         type = "text/markdown",
                                         version = _options.Value.ApiVersion
                                     },
+                                    key = "Content-Type",
+                                    value = "application/json"
                                 }
                             },
                             body = default(object)
