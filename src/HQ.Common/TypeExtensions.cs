@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Common
 {
@@ -75,6 +76,17 @@ namespace HQ.Common
         public static bool IsTruthy(this Type type)
         {
             return type == typeof(bool) || type == typeof(bool?);
+        }
+
+        public static bool ImplementsGeneric(this Type type, Type generic)
+        {
+            if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
+                return true;
+
+            if (type.GetTypeInfo().ImplementedInterfaces.Any(@interface => @interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic))
+                return true;
+
+            return type.BaseType?.ImplementsGeneric(generic) ?? false;
         }
     }
 }
