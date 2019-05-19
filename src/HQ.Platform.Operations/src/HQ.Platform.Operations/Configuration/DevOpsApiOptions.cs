@@ -31,5 +31,8 @@ namespace HQ.Platform.Operations.Configuration
 
         public bool EnableEnvironmentEndpoint { get; set; } = true;
         public string EnvironmentEndpointPath { get; set; } = "/env";
+
+        public bool EnableOptionsDebugging { get; set; } = true;
+        public string OptionsDebuggingPath { get; set; } = "/options";
     }
 }

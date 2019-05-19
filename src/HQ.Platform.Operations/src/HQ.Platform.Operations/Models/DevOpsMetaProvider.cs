@@ -81,7 +81,54 @@ namespace HQ.Platform.Operations.Models
                 };
                 folder.item.Add(item);
             }
-            
+
+            if (options.EnableOptionsDebugging)
+            {
+                var path = options.OptionsDebuggingPath.TrimStart('/');
+
+                var item = new
+                {
+                    id = Guid.NewGuid(),
+                    name = path,
+                    description = "",
+                    variable = new List<dynamic>(),
+                    @event = new List<dynamic>(),
+                    request = new
+                    {
+                        url = $"{baseUri}/{path}",
+                        auth = "bearer",
+                        proxy = new { },
+                        certificate = new { },
+                        method = "GET",
+                        description = new
+                        {
+                            content = "",
+                            type = "text/markdown",
+                            version = api.ApiVersion
+                        },
+                        header = new List<dynamic>
+                        {
+                            new
+                            {
+                                key = "Content-Type",
+                                value = "application/json",
+                                disabled = false,
+                                description = new
+                                {
+                                    content = "",
+                                    type = "text/markdown",
+                                    version = api.ApiVersion
+                                },
+                            }
+                        },
+                        body = default(object)
+                    },
+                    response = new List<dynamic>(),
+                    protocolProfileBehavior = new { }
+                };
+                folder.item.Add(item);
+            }
+
             if (options.EnableEnvironmentEndpoint)
             {
                 var path = options.EnvironmentEndpointPath.TrimStart('/');
