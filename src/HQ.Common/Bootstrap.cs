@@ -91,8 +91,6 @@ namespace HQ.Common
 
                 if (IgnoreTypes.Contains(property.PropertyType) || typeof(MulticastDelegate).IsAssignableFrom(property.PropertyType.BaseType))
                 {
-                    if(Debugger.IsAttached)
-                        Debugger.Break();
                     Trace.TraceError($"Runtime avoided JSON serializing property '{property.PropertyType.Name} {property.DeclaringType.Name}.{property.PropertyName}' that would cause a circular reference.");
                     property.ShouldSerialize = i => false;
                     property.Ignored = true;

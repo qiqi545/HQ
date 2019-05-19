@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Common
@@ -131,11 +132,11 @@ namespace HQ.Common
             return false;
         }
 
-        public static bool AnyStartWith(this IEnumerable<string> stringValues, string input, StringComparison comparison = StringComparison.CurrentCulture)
+        public static bool StartsWithAny(this PathString input, IEnumerable<string> stringValues, StringComparison comparison = StringComparison.CurrentCulture)
         {
             foreach (var value in stringValues)
             {
-                if (value.StartsWith(input, comparison))
+                if (input.StartsWithSegments(value, comparison))
                     return true;
             }
             return false;
