@@ -41,6 +41,6 @@ namespace HQ.Platform.Api.Configuration
 
         public int? VersionLifetimeSeconds { get; set; } = null;
 
-        public StringValues VersionAgnosticPaths { get; set; } = "/";
+        public string[] VersionAgnosticPaths { get; set; } = {"/"};
     }
 }

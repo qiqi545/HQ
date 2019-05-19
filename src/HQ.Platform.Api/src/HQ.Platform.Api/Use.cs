@@ -255,7 +255,7 @@ namespace HQ.Platform.Api
                 }
                 else
                 {
-                    if (!o.RequireExplicitVersion || o.VersionAgnosticPaths.AnyStartWith(c.Request.Path, StringComparison.OrdinalIgnoreCase))
+                    if (!o.RequireExplicitVersion || c.Request.Path.StartsWithAny(o.VersionAgnosticPaths, StringComparison.OrdinalIgnoreCase))
                     {
                         c.SetVersionContext(VersionContext.None);
                     }
