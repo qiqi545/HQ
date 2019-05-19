@@ -110,7 +110,12 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
+        public static Ui OnReady(this Ui ui, string script)
+        {
+	        Scripts(ui).AppendLine($"{script}");
 
+			return ui;
+        }
 
 		#region DOM Events
 
