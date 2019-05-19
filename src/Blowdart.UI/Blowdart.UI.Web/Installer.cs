@@ -136,9 +136,10 @@ namespace Blowdart.UI.Web
             layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
 
 			app.Use(async (context, next) =>
-            {
-	            await WebRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next);
-            });
-        }
+			{
+				if (!await WebRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next))
+					await next();
+			});
+		}
     }
 }

@@ -17,7 +17,7 @@ namespace Blowdart.UI.Web.Internal
 {
     internal static class WebRenderer
     {
-        public static async Task BuildUi(LayoutRoot layout, string template, HttpContext context, Func<Task> next)
+        public static async Task<bool> BuildUi(LayoutRoot layout, string template, HttpContext context, Func<Task> next)
         {
 	        var serviceProvider = layout.Services;
 
@@ -37,24 +37,20 @@ namespace Blowdart.UI.Web.Internal
             if (path == "/")
             {
                 await Response(ui.Value, path, layout.Root, layout, template, context, options.Value, settings);
+                return true;
             }
-            else
+			
+            foreach (var page in layout.Handlers)
             {
-				var found = false;
+	            var pathString = new PathString(page.Key);
+	            if (!pathString.StartsWithSegments(path))
+		            continue;
 
-                foreach (var page in layout.Handlers)
-                {
-                    var pathString = new PathString(page.Key);
-                    if (!pathString.StartsWithSegments(path))
-                        continue;
-
-                    found = true;
-                    await Response(ui.Value, page.Key, page.Value, layout, template, context, options.Value, settings);
-                }
-
-				if(!found)
-					await next();
+	            await Response(ui.Value, page.Key, page.Value, layout, template, context, options.Value, settings);
+	            return true;
             }
+
+            return false;
         }
 
         private static async Task Response(Ui renderTarget, string pageKey, Action<Ui> renderAction, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
