@@ -23,7 +23,8 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Server.Kestrel;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -38,6 +39,9 @@ namespace HQ.Platform.Security.AspNetCore
 
         public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, Action<SecurityOptions> configureSecurityAction = null)
         {
+            Bootstrap.EnsureInitialized();
+            Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));
+
             var options = new SecurityOptions();
             configureSecurityAction?.Invoke(options);
             services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
