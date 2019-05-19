@@ -130,5 +130,15 @@ namespace HQ.Common
             }
             return false;
         }
+
+        public static bool AnyStartWith(this IEnumerable<string> stringValues, string input, StringComparison comparison = StringComparison.CurrentCulture)
+        {
+            foreach (var value in stringValues)
+            {
+                if (value.StartsWith(input, comparison))
+                    return true;
+            }
+            return false;
+        }
     }
 }
