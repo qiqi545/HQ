@@ -48,9 +48,11 @@ namespace Blowdart.UI.Internal
             var action = Pools.ActionPool.Get();
             try
             {
-	            var system = layoutRoot.Systems[template] ?? settings.DefaultSystem ??
-	                         throw new ArgumentException("No registered system for the given template, and no default system to fall back on");
-
+	            layoutRoot.Systems.TryGetValue(template, out var system);
+	            system = system ?? settings.DefaultSystem ??
+	                     throw new ArgumentException(
+		                     "No registered system for the given template, and no default system to fall back on");
+				
 	            system.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
 
                 var result = action.Arguments == null
