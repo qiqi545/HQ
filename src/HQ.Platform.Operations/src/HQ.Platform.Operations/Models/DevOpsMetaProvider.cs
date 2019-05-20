@@ -35,9 +35,11 @@ namespace HQ.Platform.Operations.Models
                 protocolProfileBehavior = new { }
             };
 
+            var rootPath = options.RootPath.TrimStart('/');
+
             if (options.EnableRouteDebugging)
             {
-                var path = options.RouteDebuggingPath.TrimStart('/');
+                var path = rootPath + options.RouteDebuggingPath;
 
                 var item = new
                 {
@@ -84,7 +86,7 @@ namespace HQ.Platform.Operations.Models
 
             if (options.EnableOptionsDebugging)
             {
-                var path = options.OptionsDebuggingPath.TrimStart('/');
+                var path = rootPath + options.OptionsDebuggingPath;
 
                 var item = new
                 {
@@ -131,7 +133,7 @@ namespace HQ.Platform.Operations.Models
 
             if (options.EnableEnvironmentEndpoint)
             {
-                var path = options.EnvironmentEndpointPath.TrimStart('/');
+                var path = rootPath + options.EnvironmentEndpointPath;
 
                 var item = new
                 {
