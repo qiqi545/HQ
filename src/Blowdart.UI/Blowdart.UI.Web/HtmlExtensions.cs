@@ -128,7 +128,8 @@ namespace Blowdart.UI.Web
 	        return ui.Clicked.Contains(id);
         }
 		
-		public static Ui Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events)
+		public static Ui Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events,
+			object attr = null)
 		{
 			ui.NextId();
 			var id = ui.NextIdHash;
@@ -158,7 +159,45 @@ namespace Blowdart.UI.Web
 				Scripts(ui).AppendEvent(MouseEvents.mouseout, id);
 			}
 
-			Dom(ui).AppendTag("button", id, innerText, attributes: null);
+			Dom(ui).AppendTag("button", id, innerText, Attr(attr));
+			return ui;
+		}
+
+		public static Ui BeginButton(this Ui ui, Action<ButtonEvents, ButtonAttributes> events, object attr = null)
+		{
+			ui.NextId();
+			var id = ui.NextIdHash;
+
+			if (events != null)
+			{
+				var e = new ButtonEvents();
+				var a = new ButtonAttributes();
+				var d = new MouseEventData();
+
+				events(e, a);
+
+				if (ui.Clicked.Contains(id))
+					e.click?.Invoke(d);
+
+				if (ui.MouseOver.Contains(id))
+					e.mouseover?.Invoke(d);
+
+				if (ui.MouseOut.Contains(id))
+					e.mouseout?.Invoke(d);
+				
+				if(e.click != null)
+					Scripts(ui).AppendEvent(MouseEvents.click, id);
+				if(e.mouseover != null)
+					Scripts(ui).AppendEvent(MouseEvents.mouseover, id);
+				if(e.mouseout != null)
+					Scripts(ui).AppendEvent(MouseEvents.mouseout, id);
+			}
+
+			// todo could be BeginButton if we could pass id with attr or attr didn't exist
+			Dom(ui).Tab();
+			Dom(ui).OpenBlock("button", id, attr == null ? null : Attr(attr));
+			_indentLevel++;
+			Elements.Push("button");
 			return ui;
 		}
 

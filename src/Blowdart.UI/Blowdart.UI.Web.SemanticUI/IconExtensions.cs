@@ -12,12 +12,12 @@ namespace Blowdart.UI.Web.SemanticUI
 	public static class IconExtensions
 	{
 		
-		public static Ui Icon<T>(this Ui ui, T icon, NamedColors color = NamedColors.Unspecified, bool active = false, string label = null) where T : Enum
+		public static Ui Icon<T>(this Ui ui, T icon, NamedColors color = NamedColors.Unspecified, NamedSizes size = NamedSizes.Unspecified, bool active = false, string label = null) where T : Enum
 		{
 			var sb = Pools.StringBuilderPool.Get();
 			try
 			{
-				ui.BeginI(sb.AppendClass<T>(icon, active, color));
+				ui.BeginI(sb.AppendClass<T>(icon, active, color, size));
 				if (!string.IsNullOrWhiteSpace(label))
 					ui.Literal(label);
 				ui.EndI();
@@ -29,7 +29,7 @@ namespace Blowdart.UI.Web.SemanticUI
 			}
 		}
 
-		private static string AppendClass<T>(this StringBuilder sb, Enum icon, bool active, NamedColors color)
+		private static string AppendClass<T>(this StringBuilder sb, Enum icon, bool active, NamedColors color, NamedSizes size)
 		{
 			sb.AppendEnumNameAsWord<T>(icon);
 			sb.Append(" icon");
@@ -37,6 +37,8 @@ namespace Blowdart.UI.Web.SemanticUI
 				sb.Append(" active");
 			if(color != NamedColors.Unspecified)
 				sb.AppendEnumNameAsWord<NamedColors>(color);
+			if (size != NamedSizes.Unspecified)
+				sb.AppendEnumNameAsWord<NamedSizes>(size);
 			return sb.ToString();
 		}
 
