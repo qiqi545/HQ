@@ -87,7 +87,7 @@
   <!--#endif-->
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.4" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Version="2.2.0" Condition="'$(AppInsights)'=='true'" />
     <PackageReference Include="HQ" Version="1.0.70" />
     <PackageReference Include="HQ.Azure" Version="1.0.70" Condition="'$(Azure)'=='true'" />

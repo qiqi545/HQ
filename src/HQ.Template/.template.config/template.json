@@ -64,7 +64,7 @@
       "datatype": "string",
       "isRequired": false,
       "replaces": "APP-INSIGHTS-KEY-REPLACE-ME",
-      "description": "This is your Azure AppInsights key. This will be used to configure the node with AppInsights telemetry."
+      "description": "This is your Azure Application Insights instrumentation key. This will be used to configure the node with Application Insights telemetry."
     },
     "DocumentDb": {
       "type": "computed",
