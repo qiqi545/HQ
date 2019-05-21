@@ -7,8 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Web.Internal;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;

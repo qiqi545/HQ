@@ -4,6 +4,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Internal;
@@ -12,7 +13,7 @@ using TypeKitchen;
 
 namespace Blowdart.UI
 {
-    public class UiConfig
+	public class UiConfig
     {
         public static Action<UiSettings> Settings = null;
         public static Action<IServiceCollection> ConfigureServices = null;
@@ -40,12 +41,17 @@ namespace Blowdart.UI
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
 			services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
+
             services.AddSingleton(r => new LayoutRoot(r));
+
             services.AddSingleton(ResolveComponentTypes);
-            services.AddSingleton(RegisterComponentsByName);
+			services.AddSingleton(RegisterComponentsByName);
             services.AddSingleton(RegisterComponentsByType);
 
-            ConfigureServices?.Invoke(services);
+            services.AddSingleton(ResolveViewComponentTypes);
+            services.AddSingleton(RegisterViewComponents);
+
+			ConfigureServices?.Invoke(services);
         }
 
         private static Dictionary<Type, Func<UiComponent>> RegisterComponentsByType(IServiceProvider r)
@@ -71,7 +77,28 @@ namespace Blowdart.UI
 			return byName;
         }
 
-        private class ComponentTypes : IEnumerable<Type>
+        private static Dictionary<Type, Func<IViewComponent>> RegisterViewComponents(IServiceProvider r)
+        {
+	        var settings = r.GetRequiredService<UiSettings>();
+	        var componentTypes = r.GetRequiredService<ViewComponentTypes>();
+	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+
+	        var lookup = new Dictionary<Type, Func<IViewComponent>>();
+	        foreach (var componentType in componentTypes)
+	        {
+		        foreach (var contract in componentType.GetTypeInfo().ImplementedInterfaces)
+		        {
+			        if (!contract.ImplementsGeneric(typeof(IViewComponent<>)))
+				        continue;
+
+			        var valueType = contract.GetGenericArguments()[0];
+			        lookup[valueType] = () => autoResolver.GetService(contract) as IViewComponent;
+		        }
+	        }
+	        return lookup;
+        }
+
+		private class ComponentTypes : IEnumerable<Type>
         {
 	        private readonly IEnumerable<Type> _types;
 
@@ -98,5 +125,33 @@ namespace Blowdart.UI
             var componentTypes = exportedTypes.Where(x => !x.IsAbstract && x.GetTypeInfo().IsSubclassOf(typeof(UiComponent))).Distinct();
             return new ComponentTypes(componentTypes);
         }
-    }
+
+        private class ViewComponentTypes : IEnumerable<Type>
+        {
+	        private readonly IEnumerable<Type> _types;
+
+	        public ViewComponentTypes(IEnumerable<Type> types)
+	        {
+		        _types = types;
+	        }
+
+	        public IEnumerator<Type> GetEnumerator()
+	        {
+		        return _types.GetEnumerator();
+	        }
+
+	        IEnumerator IEnumerable.GetEnumerator()
+	        {
+		        return GetEnumerator();
+	        }
+        }
+
+        private static ViewComponentTypes ResolveViewComponentTypes(IServiceProvider r)
+        {
+	        var settings = r.GetRequiredService<UiSettings>();
+	        var exportedTypes = settings.ComponentAssemblies.SelectMany(x => x.GetExportedTypes());
+	        var componentTypes = exportedTypes.Where(x => !x.IsInterface && !x.IsAbstract && typeof(IViewComponent).IsAssignableFrom(x)).Distinct();
+	        return new ViewComponentTypes(componentTypes);
+        }
+	}
 }

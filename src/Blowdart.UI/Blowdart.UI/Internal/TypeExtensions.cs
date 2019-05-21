@@ -233,5 +233,16 @@ namespace Blowdart.UI.Internal
 	               type == typeof(double?) ||
 	               type == typeof(decimal?);
         }
+
+		public static bool ImplementsGeneric(this Type type, Type generic)
+		{
+			if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
+				return true;
+
+			if (type.GetTypeInfo().ImplementedInterfaces.Any(@interface => @interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic))
+				return true;
+
+			return type.BaseType?.ImplementsGeneric(generic) ?? false;
+		}
 	}
 }
