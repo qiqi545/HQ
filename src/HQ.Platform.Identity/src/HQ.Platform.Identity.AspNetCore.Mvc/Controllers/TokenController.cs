@@ -42,7 +42,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = false)]
     public class TokenController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TTenant : IdentityTenant

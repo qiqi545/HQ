@@ -30,7 +30,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("tenants")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageTenants)]
     public class TenantController<TTenant> : DataController where TTenant : IdentityTenant
     {

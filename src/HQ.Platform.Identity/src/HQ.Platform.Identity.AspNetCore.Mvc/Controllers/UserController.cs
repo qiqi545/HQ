@@ -33,7 +33,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("users")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
     public class UserController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>

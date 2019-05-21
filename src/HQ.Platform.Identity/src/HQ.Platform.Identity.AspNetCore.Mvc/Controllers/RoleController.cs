@@ -34,7 +34,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("roles")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
     public class RoleController<TRole, TKey> : DataController
         where TRole : IdentityRoleExtended<TKey>
