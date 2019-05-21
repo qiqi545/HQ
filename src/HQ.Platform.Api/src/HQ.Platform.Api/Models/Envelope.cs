@@ -23,25 +23,30 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Models
 {
+    public class Envelope
+    {
+        [DataMember] public IList<Error> Errors;
+        [DataMember] public bool HasErrors;
+        [DataMember] public int Status;
+        [DataMember] public IHeaderDictionary Headers;
+        [DataMember] public PagingInfo Paging;
+    }
+
     [DataContract]
     [KnownType(nameof(GetKnownTypes))]
-    public struct EnvelopeBody
+    public class EnvelopeCollectionBody<T> : Envelope
     {
-        private static IEnumerable<Type> GetKnownTypes()
-        {
-            return KnownTypesContext.GetKnownTypes();
-        }
+        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
 
-        [DataMember] public object Data;
+        [DataMember] public IEnumerable<T> Data;
+    }
 
-        [DataMember] public IList<Error> Errors;
+    [DataContract]
+    [KnownType(nameof(GetKnownTypes))]
+    public class EnvelopeBody<T> : Envelope
+    {
+        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
 
-        [DataMember] public bool HasErrors;
-
-        [DataMember] public int Status;
-
-        [DataMember] public IHeaderDictionary Headers;
-
-        [DataMember] public PagingInfo Paging;
+        [DataMember] public T Data;
     }
 }

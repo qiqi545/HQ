@@ -22,19 +22,27 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Api.Models
 {
+    public class Nested
+    {
+        [DataMember] public IList<Error> Errors;
+        [DataMember] public bool HasErrors;
+    }
+
     [DataContract]
     [KnownType(nameof(GetKnownTypes))]
-    public struct NestedBody
+    public class NestedCollectionBody<T> : Nested
     {
-        private static IEnumerable<Type> GetKnownTypes()
-        {
-            return KnownTypesContext.GetKnownTypes();
-        }
+        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
 
-        [DataMember] public object Data;
+        [DataMember] public IEnumerable<T> Data;
+    }
 
-        [DataMember] public IList<Error> Errors;
+    [DataContract]
+    [KnownType(nameof(GetKnownTypes))]
+    public class NestedBody<T> : Nested
+    {
+        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
 
-        [DataMember] public bool HasErrors;
+        [DataMember] public T Data;
     }
 }

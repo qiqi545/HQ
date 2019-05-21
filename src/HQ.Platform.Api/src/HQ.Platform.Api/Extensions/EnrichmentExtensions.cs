@@ -45,14 +45,14 @@ namespace HQ.Platform.Api.Extensions
             }
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
             QueryOptions queryOptions,
-            IPageHeader data, IList<Error> errors, out object body)
+            IPage<T> data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
                 apiOptions.JsonConversion.EnvelopeEnabled))
             {
-                body = new EnvelopeBody
+                body = new EnvelopeCollectionBody<T>
                 {
                     Data = data,
                     Status = response.StatusCode,
@@ -122,7 +122,7 @@ namespace HQ.Platform.Api.Extensions
 
             response.Headers.Add(queryOptions.TotalCountHeader, data.TotalCount.ToString());
             response.Headers.Add(queryOptions.TotalPagesHeader, data.TotalPages.ToString());
-            body = new NestedBody
+            body = new NestedCollectionBody<T>
             {
                 Data = data,
                 Errors = errors,
@@ -130,13 +130,13 @@ namespace HQ.Platform.Api.Extensions
             };
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
-            QueryOptions queryOptions, object data, IList<Error> errors, out object body)
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+            QueryOptions queryOptions, IStream<T> data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
                 apiOptions.JsonConversion.EnvelopeEnabled))
             {
-                body = new EnvelopeBody
+                body = new EnvelopeCollectionBody<T>
                 {
                     Data = data,
                     Status = response.StatusCode,
@@ -147,7 +147,7 @@ namespace HQ.Platform.Api.Extensions
             }
             else
             {
-                body = new NestedBody
+                body = new NestedCollectionBody<T>
                 {
                     Data = data,
                     Errors = errors,
@@ -156,6 +156,60 @@ namespace HQ.Platform.Api.Extensions
             }
 
             response.StatusCode = (int) HttpStatusCode.OK;
+        }
+
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+            QueryOptions queryOptions, T data, IList<Error> errors, out object body)
+        {
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
+                apiOptions.JsonConversion.EnvelopeEnabled))
+            {
+                body = new EnvelopeBody<T>
+                {
+                    Data = data,
+                    Status = response.StatusCode,
+                    Headers = response.Headers,
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
+            }
+            else
+            {
+                body = new NestedBody<T>
+                {
+                    Data = data,
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
+            }
+
+            response.StatusCode = (int)HttpStatusCode.OK;
+        }
+
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+            QueryOptions queryOptions, IList<Error> errors, out object body)
+        {
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
+                apiOptions.JsonConversion.EnvelopeEnabled))
+            {
+                body = new Envelope
+                {
+                    Status = response.StatusCode,
+                    Headers = response.Headers,
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
+            }
+            else
+            {
+                body = new Nested
+                {
+                    Errors = errors,
+                    HasErrors = errors?.Count > 0
+                };
+            }
+
+            response.StatusCode = (int)HttpStatusCode.OK;
         }
 
         internal static string GetPreviousPage(HttpRequest request, IPageHeader header, QueryOptions options)
