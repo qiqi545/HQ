@@ -34,5 +34,19 @@ namespace Blowdart.UI.Web.SemanticUI
 <script type=""text/javascript"" src=""~/lib/semantic-ui-log.js""></script>";
             return scripts;
         }
+
+        public override void BeforeView(Ui ui)
+        {
+	        ui.BeginForm("ui form");
+        }
+
+        public override void AfterView(Ui ui)
+        {
+	        ui.BeginButton("ui button", type: "submit")
+		        .Literal("Submit")
+		        .EndButton();
+
+	        ui.EndForm();
+        }
     }
 }

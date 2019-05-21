@@ -96,7 +96,9 @@ namespace Blowdart.UI
 
 		public void View<TModel>(TModel model)
 		{
+			System?.BeforeView(this);
 			View(typeof(TModel), model);
+			System?.AfterView(this);
 		}
 
 		private void View(Type type, object model)

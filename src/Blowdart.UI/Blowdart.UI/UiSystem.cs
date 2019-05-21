@@ -22,5 +22,9 @@ namespace Blowdart.UI
             action.MethodName = callee?.Name ?? template ?? settings.DefaultPageMethodName;
             action.Arguments = null;
         }
-    }
+
+        public virtual void BeforeView(Ui ui) { }
+
+        public virtual void AfterView(Ui ui) { }
+	}
 }
