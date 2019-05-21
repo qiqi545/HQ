@@ -24,7 +24,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
-    <PackageReference Include="TypeKitchen" Version="0.0.14-pre" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\_BLOWDART\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
   <!-- Push PackageId.Version.nupkg -->
