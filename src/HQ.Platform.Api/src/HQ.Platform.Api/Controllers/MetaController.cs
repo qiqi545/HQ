@@ -1,12 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using System.Net;
+using HQ.Common;
 using HQ.Platform.Api.Models;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace HQ.Platform.Api.Controllers
 {
@@ -16,10 +20,21 @@ namespace HQ.Platform.Api.Controllers
         private readonly IOptions<PublicApiOptions> _options;
         private readonly IEnumerable<IMetaProvider> _providers;
 
-        public MetaController(IOptions<PublicApiOptions> options, IEnumerable<IMetaProvider> providers)
+        private readonly ISwaggerProvider _swaggerProvider;
+        private readonly JsonSerializer _swaggerSerializer;
+        private readonly IOptions<SwaggerOptions> _swaggerOptions;
+
+        public MetaController(IOptions<PublicApiOptions> options, IEnumerable<IMetaProvider> providers,
+            ISwaggerProvider swaggerProvider,
+            IOptions<MvcJsonOptions> mvcOptions,
+            IOptions<SwaggerOptions> swaggerOptions)
         {
             _options = options;
             _providers = providers;
+
+            _swaggerProvider = swaggerProvider;
+            _swaggerSerializer = SwaggerSerializerFactory.Create(mvcOptions);
+            _swaggerOptions = swaggerOptions;
         }
 
         [HttpGet("postman")]
@@ -70,6 +85,32 @@ namespace HQ.Platform.Api.Controllers
             Response.Headers.Add("X-Postman-Version", "2.1.0");
 
             return Ok(collection);
+        }
+
+        [HttpGet("swagger")]
+        public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")] string version = "2.0")
+        {
+            var basePath = string.IsNullOrEmpty(Request.PathBase) ? null : Request.PathBase.ToString();
+            try
+            {
+                var swagger = _swaggerProvider.GetSwagger("swagger", null, basePath);
+                foreach (var preSerializeFilter in _swaggerOptions.Value.PreSerializeFilters)
+                    preSerializeFilter(swagger, Request);
+
+                Response.Headers.Add("X-Swagger-Version", "2.0");
+
+                return Content(StringBuilderPool.Scoped(sb =>
+                {
+                    using (var writer = new StringWriter(sb))
+                    {
+                        _swaggerSerializer.Serialize(writer, swagger);
+                    }
+                }), "application/json", Encoding.UTF8);
+            }
+            catch (UnknownSwaggerDocument)
+            {
+                return NotFound();
+            }
         }
     }
 
