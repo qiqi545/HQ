@@ -31,8 +31,12 @@ namespace HQ.Platform.Schema.Models
         public PropertyRelationship Rel { get; set; } = PropertyRelationship.Scalar;
         public PropertyScope Scope { get; set; } = PropertyScope.ReadWrite;
         public string Default { get; set; }
+
         public bool Nullable { get; set; }
         public bool Required { get; set; }
+        public bool Disabled { get; set; }
+        public bool Protected { get; set; }
+        public bool Personal { get; set; }
 
         public Dictionary<string, string> Annotations { get; } =
             new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
@@ -40,5 +44,7 @@ namespace HQ.Platform.Schema.Models
         public string Description { get; set; }
 
         [IgnoreDataMember] private string DebuggerDisplayName => $"{Name} ({Type})";
+
+        public bool IsComputed => Type.IsString() && From != null;
     }
 }
