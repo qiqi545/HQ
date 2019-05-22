@@ -18,11 +18,13 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
 {
     public class QueryContext
     {
+        public ClaimsPrincipal User { get; }
         public Type Type { get; set; }
         public MethodInfo Handle { get; set; }
         public List<Error> Errors { get; } = new List<Error>();
@@ -33,6 +35,11 @@ namespace HQ.Data.Contracts.Runtime
         public StreamOptions Streaming { get; set; }
         public FilterOptions Filters { get; set; }
         public ProjectionOptions Projections { get; set; }
+
+        public QueryContext(ClaimsPrincipal user)
+        {
+            User = user;
+        }
 
         public object Execute(IObjectSaveRepository repository)
         {

@@ -16,13 +16,14 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Data.Contracts.Runtime
 {
     public interface IMutationContextProvider
     {
-        IEnumerable<MutationContext> Parse(HttpRequest source);
-        IEnumerable<MutationContext> Parse(string source);
+        IEnumerable<MutationContext> Parse(HttpContext source);
+        IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source);
     }
 }

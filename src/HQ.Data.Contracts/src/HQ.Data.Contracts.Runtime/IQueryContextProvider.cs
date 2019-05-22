@@ -16,13 +16,14 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Data.Contracts.Runtime
 {
     public interface IQueryContextProvider
     {
-        IEnumerable<QueryContext> Parse(HttpRequest source);
-        IEnumerable<QueryContext> Parse(string source);
+        IEnumerable<QueryContext> Parse(HttpContext source);
+        IEnumerable<QueryContext> Parse(ClaimsPrincipal user, string source);
     }
 }

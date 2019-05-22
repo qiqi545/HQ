@@ -18,15 +18,22 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
 {
     public class MutationContext
     {
+        public ClaimsPrincipal User { get; }
         public Type Type { get; set; }
         public MethodInfo Handle { get; set; }
         public ICollection<Error> Errors { get; } = new List<Error>();
         public dynamic Body { get; set; }
+
+        public MutationContext(ClaimsPrincipal user)
+        {
+            User = user;
+        }
 
         public object Execute(IObjectSaveRepository repository)
         {
