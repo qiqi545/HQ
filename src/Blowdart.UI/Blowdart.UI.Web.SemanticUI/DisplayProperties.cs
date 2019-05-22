@@ -4,6 +4,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using TypeKitchen;
 
@@ -11,6 +12,7 @@ namespace Blowdart.UI.Web.SemanticUI
 {
 	public struct DisplayProperties
 	{
+		public bool IsDisabled { get; set; }
 		public bool IsReadOnly { get; set; }
 		public bool IsVisible { get; set; }
 		public bool IsHidden { get; set; }
@@ -19,6 +21,10 @@ namespace Blowdart.UI.Web.SemanticUI
 		public string Label { get; set; }
 		public string Placeholder { get; set; }
 		public string Description { get; set; }
+
+		public string Type { get; set; }
+		public string Format { get; set; }
+		public string Annotation { get; set; }
 	}
 
 	public static class DisplayPropertiesExtensions
@@ -33,23 +39,44 @@ namespace Blowdart.UI.Web.SemanticUI
 				? readOnly.IsReadOnly
 				: !field.CanWrite;
 
+			properties.IsDisabled = field.TryGetAttribute(out EditableAttribute editable)
+				? editable.AllowEdit
+				: !field.CanRead;
+
 			properties.IsHidden = field.TryGetAttribute(out BrowsableAttribute browsable) && 
 			                      !browsable.Browsable;
 
 			properties.IsVisible = !field.HasAttribute<IgnoreDataMemberAttribute>() && 
-			                       !field.HasAttribute<NonSerializedAttribute>();
+			                       !field.HasAttribute<NonSerializedAttribute>() &&
+			                       !field.HasAttribute<NotMappedAttribute>();
+
+			if (field.TryGetAttribute(out DataTypeAttribute dataType))
+			{
+				properties.Type = dataType.GetDataTypeName();
+				properties.Format = dataType.DisplayFormat.DataFormatString;
+			}
 			
 			if (field.TryGetAttribute(out DisplayAttribute display))
 			{
-				properties.Description = display.Description;
-				//properties.Order = display.Order;
-				//properties.Section = display.GroupName;
-				properties.Label = display.Name;
-				properties.Placeholder = display.Prompt;
+				properties.Description = display.GetDescription();
+				//properties.Order = display.GetOrder();
+				//properties.Section = display.GetGroupName();
+				properties.Label = display.GetName();
+				properties.Placeholder = display.GetPrompt();
+				
+				var shortName = display.GetShortName();
+				if(shortName != null && shortName != properties.Label)
+					properties.Annotation = display.GetShortName();
 			}
-			else
+
+			if(properties.Label == null)
 			{
 				properties.Label = field.Name;
+			}
+
+			if (field.TryGetAttribute(out DisplayNameAttribute displayName))
+			{
+				properties.Label = displayName.DisplayName;
 			}
 
 			return properties;

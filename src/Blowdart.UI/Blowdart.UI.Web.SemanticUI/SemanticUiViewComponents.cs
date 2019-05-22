@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using TypeKitchen;
 
 namespace Blowdart.UI.Web.SemanticUI
@@ -56,6 +57,7 @@ namespace Blowdart.UI.Web.SemanticUI
 			InputField("checkbox", ui, field, value);
 		}
 
+		/// <summary><see href="https://semantic-ui.com/elements/input.html"/></summary>
 		private static void InputField<T>(string type, Ui ui, AccessorMember field, T value)
 		{
 			var valueString = value is string s ? s : value?.ToString();
@@ -64,19 +66,58 @@ namespace Blowdart.UI.Web.SemanticUI
 			if (!properties.IsVisible)
 				return;
 
-			ui.BeginDiv(properties.IsRequired ? "required field" : "field");
+			if (properties.IsHidden)
 			{
-				if (!properties.IsHidden && properties.Label != null)
-					ui.Label(properties.Label);
+				RenderInput();
+			}
+			else
+			{
+				ui.BeginDiv(properties.IsRequired ? "required field" : "field");
+				{
+					if (!properties.IsHidden && properties.Label != null)
+						ui.Label(properties.Label);
 
+					ui.BeginDiv(GetInputCssClass(properties));
+					{
+						RenderInput();
+					}
+					ui.EndDiv();
+				}
+				ui.EndDiv();
+			}
+
+			void RenderInput()
+			{
 				ui.BeginInput(type: type, name: field.Name, value: valueString,
 					placeholder: properties.Placeholder,
 					@readonly: properties.IsReadOnly,
 					hidden: properties.IsHidden);
 
+				if (properties.Annotation != null)
+				{
+					ui.BeginDiv("ui basic label");
+					ui.Literal(properties.Annotation);
+					ui.EndDiv();
+				}
+
 				ui.EndInput();
 			}
-			ui.EndDiv();
+		}
+
+		private static string GetInputCssClass(DisplayProperties properties)
+		{
+			string inputClass;
+			switch (properties.Type)
+			{
+				case nameof(DataType.Url):
+					inputClass = "ui labeled input";
+					break;
+				default:
+					inputClass = properties.Annotation != null ? "ui right labeled input" : "ui input";
+					break;
+			}
+
+			return inputClass;
 		}
 
 		#endregion
