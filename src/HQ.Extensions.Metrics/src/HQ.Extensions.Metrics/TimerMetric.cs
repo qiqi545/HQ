@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace HQ.Extensions.Metrics
 {
@@ -31,6 +32,7 @@ namespace HQ.Extensions.Metrics
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
 
+        [IgnoreDataMember]
         public MetricName Name { get; }
 
         internal TimerMetric(MetricName metricName, TimeUnit durationUnit) : this(durationUnit, TimeUnit.Seconds,

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using HQ.Extensions.Metrics.Internal;
 using HQ.Extensions.Metrics.Stats;
 
@@ -40,6 +41,7 @@ namespace HQ.Extensions.Metrics
         private readonly AtomicLong _varianceM = new AtomicLong();
         private readonly AtomicLong _varianceS = new AtomicLong();
 
+        [IgnoreDataMember]
         public MetricName Name { get; }
 
         /// <summary>

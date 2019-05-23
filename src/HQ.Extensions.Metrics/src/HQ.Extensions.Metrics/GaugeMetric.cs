@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using HQ.Common;
 
 namespace HQ.Extensions.Metrics
@@ -25,6 +26,8 @@ namespace HQ.Extensions.Metrics
         public abstract string ValueAsString { get; }
         public abstract bool IsNumeric { get; }
         public abstract bool IsBoolean { get; }
+
+        [IgnoreDataMember]
         public abstract MetricName Name { get; }
     }
 
@@ -42,6 +45,7 @@ namespace HQ.Extensions.Metrics
     {
         private readonly Func<T> _evaluator;
 
+        [IgnoreDataMember]
         public override MetricName Name { get; }
 
         internal GaugeMetric(MetricName metricName, Func<T> evaluator)

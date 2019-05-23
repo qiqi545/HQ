@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Runtime.Serialization;
 using HQ.Extensions.Metrics.Internal;
 
 namespace HQ.Extensions.Metrics
@@ -25,7 +26,8 @@ namespace HQ.Extensions.Metrics
     public sealed class CounterMetric : IMetric
     {
         private readonly AtomicLong _count = new AtomicLong(0);
-        
+
+        [IgnoreDataMember]
         public MetricName Name { get; }
 
         internal CounterMetric(MetricName metricName) { Name = metricName; }

@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
@@ -41,6 +42,7 @@ namespace HQ.Extensions.Metrics
         private CancellationTokenSource _cancel;
         private Task _task;
 
+        [IgnoreDataMember]
         public MetricName Name { get; }
 
         private MeterMetric(MetricName metricName, string eventType, TimeUnit rateUnit)
