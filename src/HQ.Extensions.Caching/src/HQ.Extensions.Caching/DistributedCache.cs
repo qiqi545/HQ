@@ -8,6 +8,7 @@ using HQ.Extensions.Caching.Internal;
 using HQ.Extensions.CodeGeneration;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching
@@ -18,7 +19,7 @@ namespace HQ.Extensions.Caching
         private readonly IOptions<CacheOptions> _options;
         private readonly ICacheSerializer _serializer;
 
-        public DistributedCache(IOptions<CacheOptions> options)
+        public DistributedCache(IOptions<CacheOptions> options, ISystemClock clock)
         {
             _serializer = new JsonCacheSerializer();
             _cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions
@@ -26,7 +27,7 @@ namespace HQ.Extensions.Caching
                 CompactionPercentage = 0.05,
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
                 SizeLimit = null,
-                Clock = new LocalServerTimestampService()
+                Clock = clock ?? new LocalServerTimestampService()
             }));
             _options = options;
         }

@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
 using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
@@ -24,89 +23,72 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching
 {
-    public class InProcessCache : ICache
+    public class InProcessCache : InProcessCacheManager, ICache
     {
-        private readonly IMemoryCache _cache;
-        private readonly IOptions<CacheOptions> _options;
+        public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> cacheOptions, IOptions<MemoryCacheOptions> memoryCacheOptions) : base(cache, cacheOptions, memoryCacheOptions) { }
 
-        public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> options)
-        {
-            _cache = cache;
-            _options = options;
-        }
-
-        public InProcessCache(IOptions<CacheOptions> options)
-        {
-            _cache = new MemoryCache(new MemoryCacheOptions
-            {
-                CompactionPercentage = 0.05,
-                ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
-                SizeLimit = null,
-                Clock = new LocalServerTimestampService()
-            });
-            _options = options;
-        }
+        public InProcessCache(IOptions<CacheOptions> cacheOptions) : base(cacheOptions) { }
 
         #region Set
 
         public bool Set(string key, object value)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry()));
+            return Try(() => Cache.Set(key, value, CreateEntry()));
         }
 
         public bool Set(string key, object value, DateTime absoluteExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration)));
+            return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration)));
         }
 
         public bool Set(string key, object value, TimeSpan slidingExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration)));
+            return Try(() => Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration)));
         }
 
         public bool Set(string key, object value, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(dependency: dependency)));
         }
 
         public bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
         }
 
         public bool Set(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
         }
 
         public bool Set<T>(string key, T value)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry()));
+            return Try(() => Cache.Set(key, value, CreateEntry()));
         }
 
         public bool Set<T>(string key, T value, DateTime absoluteExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration)));
+            return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration)));
         }
 
         public bool Set<T>(string key, T value, TimeSpan slidingExpiration)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration)));
+            return Try(() => Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration)));
         }
 
         public bool Set<T>(string key, T value, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(dependency: dependency)));
         }
 
         public bool Set<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
         }
 
         public bool Set<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency)
         {
-            return Try(() => _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
+            return Try(() => Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
         }
 
         #endregion
@@ -115,97 +97,97 @@ namespace HQ.Extensions.Caching
 
         public bool Add(string key, object value)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry());
+            Cache.Set(key, value, CreateEntry());
             return true;
         }
 
         public bool Add(string key, object value, DateTime absoluteExpiration)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration));
+            Cache.Set(key, value, CreateEntry(absoluteExpiration));
             return true;
         }
 
         public bool Add(string key, object value, TimeSpan slidingExpiration)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
             return true;
         }
 
         public bool Add(string key, object value, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(dependency: dependency));
+            Cache.Set(key, value, CreateEntry(dependency: dependency));
             return true;
         }
 
         public bool Add(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency));
+            Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency));
             return true;
         }
 
         public bool Add(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
             return true;
         }
 
         public bool Add<T>(string key, T value)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry());
+            Cache.Set(key, value, CreateEntry());
             return true;
         }
 
         public bool Add<T>(string key, T value, DateTime absoluteExpiration)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration));
+            Cache.Set(key, value, CreateEntry(absoluteExpiration));
             return true;
         }
 
         public bool Add<T>(string key, T value, TimeSpan slidingExpiration)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
             return true;
         }
 
         public bool Add<T>(string key, T value, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(dependency: dependency));
+            Cache.Set(key, value, CreateEntry(dependency: dependency));
             return true;
         }
 
         public bool Add<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency));
+            Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency));
             return true;
         }
 
         public bool Add<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency)
         {
-            if (_cache.Get(key) != null)
+            if (Cache.Get(key) != null)
                 return false;
-            _cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
+            Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration));
             return true;
         }
 
@@ -284,17 +266,17 @@ namespace HQ.Extensions.Caching
 
         public object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null)
         {
-            var item = _cache.Get(key);
+            var item = Cache.Get(key);
             if (item != null)
                 return item;
 
             if (add == null)
                 return null;
 
-            if (!_options.Value.ContentionTimeout.HasValue)
+            if (!CacheOptions.Value.ContentionTimeout.HasValue)
                 return Add();
 
-            using (TimedLock.Lock(CacheLockScope.AcquireLock<object>(key), timeout ?? _options.Value.ContentionTimeout.Value))
+            using (TimedLock.Lock(CacheLockScope.AcquireLock<object>(key), timeout ?? CacheOptions.Value.ContentionTimeout.Value))
                 return Add();
 
             object Add()
@@ -318,17 +300,17 @@ namespace HQ.Extensions.Caching
 
         public T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null)
         {
-            var item = _cache.Get(key) is T typed ? typed : default;
+            var item = Cache.Get(key) is T typed ? typed : default;
             if (item != null)
                 return item;
 
             if (add == null)
                 return default;
 
-            if (!_options.Value.ContentionTimeout.HasValue)
+            if (!CacheOptions.Value.ContentionTimeout.HasValue)
                 return Add();
 
-            using (TimedLock.Lock(CacheLockScope.AcquireLock<T>(key), timeout ?? _options.Value.ContentionTimeout.Value))
+            using (TimedLock.Lock(CacheLockScope.AcquireLock<T>(key), timeout ?? CacheOptions.Value.ContentionTimeout.Value))
                 return Add();
 
             T Add()
@@ -351,7 +333,7 @@ namespace HQ.Extensions.Caching
 
         public void Remove(string key)
         {
-            _cache.Remove(key);
+            Cache.Remove(key);
         }
 
         private static bool Try(Action closure)
@@ -371,7 +353,7 @@ namespace HQ.Extensions.Caching
         {
             try
             {
-                _cache.Remove(key);
+                Cache.Remove(key);
                 return operation();
             }
             catch
@@ -384,7 +366,7 @@ namespace HQ.Extensions.Caching
         {
             try
             {
-                return _cache.Get(key) != null && operation();
+                return Cache.Get(key) != null && operation();
             }
             catch
             {
@@ -402,10 +384,37 @@ namespace HQ.Extensions.Caching
                 Size = size
             };
 
+            policy.PostEvictionCallbacks.Add(new PostEvictionCallbackRegistration
+            {
+                EvictionCallback = OnEviction
+            });
+
             if (dependency != null)
                 policy.AddExpirationToken(dependency.GetChangeToken());
 
             return policy;
+        }
+
+        private static void OnEviction(object key, object value, EvictionReason reason, object state)
+        {
+            switch (reason)
+            {
+                case EvictionReason.Capacity:
+                {
+                    // ... collect stats on memory pressure for health checks ...
+
+                    break;
+                }
+                case EvictionReason.None:
+                case EvictionReason.Removed:
+                case EvictionReason.Replaced:
+                case EvictionReason.Expired:
+                case EvictionReason.TokenExpired:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(reason), reason, null);
+            }
         }
     }
 }
