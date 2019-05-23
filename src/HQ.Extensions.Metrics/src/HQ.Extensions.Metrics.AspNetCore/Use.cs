@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,17 +15,24 @@
 
 #endregion
 
+using HQ.Extensions.Metrics.AspNetCore.Internal;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Metrics.Internal
+namespace HQ.Extensions.Metrics.AspNetCore
 {
-    internal class HealthChecksBuilder : IHealthChecksBuilder
+    public static class Use
     {
-        public HealthChecksBuilder(IServiceCollection services)
+        public static IApplicationBuilder UseMetrics(this IApplicationBuilder app, PathString path)
         {
-            Services = services;
-        }
+            var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
+            foreach (var reporter in reporters)
+                reporter.InitializeAsync();
 
-        public IServiceCollection Services { get; }
+            app.UseMiddleware<MetricsMiddleware>(path, app.ApplicationServices.GetRequiredService<IOptions<MetricsOptions>>());
+            return app;
+        }
     }
 }
