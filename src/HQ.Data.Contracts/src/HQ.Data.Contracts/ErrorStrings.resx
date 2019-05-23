@@ -138,4 +138,7 @@
   <data name="ValidationFailed" xml:space="preserve">
     <value>Validation failed.</value>
   </data>
+  <data name="TypeIsNotAnOpenGeneric" xml:space="preserve">
+    <value>The provided type is not an open generic type</value>
+  </data>
 </root>

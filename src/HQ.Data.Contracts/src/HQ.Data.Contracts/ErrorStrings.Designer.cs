@@ -70,7 +70,7 @@ namespace HQ.Data.Contracts {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid attribute of &apos;{1}&apos;..
+        ///   Looks up a localized string similar to &apos;{0}&apos; is not a valid attributes of &apos;{1}&apos;..
         /// </summary>
         public static string FieldToPropertyMismatch {
             get {
@@ -111,6 +111,15 @@ namespace HQ.Data.Contracts {
         public static string ResourceMissingInSave {
             get {
                 return ResourceManager.GetString("ResourceMissingInSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The provided type is not an open generic type.
+        /// </summary>
+        public static string TypeIsNotAnOpenGeneric {
+            get {
+                return ResourceManager.GetString("TypeIsNotAnOpenGeneric", resourceCulture);
             }
         }
         
