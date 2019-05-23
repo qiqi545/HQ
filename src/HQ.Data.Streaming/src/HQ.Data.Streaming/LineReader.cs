@@ -22,8 +22,9 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Data.Streaming.Internal;
 using HQ.Extensions.Metrics;
+
+using Constants = HQ.Data.Streaming.Internal.Constants;
 
 namespace HQ.Data.Streaming
 {
