@@ -20,6 +20,7 @@ using System.Net;
 using System.Text;
 using HQ.Common;
 using HQ.Data.Contracts;
+using HQ.Extensions.Caching;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;

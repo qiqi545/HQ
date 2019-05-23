@@ -124,6 +124,24 @@ namespace HQ.Platform.Operations
                     }
                 }
 
+                if (options.Value != null &&
+                    options.Value.EnableFeatureDebugging &&
+                    !string.IsNullOrWhiteSpace(options.Value.FeatureDebuggingPath) &&
+                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.FeatureDebuggingPath))
+                {
+                    await OperationsEndpoints.GetFeaturesDebugHandler(context, app);
+                    return;
+                }
+
+                if (options.Value != null &&
+                    options.Value.EnableCacheDebugging &&
+                    !string.IsNullOrWhiteSpace(options.Value.CacheDebuggingPath) &&
+                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.CacheDebuggingPath))
+                {
+                    await OperationsEndpoints.GetCacheDebugHandler(context, app);
+                    return;
+                }
+
                 await next();
             });
         }

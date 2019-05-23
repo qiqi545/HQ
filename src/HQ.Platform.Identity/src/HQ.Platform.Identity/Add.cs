@@ -29,6 +29,7 @@ using HQ.Platform.Identity.Validators;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Identity
 {
@@ -156,7 +157,7 @@ namespace HQ.Platform.Identity
             services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
             services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
 
-            services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
+            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;
         }

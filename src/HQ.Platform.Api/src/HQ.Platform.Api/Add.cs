@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Extensions.Caching;
+using HQ.Extensions.Caching.Configuration;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -76,8 +77,8 @@ namespace HQ.Platform.Api
 
         internal static IServiceCollection AddHttpCaching(this IServiceCollection services)
         {
-            services.AddSingleton<IHttpCache>(r => new MemoryHttpCache(r.GetRequiredService<IMemoryCache>()));
-            services.AddSingleton<IETagGenerator, WeakETagGenerator>();
+            services.TryAddSingleton<IHttpCache, InProcessHttpCache>();
+            services.TryAddSingleton<IETagGenerator, WeakETagGenerator>();
             services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(), r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
             return services;
         }

@@ -150,7 +150,37 @@ namespace HQ.Platform.Operations
                 }
             }
 
+            if (options.EnableFeatureDebugging)
+            {
+                var descriptor = new EndpointDescriptor
+                {
+                    Name = "Feature Diagnostics",
+                    Description = "Used to diagnose feature toggles, A/B testing, and cohorts.",
+                    Method = HttpMethod.Get,
+                    Url = $"{baseUri}/{rootPath + options.FeatureDebuggingPath}",
+                    Version = api.ApiVersion
+                };
+                folder.item.Add(MapFrom(descriptor));
+            }
+
+            if (options.EnableCacheDebugging)
+            {
+                var descriptor = new EndpointDescriptor
+                {
+                    Name = "Cache Diagnostics",
+                    Description = "Used to diagnose cache size, throughput, contention, and memory pressure.",
+                    Method = HttpMethod.Get,
+                    Url = $"{baseUri}/{rootPath + options.CacheDebuggingPath}",
+                    Version = api.ApiVersion
+                };
+                folder.item.Add(MapFrom(descriptor));
+            }
+
+            folder.item.Sort();
+
             collection.item.Add(folder);
+
+            collection.item.Sort();
         }
 
         public class EndpointDescriptor

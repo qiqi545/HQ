@@ -36,7 +36,13 @@ namespace HQ.Platform.Operations
 
         public bool EnableServicesDebugging { get; set; } = true;
         public string ServicesDebuggingPath { get; set; } = "/services";
-        
+
+        public bool EnableFeatureDebugging { get; set; } = true;
+        public string FeatureDebuggingPath { get; set; } = "/features";
+
+        public bool EnableCacheDebugging { get; set; } = true;
+        public string CacheDebuggingPath { get; set; } = "/caches";
+
         public bool EnableRequestProfiling { get; set; } = true;
         public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
 

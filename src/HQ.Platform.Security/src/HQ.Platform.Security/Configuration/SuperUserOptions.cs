@@ -27,9 +27,9 @@ namespace HQ.Platform.Security.Configuration
         private string _phoneNumber;
         private string _username;
 
-        public SuperUserOptions(bool enabled = false)
+        public SuperUserOptions()
         {
-            Enabled = enabled;
+            Enabled = false;
         }
 
         [Required]
