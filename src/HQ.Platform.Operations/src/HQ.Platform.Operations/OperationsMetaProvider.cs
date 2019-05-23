@@ -21,10 +21,9 @@ using System.Net.Http;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Controllers;
 using HQ.Platform.Api.Models;
-using HQ.Platform.Operations.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Operations.Models
+namespace HQ.Platform.Operations
 {
     internal class OperationsMetaProvider : IMetaProvider
     {

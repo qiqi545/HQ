@@ -19,8 +19,6 @@ using HQ.Common;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Api.Models;
-using HQ.Platform.Operations.Configuration;
-using HQ.Platform.Operations.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

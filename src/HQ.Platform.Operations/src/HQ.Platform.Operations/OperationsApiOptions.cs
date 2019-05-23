@@ -18,7 +18,7 @@
 using HQ.Common;
 using HQ.Extensions.Metrics;
 
-namespace HQ.Platform.Operations.Configuration
+namespace HQ.Platform.Operations
 {
     public class OperationsApiOptions
     {
