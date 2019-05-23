@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -32,15 +33,15 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
         /// <summary>
         ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
         /// </summary>
-        public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder, IConfiguration config)
+        public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder, IConfiguration config)
         {
-            return builder.PushToAppInsights(config.Bind);
+            return builder.PushToApplicationInsights(config.Bind);
         }
 
         /// <summary>
         ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
         /// </summary>
-        public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder,
+        public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder,
             Action<AppInsightsMetricsReporterOptions> configureAction = null)
         {
             builder.Services.Configure<HealthCheckPublisherOptions>(options =>
@@ -53,6 +54,7 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
             builder.Services.Configure(configureAction);
             builder.Services.AddSingleton<IHealthCheckPublisher>(r => new AppInsightsMetricsPublisher(
                 r.GetRequiredService<IMetricsRegistry>(),
+                r.GetRequiredService<TelemetryClient>(),
                 r.GetRequiredService<IOptionsMonitor<AppInsightsMetricsReporterOptions>>()
             ));
 

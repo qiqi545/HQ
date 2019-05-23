@@ -21,7 +21,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
@@ -31,14 +30,14 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
 
     internal class AppInsightsMetricsPublisher : IHealthCheckPublisher
     {
-        private static TelemetryClient _client;
         private readonly IMetricsRegistry _registry;
+        private readonly TelemetryClient _client;
         private readonly IOptionsMonitor<AppInsightsMetricsReporterOptions> _reporterOptions;
 
-        public AppInsightsMetricsPublisher(IMetricsRegistry registry,
-            IOptionsMonitor<AppInsightsMetricsReporterOptions> reporterOptions)
+        public AppInsightsMetricsPublisher(IMetricsRegistry registry, TelemetryClient client, IOptionsMonitor<AppInsightsMetricsReporterOptions> reporterOptions)
         {
             _registry = registry;
+            _client = client;
             _reporterOptions = reporterOptions;
         }
 
@@ -57,8 +56,6 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
             {
                 return Task.CompletedTask;
             }
-
-            _client = _client ?? new TelemetryClient(TelemetryConfiguration.Active);
 
             if (options.PublishHealthChecks)
             {
