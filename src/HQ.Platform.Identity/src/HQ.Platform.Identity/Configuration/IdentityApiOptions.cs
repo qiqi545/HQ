@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Identity.AspNetCore.Mvc.Configuration
+namespace HQ.Platform.Identity.Configuration
 {
     public class IdentityApiOptions
     {

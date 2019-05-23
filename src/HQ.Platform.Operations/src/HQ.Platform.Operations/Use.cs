@@ -15,10 +15,13 @@
 
 #endregion
 
+using System.IO;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,10 +31,42 @@ namespace HQ.Platform.Operations
     {
         public static IApplicationBuilder UseOperationsApi(this IApplicationBuilder app)
         {
+            app.UseExceptionHandler();
             app.UseServerTimingReporter();
             app.UseRequestProfiling();
             app.UseOperationsEndpoints();
             return app;
+        }
+
+        internal static IApplicationBuilder UseExceptionHandler(this IApplicationBuilder app)
+        {
+            return app.UseExceptionHandler(x =>
+            {
+                x.Run(async context =>
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.ContentType = "text/html";
+
+                    await context.Response.WriteAsync("<html lang=\"en\"><body>\r\n");
+                    await context.Response.WriteAsync("ERROR!<br><br>\r\n");
+
+                    var exceptionHandlerPathFeature =
+                        context.Features.Get<IExceptionHandlerPathFeature>();
+
+                    // Use exceptionHandlerPathFeature to process the exception (for example, 
+                    // logging), but do NOT expose sensitive error information directly to 
+                    // the client.
+
+                    if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
+                    {
+                        await context.Response.WriteAsync("File error thrown!<br><br>\r\n");
+                    }
+
+                    await context.Response.WriteAsync("<a href=\"/\">Home</a><br>\r\n");
+                    await context.Response.WriteAsync("</body></html>\r\n");
+                    await context.Response.WriteAsync(new string(' ', 512)); // IE padding
+                });
+            });
         }
 
         internal static IApplicationBuilder UseRequestProfiling(this IApplicationBuilder app)

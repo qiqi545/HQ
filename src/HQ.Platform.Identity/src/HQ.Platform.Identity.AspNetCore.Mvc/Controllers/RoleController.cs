@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Platform.Identity.AspNetCore.Mvc.Configuration;
+using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;

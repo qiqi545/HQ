@@ -21,8 +21,8 @@ using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Conventions;
-using HQ.Platform.Identity.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
@@ -38,7 +38,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
     public static class Add
     {
         public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
-            IConfiguration identityConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
+            IConfiguration apiConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant
@@ -71,7 +71,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                     });
             });
 
-            services.Configure<IdentityApiOptions>(identityConfig);
+            services.Configure<IdentityApiOptions>(apiConfig);
             services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
 
             mvc.AddControllers<TUser, TRole, TTenant, TKey>();
