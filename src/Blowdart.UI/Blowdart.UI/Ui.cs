@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -101,7 +102,7 @@ namespace Blowdart.UI
 			System?.AfterView(this);
 		}
 
-		private void View(Type type, object model)
+		internal void View(Type type, object model)
 		{
 			var accessor = ReadAccessor.Create(model);
 
@@ -109,8 +110,6 @@ namespace Blowdart.UI
 
 			while (true)
 			{
-				var fields = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
-
 				if (Attribute.IsDefined(type, typeof(ViewComponentAttribute)))
 				{
 					var attribute = (ViewComponentAttribute) Attribute.GetCustomAttribute(type, typeof(ViewComponentAttribute));
@@ -121,7 +120,9 @@ namespace Blowdart.UI
 					}
 				}
 
-				foreach (var member in fields)
+				var members = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
+
+				foreach (var member in members)
 				{
 					if (!member.TryGetAttribute(out ViewComponentAttribute custom))
 					{

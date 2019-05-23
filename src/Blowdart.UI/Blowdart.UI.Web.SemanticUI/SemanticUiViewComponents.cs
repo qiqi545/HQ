@@ -2,6 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using TypeKitchen;
 
@@ -28,7 +29,8 @@ namespace Blowdart.UI.Web.SemanticUI
 		IViewComponent<DateTimeOffset>,
 		IViewComponent<DateTimeOffset?>,
 		IViewComponent<Guid>,
-		IViewComponent<Guid?>
+		IViewComponent<Guid?>,
+		IViewComponent<ICollection>
 	{
 		#region Templates
 
@@ -262,5 +264,15 @@ namespace Blowdart.UI.Web.SemanticUI
 		}
 
 		#endregion
+
+		public void Render(Ui ui, AccessorMember field, ICollection value)
+		{
+			foreach (var item in value)
+			{
+				var type = item.GetType();
+
+				ui.View(type, item);
+			}
+		}
 	}
 }
