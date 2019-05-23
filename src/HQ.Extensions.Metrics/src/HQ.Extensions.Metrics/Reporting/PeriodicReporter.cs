@@ -44,7 +44,7 @@ namespace HQ.Extensions.Metrics.Reporting
             Stop();
         }
 
-        public abstract void Report(CancellationToken? cancellationToken = null);
+        public abstract Task Report(CancellationToken cancellationToken = default);
 
         public async Task OnTimer(Action action, CancellationToken cancellationToken)
         {

@@ -24,8 +24,7 @@ using HQ.Extensions.Metrics.Stats;
 namespace HQ.Extensions.Metrics
 {
     /// <summary>
-    ///     A meter metric which measures mean throughput and one-, five-, and fifteen-minute exponentially-weighted moving
-    ///     average throughputs
+    ///     A meter metric which measures mean throughput and one-, five-, and fifteen-minute exponentially-weighted moving average through-puts
     /// </summary>
     /// <see href="http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">EMA</see>
     public class MeterMetric : IMetric, IMetered
@@ -42,8 +41,11 @@ namespace HQ.Extensions.Metrics
         private CancellationTokenSource _cancel;
         private Task _task;
 
-        private MeterMetric(string eventType, TimeUnit rateUnit)
+        public MetricName Name { get; }
+
+        private MeterMetric(MetricName metricName, string eventType, TimeUnit rateUnit)
         {
+            Name = metricName;
             EventType = eventType;
             RateUnit = rateUnit;
         }
@@ -114,9 +116,9 @@ namespace HQ.Extensions.Metrics
         /// <returns></returns>
         public double OneMinuteRate => _m1Rate.Rate(RateUnit);
 
-        public static MeterMetric New(string eventType, TimeUnit rateUnit)
+        internal static MeterMetric New(MetricName metricName, string eventType, TimeUnit rateUnit)
         {
-            var meter = new MeterMetric(eventType, rateUnit);
+            var meter = new MeterMetric(metricName, eventType, rateUnit);
             meter.Start();
             return meter;
         }

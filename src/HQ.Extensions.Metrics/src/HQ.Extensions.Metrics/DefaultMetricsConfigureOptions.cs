@@ -30,7 +30,8 @@ namespace HQ.Extensions.Metrics
         {
             return options =>
             {
-                options.Filter = MetricType.None;
+                options.SampleTimeout = TimeSpan.FromSeconds(5);
+                options.TypeFilter = MetricType.None;
             };
         }
     }

@@ -15,12 +15,12 @@
 
 #endregion
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Extensions.Metrics.AspNetCore.Configuration;
 using HQ.Extensions.Metrics.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,36 +31,39 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
     internal class MetricsMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly PathString _endpoint;
         private readonly IOptions<MetricsOptions> _options;
-        private readonly IOptions<MetricsMiddlewareOptions> _middlewareOptions;
 
-        public MetricsMiddleware(RequestDelegate next,
-            IOptions<MetricsOptions> options,
-            IOptions<MetricsMiddlewareOptions> middlewareOptions)
+        public MetricsMiddleware(RequestDelegate next, PathString endpoint, IOptions<MetricsOptions> options)
         {
             _next = next;
+            _endpoint = endpoint;
             _options = options;
-            _middlewareOptions = middlewareOptions;
-            if (!_middlewareOptions.Value.Path.StartsWith("/"))
-                 _middlewareOptions.Value.Path = $"/{middlewareOptions.Value.Path}";
+            if (!_endpoint.Value.StartsWith("/"))
+                 _endpoint = $"/{_endpoint}";
         }
 
         public async Task Invoke(HttpContext context)
         {
-            if (context.Request.Path == _middlewareOptions.Value.Path)
+            if (context.Request.Path == _endpoint)
             {
-                var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
-                var samples = registry.SelectMany(x => x.GetSample(_options.Value.Filter)).ToImmutableDictionary();
-                var cancel = new CancellationTokenSource(_middlewareOptions.Value.Timeout);
-
-                context.Response.StatusCode = 200;
-                context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
-                await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
+                await GetMetricsSample(context, _options.Value.SampleTimeout, _options.Value.TypeFilter);
             }
             else
             {
                 await _next.Invoke(context);
             }
+        }
+
+        public static async Task GetMetricsSample(HttpContext context, TimeSpan timeout, MetricType typeFilter)
+        {
+            var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
+            var samples = registry.SelectMany(x => x.GetSample(typeFilter)).ToImmutableDictionary();
+            var cancel = new CancellationTokenSource(timeout);
+
+            context.Response.StatusCode = 200;
+            context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
+            await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
         }
     }
 }

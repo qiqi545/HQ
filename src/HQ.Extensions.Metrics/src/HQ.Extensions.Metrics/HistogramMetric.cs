@@ -40,23 +40,25 @@ namespace HQ.Extensions.Metrics
         private readonly AtomicLong _varianceM = new AtomicLong();
         private readonly AtomicLong _varianceS = new AtomicLong();
 
-        /// <inheritdoc />
+        public MetricName Name { get; }
+
         /// <summary>
         ///     Creates a new <see cref="T:HQ.Extensions.Metrics.HistogramMetric" /> with the given sample type
         /// </summary>
-        public HistogramMetric(SampleType type) : this(NewSample(type)) { }
+        internal HistogramMetric(MetricName metricName, SampleType type) : this(metricName, NewSample(type)) { }
 
         /// <summary>
         ///     Creates a new <see cref="HistogramMetric" /> with the given sample
         /// </summary>
-        public HistogramMetric(ISample sample) : this(sample, true)
+        internal HistogramMetric(MetricName metricName, ISample sample) : this(metricName, sample, true)
         {
             _sample = sample;
             Clear();
         }
 
-        private HistogramMetric(ISample sample, bool clear)
+        private HistogramMetric(MetricName metricName, ISample sample, bool clear)
         {
+            Name = metricName;
             _sample = sample;
             if (clear) Clear();
         }

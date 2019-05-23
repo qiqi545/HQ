@@ -31,18 +31,21 @@ namespace HQ.Extensions.Metrics
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
 
-        public TimerMetric(TimeUnit durationUnit) : this(durationUnit, TimeUnit.Seconds,
-            MeterMetric.New("updates", TimeUnit.Seconds), new HistogramMetric(SampleType.Biased), true)
+        public MetricName Name { get; }
+
+        internal TimerMetric(MetricName metricName, TimeUnit durationUnit) : this(durationUnit, TimeUnit.Seconds,
+            MeterMetric.New(metricName, "updates", TimeUnit.Seconds), new HistogramMetric(metricName, SampleType.Biased), true)
         {
+            Name = metricName;
         }
 
-        public TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit, rateUnit,
-            MeterMetric.New("updates", rateUnit), new HistogramMetric(SampleType.Biased), true)
+        internal TimerMetric(MetricName metricName, TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit, rateUnit,
+            MeterMetric.New(metricName, "updates", rateUnit), new HistogramMetric(metricName, SampleType.Biased), true)
         {
+            Name = metricName;
         }
 
-        private TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram,
-            bool clear)
+        private TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram, bool clear)
         {
             DurationUnit = durationUnit;
             RateUnit = rateUnit;

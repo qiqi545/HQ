@@ -74,7 +74,8 @@ namespace HQ.Extensions.Metrics
         /// <returns></returns>
         public GaugeMetric<T> Gauge<T>(Type owner, string name, Func<T> evaluator)
         {
-            return GetOrAdd(new MetricName(owner, name), new GaugeMetric<T>(evaluator));
+            var metricName = new MetricName(owner, name);
+            return GetOrAdd(metricName, new GaugeMetric<T>(metricName, evaluator));
         }
 
         /// <summary>
@@ -85,7 +86,8 @@ namespace HQ.Extensions.Metrics
         /// <returns></returns>
         public CounterMetric Counter(Type owner, string name)
         {
-            return GetOrAdd(new MetricName(owner, name), new CounterMetric());
+            var metricName = new MetricName(owner, name);
+            return GetOrAdd(metricName, new CounterMetric(metricName));
         }
 
         /// <summary>
@@ -97,7 +99,8 @@ namespace HQ.Extensions.Metrics
         /// <returns></returns>
         public HistogramMetric Histogram(Type owner, string name, SampleType sampleType)
         {
-            return GetOrAdd(new MetricName(owner, name), new HistogramMetric(sampleType));
+            var metricName = new MetricName(owner, name);
+            return GetOrAdd(metricName, new HistogramMetric(metricName, sampleType));
         }
 
         /// <summary>
@@ -111,11 +114,12 @@ namespace HQ.Extensions.Metrics
         public MeterMetric Meter(Type owner, string name, string eventType, TimeUnit rateUnit)
         {
             var metricName = new MetricName(owner, name);
-            if (_store.TryGetValue(metricName, out var existingMetric)) return (MeterMetric) existingMetric;
+            if (_store.TryGetValue(metricName, out var existingMetric))
+                return (MeterMetric) existingMetric;
 
-            var metric = MeterMetric.New(eventType, rateUnit);
-            var justAddedMetric = _store.GetOrAdd(metricName, metric);
-            return justAddedMetric == null ? metric : (MeterMetric) justAddedMetric;
+            var metric = MeterMetric.New(metricName, eventType, rateUnit);
+            var added = _store.GetOrAdd(metricName, metric);
+            return added == null ? metric : (MeterMetric) added;
         }
 
         /// <summary>
@@ -131,7 +135,7 @@ namespace HQ.Extensions.Metrics
             var metricName = new MetricName(owner, name);
             if (_store.TryGetValue(metricName, out var existingMetric)) return (TimerMetric) existingMetric;
 
-            var metric = new TimerMetric(durationUnit, rateUnit);
+            var metric = new TimerMetric(metricName, durationUnit, rateUnit);
             var justAddedMetric = _store.GetOrAdd(metricName, metric);
             return justAddedMetric == null ? metric : (TimerMetric) justAddedMetric;
         }

@@ -17,5 +17,8 @@
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetric { }
+    public interface IMetric
+    {
+        MetricName Name { get; }
+    }
 }

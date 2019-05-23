@@ -29,7 +29,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
 
         public static string GetMetricName<T>(this ActionExecutingContext filterContext) where T : IMetric
         {
-            return filterContext.ActionDescriptor.RouteValues["action"] + "." + typeof(T).Name;
+            return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
         }
 
         public static Type GetMetricOwner(this ActionExecutedContext filterContext)
@@ -39,7 +39,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
 
         public static string GetMetricName<T>(this ActionExecutedContext filterContext) where T : IMetric
         {
-            return filterContext.ActionDescriptor.RouteValues["action"] + "." + typeof(T).Name;
+            return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
         }
     }
 }

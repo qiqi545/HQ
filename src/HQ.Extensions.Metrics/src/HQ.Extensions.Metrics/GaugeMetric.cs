@@ -25,6 +25,7 @@ namespace HQ.Extensions.Metrics
         public abstract string ValueAsString { get; }
         public abstract bool IsNumeric { get; }
         public abstract bool IsBoolean { get; }
+        public abstract MetricName Name { get; }
     }
 
     /// <summary>
@@ -41,8 +42,11 @@ namespace HQ.Extensions.Metrics
     {
         private readonly Func<T> _evaluator;
 
-        public GaugeMetric(Func<T> evaluator)
+        public override MetricName Name { get; }
+
+        internal GaugeMetric(MetricName metricName, Func<T> evaluator)
         {
+            Name = metricName;
             _evaluator = evaluator;
             IsNumeric = typeof(T).IsNumeric();
             IsBoolean = typeof(T).IsTruthy();

@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -26,6 +26,8 @@ namespace HQ.Extensions.Metrics
     {
         private readonly ConcurrentDictionary<string, IMetricsHost> _registry;
 
+        public IEnumerable<KeyValuePair<string, IMetricsHost>> Manifest => _registry;
+        
         public InMemoryMetricsRegistry()
         {
             _registry = new ConcurrentDictionary<string, IMetricsHost>();
@@ -33,9 +35,8 @@ namespace HQ.Extensions.Metrics
 
         public void Add(IMetricsHost host)
         {
-            var key = Environment.MachineName + "." + Environment.CurrentManagedThreadId;
-            _registry.AddOrUpdate(key,
-                host, (n, r) => r);
+            var key = $"{Environment.MachineName}.{Environment.CurrentManagedThreadId}";
+            _registry.AddOrUpdate(key, host, (n, r) => r);
         }
 
         public IEnumerator<IMetricsHost> GetEnumerator()
