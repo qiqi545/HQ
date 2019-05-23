@@ -32,7 +32,7 @@ namespace HQ.Extensions.Metrics.Tests
         [Fact]
         public void Can_time_closure()
         {
-            var timer = new TimerMetric(TimeUnit.Seconds, TimeUnit.Seconds);
+            var timer = new TimerMetric(new MetricName(), TimeUnit.Seconds, TimeUnit.Seconds);
             var result = timer.Time(() =>
             {
                 Thread.Sleep(1);

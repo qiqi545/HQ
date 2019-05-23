@@ -45,11 +45,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
                         var metrics = context.RequestServices.GetService<IMetricsRegistry>();
                         if (metrics != null)
                             AddMetricsToServerTiming(metrics, context);
-
-                        var healthChecks = context.RequestServices.GetService<IHealthChecksRegistry>();
-                        if (healthChecks != null)
-                            AddMetricsToServerTiming(healthChecks, context);
-
+                        
                         return Task.CompletedTask;
                     });
                 }

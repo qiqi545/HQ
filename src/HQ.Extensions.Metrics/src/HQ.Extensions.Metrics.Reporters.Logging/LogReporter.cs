@@ -19,6 +19,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Reporters.Console;
 using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Logging;
@@ -39,11 +40,11 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
             _options = options;
             _logger = loggerFactory.CreateLogger(options.Value.CategoryName);
         }
-
-        public override void Report(CancellationToken? cancellationToken = null)
+        
+        public override Task Report(CancellationToken cancellationToken = default)
         {
-            if (_logger == null || cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
-                return;
+            if (_logger == null || cancellationToken.IsCancellationRequested)
+                return Task.CompletedTask;
 
             try
             {
@@ -56,7 +57,7 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
                             _options.Value.StopOnError)
                         {
                             Stop();
-                            return;
+                            return Task.CompletedTask;
                         }
                     }
 
@@ -69,6 +70,9 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
                 if (_options.Value.StopOnError)
                     Stop();
             }
+
+            return Task.CompletedTask;
         }
+
     }
 }

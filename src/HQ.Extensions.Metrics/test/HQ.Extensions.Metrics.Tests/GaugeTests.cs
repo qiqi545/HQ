@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -33,7 +33,7 @@ namespace HQ.Extensions.Metrics.Tests.Core
         public void Can_gauge_scalar_value()
         {
             var queue = new Queue<int>();
-            var gauge = new GaugeMetric<int>(() => queue.Count);
+            var gauge = new GaugeMetric<int>(new MetricName(), () => queue.Count);
 
             queue.Enqueue(5);
             Assert.Equal(1, gauge.Value);

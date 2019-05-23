@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
 using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Options;
@@ -46,10 +47,13 @@ namespace HQ.Extensions.Metrics.Reporters.Console
             _options = options;
         }
 
-        public override void Report(CancellationToken? cancellationToken = null)
+
+
+        public override Task Report(CancellationToken cancellationToken = default)
         {
             if (!TryWrite(_registry, _out, cancellationToken) && _options.Value.StopOnError)
                 Stop();
+            return Task.CompletedTask;
         }
 
         public static bool TryWrite(IMetricsRegistry registry, TextWriter @out, CancellationToken? cancellationToken)
