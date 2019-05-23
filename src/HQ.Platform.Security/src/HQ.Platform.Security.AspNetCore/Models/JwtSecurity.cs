@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Platform.Security.AspNetCore.Models
 {
     public static class JwtSecurity
     {

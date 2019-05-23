@@ -15,27 +15,25 @@
 
 #endregion
 
-using System.Net;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Configuration
 {
-    public class SecurityOptions
+    internal class PlatformApiRouteOptions : IConfigureOptions<RouteOptions>
     {
-        public SuperUserOptions SuperUser { get; set; } = new SuperUserOptions();
-        public ClaimOptions Claims { get; set; } = new ClaimOptions();
-        public TokenOptions Tokens { get; set; } = new TokenOptions();
-        public HttpsOptions Https { get; set; } = new HttpsOptions();
-        public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
-        public WebServerOptions WebServer { get; set; } = new WebServerOptions();
-        public CorsOptions Cors { get; set; }
+        private readonly IOptions<PublicApiOptions> _options;
 
-        public HttpStatusCode? ForbidStatusCode { get; set; } = HttpStatusCode.Forbidden;
-
-        public SecurityOptions() : this(false) { }
-
-        public SecurityOptions(bool forBinding = false)
+        public PlatformApiRouteOptions(IOptions<PublicApiOptions> options)
         {
-            Cors = new CorsOptions(forBinding);
+            _options = options;
+        }
+
+        public void Configure(RouteOptions options)
+        {
+            options.AppendTrailingSlash = _options.Value.CanonicalRoutes.AppendTrailingSlash;
+            options.LowercaseUrls = _options.Value.CanonicalRoutes.LowercaseUrls;
+            options.LowercaseQueryStrings = _options.Value.CanonicalRoutes.LowercaseQueryStrings;
         }
     }
 }

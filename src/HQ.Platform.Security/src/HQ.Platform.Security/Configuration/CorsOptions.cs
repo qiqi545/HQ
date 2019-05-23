@@ -15,25 +15,32 @@
 
 #endregion
 
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Options;
+using HQ.Common;
 
-namespace HQ.Platform.Api.Configuration
+namespace HQ.Platform.Security.Configuration
 {
-    internal class PublicApiRouteOptions : IConfigureOptions<RouteOptions>
+    public class CorsOptions : FeatureToggle
     {
-        private readonly IOptions<PublicApiOptions> _options;
+        public string[] Origins { get; set; }
+        public string[] Methods { get; set; }
+        public string[] Headers { get; set; }
+        public string[] ExposedHeaders { get; set; }
+        public bool AllowCredentials { get; set; } = true;
+        public bool AllowOriginWildcards { get; set; } = true;
+        public int? PreflightMaxAgeSeconds { get; set; } = null;
 
-        public PublicApiRouteOptions(IOptions<PublicApiOptions> options)
-        {
-            _options = options;
-        }
+        public CorsOptions() : this(false) { }
 
-        public void Configure(RouteOptions options)
+        public CorsOptions(bool forBinding)
         {
-            options.AppendTrailingSlash = _options.Value.CanonicalRoutes.AppendTrailingSlash;
-            options.LowercaseUrls = _options.Value.CanonicalRoutes.LowercaseUrls;
-            options.LowercaseQueryStrings = _options.Value.CanonicalRoutes.LowercaseQueryStrings;
+            // IConfiguration.Bind adds to existing arrays...
+            if (forBinding)
+                return;
+
+            Origins = new[] { "*" };
+            Methods = new[] { "*" };
+            Headers = new[] { "*" };
+            ExposedHeaders = new string[] { };
         }
     }
 }

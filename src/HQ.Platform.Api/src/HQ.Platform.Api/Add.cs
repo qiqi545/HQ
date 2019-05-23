@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Extensions.Caching;
-using HQ.Extensions.Caching.Configuration;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -30,7 +29,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -41,36 +39,21 @@ namespace HQ.Platform.Api
 {
     public static class Add
     {
-        public static IServiceCollection AddPublicApi(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
         {
             Bootstrap.EnsureInitialized();
 
             services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
             services.Configure<PublicApiOptions>(config);
 
-            services.AddCors();
             services.AddHttpCaching();
             services.AddCanonicalRoutes();
             services.AddGzipCompression();
             
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
-            services.AddSingleton<IConfigureOptions<RouteOptions>, PublicApiRouteOptions>();
-            services.AddSingleton<IConfigureOptions<MvcOptions>, PublicApiMvcConfiguration>();
+            services.AddSingleton<IConfigureOptions<RouteOptions>, PlatformApiRouteOptions>();
+            services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
-
-            return services;
-        }
-
-        internal static IServiceCollection AddCors(this IServiceCollection services)
-        {
-            services.AddCors(o => o.AddDefaultPolicy(builder =>
-            {
-                builder
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials();
-            }));
 
             return services;
         }

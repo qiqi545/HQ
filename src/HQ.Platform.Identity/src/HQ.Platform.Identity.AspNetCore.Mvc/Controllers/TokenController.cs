@@ -30,6 +30,7 @@ using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore;
+using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
 using ImpromptuInterface;

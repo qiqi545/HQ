@@ -35,7 +35,7 @@ using JsonPatchInputFormatter = HQ.Platform.Api.Formatters.JsonPatchInputFormatt
 
 namespace HQ.Platform.Api.Configuration
 {
-    internal class PublicApiMvcConfiguration : IConfigureOptions<MvcOptions>
+    internal class PlatformApiMvcConfiguration : IConfigureOptions<MvcOptions>
     {
         private readonly ArrayPool<char> _charPool;
         private readonly IEnumerable<IDynamicComponent> _components;
@@ -43,7 +43,7 @@ namespace HQ.Platform.Api.Configuration
         private readonly ObjectPoolProvider _objectPoolProvider;
         private readonly JsonSerializerSettings _settings;
 
-        public PublicApiMvcConfiguration(
+        public PlatformApiMvcConfiguration(
             ILoggerFactory loggerFactory,
             ArrayPool<char> charPool,
             ObjectPoolProvider objectPoolProvider,

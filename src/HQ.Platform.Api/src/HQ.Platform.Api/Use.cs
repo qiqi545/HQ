@@ -33,7 +33,7 @@ namespace HQ.Platform.Api
 {
     public static class Use
     {
-        public static IApplicationBuilder UsePublicApi(this IApplicationBuilder app, bool snapshot = true)
+        public static IApplicationBuilder UsePlatformApi(this IApplicationBuilder app, bool snapshot = true)
         {
             app.UseCors();
             app.UseResponseCompression();

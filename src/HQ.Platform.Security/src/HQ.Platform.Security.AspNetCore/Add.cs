@@ -19,12 +19,12 @@ using System;
 using HQ.Common;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
+using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,17 +37,43 @@ namespace HQ.Platform.Security.AspNetCore
             return AddSecurityPolicies(services, config.Bind);
         }
 
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, Action<SecurityOptions> configureSecurityAction = null)
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
+            Action<SecurityOptions> configureSecurityAction = null)
         {
             Bootstrap.EnsureInitialized();
             Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));
 
-            var options = new SecurityOptions();
+            var options = new SecurityOptions(true);
             configureSecurityAction?.Invoke(options);
             services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
-            
             services.ConfigureOptions<ConfigureWebServer>();
 
+            if (options.Cors.Enabled)
+            {
+                services.AddCors(o =>
+                {
+                    o.AddDefaultPolicy(builder =>
+                    {
+                        builder
+                            .WithOrigins(options.Cors.Origins)
+                            .WithMethods(options.Cors.Methods)
+                            .WithHeaders(options.Cors.Headers)
+                            .WithExposedHeaders(options.Cors.ExposedHeaders);
+                        
+                        if (options.Cors.AllowCredentials)
+                            builder.AllowCredentials();
+                        else
+                            builder.DisallowCredentials();
+
+                        if (options.Cors.AllowOriginWildcards)
+                            builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+
+                        if (options.Cors.PreflightMaxAgeSeconds.HasValue)
+                            builder.SetPreflightMaxAge(TimeSpan.FromSeconds(options.Cors.PreflightMaxAgeSeconds.Value));
+                    });
+                });
+            }
+            
             if (options.Tokens.Enabled)
             {
                 services.AddAuthentication(options);
@@ -58,7 +84,7 @@ namespace HQ.Platform.Security.AspNetCore
                 x.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
                     .RequireAuthenticatedUserExtended(services, options)
                     .Build();
-                
+
                 if (options.SuperUser.Enabled)
                 {
                     x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
