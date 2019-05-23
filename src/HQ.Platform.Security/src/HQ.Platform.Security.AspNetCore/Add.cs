@@ -48,28 +48,29 @@ namespace HQ.Platform.Security.AspNetCore
             services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
             services.ConfigureOptions<ConfigureWebServer>();
 
-            if (options.Cors.Enabled)
+            var cors = options.Cors;
+            if (cors.Enabled)
             {
                 services.AddCors(o =>
                 {
                     o.AddDefaultPolicy(builder =>
                     {
                         builder
-                            .WithOrigins(options.Cors.Origins)
-                            .WithMethods(options.Cors.Methods)
-                            .WithHeaders(options.Cors.Headers)
-                            .WithExposedHeaders(options.Cors.ExposedHeaders);
+                            .WithOrigins(cors.Origins ?? new[] { "*" })
+                            .WithMethods(cors.Methods ?? new[] { "*" })
+                            .WithHeaders(cors.Headers ?? new []{ "*" })
+                            .WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
                         
-                        if (options.Cors.AllowCredentials)
+                        if (cors.AllowCredentials)
                             builder.AllowCredentials();
                         else
                             builder.DisallowCredentials();
 
-                        if (options.Cors.AllowOriginWildcards)
+                        if (cors.AllowOriginWildcards)
                             builder.SetIsOriginAllowedToAllowWildcardSubdomains();
 
-                        if (options.Cors.PreflightMaxAgeSeconds.HasValue)
-                            builder.SetPreflightMaxAge(TimeSpan.FromSeconds(options.Cors.PreflightMaxAgeSeconds.Value));
+                        if (cors.PreflightMaxAgeSeconds.HasValue)
+                            builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
                     });
                 });
             }
