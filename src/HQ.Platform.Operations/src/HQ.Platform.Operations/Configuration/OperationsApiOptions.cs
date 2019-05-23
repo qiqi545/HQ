@@ -16,23 +16,35 @@
 #endregion
 
 using HQ.Common;
+using HQ.Extensions.Metrics;
 
 namespace HQ.Platform.Operations.Configuration
 {
-    public class DevOpsApiOptions
+    public class OperationsApiOptions
     {
         public string RootPath { get; set; } = "/ops";
 
         public bool EnableRouteDebugging { get; set; } = true;
         public string RouteDebuggingPath { get; set; } = "/routes";
 
-        public bool EnableRequestProfiling { get; set; } = true;
-        public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
-
         public bool EnableEnvironmentEndpoint { get; set; } = true;
         public string EnvironmentEndpointPath { get; set; } = "/env";
 
         public bool EnableOptionsDebugging { get; set; } = true;
         public string OptionsDebuggingPath { get; set; } = "/options";
+
+        public bool EnableServicesDebugging { get; set; } = true;
+        public string ServicesDebuggingPath { get; set; } = "/services";
+        
+        public bool EnableRequestProfiling { get; set; } = true;
+        public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
+
+        public bool EnableHealthChecksEndpoints { get; set; } = true;
+        public string HealthCheckLivePath { get; set; } = "/ping";
+        public string HealthChecksPath { get; set; } = "/health";
+
+        public bool EnableMetricsEndpoint { get; set; } = true;
+        public string MetricsEndpointPath { get; set; } = "/metrics";
+        public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
     }
 }

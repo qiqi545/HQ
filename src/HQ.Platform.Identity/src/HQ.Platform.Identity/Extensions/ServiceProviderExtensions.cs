@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Threading;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -25,21 +24,6 @@ namespace HQ.Platform.Identity.Extensions
 {
     public static class ServiceProviderExtensions
     {
-        public static bool TryGetRequestAbortCancellationToken(this IServiceProvider services,
-            out CancellationToken cancelToken)
-        {
-            cancelToken = CancellationToken.None;
-            var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
-            var token = accessor?.HttpContext?.RequestAborted;
-            if (!token.HasValue)
-            {
-                return false;
-            }
-
-            cancelToken = token.Value;
-            return true;
-        }
-
         public static bool TryGetTenantId<TKey>(this IServiceProvider services, out TKey tenantId)
         {
             var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;

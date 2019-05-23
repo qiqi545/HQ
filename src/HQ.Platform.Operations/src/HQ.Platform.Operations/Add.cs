@@ -16,23 +16,41 @@
 #endregion
 
 using HQ.Common;
+using HQ.Extensions.Metrics;
+using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Operations
 {
     public static class Add
     {
-        public static IServiceCollection AddDevOpsApi(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddOperationsApi(this IServiceCollection services, IConfiguration config)
         {
             Bootstrap.EnsureInitialized();
 
-            services.AddScoped<IMetaProvider, DevOpsMetaProvider>();
-            services.Configure<DevOpsApiOptions>(config);
+            services.AddScoped<IMetaProvider, OperationsMetaProvider>();
+            services.Configure<OperationsApiOptions>(config);
             services.AddSingleton(config);
+            services.TryAddSingleton(services);
+
+            services.AddMetrics(c =>
+            {
+                c.AddServerTimingReporter(o =>
+                {
+                    o.Enabled = true;
+                    o.Filter = "*";
+                    o.Rendering = ServerTimingRendering.Verbose;
+                    o.AllowedOrigins = "*";
+                });
+
+                c.RegisterAsHealthCheck(m => m.Gauge("app_online", () => true), v => v);
+            });
+
             return services;
         }
     }

@@ -17,25 +17,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
-using System.Reflection;
 using System.Runtime;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Extensions.Metrics;
+using HQ.Extensions.Metrics.Internal;
+using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Api.Serialization;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -43,10 +50,11 @@ namespace HQ.Platform.Operations
 {
     public static class Use
     {
-        public static IApplicationBuilder UseDevOpsApi(this IApplicationBuilder app)
+        public static IApplicationBuilder UseOperationsApi(this IApplicationBuilder app)
         {
+            app.UseServerTimingReporter();
             app.UseRequestProfiling();
-            app.UseEnvironmentEndpoint();
+            app.UseOperationsEndpoints();
             return app;
         }
 
@@ -54,27 +62,36 @@ namespace HQ.Platform.Operations
         {
             return app.Use(async (context, next) =>
             {
-                var options = context.RequestServices.GetService<IOptions<DevOpsApiOptions>>();
-                if (options?.Value != null && options.Value.EnableRequestProfiling)
+                var options = context.RequestServices.GetService<IOptions<OperationsApiOptions>>();
+
+                if (options?.Value != null && options.Value.EnableRequestProfiling && !options.Value.MetricsOptions.EnableServerTiming)
                 {
                     var sw = StopwatchPool.Pool.Get();
 
                     context.Response.OnStarting(() =>
                     {
-                        var elapsed = sw.Elapsed;
+                        var duration = sw.Elapsed;
                         StopwatchPool.Pool.Return(sw);
                         var header = options.Value.RequestProfilingHeader ?? Constants.HttpHeaders.ServerTiming;
-                        context.Response.Headers.Add(header, $"roundtrip;dur={elapsed.TotalMilliseconds};desc=\"*\"");
+                        context.Response.Headers.Add(header, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
                         return Task.CompletedTask;
                     });
                 }
-
                 await next();
             });
         }
 
-        internal static IApplicationBuilder UseEnvironmentEndpoint(this IApplicationBuilder app)
+        internal static IApplicationBuilder UseOperationsEndpoints(this IApplicationBuilder app)
         {
+            Task GetRoutesDebugHandler(HttpContext context)
+            {
+                var provider = context.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>();
+
+                var map = provider.ActionDescriptors.Items.Select(Map);
+
+                return WriteResultAsJson(app, context, map, context.RequestAborted);
+            }
+
             object Map(ActionDescriptor descriptor)
             {
                 var controller = descriptor.RouteValues["Controller"];
@@ -96,16 +113,9 @@ namespace HQ.Platform.Operations
                 };
             }
 
-            Task GetRoutesDebugHandler(HttpContext context)
-            {
-                return WriteResultAsJson(app, context,
-                    context.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>()
-                        .ActionDescriptors.Items.Select(Map));
-            }
-
             Task GetOptionsDebugHandler(HttpContext context)
             {
-                var optionTypes = typeof(IOptions<>).GetImplementationInstancesOfOpenGeneric();
+                var optionTypes = typeof(IOptions<>).GetImplementationsOfOpenGeneric();
 
                 var model = optionTypes.GroupBy(x => x.Name).Select(x =>
                 {
@@ -132,12 +142,104 @@ namespace HQ.Platform.Operations
                     };
                 }).ToList();
 
-                return WriteResultAsJson(app, context, model);
+                return WriteResultAsJson(app, context, model, context.RequestAborted);
+            }
+
+            Task GetServicesDebugHandler(HttpContext context)
+            {
+                var services = context.RequestServices.GetRequiredService<IServiceCollection>();
+                var missingRegistrations = new HashSet<string>();
+
+                var manifest = services.Select(x =>
+                {
+                    var serviceTypeName = x.ServiceType.Name;
+                    var implementationTypeName = x.ImplementationType?.Name;
+                    var implementationInstanceName = x.ImplementationInstance?.GetType().Name;
+
+                    string implementationFactoryTypeName = null;
+                    if (x.ImplementationFactory != null)
+                    {
+                        try
+                        {
+                            var result = x.ImplementationFactory.Invoke(context.RequestServices);
+                            if (result != null)
+                            {
+                                implementationFactoryTypeName = result.GetType().Name;
+                            }
+                        }
+                        catch(InvalidOperationException ex)
+                        {
+                            if (ex.Source == "Microsoft.Extensions.DependencyInjection.Abstractions")
+                            {
+                                var match = Regex.Match(ex.Message, "No service for type '([\\w.]*)'",
+                                    RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
+                                
+                                if(match.Success)
+                                {
+                                    var typeName = match.Groups[1];
+                                    missingRegistrations.Add(typeName.Value);
+                                }
+                            }
+                            else
+                            {
+                                Trace.TraceError($"{ex.ToString()}");
+                            }
+                        }
+                    }
+
+                    return new
+                    {
+                        x.Lifetime,
+                        ImplementationType = implementationTypeName,
+                        ImplementationInstance = implementationInstanceName,
+                        ImplementationFactory = implementationFactoryTypeName,
+                        ServiceType = serviceTypeName
+                    };
+                }).ToList();
+
+                return WriteResultAsJson(app, context, new
+                {
+                    MissingRegistrations = missingRegistrations,
+                    Manifest = manifest
+                }, context.RequestAborted);
+            }
+
+            async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options)
+            {
+                var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
+                var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
+                var cancel = new CancellationTokenSource(timeout);
+                var samples = await Task.Run(()=> registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(), cancel.Token);
+                var json = JsonSampleSerializer.Serialize(samples);
+                await WriteResultAsJson(app, context, json, context.RequestAborted);
+            }
+
+            async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter)
+            {
+                var options = context.RequestServices.GetRequiredService<IOptionsMonitor<HealthCheckOptions>>();
+                var service = context.RequestServices.GetRequiredService<HealthCheckService>();
+
+                var report = await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
+
+                if (!options.CurrentValue.ResultStatusCodes.TryGetValue(report.Status, out var num))
+                    throw new InvalidOperationException($"No status code mapping found for {"HealthStatus" as object} value: {(object) report.Status}." + "HealthCheckOptions.ResultStatusCodes must contain" + string.Format("an entry for {0}.", (object)report.Status));
+                
+                context.Response.StatusCode = num;
+
+                if (!options.CurrentValue.AllowCachingResponses)
+                {
+                    var headers = context.Response.Headers;
+                    headers["Cache-Control"] = "no-store, no-cache";
+                    headers["Pragma"] = "no-cache";
+                    headers["Expires"] = "Thu, 01 Jan 1970 00:00:00 GMT";
+                }
+
+                await WriteResultAsJson(app, context, report, context.RequestAborted);
             }
 
             return app.Use(async (context, next) =>
             {
-                var options = context.RequestServices.GetRequiredService<IOptions<DevOpsApiOptions>>();
+                var options = context.RequestServices.GetRequiredService<IOptions<OperationsApiOptions>>();
 
                 if (options.Value != null &&
                     options.Value.EnableEnvironmentEndpoint &&
@@ -164,6 +266,40 @@ namespace HQ.Platform.Operations
                 {
                     await GetOptionsDebugHandler(context);
                     return;
+                }
+
+                if (options.Value != null &&
+                    options.Value.EnableServicesDebugging &&
+                    !string.IsNullOrWhiteSpace(options.Value.ServicesDebuggingPath) &&
+                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.ServicesDebuggingPath))
+                {
+                    await GetServicesDebugHandler(context);
+                    return;
+                }
+
+                if (options.Value != null &&
+                    options.Value.EnableMetricsEndpoint &&
+                    !string.IsNullOrWhiteSpace(options.Value.MetricsEndpointPath) &&
+                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.MetricsEndpointPath))
+                {
+                    await GetMetricsHandler(context, options.Value);
+                    return;
+                }
+
+                if (options.Value != null && options.Value.EnableHealthChecksEndpoints)
+                {
+                    if (!string.IsNullOrWhiteSpace(options.Value.HealthCheckLivePath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthCheckLivePath))
+                    {
+                        await GetHealthChecksHandler(context, r => false);
+                        return;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(options.Value.HealthChecksPath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthChecksPath))
+                    {
+                        context.Request.Query.TryGetValue("tags", out var tags);
+                        await GetHealthChecksHandler(context, r => r.Tags.IsSupersetOf(tags));
+                        return;
+                    }
                 }
 
                 await next();
@@ -212,37 +348,7 @@ namespace HQ.Platform.Operations
                     ? t.GetGenericArguments()[0].Name
                     : t.Name;
         }
-
-        private static IEnumerable<Type> GetImplementationInstancesOfOpenGeneric(this Type openGenericType)
-        {
-            return GetInstancesOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());
-        }
-
-        private static IEnumerable<Type> GetInstancesOfOpenGeneric(this Type openGenericType, IEnumerable<Assembly> assemblies)
-        {
-            if (!openGenericType.IsGenericType)
-                throw new ArgumentException("provided type is not an open generic type", nameof(openGenericType));
-
-            foreach (var assembly in assemblies)
-            {
-                var members = assembly.GetTypes().SelectMany(x => x.GetMembers());
-                
-                foreach (var member in members)
-                {
-                    if (!(member is MethodBase ctorOrMethod))
-                        continue;
-
-                    foreach (var parameter in ctorOrMethod.GetParameters())
-                    {
-                        if (parameter.ParameterType.ImplementsGeneric(openGenericType))
-                        {
-                            yield return parameter.ParameterType;
-                        }
-                    }
-                }
-            }
-        }
-
+        
         private static async Task GetEnvironmentHandler(IApplicationBuilder app, HttpContext context)
         {
             string GetPlatform()
@@ -329,13 +435,13 @@ namespace HQ.Platform.Operations
                 Configuration = configuration
             };
 
-            await WriteResultAsJson(app, context, env);
+            await WriteResultAsJson(app, context, env, context.RequestAborted);
         }
 
-        private static async Task WriteResultAsJson(IApplicationBuilder app, HttpContext context, object env)
+        private static async Task WriteResultAsJson(IApplicationBuilder app, HttpContext context, object instance, CancellationToken cancellationToken)
         {
             context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
-            await context.Response.WriteAsync(SerializeObject(app, context, env));
+            await context.Response.WriteAsync(SerializeObject(app, context, instance), cancellationToken: cancellationToken);
         }
 
         private static string SerializeObject(IApplicationBuilder app, HttpContext context, object instance)

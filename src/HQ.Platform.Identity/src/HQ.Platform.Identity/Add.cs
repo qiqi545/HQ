@@ -133,6 +133,8 @@ namespace HQ.Platform.Identity
                 services.Configure(configureIdentity);
 
             identityBuilder.AddDefaultTokenProviders();
+
+            // https://github.com/blowdart/AspNetCoreIdentityEncryption
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
             identityBuilder.Services.AddSingleton<IPersonalDataProtector, DefaultPersonalDataProtector>();
 
