@@ -18,6 +18,7 @@
 using System;
 using System.Threading;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Common.AspNetCore
 {
@@ -36,6 +37,50 @@ namespace HQ.Common.AspNetCore
 
             cancelToken = token.Value;
             return true;
+        }
+
+        public static bool TryBindOptions(this IServiceProvider serviceProvider, Type optionsWrapperType, out object options)
+        {
+            // IOptions<T>
+            var resolved = optionsWrapperType.GetGenericArguments()[0];
+            while (resolved != null && resolved.IsGenericType)
+            {
+                resolved = resolved.IsGenericTypeDefinition
+                    ? resolved.MakeGenericType(optionsWrapperType.GetGenericArguments())    // IOptions<TService<T1,...TN>>
+                    : resolved.BaseType;                                                    // HubOptions<THub> -> HubOptions
+            }
+            resolved = typeof(IOptions<>).MakeGenericType(resolved);
+
+            try
+            {
+                var instance = serviceProvider.GetService(resolved);
+                var property = resolved.GetProperty(nameof(IOptions<object>.Value));
+                options = property?.GetValue(instance);
+                return options != null;
+            }
+            catch (Exception e)
+            {
+                options = new
+                {
+                    Type = GetInnerGenericTypeName(optionsWrapperType),
+                    ErrorType = e.GetType().Name,
+                    e.Message,
+                    e.StackTrace
+                };
+                return false;
+            }
+        }
+
+        public static string GetInnerGenericTypeName(this Type optionsWrapperType)
+        {
+            var declaringMethod = optionsWrapperType.DeclaringMethod;
+
+            return optionsWrapperType.IsGenericParameter && declaringMethod != null && declaringMethod.IsGenericMethod ?
+                declaringMethod.IsGenericMethod ? declaringMethod.GetGenericArguments()[0].Name :
+                declaringMethod.Name
+                : optionsWrapperType.IsGenericType
+                    ? optionsWrapperType.GetGenericArguments()[0].Name
+                    : optionsWrapperType.Name;
         }
     }
 }
