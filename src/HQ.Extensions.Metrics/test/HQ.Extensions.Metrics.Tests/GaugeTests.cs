@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using Xunit;
 
-namespace HQ.Extensions.Metrics.Tests.Core
+namespace HQ.Extensions.Metrics.Tests
 {
     public class GaugeTests : IClassFixture<MetricsFixture>
     {

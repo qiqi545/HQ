@@ -53,7 +53,9 @@ namespace HQ.Extensions.Metrics.Reporting
                 await Task.Delay(_interval, cancellationToken);
 
                 if (!cancellationToken.IsCancellationRequested)
+                {
                     action();
+                }
             }
         }
 

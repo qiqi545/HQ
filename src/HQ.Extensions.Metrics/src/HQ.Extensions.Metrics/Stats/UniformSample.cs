@@ -50,7 +50,11 @@ namespace HQ.Extensions.Metrics.Stats
         /// </summary>
         public void Clear()
         {
-            for (var i = 0; i < _values.Length; i++) Interlocked.Exchange(ref _values[i], 0);
+            for (var i = 0; i < _values.Length; i++)
+            {
+                Interlocked.Exchange(ref _values[i], 0);
+            }
+
             _count.Set(0);
         }
 
@@ -62,7 +66,11 @@ namespace HQ.Extensions.Metrics.Stats
             get
             {
                 var c = _count.Get();
-                if (c > _values.Length) return _values.Length;
+                if (c > _values.Length)
+                {
+                    return _values.Length;
+                }
+
                 return (int) c;
             }
         }
@@ -98,7 +106,11 @@ namespace HQ.Extensions.Metrics.Stats
             {
                 var size = Count;
                 var copy = new List<long>(size);
-                for (var i = 0; i < size; i++) copy.Add(Interlocked.Read(ref _values[i]));
+                for (var i = 0; i < size; i++)
+                {
+                    copy.Add(Interlocked.Read(ref _values[i]));
+                }
+
                 return copy;
             }
         }

@@ -34,7 +34,9 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
             Action<ServerTimingReporterOptions> configureAction)
         {
             if (configureAction == null)
+            {
                 throw new ArgumentNullException(nameof(configureAction));
+            }
 
             builder.AddServerTimingReporter();
             builder.Services.Configure(configureAction);

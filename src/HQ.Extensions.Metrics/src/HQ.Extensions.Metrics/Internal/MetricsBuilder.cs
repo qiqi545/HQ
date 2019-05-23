@@ -23,8 +23,8 @@ namespace HQ.Extensions.Metrics.Internal
 {
     internal class MetricsBuilder : IMetricsBuilder
     {
-        private readonly Lazy<MetricsHost> _host;
         private readonly IHealthChecksBuilder _builder;
+        private readonly Lazy<MetricsHost> _host;
 
         public MetricsBuilder(IServiceCollection services, Lazy<MetricsHost> host, IHealthChecksBuilder builder)
         {
@@ -35,22 +35,27 @@ namespace HQ.Extensions.Metrics.Internal
 
         public IServiceCollection Services { get; }
 
-        public IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, GaugeMetric<bool>> builderFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy)
+        public IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, GaugeMetric<bool>> builderFunc,
+            HealthStatus onCheckFailure = HealthStatus.Unhealthy)
         {
             return RegisterAsHealthCheck(builderFunc, m => m, onCheckFailure);
         }
 
-        public IMetricsBuilder RegisterAsHealthCheck<T>(Func<IMetricsHost, GaugeMetric<T>> builderFunc, Func<T, bool> checkFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy)
+        public IMetricsBuilder RegisterAsHealthCheck<T>(Func<IMetricsHost, GaugeMetric<T>> builderFunc,
+            Func<T, bool> checkFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy)
         {
             return RegisterAsHealthCheck(builderFunc, m => m.Value, checkFunc, onCheckFailure);
         }
 
-        public IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, CounterMetric> builderFunc, Func<long, bool> checkFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy)
+        public IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, CounterMetric> builderFunc,
+            Func<long, bool> checkFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy)
         {
             return RegisterAsHealthCheck(builderFunc, m => m.Count, checkFunc, onCheckFailure);
         }
 
-        public IMetricsBuilder RegisterAsHealthCheck<TMetric, TValue>(Func<IMetricsHost, TMetric> builderFunc, Func<TMetric, TValue> valueFunc, Func<TValue, bool> checkFunc, HealthStatus onCheckFailure = HealthStatus.Unhealthy) where TMetric : IMetric
+        public IMetricsBuilder RegisterAsHealthCheck<TMetric, TValue>(Func<IMetricsHost, TMetric> builderFunc,
+            Func<TMetric, TValue> valueFunc, Func<TValue, bool> checkFunc,
+            HealthStatus onCheckFailure = HealthStatus.Unhealthy) where TMetric : IMetric
         {
             var name = builderFunc(_host.Value).Name.Name;
             _builder.AddCheck($"health_check.{name}", () =>

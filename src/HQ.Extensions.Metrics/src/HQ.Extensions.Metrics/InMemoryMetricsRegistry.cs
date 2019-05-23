@@ -26,12 +26,12 @@ namespace HQ.Extensions.Metrics
     {
         private readonly ConcurrentDictionary<string, IMetricsHost> _registry;
 
-        public IEnumerable<KeyValuePair<string, IMetricsHost>> Manifest => _registry;
-        
         public InMemoryMetricsRegistry()
         {
             _registry = new ConcurrentDictionary<string, IMetricsHost>();
         }
+
+        public IEnumerable<KeyValuePair<string, IMetricsHost>> Manifest => _registry;
 
         public void Add(IMetricsHost host)
         {

@@ -34,7 +34,9 @@ namespace HQ.Extensions.Metrics.Reporters.Console
             Action<ConsoleReporterOptions> configureAction)
         {
             if (configureAction == null)
+            {
                 throw new ArgumentNullException(nameof(configureAction));
+            }
 
             builder.AddConsoleReporter();
             builder.Services.Configure(configureAction);

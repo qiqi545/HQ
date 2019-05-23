@@ -21,6 +21,8 @@ namespace HQ.Extensions.Metrics
 {
     public interface IMetricsHost : IReadableMetrics
     {
+        bool Clear();
+
         #region Default Owner
 
         GaugeMetric<T> Gauge<T>(string name, Func<T> evaluator);
@@ -40,7 +42,5 @@ namespace HQ.Extensions.Metrics
         TimerMetric Timer(Type owner, string name, TimeUnit durationUnit, TimeUnit rateUnit);
 
         #endregion
-
-        bool Clear();
     }
 }

@@ -41,9 +41,6 @@ namespace HQ.Extensions.Metrics
         private readonly AtomicLong _varianceM = new AtomicLong();
         private readonly AtomicLong _varianceS = new AtomicLong();
 
-        [IgnoreDataMember]
-        public MetricName Name { get; }
-
         /// <summary>
         ///     Creates a new <see cref="T:HQ.Extensions.Metrics.HistogramMetric" /> with the given sample type
         /// </summary>
@@ -62,7 +59,10 @@ namespace HQ.Extensions.Metrics
         {
             Name = metricName;
             _sample = sample;
-            if (clear) Clear();
+            if (clear)
+            {
+                Clear();
+            }
         }
 
         /// <summary>
@@ -103,7 +103,10 @@ namespace HQ.Extensions.Metrics
         public double[] Percentiles(params double[] percentiles)
         {
             var scores = new double[percentiles.Length];
-            for (var i = 0; i < scores.Length; i++) scores[i] = 0.0;
+            for (var i = 0; i < scores.Length; i++)
+            {
+                scores[i] = 0.0;
+            }
 
             if (Count > 0)
             {
@@ -132,6 +135,8 @@ namespace HQ.Extensions.Metrics
 
             return scores;
         }
+
+        [IgnoreDataMember] public MetricName Name { get; }
 
         /// <summary>
         ///     Clears all recorded values
@@ -191,7 +196,10 @@ namespace HQ.Extensions.Metrics
         private void UpdateVariance(long value)
         {
             // Initialize varianceM to the first reading if it's still blank
-            if (_varianceM.CompareAndSet(-1, BitConverter.DoubleToInt64Bits(value))) return;
+            if (_varianceM.CompareAndSet(-1, BitConverter.DoubleToInt64Bits(value)))
+            {
+                return;
+            }
 
             var done = false;
             while (!done)

@@ -29,10 +29,13 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
             return builder;
         }
 
-        public static IMetricsBuilder AddLogReporter(this IMetricsBuilder builder, Action<LogReporterOptions> configureAction)
+        public static IMetricsBuilder AddLogReporter(this IMetricsBuilder builder,
+            Action<LogReporterOptions> configureAction)
         {
             if (configureAction == null)
+            {
                 throw new ArgumentNullException(nameof(configureAction));
+            }
 
             builder.AddLogReporter();
             builder.Services.Configure(configureAction);

@@ -106,7 +106,7 @@ namespace HQ.Extensions.Metrics.Stats
                 }
             }
         }
-        
+
         private void Update(long value, long timestamp)
         {
             _lock.EnterReadLock();
@@ -126,7 +126,10 @@ namespace HQ.Extensions.Metrics.Stats
                         _values.AddOrUpdate(priority, value, (p, v) => v);
 
                         long removed;
-                        while (!_values.TryRemove(first, out removed)) first = _values.Keys.First();
+                        while (!_values.TryRemove(first, out removed))
+                        {
+                            first = _values.Keys.First();
+                        }
                     }
                 }
             }
@@ -137,7 +140,10 @@ namespace HQ.Extensions.Metrics.Stats
 
             var now = DateTime.Now.Ticks;
             var next = _nextScaleTime.Get();
-            if (now >= next) Rescale(now, next);
+            if (now >= next)
+            {
+                Rescale(now, next);
+            }
         }
 
         private static long Tick()
@@ -173,7 +179,10 @@ namespace HQ.Extensions.Metrics.Stats
         /// <param name="next"></param>
         private void Rescale(long now, long next)
         {
-            if (!_nextScaleTime.CompareAndSet(next, now + RescaleThreshold)) return;
+            if (!_nextScaleTime.CompareAndSet(next, now + RescaleThreshold))
+            {
+                return;
+            }
 
             _lock.EnterWriteLock();
             try

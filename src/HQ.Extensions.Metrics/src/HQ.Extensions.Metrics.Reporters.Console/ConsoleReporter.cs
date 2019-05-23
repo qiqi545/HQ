@@ -48,18 +48,22 @@ namespace HQ.Extensions.Metrics.Reporters.Console
         }
 
 
-
         public override Task Report(CancellationToken cancellationToken = default)
         {
             if (!TryWrite(_registry, _out, cancellationToken) && _options.Value.StopOnError)
+            {
                 Stop();
+            }
+
             return Task.CompletedTask;
         }
 
         public static bool TryWrite(IMetricsRegistry registry, TextWriter @out, CancellationToken? cancellationToken)
         {
             if (cancellationToken.HasValue && cancellationToken.Value.IsCancellationRequested)
+            {
                 return true;
+            }
 
             try
             {
@@ -69,7 +73,11 @@ namespace HQ.Extensions.Metrics.Reporters.Console
                 var dateTime = $"{now.ToShortDateString()} {now.ToShortTimeString()}";
                 @out.Write(dateTime);
                 @out.Write(' ');
-                for (var i = 0; i < 80 - dateTime.Length - 1; i++) @out.Write('=');
+                for (var i = 0; i < 80 - dateTime.Length - 1; i++)
+                {
+                    @out.Write('=');
+                }
+
                 @out.WriteLine();
 
                 foreach (var host in registry)

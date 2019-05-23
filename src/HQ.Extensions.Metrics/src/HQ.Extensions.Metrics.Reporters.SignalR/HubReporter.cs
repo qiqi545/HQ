@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,8 @@ namespace HQ.Extensions.Metrics.Reporters.SignalR
         private readonly IOptions<HubReporterOptions> _options;
         private readonly IMetricsRegistry _registry;
 
-        public HubReporter(IMetricsRegistry registry, ILoggerFactory loggerFactory, IOptions<HubReporterOptions> options)
+        public HubReporter(IMetricsRegistry registry, ILoggerFactory loggerFactory,
+            IOptions<HubReporterOptions> options)
         {
             _registry = registry;
             _options = options;
@@ -37,12 +39,12 @@ namespace HQ.Extensions.Metrics.Reporters.SignalR
 
         public Task InitializeAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

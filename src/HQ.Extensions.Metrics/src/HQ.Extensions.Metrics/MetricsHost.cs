@@ -23,8 +23,8 @@ namespace HQ.Extensions.Metrics
 {
     public class MetricsHost : IMetricsHost
     {
-        private readonly IMetricsStore _store;
         private static readonly Type Owner = typeof(MetricsHost);
+        private readonly IMetricsStore _store;
 
         public MetricsHost(IMetricsStore store)
         {
@@ -32,6 +32,17 @@ namespace HQ.Extensions.Metrics
         }
 
         public MetricsHost() : this(new InMemoryMetricsStore()) { }
+
+        private T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
+        {
+            if (_store.Contains(name))
+            {
+                return (T) _store[name];
+            }
+
+            _store.AddOrUpdate(name, metric);
+            return metric;
+        }
 
         #region Default Owner
 
@@ -115,7 +126,9 @@ namespace HQ.Extensions.Metrics
         {
             var metricName = new MetricName(owner, name);
             if (_store.TryGetValue(metricName, out var existingMetric))
+            {
                 return (MeterMetric) existingMetric;
+            }
 
             var metric = MeterMetric.New(metricName, eventType, rateUnit);
             var added = _store.GetOrAdd(metricName, metric);
@@ -133,7 +146,10 @@ namespace HQ.Extensions.Metrics
         public TimerMetric Timer(Type owner, string name, TimeUnit durationUnit, TimeUnit rateUnit)
         {
             var metricName = new MetricName(owner, name);
-            if (_store.TryGetValue(metricName, out var existingMetric)) return (TimerMetric) existingMetric;
+            if (_store.TryGetValue(metricName, out var existingMetric))
+            {
+                return (TimerMetric) existingMetric;
+            }
 
             var metric = new TimerMetric(metricName, durationUnit, rateUnit);
             var justAddedMetric = _store.GetOrAdd(metricName, metric);
@@ -149,7 +165,8 @@ namespace HQ.Extensions.Metrics
         }
 
         /// <summary>
-        ///     Clears all previously registered metrics, if the underlying <see cref="IMetricsStore"/> supports <see cref="IClearable"/>
+        ///     Clears all previously registered metrics, if the underlying <see cref="IMetricsStore" /> supports
+        ///     <see cref="IClearable" />
         /// </summary>
         public bool Clear()
         {
@@ -157,13 +174,5 @@ namespace HQ.Extensions.Metrics
         }
 
         #endregion
-
-        private T GetOrAdd<T>(MetricName name, T metric) where T : IMetric
-        {
-            if (_store.Contains(name))
-                return (T) _store[name];
-            _store.AddOrUpdate(name, metric);
-            return metric;
-        }
     }
 }

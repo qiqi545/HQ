@@ -50,7 +50,9 @@ namespace HQ.Extensions.Metrics
         public static IServiceCollection AddMetrics(this IServiceCollection services, Action<IMetricsBuilder> configure)
         {
             if (services == null)
+            {
                 throw new ArgumentNullException(nameof(services));
+            }
 
             services.AddOptions();
 

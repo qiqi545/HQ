@@ -17,7 +17,6 @@
 
 using System.Collections.Generic;
 using HQ.Extensions.Metrics.Reporters.Console;
-using HQ.Extensions.Metrics.Tests.Core;
 using Microsoft.Extensions.Options;
 using Xunit;
 

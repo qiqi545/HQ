@@ -32,28 +32,31 @@ namespace HQ.Extensions.Metrics
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
 
-        [IgnoreDataMember]
-        public MetricName Name { get; }
-
         internal TimerMetric(MetricName metricName, TimeUnit durationUnit) : this(durationUnit, TimeUnit.Seconds,
-            MeterMetric.New(metricName, "updates", TimeUnit.Seconds), new HistogramMetric(metricName, SampleType.Biased), true)
+            MeterMetric.New(metricName, "updates", TimeUnit.Seconds),
+            new HistogramMetric(metricName, SampleType.Biased), true)
         {
             Name = metricName;
         }
 
-        internal TimerMetric(MetricName metricName, TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit, rateUnit,
+        internal TimerMetric(MetricName metricName, TimeUnit durationUnit, TimeUnit rateUnit) : this(durationUnit,
+            rateUnit,
             MeterMetric.New(metricName, "updates", rateUnit), new HistogramMetric(metricName, SampleType.Biased), true)
         {
             Name = metricName;
         }
 
-        private TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram, bool clear)
+        private TimerMetric(TimeUnit durationUnit, TimeUnit rateUnit, MeterMetric meter, HistogramMetric histogram,
+            bool clear)
         {
             DurationUnit = durationUnit;
             RateUnit = rateUnit;
             _meter = meter;
             _histogram = histogram;
-            if (clear) Clear();
+            if (clear)
+            {
+                Clear();
+            }
         }
 
         /// <summary>
@@ -95,7 +98,10 @@ namespace HQ.Extensions.Metrics
         public double[] Percentiles(params double[] percentiles)
         {
             var scores = _histogram.Percentiles(percentiles);
-            for (var i = 0; i < scores.Length; i++) scores[i] = ConvertFromNanoseconds(scores[i]);
+            for (var i = 0; i < scores.Length; i++)
+            {
+                scores[i] = ConvertFromNanoseconds(scores[i]);
+            }
 
             return scores;
         }
@@ -147,13 +153,15 @@ namespace HQ.Extensions.Metrics
         /// </summary>
         /// <returns></returns>
         public double OneMinuteRate => _meter.OneMinuteRate;
-        
+
         /// <summary>
         ///     Returns the type of events the meter is measuring
         /// </summary>
         /// <returns></returns>
         public string EventType => _meter.EventType;
-     
+
+        [IgnoreDataMember] public MetricName Name { get; }
+
         /// <summary>
         ///     Clears all recorded durations
         /// </summary>
@@ -169,7 +177,11 @@ namespace HQ.Extensions.Metrics
 
         private void Update(long duration)
         {
-            if (duration < 0) return;
+            if (duration < 0)
+            {
+                return;
+            }
+
             _histogram.Update(duration);
             _meter.Mark();
         }
@@ -194,7 +206,7 @@ namespace HQ.Extensions.Metrics
                 handle.Stop();
             }
         }
-        
+
         private double ConvertFromNanoseconds(double value)
         {
             return value / DurationUnit.Convert(1, TimeUnit.Nanoseconds);

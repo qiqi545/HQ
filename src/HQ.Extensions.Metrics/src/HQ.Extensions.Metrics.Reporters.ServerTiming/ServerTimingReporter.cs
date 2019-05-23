@@ -38,7 +38,8 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
                 var options = context.RequestServices.GetService<IOptions<ServerTimingReporterOptions>>();
                 if (options?.Value != null && options.Value.Enabled)
                 {
-                    context.Response.Headers[Constants.HttpHeaders.TimingAllowOrigin] = options.Value.AllowedOrigins;
+                    context.Response.Headers[Common.Constants.HttpHeaders.TimingAllowOrigin] =
+                        options.Value.AllowedOrigins;
 
                     var sw = StopwatchPool.Pool.Get();
 
@@ -46,10 +47,14 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
                     {
                         var duration = sw.Elapsed;
                         StopwatchPool.Pool.Return(sw);
-                        context.Response.Headers.Add(Constants.HttpHeaders.ServerTiming, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
+                        context.Response.Headers.Add(Common.Constants.HttpHeaders.ServerTiming,
+                            $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
                         var metrics = context.RequestServices.GetService<IMetricsRegistry>();
                         if (metrics != null)
+                        {
                             AddMetricsToServerTiming(metrics, context, duration);
+                        }
+
                         return Task.CompletedTask;
                     });
                 }
@@ -62,7 +67,8 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 
         public void Dispose() { }
 
-        private static void AddMetricsToServerTiming(IEnumerable<IReadableMetrics> metrics, HttpContext context, TimeSpan duration)
+        private static void AddMetricsToServerTiming(IEnumerable<IReadableMetrics> metrics, HttpContext context,
+            TimeSpan duration)
         {
             foreach (var host in metrics)
             {
@@ -99,22 +105,26 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 
                     break;
                 }
+
                 case CounterMetric x:
                 {
                     var value = $"{key};dur={x.Count}";
                     AddServerTimingEntry(context, value);
                     break;
                 }
+
                 case HistogramMetric x:
                 {
                     WriteDistributed(x, key, context);
                     break;
                 }
+
                 case MeterMetric x:
                 {
                     WriteMetered(x, key, context);
                     break;
                 }
+
                 case TimerMetric x:
                 {
                     WriteMetered(x, key, context);
@@ -173,7 +183,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 
         private static void AddServerTimingEntry(HttpContext context, string value)
         {
-            context.Response.Headers.Add(Constants.HttpHeaders.ServerTiming, value);
+            context.Response.Headers.Add(Common.Constants.HttpHeaders.ServerTiming, value);
         }
     }
 }

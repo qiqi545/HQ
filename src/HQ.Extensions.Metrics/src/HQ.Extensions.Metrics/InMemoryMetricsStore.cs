@@ -23,6 +23,9 @@ namespace HQ.Extensions.Metrics
 {
     public class InMemoryMetricsStore : IMetricsStore
     {
+        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
+            ImmutableDictionary.Create<MetricName, IMetric>();
+
         private readonly ConcurrentDictionary<MetricName, IMetric> _metrics;
 
         public InMemoryMetricsStore()
@@ -52,13 +55,12 @@ namespace HQ.Extensions.Metrics
             _metrics.AddOrUpdate(name, metric, (n, m) => m);
         }
 
-        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
-            ImmutableDictionary.Create<MetricName, IMetric>();
-
         public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
             if (typeFilter.HasFlagFast(MetricType.All))
+            {
                 return NoSample;
+            }
 
             var filtered = new Dictionary<MetricName, IMetric>();
             foreach (var entry in _metrics)
@@ -76,6 +78,7 @@ namespace HQ.Extensions.Metrics
                         break;
                 }
             }
+
             return filtered.ToImmutableDictionary();
         }
 

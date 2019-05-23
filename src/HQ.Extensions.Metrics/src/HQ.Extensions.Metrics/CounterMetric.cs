@@ -27,12 +27,11 @@ namespace HQ.Extensions.Metrics
     {
         private readonly AtomicLong _count = new AtomicLong(0);
 
-        [IgnoreDataMember]
-        public MetricName Name { get; }
-
         internal CounterMetric(MetricName metricName) { Name = metricName; }
 
         public long Count => _count.Get();
+
+        [IgnoreDataMember] public MetricName Name { get; }
 
         public void Increment()
         {

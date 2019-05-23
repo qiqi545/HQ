@@ -29,9 +29,12 @@ namespace HQ.Extensions.Metrics.AspNetCore
         {
             var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
             foreach (var reporter in reporters)
+            {
                 reporter.InitializeAsync();
+            }
 
-            app.UseMiddleware<MetricsMiddleware>(path, app.ApplicationServices.GetRequiredService<IOptions<MetricsOptions>>());
+            app.UseMiddleware<MetricsMiddleware>(path,
+                app.ApplicationServices.GetRequiredService<IOptions<MetricsOptions>>());
             return app;
         }
     }

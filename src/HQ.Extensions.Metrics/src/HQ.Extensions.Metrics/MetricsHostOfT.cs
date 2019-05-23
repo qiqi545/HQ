@@ -89,7 +89,7 @@ namespace HQ.Extensions.Metrics
         {
             return _host.Timer(typeof(TOwner), name, durationUnit, rateUnit);
         }
-        
+
         /// <summary>
         ///     Clears all previously registered metrics
         /// </summary>

@@ -40,11 +40,13 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
             _options = options;
             _logger = loggerFactory.CreateLogger(options.Value.CategoryName);
         }
-        
+
         public override Task Report(CancellationToken cancellationToken = default)
         {
             if (_logger == null || cancellationToken.IsCancellationRequested)
+            {
                 return Task.CompletedTask;
+            }
 
             try
             {
@@ -68,11 +70,12 @@ namespace HQ.Extensions.Metrics.Reporters.Logging
             {
                 _logger?.LogError(e, "Error reporting metrics to logger");
                 if (_options.Value.StopOnError)
+                {
                     Stop();
+                }
             }
 
             return Task.CompletedTask;
         }
-
     }
 }

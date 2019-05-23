@@ -30,7 +30,7 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
     public static class Add
     {
         /// <summary>
-        /// Sends all metrics and health checks periodically to an Application Insights instrumentation.
+        ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
         /// </summary>
         public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder, IConfiguration config)
         {
@@ -38,9 +38,10 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
         }
 
         /// <summary>
-        /// Sends all metrics and health checks periodically to an Application Insights instrumentation.
+        ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
         /// </summary>
-        public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder, Action<AppInsightsMetricsReporterOptions> configureAction = null)
+        public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder,
+            Action<AppInsightsMetricsReporterOptions> configureAction = null)
         {
             builder.Services.Configure<HealthCheckPublisherOptions>(options =>
             {

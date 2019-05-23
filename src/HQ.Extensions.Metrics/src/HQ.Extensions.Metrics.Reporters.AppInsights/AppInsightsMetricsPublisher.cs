@@ -31,12 +31,12 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
 
     internal class AppInsightsMetricsPublisher : IHealthCheckPublisher
     {
+        private static TelemetryClient _client;
         private readonly IMetricsRegistry _registry;
         private readonly IOptionsMonitor<AppInsightsMetricsReporterOptions> _reporterOptions;
 
-        private static TelemetryClient _client;
-        
-        public AppInsightsMetricsPublisher(IMetricsRegistry registry, IOptionsMonitor<AppInsightsMetricsReporterOptions> reporterOptions)
+        public AppInsightsMetricsPublisher(IMetricsRegistry registry,
+            IOptionsMonitor<AppInsightsMetricsReporterOptions> reporterOptions)
         {
             _registry = registry;
             _reporterOptions = reporterOptions;
@@ -47,57 +47,64 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
             var options = _reporterOptions.CurrentValue;
 
             if (!options.Enabled || cancellationToken.IsCancellationRequested && cancellationToken.CanBeCanceled)
+            {
                 return Task.CompletedTask;
+            }
 
             var publishHealthy = options.PublishHealthy;
 
             if (report.Status == HealthStatus.Healthy && publishHealthy)
+            {
                 return Task.CompletedTask;
+            }
 
             _client = _client ?? new TelemetryClient(TelemetryConfiguration.Active);
-            
+
             if (options.PublishHealthChecks)
             {
                 foreach (var entry in report.Entries)
                 {
                     if (entry.Value.Status == HealthStatus.Healthy && !publishHealthy)
+                    {
                         continue;
+                    }
 
                     // https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics
 
                     var properties = new Dictionary<string, string>
                     {
-                        { nameof(entry.Key), entry.Key },
-                        { nameof(entry.Value.Description), entry.Value.Description },
-                        { nameof(Environment.MachineName), Environment.MachineName },
+                        {nameof(entry.Key), entry.Key},
+                        {nameof(entry.Value.Description), entry.Value.Description},
+                        {nameof(Environment.MachineName), Environment.MachineName}
                     };
 
                     foreach (var item in entry.Value.Data)
+                    {
                         properties[item.Key] = $"{item.Value}";
+                    }
 
                     if (entry.Value.Exception != null)
+                    {
                         properties[nameof(entry.Value.Exception)] = $"{entry.Value.Exception}";
+                    }
 
                     var metrics = new Dictionary<string, double>
                     {
-                        { nameof(entry.Value.Status), entry.Value.Status == HealthStatus.Healthy ? 1 : 0 },
-                        { nameof(entry.Value.Duration), entry.Value.Duration.TotalMilliseconds }
+                        {nameof(entry.Value.Status), entry.Value.Status == HealthStatus.Healthy ? 1 : 0},
+                        {nameof(entry.Value.Duration), entry.Value.Duration.TotalMilliseconds}
                     };
 
                     _client.TrackEvent(options.HealthCheckEventName, properties, metrics);
                 }
             }
 
-            if(options.PublishMetrics)
+            if (options.PublishMetrics)
             {
                 // https://docs.microsoft.com/en-us/azure/azure-monitor/app/api-custom-events-metrics
 
                 foreach (var registry in _registry.Manifest)
                 {
-                    var properties = new Dictionary<string, string>
-                    {
-                        { "Key", registry.Key }
-                    };
+                    var properties = new Dictionary<string, string> {{"Key", registry.Key}};
 
                     var hostType = registry.Value.GetType();
                     if (hostType.IsGenericType)
@@ -114,7 +121,9 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
                         var metricName = entry.Key.Name;
 
                         if (report.Entries.ContainsKey($"health_check.{metricName}"))
+                        {
                             continue; // was already reported as a health check
+                        }
 
                         switch (entry.Value)
                         {
@@ -128,10 +137,15 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
                                 {
                                     var dataType = gaugeType.GetGenericArguments()[0];
                                     if (dataType.IsNumeric())
+                                    {
                                         metrics.Add(metricName, double.Parse(gauge.ValueAsString));
+                                    }
                                     else
+                                    {
                                         properties.Add(metricName, gauge.ValueAsString);
+                                    }
                                 }
+
                                 break;
                             case CounterMetric counter:
                                 metrics.Add(metricName, counter.Count);
@@ -158,21 +172,23 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
             void AddDistributed(string metricName, IDistributed distributed, IDictionary<string, double> metrics)
             {
                 if (!metrics.ContainsKey($"{metricName}.{nameof(IDistributed.Count)}"))
+                {
                     metrics.Add($"{metricName}.{nameof(IDistributed.Count)}", distributed.Count);
+                }
 
                 metrics.Add($"{metricName}.{nameof(IDistributed.Max)}", distributed.Max);
                 metrics.Add($"{metricName}.{nameof(IDistributed.Mean)}", distributed.Mean);
                 metrics.Add($"{metricName}.{nameof(IDistributed.Min)}", distributed.Min);
                 metrics.Add($"{metricName}.{nameof(IDistributed.StdDev)}", distributed.StdDev);
 
-                var percentileBands = new[] {0.5, 0.75, 0.95, 0.98, 0.99, 0.999};
-                var percentiles = distributed.Percentiles();
+                var bands = Constants.Percentiles;
+                var percentiles = distributed.Percentiles(bands);
 
-                metrics.Add($"{metricName}.%{percentileBands[0]:2}", percentiles[0]);
-                metrics.Add($"{metricName}.%{percentileBands[1]:2}", percentiles[1]);
-                metrics.Add($"{metricName}.%{percentileBands[2]:2}", percentiles[2]);
-                metrics.Add($"{metricName}.%{percentileBands[3]:2}", percentiles[3]);
-                metrics.Add($"{metricName}.%{percentileBands[4]:2}", percentiles[4]);
+                metrics.Add($"{metricName}.%{bands[0]:2}", percentiles[0]);
+                metrics.Add($"{metricName}.%{bands[1]:2}", percentiles[1]);
+                metrics.Add($"{metricName}.%{bands[2]:2}", percentiles[2]);
+                metrics.Add($"{metricName}.%{bands[3]:2}", percentiles[3]);
+                metrics.Add($"{metricName}.%{bands[4]:2}", percentiles[4]);
             }
 
             void AddMetered(string metricName, IMetered meter, IDictionary<string, string> properties,
@@ -181,8 +197,10 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
                 properties.Add($"{metricName}.{nameof(IMetered.EventType)}", meter.EventType);
                 properties.Add($"{metricName}.{nameof(IMetered.RateUnit)}", $"{meter.RateUnit}");
 
-                if(!metrics.ContainsKey("{metricName}.{nameof(IMetered.Count)}"))
+                if (!metrics.ContainsKey("{metricName}.{nameof(IMetered.Count)}"))
+                {
                     metrics.Add($"{metricName}.{nameof(IMetered.Count)}", meter.Count);
+                }
 
                 metrics.Add($"{metricName}.{nameof(IMetered.FifteenMinuteRate)}", meter.FifteenMinuteRate);
                 metrics.Add($"{metricName}.{nameof(IMetered.FiveMinuteRate)}", meter.FiveMinuteRate);

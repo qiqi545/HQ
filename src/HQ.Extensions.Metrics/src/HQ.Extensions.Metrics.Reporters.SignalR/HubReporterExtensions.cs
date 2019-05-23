@@ -30,11 +30,14 @@ namespace HQ.Extensions.Metrics.Reporters.SignalR
             return builder;
         }
 
-        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder, Action<HubReporterOptions> configureAction)
+        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder,
+            Action<HubReporterOptions> configureAction)
             where T : Hub
         {
             if (configureAction == null)
+            {
                 throw new ArgumentNullException(nameof(configureAction));
+            }
 
             builder.AddHubReporter<T>();
             builder.Services.Configure(configureAction);
