@@ -40,12 +40,16 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
                 {
                     context.Response.Headers[Constants.HttpHeaders.TimingAllowOrigin] = options.Value.AllowedOrigins;
 
+                    var sw = StopwatchPool.Pool.Get();
+
                     context.Response.OnStarting(() =>
                     {
+                        var duration = sw.Elapsed;
+                        StopwatchPool.Pool.Return(sw);
+                        context.Response.Headers.Add(Constants.HttpHeaders.ServerTiming, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
                         var metrics = context.RequestServices.GetService<IMetricsRegistry>();
                         if (metrics != null)
-                            AddMetricsToServerTiming(metrics, context);
-                        
+                            AddMetricsToServerTiming(metrics, context, duration);
                         return Task.CompletedTask;
                     });
                 }
@@ -56,11 +60,9 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
             return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
-        private static void AddMetricsToServerTiming(IEnumerable<IReadableMetrics> metrics, HttpContext context)
+        private static void AddMetricsToServerTiming(IEnumerable<IReadableMetrics> metrics, HttpContext context, TimeSpan duration)
         {
             foreach (var host in metrics)
             {
