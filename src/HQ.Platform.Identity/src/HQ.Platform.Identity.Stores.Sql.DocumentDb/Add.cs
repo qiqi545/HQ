@@ -35,6 +35,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
+using Constants = HQ.Common.Constants;
+
 namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
 {
     public static class Add
