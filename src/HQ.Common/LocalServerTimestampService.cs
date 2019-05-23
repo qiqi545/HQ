@@ -21,10 +21,7 @@ namespace HQ.Common
 {
     public class LocalServerTimestampService : IServerTimestampService
     {
-        public DateTimeOffset GetCurrentTime()
-        {
-            return UtcNow;
-        }
+        public DateTimeOffset GetCurrentTime() => UtcNow;
 
         public DateTimeOffset UtcNow => DateTimeOffset.UtcNow;
     }
