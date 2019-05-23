@@ -15,24 +15,10 @@
 
 #endregion
 
-using System;
-using Microsoft.Extensions.Options;
-
 namespace HQ.Extensions.Metrics
 {
-    internal class DefaultMetricsConfigureOptions : ConfigureOptions<MetricsOptions>
+    public static class Constants
     {
-        public DefaultMetricsConfigureOptions() : base(DefaultOptionsBuilder())
-        {
-        }
-
-        private static Action<MetricsOptions> DefaultOptionsBuilder()
-        {
-            return options =>
-            {
-                options.SampleTimeoutSeconds = 5;
-                options.TypeFilter = MetricType.None;
-            };
-        }
+        public static readonly double[] Percentiles = {0.5, 0.75, 0.95, 0.98, 0.99, 0.999};
     }
 }

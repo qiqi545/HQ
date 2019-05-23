@@ -1,20 +1,39 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using HQ.Common;
 using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
     public class CacheMetricsStore : IMetricsStore
     {
-        private readonly ICache _metrics;
+        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
+            ImmutableDictionary.Create<MetricName, IMetric>();
 
-        public IMetric this[MetricName name] => _metrics.Get<IMetric>(name.CacheKey);
+        private readonly ICache _metrics;
 
         public CacheMetricsStore(ICache metrics)
         {
             _metrics = metrics;
         }
+
+        public IMetric this[MetricName name] => _metrics.Get<IMetric>(name.CacheKey);
 
         public IMetric GetOrAdd(MetricName name, IMetric metric)
         {
@@ -40,15 +59,15 @@ namespace HQ.Extensions.Metrics
             UpdateManifest(name);
         }
 
-        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
-            ImmutableDictionary.Create<MetricName, IMetric>();
-
         public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
             if (typeFilter.HasFlagFast(MetricType.All))
+            {
                 return NoSample;
+            }
+
             var filtered = new Dictionary<MetricName, IMetric>();
-            foreach (var entry in _metrics.Get<List<MetricName>>(Constants.Categories.Metrics))
+            foreach (var entry in _metrics.Get<List<MetricName>>(Common.Constants.Categories.Metrics))
             {
                 switch (entry.Class.Name)
                 {
@@ -63,24 +82,31 @@ namespace HQ.Extensions.Metrics
                         break;
                 }
             }
+
             return filtered.ToImmutableDictionary();
         }
 
         public bool Clear()
         {
-            if (!(_metrics is IClearable clearable))
+            if (!(_metrics is IClearable clear))
+            {
                 return false;
-            clearable.Clear();
+            }
+
+            clear.Clear();
             return true;
         }
 
         private void UpdateManifest(MetricName name)
         {
-            var list = _metrics.GetOrAdd(Constants.Categories.Metrics, () => new List<MetricName>());
+            var list = _metrics.GetOrAdd(Common.Constants.Categories.Metrics, () => new List<MetricName>());
             if (list.Contains(name))
+            {
                 return;
+            }
+
             list.Add(name);
-            _metrics.Set(Constants.Categories.Metrics, list);
+            _metrics.Set(Common.Constants.Categories.Metrics, list);
         }
     }
 }

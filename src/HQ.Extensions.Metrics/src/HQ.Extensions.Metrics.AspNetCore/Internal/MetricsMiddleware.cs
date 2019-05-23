@@ -20,7 +20,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Extensions.Metrics.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,8 +29,8 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
 {
     internal class MetricsMiddleware
     {
-        private readonly RequestDelegate _next;
         private readonly PathString _endpoint;
+        private readonly RequestDelegate _next;
         private readonly IOptions<MetricsOptions> _options;
 
         public MetricsMiddleware(RequestDelegate next, PathString endpoint, IOptions<MetricsOptions> options)
@@ -40,14 +39,17 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
             _endpoint = endpoint;
             _options = options;
             if (!_endpoint.Value.StartsWith("/"))
-                 _endpoint = $"/{_endpoint}";
+            {
+                _endpoint = $"/{_endpoint}";
+            }
         }
 
         public async Task Invoke(HttpContext context)
         {
             if (context.Request.Path == _endpoint)
             {
-                await GetMetricsSample(context, _options.Value.SampleTimeout, _options.Value.TypeFilter);
+                await GetMetricsSample(context, TimeSpan.FromSeconds(_options.Value.SampleTimeoutSeconds),
+                    _options.Value.TypeFilter);
             }
             else
             {
@@ -62,7 +64,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
             var cancel = new CancellationTokenSource(timeout);
 
             context.Response.StatusCode = 200;
-            context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
+            context.Response.Headers.Add(Common.Constants.HttpHeaders.ContentType, Common.Constants.MediaTypes.Json);
             await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
         }
     }

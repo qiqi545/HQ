@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Text;
+using HQ.Common;
 
 namespace HQ.Extensions.Metrics.Internal
 {
@@ -25,46 +26,55 @@ namespace HQ.Extensions.Metrics.Internal
     {
         public static Func<IImmutableDictionary<MetricName, IMetric>, string> Serialize = metrics =>
         {
-            var sb = new StringBuilder("[");
-
-            foreach (var metric in metrics)
+            return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append("{\"name\":\"");
-                sb.Append(metric.Key.CacheKey).Append("\",\"metric\":");
+                sb.Append('[');
 
-                switch (metric.Value)
+                foreach (var metric in metrics)
                 {
-                    case CounterMetric counter:
-                        AppendCounter(sb, counter);
-                        break;
-                    case GaugeMetric gauge:
-                        AppendGauge(sb, gauge);
-                        break;
-                    case HistogramMetric histogram:
-                        AppendHistogram(sb, histogram);
-                        break;
-                    case MeterMetric meter:
-                        AppendMeter(sb, meter);
-                        break;
-                    case TimerMetric timer:
-                        AppendTimer(sb, timer);
-                        break;
+                    if (metric.Key.Class != null && metric.Key.Class != typeof(MetricsHost))
+                    {
+                        sb.Append("{\"scope\":\"").Append(metric.Key.Class.Name).Append("\",");
+                    }
+                    else
+                    {
+                        sb.Append('{');
+                    }
+
+                    sb.Append("\"name\":\"").Append(metric.Key.Name).Append("\",\"metric\":");
+
+                    switch (metric.Value)
+                    {
+                        case CounterMetric counter:
+                            AppendCounter(sb, counter);
+                            break;
+                        case GaugeMetric gauge:
+                            AppendGauge(sb, gauge);
+                            break;
+                        case HistogramMetric histogram:
+                            AppendHistogram(sb, histogram);
+                            break;
+                        case MeterMetric meter:
+                            AppendMeter(sb, meter);
+                            break;
+                        case TimerMetric timer:
+                            AppendTimer(sb, timer);
+                            break;
+                    }
+
+                    sb.Append("},");
                 }
 
-                sb.Append("},");
-            }
+                if (metrics.Count > 0)
+                {
+                    sb.Remove(sb.Length - 1, 1);
+                }
 
-            if (metrics.Count > 0)
-                sb.Remove(sb.Length - 1, 1);
-
-            sb.Append("]");
-
-            return sb.ToString();
+                sb.Append(']');
+            });
         };
 
-        private static readonly double[] percentiles = { 0.5, 0.75, 0.95, 0.98, 0.99, 0.999 };
-
-        private static void AppendMeter(StringBuilder sb, MeterMetric meter)
+        private static void AppendMeter(StringBuilder sb, IMetered meter)
         {
             sb.Append("{\"count\":").Append(meter.Count)
                 .Append(",\"rate_unit\":\"").Append(meter.RateUnit).Append("\"")
@@ -74,11 +84,11 @@ namespace HQ.Extensions.Metrics.Internal
                 .Append(",\"mean_rate\":").Append(meter.MeanRate).Append("}");
         }
 
-        private static void AppendHistogram(StringBuilder sb, HistogramMetric histogram)
+        private static void AppendHistogram(StringBuilder sb, IDistributed histogram)
         {
-            sb.Append("{");
+            sb.Append('{');
             AppendDistribution(sb, histogram);
-            sb.Append("}");
+            sb.Append('}');
         }
 
         private static void AppendDistribution(StringBuilder sb, IDistributed distribution)
@@ -88,21 +98,25 @@ namespace HQ.Extensions.Metrics.Internal
                 .Append(",\"min\":").Append(distribution.Min)
                 .Append(",\"mean\":").Append(distribution.Mean)
                 .Append(",\"std_dev\":").Append(distribution.StdDev);
+
             sb.Append(",\"percentiles\":[");
-            var values = distribution.Percentiles(percentiles);
+            var values = distribution.Percentiles(Constants.Percentiles);
             for (var i = 0; i < values.Length; i++)
             {
                 sb.Append(values[i]);
                 if (i < values.Length - 1)
+                {
                     sb.Append(',');
+                }
             }
 
-            sb.Append("]");
+            sb.Append(']');
         }
 
         private static void AppendTimer(StringBuilder sb, TimerMetric timer)
         {
-            sb.Append("{");
+            sb.Append('{');
+
             AppendDistribution(sb, timer);
 
             sb.Append(",\"duration_unit\":\"").Append(timer.DurationUnit).Append("\"")
@@ -112,17 +126,17 @@ namespace HQ.Extensions.Metrics.Internal
                 .Append(",\"one_minute_rate\":").Append(timer.OneMinuteRate)
                 .Append(",\"mean_rate\":").Append(timer.MeanRate);
 
-            sb.Append("}");
+            sb.Append('}');
         }
 
         private static void AppendGauge(StringBuilder sb, GaugeMetric gauge)
         {
-            sb.Append("{\"value\":").Append(gauge.ValueAsString).Append("}");
+            sb.Append("{\"value\":").Append(gauge.ValueAsString).Append('}');
         }
 
         private static void AppendCounter(StringBuilder sb, CounterMetric counter)
         {
-            sb.Append("{\"count\":").Append(counter.Count).Append("}");
+            sb.Append("{\"count\":").Append(counter.Count).Append('}');
         }
     }
 }

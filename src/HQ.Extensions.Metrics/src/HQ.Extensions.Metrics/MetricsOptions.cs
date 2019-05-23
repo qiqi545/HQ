@@ -15,14 +15,12 @@
 
 #endregion
 
-using System;
-using HQ.Common;
-
 namespace HQ.Extensions.Metrics
 {
     public class MetricsOptions
     {
         public MetricType TypeFilter { get; set; } = MetricType.None;
-        public TimeSpan SampleTimeout { get; set; } = TimeSpan.FromSeconds(5);
+        public int SampleTimeoutSeconds { get; set; } = 5;
+        public bool EnableServerTiming { get; set; } = true;
     }
 }
