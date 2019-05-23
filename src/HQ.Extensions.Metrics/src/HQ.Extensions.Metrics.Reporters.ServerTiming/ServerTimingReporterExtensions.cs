@@ -31,7 +31,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
         }
 
         public static IMetricsBuilder AddServerTimingReporter(this IMetricsBuilder builder,
-            Action<ServerTimingReporter> configureAction)
+            Action<ServerTimingReporterOptions> configureAction)
         {
             if (configureAction == null)
                 throw new ArgumentNullException(nameof(configureAction));
