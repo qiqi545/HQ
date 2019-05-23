@@ -167,5 +167,11 @@ namespace HQ.Common
 
             public const string Xml = "application/xml";
         }
+
+        public static class Events
+        {
+            public const string HealthCheck = "health.check";
+            public const string MetricsSample = "metrics.sample";
+        }
     }
 }

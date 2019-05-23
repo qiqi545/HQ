@@ -17,10 +17,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Reflection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Common
 {
@@ -38,21 +36,6 @@ namespace HQ.Common
         {
             typeof(float), typeof(double), typeof(decimal), typeof(Complex), typeof(BigInteger)
         };
-
-        public static ConstructorInfo GetWidestConstructor(this Type type)
-        {
-            var allPublic = type.GetConstructors();
-            var constructor = allPublic.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-            return constructor ?? type.GetConstructor(Type.EmptyTypes);
-        }
-
-        public static MethodInfo GetWidestMethod(this Type type, string name,
-            StringComparison comparison = StringComparison.OrdinalIgnoreCase)
-        {
-            var allPublic = type.GetMethods().Where(m => m.Name.Equals(name, comparison));
-            var method = allPublic.OrderByDescending(c => c.GetParameters().Length).FirstOrDefault();
-            return method ?? type.GetMethod(name);
-        }
 
         public static string GetNonGenericName(this Type type)
         {
@@ -80,13 +63,55 @@ namespace HQ.Common
 
         public static bool ImplementsGeneric(this Type type, Type generic)
         {
-            if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
-                return true;
+            while (true)
+            {
+                if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
+                    return true;
 
-            if (type.GetTypeInfo().ImplementedInterfaces.Any(@interface => @interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic))
-                return true;
+                var interfaces = type.GetTypeInfo().ImplementedInterfaces;
 
-            return type.BaseType?.ImplementsGeneric(generic) ?? false;
+                foreach (var @interface in interfaces)
+                {
+                    if (@interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic)
+                        return true;
+                }
+
+                if (type.BaseType == null)
+                    return false;
+
+                type = type.BaseType;
+            }
+        }
+
+        public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType)
+        {
+            return GetImplementationsOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());
+        }
+
+        public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType, IEnumerable<Assembly> assemblies)
+        {
+            if (!openGenericType.IsGenericType)
+                throw new ArgumentException("The provided type is not an open generic type", nameof(openGenericType));
+
+            foreach (var assembly in assemblies)
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    foreach (var member in type.GetMembers())
+                    {
+                        if (!(member is MethodBase ctorOrMethod))
+                            continue;
+
+                        foreach (var parameter in ctorOrMethod.GetParameters())
+                        {
+                            if (parameter.ParameterType.ImplementsGeneric(openGenericType))
+                            {
+                                yield return parameter.ParameterType;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
