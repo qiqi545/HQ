@@ -29,17 +29,23 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
 
     public static class Add
     {
+        /// <summary>
+        /// Sends all metrics and health checks periodically to an Application Insights instrumentation.
+        /// </summary>
         public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder, IConfiguration config)
         {
             return builder.PushToAppInsights(config.Bind);
         }
 
+        /// <summary>
+        /// Sends all metrics and health checks periodically to an Application Insights instrumentation.
+        /// </summary>
         public static IMetricsBuilder PushToAppInsights(this IMetricsBuilder builder, Action<AppInsightsMetricsReporterOptions> configureAction = null)
         {
             builder.Services.Configure<HealthCheckPublisherOptions>(options =>
             {
-                options.Delay = TimeSpan.FromSeconds(2);
                 options.Predicate = check => true;
+                options.Delay = TimeSpan.FromSeconds(2);
                 options.Timeout = TimeSpan.FromSeconds(30);
                 options.Period = TimeSpan.FromSeconds(30);
             });
@@ -56,8 +62,8 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
             // information, see: https://github.com/aspnet/Extensions/issues/639.
             builder.Services.TryAddEnumerable(
                 ServiceDescriptor.Singleton(typeof(IHostedService),
-                    typeof(HealthCheckPublisherOptions).Assembly
-                        .GetType(nameof(HealthCheckService))));
+                    typeof(HealthCheckPublisherOptions).Assembly.GetType(
+                        "Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckPublisherHostedService")));
 
             return builder;
         }
