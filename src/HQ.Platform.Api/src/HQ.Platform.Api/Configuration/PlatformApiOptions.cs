@@ -19,7 +19,7 @@ using System.Reflection;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class PublicApiOptions
+    public class PlatformApiOptions
     {
         public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
         public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();

@@ -48,10 +48,10 @@ namespace HQ.Platform.Security.AspnetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class SuperUserTokenController : DataController
     {
-        private readonly IOptions<PublicApiOptions> _apiOptions;
+        private readonly IOptions<PlatformApiOptions> _apiOptions;
         private readonly IOptions<SecurityOptions> _securityOptions;
 
-        public SuperUserTokenController(IOptions<SecurityOptions> securityOptions, IOptions<PublicApiOptions> apiOptions)
+        public SuperUserTokenController(IOptions<SecurityOptions> securityOptions, IOptions<PlatformApiOptions> apiOptions)
         {
             _securityOptions = securityOptions;
             _apiOptions = apiOptions;

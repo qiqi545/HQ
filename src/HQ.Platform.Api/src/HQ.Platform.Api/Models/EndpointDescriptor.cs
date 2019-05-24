@@ -24,5 +24,6 @@ namespace HQ.Platform.Api.Models
         public HttpMethod Method { get; set; }
         public string Url { get; set; }
         public string Version { get; set; }
+        public string Auth { get; set; }
     }
 }

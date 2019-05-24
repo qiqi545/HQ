@@ -36,9 +36,9 @@ namespace HQ.Platform.Api.Filters
         private const string SchemeDelimiter = "://";
         private const char ForwardSlash = '/';
 
-        private readonly IOptions<PublicApiOptions> _options;
+        private readonly IOptions<PlatformApiOptions> _options;
 
-        public CanonicalRoutesResourceFilter(IOptions<PublicApiOptions> options)
+        public CanonicalRoutesResourceFilter(IOptions<PlatformApiOptions> options)
         {
             _options = options;
         }

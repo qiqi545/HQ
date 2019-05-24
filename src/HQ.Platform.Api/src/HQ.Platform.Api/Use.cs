@@ -51,14 +51,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<CanonicalRoutesOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<CanonicalRoutesOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<CanonicalRoutesOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -83,14 +83,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<MethodOverrideOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<MethodOverrideOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<MethodOverrideOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -116,14 +116,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<ResourceRewritingOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<ResourceRewritingOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<ResourceRewritingOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -159,14 +159,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<RequestLimitOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<RequestLimitOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<RequestLimitOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -188,14 +188,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<JsonConversionOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<JsonConversionOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<JsonConversionOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -232,14 +232,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<VersioningOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<VersioningOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<VersioningOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<VersioningOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -285,14 +285,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options)
+                return app.FeatureEnabled<MultiTenancyOptions, PlatformApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<MultiTenancyOptions, PublicApiOptions>(out var options))
+                if (context.FeatureEnabled<MultiTenancyOptions, PlatformApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }

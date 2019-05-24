@@ -12,21 +12,13 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
-
-using System;
-using System.Collections.Generic;
-
 namespace HQ.Platform.Api.Models
 {
-    public class MetaItem
+    public class MetaHeader
     {
-        public Guid? id { get; set; }
-        public string name { get; set; }
+        public bool disabled { get; set; }
         public MetaDescription description { get; set; }
-        public List<object> variable { get; set; }
-        public List<object> @event { get; set; }
-        public MetaOperation request { get; set; }
-        public List<object> response { get; set; }
-        public object protocolProfileBehavior { get; set; }
+        public string key { get; set; }
+        public string value { get; set; }
     }
 }

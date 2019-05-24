@@ -37,7 +37,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    [Category("Identity"), DisplayName("Tenants"), Description("Manages system roles.")]
+    [Category("Identity", "Manages application access controls."), DisplayName("Roles"), Description("Manages system roles.")]
     public class RoleController<TRole, TKey> : DataController
         where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>

@@ -60,7 +60,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
                 .AddCookie(cfg => cfg.SlidingExpiration = true);
         }
 
-        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PublicApiOptions api) where TUser : IUserIdProvider
+        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PlatformApiOptions api) where TUser : IUserIdProvider
         {
             var now = DateTimeOffset.Now;
             var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);

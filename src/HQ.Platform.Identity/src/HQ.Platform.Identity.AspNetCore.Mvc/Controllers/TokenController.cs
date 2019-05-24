@@ -44,13 +44,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [Category("Identity"), DisplayName("Tokens"), Description("Manages authentication tokens.")]
+    [Category("Identity", "Manages application access controls."), DisplayName("Tokens"), Description("Manages authentication tokens.")]
     public class TokenController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TTenant : IdentityTenant
         where TKey : IEquatable<TKey>
     {
-        private readonly IOptions<PublicApiOptions> _apiOptions;
+        private readonly IOptions<PlatformApiOptions> _apiOptions;
         private readonly ILogger<TokenController<TUser, TTenant, TKey>> _logger;
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
@@ -60,7 +60,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             UserManager<TUser> userManager,
             IServerTimestampService timestamps,
             IOptions<SecurityOptions> securityOptions,
-            IOptions<PublicApiOptions> apiOptions,
+            IOptions<PlatformApiOptions> apiOptions,
             ILogger<TokenController<TUser, TTenant, TKey>> logger)
         {
             _userManager = userManager;

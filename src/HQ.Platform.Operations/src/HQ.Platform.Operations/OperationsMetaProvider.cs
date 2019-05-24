@@ -18,7 +18,8 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using HQ.Platform.Api.Configuration;
+using System.Net.Mime;
+using HQ.Common;
 using HQ.Platform.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -26,28 +27,33 @@ namespace HQ.Platform.Operations
 {
     internal class OperationsMetaProvider : IMetaProvider
     {
-        private readonly IOptions<PublicApiOptions> _api;
         private readonly IOptions<OperationsApiOptions> _options;
 
-        public OperationsMetaProvider(IOptions<OperationsApiOptions> options, IOptions<PublicApiOptions> api)
+        public OperationsMetaProvider(IOptions<OperationsApiOptions> options)
         {
             _options = options;
-            _api = api;
         }
 
         public void Populate(string baseUri, MetaCollection collection)
         {
+            const string auth = "bearer";
+
+            var versionString = typeof(OperationsMetaProvider).Assembly.GetName().Version.ToString();
             var options = _options.Value;
-            var api = _api.Value;
 
             var folder = new MetaFolder
             {
                 name = "Operations",
-                description = "Provides diagnostic tools for server operators at runtime.",
+                description = new MetaDescription
+                {
+                    content = "Provides diagnostic tools for server operators at runtime.",
+                    type = Constants.MediaTypes.Markdown,
+                    version = null
+                },
                 variable = new List<dynamic>(),
                 item = new List<MetaItem>(),
                 @event = new List<dynamic>(),
-                auth = "bearer",
+                auth = auth,
                 protocolProfileBehavior = new { }
             };
 
@@ -57,11 +63,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Route Diagnostics",
                     Description = "Used to detect resolution issues in API path routing.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.RouteDebuggingPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -70,12 +77,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Configuration Diagnostics",
-                    Description =
-                        "Used to detect configuration binding errors and other issues with configuration, as well as inspect current values of all configurations.",
+                    Description = "Used to detect configuration binding errors and other issues with configuration, as well as inspect current values of all configurations.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.OptionsDebuggingPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -84,11 +91,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Environment Diagnostics",
                     Description = "Used to obtain diagnostic runtime information from the running node instance.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.EnvironmentEndpointPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -97,12 +105,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Services Diagnostics",
-                    Description =
-                        "Used to detect errors in dependency injection (DI) or inversion of control (IoC) in the application container.",
+                    Description = "Used to detect errors in dependency injection (DI) or inversion of control (IoC) in the application container.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.ServicesDebuggingPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -111,11 +119,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Metrics Sample",
                     Description = "Used to sample all registered metrics in the system for reporting purposes.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.MetricsEndpointPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -126,12 +135,12 @@ namespace HQ.Platform.Operations
                 {
                     var descriptor = new EndpointDescriptor
                     {
+                        Auth = auth,
                         Name = "Health Checks (full)",
-                        Description =
-                            "Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
+                        Description = "Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
                         Method = HttpMethod.Get,
                         Url = $"{baseUri}/{rootPath + options.HealthChecksPath}",
-                        Version = api.ApiVersion
+                        Version = versionString
                     };
 
                     folder.item.Add(MapFrom(descriptor));
@@ -141,12 +150,12 @@ namespace HQ.Platform.Operations
                 {
                     var descriptor = new EndpointDescriptor
                     {
+                        Auth = auth,
                         Name = "Health Check (live-only)",
-                        Description =
-                            "Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
+                        Description = "Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
                         Method = HttpMethod.Get,
                         Url = $"{baseUri}/{rootPath + options.HealthCheckLivePath}",
-                        Version = api.ApiVersion
+                        Version = versionString
                     };
 
                     folder.item.Add(MapFrom(descriptor));
@@ -157,11 +166,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Feature Diagnostics",
                     Description = "Used to diagnose feature toggles, A/B testing, and cohorts.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.FeatureDebuggingPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -170,11 +180,12 @@ namespace HQ.Platform.Operations
             {
                 var descriptor = new EndpointDescriptor
                 {
+                    Auth = auth,
                     Name = "Cache Diagnostics",
                     Description = "Used to diagnose cache size, throughput, contention, and memory pressure.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.CacheDebuggingPath}",
-                    Version = api.ApiVersion
+                    Version = versionString
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
@@ -190,27 +201,39 @@ namespace HQ.Platform.Operations
             {
                 id = Guid.NewGuid(),
                 name = descriptor.Name,
-                description = descriptor.Description,
+                description = new MetaDescription
+                {
+                    content = descriptor.Description,
+                    type = "text/markdown",
+                    version = null
+                },
                 variable = new List<dynamic>(),
                 @event = new List<dynamic>(),
-                request = new
+                request = new MetaOperation
                 {
                     url = descriptor.Url,
-                    auth = "bearer",
+                    auth = descriptor.Auth,
                     proxy = new { },
                     certificate = new { },
-                    method = descriptor.Method,
-                    description = new {content = descriptor.Description, type = "text/markdown", version = descriptor.Version},
-                    header = new List<dynamic>
+                    method = descriptor.Method.ToString(),
+                    description = new MetaDescription
                     {
-                        new
+                        content = descriptor.Description,
+                        type = "text/markdown",
+                        version = descriptor.Version
+                    },
+                    header = new List<MetaHeader>
+                    {
+                        new MetaHeader
                         {
                             key = "Content-Type",
                             value = "application/json",
                             disabled = false,
-                            description = new
+                            description = new MetaDescription
                             {
-                                content = "", type = "text/markdown", version = descriptor.Version
+                                content = "",
+                                type = "text/markdown",
+                                version = descriptor.Version
                             }
                         }
                     },

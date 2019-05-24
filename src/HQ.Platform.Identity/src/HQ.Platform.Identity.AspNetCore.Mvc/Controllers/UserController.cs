@@ -36,7 +36,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    [Category("Identity"), DisplayName("Users"), Description("Manages user accounts.")]
+    [Category("Identity", "Manages application access controls."), DisplayName("Users"), Description("Manages user accounts.")]
     public class UserController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TKey : IEquatable<TKey>

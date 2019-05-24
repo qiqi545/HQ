@@ -44,7 +44,7 @@ namespace HQ.Platform.Api
             Bootstrap.EnsureInitialized();
 
             services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
-            services.Configure<PublicApiOptions>(config);
+            services.Configure<PlatformApiOptions>(config);
 
             services.AddHttpCaching();
             services.AddCanonicalRoutes();
@@ -68,7 +68,7 @@ namespace HQ.Platform.Api
 
         internal static IServiceCollection AddCanonicalRoutes(this IServiceCollection services)
         {
-            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<PublicApiOptions>>()));
+            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<PlatformApiOptions>>()));
             return services;
         }
 

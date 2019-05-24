@@ -4,10 +4,13 @@ using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Api.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Models
@@ -15,111 +18,193 @@ namespace HQ.Platform.Api.Models
     internal class ApiExplorerMetaProvider : IMetaProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _explorer;
-        private readonly IOptions<PublicApiOptions> _options;
+        private readonly IServiceProvider _serviceProvider;
 
-        public ApiExplorerMetaProvider(IApiDescriptionGroupCollectionProvider apiExplorer, IOptions<PublicApiOptions> options)
+        public ApiExplorerMetaProvider(IApiDescriptionGroupCollectionProvider apiExplorer, IServiceProvider serviceProvider)
         {
             _explorer = apiExplorer;
-            _options = options;
+            _serviceProvider = serviceProvider;
         }
 
         public void Populate(string baseUri, MetaCollection collection)
         {
             var descriptions = _explorer.ApiDescriptionGroups.Items.SelectMany(x => x.Items);
+            var endpointsByController = descriptions.GroupBy(x => ((ControllerActionDescriptor)x.ActionDescriptor));
 
-            var manifest = descriptions.GroupBy(x => ((ControllerActionDescriptor)x.ActionDescriptor).ControllerTypeInfo);
+            var allFolders = new Dictionary<TypeInfo, MetaFolder>();
+            
+            var rootVersion = _explorer.ApiDescriptionGroups.Version;
 
-            foreach (var group in manifest)
+            //
+            // Map all folders:
+            foreach (ApiDescriptionGroup descriptionGroup in _explorer.ApiDescriptionGroups.Items)
             {
-                var controllerName = ResolveControllerName(group);
-                var description = ResolveControllerDescription(group);
+                var groupName = descriptionGroup.GroupName;
 
-                var folder = new MetaFolder
+                foreach (ApiDescription description in descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
                 {
-                    name = controllerName,
-                    description = new MetaDescription
+                    var controllerDescriptor = (ControllerActionDescriptor) description.ActionDescriptor;
+                    var controllerType = controllerDescriptor.ControllerTypeInfo;
+                    var controllerName = ResolveControllerName(controllerType);
+
+                    if (!allFolders.TryGetValue(controllerType, out var folder))
                     {
-                        content = description,
-                        type = "text/markdown",
-                        version = null
-                    },
-                    variable = new List<dynamic>(),
-                    item = new List<MetaItem>(),
-                    @event = new List<dynamic>(),
-                    auth = "bearer",
-                    protocolProfileBehavior = new { }
-                };
+                        allFolders.Add(controllerType, folder = new MetaFolder
+                        {
+                            name = controllerName,
+                            description = new MetaDescription
+                            {
+                                content = ResolveControllerDescription(controllerType)?.Content,
+                                type = ResolveControllerDescription(controllerType)?.MediaType,
+                                version = null
+                            },
+                            variable = new List<dynamic>(),
+                            item = new List<MetaItem>(),
+                            @event = new List<dynamic>(),
+                            auth = ResolveAuth(controllerDescriptor),
+                            protocolProfileBehavior = new { }
+                        });
+                    }
 
-                foreach (var operation in @group.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
-                {
-                    var url = $"{baseUri}/{operation.RelativePath}";
-
+                    var url = $"{baseUri}/{description.RelativePath}";
                     var item = new MetaItem
                     {
                         id = Guid.NewGuid(),
-                        name = operation.RelativePath,
+                        name = description.RelativePath,
                         description = new MetaDescription
                         {
                             content = "",
-                            type = "text/markdown",
+                            type = Constants.MediaTypes.Markdown,
                             version = null
                         },
                         variable = new List<dynamic>(),
                         @event = new List<dynamic>(),
-                        request = new
+                        request = new MetaOperation
                         {
-                            url,
-                            auth = "bearer",
+                            url = url,
+                            auth = ResolveOperationAuth(description),
                             proxy = new { },
                             certificate = new { },
-                            method = operation.HttpMethod,
-                            description = new
+                            method = description.HttpMethod,
+                            description = new MetaDescription
                             {
                                 content = "",
-                                type = "text/markdown",
-                                version = _options.Value.ApiVersion
+                                type = Constants.MediaTypes.Markdown,
+                                version = null
                             },
-                            header = new List<dynamic>
+                            header = new List<MetaHeader>
                             {
-                                new
+                                new MetaHeader
                                 {
                                     disabled = false,
                                     description = new MetaDescription
                                     {
                                         content = "",
-                                        type = "text/markdown",
-                                        version = _options.Value.ApiVersion
+                                        type = Constants.MediaTypes.Markdown,
+                                        version = null
                                     },
                                     key = "Content-Type",
                                     value = "application/json"
                                 }
                             },
-                            body = default(object)
+                            body = default
                         },
                         response = new List<dynamic>(),
                         protocolProfileBehavior = new { }
                     };
+
                     folder.item.Add(item);
                 }
+            }
 
+            //
+            // Create folder hierarchy:
+            var roots = new List<MetaFolder>();
+            var categories = new Dictionary<CategoryAttribute, List<MetaFolder>>();
+            foreach (var folder in allFolders)
+            {
+                var controllerType = folder.Key;
+                var category = ResolveControllerCategory(controllerType);
+
+                if (category != null)
+                {
+                    if (!categories.TryGetValue(category, out var list))
+                        categories.Add(category, list = new List<MetaFolder>());
+                    list.Add(folder.Value);
+                }
+                else
+                {
+                    roots.Add(folder.Value);
+                }
+            }
+
+            //
+            // Add folder tree:
+            foreach (var entry in categories)
+            {
+                var category = entry.Key;
+                var categoryFolder = new MetaFolder
+                {
+                    name = category.Name,
+                    description = new MetaDescription
+                    {
+                        content = category.Description,
+                        type = category.DescriptionMediaType,
+                        version = null
+                    },
+                    variable = new List<dynamic>(),
+                    item = new List<MetaItem>(),
+                    @event = new List<dynamic>(),
+                    protocolProfileBehavior = new { }
+                };
+                foreach (var subFolder in entry.Value.OrderBy(x => x.name))
+                    categoryFolder.item.Add(subFolder);
+                var categoryAuth = categoryFolder.item.Where(x => !string.IsNullOrWhiteSpace(x.request?.auth)).Select(x => x.request.auth).Distinct();
+                categoryFolder.auth = string.Join(",", categoryAuth);
+                collection.item.Add(categoryFolder);
+            }
+
+            //
+            // Add root level folders:
+            foreach (var folder in roots.OrderBy(x => x.name))
+            {
                 collection.item.Add(folder);
             }
         }
 
-        private static string ResolveControllerDescription(IGrouping<TypeInfo, ApiDescription> group)
+        private string ResolveOperationAuth(ApiDescription operation)
         {
-            var controllerType = group.Key;
-
-            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+            return ResolveAuth(operation.ActionDescriptor);
+        }
+        
+        private string ResolveAuth(ActionDescriptor descriptor)
+        {
+            if (!(descriptor.EndpointMetadata.FirstOrDefault(x => x is AuthorizeAttribute) is AuthorizeAttribute authAttribute))
                 return null;
 
-            var description = (DescriptionAttribute)controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
-            return description.Description;
+            if (!string.IsNullOrWhiteSpace(authAttribute.AuthenticationSchemes))
+                return authAttribute.AuthenticationSchemes.ToLowerInvariant();
+
+            var options = _serviceProvider.GetRequiredService<IOptions<AuthenticationOptions>>();
+            return (options.Value.DefaultChallengeScheme ?? options.Value.DefaultScheme).ToLowerInvariant();
         }
 
-        private static string ResolveControllerName(IGrouping<TypeInfo, ApiDescription> group)
+        private static CategoryAttribute ResolveControllerCategory(MemberInfo controllerType)
         {
-            var controllerType = group.Key;
+            return !Attribute.IsDefined(controllerType, typeof(CategoryAttribute)) ? null
+                : (CategoryAttribute) controllerType.GetCustomAttribute(typeof(CategoryAttribute), true);
+        }
+
+        private static DescriptionAttribute ResolveControllerDescription(MemberInfo controllerType)
+        {
+            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+                return null;
+            var description = (DescriptionAttribute)controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
+            return description;
+        }
+
+        private static string ResolveControllerName(Type controllerType)
+        {
             var controllerTypeName = controllerType.GetNonGenericName();
 
             if (!Attribute.IsDefined(controllerType, typeof(DisplayNameAttribute)))

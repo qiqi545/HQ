@@ -17,14 +17,14 @@ namespace HQ.Platform.Api.Controllers
     [Route("meta")]
     public class MetaController : Controller
     {
-        private readonly IOptions<PublicApiOptions> _options;
+        private readonly IOptions<PlatformApiOptions> _options;
         private readonly IEnumerable<IMetaProvider> _providers;
 
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
         private readonly IOptions<SwaggerOptions> _swaggerOptions;
 
-        public MetaController(IOptions<PublicApiOptions> options, IEnumerable<IMetaProvider> providers,
+        public MetaController(IOptions<PlatformApiOptions> options, IEnumerable<IMetaProvider> providers,
             ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcOptions,
             IOptions<SwaggerOptions> swaggerOptions)

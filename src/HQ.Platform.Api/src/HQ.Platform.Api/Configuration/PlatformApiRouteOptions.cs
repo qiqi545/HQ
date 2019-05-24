@@ -22,9 +22,9 @@ namespace HQ.Platform.Api.Configuration
 {
     internal class PlatformApiRouteOptions : IConfigureOptions<RouteOptions>
     {
-        private readonly IOptions<PublicApiOptions> _options;
+        private readonly IOptions<PlatformApiOptions> _options;
 
-        public PlatformApiRouteOptions(IOptions<PublicApiOptions> options)
+        public PlatformApiRouteOptions(IOptions<PlatformApiOptions> options)
         {
             _options = options;
         }

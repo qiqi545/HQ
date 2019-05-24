@@ -28,7 +28,7 @@ namespace HQ.Platform.Api.Extensions
 {
     public static class EnrichmentExtensions
     {
-        public static void MaybeTrim(this HttpResponse response, HttpRequest request, PublicApiOptions options)
+        public static void MaybeTrim(this HttpResponse response, HttpRequest request, PlatformApiOptions options)
         {
             if (FeatureRequested(request, options.JsonConversion.TrimOperator, options.JsonConversion.TrimEnabled))
             {
@@ -36,7 +36,7 @@ namespace HQ.Platform.Api.Extensions
             }
         }
 
-        public static void MaybePrettyPrint(this HttpResponse response, HttpRequest request, PublicApiOptions options)
+        public static void MaybePrettyPrint(this HttpResponse response, HttpRequest request, PlatformApiOptions options)
         {
             if (FeatureRequested(request, options.JsonConversion.PrettyPrintOperator,
                 options.JsonConversion.PrettyPrintEnabled))
@@ -45,7 +45,7 @@ namespace HQ.Platform.Api.Extensions
             }
         }
 
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
             QueryOptions queryOptions,
             IPage<T> data, IList<Error> errors, out object body)
         {
@@ -130,7 +130,7 @@ namespace HQ.Platform.Api.Extensions
             };
         }
 
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
             QueryOptions queryOptions, IStream<T> data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
@@ -158,7 +158,7 @@ namespace HQ.Platform.Api.Extensions
             response.StatusCode = (int) HttpStatusCode.OK;
         }
 
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
             QueryOptions queryOptions, T data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
@@ -186,7 +186,7 @@ namespace HQ.Platform.Api.Extensions
             response.StatusCode = (int)HttpStatusCode.OK;
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PublicApiOptions apiOptions,
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
             QueryOptions queryOptions, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,

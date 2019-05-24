@@ -33,7 +33,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageTenants)]
-    [Category("Identity"), DisplayName("Tenants"), Description("Manages system tenants.")]
+    [Category("Identity", "Manages application access controls."), DisplayName("Tenants"), Description("Manages system tenants.")]
     public class TenantController<TTenant> : DataController where TTenant : IdentityTenant
     {
         private readonly ITenantService<TTenant> _tenantService;
