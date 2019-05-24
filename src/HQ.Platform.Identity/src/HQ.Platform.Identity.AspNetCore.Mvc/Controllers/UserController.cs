@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
+    [Category("Identity"), DisplayName("Users"), Description("Manages user accounts.")]
     public class UserController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TKey : IEquatable<TKey>

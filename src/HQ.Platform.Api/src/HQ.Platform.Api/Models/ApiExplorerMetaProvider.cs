@@ -31,12 +31,18 @@ namespace HQ.Platform.Api.Models
 
             foreach (var group in manifest)
             {
-                var controllerName = ResolveControllerName(@group);
+                var controllerName = ResolveControllerName(group);
+                var description = ResolveControllerDescription(group);
 
                 var folder = new MetaFolder
                 {
                     name = controllerName,
-                    description = "",
+                    description = new MetaDescription
+                    {
+                        content = description,
+                        type = "text/markdown",
+                        version = null
+                    },
                     variable = new List<dynamic>(),
                     item = new List<MetaItem>(),
                     @event = new List<dynamic>(),
@@ -52,7 +58,12 @@ namespace HQ.Platform.Api.Models
                     {
                         id = Guid.NewGuid(),
                         name = operation.RelativePath,
-                        description = "",
+                        description = new MetaDescription
+                        {
+                            content = "",
+                            type = "text/markdown",
+                            version = null
+                        },
                         variable = new List<dynamic>(),
                         @event = new List<dynamic>(),
                         request = new
@@ -73,7 +84,7 @@ namespace HQ.Platform.Api.Models
                                 new
                                 {
                                     disabled = false,
-                                    description = new
+                                    description = new MetaDescription
                                     {
                                         content = "",
                                         type = "text/markdown",
@@ -95,16 +106,27 @@ namespace HQ.Platform.Api.Models
             }
         }
 
-        private static string ResolveControllerName(IGrouping<TypeInfo, ApiDescription> @group)
+        private static string ResolveControllerDescription(IGrouping<TypeInfo, ApiDescription> group)
+        {
+            var controllerType = group.Key;
+
+            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+                return null;
+
+            var description = (DescriptionAttribute)controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
+            return description.Description;
+        }
+
+        private static string ResolveControllerName(IGrouping<TypeInfo, ApiDescription> group)
         {
             var controllerType = group.Key;
             var controllerTypeName = controllerType.GetNonGenericName();
 
-            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+            if (!Attribute.IsDefined(controllerType, typeof(DisplayNameAttribute)))
                 return controllerTypeName.Replace(nameof(Controller), string.Empty);
 
-            var description = (DescriptionAttribute) controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
-            return description.Description;
+            var description = (DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
+            return description.Name;
         }
     }
 }

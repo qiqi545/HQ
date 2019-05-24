@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
@@ -36,6 +37,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
+    [Category("Identity"), DisplayName("Tenants"), Description("Manages system roles.")]
     public class RoleController<TRole, TKey> : DataController
         where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>

@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
@@ -29,7 +30,6 @@ using HQ.Platform.Identity.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
@@ -44,6 +44,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
+    [Category("Identity"), DisplayName("Tokens"), Description("Manages authentication tokens.")]
     public class TokenController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TTenant : IdentityTenant

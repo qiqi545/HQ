@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -32,6 +33,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageTenants)]
+    [Category("Identity"), DisplayName("Tenants"), Description("Manages system tenants.")]
     public class TenantController<TTenant> : DataController where TTenant : IdentityTenant
     {
         private readonly ITenantService<TTenant> _tenantService;
