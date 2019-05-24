@@ -12,7 +12,7 @@ namespace System.Data.DocumentDb
 {
     public sealed class DocumentDbDataReader<TRow> : DbDataReader where TRow : IDictionary<string, object>
     {
-        private readonly Dictionary<string, AccessorMember> _members;
+        private readonly AccessorMembers _members;
         private readonly IResultSet<TRow> _resultSet;
         private bool _closed;
         private int _index = -1;
@@ -20,7 +20,7 @@ namespace System.Data.DocumentDb
         public DocumentDbDataReader(IResultSet<TRow> resultSet, Type type)
         {
             _resultSet = resultSet;
-            _members = AccessorMembers.Create(type).ToDictionary(k => k.Name, v => v);
+            _members = AccessorMembers.Create(type);
         }
 
         private TRow CurrentRow
