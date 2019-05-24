@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -23,7 +25,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Operations
 {
     /// <summary>
-    /// Fails startup if health checks fail. This is a fat canary.
+    ///     Fails startup if health checks fail. This is a fat canary.
     /// </summary>
     public class HealthCheckStartupFilter : IStartupFilter
     {
@@ -41,7 +43,9 @@ namespace HQ.Platform.Operations
             var report = _service.CheckHealthAsync(r => r.Tags.Contains("startup")).GetAwaiter().GetResult();
 
             if (report.Status == HealthStatus.Unhealthy)
+            {
                 throw new Exception("Application failed to start due to failing startup health checks.");
+            }
 
             return next;
         }

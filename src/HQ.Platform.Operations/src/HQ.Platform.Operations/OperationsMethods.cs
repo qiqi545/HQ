@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -43,9 +45,7 @@ namespace HQ.Platform.Operations
 
                         return new OperationsReports.OptionBindingReport
                         {
-                            Type = t.GetInnerGenericTypeName(),
-                            Value = options,
-                            IsValid = valid
+                            Type = t.GetInnerGenericTypeName(), Value = options, IsValid = valid
                         };
                     })
                     .OrderByDescending(v => !v.IsValid)
@@ -56,19 +56,17 @@ namespace HQ.Platform.Operations
                 foreach (var v in values)
                 {
                     if (v.IsValid)
+                    {
                         continue;
+                    }
+
                     hasErrors = true;
                     break;
                 }
 
                 report.HasErrors |= hasErrors;
 
-                return new OperationsReports.OptionReport
-                {
-                    Scope = scope,
-                    HasErrors = hasErrors,
-                    Values = values
-                };
+                return new OperationsReports.OptionReport {Scope = scope, HasErrors = hasErrors, Values = values};
             }).ToList();
 
             return report;
@@ -118,6 +116,7 @@ namespace HQ.Platform.Operations
                             }
                         }
                     }
+
                     return new OperationsReports.ServiceReport
                     {
                         Lifetime = x.Lifetime,
@@ -126,7 +125,7 @@ namespace HQ.Platform.Operations
                         ImplementationFactory = implementationFactoryTypeName,
                         ServiceType = serviceTypeName
                     };
-                }).ToList(),
+                }).ToList()
             };
 
             return report;

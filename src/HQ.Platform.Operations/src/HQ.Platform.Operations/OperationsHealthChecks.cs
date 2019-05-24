@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -33,7 +35,8 @@ namespace HQ.Platform.Operations
                 _serviceProvider = serviceProvider;
             }
 
-            public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
+            public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+                CancellationToken cancellationToken = new CancellationToken())
             {
                 string description;
                 HealthStatus status;
@@ -45,12 +48,15 @@ namespace HQ.Platform.Operations
                     var report = OperationsMethods.GetOptionsReport(_serviceProvider);
 
                     status = report.HasErrors ? HealthStatus.Unhealthy : HealthStatus.Healthy;
-                    data = status != HealthStatus.Healthy? report.Options.Where(x => x.HasErrors).ToDictionary(k => k.Scope, v => (object) v.Values) : null;
+                    data = status != HealthStatus.Healthy
+                        ? report.Options.Where(x => x.HasErrors).ToDictionary(k => k.Scope, v => (object) v.Values)
+                        : null;
 
                     switch (status)
                     {
                         case HealthStatus.Unhealthy:
-                            description = "The options configuration for this application has one or more binding errors, hiding runtime exceptions.";
+                            description =
+                                "The options configuration for this application has one or more binding errors, hiding runtime exceptions.";
                             break;
                         case HealthStatus.Healthy:
                             description = "The options configuration for this application is binding correctly.";
@@ -83,7 +89,8 @@ namespace HQ.Platform.Operations
                 _serviceProvider = serviceProvider;
             }
 
-            public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = new CancellationToken())
+            public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context,
+                CancellationToken cancellationToken = new CancellationToken())
             {
                 string description;
                 HealthStatus status;
@@ -95,12 +102,16 @@ namespace HQ.Platform.Operations
                     var report = OperationsMethods.GetServicesReport(_serviceProvider);
 
                     status = report.MissingRegistrations.Count > 0 ? HealthStatus.Unhealthy : HealthStatus.Healthy;
-                    data = status == HealthStatus.Healthy ? null : report.MissingRegistrations.ToDictionary(k => k, v => (object)report.Services.FirstOrDefault(x => x.ServiceType == v));
+                    data = status == HealthStatus.Healthy
+                        ? null
+                        : report.MissingRegistrations.ToDictionary(k => k,
+                            v => (object) report.Services.FirstOrDefault(x => x.ServiceType == v));
 
                     switch (status)
                     {
                         case HealthStatus.Unhealthy:
-                            description = "The DI container for this application has a missing registration, hiding a runtime exception.";
+                            description =
+                                "The DI container for this application has a missing registration, hiding a runtime exception.";
                             break;
                         case HealthStatus.Healthy:
                             description = "The DI container is correctly configured for this application.";

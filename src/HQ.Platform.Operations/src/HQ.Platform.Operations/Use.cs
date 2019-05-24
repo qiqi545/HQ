@@ -40,7 +40,8 @@ namespace HQ.Platform.Operations
             {
                 var options = context.RequestServices.GetService<IOptions<OperationsApiOptions>>();
 
-                if (options?.Value != null && options.Value.EnableRequestProfiling && !options.Value.MetricsOptions.EnableServerTiming)
+                if (options?.Value != null && options.Value.EnableRequestProfiling &&
+                    !options.Value.MetricsOptions.EnableServerTiming)
                 {
                     var sw = StopwatchPool.Pool.Get();
 
@@ -53,6 +54,7 @@ namespace HQ.Platform.Operations
                         return Task.CompletedTask;
                     });
                 }
+
                 await next();
             });
         }
@@ -66,7 +68,8 @@ namespace HQ.Platform.Operations
                 if (options.Value != null &&
                     options.Value.EnableEnvironmentEndpoint &&
                     !string.IsNullOrWhiteSpace(options.Value.EnvironmentEndpointPath) &&
-                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.EnvironmentEndpointPath))
+                    context.Request.Path.Value.StartsWith(
+                        options.Value.RootPath + options.Value.EnvironmentEndpointPath))
                 {
                     await OperationsHandlers.GetEnvironmentHandler(app, context);
                     return;
@@ -83,7 +86,7 @@ namespace HQ.Platform.Operations
 
                 if (options.Value != null &&
                     options.Value.EnableOptionsDebugging &&
-                    !string.IsNullOrWhiteSpace(options.Value.OptionsDebuggingPath) && 
+                    !string.IsNullOrWhiteSpace(options.Value.OptionsDebuggingPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.OptionsDebuggingPath))
                 {
                     await OperationsHandlers.GetOptionsDebugHandler(context, app);
@@ -110,13 +113,16 @@ namespace HQ.Platform.Operations
 
                 if (options.Value != null && options.Value.EnableHealthChecksEndpoints)
                 {
-                    if (!string.IsNullOrWhiteSpace(options.Value.HealthCheckLivePath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthCheckLivePath))
+                    if (!string.IsNullOrWhiteSpace(options.Value.HealthCheckLivePath) &&
+                        context.Request.Path.Value.StartsWith(
+                            options.Value.RootPath + options.Value.HealthCheckLivePath))
                     {
                         await OperationsHandlers.GetHealthChecksHandler(context, r => false, app);
                         return;
                     }
 
-                    if (!string.IsNullOrWhiteSpace(options.Value.HealthChecksPath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthChecksPath))
+                    if (!string.IsNullOrWhiteSpace(options.Value.HealthChecksPath) &&
+                        context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthChecksPath))
                     {
                         context.Request.Query.TryGetValue("tags", out var tags);
                         await OperationsHandlers.GetHealthChecksHandler(context, r => r.Tags.IsSupersetOf(tags), app);

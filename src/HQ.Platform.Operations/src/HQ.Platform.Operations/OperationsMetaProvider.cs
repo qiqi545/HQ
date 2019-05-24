@@ -27,8 +27,8 @@ namespace HQ.Platform.Operations
 {
     internal class OperationsMetaProvider : IMetaProvider
     {
-        private readonly IOptions<OperationsApiOptions> _options;
         private readonly IOptions<PublicApiOptions> _api;
+        private readonly IOptions<OperationsApiOptions> _options;
 
         public OperationsMetaProvider(IOptions<OperationsApiOptions> options, IOptions<PublicApiOptions> api)
         {
@@ -72,7 +72,8 @@ namespace HQ.Platform.Operations
                 var descriptor = new EndpointDescriptor
                 {
                     Name = "Configuration Diagnostics",
-                    Description = "Used to detect configuration binding errors and other issues with configuration, as well as inspect current values of all configurations.",
+                    Description =
+                        "Used to detect configuration binding errors and other issues with configuration, as well as inspect current values of all configurations.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.OptionsDebuggingPath}",
                     Version = api.ApiVersion
@@ -98,7 +99,8 @@ namespace HQ.Platform.Operations
                 var descriptor = new EndpointDescriptor
                 {
                     Name = "Services Diagnostics",
-                    Description = "Used to detect errors in dependency injection (DI) or inversion of control (IoC) in the application container.",
+                    Description =
+                        "Used to detect errors in dependency injection (DI) or inversion of control (IoC) in the application container.",
                     Method = HttpMethod.Get,
                     Url = $"{baseUri}/{rootPath + options.ServicesDebuggingPath}",
                     Version = api.ApiVersion
@@ -126,7 +128,8 @@ namespace HQ.Platform.Operations
                     var descriptor = new EndpointDescriptor
                     {
                         Name = "Health Checks (full)",
-                        Description = "Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
+                        Description =
+                            "Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
                         Method = HttpMethod.Get,
                         Url = $"{baseUri}/{rootPath + options.HealthChecksPath}",
                         Version = api.ApiVersion
@@ -140,7 +143,8 @@ namespace HQ.Platform.Operations
                     var descriptor = new EndpointDescriptor
                     {
                         Name = "Health Check (live-only)",
-                        Description = "Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
+                        Description =
+                            "Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
                         Method = HttpMethod.Get,
                         Url = $"{baseUri}/{rootPath + options.HealthCheckLivePath}",
                         Version = api.ApiVersion
@@ -183,15 +187,6 @@ namespace HQ.Platform.Operations
             collection.item.Sort();
         }
 
-        public class EndpointDescriptor
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public HttpMethod Method { get; set; }
-            public string Url { get; set; }
-            public string Version { get; set; }
-        }
-
         private static object MapFrom(EndpointDescriptor descriptor)
         {
             var item = new
@@ -208,12 +203,8 @@ namespace HQ.Platform.Operations
                     proxy = new { },
                     certificate = new { },
                     method = descriptor.Method,
-                    description = new
-                    {
-                        content = descriptor.Description,
-                        type = "text/markdown",
-                        version = descriptor.Version
-                    },
+                    description =
+                        new {content = descriptor.Description, type = "text/markdown", version = descriptor.Version},
                     header = new List<dynamic>
                     {
                         new
@@ -223,10 +214,8 @@ namespace HQ.Platform.Operations
                             disabled = false,
                             description = new
                             {
-                                content = "",
-                                type = "text/markdown",
-                                version = descriptor.Version
-                            },
+                                content = "", type = "text/markdown", version = descriptor.Version
+                            }
                         }
                     },
                     body = default(object)
@@ -235,6 +224,15 @@ namespace HQ.Platform.Operations
                 protocolProfileBehavior = new { }
             };
             return item;
+        }
+
+        public class EndpointDescriptor
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public HttpMethod Method { get; set; }
+            public string Url { get; set; }
+            public string Version { get; set; }
         }
     }
 }

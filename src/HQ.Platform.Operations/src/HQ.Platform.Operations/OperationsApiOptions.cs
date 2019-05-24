@@ -15,7 +15,6 @@
 
 #endregion
 
-using HQ.Common;
 using HQ.Extensions.Metrics;
 using Constants = HQ.Common.Constants;
 

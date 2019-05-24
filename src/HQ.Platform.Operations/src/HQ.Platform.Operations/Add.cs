@@ -29,25 +29,28 @@ namespace HQ.Platform.Operations
 {
     public static class Add
     {
-        public static IServiceCollection AddOperationsApi(this IServiceCollection services, IHostingEnvironment environment, IConfiguration config)
+        public static IServiceCollection AddOperationsApi(this IServiceCollection services,
+            IHostingEnvironment environment, IConfiguration config)
         {
             Bootstrap.EnsureInitialized();
 
             if (!environment.IsDevelopment())
+            {
                 services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
+            }
 
             services.AddScoped<IMetaProvider, OperationsMetaProvider>();
             services.Configure<OperationsApiOptions>(config);
             services.AddSingleton(config);
             services.TryAddSingleton(services);
-            
+
             services.AddMetrics(c =>
             {
                 c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
-                    HealthStatus.Unhealthy, new[] { "ops", "startup" });
+                    HealthStatus.Unhealthy, new[] {"ops", "startup"});
 
                 c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
-                    HealthStatus.Unhealthy, new[] { "ops", "startup" });
+                    HealthStatus.Unhealthy, new[] {"ops", "startup"});
 
                 c.AddServerTimingReporter(o =>
                 {

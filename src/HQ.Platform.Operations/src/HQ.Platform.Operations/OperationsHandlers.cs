@@ -137,14 +137,19 @@ namespace HQ.Platform.Operations
             await app.WriteResultAsJson(context, env);
         }
 
-        public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter, IApplicationBuilder app)
+        public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter,
+            IApplicationBuilder app)
         {
             var options = context.RequestServices.GetRequiredService<IOptionsMonitor<HealthCheckOptions>>();
             var service = context.RequestServices.GetRequiredService<HealthCheckService>();
-            var report = await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
+            var report =
+                await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
             if (!options.CurrentValue.ResultStatusCodes.TryGetValue(report.Status, out var num))
-                throw new InvalidOperationException($"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
-            
+            {
+                throw new InvalidOperationException(
+                    $"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
+            }
+
             context.Response.StatusCode = num;
 
             if (!options.CurrentValue.AllowCachingResponses)
@@ -158,12 +163,14 @@ namespace HQ.Platform.Operations
             await app.WriteResultAsJson(context, report);
         }
 
-        public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options, IApplicationBuilder app)
+        public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options,
+            IApplicationBuilder app)
         {
             var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
             var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
             var cancel = new CancellationTokenSource(timeout);
-            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(), cancel.Token);
+            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(),
+                cancel.Token);
             var json = JsonSampleSerializer.Serialize(samples);
 
             await app.WriteResultAsJson(context, json);
@@ -221,7 +228,9 @@ namespace HQ.Platform.Operations
                 foreach (var featureType in assembly.GetTypes())
                 {
                     if (!featureType.IsSubclassOf(typeof(FeatureToggle)))
+                    {
                         continue;
+                    }
 
                     Type optionsWrapperType;
 
@@ -268,12 +277,8 @@ namespace HQ.Platform.Operations
                 }
             }
 
-            return app.WriteResultAsJson(context, new
-            {
-                Registered = registered,
-                Unregistered = unregistered,
-                Indeterminate = indeterminate
-            });
+            return app.WriteResultAsJson(context,
+                new {Registered = registered, Unregistered = unregistered, Indeterminate = indeterminate});
         }
 
         public static Task GetCacheDebugHandler(HttpContext context, IApplicationBuilder app)
@@ -297,7 +302,7 @@ namespace HQ.Platform.Operations
                     managed.Add(new
                     {
                         Type = manager.GetType().Name,
-                        Count = manager.Count,
+                        manager.Count,
                         Size = manager.SizeBytes,
                         SizeLimit = manager.SizeLimitBytes
                     });
@@ -305,10 +310,7 @@ namespace HQ.Platform.Operations
                     continue;
                 }
 
-                unmanaged.Add(new
-                {
-                    Type = cache.GetType().Name
-                });
+                unmanaged.Add(new {Type = cache.GetType().Name});
             }
 
             foreach (var cache in app.ApplicationServices.GetServices<IHttpCache>())
@@ -321,7 +323,7 @@ namespace HQ.Platform.Operations
                     managed.Add(new
                     {
                         Type = manager.GetType().Name,
-                        Count = manager.Count,
+                        manager.Count,
                         Size = manager.SizeBytes,
                         SizeLimit = manager.SizeLimitBytes
                     });
@@ -329,20 +331,18 @@ namespace HQ.Platform.Operations
                     continue;
                 }
 
-                unmanaged.Add(new
-                {
-                    Type = cache.GetType().Name
-                });
+                unmanaged.Add(new {Type = cache.GetType().Name});
             }
 
-            return app.WriteResultAsJson(context, new
-            {
-                Managed = managed,
-                TotalMemory = GC.GetTotalMemory(false),
-                TotalCacheKeys = totalCacheKeys,
-                TotalCacheMemory = totalCacheMemory,
-                Unmanaged = unmanaged
-            });
+            return app.WriteResultAsJson(context,
+                new
+                {
+                    Managed = managed,
+                    TotalMemory = GC.GetTotalMemory(false),
+                    TotalCacheKeys = totalCacheKeys,
+                    TotalCacheMemory = totalCacheMemory,
+                    Unmanaged = unmanaged
+                });
         }
     }
 }
