@@ -33,6 +33,11 @@ namespace HQ.Extensions.Metrics.Internal
             Services = services;
         }
 
+        public IHealthChecksBuilder Add(HealthCheckRegistration registration)
+        {
+            return _builder.Add(registration);
+        }
+
         public IServiceCollection Services { get; }
 
         public IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, GaugeMetric<bool>> builderFunc,

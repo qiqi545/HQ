@@ -21,13 +21,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsBuilder
+    public interface IMetricsBuilder : IHealthChecksBuilder
     {
-        /// <summary>
-        ///     Gets the <see cref="IServiceCollection" /> where metrics services are configured.
-        /// </summary>
-        IServiceCollection Services { get; }
-
         IMetricsBuilder RegisterAsHealthCheck(Func<IMetricsHost, GaugeMetric<bool>> builderFunc,
             HealthStatus onCheckFailure = HealthStatus.Unhealthy);
 
