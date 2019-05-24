@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using HQ.Common;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -29,14 +31,14 @@ namespace HQ.Platform.Api.Models
 
             foreach (var group in manifest)
             {
-                var controllerName = @group.Key.Name.Replace(nameof(Controller), string.Empty);
+                var controllerName = ResolveControllerName(@group);
 
-                var folder = new
+                var folder = new MetaFolder
                 {
                     name = controllerName,
                     description = "",
                     variable = new List<dynamic>(),
-                    item = new List<dynamic>(),
+                    item = new List<MetaItem>(),
                     @event = new List<dynamic>(),
                     auth = "bearer",
                     protocolProfileBehavior = new { }
@@ -46,7 +48,7 @@ namespace HQ.Platform.Api.Models
                 {
                     var url = $"{baseUri}/{operation.RelativePath}";
 
-                    var item = new
+                    var item = new MetaItem
                     {
                         id = Guid.NewGuid(),
                         name = operation.RelativePath,
@@ -91,6 +93,18 @@ namespace HQ.Platform.Api.Models
 
                 collection.item.Add(folder);
             }
+        }
+
+        private static string ResolveControllerName(IGrouping<TypeInfo, ApiDescription> @group)
+        {
+            var controllerType = group.Key;
+            var controllerTypeName = controllerType.GetNonGenericName();
+
+            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+                return controllerTypeName.Replace(nameof(Controller), string.Empty);
+
+            var description = (DescriptionAttribute) controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
+            return description.Description;
         }
     }
 }

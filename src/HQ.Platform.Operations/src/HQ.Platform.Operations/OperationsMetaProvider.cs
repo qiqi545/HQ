@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Controllers;
 using HQ.Platform.Api.Models;
 using Microsoft.Extensions.Options;
 
@@ -41,12 +40,12 @@ namespace HQ.Platform.Operations
             var options = _options.Value;
             var api = _api.Value;
 
-            var folder = new
+            var folder = new MetaFolder
             {
                 name = "Operations",
                 description = "Provides diagnostic tools for server operators at runtime.",
                 variable = new List<dynamic>(),
-                item = new List<dynamic>(),
+                item = new List<MetaItem>(),
                 @event = new List<dynamic>(),
                 auth = "bearer",
                 protocolProfileBehavior = new { }
@@ -179,17 +178,15 @@ namespace HQ.Platform.Operations
                 };
                 folder.item.Add(MapFrom(descriptor));
             }
-
-            folder.item.Sort();
-
+            
             collection.item.Add(folder);
 
             collection.item.Sort();
         }
 
-        private static object MapFrom(EndpointDescriptor descriptor)
+        private static MetaItem MapFrom(EndpointDescriptor descriptor)
         {
-            var item = new
+            var item = new MetaItem
             {
                 id = Guid.NewGuid(),
                 name = descriptor.Name,
@@ -203,8 +200,7 @@ namespace HQ.Platform.Operations
                     proxy = new { },
                     certificate = new { },
                     method = descriptor.Method,
-                    description =
-                        new {content = descriptor.Description, type = "text/markdown", version = descriptor.Version},
+                    description = new {content = descriptor.Description, type = "text/markdown", version = descriptor.Version},
                     header = new List<dynamic>
                     {
                         new
@@ -224,15 +220,6 @@ namespace HQ.Platform.Operations
                 protocolProfileBehavior = new { }
             };
             return item;
-        }
-
-        public class EndpointDescriptor
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-            public HttpMethod Method { get; set; }
-            public string Url { get; set; }
-            public string Version { get; set; }
         }
     }
 }

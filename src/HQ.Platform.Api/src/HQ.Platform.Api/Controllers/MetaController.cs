@@ -72,7 +72,7 @@ namespace HQ.Platform.Api.Controllers
                     version = _options.Value.ApiVersion,
                     schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
-                item = new List<dynamic>(),
+                item = new List<MetaItem>(),
                 @event = new List<dynamic>(),
                 variable = new List<dynamic>(),
                 auth = "bearer",
@@ -112,15 +112,5 @@ namespace HQ.Platform.Api.Controllers
                 return NotFound();
             }
         }
-    }
-
-    public class MetaCollection
-    {
-        public dynamic info;
-        public string auth;
-        public dynamic protocolProfileBehavior;
-        public List<dynamic> item = new List<dynamic>();
-        public List<dynamic> @event = new List<dynamic>();
-        public List<dynamic> variable = new List<dynamic>();
     }
 }
