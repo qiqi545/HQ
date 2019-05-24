@@ -16,8 +16,6 @@
 #endregion
 
 using System;
-using Blowdart.UI;
-using Blowdart.UI.Web;
 using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Identity.Models;
@@ -30,27 +28,22 @@ namespace HQ.Installer
 {
     public static class Use
     {
-        public static IApplicationBuilder UseHq(this IApplicationBuilder app, Action<IRouteBuilder> configureRoutes = null)
+        public static IApplicationBuilder UseHq(this IApplicationBuilder app,
+            Action<IRouteBuilder> configureRoutes = null)
         {
             Bootstrap.EnsureInitialized();
-            HqServer.Masthead();
 
             app.UseSecurityPolicies();
-
-            app.UsePublicApi();
+            app.UseOperationsApi();
+            app.UsePlatformApi();
             app.UseMultiTenancy<IdentityTenant, string>();
-            app.UseDevOpsApi();
-            app.UseMvc(builder => { configureRoutes?.Invoke(builder); });
+            app.UseVersioning();
 
-            if (app.ApplicationServices.GetService(typeof(LayoutRoot)) == null)
-                return app;
-
-            app.UseBlowdartUi(site =>
+            app.UseMvc(routes =>
             {
-                site.Default(ui =>
-                {
-                    ui.Component("SplashPage");
-                });
+                configureRoutes?.Invoke(routes);
+
+                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
             return app;

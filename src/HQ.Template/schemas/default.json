@@ -1,11 +1,20 @@
 [
-	{
-	  "name": "Person",
-	  "type": "object",
-	  "properties":
-	  [
-	    { "name": "Name", "type": "string", "required": true },
-	  	{ "name": "Welcome", "type": "string", "from": "Hello, {{ Name }}!" }
-	  ]
-	}
+  {
+    "name": "Person",
+    "type": "object",
+    "description": "A user of our application.",
+    "properties": [
+      {
+        "name": "Name",
+        "type": "string",
+        "required": true,
+        "protected": true
+      },
+      {
+        "name": "Welcome",
+        "type": "string",
+        "from": "Hello, {{ Name }}!"
+      }
+    ]
+  }
 ]

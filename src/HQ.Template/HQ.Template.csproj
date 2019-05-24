@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="generated\" />
     <Folder Include="runtime\Filters\" />
     <Folder Include="runtime\Attributes\" />
     <Folder Include="runtime\Models\" />

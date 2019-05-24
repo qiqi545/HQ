@@ -20,9 +20,10 @@ using System.Reflection;
 using Blowdart.UI;
 using Blowdart.UI.Web;
 using Blowdart.UI.Web.SemanticUI;
+using Demo.UI;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
-using HQ.Installer.UI;
 using HQ.Platform.Api;
 using HQ.Platform.Identity;
 using HQ.Platform.Identity.AspNetCore.Mvc;
@@ -36,20 +37,21 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Installer
 {
     public static class Add
     {
-        public static IServiceCollection AddHq(this IServiceCollection services, DatabaseType databaseType, IConfiguration config,
-          Action<MvcOptions> setupAction = null)
+        public static IServiceCollection AddHq(this IServiceCollection services, DatabaseType databaseType, IConfiguration config, Action<MvcOptions> setupAction = null)
         {
-            services.AddPublicApi(config.GetSection("Api"));
+            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
-            services.AddDevOpsApi(config.GetSection("Ops"));
-
-            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Api").GetSection("MultiTenancy"))
-                .AddIdentityTenantContextStore<IdentityTenant>();
+            services.AddSecurityPolicies(config.GetSection("Security"));
+            services.AddOperationsApi(config.GetSection("Ops"));
+            services.AddPlatformApi(config.GetSection("Api"));
+            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Api").GetSection("MultiTenancy")).AddIdentityTenantContextStore<IdentityTenant>();
+            services.AddVersioning(config.GetSection("Api").GetSection("Versioning")).AddIdentityVersionContextStore();
 
             var identity = services
                 .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
@@ -57,7 +59,7 @@ namespace HQ.Installer
 
             services.AddDynamicMvc(setupAction)
                .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
-                   config.GetSection("IdentityApi"), config.GetSection("Security"));
+                   config.GetSection("Identity").GetSection("Api"), config.GetSection("Security"));
 
             switch (databaseType)
             {
@@ -80,31 +82,26 @@ namespace HQ.Installer
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
 
-            services.AddSecurityPolicies(config.GetSection("Security"));
-
             return services;
         }
 
         public static void AddUi(this IServiceCollection services)
         {
-            var title = Assembly.GetCallingAssembly().GetName().Name;
-
             UiConfig.Settings = settings =>
             {
+                settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
                 {
-                    typeof(UiComponent).Assembly,       // Blowdart.UI
-                    typeof(HtmlSystem).Assembly,        // Blowdart.UI.Web
-                    typeof(SemanticUi).Assembly,        // Blowdart.UI.Web.Semantic.UI,
-                    typeof(SplashPage).Assembly,        // HQ
-                    Assembly.GetEntryAssembly()         // App
+                    typeof(UiComponent).Assembly,   // Blowdart.UI
+                    typeof(HtmlSystem).Assembly,    // Blowdart.UI.Web
+                    typeof(SemanticUi).Assembly,    // Blowdart.UI.Web.Semantic.UI,
+                    typeof(Dashboard).Assembly,     // HQ
+                    Assembly.GetEntryAssembly()     // App
                 };
             };
 
-            var serviceProvider = services.BuildServiceProvider();
-            var env = serviceProvider.GetRequiredService<IHostingEnvironment>();
-
-            services.AddBlowdartUi(env, typeof(SemanticUi).Assembly);
+            services.AddBlowdartUi(services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>(),
+                typeof(SemanticUi).Assembly);
         }
     }
 }

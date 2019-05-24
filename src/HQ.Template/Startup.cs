@@ -6,6 +6,7 @@ using HQ.Data.Sql.SqlServer;
 using HQ.Data.Sql.Sqlite;
 #endif
 using HQ.Installer;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,16 +30,16 @@ namespace HQ.Template
         {
 #if DocumentDb
             services.AddHq(DatabaseType.DocumentDb, _configuration.GetSection("HQ"))
-                .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
+                .AddSecurityPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<DocumentDbBatchOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #elif SqlServer
             services.AddHq(DatabaseType.SqlServer, _configuration.GetSection("HQ"))
-                .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
+                .AddSecurityPolicies(_configuration.GetSection("HQ").GetSection("Security"))
                 .AddGenerated<SqlServerOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #else
             services.AddHq(DatabaseType.Sqlite, _configuration.GetSection("HQ"))
-                .AddAuthorizationPolicies(_configuration.GetSection("HQ").GetSection("Security"))
-                .AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
+                .AddSecurityPolicies(_configuration.GetSection("HQ").GetSection("Security"))
+                //.AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"), "/api")
 #endif
 
 #if AppInsights
