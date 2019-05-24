@@ -3,9 +3,9 @@
 
 using System.Collections.Generic;
 using System.Reflection;
-using FastMember;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using TypeKitchen;
 
 namespace System.Data.DocumentDb
 {
@@ -49,7 +49,7 @@ namespace System.Data.DocumentDb
                         // will only opt-in to deserialize "Id" if it hasn't been set yet; this gets around
                         // the case where the mapped object's key is "Id", but it is a different type than "id"
 
-                        var accessor = TypeAccessor.Create(instance.GetType());
+                        var accessor = ReadAccessor.Create(instance.GetType());
                         var value = accessor[instance, property.PropertyName];
                         var @default = property.PropertyType.IsValueType ? Activator.CreateInstance(property.PropertyType) : null;
                         return value == null && @default == null || value != null && value.Equals(@default);
