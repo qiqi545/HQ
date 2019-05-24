@@ -68,7 +68,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.EnvironmentEndpointPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.EnvironmentEndpointPath))
                 {
-                    await OperationsEndpoints.GetEnvironmentHandler(app, context);
+                    await OperationsHandlers.GetEnvironmentHandler(app, context);
                     return;
                 }
 
@@ -77,7 +77,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.RouteDebuggingPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.RouteDebuggingPath))
                 {
-                    await OperationsEndpoints.GetRoutesDebugHandler(context, app);
+                    await OperationsHandlers.GetRoutesDebugHandler(context, app);
                     return;
                 }
 
@@ -86,7 +86,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.OptionsDebuggingPath) && 
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.OptionsDebuggingPath))
                 {
-                    await OperationsEndpoints.GetOptionsDebugHandler(context, app);
+                    await OperationsHandlers.GetOptionsDebugHandler(context, app);
                     return;
                 }
 
@@ -95,7 +95,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.ServicesDebuggingPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.ServicesDebuggingPath))
                 {
-                    await OperationsEndpoints.GetServicesDebugHandler(context, app);
+                    await OperationsHandlers.GetServicesDebugHandler(context, app);
                     return;
                 }
 
@@ -104,7 +104,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.MetricsEndpointPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.MetricsEndpointPath))
                 {
-                    await OperationsEndpoints.GetMetricsHandler(context, options.Value, app);
+                    await OperationsHandlers.GetMetricsHandler(context, options.Value, app);
                     return;
                 }
 
@@ -112,14 +112,14 @@ namespace HQ.Platform.Operations
                 {
                     if (!string.IsNullOrWhiteSpace(options.Value.HealthCheckLivePath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthCheckLivePath))
                     {
-                        await OperationsEndpoints.GetHealthChecksHandler(context, r => false, app);
+                        await OperationsHandlers.GetHealthChecksHandler(context, r => false, app);
                         return;
                     }
 
                     if (!string.IsNullOrWhiteSpace(options.Value.HealthChecksPath) && context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HealthChecksPath))
                     {
                         context.Request.Query.TryGetValue("tags", out var tags);
-                        await OperationsEndpoints.GetHealthChecksHandler(context, r => r.Tags.IsSupersetOf(tags), app);
+                        await OperationsHandlers.GetHealthChecksHandler(context, r => r.Tags.IsSupersetOf(tags), app);
                         return;
                     }
                 }
@@ -129,7 +129,7 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.FeatureDebuggingPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.FeatureDebuggingPath))
                 {
-                    await OperationsEndpoints.GetFeaturesDebugHandler(context, app);
+                    await OperationsHandlers.GetFeaturesDebugHandler(context, app);
                     return;
                 }
 
@@ -138,14 +138,12 @@ namespace HQ.Platform.Operations
                     !string.IsNullOrWhiteSpace(options.Value.CacheDebuggingPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.CacheDebuggingPath))
                 {
-                    await OperationsEndpoints.GetCacheDebugHandler(context, app);
+                    await OperationsHandlers.GetCacheDebugHandler(context, app);
                     return;
                 }
 
                 await next();
             });
         }
-        
-        
     }
 }

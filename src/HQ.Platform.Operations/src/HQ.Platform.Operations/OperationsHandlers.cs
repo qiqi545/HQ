@@ -24,16 +24,13 @@ using System.Linq;
 using System.Net;
 using System.Runtime;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Common.AspNetCore;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Internal;
 using HQ.Platform.Api.Extensions;
-using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +44,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations
 {
-    internal static class OperationsEndpoints
+    internal static class OperationsHandlers
     {
         public static async Task GetEnvironmentHandler(IApplicationBuilder app, HttpContext context)
         {
@@ -140,19 +137,14 @@ namespace HQ.Platform.Operations
             await app.WriteResultAsJson(context, env);
         }
 
-        public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter,
-            IApplicationBuilder app)
+        public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter, IApplicationBuilder app)
         {
             var options = context.RequestServices.GetRequiredService<IOptionsMonitor<HealthCheckOptions>>();
             var service = context.RequestServices.GetRequiredService<HealthCheckService>();
-
-            var report =
-                await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
-
+            var report = await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
             if (!options.CurrentValue.ResultStatusCodes.TryGetValue(report.Status, out var num))
-                throw new InvalidOperationException(
-                    $"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
-
+                throw new InvalidOperationException($"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
+            
             context.Response.StatusCode = num;
 
             if (!options.CurrentValue.AllowCachingResponses)
@@ -166,14 +158,12 @@ namespace HQ.Platform.Operations
             await app.WriteResultAsJson(context, report);
         }
 
-        public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options,
-            IApplicationBuilder app)
+        public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options, IApplicationBuilder app)
         {
             var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
             var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
             var cancel = new CancellationTokenSource(timeout);
-            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(),
-                cancel.Token);
+            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(), cancel.Token);
             var json = JsonSampleSerializer.Serialize(samples);
 
             await app.WriteResultAsJson(context, json);
@@ -212,94 +202,19 @@ namespace HQ.Platform.Operations
 
         public static Task GetServicesDebugHandler(HttpContext context, IApplicationBuilder app)
         {
-            var services = context.RequestServices.GetRequiredService<IServiceCollection>();
-            var missingRegistrations = new HashSet<string>();
-
-            var manifest = services.Select(x =>
-                {
-                    var serviceTypeName = x.ServiceType.Name;
-                    var implementationTypeName = x.ImplementationType?.Name;
-                    var implementationInstanceName = x.ImplementationInstance?.GetType().Name;
-
-                    string implementationFactoryTypeName = null;
-                    if (x.ImplementationFactory != null)
-                    {
-                        try
-                        {
-                            var result = x.ImplementationFactory.Invoke(context.RequestServices);
-                            if (result != null)
-                            {
-                                implementationFactoryTypeName = result.GetType().Name;
-                            }
-                        }
-                        catch (InvalidOperationException ex)
-                        {
-                            if (ex.Source == "Microsoft.Extensions.DependencyInjection.Abstractions")
-                            {
-                                var match = Regex.Match(ex.Message, "No service for type '([\\w.]*)'",
-                                    RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.Singleline);
-
-                                if (match.Success)
-                                {
-                                    var typeName = match.Groups[1];
-                                    missingRegistrations.Add(typeName.Value);
-                                }
-                            }
-                            else
-                            {
-                                Trace.TraceError($"{ex.ToString()}");
-                            }
-                        }
-                    }
-
-                    return new
-                    {
-                        x.Lifetime,
-                        ImplementationType = implementationTypeName,
-                        ImplementationInstance = implementationInstanceName,
-                        ImplementationFactory = implementationFactoryTypeName,
-                        ServiceType = serviceTypeName
-                    };
-                })
-                .ToList();
-
-            return app.WriteResultAsJson(context,
-                new {MissingRegistrations = missingRegistrations, Manifest = manifest});
+            return app.WriteResultAsJson(context, OperationsMethods.GetServicesReport(context.RequestServices));
         }
 
         public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
         {
-            var optionTypes = typeof(IOptions<>).GetImplementationsOfOpenGeneric();
-
-            var model = optionTypes.GroupBy(x => x.Name)
-                .Select(x =>
-                {
-                    // i.e., IOptions, IOptionsSnapshot, IOptionsMonitor, etc.
-                    var scope = x.Key.Substring(0, x.Key.Length - 2 /* `1 */);
-
-                    var values = x.Distinct()
-                        .Select(t =>
-                        {
-                            var valid = context.RequestServices.TryBindOptions(t, out var options);
-
-                            return new {Type = t.GetInnerGenericTypeName(), IsValid = valid, Value = options};
-                        })
-                        .OrderByDescending(v => !v.IsValid)
-                        .ThenBy(v => v.Type)
-                        .ToList();
-
-                    return new {Scope = scope, HasErrors = values.Any(v => !v.IsValid), Values = values};
-                })
-                .ToList();
-
-            return app.WriteResultAsJson(context, model);
+            return app.WriteResultAsJson(context, OperationsMethods.GetOptionsReport(app.ApplicationServices));
         }
 
         public static Task GetFeaturesDebugHandler(HttpContext context, IApplicationBuilder app)
         {
-            var unregistered = new HashSet<string>();
-            var faulted = new HashSet<string>();
             var registered = new Dictionary<string, bool>();
+            var unregistered = new HashSet<string>();
+            var indeterminate = new HashSet<string>();
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -316,7 +231,7 @@ namespace HQ.Platform.Operations
                     }
                     catch
                     {
-                        faulted.Add(featureType.Name);
+                        indeterminate.Add(featureType.Name);
                         continue;
                     }
 
@@ -335,7 +250,7 @@ namespace HQ.Platform.Operations
                         var property = optionsWrapperType.GetProperty(nameof(IOptions<object>.Value));
                         if (!(property?.GetValue(instance) is FeatureToggle feature))
                         {
-                            faulted.Add(featureType.Name);
+                            indeterminate.Add(featureType.Name);
                             continue;
                         }
 
@@ -357,7 +272,7 @@ namespace HQ.Platform.Operations
             {
                 Registered = registered,
                 Unregistered = unregistered,
-                Faulted = faulted
+                Indeterminate = indeterminate
             });
         }
 

@@ -19,25 +19,36 @@ using HQ.Common;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Api.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace HQ.Platform.Operations
 {
     public static class Add
     {
-        public static IServiceCollection AddOperationsApi(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddOperationsApi(this IServiceCollection services, IHostingEnvironment environment, IConfiguration config)
         {
             Bootstrap.EnsureInitialized();
+
+            if (!environment.IsDevelopment())
+                services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
 
             services.AddScoped<IMetaProvider, OperationsMetaProvider>();
             services.Configure<OperationsApiOptions>(config);
             services.AddSingleton(config);
             services.TryAddSingleton(services);
-
+            
             services.AddMetrics(c =>
             {
+                c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
+                    HealthStatus.Unhealthy, new[] { "ops", "startup" });
+
+                c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
+                    HealthStatus.Unhealthy, new[] { "ops", "startup" });
+
                 c.AddServerTimingReporter(o =>
                 {
                     o.Enabled = true;
@@ -45,8 +56,6 @@ namespace HQ.Platform.Operations
                     o.Rendering = ServerTimingRendering.Verbose;
                     o.AllowedOrigins = "*";
                 });
-
-                c.RegisterAsHealthCheck(m => m.Gauge("app_online", () => true), v => v);
             });
 
             return services;
