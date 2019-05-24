@@ -160,7 +160,8 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
                         }
                     }
 
-                    _client.TrackEvent(options.MetricsSampleEventName, properties, metrics);
+                    if(metrics.Count > 0)
+                        _client.TrackEvent(options.MetricsSampleEventName, properties, metrics);
                 }
             }
 
