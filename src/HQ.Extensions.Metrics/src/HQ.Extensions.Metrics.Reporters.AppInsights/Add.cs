@@ -46,7 +46,7 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
         {
             builder.Services.Configure<HealthCheckPublisherOptions>(options =>
             {
-                options.Predicate = check => true;
+                options.Predicate = r => !r.Tags.Contains("startup");
                 options.Delay = TimeSpan.FromSeconds(2);
                 options.Timeout = TimeSpan.FromSeconds(30);
                 options.Period = TimeSpan.FromSeconds(30);
