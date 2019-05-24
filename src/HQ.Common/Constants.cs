@@ -164,8 +164,9 @@ namespace HQ.Common
             public const string OpenApiJson = "application/vnd.oai.openapi+json";
             public const string JsonApi = "application/vnd.api+json";
             public const string HqSchema = "application/vnd.hq.schema+json";
-
             public const string Xml = "application/xml";
+
+            public const string Markdown = "text/markdown";
         }
 
         public static class Events
