@@ -15,8 +15,10 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using HQ.Common;
+using HQ.Platform.Schema.Internal;
 using HQ.Platform.Schema.Models;
 
 namespace HQ.Platform.Schema.Extensions
@@ -27,7 +29,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(ns ?? schema?.Namespace ?? Constants.Schema.DefaultNamespace);
+                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
             });
         }
 
@@ -40,7 +42,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(ns ?? schema?.Namespace ?? Constants.Schema.DefaultNamespace);
+                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
                 sb.Append('.').Append(schema.TypeString());
             });
         }
@@ -54,12 +56,11 @@ namespace HQ.Platform.Schema.Extensions
         {
             return StringBuilderPool.Scoped(sb =>
             {
-                sb.Append(schema?.Namespace ?? Constants.Schema.DefaultNamespace);
+                sb.Append(schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
             });
         }
 
-        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema,
-            Dictionary<string, Models.Schema> map)
+        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema, Dictionary<string, Models.Schema> map)
         {
             var self = schema.FullTypeString();
 
@@ -86,6 +87,30 @@ namespace HQ.Platform.Schema.Extensions
                     }
                 }
             }
+        }
+
+        public static SelfEnumerable<Models.Schema> ToTopologicalOrder(this IReadOnlyCollection<Models.Schema> schemas)
+        {
+            var edges = new List<Tuple<Models.Schema, Models.Schema>>();
+            foreach (var schema in schemas)
+            {
+                foreach (var property in schema.Properties)
+                {
+                    if (!property.IsModel())
+                        continue;
+                    var dependent = schema.Scope[property.FullTypeString(schema.Scope)];
+                    var edge = new Tuple<Models.Schema, Models.Schema>(schema, dependent);
+                    edges.Add(edge);
+                }
+            }
+
+            var sorted = TopologicalSorter<Models.Schema>.Sort(schemas, edges);
+            if (sorted == null)
+            {
+                throw new InvalidOperationException("Schema collection has at least one cycle.");
+            }
+
+            return sorted.Enumerate();
         }
     }
 }
