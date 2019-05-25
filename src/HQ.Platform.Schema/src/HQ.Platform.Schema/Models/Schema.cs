@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Schema.Extensions;
 
@@ -31,7 +32,7 @@ namespace HQ.Platform.Schema.Models
         public IList<string> Values { get; } = new List<string>();
         public string Description { get; set; }
 
-        [NonMapped] public IDictionary<string, Schema> Scope { get; set; } = new Dictionary<string, Schema>();
+        [NonMapped, IgnoreDataMember] public IDictionary<string, Schema> Scope { get; set; } = new Dictionary<string, Schema>();
 
         [Computed] private string DebuggerDisplayName => this.FullTypeString();
 
