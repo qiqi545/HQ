@@ -30,7 +30,7 @@ namespace HQ.Data.Contracts
 
         public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
         {
-            var list = FieldValidations.MustExistOnType(type, Fields.SelfEnumerate());
+            var list = FieldValidations.MustExistOnType(type, Fields.Enumerate());
             errors = list;
             return list.Count == 0;
         }
