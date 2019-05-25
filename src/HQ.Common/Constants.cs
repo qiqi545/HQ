@@ -59,7 +59,7 @@ namespace HQ.Common
             public const string DefaultCollection = "AspNetIdentity";
         }
 
-        public static class Schema
+        public static class Schemas
         {
             public const string DefaultNamespace = "MyNamespace";
         }
