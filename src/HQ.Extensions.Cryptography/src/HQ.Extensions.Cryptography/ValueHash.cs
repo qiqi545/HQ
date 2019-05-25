@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
 using System.IO;
+using System.Runtime.CompilerServices;
+using HQ.Data.Contracts.Attributes;
 using TypeKitchen;
 using WyHash;
 
@@ -31,7 +34,13 @@ namespace HQ.Extensions.Cryptography
                 {
                     foreach (var member in members)
                     {
-                        WriteValue(accessor[instance, member.Name], bw);
+                        if (member.HasAttribute<CompilerGeneratedAttribute>())
+                            continue; // backing fields
+
+                        if (member.HasAttribute<ComputedAttribute>() || member.HasAttribute<NonMappedAttribute>())
+                            continue; // explicitly non-value participating
+
+                        WriteValue(accessor[instance, member.Name], member.Type, bw);
                     }
                 }
 
@@ -39,7 +48,7 @@ namespace HQ.Extensions.Cryptography
             }
         }
 
-        private static void WriteValue(object value, BinaryWriter bw)
+        private static void WriteValue(object value, Type type, BinaryWriter bw)
         {
             switch (value)
             {
@@ -88,7 +97,20 @@ namespace HQ.Extensions.Cryptography
                 case byte[] v:
                     bw.Write(v);
                     break;
+                case null:
+                    bw.Write(0);
+                    break;
                 default:
+
+                    if (typeof(IEnumerable).IsAssignableFrom(type))
+                    {
+                        foreach (var item in (IEnumerable) value)
+                        {
+                            WriteValue(item, item.GetType(), bw);
+                        }
+                        break;
+                    }
+
                     bw.Write(ComputeHash(value));
                     break;
             }
