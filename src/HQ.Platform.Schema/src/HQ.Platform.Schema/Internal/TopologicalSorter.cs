@@ -68,8 +68,10 @@ namespace HQ.Platform.Schema.Internal
                     //     insert m into S
 
                     // for each node m with an edge e from n to m do
-                    foreach (var e in edges)
+                    for (int j = edges.Count - 1; j >= 0; j--)
                     {
+                        var e = edges[j];
+
                         if (!e.Item1.Equals(n))
                             continue;
                         var m = e.Item2;

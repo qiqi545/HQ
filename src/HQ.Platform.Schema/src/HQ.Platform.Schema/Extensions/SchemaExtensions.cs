@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using HQ.Common;
 using HQ.Platform.Schema.Internal;
 using HQ.Platform.Schema.Models;
@@ -91,20 +92,39 @@ namespace HQ.Platform.Schema.Extensions
 
         public static SelfEnumerable<Models.Schema> ToTopologicalOrder(this IReadOnlyCollection<Models.Schema> schemas)
         {
-            var edges = new List<Tuple<Models.Schema, Models.Schema>>();
+            var edges = new List<Tuple<Models.Schema, PropertyRelationship, Models.Schema>>();
             foreach (var schema in schemas)
             {
                 foreach (var property in schema.Properties)
                 {
-                    if (!property.IsModel())
+                    if (!property.IsModel() && property.Type != PropertyType.Enum)
                         continue;
-                    var dependent = schema.Scope[property.FullTypeString(schema.Scope)];
-                    var edge = new Tuple<Models.Schema, Models.Schema>(schema, dependent);
-                    edges.Add(edge);
+
+                    var dependsOn = schema.Scope[property.From];
+
+                    // if we have the inverse of this already, don't add it as an edge
+                    bool isInverse = false;
+                    foreach (var edge in edges)
+                    {
+                        if (edge.Item1 == dependsOn)
+                        {
+                            isInverse = edge.Item2 == PropertyRelationship.OneToMany &&
+                                            property.Rel == PropertyRelationship.OneToOne ||
+                                            edge.Item2 == PropertyRelationship.OneToOne &&
+                                            property.Rel == PropertyRelationship.OneToMany;
+
+                            break;
+                        }
+                    }
+                    if (isInverse)
+                        continue;
+                    
+                    edges.Add(new Tuple<Models.Schema, PropertyRelationship, Models.Schema>(schema, property.Rel, dependsOn));
                 }
             }
 
-            var sorted = TopologicalSorter<Models.Schema>.Sort(schemas, edges);
+            var enumerable = edges.Select(x => new Tuple<Models.Schema, Models.Schema>(x.Item1, x.Item3)).ToList();
+            var sorted = TopologicalSorter<Models.Schema>.Sort(schemas, enumerable);
             if (sorted == null)
             {
                 throw new InvalidOperationException("Schema collection has at least one cycle.");
