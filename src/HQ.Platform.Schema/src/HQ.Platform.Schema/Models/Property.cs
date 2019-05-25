@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
+using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Platform.Schema.Models
 {
@@ -43,8 +43,9 @@ namespace HQ.Platform.Schema.Models
 
         public string Description { get; set; }
 
-        [IgnoreDataMember] private string DebuggerDisplayName => $"{Name} ({Type})";
+        [Computed] private string DebuggerDisplayName => $"{Name} ({Type})";
 
+        [Computed]
         public bool IsComputed => Type.IsString() && From != null;
     }
 }
