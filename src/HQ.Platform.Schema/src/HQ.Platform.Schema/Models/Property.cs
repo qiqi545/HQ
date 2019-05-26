@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using HQ.Data.Contracts.Attributes;
 
@@ -43,9 +44,9 @@ namespace HQ.Platform.Schema.Models
 
         public string Description { get; set; }
 
-        [Computed] private string DebuggerDisplayName => $"{Name} ({Type})";
+        [NotMapped] private string DebuggerDisplayName => $"{Name} ({Type})";
 
-        [Computed]
+        [NotMapped]
         public bool IsComputed => Type.IsString() && From != null;
 
         public bool Equals(Property other)

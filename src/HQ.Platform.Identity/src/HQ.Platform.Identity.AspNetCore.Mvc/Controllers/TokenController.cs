@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
@@ -44,7 +46,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [Category("Identity", "Manages application access controls."), DisplayName("Tokens"), Description("Manages authentication tokens.")]
+    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Tokens"), MetaDescription("Manages authentication tokens.")]
     public class TokenController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TTenant : IdentityTenant

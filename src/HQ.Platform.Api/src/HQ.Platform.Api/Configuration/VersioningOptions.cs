@@ -15,10 +15,8 @@
 
 #endregion
 
-
 using System.Net;
 using HQ.Common;
-using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Configuration
 {

@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Api.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
@@ -37,7 +38,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    [Category("Identity", "Manages application access controls."), DisplayName("Roles"), Description("Manages system roles.")]
+    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Roles"), MetaDescription("Manages system roles.")]
     public class RoleController<TRole, TKey> : DataController
         where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>

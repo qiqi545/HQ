@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
-using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Schema.Extensions;
 
 namespace HQ.Platform.Schema.Models
@@ -33,9 +33,9 @@ namespace HQ.Platform.Schema.Models
         public IList<string> Values { get; } = new List<string>();
         public string Description { get; set; }
 
-        [NonMapped, IgnoreDataMember] public IDictionary<string, Schema> Scope { get; set; } = new Dictionary<string, Schema>();
+        [NotMapped, IgnoreDataMember] public IDictionary<string, Schema> Scope { get; set; } = new Dictionary<string, Schema>();
 
-        [Computed] private string DebuggerDisplayName => this.FullTypeString();
+        [NotMapped] private string DebuggerDisplayName => this.FullTypeString();
 
         public string Name { get; set; }
         public string Namespace { get; set; }

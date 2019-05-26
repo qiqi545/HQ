@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Api.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    [Category("Identity", "Manages application access controls."), DisplayName("Users"), Description("Manages user accounts.")]
+    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Users"), MetaDescription("Manages user accounts.")]
     public class UserController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TKey : IEquatable<TKey>

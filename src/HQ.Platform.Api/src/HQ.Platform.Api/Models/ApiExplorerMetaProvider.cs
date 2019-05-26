@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Api.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -120,7 +122,7 @@ namespace HQ.Platform.Api.Models
             //
             // Create folder hierarchy:
             var roots = new List<MetaFolder>();
-            var categories = new Dictionary<CategoryAttribute, List<MetaFolder>>();
+            var categories = new Dictionary<MetaCategoryAttribute, List<MetaFolder>>();
             foreach (var folder in allFolders)
             {
                 var controllerType = folder.Key;
@@ -189,17 +191,17 @@ namespace HQ.Platform.Api.Models
             return (options.Value.DefaultChallengeScheme ?? options.Value.DefaultScheme).ToLowerInvariant();
         }
 
-        private static CategoryAttribute ResolveControllerCategory(MemberInfo controllerType)
+        private static MetaCategoryAttribute ResolveControllerCategory(MemberInfo controllerType)
         {
-            return !Attribute.IsDefined(controllerType, typeof(CategoryAttribute)) ? null
-                : (CategoryAttribute) controllerType.GetCustomAttribute(typeof(CategoryAttribute), true);
+            return !Attribute.IsDefined(controllerType, typeof(MetaCategoryAttribute)) ? null
+                : (MetaCategoryAttribute) controllerType.GetCustomAttribute(typeof(MetaCategoryAttribute), true);
         }
 
-        private static DescriptionAttribute ResolveControllerDescription(MemberInfo controllerType)
+        private static MetaDescriptionAttribute ResolveControllerDescription(MemberInfo controllerType)
         {
-            if (!Attribute.IsDefined(controllerType, typeof(DescriptionAttribute)))
+            if (!Attribute.IsDefined(controllerType, typeof(MetaDescriptionAttribute)))
                 return null;
-            var description = (DescriptionAttribute)controllerType.GetCustomAttribute(typeof(DescriptionAttribute), true);
+            var description = (MetaDescriptionAttribute)controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
             return description;
         }
 
@@ -211,7 +213,7 @@ namespace HQ.Platform.Api.Models
                 return controllerTypeName.Replace(nameof(Controller), string.Empty);
 
             var description = (DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
-            return description.Name;
+            return description.DisplayName;
         }
     }
 }
