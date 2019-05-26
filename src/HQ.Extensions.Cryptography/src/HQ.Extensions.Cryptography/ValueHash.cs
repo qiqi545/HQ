@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Runtime.CompilerServices;
-using HQ.Data.Contracts.Attributes;
+using System.Runtime.Serialization;
 using TypeKitchen;
 using WyHash;
 
@@ -37,7 +38,7 @@ namespace HQ.Extensions.Cryptography
                         if (member.HasAttribute<CompilerGeneratedAttribute>())
                             continue; // backing fields
 
-                        if (member.HasAttribute<ComputedAttribute>() || member.HasAttribute<NonMappedAttribute>())
+                        if (member.HasAttribute<NotMappedAttribute>() || member.HasAttribute<IgnoreDataMemberAttribute>())
                             continue; // explicitly non-value participating
 
                         WriteValue(accessor[instance, member.Name], member.Type, bw);
