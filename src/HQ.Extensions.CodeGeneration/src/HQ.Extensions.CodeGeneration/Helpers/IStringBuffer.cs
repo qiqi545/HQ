@@ -21,6 +21,7 @@ namespace HQ.Extensions.CodeGeneration.Helpers
 {
     public interface IStringBuffer : IDisposable
     {
+        string Key { get; }
         void AppendLine(string value);
         void AppendLine();
         void Append(string value);

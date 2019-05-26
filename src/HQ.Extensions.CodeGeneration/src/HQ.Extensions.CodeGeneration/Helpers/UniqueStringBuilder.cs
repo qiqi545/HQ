@@ -73,6 +73,17 @@ namespace HQ.Extensions.CodeGeneration.Helpers
             _bucket.Add(value);
         }
 
+        public void AppendLine(StringBuilder value)
+        {
+            _bucket.Add(value.ToString());
+        }
+
+        public void AppendLine(UniqueStringBuilder value)
+        {
+            foreach(var line in value._bucket)
+                _bucket.Add(line);
+        }
+
         public void Dispose()
         {
             _buffer.Clear();

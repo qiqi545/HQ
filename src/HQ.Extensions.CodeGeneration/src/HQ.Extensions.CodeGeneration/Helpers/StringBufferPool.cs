@@ -52,7 +52,7 @@ namespace HQ.Extensions.CodeGeneration.Helpers
         public IStringBuffer GetOrAdd(string key)
         {
             if (!_inner.TryGetValue(key, out var buffer))
-                _inner.Add(key, buffer = new StringBuffer());
+                _inner.Add(key, buffer = new StringBuffer(key));
             return buffer;
         }
 
@@ -60,8 +60,11 @@ namespace HQ.Extensions.CodeGeneration.Helpers
         {
             private readonly StringBuilder _inner;
 
-            public StringBuffer()
+            public string Key { get; }
+
+            public StringBuffer(string key)
             {
+                Key = key;
                 _inner = StringBuilderPool.Pool.Get();
             }
 
