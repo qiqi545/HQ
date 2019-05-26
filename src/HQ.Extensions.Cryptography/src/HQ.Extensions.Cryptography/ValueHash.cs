@@ -103,6 +103,15 @@ namespace HQ.Extensions.Cryptography
                     break;
                 default:
 
+                    if (type.IsEnum)
+                    {
+                        var enumType = Enum.GetUnderlyingType(value.GetType());
+                        var enumValue = Convert.ChangeType(value, enumType);
+
+                        WriteValue(enumValue, enumType, bw);
+                        break;
+                    }
+
                     if (typeof(IEnumerable).IsAssignableFrom(type))
                     {
                         foreach (var item in (IEnumerable) value)
