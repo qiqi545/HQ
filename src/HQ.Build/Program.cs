@@ -88,6 +88,13 @@ namespace HQ.Build
                                 return;
                             }
 
+                            var applicationId = arguments.Dequeue();
+                            if (!Guid.TryParse(key, out _))
+                            {
+                                Console.Error.WriteLine("Invalid application ID.");
+                                return;
+                            }
+
                             if (EndOfSubArguments(arguments))
                             {
                                 Console.Error.WriteLine("No schema directory specified.");
@@ -158,13 +165,13 @@ namespace HQ.Build
                                     Headers = new WebHeaderCollection
                                     {
                                         ["X-API-Key"] = key,
+                                        //["X-API-Version"] = version
                                         [HttpRequestHeader.ContentType] = "application/vnd.hq.archivist+json"
                                     }
                                 };
                                 ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
                                 var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(manifest));
-                                payload = wc.UploadData("codegen", "POST", data);
-                                
+                                payload = wc.UploadData($"codegen/{applicationId}", "POST", data);
                             }
                             catch (Exception ex)
                             {

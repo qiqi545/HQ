@@ -43,12 +43,12 @@ namespace HQ.Installer
 {
     public static class Add
     {
-        public static IServiceCollection AddHq(this IServiceCollection services, DatabaseType databaseType, IConfiguration config, Action<MvcOptions> setupAction = null)
+        public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, DatabaseType databaseType, IConfiguration config, Action<MvcOptions> setupAction = null)
         {
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             services.AddSecurityPolicies(config.GetSection("Security"));
-            services.AddOperationsApi(config.GetSection("Ops"));
+            services.AddOperationsApi(env, config.GetSection("Ops"));
             services.AddPlatformApi(config.GetSection("Api"));
             services.AddMultiTenancy<IdentityTenant>(config.GetSection("Api").GetSection("MultiTenancy")).AddIdentityTenantContextStore<IdentityTenant>();
             services.AddVersioning(config.GetSection("Api").GetSection("Versioning")).AddIdentityVersionContextStore();

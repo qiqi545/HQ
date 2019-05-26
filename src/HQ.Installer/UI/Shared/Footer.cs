@@ -69,7 +69,7 @@ namespace Demo.UI.Shared
                             ui.BeginDiv(new { @class = "text container" });
                             {
                                 ui.Element("p", $"UI Version: {typeof(Dashboard).Assembly.GetName().Version}");
-                                ui.Element("p", $"Platform Version: {typeof(Constants.Schema).Assembly.GetName().Version}");
+                                ui.Element("p", $"Platform Version: {typeof(Constants.Schemas).Assembly.GetName().Version}");
                                 ui.Element("p", $"App Version: {Assembly.GetEntryAssembly().GetName().Version}");
                             }
                             ui.EndDiv();
