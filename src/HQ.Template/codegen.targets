@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Target Name="GenerateCode" BeforeTargets="Compile">
-    <Exec Command="hq -c $(HQEndpoint) $(HQKey) $(ProjectDir)schemas\ $(ProjectDir)generated\ $(RootNamespace)" ContinueOnError="true">
+    <Exec Command="hq -c $(HQEndpoint) $(HQKey) ${HQApplicationId} $(ProjectDir)schemas\ $(ProjectDir)generated\ $(RootNamespace)" ContinueOnError="true">
 		<Output TaskParameter="ExitCode" ItemName="ExitCode"/>
 	</Exec>
 	<Error Text="HQ.io build tools are missing on this machine. You must run `dotnet tool install -g HQ.Build`." Condition="'%(ExitCode.Identity)'==9009" ContinueOnError="true"/>

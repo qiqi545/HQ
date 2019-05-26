@@ -31,6 +31,10 @@ namespace HQ.Build
 {
     public static class Program
     {
+        private const string ApiKeyHeader = "X-API-KEY";
+        private const string ApiVersionHeader = "X-API-VERSION";
+        private const string VersionHashFile = ApiVersionHeader + ".txt";
+
         public static void Main(params string[] args)
         {
             Masthead();
@@ -164,17 +168,45 @@ namespace HQ.Build
                                     },
                                     Headers = new WebHeaderCollection
                                     {
-                                        ["X-API-Key"] = key,
-                                        //["X-API-Version"] = version
+                                        [ApiKeyHeader] = key,
                                         [HttpRequestHeader.ContentType] = "application/vnd.hq.archivist+json"
                                     }
                                 };
+
+                                if (File.Exists(VersionHashFile))
+                                {
+                                    var versionHash = File.ReadAllText(VersionHashFile);
+                                    wc.Headers.Add(ApiVersionHeader, versionHash);
+                                }
+
                                 ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
                                 var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(manifest));
                                 payload = wc.UploadData($"codegen/{applicationId}", "POST", data);
+
+                                var headers = wc.ResponseHeaders;
+                                for (int i = 0; i < headers.Count; i++)
+                                {
+                                    var name = headers.GetKey(i);
+                                    if (!name.Equals(ApiVersionHeader, StringComparison.OrdinalIgnoreCase))
+                                        continue;
+                                    var value = headers.Get(i);
+                                    File.WriteAllText(VersionHashFile, value);
+                                }
                             }
                             catch (Exception ex)
                             {
+                                if (ex is WebException web)
+                                {
+                                    if (web.Response is HttpWebResponse http)
+                                    {
+                                        if (http.StatusCode == HttpStatusCode.NotModified)
+                                        {
+                                            Console.Out.WriteLine("No schema changes found.");
+                                            return;
+                                        }
+                                    }
+                                }
+
                                 Console.Error.WriteLine("Invalid response from service.");
                                 Console.Error.WriteLine(ex);
                                 return;

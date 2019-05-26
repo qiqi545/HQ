@@ -12,6 +12,7 @@
   <PropertyGroup>
     <HQEndpoint>https://build.hq.io</HQEndpoint>
     <HQKey>PRIVATE-KEY-REPLACE-ME</HQKey>
+    <HQApplicationId>APPLICATION-ID-REPLACE-ME</HQApplicationId>
   </PropertyGroup>
 
   <ItemGroup>
