@@ -100,7 +100,9 @@ namespace HQ.Platform.Schema.Extensions
                     if (!property.IsModel() && property.Type != PropertyType.Enum)
                         continue;
 
-                    var dependsOn = schema.Scope[property.From];
+                    // we might have specified a relationship to an older schema that's not in the revision set
+                    if (!schema.Scope.TryGetValue(property.From, out var dependsOn))
+                        continue;
 
                     // if we have the inverse of this already, don't add it as an edge
                     bool isInverse = false;
