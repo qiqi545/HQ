@@ -141,6 +141,7 @@ namespace HQ.Common
             ///     See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
             /// </summary>
             public const string Prefer = "Prefer";
+            public const string PreferenceApplied = "Preference-Applied";
         }
 
         public static class HttpVerbs
