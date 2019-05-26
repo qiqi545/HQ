@@ -15,6 +15,8 @@
 
 #endregion
 
+using Microsoft.Extensions.Primitives;
+
 namespace HQ.Common
 {
     public static class Constants
@@ -168,6 +170,9 @@ namespace HQ.Common
             public const string Xml = "application/xml";
 
             public const string Markdown = "text/markdown";
+            public const string PlainText = "text/plain";
+            public const string Binary = "application/octet-stream";
+            public const string Unspecified = Binary;
         }
 
         public static class Events
