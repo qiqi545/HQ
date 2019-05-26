@@ -17,7 +17,7 @@ using System;
 
 namespace HQ.Data.Contracts.Attributes
 {
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    [AttributeUsage(AttributeTargets.All, Inherited = false)]
     public class FingerprintAttribute : Attribute
     {
         public FingerprintAttribute(ulong hash)
