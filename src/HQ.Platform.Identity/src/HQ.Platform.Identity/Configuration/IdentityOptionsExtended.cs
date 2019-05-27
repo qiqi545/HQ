@@ -21,6 +21,8 @@ namespace HQ.Platform.Identity.Configuration
 {
     public class IdentityOptionsExtended : IdentityOptions
     {
+        public bool Enabled { get; set; }
+
         public IdentityOptionsExtended() { }
 
         public IdentityOptionsExtended(IdentityOptions inner)
