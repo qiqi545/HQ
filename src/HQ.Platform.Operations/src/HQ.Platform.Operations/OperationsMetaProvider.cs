@@ -211,7 +211,7 @@ namespace HQ.Platform.Operations
                 @event = new List<dynamic>(),
                 request = new MetaOperation
                 {
-                    url = descriptor.Url,
+                    url = MetaUrl.Raw(descriptor.Url),
                     auth = descriptor.Auth,
                     proxy = new { },
                     certificate = new { },
@@ -222,9 +222,9 @@ namespace HQ.Platform.Operations
                         type = "text/markdown",
                         version = descriptor.Version
                     },
-                    header = new List<MetaHeader>
+                    header = new List<MetaParameter>
                     {
-                        new MetaHeader
+                        new MetaParameter
                         {
                             key = "Content-Type",
                             value = "application/json",

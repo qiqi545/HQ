@@ -19,20 +19,16 @@ using System.Diagnostics;
 
 namespace HQ.Platform.Api.Models
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+    [DebuggerDisplay("{" + nameof(GroupName) + "}")]
     public struct VersionGroup
     {
-        public short Year { get; }
-        public byte Month { get; }
-        public byte Day { get; }
+        public string GroupName { get; }
 
-        public string DisplayName => $"{Year:D4}-{Month:D2}-{Day:D2}";
+        public VersionGroup(short year, byte month, byte day) : this($"{year:D4}-{month:D2}-{day:D2}") { }
 
-        public VersionGroup(short year, byte month, byte day)
+        public VersionGroup(string groupName)
         {
-            Year = year;
-            Month = month;
-            Day = day;
+            GroupName = groupName;
         }
     }
 }

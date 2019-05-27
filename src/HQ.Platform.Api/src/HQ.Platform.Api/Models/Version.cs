@@ -19,7 +19,7 @@ namespace HQ.Platform.Api.Models
 {
     public struct Version
     {
-        public long Major { get; set; }
-        public long? Minor { get; set; }
+        public ulong Major { get; set; }
+        public ulong? Minor { get; set; }
     }
 }
