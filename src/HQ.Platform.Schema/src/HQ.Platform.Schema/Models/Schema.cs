@@ -33,7 +33,8 @@ namespace HQ.Platform.Schema.Models
         public IList<string> Values { get; } = new List<string>();
         public string Description { get; set; }
 
-        [NotMapped, IgnoreDataMember] public IDictionary<string, Schema> Scope { get; set; } = new Dictionary<string, Schema>();
+        [NotMapped, IgnoreDataMember]
+        public List<KeyValuePair<string, Schema>> Scope { get; set; } = new List<KeyValuePair<string, Schema>>();
 
         [NotMapped] private string DebuggerDisplayName => this.FullTypeString();
 
