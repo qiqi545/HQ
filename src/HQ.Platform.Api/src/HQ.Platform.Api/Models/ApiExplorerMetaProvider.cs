@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using HQ.Common;
-using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -30,28 +29,42 @@ namespace HQ.Platform.Api.Models
 
         public void Populate(string baseUri, MetaCollection collection)
         {
-            var descriptions = _explorer.ApiDescriptionGroups.Items.SelectMany(x => x.Items);
-            var endpointsByController = descriptions.GroupBy(x => ((ControllerActionDescriptor)x.ActionDescriptor));
+            var foldersByType = new Dictionary<TypeInfo, MetaFolder>();
+            var foldersByGroupName = new Dictionary<string, List<MetaFolder>>();
 
-            var allFolders = new Dictionary<TypeInfo, MetaFolder>();
-            
             var rootVersion = _explorer.ApiDescriptionGroups.Version;
 
-            //
+            var groupNames = _explorer.ApiDescriptionGroups.Items.Where(x => !string.IsNullOrWhiteSpace(x.GroupName))
+                .SelectMany(x => x.GroupName.Contains(",") ? x.GroupName.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
+                : new[] {x.GroupName}).Distinct().ToList();
+
+            var groupFolders = groupNames.Select(x => new MetaFolder
+            {
+                name = x,
+                description = new MetaDescription {content = "", type = "", version = null},
+                variable = new List<dynamic>(),
+                item = new List<MetaItem>(),
+                @event = new List<dynamic>(),
+                auth = null,
+                protocolProfileBehavior = new { }
+            }).ToDictionary(k => k.name, v => v);
+
             // Map all folders:
-            foreach (ApiDescriptionGroup descriptionGroup in _explorer.ApiDescriptionGroups.Items)
+            foreach (var descriptionGroup in _explorer.ApiDescriptionGroups.Items)
             {
                 var groupName = descriptionGroup.GroupName;
 
-                foreach (ApiDescription description in descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
+                foreach (var description in descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
                 {
                     var controllerDescriptor = (ControllerActionDescriptor) description.ActionDescriptor;
                     var controllerType = controllerDescriptor.ControllerTypeInfo;
                     var controllerName = ResolveControllerName(controllerType);
 
-                    if (!allFolders.TryGetValue(controllerType, out var folder))
+                    var item = CreateOperationMetaItem(baseUri, description);
+
+                    if (!foldersByType.TryGetValue(controllerType, out var folder))
                     {
-                        allFolders.Add(controllerType, folder = new MetaFolder
+                        foldersByType.Add(controllerType, folder = new MetaFolder
                         {
                             name = controllerName,
                             description = new MetaDescription
@@ -68,54 +81,20 @@ namespace HQ.Platform.Api.Models
                         });
                     }
 
-                    var url = $"{baseUri}/{description.RelativePath}";
-                    var item = new MetaItem
-                    {
-                        id = Guid.NewGuid(),
-                        name = description.RelativePath,
-                        description = new MetaDescription
-                        {
-                            content = "",
-                            type = Constants.MediaTypes.Markdown,
-                            version = null
-                        },
-                        variable = new List<dynamic>(),
-                        @event = new List<dynamic>(),
-                        request = new MetaOperation
-                        {
-                            url = url,
-                            auth = ResolveOperationAuth(description),
-                            proxy = new { },
-                            certificate = new { },
-                            method = description.HttpMethod,
-                            description = new MetaDescription
-                            {
-                                content = "",
-                                type = Constants.MediaTypes.Markdown,
-                                version = null
-                            },
-                            header = new List<MetaHeader>
-                            {
-                                new MetaHeader
-                                {
-                                    disabled = false,
-                                    description = new MetaDescription
-                                    {
-                                        content = "",
-                                        type = Constants.MediaTypes.Markdown,
-                                        version = null
-                                    },
-                                    key = "Content-Type",
-                                    value = "application/json"
-                                }
-                            },
-                            body = default
-                        },
-                        response = new List<dynamic>(),
-                        protocolProfileBehavior = new { }
-                    };
-
                     folder.item.Add(item);
+
+                    if (groupName == null)
+                        continue;
+
+                    var groups = groupName.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var group in groups)
+                    {
+                        if(!foldersByGroupName.TryGetValue(group, out var list))
+                            foldersByGroupName.Add(group, list = new List<MetaFolder>());
+                        if (list.Contains(folder))
+                            continue;
+                        list.Add(folder);
+                    }
                 }
             }
 
@@ -123,7 +102,7 @@ namespace HQ.Platform.Api.Models
             // Create folder hierarchy:
             var roots = new List<MetaFolder>();
             var categories = new Dictionary<MetaCategoryAttribute, List<MetaFolder>>();
-            foreach (var folder in allFolders)
+            foreach (var folder in foldersByType)
             {
                 var controllerType = folder.Key;
                 var category = ResolveControllerCategory(controllerType);
@@ -132,7 +111,28 @@ namespace HQ.Platform.Api.Models
                 {
                     if (!categories.TryGetValue(category, out var list))
                         categories.Add(category, list = new List<MetaFolder>());
-                    list.Add(folder.Value);
+
+                    // Does this folder belong to a group?
+                    var inGroup = false;
+                    foreach (var groupName in groupNames)
+                    {
+                        if (!foldersByGroupName[groupName].Contains(folder.Value))
+                            continue;
+
+                        var groupFolder = groupFolders[groupName];
+                        groupFolder.item.Add(folder.Value);
+
+                        if (!list.Contains(groupFolder))
+                        {
+                            list.Add(groupFolder);
+                        }
+
+                        inGroup = true;
+                        break;
+                    }
+
+                    if(!inGroup)
+                        list.Add(folder.Value);
                 }
                 else
                 {
@@ -141,10 +141,11 @@ namespace HQ.Platform.Api.Models
             }
 
             //
-            // Add folder tree:
+            // Add category folders:
             foreach (var entry in categories)
             {
                 var category = entry.Key;
+
                 var categoryFolder = new MetaFolder
                 {
                     name = category.Name,
@@ -159,10 +160,12 @@ namespace HQ.Platform.Api.Models
                     @event = new List<dynamic>(),
                     protocolProfileBehavior = new { }
                 };
+
                 foreach (var subFolder in entry.Value.OrderBy(x => x.name))
                     categoryFolder.item.Add(subFolder);
-                var categoryAuth = categoryFolder.item.Where(x => !string.IsNullOrWhiteSpace(x.request?.auth)).Select(x => x.request.auth).Distinct();
-                categoryFolder.auth = string.Join(",", categoryAuth);
+
+                categoryFolder.auth = ResolveCategoryAuth(categoryFolder);
+
                 collection.item.Add(categoryFolder);
             }
 
@@ -172,6 +175,73 @@ namespace HQ.Platform.Api.Models
             {
                 collection.item.Add(folder);
             }
+
+            //
+            // Change group name folder meta:
+            foreach (var groupFolder in groupFolders)
+            {
+                var name = groupFolder.Value.name;
+                groupFolder.Value.name = $"Revision {name}";
+            }
+        }
+        
+        private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description)
+        {
+            var url = $"{baseUri}/{description.RelativePath}";
+            var item = new MetaItem
+            {
+                id = Guid.NewGuid(),
+                name = description.RelativePath,
+                description = new MetaDescription
+                {
+                    content = "",
+                    type = Constants.MediaTypes.Markdown,
+                    version = null
+                },
+                variable = new List<dynamic>(),
+                @event = new List<dynamic>(),
+                request = new MetaOperation
+                {
+                    url = url,
+                    auth = ResolveOperationAuth(description),
+                    proxy = new { },
+                    certificate = new { },
+                    method = description.HttpMethod,
+                    description = new MetaDescription
+                    {
+                        content = "",
+                        type = Constants.MediaTypes.Markdown,
+                        version = null
+                    },
+                    header = new List<MetaHeader>
+                    {
+                        new MetaHeader
+                        {
+                            disabled = false,
+                            description = new MetaDescription
+                            {
+                                content = "",
+                                type = Constants.MediaTypes.Markdown,
+                                version = null
+                            },
+                            key = Constants.HttpHeaders.ContentType,
+                            value = Constants.MediaTypes.Json
+                        }
+                    },
+                    body = default
+                },
+                response = new List<dynamic>(),
+                protocolProfileBehavior = new { }
+            };
+            return item;
+        }
+        
+        private static string ResolveCategoryAuth(MetaFolder categoryFolder)
+        {
+            var categoryAuth = categoryFolder.item.Where(x => !string.IsNullOrWhiteSpace(x.request?.auth))
+                .Select(x => x.request.auth).Distinct();
+
+            return string.Join(",", categoryAuth);
         }
 
         private string ResolveOperationAuth(ApiDescription operation)
