@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Linq;
 using HQ.Common;
 using HQ.Data.Contracts.Attributes;
@@ -48,7 +49,26 @@ namespace HQ.Platform.Api.Models
                 return true; // developer error?
 
             // finally we can determine if this is the intended version or not
-            return version.Major == fingerprint.Major && version.Minor.GetValueOrDefault() == fingerprint.Minor;
+            var isValidForRequest = CompareMajor(version, fingerprint) && CompareMinor(version, fingerprint);
+
+            return isValidForRequest;
+        }
+
+        private static bool CompareMajor(Version version, FingerprintAttribute fingerprint)
+        {
+            return MostlyEqual(version.Major, fingerprint.Major);
+        }
+
+        private static bool CompareMinor(Version version, FingerprintAttribute fingerprint)
+        {
+            return MostlyEqual(version.Minor.GetValueOrDefault(), fingerprint.Minor);
+        }
+
+        private static bool MostlyEqual(ulong version, ulong fingerprint)
+        {
+            // In case storage is using IEEE 754 (like CosmosDB), we need to compare versus an epsilon
+            var delta = Math.Abs((long) (version - fingerprint));
+            return delta <= 100;
         }
     }
 }
