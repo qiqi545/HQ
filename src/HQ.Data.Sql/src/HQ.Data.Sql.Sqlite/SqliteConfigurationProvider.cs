@@ -14,6 +14,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using Dapper;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +32,9 @@ namespace HQ.Data.Sql.Sqlite
 
         public override void Set(string key, string value)
         {
+            if (TryGet(key, out var previousValue) && value == previousValue)
+                return;
+
             using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
             {
                 db.Open();
@@ -41,6 +45,9 @@ namespace HQ.Data.Sql.Sqlite
                 t.Commit();
             }
             Data[key] = value;
+
+            if (_source.ReloadOnChange)
+                OnReload();
         }
 
         public override void Load()
@@ -49,7 +56,7 @@ namespace HQ.Data.Sql.Sqlite
             using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
             {
                 db.Open();
-                var data = db.Query<KeyValuePair<string, string>>(GetAll);
+                var data = db.Query<ConfigurationRow>(GetAll);
                 foreach (var item in data)
                     Data[item.Key] = item.Value;
             }
@@ -57,11 +64,20 @@ namespace HQ.Data.Sql.Sqlite
                 OnReload();
         }
 
+        [DebuggerDisplay("{Key} = {Value}")]
+        private struct ConfigurationRow
+        {
+#pragma warning disable 649
+            public string Key;
+            public string Value;
+#pragma warning restore 649
+        }
+
         #region SQL
 
-        private const string GetAll = "SELECT 'Key', 'Value' FROM 'Configuration'";
+        private const string GetAll = "SELECT * FROM 'Configuration'";
         private const string Update = "UPDATE 'Configuration' SET 'Value' = @Value WHERE 'Key' = @Key;";
-        private const string Insert = "INSERT INTO 'Configuration' ('Key','Value') VALUES (@Key,@Value);";
+        private const string Insert = "INSERT INTO 'Configuration' ('Key','Value') VALUES (@Key, @Value);";
 
         #endregion
     }

@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
@@ -23,31 +24,33 @@ namespace HQ.Data.Sql.Sqlite
 {
     public static class SqliteConfigurationExtensions
     {
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, optional: false, reloadOnChange: false);
+            return AddSqlite(builder, provider: null, path: path, optional: false, reloadOnChange: false, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: false);
+            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: false, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: reloadOnChange);
+            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: reloadOnChange, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool optional, bool reloadOnChange)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool optional, bool reloadOnChange, IConfiguration configSeed)
         {
             if (provider == null && Path.IsPathRooted(path))
             {
                 provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
                 path = Path.GetFileName(path);
             }
+
             var source = new SqliteConfigurationSource(path)
             {
-                ReloadOnChange = reloadOnChange
+                ReloadOnChange = reloadOnChange,
+                ConfigSeed = configSeed
                 // FileProvider = provider,
                 // Optional = optional
             };

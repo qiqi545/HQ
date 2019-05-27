@@ -13,6 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using Dapper;
@@ -23,8 +24,11 @@ namespace HQ.Data.Sql.Sqlite
 {
     public class SqliteConfigurationSource : IConfigurationSource
     {
-        public SqliteConfigurationSource(string dataFilePath)
+        private readonly IConfiguration _configSeed;
+
+        public SqliteConfigurationSource(string dataFilePath, IConfiguration configSeed = null)
         {
+            _configSeed = configSeed;
             DataFilePath = dataFilePath;
             DataDirectoryPath = new FileInfo(DataFilePath).Directory?.FullName;
             DataFileName = Path.GetFileName(DataFilePath);
@@ -35,6 +39,9 @@ namespace HQ.Data.Sql.Sqlite
         public string DataFileName { get; }
         public bool ReloadOnChange { get; set; }
 
+        public IConfiguration ConfigSeed { get; set; }
+        public SeedStrategy SeedStrategy { get; set; }
+
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
             if (DataDirectoryPath != null)
@@ -44,12 +51,34 @@ namespace HQ.Data.Sql.Sqlite
             {
                 using (var db = new SqliteConnection($"Data Source={DataFilePath}"))
                 {
+                    db.Open();
+
                     db.Execute(@"
 CREATE TABLE IF NOT EXISTS 'Configuration'
 (  
     'Key' VARCHAR(128) NOT NULL,
-    'Value' VARCHAR(255) NOT NULL
+    'Value' VARCHAR(255) NOT NULL,
+    UNIQUE(Key)
 );");
+                    if (ConfigSeed != null)
+                    {
+                        var t = db.BeginTransaction();
+
+                        switch (SeedStrategy)
+                        {
+                            case SeedStrategy.InsertIfNotExists:
+                                foreach (var entry in ConfigSeed.AsEnumerable())
+                                {
+                                    db.Execute("INSERT OR IGNORE INTO 'Configuration' ('Key', 'Value') VALUES (@Key, @Value)",
+                                        new { entry.Key, entry.Value }, t);
+                                }
+                                break;
+                            default:
+                                throw new ArgumentOutOfRangeException();
+                        }
+                        
+                        t.Commit();
+                    }
                 }
             }
             catch (SqliteException e)
