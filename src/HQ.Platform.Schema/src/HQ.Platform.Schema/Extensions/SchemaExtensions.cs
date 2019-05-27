@@ -44,44 +44,7 @@ namespace HQ.Platform.Schema.Extensions
         {
             return $"{schema.Name.Identifier()}";
         }
-
-        public static string VersionString(this Models.Schema schema)
-        {
-            return StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append(schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
-            });
-        }
-
-        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema, IEnumerable<KeyValuePair<string, Models.Schema>> map)
-        {
-            var self = schema.FullTypeString();
-
-            foreach (var property in schema.Properties)
-            {
-                if (property.Rel != PropertyRelationship.OneToMany)
-                {
-                    continue;
-                }
-
-                var propertyTypeString = property.FullTypeString(map, true);
-
-                foreach (var entry in map)
-                {
-                    var candidate = entry.Value.FullTypeString();
-                    if (self == candidate)
-                    {
-                        continue;
-                    }
-
-                    if (candidate == propertyTypeString)
-                    {
-                        yield return entry.Value;
-                    }
-                }
-            }
-        }
-
+        
         public static SelfEnumerable<Models.Schema> ToTopologicalOrder(this IReadOnlyCollection<Models.Schema> schemas)
         {
             var edges = new List<Tuple<Models.Schema, PropertyRelationship, Models.Schema>>();
