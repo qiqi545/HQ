@@ -28,9 +28,6 @@ namespace HQ.Platform.Security.Configuration
         public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
         public WebServerOptions WebServer { get; set; } = new WebServerOptions();
         public CorsOptions Cors { get; set; }
-
-        public HttpStatusCode? ForbidStatusCode { get; set; } = HttpStatusCode.Forbidden;
-
         public SecurityOptions() : this(false) { }
 
         public SecurityOptions(bool forBinding = false)

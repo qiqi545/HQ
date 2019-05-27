@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Net;
 using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
@@ -22,6 +23,7 @@ namespace HQ.Platform.Api.Configuration
     public class MultiTenancyOptions : FeatureToggle
     {
         public bool RequireTenant { get; set; } = false;
+        public int TenantRequiredStatusCode = (int)HttpStatusCode.NotFound;
         public string DefaultTenantId { get; set; } = "0";
         public string DefaultTenantName { get; set; } = Constants.MultiTenancy.DefaultTenantName;
         public string TenantHeader { get; set; } = Constants.MultiTenancy.TenantHeader;

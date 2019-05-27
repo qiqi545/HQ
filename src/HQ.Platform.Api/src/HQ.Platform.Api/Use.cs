@@ -325,7 +325,7 @@ namespace HQ.Platform.Api
                     }
                     else
                     {
-                        c.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                        c.Response.StatusCode = o.TenantRequiredStatusCode;
                         return;
                     }
                 }
