@@ -26,14 +26,6 @@ namespace HQ.Platform.Schema.Extensions
 {
     public static class SchemaExtensions
     {
-        public static string Prefix(this Models.Schema schema, string ns = null)
-        {
-            return StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
-            });
-        }
-
         public static string Label(this Models.Schema schema, string ns = null)
         {
             return schema?.Name?.Label();
