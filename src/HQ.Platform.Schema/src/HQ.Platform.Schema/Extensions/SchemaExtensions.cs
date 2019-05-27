@@ -101,7 +101,9 @@ namespace HQ.Platform.Schema.Extensions
                         continue;
 
                     // we might have specified a relationship to an older schema that's not in the revision set
-                    if (!schema.Scope.TryGetValue(property.From, out var dependsOn))
+                    // (note that if we have a relationship schema in the revision set with this name, we assume it's a request to map to the version in the set)
+                    var dependsOn = schema.Scope.FirstOrDefault(x => x.Key.Equals(property.From, StringComparison.OrdinalIgnoreCase)).Value;
+                    if (dependsOn == null)
                         continue;
 
                     // if we have the inverse of this already, don't add it as an edge
