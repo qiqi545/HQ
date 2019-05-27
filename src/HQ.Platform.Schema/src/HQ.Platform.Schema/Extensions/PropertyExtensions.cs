@@ -36,7 +36,7 @@ namespace HQ.Platform.Schema.Extensions
             return property?.Name?.Label();
         }
 
-        public static string FullTypeString(this Property property, IDictionary<string, Models.Schema> map,
+        public static string FullTypeString(this Property property, IEnumerable<KeyValuePair<string, Models.Schema>> map,
             bool parentOnly = false)
         {
             switch (property.Type)
@@ -83,7 +83,7 @@ namespace HQ.Platform.Schema.Extensions
             }
         }
 
-        internal static string GetDynamicTypeString(this Property property, IDictionary<string, Models.Schema> map,
+        internal static string GetDynamicTypeString(this Property property, IEnumerable<KeyValuePair<string, Models.Schema>> map,
             bool parentOnly = false)
         {
             switch (property.Rel)

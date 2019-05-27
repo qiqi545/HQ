@@ -61,7 +61,7 @@ namespace HQ.Platform.Schema.Extensions
             });
         }
 
-        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema, Dictionary<string, Models.Schema> map)
+        public static IEnumerable<Models.Schema> GetOneToMany(this Models.Schema schema, IEnumerable<KeyValuePair<string, Models.Schema>> map)
         {
             var self = schema.FullTypeString();
 

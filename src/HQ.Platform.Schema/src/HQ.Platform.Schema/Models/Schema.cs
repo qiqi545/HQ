@@ -40,9 +40,9 @@ namespace HQ.Platform.Schema.Models
         public string Name { get; set; }
         public string Namespace { get; set; }
 
-        public IDictionary<string, Schema> GetMap(string ns)
+        public IEnumerable<KeyValuePair<string, Schema>> GetMap()
         {
-            return Scope.ToDictionary(k => k.Key, v => v.Value);
+            return Scope;
         }
 
         public bool Equals(Schema other)
