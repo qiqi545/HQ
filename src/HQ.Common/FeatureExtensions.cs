@@ -27,14 +27,14 @@ namespace HQ.Common
     public static class FeatureExtensions
     {
         public static bool FeatureEnabled<TFeature, TOptions>(this HttpContext context, out TFeature feature)
-            where TFeature : FeatureToggle
+            where TFeature : class, IFeatureToggle
             where TOptions : class, new()
         {
             return context.RequestServices.FeatureEnabled<TFeature, TOptions>(out feature);
         }
 
         public static bool FeatureEnabled<TFeature, TOptions>(this IApplicationBuilder appBuilder, out TFeature feature)
-            where TFeature : FeatureToggle
+            where TFeature : class, IFeatureToggle
             where TOptions : class, new()
         {
             return appBuilder.ApplicationServices.FeatureEnabled<TFeature, TOptions>(out feature);
@@ -42,7 +42,8 @@ namespace HQ.Common
 
         public static bool FeatureEnabled<TFeature, TOptions>(this IServiceProvider serviceProvider,
             out TFeature feature)
-            where TFeature : FeatureToggle where TOptions : class, new()
+            where TFeature : class, IFeatureToggle
+            where TOptions : class, new()
         {
             var options = serviceProvider.GetService(typeof(IOptions<TOptions>));
             if (!(options is IOptions<TOptions> o))
