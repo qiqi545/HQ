@@ -73,14 +73,23 @@ namespace HQ.Common.AspNetCore
 
         public static string GetInnerGenericTypeName(this Type optionsWrapperType)
         {
-            var declaringMethod = optionsWrapperType.DeclaringMethod;
+            if (!optionsWrapperType.IsGenericParameter)
+                return FallbackToGenericTypeName(optionsWrapperType);
 
-            return optionsWrapperType.IsGenericParameter && declaringMethod != null && declaringMethod.IsGenericMethod ?
-                declaringMethod.IsGenericMethod ? declaringMethod.GetGenericArguments()[0].Name :
-                declaringMethod.Name
-                : optionsWrapperType.IsGenericType
-                    ? optionsWrapperType.GetGenericArguments()[0].Name
-                    : optionsWrapperType.Name;
+            var declaringMethod = optionsWrapperType.DeclaringMethod;
+            if (declaringMethod == null)
+                return FallbackToGenericTypeName(optionsWrapperType);
+
+            return declaringMethod.IsGenericMethod
+                ? declaringMethod.GetGenericArguments()[0].Name
+                : declaringMethod.Name;
+        }
+
+        private static string FallbackToGenericTypeName(Type optionsWrapperType)
+        {
+            return optionsWrapperType.IsGenericType
+                ? optionsWrapperType.GetGenericArguments()[0].Name
+                : optionsWrapperType.Name;
         }
     }
 }
