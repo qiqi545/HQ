@@ -20,11 +20,13 @@ namespace HQ.Data.Contracts.Attributes
     [AttributeUsage(AttributeTargets.All, Inherited = false)]
     public class FingerprintAttribute : Attribute
     {
-        public FingerprintAttribute(ulong hash)
+        public FingerprintAttribute(ulong major, ulong minor = 0)
         {
-            Hash = hash;
+            Major = major;
+            Minor = minor;
         }
 
-        public ulong Hash { get; set; }
+        public ulong Major { get; set; }
+        public ulong Minor { get; set; }
     }
 }
