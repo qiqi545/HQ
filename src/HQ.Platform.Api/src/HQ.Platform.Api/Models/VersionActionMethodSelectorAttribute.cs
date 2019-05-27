@@ -68,7 +68,7 @@ namespace HQ.Platform.Api.Models
         {
             // In case storage is using IEEE 754 (like CosmosDB), we need to compare versus an epsilon
             var delta = Math.Abs((long) (version - fingerprint));
-            return delta <= 100;
+            return delta <= 1000;
         }
     }
 }
