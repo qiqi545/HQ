@@ -168,11 +168,5 @@ namespace HQ.Platform.Identity
             services.AddScoped<ITenantContextStore<TTenant>, IdentityTenantContextStore<TTenant>>();
             return services;
         }
-
-        public static IServiceCollection AddIdentityVersionContextStore(this IServiceCollection services)
-        {
-            services.AddScoped<IVersionContextStore, IdentityVersionContextStore>();
-            return services;
-        }
     }
 }
