@@ -15,8 +15,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using HQ.Platform.Schema.Models;
 
 namespace HQ.Platform.Schema.Extensions

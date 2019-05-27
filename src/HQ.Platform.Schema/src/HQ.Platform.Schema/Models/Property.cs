@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
-using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Platform.Schema.Models
 {

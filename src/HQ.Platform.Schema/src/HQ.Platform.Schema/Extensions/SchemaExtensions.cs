@@ -15,22 +15,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using HQ.Common;
-using HQ.Platform.Schema.Internal;
-using HQ.Platform.Schema.Models;
 
 namespace HQ.Platform.Schema.Extensions
 {
     public static class SchemaExtensions
     {
-        public static string Label(this Models.Schema schema, string ns = null)
-        {
-            return schema?.Name?.Label();
-        }
-
         public static string FullTypeString(this Models.Schema schema, string ns = null)
         {
             return StringBuilderPool.Scoped(sb =>
@@ -43,53 +33,6 @@ namespace HQ.Platform.Schema.Extensions
         public static string TypeString(this Models.Schema schema)
         {
             return $"{schema.Name.Identifier()}";
-        }
-        
-        public static SelfEnumerable<Models.Schema> ToTopologicalOrder(this IReadOnlyCollection<Models.Schema> schemas)
-        {
-            var edges = new List<Tuple<Models.Schema, PropertyRelationship, Models.Schema>>();
-            foreach (var schema in schemas)
-            {
-                foreach (var property in schema.Properties)
-                {
-                    if (!property.IsModel() && property.Type != PropertyType.Enum)
-                        continue;
-
-                    // we might have specified a relationship to an older schema that's not in the revision set
-                    // (note that if we have a relationship schema in the revision set with this name, we assume it's a request to map to the version in the set)
-                    var dependsOn = schema.Scope.FirstOrDefault(x => x.Key.Equals(property.From, StringComparison.OrdinalIgnoreCase)).Value;
-                    if (dependsOn == null)
-                        continue;
-
-                    // if we have the inverse of this already, don't add it as an edge
-                    bool isInverse = false;
-                    foreach (var edge in edges)
-                    {
-                        if (edge.Item1 == dependsOn)
-                        {
-                            isInverse = edge.Item2 == PropertyRelationship.OneToMany &&
-                                            property.Rel == PropertyRelationship.OneToOne ||
-                                            edge.Item2 == PropertyRelationship.OneToOne &&
-                                            property.Rel == PropertyRelationship.OneToMany;
-
-                            break;
-                        }
-                    }
-                    if (isInverse)
-                        continue;
-                    
-                    edges.Add(new Tuple<Models.Schema, PropertyRelationship, Models.Schema>(schema, property.Rel, dependsOn));
-                }
-            }
-
-            var enumerable = edges.Select(x => new Tuple<Models.Schema, Models.Schema>(x.Item1, x.Item3)).ToList();
-            var sorted = TopologicalSorter<Models.Schema>.Sort(schemas, enumerable);
-            if (sorted == null)
-            {
-                throw new InvalidOperationException("Schema collection has at least one cycle.");
-            }
-
-            return sorted.Enumerate();
         }
     }
 }
