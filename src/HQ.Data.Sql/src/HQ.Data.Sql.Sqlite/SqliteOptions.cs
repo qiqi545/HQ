@@ -19,5 +19,6 @@ namespace HQ.Data.Sql.Sqlite
 {
     public class SqliteOptions
     {
+        
     }
 }
