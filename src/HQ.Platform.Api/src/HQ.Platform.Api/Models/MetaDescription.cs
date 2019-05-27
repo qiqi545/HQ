@@ -12,6 +12,9 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
+
+using HQ.Common;
+
 namespace HQ.Platform.Api.Models
 {
     public class MetaDescription
@@ -19,5 +22,10 @@ namespace HQ.Platform.Api.Models
         public string content;
         public string type;
         public string version;
+
+        public static MetaDescription PlainText(string value)
+        {
+            return new MetaDescription {content = value, type = Constants.MediaTypes.PlainText, version = null};
+        }
     }
 }

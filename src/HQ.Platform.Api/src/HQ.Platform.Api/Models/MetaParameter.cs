@@ -14,7 +14,7 @@
 #endregion
 namespace HQ.Platform.Api.Models
 {
-    public class MetaHeader
+    public class MetaParameter
     {
         public bool disabled { get; set; }
         public MetaDescription description { get; set; }

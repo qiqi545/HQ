@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Platform.Api.Attributes;
+using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@ namespace HQ.Platform.Api.Models
 {
     internal class ApiExplorerMetaProvider : IMetaProvider
     {
+        private readonly IOptionsMonitor<PlatformApiOptions> _options;
         private readonly IApiDescriptionGroupCollectionProvider _explorer;
         private readonly IServiceProvider _serviceProvider;
 
-        public ApiExplorerMetaProvider(IApiDescriptionGroupCollectionProvider apiExplorer, IServiceProvider serviceProvider)
+        public ApiExplorerMetaProvider(IApiDescriptionGroupCollectionProvider apiExplorer, IServiceProvider serviceProvider, IOptionsMonitor<PlatformApiOptions> options)
         {
+            _options = options;
             _explorer = apiExplorer;
             _serviceProvider = serviceProvider;
         }
@@ -180,8 +183,29 @@ namespace HQ.Platform.Api.Models
             // Change group name folder meta:
             foreach (var groupFolder in groupFolders)
             {
-                var name = groupFolder.Value.name;
-                groupFolder.Value.name = $"Revision {name}";
+                var revisionName = groupFolder.Value.name;
+                groupFolder.Value.name = $"Revision {revisionName}";
+
+                if (_options.CurrentValue.Versioning.EnableVersionParameter)
+                {
+                    foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
+                    {
+                        foreach (var item in objectGroup.item)
+                        {
+                            item.request.url.query = new[]
+                            {
+                                new MetaParameter
+                                {
+                                    key = _options.CurrentValue.Versioning.VersionParameter,
+                                    value = revisionName,
+                                    description = MetaDescription.PlainText("Sets the version revision number for this API request.")
+                                }
+                            };
+                        }
+                    }
+                }
+
+                
             }
         }
         
@@ -202,7 +226,7 @@ namespace HQ.Platform.Api.Models
                 @event = new List<dynamic>(),
                 request = new MetaOperation
                 {
-                    url = url,
+                    url = MetaUrl.Raw(url),
                     auth = ResolveOperationAuth(description),
                     proxy = new { },
                     certificate = new { },
@@ -213,9 +237,9 @@ namespace HQ.Platform.Api.Models
                         type = Constants.MediaTypes.Markdown,
                         version = null
                     },
-                    header = new List<MetaHeader>
+                    header = new List<MetaParameter>
                     {
-                        new MetaHeader
+                        new MetaParameter
                         {
                             disabled = false,
                             description = new MetaDescription

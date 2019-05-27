@@ -19,13 +19,13 @@ namespace HQ.Platform.Api.Models
 {
     public class MetaOperation
     {
-        public string url { get; set; }
+        public MetaUrl url { get; set; }
         public string auth { get; set; }
         public object proxy { get; set; }
         public object certificate { get; set; }
         public string method { get; set; }
         public MetaDescription description { get; set; }
-        public List<MetaHeader> header { get; set; }
+        public List<MetaParameter> header { get; set; }
         public object body { get; set; }
     }
 }
