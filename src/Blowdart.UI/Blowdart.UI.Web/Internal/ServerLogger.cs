@@ -30,7 +30,8 @@ namespace Blowdart.UI.Web.Internal
         {
             if (!IsEnabled(logLevel))
                 return;
-            _context.Clients.All.SendAsync(MessageTypes.Log, new LogMessage<TState>(logLevel, eventId, state, exception, formatter));
+            var message = new LogMessage<TState>(logLevel, eventId, state, exception, formatter);
+            _context.Clients.All.SendAsync(MessageTypes.Log, message);
         }
     }
 }
