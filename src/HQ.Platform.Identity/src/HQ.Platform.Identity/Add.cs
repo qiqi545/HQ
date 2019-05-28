@@ -48,7 +48,8 @@ namespace HQ.Platform.Identity
             };
         }
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services, IConfiguration configuration)
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+            IConfiguration configuration)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
@@ -85,7 +86,8 @@ namespace HQ.Platform.Identity
             var cookiesBuilder = authBuilder.AddIdentityCookies(o => { });
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(
+            this IServiceCollection services,
             IConfiguration configuration)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
@@ -94,11 +96,13 @@ namespace HQ.Platform.Identity
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
-            
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind, configuration.Bind);
+
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind,
+                configuration.Bind);
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(
+            this IServiceCollection services,
             Action<IdentityOptions> configureIdentity = null,
             Action<IdentityOptionsExtended> configureIdentityExtended = null)
             where TUser : IdentityUserExtended<TKey>
@@ -128,10 +132,14 @@ namespace HQ.Platform.Identity
             });
 
             if (configureIdentityExtended != null)
+            {
                 services.Configure(configureIdentityExtended);
+            }
 
             if (configureIdentity != null)
+            {
                 services.Configure(configureIdentity);
+            }
 
             identityBuilder.AddDefaultTokenProviders();
 

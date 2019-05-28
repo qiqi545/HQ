@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -34,7 +36,8 @@ namespace HQ.Platform.Identity.Services
         private readonly IQueryableProvider<TTenant> _queryableProvider;
         private readonly TenantManager<TTenant, TUser, TKey> _tenantManager;
 
-        public TenantService(TenantManager<TTenant, TUser, TKey> tenantManager, IQueryableProvider<TTenant> queryableProvider)
+        public TenantService(TenantManager<TTenant, TUser, TKey> tenantManager,
+            IQueryableProvider<TTenant> queryableProvider)
         {
             _tenantManager = tenantManager;
             _queryableProvider = queryableProvider;
@@ -50,7 +53,7 @@ namespace HQ.Platform.Identity.Services
 
         public async Task<Operation<TTenant>> CreateAsync(CreateTenantModel model)
         {
-            var tenant = (TTenant)FormatterServices.GetUninitializedObject(typeof(TTenant));
+            var tenant = (TTenant) FormatterServices.GetUninitializedObject(typeof(TTenant));
             tenant.Name = model.Name;
             tenant.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
@@ -68,7 +71,9 @@ namespace HQ.Platform.Identity.Services
         {
             var operation = await FindByIdAsync(id);
             if (!operation.Succeeded)
+            {
                 return operation;
+            }
 
             var deleted = await _tenantManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
@@ -78,7 +83,8 @@ namespace HQ.Platform.Identity.Services
         {
             var tenant = await _tenantManager.FindByIdAsync(id);
             return tenant == null
-                ? new Operation<TTenant>(new Error(ErrorEvents.NotFound, ErrorStrings.TenantNotFound, HttpStatusCode.NotFound))
+                ? new Operation<TTenant>(new Error(ErrorEvents.NotFound, ErrorStrings.TenantNotFound,
+                    HttpStatusCode.NotFound))
                 : new Operation<TTenant>(tenant);
         }
 

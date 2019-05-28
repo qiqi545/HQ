@@ -15,18 +15,24 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public interface IApplicationService<TApplication>
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
+        Task<Operation<IEnumerable<TApplication>>> GetAsync();
+        Task<Operation<TApplication>> CreateAsync(CreateApplicationModel model);
+        Task<Operation> UpdateAsync(TApplication application);
+        Task<Operation> DeleteAsync(string id);
 
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        Task<Operation<TApplication>> FindByIdAsync(string id);
+        Task<Operation<TApplication>> FindByNameAsync(string name);
+
+        Task<Operation<IEnumerable<TApplication>>> FindByPhoneNumberAsync(string phoneNumber);
+        Task<Operation<IEnumerable<TApplication>>> FindByEmailAsync(string email);
+        Task<Operation<IEnumerable<TApplication>>> FindByUserNameAsync(string username);
     }
 }

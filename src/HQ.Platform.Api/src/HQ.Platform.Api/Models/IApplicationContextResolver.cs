@@ -15,18 +15,13 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Api.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public interface IApplicationContextResolver<TApplication> where TApplication : class
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
-
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        Task<ApplicationContext<TApplication>> ResolveAsync(HttpContext http);
     }
 }

@@ -32,8 +32,8 @@ using Microsoft.AspNetCore.Identity;
 namespace HQ.Platform.Identity.Services
 {
     public class UserService<TUser, TKey> : IUserService<TUser>
-       where TUser : IdentityUserExtended<TKey>
-       where TKey : IEquatable<TKey>
+        where TUser : IdentityUserExtended<TKey>
+        where TKey : IEquatable<TKey>
     {
         private readonly IQueryableProvider<TUser> _queryableProvider;
         private readonly UserManager<TUser> _userManager;
@@ -54,7 +54,7 @@ namespace HQ.Platform.Identity.Services
 
         public async Task<Operation<TUser>> CreateAsync(CreateUserModel model)
         {
-            var user = (TUser)FormatterServices.GetUninitializedObject(typeof(TUser));
+            var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
             user.PhoneNumber = model.PhoneNumber;
             user.Email = model.Email;
             user.UserName = model.UserName;
@@ -76,7 +76,9 @@ namespace HQ.Platform.Identity.Services
         {
             var operation = await FindByIdAsync(id);
             if (!operation.Succeeded)
+            {
                 return operation;
+            }
 
             var deleted = await _userManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
@@ -88,7 +90,8 @@ namespace HQ.Platform.Identity.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             return user == null
-                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.UserNotFound, HttpStatusCode.NotFound))
+                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.UserNotFound,
+                    HttpStatusCode.NotFound))
                 : new Operation<TUser>(user);
         }
 

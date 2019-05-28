@@ -26,7 +26,6 @@ using HQ.Common.AspNetCore;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
-using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 

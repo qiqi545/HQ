@@ -16,17 +16,17 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public interface IApplicationValidator<TApplication, TUser, TKey>
+        where TApplication : IdentityApplication<TKey>
+        where TUser : IdentityUserExtended<TKey>
+        where TKey : IEquatable<TKey>
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
-
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        Task<IdentityResult> ValidateAsync(ApplicationManager<TApplication, TUser, TKey> manager,
+            TApplication application);
     }
 }

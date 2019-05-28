@@ -28,7 +28,9 @@ namespace HQ.Platform.Identity.Extensions
         {
             var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
             if (security?.Value?.Claims != null)
+            {
                 return services.TryGetClaim(security.Value.Claims.TenantIdClaim, out tenantId);
+            }
 
             tenantId = default;
             return false;
@@ -38,7 +40,9 @@ namespace HQ.Platform.Identity.Extensions
         {
             var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
             if (security?.Value?.Claims != null)
+            {
                 return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
+            }
 
             tenantName = default;
             return false;
@@ -61,7 +65,7 @@ namespace HQ.Platform.Identity.Extensions
                 return false;
             }
 
-            value = (TKey)Convert.ChangeType(claim.Value, typeof(TKey));
+            value = (TKey) Convert.ChangeType(claim.Value, typeof(TKey));
             return true;
         }
     }

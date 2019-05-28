@@ -16,17 +16,25 @@
 #endregion
 
 using System;
+using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public class IdentityApplication : IdentityApplication<string>
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
     }
 
-    public class IdentityUserExtended : IdentityUserExtended<string>
+    public class IdentityApplication<TKey> : IApplication<TKey>
     {
+        [ProtectedPersonalData] public virtual string NormalizedName { get; set; }
+
+        public virtual string SecurityStamp { get; set; }
+
+        public virtual string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+
+        [PersonalData] public virtual TKey Id { get; set; }
+
+        [ProtectedPersonalData] public virtual string Name { get; set; }
     }
 }

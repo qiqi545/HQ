@@ -69,16 +69,16 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attributes name="name" use="required" type="xsd:string" />
-              <xsd:attributes name="type" type="xsd:string" />
-              <xsd:attributes name="mimetype" type="xsd:string" />
-              <xsd:attributes ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attributes name="alias" type="xsd:string" />
-              <xsd:attributes name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
@@ -87,10 +87,10 @@
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
                 <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attributes name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attributes name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attributes name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attributes ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
@@ -98,7 +98,7 @@
               <xsd:sequence>
                 <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attributes name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplicationNotFound" xml:space="preserve">
+    <value>Application not found.</value>
+  </data>
+  <data name="DuplicateApplicationName" xml:space="preserve">
+    <value>Application name '{0}' is already taken.</value>
+  </data>
   <data name="DuplicatePhoneNumber" xml:space="preserve">
     <value>Phone number '{0}' is already taken.</value>
   </data>
   <data name="DuplicateTenantName" xml:space="preserve">
     <value>Tenant name '{0}' is already taken.</value>
+  </data>
+  <data name="InvalidApplicationName" xml:space="preserve">
+    <value>Application name '{0}' is invalid.</value>
   </data>
   <data name="InvalidPhoneNumber" xml:space="preserve">
     <value>Phone number '{0}' is invalid.</value>
@@ -132,11 +141,20 @@
   <data name="MustHaveEmailPhoneOrUsername" xml:space="preserve">
     <value>Must have an email address, phone number, or email address to register.</value>
   </data>
+  <data name="NullApplicationSecurityStamp" xml:space="preserve">
+    <value>Application security stamp cannot be null.</value>
+  </data>
   <data name="NullTenantSecurityStamp" xml:space="preserve">
     <value>Tenant security stamp cannot be null.</value>
   </data>
   <data name="RoleNotFound" xml:space="preserve">
     <value>Role not found.</value>
+  </data>
+  <data name="StoreNotIApplicationSecurityStampStore" xml:space="preserve">
+    <value>Store does not implement IApplicationSecurityStampStore&lt;TApplication&gt;.</value>
+  </data>
+  <data name="StoreNotIQueryableApplicationStore" xml:space="preserve">
+    <value>Store does not implement IQueryableApplicationStore&lt;TApplication&gt;.</value>
   </data>
   <data name="StoreNotIQueryableTenantStore" xml:space="preserve">
     <value>Store does not implement IQueryableTenantStore&lt;TTenant&gt;.</value>

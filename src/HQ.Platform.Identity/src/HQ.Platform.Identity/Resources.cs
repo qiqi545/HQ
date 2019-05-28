@@ -21,6 +21,7 @@ namespace HQ.Platform.Identity
 {
     internal sealed class Resources
     {
+        /// <summary></summary>
         internal static string FormatInvalidPhoneNumber(string phoneNumber)
         {
             return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidPhoneNumber, phoneNumber);
@@ -32,6 +33,7 @@ namespace HQ.Platform.Identity
             return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicatePhoneNumber, phoneNumber);
         }
 
+        /// <summary></summary>
         internal static string FormatInvalidTenantName(string tenantName)
         {
             return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidTenantName, tenantName);
@@ -41,6 +43,18 @@ namespace HQ.Platform.Identity
         internal static string FormatDuplicateTenantName(string tenantName)
         {
             return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicateTenantName, tenantName);
+        }
+
+        /// <summary></summary>
+        internal static string FormatInvalidApplicationName(string ApplicationName)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.InvalidApplicationName, ApplicationName);
+        }
+
+        /// <summary></summary>
+        internal static string FormatDuplicateApplicationName(string ApplicationName)
+        {
+            return string.Format(CultureInfo.CurrentCulture, ErrorStrings.DuplicateApplicationName, ApplicationName);
         }
     }
 }

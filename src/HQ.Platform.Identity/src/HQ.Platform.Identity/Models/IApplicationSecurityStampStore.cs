@@ -15,18 +15,15 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Identity;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public interface IApplicationSecurityStampStore<TApplication> : IApplicationStore<TApplication>
+        where TApplication : class
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
-
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        Task SetSecurityStampAsync(TApplication application, string stamp, CancellationToken cancellationToken);
+        Task<string> GetSecurityStampAsync(TApplication application, CancellationToken cancellationToken);
     }
 }

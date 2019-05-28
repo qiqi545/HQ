@@ -25,8 +25,7 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(InvalidPhoneNumber),
-                Description = Resources.FormatInvalidPhoneNumber(phoneNumber)
+                Code = nameof(InvalidPhoneNumber), Description = Resources.FormatInvalidPhoneNumber(phoneNumber)
             };
         }
 
@@ -34,8 +33,7 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(DuplicatePhoneNumber),
-                Description = Resources.FormatDuplicatePhoneNumber(phoneNumber)
+                Code = nameof(DuplicatePhoneNumber), Description = Resources.FormatDuplicatePhoneNumber(phoneNumber)
             };
         }
 
@@ -43,8 +41,7 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(MustHaveEmailPhoneOrUsername),
-                Description = ErrorStrings.MustHaveEmailPhoneOrUsername
+                Code = nameof(MustHaveEmailPhoneOrUsername), Description = ErrorStrings.MustHaveEmailPhoneOrUsername
             };
         }
 
@@ -52,8 +49,7 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(DuplicateTenantName),
-                Description = Resources.FormatInvalidTenantName(tenantName)
+                Code = nameof(DuplicateTenantName), Description = Resources.FormatInvalidTenantName(tenantName)
             };
         }
 
@@ -61,8 +57,27 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(DuplicateTenantName),
-                Description = Resources.FormatDuplicateTenantName(tenantName)
+                Code = nameof(DuplicateTenantName), Description = Resources.FormatDuplicateTenantName(tenantName)
+            };
+        }
+
+        public static IdentityError InvalidApplicationName(this IdentityErrorDescriber describer,
+            string ApplicationName)
+        {
+            return new IdentityError
+            {
+                Code = nameof(DuplicateApplicationName),
+                Description = Resources.FormatInvalidApplicationName(ApplicationName)
+            };
+        }
+
+        public static IdentityError DuplicateApplicationName(this IdentityErrorDescriber describer,
+            string ApplicationName)
+        {
+            return new IdentityError
+            {
+                Code = nameof(DuplicateApplicationName),
+                Description = Resources.FormatDuplicateApplicationName(ApplicationName)
             };
         }
     }

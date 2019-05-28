@@ -19,7 +19,7 @@ namespace HQ.Platform.Identity {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ErrorStrings {
@@ -61,6 +61,24 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Application not found..
+        /// </summary>
+        internal static string ApplicationNotFound {
+            get {
+                return ResourceManager.GetString("ApplicationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application name &apos;{0}&apos; is already taken..
+        /// </summary>
+        internal static string DuplicateApplicationName {
+            get {
+                return ResourceManager.GetString("DuplicateApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phone number &apos;{0}&apos; is already taken..
         /// </summary>
         internal static string DuplicatePhoneNumber {
@@ -75,6 +93,15 @@ namespace HQ.Platform.Identity {
         internal static string DuplicateTenantName {
             get {
                 return ResourceManager.GetString("DuplicateTenantName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application name &apos;{0}&apos; is invalid..
+        /// </summary>
+        internal static string InvalidApplicationName {
+            get {
+                return ResourceManager.GetString("InvalidApplicationName", resourceCulture);
             }
         }
         
@@ -106,6 +133,15 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Application security stamp cannot be null..
+        /// </summary>
+        internal static string NullApplicationSecurityStamp {
+            get {
+                return ResourceManager.GetString("NullApplicationSecurityStamp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tenant security stamp cannot be null..
         /// </summary>
         internal static string NullTenantSecurityStamp {
@@ -120,6 +156,24 @@ namespace HQ.Platform.Identity {
         internal static string RoleNotFound {
             get {
                 return ResourceManager.GetString("RoleNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Store does not implement IApplicationSecurityStampStore&lt;TApplication&gt;..
+        /// </summary>
+        internal static string StoreNotIApplicationSecurityStampStore {
+            get {
+                return ResourceManager.GetString("StoreNotIApplicationSecurityStampStore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Store does not implement IQueryableApplicationStore&lt;TApplication&gt;..
+        /// </summary>
+        internal static string StoreNotIQueryableApplicationStore {
+            get {
+                return ResourceManager.GetString("StoreNotIQueryableApplicationStore", resourceCulture);
             }
         }
         

@@ -16,17 +16,13 @@
 #endregion
 
 using System;
-using Microsoft.AspNetCore.Identity;
+using System.Linq;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public interface IQueryableApplicationStore<TApplication> : IApplicationStore<TApplication>, IDisposable
+        where TApplication : class
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
-
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        IQueryable<TApplication> Applications { get; }
     }
 }

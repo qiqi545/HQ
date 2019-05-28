@@ -17,7 +17,6 @@
 
 using System;
 using System.Threading.Tasks;
-using HQ.Extensions.CodeGeneration;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using TypeKitchen;

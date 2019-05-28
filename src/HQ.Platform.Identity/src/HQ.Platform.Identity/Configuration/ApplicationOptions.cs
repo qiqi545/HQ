@@ -15,18 +15,11 @@
 
 #endregion
 
-using System;
-using Microsoft.AspNetCore.Identity;
-
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Identity.Configuration
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public class ApplicationOptions
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
-
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        public string AllowedApplicationNameCharacters { get; set; } =
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     }
 }

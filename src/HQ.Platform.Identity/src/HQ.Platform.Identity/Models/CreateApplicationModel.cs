@@ -15,18 +15,15 @@
 
 #endregion
 
-using System;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey> where TKey : IEquatable<TKey>
+    public class CreateApplicationModel
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
+        [Required] [ProtectedPersonalData] public string Name { get; set; }
 
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
+        public string ConcurrencyStamp { get; set; }
     }
 }
