@@ -8,8 +8,8 @@ namespace Blowdart.UI
 {
     public abstract class UiData
     {
-        public abstract TModel GetModel<TService, TModel>(string template);
-        public abstract object GetModel<TService>(string template);
+        public abstract TModel GetModel<TController, TModel>(string template);
+        public abstract object GetModel<TController>(string template);
         public abstract object GetModel(string template, Type serviceType);
         public abstract object GetModel(string template, MethodInfo method, Ui ui);
     }

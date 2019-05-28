@@ -65,13 +65,17 @@ namespace Blowdart.UI.Web
 
         public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
         {
-	        var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+			var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
-            
-            var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
-            var request = http.HttpContext.Request;
-            var requestUri = new Uri(request.GetEncodedUrl(), UriKind.Absolute);
 
+			var request = http.HttpContext.Request;
+			var requestUri = new Uri(request.GetEncodedUrl(), UriKind.Absolute);
+
+			// if we don't use the HTTP service provider, we can't resolve any scoped services!
+			serviceProvider = http.HttpContext.RequestServices;
+
+			var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
+            
             //
             // URI Resolution:
             var templateParameters = uriTemplate.GetParameters(requestUri);
@@ -146,9 +150,9 @@ namespace Blowdart.UI.Web
             {
                 foreach (var parameter in executor.MethodParameters)
                 {
-                    if (parameters.TryGetValue(parameter.Name, out var argument))
+                    if (parameters.TryGetValue(parameter.Name, out var parameterValue))
                     {
-                        if (argument is StringValues multiString)
+                        if (parameterValue is StringValues multiString)
                         {
                             if (parameter.ParameterType == typeof(string))
                             {
@@ -161,7 +165,7 @@ namespace Blowdart.UI.Web
                         }
                         else
                         {
-                            arguments.Add(argument);
+                            arguments.Add(parameterValue);
                         }
 
                         continue;
@@ -182,7 +186,16 @@ namespace Blowdart.UI.Web
                         continue;
                     }
 
-                    arguments.Add(serviceProvider.GetService(parameter.ParameterType));
+                    try
+                    {
+	                    var argument = serviceProvider.GetService(parameter.ParameterType);
+	                    arguments.Add(argument);
+					}
+                    catch (Exception exception)
+                    {
+	                    Console.WriteLine(exception);
+	                    throw;
+                    }
                 }
 
                 action.Arguments = arguments.ToArray();

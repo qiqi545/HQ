@@ -71,7 +71,16 @@ namespace Blowdart.UI
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
         }
 
-        public void Component<TComponent, TService, TModel>() 
+        public void Component<TComponent, TModel>(TModel model) where TComponent : UiComponent
+        {
+	        var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+	        if (components.TryGetValue(typeof(TComponent), out var component))
+		        component().Render(this, model);
+	        else
+		        Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
+        }
+
+		public void Component<TComponent, TController, TModel>() 
             where TComponent : UiComponent<TModel>
             where TModel : class
         {
@@ -80,7 +89,7 @@ namespace Blowdart.UI
             {
 	            var settings = _serviceProvider.GetRequiredService<UiSettings>();
 				
-				var model = Data.GetModel<TService, TModel>(settings.DefaultPageMethodName);
+				var model = Data.GetModel<TController, TModel>(settings.DefaultPageMethodName);
 
 				if (component is UiComponent<TModel> typed)
                     typed.Render(this, model);
