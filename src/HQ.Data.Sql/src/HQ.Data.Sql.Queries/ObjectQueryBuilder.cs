@@ -42,18 +42,6 @@ namespace HQ.Data.Sql.Queries
             });
         }
 
-        public static string Count<T>(this ISqlDialect dialect, FilterOptions filter = null)
-        {
-            return StringBuilderPool.Scoped(sb =>
-            {
-                // SELECT COUNT(1) FROM ...
-                sb.Append($"SELECT COUNT(1) FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
-
-                // WHERE ...
-                if (filter?.Fields.Count > 0) sb.Append($" {dialect.Where(filter)}");
-            });
-        }
-
         public static string Count<T>(this ISqlDialect dialect, IDataDescriptor descriptor, FilterOptions filter = null)
         {
             return StringBuilderPool.Scoped(sb =>

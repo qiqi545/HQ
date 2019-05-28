@@ -32,6 +32,16 @@ namespace HQ.Data.Sql.Queries
 
     partial class SqlBuilder
     {
+        public static Query Count<T>()
+        {
+            return Count(GetDescriptor<T>(), null);
+        }
+
+        public static Query Count<T>(dynamic where)
+        {
+            return Count(GetDescriptor<T>(), where);
+        }
+
         public static Query Select<T>(params Expression<Func<T, object>>[] orderBy)
         {
             return Select(GetDescriptor<T>(), null, orderBy: orderBy);
@@ -208,6 +218,13 @@ namespace HQ.Data.Sql.Queries
             return new Query(qp.sql, qp.parameters);
         }
 
+        private static Query Count(IDataDescriptor descriptor, dynamic where)
+        {
+            QueryAndParameters qp = BuildSelectQueryAndParameters(descriptor, new List<string> { Dialect.Count }, where);
+
+            return new Query(qp.sql, qp.parameters);
+        }
+
         private static Query Select<T>(IDataDescriptor descriptor, List<string> columnFilter, dynamic where, int page,
             int perPage, params Expression<Func<T, object>>[] orderBy)
         {
@@ -223,7 +240,7 @@ namespace HQ.Data.Sql.Queries
 
             return new Query(pageSql, qp.parameters);
         }
-
+        
         private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
             List<string> columnFilter, dynamic where)
         {
