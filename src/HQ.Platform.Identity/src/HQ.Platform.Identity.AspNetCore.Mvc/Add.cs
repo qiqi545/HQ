@@ -68,6 +68,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageTenants);
                     });
+                x.AddPolicy(Constants.Security.Policies.ManageApplications,
+                    b =>
+                    {
+                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                            ClaimValues.ManageApplications);
+                    });
             });
 
             services.Configure<IdentityApiOptions>(apiConfig);
