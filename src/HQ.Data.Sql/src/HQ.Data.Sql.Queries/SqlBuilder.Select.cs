@@ -227,8 +227,9 @@ namespace HQ.Data.Sql.Queries
         private static QueryAndParameters BuildSelectQueryAndParameters(IDataDescriptor descriptor,
             List<string> columnFilter, dynamic where)
         {
-            object instance = where;
+            object instance = where ?? new { };
             var accessor = ReadAccessor.Create(instance.GetType());
+
             var whereHash = accessor.AsReadOnlyDictionary(instance);
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
