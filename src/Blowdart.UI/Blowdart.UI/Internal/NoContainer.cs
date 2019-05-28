@@ -47,7 +47,7 @@ namespace Blowdart.UI.Internal
         public NoContainer(IServiceProvider fallbackProvider = null, IEnumerable<Assembly> fallbackAssemblies = null)
         {
             _fallbackProvider = fallbackProvider;
-            _fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
+            _fallbackAssemblies = (fallbackAssemblies ?? Enumerable.Empty<Assembly>()).Distinct();
         }
 
         #region Register
