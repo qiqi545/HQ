@@ -227,15 +227,25 @@ namespace HQ.Platform.Identity.Stores.Sql
                 return _queryable.UnsafeQueryable;
             }
 
-            return Task.Run(GetAllTenantsAsync, CancellationToken).Result.AsQueryable();
+            return Task.Run(() => GetAllTenantsAsync(CancellationToken), CancellationToken).Result.AsQueryable();
         }
 
-        private async Task<IEnumerable<TTenant>> GetAllTenantsAsync()
+        private async Task<IEnumerable<TTenant>> GetAllTenantsAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var query = SqlBuilder.Select<TTenant>();
             _connection.SetTypeInfo(typeof(TTenant));
             var tenants = await _connection.Current.QueryAsync<TTenant>(query.Sql, query.Parameters);
             return tenants;
+        }
+
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var query = SqlBuilder.Count<TTenant>();
+            _connection.SetTypeInfo(typeof(TTenant));
+            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+            return count;
         }
     }
 }

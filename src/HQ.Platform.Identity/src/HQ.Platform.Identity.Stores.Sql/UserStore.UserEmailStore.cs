@@ -96,5 +96,14 @@ namespace HQ.Platform.Identity.Stores.Sql
             var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
             return users;
         }
+
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var query = SqlBuilder.Count<TUser>();
+            _connection.SetTypeInfo(typeof(TUser));
+            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+            return count;
+        }
     }
 }

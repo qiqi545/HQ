@@ -25,7 +25,12 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IUserService<TUser>
+    public interface IUserService
+    {
+        Task<Operation<int>> GetCountAsync();
+    }
+
+    public interface IUserService<TUser> : IUserService
     {
         IQueryable<TUser> Users { get; }
 

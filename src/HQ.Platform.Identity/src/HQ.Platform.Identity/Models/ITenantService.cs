@@ -21,7 +21,11 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ITenantService<TTenant>
+    public interface ITenantService
+    {
+        Task<Operation<int>> GetCountAsync();
+    }
+    public interface ITenantService<TTenant> : ITenantService
     {
         Task<Operation<IEnumerable<TTenant>>> GetAsync();
         Task<Operation<TTenant>> CreateAsync(CreateTenantModel model);

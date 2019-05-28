@@ -28,6 +28,7 @@ namespace HQ.Platform.Identity.Models
 
         Task<string> GetTenantIdAsync(TTenant tenant, CancellationToken cancellationToken);
         Task<string> GetTenantNameAsync(TTenant tenant, CancellationToken cancellationToken);
+        Task<int> GetCountAsync(CancellationToken cancellationToken);
 
         Task<IdentityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken);
         Task<IdentityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken);

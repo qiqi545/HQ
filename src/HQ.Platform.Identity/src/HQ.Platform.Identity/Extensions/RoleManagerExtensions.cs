@@ -16,6 +16,8 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
+using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using TypeKitchen;
 
@@ -26,9 +28,26 @@ namespace HQ.Platform.Identity.Extensions
     /// </summary>
     public static class RoleManagerExtensions
     {
-        private static void ThrowIfDisposed<TUser>(this RoleManager<TUser> roleManager) where TUser : class
+        public static Task<int> GetCountAsync<TRole>(this RoleManager<TRole> roleManager) where TRole : class
         {
-            var accessor = ReadAccessor.Create(typeof(RoleManager<TUser>));
+            roleManager.ThrowIfDisposed();
+            if (roleManager.GetStore() is IRoleStoreExtended<TRole> extended)
+            {
+                return extended.GetCountAsync(extended.CancellationToken);
+            }
+            return null;
+        }
+
+        public static IRoleStore<TRole> GetStore<TRole>(this RoleManager<TRole> roleManager) where TRole : class
+        {
+            var accessor = ReadAccessor.Create(typeof(RoleManager<TRole>));
+            var roleStore = accessor[roleManager, "Store"];
+            return roleStore as IRoleStore<TRole>;
+        }
+
+        private static void ThrowIfDisposed<TRole>(this RoleManager<TRole> roleManager) where TRole : class
+        {
+            var accessor = ReadAccessor.Create(typeof(RoleManager<TRole>));
             var disposedField = accessor[roleManager, "_disposed"];
             if (disposedField is bool disposed && disposed)
             {

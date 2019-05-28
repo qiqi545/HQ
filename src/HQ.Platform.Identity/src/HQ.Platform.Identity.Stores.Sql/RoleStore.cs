@@ -192,15 +192,25 @@ namespace HQ.Platform.Identity.Stores.Sql
                 return _queryable.UnsafeQueryable;
             }
 
-            return Task.Run(GetAllRolesAsync, CancellationToken).Result.AsQueryable();
+            return Task.Run(() => GetAllRolesAsync(CancellationToken), CancellationToken).Result.AsQueryable();
         }
 
-        private async Task<IEnumerable<TRole>> GetAllRolesAsync()
+        private async Task<IEnumerable<TRole>> GetAllRolesAsync(CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var query = SqlBuilder.Select<TRole>(new {TenantId = _tenantId});
             _connection.SetTypeInfo(typeof(TRole));
             var roles = await _connection.Current.QueryAsync<TRole>(query.Sql, query.Parameters);
             return roles;
+        }
+
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var query = SqlBuilder.Count<TRole>();
+            _connection.SetTypeInfo(typeof(TRole));
+            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+            return count;
         }
     }
 }

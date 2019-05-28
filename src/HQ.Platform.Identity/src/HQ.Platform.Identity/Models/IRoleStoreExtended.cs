@@ -26,7 +26,7 @@ namespace HQ.Platform.Identity.Models
     public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
     {
         CancellationToken CancellationToken { get; }
-
-        Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = new CancellationToken());
+        Task<int> GetCountAsync(CancellationToken cancellationToken);
+        Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = default);
     }
 }

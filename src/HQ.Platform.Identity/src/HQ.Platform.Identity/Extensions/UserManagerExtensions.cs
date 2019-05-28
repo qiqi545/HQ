@@ -25,6 +25,16 @@ namespace HQ.Platform.Identity.Extensions
 {
     public static class UserManagerExtensions
     {
+        public static Task<int> GetCountAsync<TUser>(this UserManager<TUser> userManager) where TUser : class
+        {
+            userManager.ThrowIfDisposed();
+            if (userManager.GetStore() is IUserStoreExtended<TUser> extended)
+            {
+                return extended.GetCountAsync(extended.CancellationToken);
+            }
+            return null;
+        }
+
         public static bool SupportsSuperUser<TUser>(this UserManager<TUser> userManager) where TUser : class
         {
             userManager.ThrowIfDisposed();

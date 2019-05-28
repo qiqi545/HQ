@@ -48,6 +48,13 @@ namespace HQ.Platform.Identity.Services
 
         public IQueryable<TRole> Roles => _roleManager.Roles;
 
+        public async Task<Operation<int>> GetCountAsync()
+        {
+            var result = await _roleManager.GetCountAsync();
+            var operation = new Operation<int>(result);
+            return operation;
+        }
+
         public Task<Operation<IEnumerable<TRole>>> GetAsync()
         {
             var all = _queryableProvider.SafeAll ?? Roles;

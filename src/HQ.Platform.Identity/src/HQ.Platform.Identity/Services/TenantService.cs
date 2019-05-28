@@ -45,6 +45,13 @@ namespace HQ.Platform.Identity.Services
 
         public IQueryable<TTenant> Tenants => _tenantManager.Tenants;
 
+        public async Task<Operation<int>> GetCountAsync()
+        {
+            var result = await _tenantManager.GetCountAsync();
+            var operation = new Operation<int>(result);
+            return operation;
+        }
+
         public Task<Operation<IEnumerable<TTenant>>> GetAsync()
         {
             var all = _queryableProvider.SafeAll ?? Tenants;

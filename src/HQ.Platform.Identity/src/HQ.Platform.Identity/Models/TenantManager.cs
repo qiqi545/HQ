@@ -65,6 +65,12 @@ namespace HQ.Platform.Identity.Models
 
         protected virtual CancellationToken CancellationToken => _tenantStore.CancellationToken;
 
+        public async Task<int> GetCountAsync()
+        {
+            ThrowIfDisposed();
+            return await _tenantStore.GetCountAsync(CancellationToken);
+        }
+
         public virtual IQueryable<TTenant> Tenants
         {
             get

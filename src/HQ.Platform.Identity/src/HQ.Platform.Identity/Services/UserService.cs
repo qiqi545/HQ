@@ -46,6 +46,13 @@ namespace HQ.Platform.Identity.Services
 
         public IQueryable<TUser> Users => _userManager.Users;
 
+        public async Task<Operation<int>> GetCountAsync()
+        {
+            var result = await _userManager.GetCountAsync();
+            var operation = new Operation<int>(result);
+            return operation;
+        }
+
         public Task<Operation<IEnumerable<TUser>>> GetAsync()
         {
             var all = _queryableProvider.SafeAll ?? Users;

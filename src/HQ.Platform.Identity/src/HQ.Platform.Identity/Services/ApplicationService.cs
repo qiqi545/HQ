@@ -46,7 +46,6 @@ namespace HQ.Platform.Identity.Services
         public async Task<Operation<int>> GetCountAsync()
         {
             var result = await _applicationManager.GetCountAsync();
-            // var result = _applicationManager.Applications.Count();
             var operation = new Operation<int>(result);
             return operation;
         }

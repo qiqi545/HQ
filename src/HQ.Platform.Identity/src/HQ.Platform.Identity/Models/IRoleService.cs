@@ -23,8 +23,13 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IRoleService<TRole>
+    public interface IRoleService
     {
+        Task<Operation<int>> GetCountAsync();
+    }
+
+    public interface IRoleService<TRole> : IRoleService
+    { 
         IQueryable<TRole> Roles { get; }
 
         Task<Operation<IEnumerable<TRole>>> GetAsync();
