@@ -92,6 +92,8 @@
     <PackageReference Include="HQ" Version="1.0.70" />
     <PackageReference Include="HQ.Azure" Version="1.0.70" Condition="'$(Azure)'=='true'" />
     <PackageReference Include="HQ.Installer" Version="0.0.13" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
   </ItemGroup>
 
 </Project>

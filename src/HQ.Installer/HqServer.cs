@@ -17,20 +17,34 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection;
+using HQ.Data.Sql.Sqlite;
 using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace HQ.Installer
 {
     public static class HqServer
     {
+        private const string AppSettingsFileName = "appsettings";
+        private const string AppSettingsFileExtension = ".json";
+
+        private const string ConfigSeedFileName = "seed.json";
+        private const string SettingsDatabaseFileName = "settings.db";
+
+
         public static void Start<TStartup>(string[] args) where TStartup : class
         {
+            Masthead();
+
             Execute(args, () =>
             {
                 var builder = WebHost.CreateDefaultBuilder(args)
-                    .UseKestrel(o => { o.AddServerHeader = false; })
+                    .ConfigureHq(args)
                     .UseStartup<TStartup>();
 
                 var host = builder.Build();
@@ -53,6 +67,72 @@ namespace HQ.Installer
 |__| |__||____||_||___| |___| |_______|
 ");
             Console.ForegroundColor = color;
+        }
+
+        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args)
+        {
+            hostBuilder.ConfigureAppConfiguration((context, config) =>
+            {
+                var seedBuilder = new ConfigurationBuilder();
+
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+                {
+                    foreach (var resourceName in assembly.GetManifestResourceNames())
+                    {
+                        if (!resourceName.EndsWith(ConfigSeedFileName))
+                            continue;
+
+                        var baseNamespace = resourceName.Replace("." + ConfigSeedFileName, "");
+                        var provider = new EmbeddedFileProvider(assembly, baseNamespace);
+                        seedBuilder.AddJsonFile(o =>
+                        {
+                            o.FileProvider = provider;
+                            o.Path = ConfigSeedFileName;
+                            o.Optional = false;
+                            o.ReloadOnChange = false;
+                        });
+                    }
+                }
+
+                IConfiguration configSeed = null;
+                if (seedBuilder.Sources.Count > 0)
+                    configSeed = seedBuilder.Build();
+
+                config.AddSqlite(SettingsDatabaseFileName, false, true, configSeed);
+
+                config.AddJsonFile($"{AppSettingsFileName}.{AppSettingsFileExtension}", true, true)
+                      .AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
+
+                if (context.HostingEnvironment.IsDevelopment())
+                {
+                    var assembly = Assembly.Load(new AssemblyName(context.HostingEnvironment.ApplicationName));
+                    if (assembly != null)
+                        config.AddUserSecrets(assembly, true);
+                }
+                config.AddEnvironmentVariables();
+                if (args != null && args.Length > 0)
+                    config.AddCommandLine(args);
+            });
+
+            hostBuilder.ConfigureLogging((hostingContext, logging) =>
+            {
+                var config = hostingContext.Configuration.GetSection("Logging");
+
+                logging.AddConfiguration(config);
+                logging.AddConsole();
+                logging.AddDebug();
+                logging.AddEventSourceLogger();
+
+#if AppInsights
+                logging.AddApplicationInsights(o =>
+                {
+                    o.IncludeScopes = true;
+                    o.TrackExceptionsAsExceptionTelemetry = true;
+                });
+#endif
+            });
+
+            return hostBuilder;
         }
 
         internal static void Execute(string[] args, Action action)

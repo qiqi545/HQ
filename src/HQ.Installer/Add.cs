@@ -43,40 +43,46 @@ namespace HQ.Installer
 {
     public static class Add
     {
-        public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, DatabaseType databaseType, IConfiguration config, Action<MvcOptions> setupAction = null)
+        public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, Action<MvcOptions> setupAction = null)
         {
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             services.AddSecurityPolicies(config.GetSection("Security"));
             services.AddOperationsApi(env, config.GetSection("Ops"));
             services.AddPlatformApi(config.GetSection("Api"));
-            services.AddMultiTenancy<IdentityTenant>(config.GetSection("Api").GetSection("MultiTenancy")).AddIdentityTenantContextStore<IdentityTenant>();
-            services.AddVersioning(config.GetSection("Api").GetSection("Versioning")).AddIdentityVersionContextStore();
-
-            var identity = services
-                .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
-                    config.GetSection("Identity"));
-
+            services.AddMultiTenancy<IdentityTenant, IdentityApplication>(config.GetSection("Api").GetSection("MultiTenancy"))
+                .AddIdentityTenantContextStore<IdentityTenant>()
+                .AddIdentityApplicationContextStore<IdentityApplication>();
+            services.AddVersioning(config.GetSection("Api").GetSection("Versioning"));
             services.AddDynamicMvc(setupAction)
-               .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(
-                   config.GetSection("Identity").GetSection("Api"), config.GetSection("Security"));
+                .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(
+                    config.GetSection("Identity").GetSection("Api"), config.GetSection("Security"));
+
+            return services;
+        }
+
+        public static IServiceCollection AddBackendServices(this IServiceCollection services, DatabaseType databaseType, string connectionString, IConfiguration dbConfig, IConfiguration config)
+        {
+            var identity = services
+                .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(
+                    config.GetSection("Identity"));
 
             switch (databaseType)
             {
                 case DatabaseType.DocumentDb:
-                    identity.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
+                    identity.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
+                        connectionString, ConnectionScope.ByRequest,
+                        dbConfig);
                     break;
                 case DatabaseType.SqlServer:
-                    identity.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
+                    identity.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
+                        connectionString, ConnectionScope.ByRequest,
+                        dbConfig);
                     break;
                 case DatabaseType.Sqlite:
-                    identity.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>(
-                        config.GetConnectionString("DefaultConnection"), ConnectionScope.ByRequest,
-                        config.GetSection("DbOptions"));
+                    identity.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
+                        connectionString, ConnectionScope.ByRequest,
+                        dbConfig);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
@@ -85,7 +91,7 @@ namespace HQ.Installer
             return services;
         }
 
-        public static void AddUi(this IServiceCollection services)
+        public static void AddAdminUi(this IServiceCollection services)
         {
             UiConfig.Settings = settings =>
             {
