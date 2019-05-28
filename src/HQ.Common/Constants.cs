@@ -43,6 +43,7 @@ namespace HQ.Common
             public const string CacheArgument = "cache";
             public const string CacheKeyArgument = "cacheKey";
             public const string Tenant = "tenant";
+            public const string Application = "application";
             public const string Version = "version";
         }
 
@@ -72,6 +73,7 @@ namespace HQ.Common
             {
                 public const string SuperUserOnly = "SuperUserOnly";
                 public const string ManageTenants = "ManageTenants";
+                public const string ManageApplications = "ManageApplications";
                 public const string ManageUsers = "ManageUsers";
                 public const string ManageRoles = "ManageRoles";
             }
@@ -90,6 +92,7 @@ namespace HQ.Common
         {
             public const string DefaultTenantName = "defaultTenant";
             public const string TenantHeader = "X-Api-Tenant";
+            public const string ApplicationHeader = "X-Api-Application";
         }
 
         public static class QueryStrings
