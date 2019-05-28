@@ -39,19 +39,20 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant>(
+        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
-            where TTenant : IdentityTenant
+            where TTenant : IdentityTenant<string>
+            where TApplication : IdentityApplication<string>
         {
-            return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope,
+            return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString, scope,
                 databaseConfig);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)
@@ -59,15 +60,16 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
         {
             var configureDatabase =
                 databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>) null;
 
-            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
+            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder, connectionString, scope,
                 configureDatabase);
         }
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
+        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString,
             ConnectionScope scope = ConnectionScope.ByRequest,
@@ -76,6 +78,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
         {
             var services = identityBuilder.Services;
             services.AddSingleton<ITypeRegistry, TypeRegistry>();
@@ -107,6 +110,8 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
                         return "AspNetUsers";
                     case nameof(IdentityTenant):
                         return "AspNetTenants";
+                    case nameof(IdentityApplication):
+                        return "AspNetApplications";
                     default:
                         return s;
                 }
@@ -115,6 +120,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
             DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
             DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
+            DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
             services.AddMetrics();
             services.AddSingleton(dialect);
@@ -122,6 +128,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
+            identityBuilder.Services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
 
             var options = new SqlServerOptions();
             ConfigureAction(options);

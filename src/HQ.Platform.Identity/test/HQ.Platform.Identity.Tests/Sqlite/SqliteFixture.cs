@@ -15,7 +15,7 @@ namespace HQ.Platform.Identity.Tests.Sqlite
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, string>(options =>
+            services.AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(options =>
                 {
                     options.User.RequirePhoneNumber = false;
                     options.User.RequireEmail = false;
@@ -26,7 +26,7 @@ namespace HQ.Platform.Identity.Tests.Sqlite
                     options.Stores.CreateIfNotExists = true;
                     options.Stores.MigrateOnStartup = true;
                 })
-                .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant>($"Data Source={Guid.NewGuid()}.db",
+                .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>($"Data Source={Guid.NewGuid()}.db",
                     ConnectionScope.KeepAlive);
         }
 

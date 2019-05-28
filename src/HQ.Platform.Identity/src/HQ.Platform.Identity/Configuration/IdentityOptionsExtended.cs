@@ -21,8 +21,6 @@ namespace HQ.Platform.Identity.Configuration
 {
     public class IdentityOptionsExtended : IdentityOptions
     {
-        public bool Enabled { get; set; }
-
         public IdentityOptionsExtended() { }
 
         public IdentityOptionsExtended(IdentityOptions inner)
@@ -40,6 +38,8 @@ namespace HQ.Platform.Identity.Configuration
             SignIn = inner.SignIn;
             ClaimsIdentity = inner.ClaimsIdentity;
         }
+
+        public bool Enabled { get; set; }
 
         public IdentityApiOptions Api { get; set; } = new IdentityApiOptions();
         public new UserOptionsExtended User { get; set; } = new UserOptionsExtended();

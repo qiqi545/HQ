@@ -48,28 +48,30 @@ namespace HQ.Platform.Identity
             };
         }
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services,
             IConfiguration configuration)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             AddIdentityPreamble(services);
 
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration);
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration);
         }
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TKey>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services,
             Action<IdentityOptionsExtended> configureIdentityExtended = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             AddIdentityPreamble(services);
 
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configureIdentityExtended: o =>
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configureIdentityExtended: o =>
             {
                 configureIdentityExtended?.Invoke(o);
             });
@@ -86,28 +88,30 @@ namespace HQ.Platform.Identity
             var cookiesBuilder = authBuilder.AddIdentityCookies(o => { });
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
             this IServiceCollection services,
             IConfiguration configuration)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
 
-            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(configuration.Bind,
+            return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration.Bind,
                 configuration.Bind);
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TKey>(
+        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
             this IServiceCollection services,
             Action<IdentityOptions> configureIdentity = null,
             Action<IdentityOptionsExtended> configureIdentityExtended = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             /*
@@ -158,10 +162,11 @@ namespace HQ.Platform.Identity
 
             services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
             services.AddScoped<ITenantValidator<TTenant, TUser, TKey>, TenantValidator<TTenant, TUser, TKey>>();
+            services.AddScoped<IApplicationValidator<TApplication, TUser, TKey>, ApplicationValidator<TApplication, TUser, TKey>>();
 
             services.AddScoped<IUserService<TUser>, UserService<TUser, TKey>>();
-            services.AddScoped<IVersionService, IdentityVersionService>();
             services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();
+            services.AddScoped<IApplicationService<TApplication>, ApplicationService<TApplication, TUser, TKey>>();
             services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
             services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
 
@@ -174,6 +179,13 @@ namespace HQ.Platform.Identity
             where TTenant : IdentityTenant
         {
             services.AddScoped<ITenantContextStore<TTenant>, IdentityTenantContextStore<TTenant>>();
+            return services;
+        }
+
+        public static IServiceCollection AddIdentityApplicationContextStore<TApplication>(this IServiceCollection services)
+            where TApplication : IdentityApplication
+        {
+            services.AddScoped<IApplicationContextStore<TApplication>, IdentityApplicationContextStore<TApplication>>();
             return services;
         }
     }
