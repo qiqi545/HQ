@@ -236,9 +236,6 @@ namespace Blowdart.UI.Web
             builder.UseStartup<UiServer>();
 
             var webHost = builder.Build();
-
-            AddImplicitHandlers(webHost.Services);
-
 			var cancellationToken = new CancellationToken();
             
             // webHost.Run(); 
@@ -293,6 +290,8 @@ namespace Blowdart.UI.Web
 		internal static void BeforeStart(IServiceProvider serviceProvider)
 		{
 			HandlersAreNotFinished();
+
+			AddImplicitHandlers(serviceProvider);
 
 			var layout = serviceProvider.GetRequiredService<LayoutRoot>();
 			var meta = Caches.Introspection.IntrospectMeta();
@@ -396,13 +395,16 @@ namespace Blowdart.UI.Web
 			// Annotated:
             foreach (var handler in Caches.Introspection.IntrospectHandlers())
                 AddHandler(handler.Key, handler.Value);
-
-			//
-			// Conventional Default (entry class has a default method):
-			_callerMethods = _callerMethods ?? IntrospectHostMethods();
-			var settings = serviceProvider.GetRequiredService<UiSettings>();
-			if (_callerMethods.TryGetValue(settings.DefaultPageMethodName, out var method))
-				AddHandler("/", method);
+			
+            if (_standalone)
+            {
+	            //
+	            // Conventional Default (entry class has a default method):
+	            _callerMethods = _callerMethods ?? IntrospectHostMethods();
+	            var settings = serviceProvider.GetRequiredService<UiSettings>();
+	            if (_callerMethods.TryGetValue(settings.DefaultPageMethodName, out var method))
+		            AddHandler("/", method);
+			}
 		}
 
         private static void HandlersAreFinished()

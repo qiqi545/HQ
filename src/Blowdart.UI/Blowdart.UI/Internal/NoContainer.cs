@@ -207,7 +207,6 @@ namespace Blowdart.UI.Internal
             if (ThrowIfCantResolve)
                 throw new InvalidOperationException($"No registration for {serviceType}");
             return null;
-
         }
 
         private object CreateInstance(Type implementationType)
@@ -233,7 +232,7 @@ namespace Blowdart.UI.Internal
 
         private static ConstructorInfo GetSuitableConstructor(Type implementationType)
         {
-            // Pick the widest constructor; this way we could have parameterless constructors or
+            // Pick the widest constructor; this way we could have parameter-less constructors or
             // simple constructors for testing, without having to do anything special to get the
             // "real" one, such as attributes or other nonsense
 
