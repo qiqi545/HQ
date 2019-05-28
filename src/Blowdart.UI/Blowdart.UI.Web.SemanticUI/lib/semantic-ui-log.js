@@ -1,9 +1,9 @@
 ﻿document.addEventListener("DOMContentLoaded", function (event) {
-    var clear = $('#clear-logs');
+    const clear = $('#clear-logs');
     if (clear) {
         clear.click(function () {
-            $('#no-logs').addClass('active');
-            $('#logs').empty();
+            $("#no-logs").addClass("active");
+            $("#logs").empty();
         });
     }
 });
