@@ -101,7 +101,7 @@ namespace HQ.Platform.Operations
                 {
                     var report = OperationsMethods.GetServicesReport(_serviceProvider);
 
-                    status = report.MissingRegistrations.Count > 0 ? HealthStatus.Unhealthy : HealthStatus.Healthy;
+                    status = report.MissingRegistrations.Count > 0 ? HealthStatus.Degraded : HealthStatus.Healthy;
                     data = status == HealthStatus.Healthy
                         ? null
                         : report.MissingRegistrations.ToDictionary(k => k,
@@ -110,14 +110,14 @@ namespace HQ.Platform.Operations
                     switch (status)
                     {
                         case HealthStatus.Unhealthy:
-                            description =
-                                "The DI container for this application has a missing registration, hiding a runtime exception.";
+                            description = "The DI container for this application has a missing registration, hiding a runtime exception.";
                             break;
                         case HealthStatus.Healthy:
                             description = "The DI container is correctly configured for this application.";
                             break;
                         case HealthStatus.Degraded:
-                            throw new NotImplementedException();
+                            description = "The DI container for this application has a missing registration, hiding a runtime exception.";
+                            break;
                         default:
                             throw new ArgumentOutOfRangeException();
                     }
