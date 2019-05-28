@@ -41,26 +41,30 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
     {
         public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest, IConfiguration databaseConfig = null)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            IConfiguration databaseConfig = null)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant
         {
-            return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope, databaseConfig);
+            return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope,
+                databaseConfig);
         }
 
         public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest, IConfiguration databaseConfig = null)
+            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+            IConfiguration databaseConfig = null)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
         {
             var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>)null;
+                databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>) null;
 
-            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, configureDatabase);
+            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
+                configureDatabase);
         }
 
         public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant>(
@@ -143,7 +147,6 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             {
                 if (c is SqlServerOptions command)
                 {
-
                 }
             };
         }

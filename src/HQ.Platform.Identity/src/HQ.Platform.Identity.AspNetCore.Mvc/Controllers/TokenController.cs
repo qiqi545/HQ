@@ -23,7 +23,6 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
@@ -46,7 +45,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Tokens"), MetaDescription("Manages authentication tokens.")]
+    [MetaCategory("Identity", "Manages application access controls.")]
+    [DisplayName("Tokens")]
+    [MetaDescription("Manages authentication tokens.")]
     public class TokenController<TUser, TTenant, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
         where TTenant : IdentityTenant
@@ -77,10 +78,14 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public IActionResult VerifyToken()
         {
             if (User.Identity == null)
+            {
                 return Unauthorized();
+            }
 
             if (User.Identity.IsAuthenticated)
+            {
                 return Ok(User.GetClaims());
+            }
 
             return Unauthorized();
         }
@@ -90,7 +95,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             TUser user;
             switch (model.IdentityType)
@@ -101,22 +108,32 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 case IdentityType.Email:
                     user = await _userManager.FindByEmailAsync(model.Identity);
                     if (!user.EmailConfirmed)
+                    {
                         return NotFound();
+                    }
+
                     break;
                 case IdentityType.PhoneNumber:
                     user = await _userManager.FindByPhoneNumberAsync(model.Identity);
                     if (!user.PhoneNumberConfirmed)
+                    {
                         return NotFound();
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
             if (user == null)
+            {
                 return NotFound();
+            }
 
             if (user.LockoutEnd.HasValue && user.LockoutEnd > _timestamps.GetCurrentTime())
+            {
                 return Forbid();
+            }
 
             if (await _userManager.CheckPasswordAsync(user, model.Password))
             {
@@ -136,10 +153,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 var provider = user.ActLike<IUserIdProvider>();
                 var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.Value, _apiOptions.Value);
 
-                return Ok(new
-                {
-                    AccessToken = token
-                });
+                return Ok(new {AccessToken = token});
             }
 
             return Unauthorized();

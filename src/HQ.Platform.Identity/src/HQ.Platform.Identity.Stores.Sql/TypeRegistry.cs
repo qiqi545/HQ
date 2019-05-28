@@ -31,7 +31,10 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             Debug.Assert(type.AssemblyQualifiedName != null, "type.AssemblyQualifiedName != null");
             if (_typesByName.TryGetValue(type.AssemblyQualifiedName, out _))
+            {
                 throw new ArgumentException("type is already registered");
+            }
+
             _typesByName.AddOrUpdate(type.AssemblyQualifiedName, s => type, (s, t) => t);
             return true;
         }
@@ -40,7 +43,10 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             Debug.Assert(type.AssemblyQualifiedName != null, "type.AssemblyQualifiedName != null");
             if (_typesByName.TryGetValue(type.AssemblyQualifiedName, out _))
+            {
                 return false;
+            }
+
             _typesByName.AddOrUpdate(type.AssemblyQualifiedName, s => type, (s, t) => t);
             return true;
         }
@@ -49,7 +55,9 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             // exact match
             if (_typesByName.TryGetValue(name, out type))
+            {
                 return true;
+            }
 
             // context-free name match
             type = _typesByName.FirstOrDefault(x => x.Value.Name.Equals(name, StringComparison.OrdinalIgnoreCase))

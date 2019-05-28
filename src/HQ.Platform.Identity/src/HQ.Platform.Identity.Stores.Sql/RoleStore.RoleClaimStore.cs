@@ -36,11 +36,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new
-            {
-                TenantId = _tenantId,
-                RoleId = role.Id
-            });
+            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new {TenantId = _tenantId, RoleId = role.Id});
 
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
@@ -56,10 +52,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var query = SqlBuilder.Insert(new AspNetRoleClaims<TKey>
             {
-                TenantId = _tenantId,
-                RoleId = role.Id,
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value
+                TenantId = _tenantId, RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value
             });
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
 
@@ -74,10 +67,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var query = SqlBuilder.Delete<AspNetRoleClaims<TKey>>(new
             {
-                TenantId = _tenantId,
-                RoleId = role.Id,
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value
+                TenantId = _tenantId, RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value
             });
             _connection.SetTypeInfo(typeof(TRole));
 
@@ -90,10 +80,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new
-            {
-                TenantId = _tenantId
-            });
+            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new {TenantId = _tenantId});
 
             _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
             var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);

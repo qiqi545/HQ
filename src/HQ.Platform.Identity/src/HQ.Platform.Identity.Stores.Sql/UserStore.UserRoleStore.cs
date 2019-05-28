@@ -42,9 +42,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             {
                 var query = SqlBuilder.Insert(new AspNetUserRoles<TKey>
                 {
-                    UserId = user.Id,
-                    RoleId = roleId,
-                    TenantId = _tenantId
+                    UserId = user.Id, RoleId = roleId, TenantId = _tenantId
                 });
 
                 _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
@@ -62,7 +60,9 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (roleId != null)
             {
                 var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new
-                    {UserId = user.Id, RoleId = roleId, TenantId = _tenantId});
+                {
+                    UserId = user.Id, RoleId = roleId, TenantId = _tenantId
+                });
 
                 _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
                 var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
@@ -79,11 +79,7 @@ namespace HQ.Platform.Identity.Stores.Sql
                 return SuperUserRoles;
             }
 
-            var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new
-            {
-                UserId = user.Id,
-                TenantId = _tenantId
-            });
+            var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
 
             // Mapping:
             _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
@@ -95,7 +91,8 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (roleMapping.Any())
             {
                 var descriptor = SqlBuilder.GetDescriptor<TRole>();
-                var roleQuery = SqlBuilder.Select<TRole>(descriptor, new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId) });
+                var roleQuery = SqlBuilder.Select<TRole>(descriptor,
+                    new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId)});
                 _connection.SetTypeInfo(typeof(TRole));
 
                 var roles = await _connection.Current.QueryAsync<TRole>(roleQuery.Sql, roleQuery.Parameters);
@@ -120,11 +117,8 @@ namespace HQ.Platform.Identity.Stores.Sql
                                "WHERE r.NormalizedName = @NormalizedName " +
                                "AND r.TenantId = @TenantId";
 
-            var users = await _connection.Current.QueryAsync<TUser>(sql, new
-            {
-                NormalizedName = roleName,
-                TenantId = _tenantId
-            });
+            var users = await _connection.Current.QueryAsync<TUser>(sql,
+                new {NormalizedName = roleName, TenantId = _tenantId});
 
             return users.AsList();
         }
@@ -132,7 +126,9 @@ namespace HQ.Platform.Identity.Stores.Sql
         private async Task<TKey> GetRoleIdByNameAsync(string roleName)
         {
             var query = SqlBuilder.Select<TRole>(new
-                {NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId});
+            {
+                NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId
+            });
             _connection.SetTypeInfo(typeof(TRole));
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
             return role.Id;

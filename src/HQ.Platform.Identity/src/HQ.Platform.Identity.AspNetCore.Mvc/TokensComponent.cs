@@ -24,7 +24,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public class TokensComponent : IDynamicComponent
     {
-        public IEnumerable<Type> ControllerTypes => new[] { typeof(TokenController<,,>) };
+        public IEnumerable<Type> ControllerTypes => new[] {typeof(TokenController<,,>)};
         public Func<string> Namespace { get; set; }
     }
 }

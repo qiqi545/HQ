@@ -34,11 +34,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageTenants)]
-    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Tenants"), MetaDescription("Manages system tenants.")]
+    [MetaCategory("Identity", "Manages application access controls.")]
+    [DisplayName("Tenants")]
+    [MetaDescription("Manages system tenants.")]
     public class TenantController<TTenant> : DataController where TTenant : IdentityTenant
     {
-        private readonly ITenantService<TTenant> _tenantService;
         private readonly IOptions<IdentityApiOptions> _options;
+        private readonly ITenantService<TTenant> _tenantService;
 
         public TenantController(ITenantService<TTenant> tenantService, IOptions<IdentityApiOptions> options)
         {
@@ -51,7 +53,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var roles = await _tenantService.GetAsync();
             if (roles?.Data == null || roles.Data?.Count() == 0)
+            {
                 return NotFound();
+            }
+
             return Ok(roles.Data);
         }
 
@@ -59,35 +64,49 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Create([FromBody] CreateTenantModel model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             var result = await _tenantService.CreateAsync(model);
 
             return result.Succeeded
                 ? Created($"{_options.Value.RootPath ?? string.Empty}/tenants/{result.Data.Id}", result.Data)
-                : (IActionResult)BadRequest(result.Errors);
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _tenantService.DeleteAsync(id);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+            {
                 return NotFound();
-            return result.Succeeded ? NoContent() : (IActionResult)BadRequest(result.Errors);
+            }
+
+            return result.Succeeded ? NoContent() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TTenant tenant)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _tenantService.UpdateAsync(tenant);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+            {
                 return NotFound();
-            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
+            }
+
+            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpGet("{id}")]
@@ -96,10 +115,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _tenantService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
+
             return user.Succeeded
                 ? Ok(user.Data)
-                : (IActionResult)BadRequest(user.Errors);
+                : (IActionResult) BadRequest(user.Errors);
         }
 
         [HttpGet("name/{name}")]
@@ -107,10 +129,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var user = await _tenantService.FindByNameAsync(name);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
+
             return user.Succeeded
                 ? Ok(user.Data)
-                : (IActionResult)BadRequest(user.Errors);
+                : (IActionResult) BadRequest(user.Errors);
         }
     }
 }

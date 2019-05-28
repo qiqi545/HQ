@@ -41,12 +41,8 @@ namespace HQ.Platform.Identity.Stores.Sql
                                   "AND Name = 'RecoveryCodes' " +
                                   "AND TenantId = @TenantId";
 
-            await _connection.Current.ExecuteAsync(update, new
-            {
-                UserId = user.Id,
-                Value = string.Join(";", recoveryCodes),
-                TenantId = _tenantId
-            });
+            await _connection.Current.ExecuteAsync(update,
+                new {UserId = user.Id, Value = string.Join(";", recoveryCodes), TenantId = _tenantId});
         }
 
         public async Task<bool> RedeemCodeAsync(TUser user, string code, CancellationToken cancellationToken)
@@ -59,11 +55,8 @@ namespace HQ.Platform.Identity.Stores.Sql
                                "AND Name = 'RecoveryCodes' " +
                                "AND TenantId = @TenantId";
 
-            var value = await _connection.Current.QuerySingleOrDefaultAsync<string>(sql, new
-            {
-                UserId = user.Id,
-                TenantId = _tenantId
-            });
+            var value = await _connection.Current.QuerySingleOrDefaultAsync<string>(sql,
+                new {UserId = user.Id, TenantId = _tenantId});
 
             if (!string.IsNullOrWhiteSpace(value))
             {
@@ -81,10 +74,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
             {
-                UserId = user.Id,
-                Name = "RecoveryCodes",
-                LoginProvider = "[AspNetUserStore]",
-                TenantId = _tenantId
+                UserId = user.Id, Name = "RecoveryCodes", LoginProvider = "[AspNetUserStore]", TenantId = _tenantId
             });
             _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 

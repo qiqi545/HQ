@@ -47,7 +47,8 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant
         {
-            return identityBuilder.AddSqliteIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope, databaseConfig);
+            return identityBuilder.AddSqliteIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope,
+                databaseConfig);
         }
 
         public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
@@ -60,12 +61,12 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             where TTenant : IdentityTenant<TKey>
         {
             var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<SqliteOptions>)null;
+                databaseConfig != null ? databaseConfig.Bind : (Action<SqliteOptions>) null;
 
             return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder,
                 connectionString, scope, configureDatabase);
         }
-        
+
         public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,

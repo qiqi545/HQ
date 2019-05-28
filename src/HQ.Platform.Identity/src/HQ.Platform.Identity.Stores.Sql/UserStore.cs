@@ -83,6 +83,28 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public IQueryable<TUser> Users => MaybeQueryable();
 
+        public CancellationToken CancellationToken { get; }
+
+        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
+
+        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
+                _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+            {
+                return new[] {CreateSuperUserInstance()};
+            }
+
+            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
+            _connection.SetTypeInfo(typeof(TUser));
+
+            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+            return users;
+        }
+
         public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -209,28 +231,6 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public void Dispose()
         {
-        }
-
-        public CancellationToken CancellationToken { get; }
-
-        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
-
-        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-
-            if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username?.ToUpperInvariant())
-            {
-                return new[] {CreateSuperUserInstance()};
-            }
-
-            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
-            _connection.SetTypeInfo(typeof(TUser));
-
-            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
-            return users;
         }
 
         private IQueryable<TUser> MaybeQueryable()

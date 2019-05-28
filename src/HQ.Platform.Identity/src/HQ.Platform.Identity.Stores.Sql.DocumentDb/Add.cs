@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
@@ -49,7 +48,8 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant
         {
-            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope, databaseConfig);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant>(connectionString, scope,
+                databaseConfig);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(
@@ -62,9 +62,10 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             where TTenant : IdentityTenant<TKey>
         {
             var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<DocumentDbOptions>)null;
+                databaseConfig != null ? databaseConfig.Bind : (Action<DocumentDbOptions>) null;
 
-            return AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope, configureDatabase);
+            return AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(identityBuilder, connectionString, scope,
+                configureDatabase);
         }
 
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant>(

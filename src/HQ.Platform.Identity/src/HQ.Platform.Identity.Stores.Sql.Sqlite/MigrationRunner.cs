@@ -39,10 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
         public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
         {
-            var builder = new SqliteConnectionStringBuilder(_connectionString)
-            {
-                Mode = SqliteOpenMode.ReadWriteCreate
-            };
+            var builder = new SqliteConnectionStringBuilder(_connectionString) {Mode = SqliteOpenMode.ReadWriteCreate};
             if (!File.Exists(builder.DataSource))
             {
                 var connection = new SqliteConnection(builder.ConnectionString);
@@ -63,11 +60,15 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 .BuildServiceProvider();
 
             var runner = container.GetRequiredService<IMigrationRunner>();
-            if (runner is FluentMigrator.Runner.MigrationRunner defaultRunner && defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
+            if (runner is FluentMigrator.Runner.MigrationRunner defaultRunner &&
+                defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
             {
                 var source = container.GetRequiredService<IFilteringMigrationSource>();
-                defaultRunner.MigrationLoader = new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
-            };
+                defaultRunner.MigrationLoader =
+                    new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
+            }
+
+            ;
             runner.MigrateUp();
         }
     }

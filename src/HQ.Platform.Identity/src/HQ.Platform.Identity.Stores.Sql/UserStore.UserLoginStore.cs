@@ -37,14 +37,15 @@ namespace HQ.Platform.Identity.Stores.Sql
                 "INSERT INTO AspNetUserLogins (LoginProvider, ProviderKey, ProviderDisplayName, UserId, TenantId) " +
                 "VALUES (@LoginProvider, @ProviderKey, @ProviderDisplayName, @UserId, @TenantId)";
 
-            var inserted = await _connection.Current.ExecuteAsync(sql, new
-            {
-                login.LoginProvider,
-                login.ProviderKey,
-                login.ProviderDisplayName,
-                UserId = user.Id,
-                TenantId = _tenantId
-            });
+            var inserted = await _connection.Current.ExecuteAsync(sql,
+                new
+                {
+                    login.LoginProvider,
+                    login.ProviderKey,
+                    login.ProviderDisplayName,
+                    UserId = user.Id,
+                    TenantId = _tenantId
+                });
 
             Debug.Assert(inserted == 1);
         }
@@ -60,13 +61,8 @@ namespace HQ.Platform.Identity.Stores.Sql
                                "AND ProviderKey = @ProviderKey " +
                                "AND TenantId = @TenantId";
 
-            var deleted = await _connection.Current.ExecuteAsync(sql, new
-            {
-                TenantId = _tenantId,
-                UserId = user.Id,
-                LoginProvider = loginProvider,
-                ProviderKey = providerKey
-            });
+            var deleted = await _connection.Current.ExecuteAsync(sql,
+                new {TenantId = _tenantId, UserId = user.Id, LoginProvider = loginProvider, ProviderKey = providerKey});
 
             Debug.Assert(deleted == 1);
         }
@@ -75,11 +71,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
-            {
-                UserId = user.Id,
-                TenantId = _tenantId
-            });
+            var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
 
             _connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
@@ -100,12 +92,8 @@ namespace HQ.Platform.Identity.Stores.Sql
                                      "AND ProviderKey = @ProviderKey " +
                                      "AND TenantId = @TenantId";
 
-            var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(getUserId, new
-            {
-                LoginProvider = loginProvider,
-                ProviderKey = providerKey,
-                TenantId = _tenantId
-            });
+            var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(getUserId,
+                new {LoginProvider = loginProvider, ProviderKey = providerKey, TenantId = _tenantId});
 
             if (userId == null)
             {

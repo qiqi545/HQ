@@ -72,24 +72,21 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             });
 
             services.Configure<IdentityApiOptions>(apiConfig);
-            services.Configure<RazorViewEngineOptions>(x => { x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>()); });
+            services.Configure<RazorViewEngineOptions>(x =>
+            {
+                x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
+            });
 
             mvc.AddControllers<TUser, TRole, TTenant, TKey>();
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
-                return new IdentityApiComponent
-                {
-                    Namespace = () => o.Value.RootPath ?? string.Empty
-                };
+                return new IdentityApiComponent {Namespace = () => o.Value.RootPath ?? string.Empty};
             });
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-                return new TokensComponent
-                {
-                    Namespace = () => o.Value.Tokens?.Path ?? string.Empty
-                };
+                return new TokensComponent {Namespace = () => o.Value.Tokens?.Path ?? string.Empty};
             });
 
             return mvc;
@@ -106,7 +103,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 typeof(TokenController<TUser, TTenant, TKey>).GetTypeInfo(),
                 typeof(TenantController<TTenant>).GetTypeInfo(),
                 typeof(UserController<TUser, TTenant, TKey>).GetTypeInfo(),
-                typeof(RoleController<TRole, TKey>).GetTypeInfo(),
+                typeof(RoleController<TRole, TKey>).GetTypeInfo()
             };
             return mvc.ConfigureApplicationPartManager(x =>
             {

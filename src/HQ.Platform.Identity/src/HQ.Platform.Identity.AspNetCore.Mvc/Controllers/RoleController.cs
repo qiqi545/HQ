@@ -38,16 +38,19 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageUsers)]
-    [MetaCategory("Identity", "Manages application access controls."), DisplayName("Roles"), MetaDescription("Manages system roles.")]
+    [MetaCategory("Identity", "Manages application access controls.")]
+    [DisplayName("Roles")]
+    [MetaDescription("Manages system roles.")]
     public class RoleController<TRole, TKey> : DataController
         where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>
     {
+        private readonly IOptions<IdentityApiOptions> _options;
         private readonly IRoleService<TRole> _roleService;
         private readonly IOptions<SecurityOptions> _security;
-        private readonly IOptions<IdentityApiOptions> _options;
 
-        public RoleController(IRoleService<TRole> roleService, IOptions<SecurityOptions> security, IOptions<IdentityApiOptions> options)
+        public RoleController(IRoleService<TRole> roleService, IOptions<SecurityOptions> security,
+            IOptions<IdentityApiOptions> options)
         {
             _roleService = roleService;
             _security = security;
@@ -59,7 +62,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var roles = await _roleService.GetAsync();
             if (roles?.Data == null)
+            {
                 return NotFound();
+            }
+
             return Ok(roles.Data);
         }
 
@@ -67,35 +73,49 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
 
             var result = await _roleService.CreateAsync(model);
 
             return result.Succeeded
                 ? Created($"{_options.Value.RootPath ?? string.Empty}/roles/{result.Data.Id}", result.Data)
-                : (IActionResult)BadRequest(result.Errors);
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TRole role)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _roleService.UpdateAsync(role);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+            {
                 return NotFound();
-            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
+            }
+
+            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
+            {
                 return error;
+            }
+
             var result = await _roleService.DeleteAsync(id);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+            {
                 return NotFound();
-            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
+            }
+
+            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpGet("{id}/claims")]
@@ -103,12 +123,16 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             var role = await _roleService.FindByIdAsync(id);
             if (role?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claims = await _roleService.GetClaimsAsync(role.Data);
 
             if (claims?.Data.Count == 0)
+            {
                 return NotFound();
+            }
 
             return Ok(claims);
         }
@@ -117,11 +141,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
         {
             if (!Valid(model, out var error))
+            {
                 return error;
+            }
 
             var role = await _roleService.FindByIdAsync(id);
             if (role?.Data == null)
+            {
                 return NotFound();
+            }
 
             var issuer = _security.Value.Tokens.Issuer;
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
@@ -129,15 +157,18 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
             return result.Succeeded
                 ? Created($"/api/roles/{role.Data.Id}/claims", claim)
-                : (IActionResult)BadRequest(result.Errors);
+                : (IActionResult) BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}/claims/{type}/{value}")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
+        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
+            [FromRoute] string value)
         {
             var user = await _roleService.FindByIdAsync(id);
             if (user?.Data == null)
+            {
                 return NotFound();
+            }
 
             var claims = await _roleService.GetClaimsAsync(user.Data);
 
@@ -145,13 +176,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                                                         x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
 
             if (claim == null)
+            {
                 return NotFound();
+            }
 
             var result = await _roleService.RemoveClaimAsync(user.Data, claim);
 
             return result.Succeeded
-                ? StatusCode((int)HttpStatusCode.NoContent)
-                : (IActionResult)BadRequest(result.Errors);
+                ? StatusCode((int) HttpStatusCode.NoContent)
+                : (IActionResult) BadRequest(result.Errors);
         }
 
 
