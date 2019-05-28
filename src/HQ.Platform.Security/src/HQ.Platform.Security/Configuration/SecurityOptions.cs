@@ -15,8 +15,6 @@
 
 #endregion
 
-using System.Net;
-
 namespace HQ.Platform.Security.Configuration
 {
     public class SecurityOptions

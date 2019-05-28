@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,21 +11,25 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using HQ.Platform.Identity.Models;
+using HQ.Test.Sdk;
+using HQ.Test.Sdk.Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Identity.Tests
 {
-    public class IdentityRoleExtended<TKey> : IdentityRole<TKey> where TKey : IEquatable<TKey>
+    public abstract class ApplicationServiceTests : ServiceUnderTest
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
-    }
+        protected ApplicationServiceTests(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
-    public class IdentityRoleExtended : IdentityRoleExtended<string>
-    {
+        [Test]
+        public async Task Can_create_application()
+        {
+            var service = ServiceProvider.GetRequiredService<IApplicationService<IdentityRoleExtended>>();
+        }
     }
 }

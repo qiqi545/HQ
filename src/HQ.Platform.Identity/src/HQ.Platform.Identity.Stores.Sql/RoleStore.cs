@@ -41,12 +41,14 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IDataConnection _connection;
         private readonly IQueryableProvider<TRole> _queryable;
         private readonly TKey _tenantId;
+        private readonly TKey _applicationId;
 
         public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable,
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
             serviceProvider.TryGetTenantId(out _tenantId);
+            serviceProvider.TryGetApplicationId(out _applicationId);
 
             CancellationToken = cancellationToken;
 
@@ -61,6 +63,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             role.TenantId = _tenantId;
+            role.ApplicationId = _applicationId;
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
             if (role.Id == null)
