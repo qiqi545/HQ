@@ -110,6 +110,10 @@ namespace Blowdart.UI.Web.Internal
 				}
 
 				var stylesSection = htmlSystem.StylesSection();
+				if (htmlSystem.RenderStyles != null)
+					stylesSection += Environment.NewLine +
+					                 $"<style type=\"text/css\">{htmlSystem.RenderStyles}</style>";
+
 				var scriptsSection = htmlSystem.ScriptsSection();
 
 				string wasmSection;

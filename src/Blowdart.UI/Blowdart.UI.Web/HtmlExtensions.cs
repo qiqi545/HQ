@@ -110,10 +110,15 @@ namespace Blowdart.UI.Web
             return ui;
         }
 
-        public static Ui OnReady(this Ui ui, string script)
+        public static Ui Styles(this Ui ui, string styles)
+        {
+	        Styles(ui).AppendLine($"{styles}");
+	        return ui;
+        }
+
+		public static Ui OnReady(this Ui ui, string script)
         {
 	        Scripts(ui).AppendLine($"{script}");
-
 			return ui;
         }
 
@@ -216,7 +221,12 @@ namespace Blowdart.UI.Web
             return system;
         }
 
-        private static StringBuilder Dom(Ui ui)
+		private static StringBuilder Styles(Ui ui)
+		{
+			return ui.Html().Styles;
+		}
+
+		private static StringBuilder Dom(Ui ui)
         {
             return ui.Html().Dom;
         }

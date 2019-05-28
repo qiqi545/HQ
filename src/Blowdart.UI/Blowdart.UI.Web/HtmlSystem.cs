@@ -19,30 +19,37 @@ namespace Blowdart.UI.Web
 {
     public class HtmlSystem : UiSystem
     {
+	    private string _styles;
 	    private string _dom;
 	    private string _scripts;
-	    
+
+	    public StringBuilder Styles;
 		public StringBuilder Dom;
-        public StringBuilder Scripts;
-        
+		public StringBuilder Scripts;
+
+		public string RenderStyles => _styles ?? Styles?.ToString();
 		public string RenderDom => _dom ?? Dom?.ToString();
         public string RenderScripts => _scripts ?? Scripts?.ToString();
         
 		public override void Begin(UiContext context = null)
-        {
+		{
+			_styles = null;
             _dom = null;
             _scripts = null;
 
+            Styles = Pools.StringBuilderPool.Get();
             Dom = Pools.StringBuilderPool.Get();
             Scripts = Pools.StringBuilderPool.Get();
         }
 
         public override void End()
         {
+	        _styles = RenderStyles;
             _dom = RenderDom;
             _scripts = RenderScripts;
 
-            Pools.StringBuilderPool.Return(Dom);
+            Pools.StringBuilderPool.Return(Styles);
+			Pools.StringBuilderPool.Return(Dom);
             Pools.StringBuilderPool.Return(Scripts);
         }
 		
