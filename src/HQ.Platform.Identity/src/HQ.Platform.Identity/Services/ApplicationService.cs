@@ -43,6 +43,14 @@ namespace HQ.Platform.Identity.Services
 
         public IQueryable<TApplication> Applications => _applicationManager.Applications;
 
+        public async Task<Operation<int>> GetCountAsync()
+        {
+            var result = await _applicationManager.GetCountAsync();
+            // var result = _applicationManager.Applications.Count();
+            var operation = new Operation<int>(result);
+            return operation;
+        }
+
         public Task<Operation<IEnumerable<TApplication>>> GetAsync()
         {
             var all = _queryableProvider.SafeAll ?? Applications;
@@ -76,6 +84,8 @@ namespace HQ.Platform.Identity.Services
             var deleted = await _applicationManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
         }
+
+        
 
         public async Task<Operation<TApplication>> FindByIdAsync(string id)
         {

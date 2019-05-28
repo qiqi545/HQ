@@ -84,6 +84,12 @@ namespace HQ.Platform.Identity.Models
             GC.SuppressFinalize(this);
         }
 
+        public async Task<int> GetCountAsync()
+        {
+            ThrowIfDisposed();
+            return await _applicationStore.GetCountAsync(CancellationToken);
+        }
+
         public virtual async Task<TApplication> FindByIdAsync(string applicationId)
         {
             ThrowIfDisposed();

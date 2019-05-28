@@ -170,6 +170,9 @@ namespace HQ.Platform.Identity
             services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
             services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
 
+            // untyped forwarding
+            services.AddTransient<IApplicationService>(r => r.GetService<IApplicationService<TApplication>>());
+
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;

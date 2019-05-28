@@ -51,6 +51,17 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public IQueryable<TApplication> Applications => MaybeQueryable();
 
+        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var query = SqlBuilder.Dialect.Count<TApplication>();
+            _connection.SetTypeInfo(typeof(TApplication));
+
+            var count = await _connection.Current.ExecuteScalarAsync<int>(query);
+            return count;
+        }
+
         public async Task<IdentityResult> CreateAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -232,8 +243,8 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             var query = SqlBuilder.Select<TApplication>();
             _connection.SetTypeInfo(typeof(TApplication));
-            var tenants = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
-            return tenants;
+            var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
+            return applications;
         }
     }
 }
