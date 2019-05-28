@@ -27,7 +27,6 @@ using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,11 +36,11 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc,
-            IConfiguration apiConfig, IConfiguration securityConfig, Action<MvcOptions> setupAction = null)
+        public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvc, IConfiguration apiConfig, IConfiguration securityConfig)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant
+            where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             var services = mvc.Services;
@@ -77,12 +76,14 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
             });
 
-            mvc.AddControllers<TUser, TRole, TTenant, TKey>();
+            mvc.AddControllers<TUser, TRole, TTenant, TApplication, TKey>();
+
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
                 return new IdentityApiComponent {Namespace = () => o.Value.RootPath ?? string.Empty};
             });
+
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<SecurityOptions>>();
@@ -92,16 +93,18 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             return mvc;
         }
 
-        private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TKey>(this IMvcBuilder mvc)
+        private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvc)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant
+            where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
             var typeInfo = new List<TypeInfo>
             {
-                typeof(TokenController<TUser, TTenant, TKey>).GetTypeInfo(),
-                typeof(TenantController<TTenant>).GetTypeInfo(),
+                typeof(TokenController<TUser, TTenant, TApplication, TKey>).GetTypeInfo(),
+                typeof(TenantController<TTenant, TKey>).GetTypeInfo(),
+                typeof(ApplicationController<TApplication, TKey>).GetTypeInfo(),
                 typeof(UserController<TUser, TTenant, TKey>).GetTypeInfo(),
                 typeof(RoleController<TRole, TKey>).GetTypeInfo()
             };

@@ -10,10 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ApplicationStore.ApplicationSecurityStampStore.cs" />
     <Compile Remove="TenantStore.TenantSecurityStampStore.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="ApplicationStore.ApplicationSecurityStampStore.cs" />
     <None Include="TenantStore.TenantSecurityStampStore.cs" />
   </ItemGroup>
 

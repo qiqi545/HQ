@@ -58,6 +58,9 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly TKey _tenantId;
         private readonly string _tenantName;
 
+        private readonly TKey _applicationId;
+        private readonly string _applicationName;
+
         public UserStore(IDataConnection connection,
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
@@ -69,6 +72,8 @@ namespace HQ.Platform.Identity.Stores.Sql
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
             serviceProvider.TryGetTenantId(out _tenantId);
             serviceProvider.TryGetTenantName(out _tenantName);
+            serviceProvider.TryGetApplicationId(out _applicationId);
+            serviceProvider.TryGetApplicationName(out _applicationName);
 
             CancellationToken = cancellationToken;
 
@@ -110,6 +115,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             user.TenantId = _tenantId;
+            user.ApplicationId = _applicationId;
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
             if (user.Id == null)

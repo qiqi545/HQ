@@ -70,6 +70,19 @@ namespace HQ.Platform.Api.Extensions
                 : default;
         }
 
+        public static void SetApplicationContext<TApplication>(this HttpContext context, ApplicationContext<TApplication> tenantContext)
+            where TApplication : class
+        {
+            context.Items[Constants.ContextKeys.Application] = tenantContext;
+        }
+
+        public static ApplicationContext<TApplication> GetApplicationContext<TApplication>(this HttpContext context) where TApplication : class
+        {
+            return context.Items.TryGetValue(Constants.ContextKeys.Application, out var tenantContext)
+                ? tenantContext as ApplicationContext<TApplication>
+                : default;
+        }
+
         public static void SetVersionContext(this HttpContext context, VersionContext versionContext)
         {
             context.Items[Constants.ContextKeys.Version] = versionContext;

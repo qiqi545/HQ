@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,7 +11,6 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
@@ -31,51 +29,51 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
-    [Route("tenants")]
+    [Route("applications")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageTenants)]
+    [Authorize(Constants.Security.Policies.ManageApplications)]
     [MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Tenants")]
-    [MetaDescription("Manages system tenants.")]
-    public class TenantController<TTenant, TKey> : DataController
-        where TTenant : IdentityTenant<TKey>
+    [MetaDescription("Manages system applications.")]
+    public class ApplicationController<TApplication, TKey> : DataController
+        where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IOptions<IdentityApiOptions> _options;
-        private readonly ITenantService<TTenant> _tenantService;
+        private readonly IApplicationService<TApplication> _applicationService;
 
-        public TenantController(ITenantService<TTenant> tenantService, IOptions<IdentityApiOptions> options)
+        public ApplicationController(IApplicationService<TApplication> applicationService, IOptions<IdentityApiOptions> options)
         {
-            _tenantService = tenantService;
+            _applicationService = applicationService;
             _options = options;
         }
 
         [HttpGet("")]
         public async Task<IActionResult> Get()
         {
-            var tenants = await _tenantService.GetAsync();
-            if (tenants?.Data == null || tenants.Data?.Count() == 0)
+            var applications = await _applicationService.GetAsync();
+            if (applications?.Data == null || applications.Data?.Count() == 0)
             {
                 return NotFound();
             }
 
-            return Ok(tenants.Data);
+            return Ok(applications.Data);
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Create([FromBody] CreateTenantModel model)
+        public async Task<IActionResult> Create([FromBody] CreateApplicationModel model)
         {
             if (!ValidModelState(out var error))
             {
                 return error;
             }
 
-            var result = await _tenantService.CreateAsync(model);
+            var result = await _applicationService.CreateAsync(model);
 
             return result.Succeeded
                 ? Created($"{_options.Value.RootPath ?? string.Empty}/tenants/{result.Data.Id}", result.Data)
-                : (IActionResult) BadRequest(result.Errors);
+                : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpDelete("{id}")]
@@ -86,59 +84,59 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 return error;
             }
 
-            var result = await _tenantService.DeleteAsync(id);
+            var result = await _applicationService.DeleteAsync(id);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
             {
                 return NotFound();
             }
 
-            return result.Succeeded ? NoContent() : (IActionResult) BadRequest(result.Errors);
+            return result.Succeeded ? NoContent() : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromBody] TTenant tenant)
+        public async Task<IActionResult> Update([FromBody] TApplication tenant)
         {
             if (!ValidModelState(out var error))
             {
                 return error;
             }
 
-            var result = await _tenantService.UpdateAsync(tenant);
+            var result = await _applicationService.UpdateAsync(tenant);
             if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
             {
                 return NotFound();
             }
 
-            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
         }
 
         [HttpGet("{id}")]
         [HttpGet("id/{id}")]
         public async Task<IActionResult> FindById([FromRoute] string id)
         {
-            var tenant = await _tenantService.FindByIdAsync(id);
-            if (tenant?.Data == null)
+            var application = await _applicationService.FindByIdAsync(id);
+            if (application?.Data == null)
             {
                 return NotFound();
             }
 
-            return tenant.Succeeded
-                ? Ok(tenant.Data)
-                : (IActionResult) BadRequest(tenant.Errors);
+            return application.Succeeded
+                ? Ok(application.Data)
+                : (IActionResult)BadRequest(application.Errors);
         }
 
         [HttpGet("name/{name}")]
         public async Task<IActionResult> FindByUsername([FromRoute] string name)
         {
-            var tenant = await _tenantService.FindByNameAsync(name);
-            if (tenant?.Data == null)
+            var application = await _applicationService.FindByNameAsync(name);
+            if (application?.Data == null)
             {
                 return NotFound();
             }
 
-            return tenant.Succeeded
-                ? Ok(tenant.Data)
-                : (IActionResult) BadRequest(tenant.Errors);
+            return application.Succeeded
+                ? Ok(application.Data)
+                : (IActionResult)BadRequest(application.Errors);
         }
     }
 }

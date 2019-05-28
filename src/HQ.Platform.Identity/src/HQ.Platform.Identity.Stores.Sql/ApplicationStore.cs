@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,7 +11,6 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
@@ -31,16 +29,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class TenantStore<TTenant, TKey> : IQueryableTenantStore<TTenant>
-        where TTenant : IdentityTenant<TKey>
+    public partial class ApplicationStore<TApplication, TKey> : IQueryableApplicationStore<TApplication>
+        where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IDataConnection _connection;
-        private readonly IQueryableProvider<TTenant> _queryable;
+        private readonly IQueryableProvider<TApplication> _queryable;
 
-        public TenantStore(
+        public ApplicationStore(
             IDataConnection connection,
-            IQueryableProvider<TTenant> queryable,
+            IQueryableProvider<TApplication> queryable,
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
@@ -51,25 +49,25 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public CancellationToken CancellationToken { get; }
 
-        public IQueryable<TTenant> Tenants => MaybeQueryable();
+        public IQueryable<TApplication> Applications => MaybeQueryable();
 
-        public async Task<IdentityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken)
+        public async Task<IdentityResult> CreateAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            tenant.ConcurrencyStamp = tenant.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+            application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            if (tenant.Id == null)
+            if (application.Id == null)
             {
                 var idType = typeof(TKey);
                 var id = Guid.NewGuid();
                 if (idType == typeof(Guid))
                 {
-                    tenant.Id = (TKey) (object) id;
+                    application.Id = (TKey)(object)id;
                 }
                 else if (idType == typeof(string))
                 {
-                    tenant.Id = (TKey) (object) $"{id}";
+                    application.Id = (TKey)(object)$"{id}";
                 }
                 else
                 {
@@ -77,135 +75,135 @@ namespace HQ.Platform.Identity.Stores.Sql
                 }
             }
 
-            var query = SqlBuilder.Insert(tenant);
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Insert(application);
+            _connection.SetTypeInfo(typeof(TApplication));
 
             var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             Debug.Assert(inserted == 1);
 
             if (_connection.TryGetLastInsertedId(out TKey insertedId))
             {
-                tenant.Id = insertedId;
+                application.Id = insertedId;
             }
 
             return IdentityResult.Success;
         }
 
-        public async Task<IdentityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            tenant.ConcurrencyStamp = tenant.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+            application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Update(tenant, new {tenant.Id});
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Update(application, new { application.Id });
+            _connection.SetTypeInfo(typeof(TApplication));
 
             var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             Debug.Assert(updated == 1);
             return IdentityResult.Success;
         }
 
-        public Task SetTenantNameAsync(TTenant tenant, string name, CancellationToken cancellationToken)
+        public Task SetApplicationNameAsync(TApplication application, string name, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            tenant.Name = name;
+            application.Name = name;
             return Task.CompletedTask;
         }
 
-        public Task SetNormalizedTenantNameAsync(TTenant tenant, string normalizedName,
+        public Task SetNormalizedApplicationNameAsync(TApplication application, string normalizedName,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            tenant.NormalizedName = normalizedName;
+            application.NormalizedName = normalizedName;
             return Task.CompletedTask;
         }
 
-        public async Task<IdentityResult> DeleteAsync(TTenant tenant, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Delete<TTenant>(new {tenant.Id});
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Delete<TApplication>(new { application.Id });
+            _connection.SetTypeInfo(typeof(TApplication));
             var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
             Debug.Assert(deleted == 1);
             return IdentityResult.Success;
         }
 
-        public async Task<TTenant> FindByIdAsync(string tenantId, CancellationToken cancellationToken)
+        public async Task<TApplication> FindByIdAsync(string applicationId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var id = StringToId(tenantId);
+            var id = StringToId(applicationId);
 
-            var query = SqlBuilder.Select<TTenant>(new {Id = id});
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Select<TApplication>(new { Id = id });
+            _connection.SetTypeInfo(typeof(TApplication));
 
-            var tenant = await _connection.Current.QuerySingleOrDefaultAsync<TTenant>(query.Sql, query.Parameters);
-            return tenant;
+            var application = await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
+            return application;
         }
 
-        public async Task<IEnumerable<TTenant>> FindByIdsAsync(IEnumerable<string> tenantIds,
+        public async Task<IEnumerable<TApplication>> FindByIdsAsync(IEnumerable<string> applicationIds,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             var ids = new List<object>();
-            foreach (var tenantId in tenantIds)
+            foreach (var tenantId in applicationIds)
             {
                 ids.Add(StringToId(tenantId));
             }
 
-            var query = SqlBuilder.Select<TTenant>(new {Id = ids});
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Select<TApplication>(new { Id = ids });
+            _connection.SetTypeInfo(typeof(TApplication));
 
-            var tenants = await _connection.Current.QueryAsync<TTenant>(query.Sql, query.Parameters);
-            return tenants;
+            var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
+            return applications;
         }
 
-        public async Task<TTenant> FindByNameAsync(string normalizedTenantName, CancellationToken cancellationToken)
+        public async Task<TApplication> FindByNameAsync(string normalizedApplicationName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<TTenant>(new {NormalizedName = normalizedTenantName});
-            _connection.SetTypeInfo(typeof(TTenant));
+            var query = SqlBuilder.Select<TApplication>(new { NormalizedName = normalizedApplicationName });
+            _connection.SetTypeInfo(typeof(TApplication));
 
-            var tenant = await _connection.Current.QuerySingleOrDefaultAsync<TTenant>(query.Sql, query.Parameters);
-            return tenant;
+            var application = await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
+            return application;
         }
 
-        public Task<string> GetTenantIdAsync(TTenant tenant, CancellationToken cancellationToken)
+        public Task<string> GetApplicationIdAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(tenant?.Id.ToString());
+            return Task.FromResult(application?.Id.ToString());
         }
 
-        public Task<string> GetTenantNameAsync(TTenant tenant, CancellationToken cancellationToken)
+        public Task<string> GetApplicationNameAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(tenant?.Name);
+            return Task.FromResult(application?.Name);
         }
 
         public void Dispose()
         {
         }
 
-        private static object StringToId(string tenantId)
+        private static object StringToId(string applicationId)
         {
             var idType = typeof(TKey);
             object id;
-            if (idType == typeof(Guid) && Guid.TryParse(tenantId, out var guid))
+            if (idType == typeof(Guid) && Guid.TryParse(applicationId, out var guid))
             {
                 id = guid;
             }
             else if ((idType == typeof(short) || idType == typeof(int) || idType == typeof(long)) &&
-                     long.TryParse(tenantId, out var integer))
+                     long.TryParse(applicationId, out var integer))
             {
                 id = integer;
             }
             else if (idType == typeof(string))
             {
-                id = tenantId;
+                id = applicationId;
             }
             else
             {
@@ -215,7 +213,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             return id;
         }
 
-        private IQueryable<TTenant> MaybeQueryable()
+        private IQueryable<TApplication> MaybeQueryable()
         {
             if (_queryable.IsSafe)
             {
@@ -227,14 +225,14 @@ namespace HQ.Platform.Identity.Stores.Sql
                 return _queryable.UnsafeQueryable;
             }
 
-            return Task.Run(GetAllTenantsAsync, CancellationToken).Result.AsQueryable();
+            return Task.Run(GetAllApplicationsAsync, CancellationToken).Result.AsQueryable();
         }
 
-        private async Task<IEnumerable<TTenant>> GetAllTenantsAsync()
+        private async Task<IEnumerable<TApplication>> GetAllApplicationsAsync()
         {
-            var query = SqlBuilder.Select<TTenant>();
-            _connection.SetTypeInfo(typeof(TTenant));
-            var tenants = await _connection.Current.QueryAsync<TTenant>(query.Sql, query.Parameters);
+            var query = SqlBuilder.Select<TApplication>();
+            _connection.SetTypeInfo(typeof(TApplication));
+            var tenants = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
             return tenants;
         }
     }

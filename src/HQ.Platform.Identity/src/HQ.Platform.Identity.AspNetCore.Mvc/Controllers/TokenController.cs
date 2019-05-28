@@ -48,15 +48,17 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Tokens")]
     [MetaDescription("Manages authentication tokens.")]
-    public class TokenController<TUser, TTenant, TKey> : DataController
+    public class TokenController<TUser, TTenant, TApplication, TKey> : DataController
         where TUser : IdentityUserExtended<TKey>
-        where TTenant : IdentityTenant
+        where TTenant : IdentityTenant<TKey>
+        where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IOptions<PlatformApiOptions> _apiOptions;
-        private readonly ILogger<TokenController<TUser, TTenant, TKey>> _logger;
         private readonly IOptions<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
+        private readonly ILogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
+
         private readonly UserManager<TUser> _userManager;
 
         public TokenController(
@@ -64,7 +66,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             IServerTimestampService timestamps,
             IOptions<SecurityOptions> securityOptions,
             IOptions<PlatformApiOptions> apiOptions,
-            ILogger<TokenController<TUser, TTenant, TKey>> logger)
+            ILogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
         {
             _userManager = userManager;
             _timestamps = timestamps;
@@ -111,7 +113,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                     {
                         return NotFound();
                     }
-
                     break;
                 case IdentityType.PhoneNumber:
                     user = await _userManager.FindByPhoneNumberAsync(model.Identity);
@@ -145,8 +146,17 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 {
                     if (tenantContext.Tenant != null)
                     {
-                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantIdClaim, tenantContext.Tenant.Id));
+                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
                         claims.Add(new Claim(_securityOptions.Value.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+                    }
+                }
+
+                if (HttpContext.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext)
+                {
+                    if (applicationContext.Application != null)
+                    {
+                        claims.Add(new Claim(_securityOptions.Value.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
+                        claims.Add(new Claim(_securityOptions.Value.Claims.ApplicationNameClaim, applicationContext.Application.Name));
                     }
                 }
 

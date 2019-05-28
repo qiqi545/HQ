@@ -55,10 +55,17 @@ namespace HQ.Platform.Identity.Stores.Sql
             {
                 claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
             }
-
+            if (!_applicationId.Equals(default))
+            {
+                claims.TryAddClaim(_security.Value.Claims.ApplicationIdClaim, $"{_applicationId}");
+            }
             if (!string.IsNullOrWhiteSpace(_tenantName))
             {
                 claims.TryAddClaim(_security.Value.Claims.TenantNameClaim, _tenantName);
+            }
+            if (!string.IsNullOrWhiteSpace(_applicationName))
+            {
+                claims.TryAddClaim(_security.Value.Claims.ApplicationNameClaim, _applicationName);
             }
 
             claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
@@ -122,16 +129,15 @@ namespace HQ.Platform.Identity.Stores.Sql
                                "AND ClaimValue = @ClaimValue " +
                                "AND TenantId = @TenantId";
 
-            await _connection.Current.ExecuteAsync(sql,
-                new
-                {
-                    TenantId = _tenantId,
-                    NewClaimType = newClaim.Type,
-                    NewClaimValue = newClaim.Value,
-                    UserId = user.Id,
-                    ClaimType = claim.Type,
-                    ClaimValue = claim.Value
-                });
+            await _connection.Current.ExecuteAsync(sql, new
+            {
+                TenantId = _tenantId,
+                NewClaimType = newClaim.Type,
+                NewClaimValue = newClaim.Value,
+                UserId = user.Id,
+                ClaimType = claim.Type,
+                ClaimValue = claim.Value
+            });
         }
 
         public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)

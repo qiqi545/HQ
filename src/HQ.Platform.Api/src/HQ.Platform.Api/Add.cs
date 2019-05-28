@@ -120,32 +120,38 @@ namespace HQ.Platform.Api
 
         #region Multi-Tenancy
 
-        public static IServiceCollection AddMultiTenancy<TTenant>(this IServiceCollection services,
+        public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
             IConfiguration config)
             where TTenant : class, new()
+            where TApplication : class, new()
         {
-            return services.AddMultiTenancy<TTenant>(config.Bind);
+            return services.AddMultiTenancy<TTenant, TApplication>(config.Bind);
         }
 
-        public static IServiceCollection AddMultiTenancy<TTenant>(this IServiceCollection services,
+        public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
             Action<MultiTenancyOptions> configureAction = null)
             where TTenant : class, new()
+            where TApplication : class, new()
         {
-            return services.AddMultiTenancy<DefaultTenantContextResolver<TTenant>, TTenant>(configureAction);
+            return services.AddMultiTenancy<DefaultTenantContextResolver<TTenant>, TTenant, DefaultApplicationContextResolver<TApplication>, TApplication>(configureAction);
         }
 
-        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant>(this IServiceCollection services,
+        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(this IServiceCollection services,
             IConfiguration config)
             where TTenantResolver : class, ITenantContextResolver<TTenant>
             where TTenant : class, new()
+            where TApplicationResolver : class, IApplicationContextResolver<TApplication>
+            where TApplication : class, new()
         {
-            return services.AddMultiTenancy<TTenantResolver, TTenant>(config.Bind);
+            return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(config.Bind);
         }
 
-        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant>(this IServiceCollection services,
+        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(this IServiceCollection services,
             Action<MultiTenancyOptions> configureAction = null)
             where TTenantResolver : class, ITenantContextResolver<TTenant>
             where TTenant : class, new()
+            where TApplicationResolver : class, IApplicationContextResolver<TApplication>
+            where TApplication : class, new()
         {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -155,9 +161,14 @@ namespace HQ.Platform.Api
             }
 
             services.AddInProcessCache();
+
             services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
             services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());
             services.AddScoped<ITenantContext<TTenant>>(r => new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
+
+            services.AddScoped<IApplicationContextResolver<TApplication>, TApplicationResolver>();
+            services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetApplicationContext<TApplication>());
+            services.AddScoped<IApplicationContext<TApplication>>(r => new ApplicationContextWrapper<TApplication>(r.GetService<TApplication>()));
 
             return services;
         }

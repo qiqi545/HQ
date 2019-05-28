@@ -97,7 +97,7 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             identityBuilder.Services.Configure<DocumentDbOptions>(ConfigureAction);
 
             var dialect = new DocumentDbDialect();
-            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString,
+            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString,
                 scope,
                 OnCommand<TKey>(), OnConnection);
 

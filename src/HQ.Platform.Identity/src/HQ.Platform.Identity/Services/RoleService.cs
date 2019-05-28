@@ -60,7 +60,7 @@ namespace HQ.Platform.Identity.Services
             role.Name = model.Name;
             role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
             role.NormalizedName = model.Name?.ToUpperInvariant();
-
+            
             var result = await _roleManager.CreateAsync(role);
             return result.ToOperation(role);
         }

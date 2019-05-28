@@ -97,7 +97,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
             configureDatabase?.Invoke(options);
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString, scope,
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope,
                 OnCommand<TKey>(), OnConnection);
             identityBuilder.Services.AddSingleton(dialect);
 

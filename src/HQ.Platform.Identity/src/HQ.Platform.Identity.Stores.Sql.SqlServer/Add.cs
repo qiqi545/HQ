@@ -95,7 +95,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             identityBuilder.Services.Configure<SqlServerOptions>(ConfigureAction);
 
             var dialect = new SqlServerDialect();
-            identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant>(connectionString,
+            identityBuilder.AddSqlStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString,
                 scope, OnCommand<TKey>(), OnConnection);
 
             SqlBuilder.Dialect = dialect;

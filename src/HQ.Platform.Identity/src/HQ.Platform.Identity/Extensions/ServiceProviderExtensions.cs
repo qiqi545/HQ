@@ -48,6 +48,30 @@ namespace HQ.Platform.Identity.Extensions
             return false;
         }
 
+        public static bool TryGetApplicationId<TKey>(this IServiceProvider services, out TKey applicationId)
+        {
+            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+            if (security?.Value?.Claims != null)
+            {
+                return services.TryGetClaim(security.Value.Claims.ApplicationIdClaim, out applicationId);
+            }
+
+            applicationId = default;
+            return false;
+        }
+
+        public static bool TryGetApplicationName(this IServiceProvider services, out string applicationName)
+        {
+            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+            if (security?.Value?.Claims != null)
+            {
+                return services.TryGetClaim(security.Value.Claims.ApplicationNameClaim, out applicationName);
+            }
+
+            applicationName = default;
+            return false;
+        }
+
         public static bool TryGetClaim<TKey>(this IServiceProvider services, string type, out TKey value)
         {
             var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;

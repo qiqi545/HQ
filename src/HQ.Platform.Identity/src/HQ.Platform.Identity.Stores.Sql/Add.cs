@@ -27,7 +27,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 {
     public static class Add
     {
-        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole, TTenant>
+        internal static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole, TTenant, TApplication>
         (
             this IdentityBuilder identityBuilder,
             string connectionString,
@@ -40,6 +40,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
+            where TApplication : IdentityApplication<TKey>
         {
             var services = identityBuilder.Services;
 
@@ -59,6 +60,9 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             services.AddTransient<ITenantStore<TTenant>, TenantStore<TTenant, TKey>>();
             services.AddScoped<TenantManager<TTenant, TUser, TKey>>();
+
+            services.AddTransient<IApplicationStore<TApplication>, ApplicationStore<TApplication, TKey>>();
+            services.AddScoped<ApplicationManager<TApplication, TUser, TKey>>();
 
             return identityBuilder
                 .AddRoles<TRole>()
