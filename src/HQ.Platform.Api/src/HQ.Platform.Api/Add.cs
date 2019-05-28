@@ -111,6 +111,7 @@ namespace HQ.Platform.Api
             }
 
             services.AddInProcessCache();
+            services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
             services.AddScoped<IVersionContextResolver, TVersionResolver>();
             services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
             return services;
