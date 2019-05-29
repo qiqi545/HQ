@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Filters
 {
@@ -62,7 +63,7 @@ namespace HQ.Platform.Api.Filters
             var lowercaseUrls = options.LowercaseUrls;
             var lowercaseQueryStrings = options.LowercaseQueryStrings;
             
-            var sb = StringBuilderPool.Pool.Get();
+            var sb = Pooling.StringBuilderPool.Get();
             try
             {
                 if (lowercaseUrls)
@@ -146,7 +147,7 @@ namespace HQ.Platform.Api.Filters
             }
             finally
             {
-                StringBuilderPool.Pool.Return(sb);
+                Pooling.StringBuilderPool.Return(sb);
             }
 
             return canonical;

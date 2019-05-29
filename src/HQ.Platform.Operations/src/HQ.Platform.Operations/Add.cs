@@ -15,15 +15,19 @@
 
 #endregion
 
+using System;
 using HQ.Common;
+using HQ.Common.AspNetCore;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
+using HQ.Extensions.Options;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations
 {
@@ -39,6 +43,7 @@ namespace HQ.Platform.Operations
                 services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
             }
 
+            services.AddValidOptions();
             services.AddScoped<IMetaProvider, OperationsMetaProvider>();
             services.Configure<OperationsApiOptions>(config);
             services.AddSingleton(config);

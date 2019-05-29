@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Models
 {
@@ -30,7 +31,7 @@ namespace HQ.Platform.Api.Models
                 return input;
             }
 
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append(char.ToLowerInvariant(input[0]));
                 for (var i = 1; i < input.Length; i++)

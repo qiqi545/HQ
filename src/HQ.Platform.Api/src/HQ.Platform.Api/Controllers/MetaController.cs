@@ -11,6 +11,7 @@ using HQ.Common;
 using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Controllers
 {
@@ -99,7 +100,7 @@ namespace HQ.Platform.Api.Controllers
 
                 Response.Headers.Add("X-Swagger-Version", "2.0");
 
-                return Content(StringBuilderPool.Scoped(sb =>
+                return Content(Pooling.StringBuilderPool.Scoped(sb =>
                 {
                     using (var writer = new StringWriter(sb))
                     {

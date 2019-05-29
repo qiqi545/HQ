@@ -23,6 +23,7 @@ using HQ.Data.Contracts.Configuration;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Extensions
 {
@@ -73,7 +74,7 @@ namespace HQ.Platform.Api.Extensions
                 return;
             }
 
-            var link = StringBuilderPool.Scoped(sb =>
+            var link = Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (data.TotalPages > 1)
                 {

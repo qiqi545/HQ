@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Models
 {
@@ -25,7 +26,7 @@ namespace HQ.Platform.Api.Models
 
         public string Transform(string input)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (input == null)
                 {

@@ -26,6 +26,7 @@
     <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\HQ.Extensions.Metrics.AspNetCore.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\HQ.Extensions.Metrics.Reporters.ServerTiming.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
     <ProjectReference Include="..\..\..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
   </ItemGroup>
 
