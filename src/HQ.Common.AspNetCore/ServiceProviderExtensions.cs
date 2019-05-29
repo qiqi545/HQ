@@ -17,6 +17,7 @@
 
 using System;
 using System.Threading;
+using HQ.Extensions.Options;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 
@@ -39,7 +40,7 @@ namespace HQ.Common.AspNetCore
             return true;
         }
 
-        public static bool TryBindOptions(this IServiceProvider serviceProvider, Type optionsWrapperType, out object options)
+        public static bool TryBindOptions(this IServiceProvider serviceProvider, Type optionsWrapperType, bool validate, out object options)
         {
             // IOptions<T>
             var resolved = optionsWrapperType.GetGenericArguments()[0];
@@ -49,7 +50,9 @@ namespace HQ.Common.AspNetCore
                     ? resolved.MakeGenericType(optionsWrapperType.GetGenericArguments())    // IOptions<TService<T1,...TN>>
                     : resolved.BaseType;                                                    // HubOptions<THub> -> HubOptions
             }
-            resolved = typeof(IOptions<>).MakeGenericType(resolved);
+
+            var testingType = validate ? typeof(IValidOptions<>) : typeof(IOptions<>);
+            resolved = testingType.MakeGenericType(resolved);
 
             try
             {

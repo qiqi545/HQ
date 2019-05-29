@@ -17,6 +17,7 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
@@ -31,7 +32,7 @@ namespace HQ.Common.AspNetCore.Mvc
             if (types.Length == 0)
                 return;
 
-            controller.ControllerName = StringBuilderPool.Scoped(sb =>
+            controller.ControllerName = Pooling.StringBuilderPool.Scoped(sb =>
             {
                 var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
                 sb.Append(controllerName);
