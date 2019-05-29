@@ -13,15 +13,17 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System.Collections.Generic;
+using System;
 using System.Diagnostics;
 using Dapper;
+using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Sqlite
 {
-    public class SqliteConfigurationProvider : ConfigurationProvider
+    public class SqliteConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
     {
         private readonly SqliteConfigurationSource _source;
 
@@ -30,40 +32,84 @@ namespace HQ.Data.Sql.Sqlite
             _source = source;
         }
 
+        public bool HasChildren(string key)
+        {
+            foreach (var entry in Data)
+                if (entry.Key.StartsWith(key, StringComparison.Ordinal))
+                    return true;
+            return false;
+        }
+
+        public bool Save<TOptions>(string key, TOptions instance)
+        {
+            var accessor = ReadAccessor.Create(instance);
+
+            var changed = false;
+            using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
+            {
+                db.Open();
+
+                var t = db.BeginTransaction();
+
+                foreach (var entry in Data)
+                {
+                    if (!entry.Key.StartsWith(key, StringComparison.Ordinal))
+                        continue; // not in this parent
+
+                    var propertyKey = entry.Key.Substring(key.Length + 1);
+                    if (!accessor.TryGetValue(instance, propertyKey, out var value))
+                        continue; // not in this child
+
+                    var valueString = value.ToString();
+
+                    var count = db.Execute(Update, new { entry.Key, Value = valueString }, t);
+                    if (count == 0)
+                        count = db.Execute(Insert, new { entry.Key, Value = valueString }, t);
+                    if (count > 0)
+                        changed = true;
+                }
+                t.Commit();
+            }
+
+            return changed;
+        }
+
         public override void Set(string key, string value)
         {
             if (TryGet(key, out var previousValue) && value == previousValue)
                 return;
-
             using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
             {
                 db.Open();
                 var t = db.BeginTransaction();
-                var count = db.Execute(Update, new {Key = key, Value = value});
+                var count = db.Execute(Update, new {Key = key, Value = value}, t);
                 if (count == 0)
-                    db.Execute(Insert, new {Key = key, Value = value});
+                    db.Execute(Insert, new {Key = key, Value = value}, t);
                 t.Commit();
             }
             Data[key] = value;
-
             if (_source.ReloadOnChange)
                 OnReload();
         }
 
         public override void Load()
         {
+            var onChange = Data.Count > 0;
             Data.Clear();
             using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
             {
                 db.Open();
                 var data = db.Query<ConfigurationRow>(GetAll);
                 foreach (var item in data)
+                {
                     Data[item.Key] = item.Value;
+                    onChange = true;
+                }
             }
-            if(_source.ReloadOnChange)
+            if(onChange && _source.ReloadOnChange)
                 OnReload();
         }
-
+        
         [DebuggerDisplay("{Key} = {Value}")]
         private struct ConfigurationRow
         {
@@ -75,9 +121,9 @@ namespace HQ.Data.Sql.Sqlite
 
         #region SQL
 
-        private const string GetAll = "SELECT * FROM 'Configuration'";
-        private const string Update = "UPDATE 'Configuration' SET 'Value' = @Value WHERE 'Key' = @Key;";
-        private const string Insert = "INSERT INTO 'Configuration' ('Key','Value') VALUES (@Key, @Value);";
+        private const string GetAll = "SELECT * FROM Configuration";
+        private const string Update = "UPDATE Configuration SET Value = :Value WHERE Key = :Key";
+        private const string Insert = "INSERT INTO Configuration (Key, Value) VALUES (:Key, :Value)";
 
         #endregion
     }

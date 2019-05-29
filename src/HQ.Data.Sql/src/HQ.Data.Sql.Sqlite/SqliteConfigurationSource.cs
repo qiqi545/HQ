@@ -13,25 +13,20 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Diagnostics;
 using System.IO;
-using Dapper;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
 namespace HQ.Data.Sql.Sqlite
 {
     public class SqliteConfigurationSource : IConfigurationSource
     {
-        private readonly IConfiguration _configSeed;
-
-        public SqliteConfigurationSource(string dataFilePath, IConfiguration configSeed = null)
+        public SqliteConfigurationSource(string dataFilePath, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
         {
-            _configSeed = configSeed;
+            ConfigSeed = configSeed;
             DataFilePath = dataFilePath;
             DataDirectoryPath = new FileInfo(DataFilePath).Directory?.FullName;
             DataFileName = Path.GetFileName(DataFilePath);
+            SeedStrategy = strategy;
         }
 
         public string DataFilePath { get; }
@@ -46,47 +41,7 @@ namespace HQ.Data.Sql.Sqlite
         {
             if (DataDirectoryPath != null)
                 Directory.CreateDirectory(DataDirectoryPath);
-
-            try
-            {
-                using (var db = new SqliteConnection($"Data Source={DataFilePath}"))
-                {
-                    db.Open();
-
-                    db.Execute(@"
-CREATE TABLE IF NOT EXISTS 'Configuration'
-(  
-    'Key' VARCHAR(128) NOT NULL,
-    'Value' VARCHAR(255) NOT NULL,
-    UNIQUE(Key)
-);");
-                    if (ConfigSeed != null)
-                    {
-                        var t = db.BeginTransaction();
-
-                        switch (SeedStrategy)
-                        {
-                            case SeedStrategy.InsertIfNotExists:
-                                foreach (var entry in ConfigSeed.AsEnumerable())
-                                {
-                                    db.Execute("INSERT OR IGNORE INTO 'Configuration' ('Key', 'Value') VALUES (@Key, @Value)",
-                                        new { entry.Key, entry.Value }, t);
-                                }
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                        
-                        t.Commit();
-                    }
-                }
-            }
-            catch (SqliteException e)
-            {
-                Trace.TraceError("Error migrating configuration database", e);
-                throw;
-            }
-
+            SqliteConfigurationHelper.MigrateToLatest(DataFilePath, ConfigSeed, SeedStrategy);
             return new SqliteConfigurationProvider(this);
         }
     }

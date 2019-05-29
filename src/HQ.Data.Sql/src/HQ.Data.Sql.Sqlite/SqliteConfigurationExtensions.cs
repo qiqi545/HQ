@@ -46,11 +46,11 @@ namespace HQ.Data.Sql.Sqlite
                 provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
                 path = Path.GetFileName(path);
             }
-
             var source = new SqliteConfigurationSource(path)
             {
                 ReloadOnChange = reloadOnChange,
-                ConfigSeed = configSeed
+                ConfigSeed = configSeed,
+                SeedStrategy = SeedStrategy.InsertIfEmpty
                 // FileProvider = provider,
                 // Optional = optional
             };

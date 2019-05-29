@@ -16,6 +16,7 @@ namespace HQ.Data.Sql.Sqlite
 {
     public enum SeedStrategy
     {
-        InsertIfNotExists
+        InsertIfNotExists,
+        InsertIfEmpty
     }
 }
