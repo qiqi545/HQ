@@ -22,19 +22,30 @@ namespace HQ.Extensions.Options
             var builder = new ConfigurationBuilder();
             foreach (var assembly in assemblies)
             {
-                foreach (var resourceName in assembly.GetManifestResourceNames())
+                if (assembly.IsDynamic)
+                    continue;
+                try
                 {
-                    if (!resourceName.EndsWith(fileName))
-                        continue;
-                    var baseNamespace = resourceName.Replace($".{fileName}", string.Empty);
-                    var provider = new EmbeddedFileProvider(assembly, baseNamespace);
-                    builder.AddJsonFile(o =>
+                    foreach (var resourceName in assembly.GetManifestResourceNames())
                     {
-                        o.FileProvider = provider;
-                        o.Path = fileName;
-                        o.Optional = false;
-                        o.ReloadOnChange = false;
-                    });
+
+                        if (!resourceName.EndsWith(fileName))
+                            continue;
+                        var baseNamespace = resourceName.Replace($".{fileName}", string.Empty);
+                        var provider = new EmbeddedFileProvider(assembly, baseNamespace);
+                        builder.AddJsonFile(o =>
+                        {
+                            o.FileProvider = provider;
+                            o.Path = fileName;
+                            o.Optional = false;
+                            o.ReloadOnChange = false;
+                        });
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception);
+                    throw;
                 }
             }
             IConfiguration configSeed = null;

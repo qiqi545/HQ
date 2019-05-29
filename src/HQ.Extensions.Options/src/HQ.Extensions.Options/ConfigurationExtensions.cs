@@ -16,12 +16,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using TypeKitchen;
 
 namespace HQ.Extensions.Options
 {
-    internal static class ValidationExtensions
+    internal static class ConfigurationExtensions
     {
         public static TOptions Valid<TOptions>(this TOptions instance, IServiceProvider serviceProvider)
         {
@@ -61,6 +62,21 @@ namespace HQ.Extensions.Options
                 });
 
                 throw new ValidationException(message);
+            }
+            finally
+            {
+                Pooling.ListPool<ValidationResult>.Return(results);
+            }
+        }
+
+        public static bool IsValid<TOptions>(this TOptions instance, IServiceProvider serviceProvider)
+        {
+            var results = Pooling.ListPool<ValidationResult>.Get();
+            try
+            {
+                var context = new ValidationContext(instance, serviceProvider, null);
+                Validator.TryValidateObject(instance, context, results, true);
+                return results.Count == 0;
             }
             finally
             {

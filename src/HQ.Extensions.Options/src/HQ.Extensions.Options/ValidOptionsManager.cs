@@ -23,20 +23,22 @@ namespace HQ.Extensions.Options
     public sealed class ValidOptionsManager<TOptions> : IValidOptions<TOptions>, IValidOptionsSnapshot<TOptions>
         where TOptions : class, new()
     {
-        private readonly OptionsManager<TOptions> _inner;
+        private readonly IOptions<TOptions> _default;
+        private readonly IOptionsSnapshot<TOptions> _snapshot;
         private readonly IServiceProvider _serviceProvider;
 
-        public ValidOptionsManager(OptionsManager<TOptions> inner, IServiceProvider serviceProvider)
+        public ValidOptionsManager(IOptions<TOptions> @default, IOptionsSnapshot<TOptions> snapshot, IServiceProvider serviceProvider)
         {
-            _inner = inner;
+            _default = @default;
+            _snapshot = snapshot;
             _serviceProvider = serviceProvider;
         }
 
-        public TOptions Value => Get(Microsoft.Extensions.Options.Options.DefaultName);
+        public TOptions Value => _default.Value;
 
         public TOptions Get(string name)
         {
-            return _inner.Get(name).Valid(_serviceProvider);
+            return _snapshot.Get(name).Valid(_serviceProvider);
         }
     }
 }

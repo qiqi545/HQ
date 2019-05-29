@@ -22,10 +22,10 @@ namespace HQ.Extensions.Options
 {
     public sealed class ValidOptionsMonitor<TOptions> : IValidOptionsMonitor<TOptions> where TOptions : class, new()
     {
-        private readonly OptionsMonitor<TOptions> _inner;
+        private readonly IOptionsMonitor<TOptions> _inner;
         private readonly IServiceProvider _serviceProvider;
 
-        public ValidOptionsMonitor(OptionsMonitor<TOptions> inner, IServiceProvider serviceProvider)
+        public ValidOptionsMonitor(IOptionsMonitor<TOptions> inner, IServiceProvider serviceProvider)
         {
             _inner = inner;
             _serviceProvider = serviceProvider;
