@@ -124,20 +124,20 @@ namespace Blowdart.UI.Web
 
 		#region DOM Events
 
-		public static bool Click(this Ui ui, string el, string innerText, object attr = null)
-        {
-	        ui.NextId();
-	        var id = ui.NextIdHash;
-	        Dom(ui).AppendTag(el, id, innerText, attr == null ? null : Attr(attr));
-	        Scripts(ui).AppendEvent(MouseEvents.click, id);
-	        return ui.Clicked.Contains(id);
-        }
-		
-		public static Ui Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events,
-			object attr = null)
+		public static bool OnClick(this Ui ui)
 		{
-			ui.NextId();
-			var id = ui.NextIdHash;
+			return OnEvent(ui, MouseEvents.click);
+		}
+
+		public static bool OnEvent(this Ui ui, string eventType)
+		{
+			Scripts(ui).AppendEvent(eventType, ui.NextIdHash);
+			return ui.Events.Contains(eventType, ui.NextIdHash);
+		}
+
+		public static Ui Button(this Ui ui, string innerText, Action<ButtonEvents, ButtonAttributes> events, object attr = null)
+		{
+			var id = ui.NextId();
 
 			if (events != null)
 			{
@@ -147,13 +147,13 @@ namespace Blowdart.UI.Web
 				
 				events(e, a);
 
-				if (ui.Clicked.Contains(id))
+				if (ui.Events.Contains(MouseEvents.click, id))
 					e.click?.Invoke(d);
 
-				if (ui.MouseOver.Contains(id))
+				if (ui.Events.Contains(MouseEvents.mouseover, id))
 					e.mouseover?.Invoke(d);
 
-				if (ui.MouseOut.Contains(id))
+				if (ui.Events.Contains(MouseEvents.mouseout, id))
 					e.mouseout?.Invoke(d);
 
 				if (a.innerText != null)
@@ -181,16 +181,16 @@ namespace Blowdart.UI.Web
 
 				events(e, a);
 
-				if (ui.Clicked.Contains(id))
+				if (ui.Events.Contains(MouseEvents.click, id))
 					e.click?.Invoke(d);
 
-				if (ui.MouseOver.Contains(id))
+				if (ui.Events.Contains(MouseEvents.mouseover, id))
 					e.mouseover?.Invoke(d);
 
-				if (ui.MouseOut.Contains(id))
+				if (ui.Events.Contains(MouseEvents.mouseout, id))
 					e.mouseout?.Invoke(d);
-				
-				if(e.click != null)
+
+				if (e.click != null)
 					Scripts(ui).AppendEvent(MouseEvents.click, id);
 				if(e.mouseover != null)
 					Scripts(ui).AppendEvent(MouseEvents.mouseover, id);
@@ -207,13 +207,7 @@ namespace Blowdart.UI.Web
 		}
 
 		#endregion
-
-
-
-
-
-
-
+		
 		private static HtmlSystem Html(this Ui ui)
         {
             if (!(ui.System is HtmlSystem system))

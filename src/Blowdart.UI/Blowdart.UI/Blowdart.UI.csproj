@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Primitives" Version="2.2.0" />

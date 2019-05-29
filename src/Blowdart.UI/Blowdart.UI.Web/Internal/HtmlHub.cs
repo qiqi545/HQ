@@ -137,7 +137,7 @@ namespace Blowdart.UI.Web.Internal
 	        return patch;
         }
 
-        private void UpdateInputState(WebUiContext context, string id, string eventType, string value, Ui ui)
+        private static void UpdateInputState(WebUiContext context, string id, string eventType, string value, Ui ui)
         {
 	        //
 	        // Input State:
@@ -155,21 +155,15 @@ namespace Blowdart.UI.Web.Internal
 		        }
 			}
 
+			//
+			// DOM Events:
 	        switch (eventType)
 	        {
 		        case MouseEvents.mouseover:
-		        {
-			        ui.MouseOver.Add(id);
-			        break;
-		        }
 				case MouseEvents.mouseout:
-		        {
-			        ui.MouseOut.Add(id);
-			        break;
-		        }
 				case MouseEvents.click:
 		        {
-			        ui.Clicked.Add(id);
+			        ui.Events.Add(eventType, id);
 			        break;
 		        }
 		        case InputEvents.input:

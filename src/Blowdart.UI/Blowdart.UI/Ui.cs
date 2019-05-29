@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Internal.Execution;
+using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using TypeKitchen;
 
@@ -233,9 +234,8 @@ namespace Blowdart.UI
 		#region Lifecycle
 
 		private int _count;
-        internal readonly HashSet<Value128> MouseOut = new HashSet<Value128>();
-		internal readonly HashSet<Value128> MouseOver = new HashSet<Value128>();
-		internal readonly HashSet<Value128> Clicked = new HashSet<Value128>();
+
+		internal readonly MultiValueDictionary<string, Value128> Events = MultiValueDictionary<string, Value128>.Create<HashSet<Value128>>();
         internal readonly Dictionary<Value128, int> InputValues = new Dictionary<Value128, int>();
 
 		public UiContext Context { get; private set; }
@@ -244,9 +244,7 @@ namespace Blowdart.UI
         {
             _count = 0;
             Context = context;
-            MouseOver.Clear();
-            MouseOut.Clear();
-			Clicked.Clear();
+            Events.Clear();
 			InputValues.Clear();
             System = system;
             System.Begin(context);
@@ -264,20 +262,23 @@ namespace Blowdart.UI
 
         internal Value128 NextIdHash;
 
-        public void NextId(string id = null, [CallerMemberName] string callerMemberName = null)
+        public Value128 NextId(string id = null, [CallerMemberName] string callerMemberName = null)
         {
             NextIdHash = Hashing.MurmurHash3(id ?? $"{callerMemberName}{_count++}", NextIdHash) ^ NextIdHash;
+            return NextIdHash;
         }
 
-        public void NextId(StringBuilder id)
+        public Value128 NextId(StringBuilder id)
         {
             NextIdHash = Hashing.MurmurHash3(id, NextIdHash) ^ NextIdHash;
-        }
+            return NextIdHash;
+		}
 
-        public void NextId(int i)
+        public Value128 NextId(int i)
         {
             NextIdHash = Hashing.MurmurHash3((ulong) i, NextIdHash) ^ NextIdHash;
-        }
+            return NextIdHash;
+		}
 
         #endregion
 
