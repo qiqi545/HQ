@@ -48,6 +48,13 @@ namespace HQ.Data.SessionManagement
                 key = default;
                 return false;
             }
+
+            if (wrapped.LastInsertedId == null)
+            {
+                key = default;
+                return false;
+            }
+
             key = (TKey) Convert.ChangeType(wrapped.LastInsertedId, typeof(TKey));
             return true;
         }

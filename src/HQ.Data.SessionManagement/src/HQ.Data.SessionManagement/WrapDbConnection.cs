@@ -33,11 +33,19 @@ namespace HQ.Data.SessionManagement
             Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
         {
             Inner = inner;
-
-            _maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
             _serviceProvider = serviceProvider;
             _onCommand = onCommand;
             _type = type;
+
+            try
+            {
+                _maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
+                _maybeRetains.GetLastInsertedId();
+            }
+            catch
+            {
+                _maybeRetains = null;
+            }
         }
 
         public DbConnection Inner { get; }
