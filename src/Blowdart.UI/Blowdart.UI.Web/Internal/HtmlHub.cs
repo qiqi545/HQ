@@ -26,14 +26,16 @@ namespace Blowdart.UI.Web.Internal
         {
             await base.OnConnectedAsync();
 
-            if (!_options.Value.UsePrerendering)
+            var http = Context.GetHttpContext();
+
+			if (!_options.Value.UsePrerendering)
             {
-                var ui = Ui.CreateNew(_layoutRoot.Services);
+				var ui = Ui.CreateNew(http.RequestServices.GetRequiredService<UiData>());
                 ui.Begin(_layoutRoot.Systems["/"], WebUiContext.Build(this));
                 _layoutRoot.Root(ui);
                 ui.End();
 
-                var system = _layoutRoot.Services.GetRequiredService<HtmlSystem>();
+                var system = http.RequestServices.GetRequiredService<HtmlSystem>();
                 await Clients.Caller.SendAsync(MessageTypes.FirstTimeRender, system.RenderDom, system.RenderScripts);
             }
         }
@@ -41,17 +43,20 @@ namespace Blowdart.UI.Web.Internal
 		[HubMethodName("e")]
         public async Task HandleEvent(string page, string id, string eventType, byte[] data, string value)
         {
-	        var delta = DeserializeInputStateDelta(data);
-	        var context = WebUiContext.Build(this, delta);
-			var ui = Ui.CreateNew(_layoutRoot.Services);
+	        var http = Context.GetHttpContext();
+
+	        var ui = Ui.CreateNew(http.RequestServices.GetRequiredService<UiData>());
 			InlineElements.SetUi(ui);
 
 			const string pageKey = "/"; // TODO: need to do our own reverse-match on the template to find the handler
 
 			if (!_layoutRoot.Systems.TryGetValue(pageKey, out var system))
-				system = _layoutRoot.Services.GetRequiredService<UiSystem>();
+				system = http.RequestServices.GetRequiredService<UiSystem>();
 			if (!(system is HtmlSystem htmlSystem))
 				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+
+			var delta = DeserializeInputStateDelta(data);
+			var context = WebUiContext.Build(this, delta);
 
 			ui.Begin(system, context);
 			UpdateInputState(context, id, eventType, value, ui);

@@ -2,7 +2,6 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -15,29 +14,26 @@ using TypeKitchen;
 
 namespace Blowdart.UI
 {
-    public class Ui : IServiceProvider
+    public class Ui
     {
-        private readonly IServiceProvider _serviceProvider;
-
-        protected Ui(IServiceProvider serviceProvider)
+        protected Ui(UiData data)
         {
-            _serviceProvider = serviceProvider;
-            Data = serviceProvider.GetRequiredService<UiData>();
+	        Data = data;
         }
 
         internal UiSystem System { get; private set; }
         internal UiData Data { get; set; }
 
-        public static Ui CreateNew(IServiceProvider serviceProvider)
+        public static Ui CreateNew(UiData data)
         {
-            return new Ui(serviceProvider);
+            return new Ui(data);
         }
 
         #region Components
 
         public void Component(string name)
         {
-			var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
+			var components = Context.UiServices.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
 			if (components.TryGetValue(name, out var component))
                 component().Render(this);
             else
@@ -46,7 +42,7 @@ namespace Blowdart.UI
 
         public void Component(string name, dynamic model)
         {
-			var components = _serviceProvider.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
+			var components = Context.UiServices.GetRequiredService<Dictionary<string, Func<UiComponent>>>();
 			if (components.TryGetValue(name, out var component))
                 component().Render(this, model);
             else
@@ -55,7 +51,7 @@ namespace Blowdart.UI
 
         public void Component<TComponent>() where TComponent : UiComponent
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
                 component().Render(this);
             else
@@ -64,7 +60,7 @@ namespace Blowdart.UI
 
         public void Component<TComponent>(dynamic model) where TComponent : UiComponent
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
                 component().Render(this, model);
             else
@@ -73,7 +69,7 @@ namespace Blowdart.UI
 
         public void Component<TComponent, TModel>(TModel model) where TComponent : UiComponent
         {
-	        var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+	        var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
 	        if (components.TryGetValue(typeof(TComponent), out var component))
 		        component().Render(this, model);
 	        else
@@ -84,12 +80,12 @@ namespace Blowdart.UI
             where TComponent : UiComponent<TModel>
             where TModel : class
         {
-            var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {
-	            var settings = _serviceProvider.GetRequiredService<UiSettings>();
+	            var settings = Context.UiServices.GetRequiredService<UiSettings>();
 				
-				var model = Data.GetModel<TController, TModel>(settings.DefaultPageMethodName);
+				var model = Data.GetModel<TController, TModel>(settings.DefaultPageMethodName, Context.UiServices);
 
 				if (component is UiComponent<TModel> typed)
                     typed.Render(this, model);
@@ -115,7 +111,7 @@ namespace Blowdart.UI
 		{
 			var accessor = ReadAccessor.Create(model);
 
-			var components = _serviceProvider.GetRequiredService<Dictionary<Type, Func<IViewComponent>>>();
+			var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<IViewComponent>>>();
 
 			while (true)
 			{
@@ -255,11 +251,6 @@ namespace Blowdart.UI
             System.Error(errorMessage, exception);
         }
 
-        #endregion
-
-        public object GetService(Type serviceType)
-        {
-            return _serviceProvider.GetService(serviceType);
-        }
+		#endregion
     }
 }

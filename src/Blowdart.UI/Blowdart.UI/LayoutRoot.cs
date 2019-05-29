@@ -14,16 +14,10 @@ namespace Blowdart.UI
 	    private readonly Dictionary<string, Action<Ui>> _handlers = new Dictionary<string, Action<Ui>>();
 	    private readonly Dictionary<string, UiSystem> _systems = new Dictionary<string, UiSystem>();
 
-		public LayoutRoot(IServiceProvider serviceProvider)
-        {
-            Services = serviceProvider;
-        }
-
-        internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
+		internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
 		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
 		internal IReadOnlyDictionary<string, UiSystem> Systems => _systems;
 
-		internal IServiceProvider Services { get; }
         public Action<Ui> Root => Handlers["/"];
 
         #region Default
@@ -57,7 +51,7 @@ namespace Blowdart.UI
         {
 			_handlers.Add(Normalize(template), ui =>
             {
-                view(ui, ui.Data.GetModel<TService>(template));
+				view(ui, ui.Data.GetModel<TService>(template, ui.Context.UiServices));
             });
             return this;
         }
@@ -66,7 +60,7 @@ namespace Blowdart.UI
         {
 	        _handlers.Add(Normalize(template), ui =>
             {
-                view(ui, ui.Data.GetModel<TService, TModel>(template));
+                view(ui, ui.Data.GetModel<TService, TModel>(template, ui.Context.UiServices));
             });
             return this;
         }

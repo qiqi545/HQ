@@ -99,15 +99,14 @@ namespace Blowdart.UI.Web
 
         internal static void UseBlowdartUi(this IApplicationBuilder app, Action<LayoutRoot> layout, bool standalone)
         {
-            var serviceProvider = app.ApplicationServices;
-            var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
+            var options = app.ApplicationServices.GetRequiredService<IOptions<UiServerOptions>>();
 
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>();
+            var loggerFactory = app.ApplicationServices.GetService<ILoggerFactory>();
             if (options.Value.UseLogStreaming)
-                loggerFactory?.AddProvider(new ServerLoggerProvider(serviceProvider.GetRequiredService<IHubContext<LoggingHub>>()));
+                loggerFactory?.AddProvider(new ServerLoggerProvider(app.ApplicationServices.GetRequiredService<IHubContext<LoggingHub>>()));
 
             if (!standalone)
-				UiServer.BeforeStart(serviceProvider);
+				UiServer.BeforeStart(app.ApplicationServices);
 
 			app.UseStaticFiles();
             app.Map("/~", x =>
@@ -130,12 +129,12 @@ namespace Blowdart.UI.Web
                     r.MapHub<LoggingHub>(options.Value.LoggingPath, SetMessagingModel);
             });
 
-            var template = WebRenderer.LoadPageTemplate(serviceProvider, options);
-            layout?.Invoke(serviceProvider.GetRequiredService<LayoutRoot>());
+            var template = WebRenderer.LoadPageTemplate(app.ApplicationServices, options);
+            layout?.Invoke(app.ApplicationServices.GetRequiredService<LayoutRoot>());
 
 			app.Use(async (context, next) =>
 			{
-				if (!await WebRenderer.BuildUi(serviceProvider.GetRequiredService<LayoutRoot>(), template, context, next))
+				if (!await WebRenderer.BuildUi(context.RequestServices.GetRequiredService<LayoutRoot>(), template, context))
 					await next();
 			});
 		}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Blowdart.UI.Internal;
 using Blowdart.UI.Theming;
+using TypeKitchen;
 
 namespace Blowdart.UI.Web.SemanticUI
 {
@@ -14,7 +15,7 @@ namespace Blowdart.UI.Web.SemanticUI
 		
 		public static Ui Icon<T>(this Ui ui, T icon, NamedColors color = NamedColors.Unspecified, NamedSizes size = NamedSizes.Unspecified, bool active = false, string label = null) where T : Enum
 		{
-			var sb = Pools.StringBuilderPool.Get();
+			var sb = Pooling.StringBuilderPool.Get();
 			try
 			{
 				ui.BeginI(sb.AppendClass<T>(icon, active, color, size));
@@ -25,7 +26,7 @@ namespace Blowdart.UI.Web.SemanticUI
 			}
 			finally
 			{
-				Pools.StringBuilderPool.Return(sb);
+				Pooling.StringBuilderPool.Return(sb);
 			}
 		}
 
@@ -48,7 +49,7 @@ namespace Blowdart.UI.Web.SemanticUI
 		{
 			if (!Interned.TryGetValue(@enum, out var nameAsWord))
 			{
-				var wsb = Pools.StringBuilderPool.Get();
+				var wsb = Pooling.StringBuilderPool.Get();
 				try
 				{
 					var name = Enum.GetName(typeof(T), @enum);
@@ -67,7 +68,7 @@ namespace Blowdart.UI.Web.SemanticUI
 				}
 				finally
 				{
-					Pools.StringBuilderPool.Return(wsb);
+					Pooling.StringBuilderPool.Return(wsb);
 				}
 			}
 			sb.Append(nameAsWord);

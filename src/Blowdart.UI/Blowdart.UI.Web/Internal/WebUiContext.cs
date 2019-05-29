@@ -60,6 +60,7 @@ namespace Blowdart.UI.Web.Internal
 
 			var context = new WebUiContext
             {
+				UiServices = http.RequestServices,
 	            TraceIdentifier = http.TraceIdentifier,
 				User = http.User
             };

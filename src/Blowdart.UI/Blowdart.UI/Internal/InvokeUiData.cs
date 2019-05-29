@@ -7,42 +7,35 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Blowdart.UI.Internal
 {
-    public class InvokeUiData : UiData
+    public sealed class InvokeUiData : UiData
     {
-        private readonly IServiceProvider _serviceProvider;
-        
-        public InvokeUiData(IServiceProvider serviceProvider)
+        public override TModel GetModel<TService, TModel>(string template, IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
-        }
-
-        public override TModel GetModel<TService, TModel>(string template)
-        {
-            var model = GetModel<TService>(template);
+            var model = GetModel<TService>(template, serviceProvider);
             if (model == null)
                 return default;
             return (TModel) model;
         }
 
-        public override object GetModel<TService>(string template)
+        public override object GetModel<TService>(string template, IServiceProvider serviceProvider)
         {
-            return GetModel(template, typeof(TService));
+            return GetModel(template, typeof(TService), serviceProvider);
         }
 
-        public override object GetModel(string template, Type serviceType)
+        public override object GetModel(string template, Type serviceType, IServiceProvider serviceProvider)
         {
-            return PopulateAndExecute(template, serviceType, null, null);
+            return PopulateAndExecute(template, serviceType, null, null, serviceProvider);
         }
 
         public override object GetModel(string template, MethodInfo method, Ui ui)
         {
-            return PopulateAndExecute(template, method.DeclaringType, method, ui);
+            return PopulateAndExecute(template, method.DeclaringType, method, ui, ui.Context.UiServices);
         }
 
-        private object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui)
+        private static object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui, IServiceProvider serviceProvider)
         {
-            var settings = _serviceProvider.GetRequiredService<UiSettings>();
-            var layoutRoot = _serviceProvider.GetRequiredService<LayoutRoot>();
+            var settings = serviceProvider.GetRequiredService<UiSettings>();
+            var layoutRoot = serviceProvider.GetRequiredService<LayoutRoot>();
 			
 			var target = Pools.AutoResolver.GetService(serviceType);
             var action = Pools.ActionPool.Get();
@@ -50,8 +43,7 @@ namespace Blowdart.UI.Internal
             {
 	            layoutRoot.Systems.TryGetValue(template, out var system);
 	            system = system ?? settings.DefaultSystem ??
-	                     throw new ArgumentException(
-		                     "No registered system for the given template, and no default system to fall back on");
+	                     throw new ArgumentException("No registered system for the given template, and no default system to fall back on");
 				
 	            system.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
 

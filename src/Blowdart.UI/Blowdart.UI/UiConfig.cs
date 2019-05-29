@@ -4,7 +4,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 using Blowdart.UI.Internal;
@@ -32,7 +31,7 @@ namespace Blowdart.UI
                     settings.DefaultSystem = Instancing.CreateInstance<TSystem>();
 
                 if (settings.Data == null)
-                    settings.Data = new InvokeUiData(r);
+                    settings.Data = new InvokeUiData();
 
                 Pools.AutoResolver = new NoContainer(r, settings.ComponentAssemblies);
 
@@ -42,7 +41,7 @@ namespace Blowdart.UI
 			services.AddSingleton(r => r.GetRequiredService<UiSettings>().DefaultSystem);
             services.AddSingleton(r => r.GetRequiredService<UiSettings>().Data);
 
-            services.AddSingleton(r => new LayoutRoot(r));
+            services.AddSingleton(r => new LayoutRoot());
 
             services.AddSingleton(ResolveComponentTypes);
 			services.AddSingleton(RegisterComponentsByName);

@@ -5,38 +5,30 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using Blowdart.UI.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace Blowdart.UI.Web.Internal
 {
     internal static class WebRenderer
     {
-        public static async Task<bool> BuildUi(LayoutRoot layout, string template, HttpContext context, Func<Task> next)
+        public static async Task<bool> BuildUi(LayoutRoot layout, string template, HttpContext context)
         {
-	        var serviceProvider = layout.Services;
-
-	        var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
-            var settings = serviceProvider.GetRequiredService<UiSettings>();
+			var options = context.RequestServices.GetRequiredService<IOptions<UiServerOptions>>();
+            var settings = context.RequestServices.GetRequiredService<UiSettings>();
 
             var path = context.Request.Path;
 
-			// todo this assumes that every request is in a dedicated thread, which is false
-			var ui = new ThreadLocal<Ui>(() =>
+            var ui = Ui.CreateNew(context.RequestServices.GetRequiredService<UiData>());
+            InlineElements.SetUi(ui);
+
+			if (path == "/")
             {
-	            var instance = Ui.CreateNew(serviceProvider);
-				InlineElements.SetUi(instance);
-				return instance;
-            });
-			
-            if (path == "/")
-            {
-                await Response(ui.Value, path, layout.Root, layout, template, context, options.Value, settings);
+                await Response(context, ui, path, layout.Root, layout, template, options.Value, settings);
                 return true;
             }
 			
@@ -46,14 +38,15 @@ namespace Blowdart.UI.Web.Internal
 	            if (!pathString.StartsWithSegments(path))
 		            continue;
 
-	            await Response(ui.Value, page.Key, page.Value, layout, template, context, options.Value, settings);
+	            await Response(context, ui, page.Key, page.Value, layout, template, options.Value, settings);
 	            return true;
             }
 
             return false;
         }
 
-        private static async Task Response(Ui renderTarget, string pageKey, Action<Ui> renderAction, LayoutRoot layout, string template, HttpContext context, UiServerOptions options, UiSettings settings)
+        private static async Task Response(HttpContext context, Ui renderTarget, string pageKey,
+	        Action<Ui> renderAction, LayoutRoot layout, string template, UiServerOptions options, UiSettings settings)
         {
             var html = RenderToTarget(renderTarget, pageKey, renderAction, layout, template, context, options, settings);
 
@@ -66,7 +59,7 @@ namespace Blowdart.UI.Web.Internal
             if (options.UsePrerendering)
             {
 	            if (!layout.Systems.TryGetValue(pageKey, out var system))
-		            system = layout.Services.GetRequiredService<UiSystem>();
+		            system = context.RequestServices.GetRequiredService<UiSystem>();
 	            if (!(system is HtmlSystem htmlSystem))
 		            throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
@@ -89,7 +82,7 @@ namespace Blowdart.UI.Web.Internal
 	            var title = !hasMeta ? settings.DefaultPageTitle : meta[titleKey] ?? settings.DefaultPageTitle;
 
 	            string metaString;
-				var metaBuilder = Pools.StringBuilderPool.Get();
+				var metaBuilder = Pooling.StringBuilderPool.Get();
 				try
 				{
 					metaBuilder.Append("<title>").Append(title).Append("</title>").AppendLine();
@@ -106,13 +99,12 @@ namespace Blowdart.UI.Web.Internal
 				}
 				finally
 				{
-					Pools.StringBuilderPool.Return(metaBuilder);
+					Pooling.StringBuilderPool.Return(metaBuilder);
 				}
 
 				var stylesSection = htmlSystem.StylesSection();
 				if (htmlSystem.RenderStyles != null)
-					stylesSection += Environment.NewLine +
-					                 $"<style type=\"text/css\">{htmlSystem.RenderStyles}</style>";
+					stylesSection += $"{Environment.NewLine}<style type=\"text/css\">{htmlSystem.RenderStyles}</style>";
 
 				var scriptsSection = htmlSystem.ScriptsSection();
 

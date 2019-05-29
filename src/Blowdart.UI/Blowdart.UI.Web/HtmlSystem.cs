@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using TypeKitchen;
 
 namespace Blowdart.UI.Web
 {
@@ -37,9 +38,9 @@ namespace Blowdart.UI.Web
             _dom = null;
             _scripts = null;
 
-            Styles = Pools.StringBuilderPool.Get();
-            Dom = Pools.StringBuilderPool.Get();
-            Scripts = Pools.StringBuilderPool.Get();
+            Styles = Pooling.StringBuilderPool.Get();
+            Dom = Pooling.StringBuilderPool.Get();
+            Scripts = Pooling.StringBuilderPool.Get();
         }
 
         public override void End()
@@ -48,9 +49,9 @@ namespace Blowdart.UI.Web
             _dom = RenderDom;
             _scripts = RenderScripts;
 
-            Pools.StringBuilderPool.Return(Styles);
-			Pools.StringBuilderPool.Return(Dom);
-            Pools.StringBuilderPool.Return(Scripts);
+            Pooling.StringBuilderPool.Return(Styles);
+			Pooling.StringBuilderPool.Return(Dom);
+            Pooling.StringBuilderPool.Return(Scripts);
         }
 		
 		public virtual string ScriptsSection()
@@ -145,7 +146,7 @@ namespace Blowdart.UI.Web
                 return;
             }
 
-            var arguments = Pools.ArgumentsPool.Get();
+            var arguments = Pooling.ListPool<object>.Get();
             try
             {
                 foreach (var parameter in executor.MethodParameters)
@@ -202,7 +203,7 @@ namespace Blowdart.UI.Web
             }
             finally
             {
-                Pools.ArgumentsPool.Return(arguments);
+                Pooling.ListPool<object>.Return(arguments);
             }
         }
 
