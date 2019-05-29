@@ -21,7 +21,7 @@ namespace Blowdart.UI
         {
             services.AddSingleton(r =>
             {
-                var settings = new UiSettings(r);
+                var settings = new UiSettings();
                 Settings?.Invoke(settings);
 
                 if (settings.ComponentAssemblies == null)

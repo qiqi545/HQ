@@ -60,6 +60,7 @@ namespace Blowdart.UI.Web.Internal
             {
 	            if (!layout.Systems.TryGetValue(pageKey, out var system))
 		            system = context.RequestServices.GetRequiredService<UiSystem>();
+
 	            if (!(system is HtmlSystem htmlSystem))
 		            throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
