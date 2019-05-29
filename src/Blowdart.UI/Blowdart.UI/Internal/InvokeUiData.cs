@@ -37,7 +37,7 @@ namespace Blowdart.UI.Internal
             var settings = serviceProvider.GetRequiredService<UiSettings>();
             var layoutRoot = serviceProvider.GetRequiredService<LayoutRoot>();
 			
-			var target = Pools.AutoResolver.GetService(serviceType);
+			var target = Pools.AutoResolver.AutoResolve(serviceType, serviceProvider);
             var action = Pools.ActionPool.Get();
             try
             {
@@ -45,7 +45,7 @@ namespace Blowdart.UI.Internal
 	            system = system ?? settings.DefaultSystem ??
 	                     throw new ArgumentException("No registered system for the given template, and no default system to fall back on");
 				
-	            system.PopulateAction(settings, action, Pools.AutoResolver, template, target, callee, ui);
+	            system.PopulateAction(settings, action, serviceProvider, template, target, callee, ui);
 
                 var result = action.Arguments == null
                     ? target.ExecuteMethod(action.MethodName)

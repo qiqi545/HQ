@@ -39,14 +39,12 @@ namespace Blowdart.UI.Internal
 {
     internal class NoContainer : IContainer, IServiceProvider
     {
-        private readonly IServiceProvider _fallbackProvider;
         private readonly IEnumerable<Assembly> _fallbackAssemblies;
 
         public bool ThrowIfCantResolve { get; set; }
 
         public NoContainer(IServiceProvider fallbackProvider = null, IEnumerable<Assembly> fallbackAssemblies = null)
         {
-            _fallbackProvider = fallbackProvider;
             _fallbackAssemblies = (fallbackAssemblies ?? Enumerable.Empty<Assembly>()).Distinct();
         }
 
@@ -136,10 +134,10 @@ namespace Blowdart.UI.Internal
 
         #region Resolve
 
-        public T Resolve<T>() where T : class
+        public T Resolve<T>(IServiceProvider fallbackProvider) where T : class
         {
             if (!_registrations.TryGetValue(typeof(T), out var builder))
-                return AutoResolve(typeof(T)) as T;
+                return AutoResolve(typeof(T), fallbackProvider) as T;
             if (builder() is T resolved)
                 return resolved;
             if (ThrowIfCantResolve)
@@ -147,10 +145,10 @@ namespace Blowdart.UI.Internal
             return null;
         }
 
-        public object Resolve(Type serviceType)
+        public object Resolve(Type serviceType, IServiceProvider fallbackProvider)
         {
             if (!_registrations.TryGetValue(serviceType, out var builder))
-                return AutoResolve(serviceType);
+                return AutoResolve(serviceType, fallbackProvider);
             var resolved = builder();
             if (resolved != null)
                 return resolved;
@@ -185,7 +183,7 @@ namespace Blowdart.UI.Internal
         private readonly IDictionary<Type, ConstructorInfo> _constructors = new ConcurrentDictionary<Type, ConstructorInfo>();
         private readonly IDictionary<ConstructorInfo, ParameterInfo[]> _constructorParameters = new ConcurrentDictionary<ConstructorInfo, ParameterInfo[]>();
 
-        public object AutoResolve(Type serviceType)
+        public object AutoResolve(Type serviceType, IServiceProvider fallbackProvider)
         {
             // got it:
             if (_registrations.TryGetValue(serviceType, out var creator))
@@ -193,14 +191,14 @@ namespace Blowdart.UI.Internal
 
             // want it:
             var typeInfo = serviceType.GetTypeInfo();
-            if (!typeInfo.IsAbstract) return CreateInstance(serviceType);
+            if (!typeInfo.IsAbstract) return CreateInstance(serviceType, fallbackProvider);
 
             // need it:
             var type = _fallbackAssemblies.SelectMany(s => s.GetTypes()).FirstOrDefault(i => serviceType.IsAssignableFrom(i) && !i.GetTypeInfo().IsInterface);
             if (type != null)
-                return AutoResolve(type);
+                return AutoResolve(type, fallbackProvider);
 
-            var fallback = _fallbackProvider?.GetService(serviceType);
+            var fallback = fallbackProvider?.GetService(serviceType);
             if (fallback != null)
                 return fallback;
 
@@ -209,7 +207,7 @@ namespace Blowdart.UI.Internal
             return null;
         }
 
-        private object CreateInstance(Type implementationType)
+        private object CreateInstance(Type implementationType, IServiceProvider fallbackProvider)
         {
             // type->constructor
             if (!_constructors.TryGetValue(implementationType, out var ctor))
@@ -225,7 +223,7 @@ namespace Blowdart.UI.Internal
 
             var args = new object[parameters.Length];
             for (var i = 0; i < parameters.Length; i++)
-                args[i] = AutoResolve(parameters[i].ParameterType);
+                args[i] = AutoResolve(parameters[i].ParameterType, fallbackProvider);
 
             return activator(args);
         }
@@ -460,7 +458,7 @@ namespace Blowdart.UI.Internal
 
         public object GetService(Type serviceType)
         {
-            return Resolve(serviceType);
+            return Resolve(serviceType, fallbackProvider: null);
         }
     }
 
@@ -487,9 +485,9 @@ namespace Blowdart.UI.Internal
 
     public interface IDependencyResolver : IDisposable
     {
-        T Resolve<T>() where T : class;
+        T Resolve<T>(IServiceProvider fallbackProvider) where T : class;
         T Resolve<T>(string name) where T : class;
-        object Resolve(Type serviceType);
+        object Resolve(Type serviceType, IServiceProvider fallbackProvider);
         object Resolve(Type serviceType, string name);
     }
 
