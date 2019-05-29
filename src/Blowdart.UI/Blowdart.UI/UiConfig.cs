@@ -53,14 +53,18 @@ namespace Blowdart.UI
 			ConfigureServices?.Invoke(services);
         }
 
-        private static Dictionary<Type, Func<UiComponent>> RegisterComponentsByType(IServiceProvider r)
+        private static Dictionary<Type, Func<Type, UiComponent>> RegisterComponentsByType(IServiceProvider r)
         {
 	        var settings = r.GetRequiredService<UiSettings>();
 	        var componentTypes = r.GetRequiredService<ComponentTypes>();
 	        var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
 	        var byType = componentTypes.ToDictionary(k => k, v =>
 	        {
-		        return new Func<UiComponent>(() => autoResolver.GetService(v) as UiComponent ?? Instancing.CreateInstance<UiComponent>());
+		        return new Func<Type, UiComponent>(c =>
+		        {
+					return autoResolver.GetService(c == null ? v : c) as UiComponent ??
+			               Instancing.CreateInstance<UiComponent>();
+		        });
 	        });
 	        return byType;
         }

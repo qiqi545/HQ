@@ -51,36 +51,75 @@ namespace Blowdart.UI
 
         public void Component<TComponent>() where TComponent : UiComponent
         {
-            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
-            if (components.TryGetValue(typeof(TComponent), out var component))
-                component().Render(this);
-            else
-                Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<Type, UiComponent>>>();
+			var componentType = typeof(TComponent);
+
+            if (componentType.IsGenericType)
+            {
+	            var openComponentType = componentType.GetGenericTypeDefinition();
+	            if (components.TryGetValue(openComponentType, out var component))
+		            component(componentType).Render(this);
+	            else
+		            Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+			}
+			else
+			{
+				if (components.TryGetValue(componentType, out var component))
+					component(null).Render(this);
+				else
+					Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+			}
         }
 
         public void Component<TComponent>(dynamic model) where TComponent : UiComponent
         {
-            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
-            if (components.TryGetValue(typeof(TComponent), out var component))
-                component().Render(this, model);
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<Type, UiComponent>>>();
+            var componentType = typeof(TComponent);
+			
+            if (componentType.IsGenericType)
+            {
+	            var openComponentType = componentType.GetGenericTypeDefinition();
+	            if (components.TryGetValue(openComponentType, out var component))
+		            component(componentType).Render(this, model);
+	            else
+		            Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+            }
             else
-                Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
+            {
+	            if (components.TryGetValue(componentType, out var component))
+		            component(null).Render(this, model);
+	            else
+		            Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+            }
         }
 
         public void Component<TComponent, TModel>(TModel model) where TComponent : UiComponent
         {
-	        var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
-	        if (components.TryGetValue(typeof(TComponent), out var component))
-		        component().Render(this, model);
-	        else
-		        Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");
-        }
+	        var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<Type, UiComponent>>>();
+	        var componentType = typeof(TComponent);
+
+			if (componentType.IsGenericType)
+			{
+				var openComponentType = componentType.GetGenericTypeDefinition();
+				if (components.TryGetValue(openComponentType, out var component))
+					component(componentType).Render(this, model);
+				else
+					Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+			}
+			else
+			{
+				if (components.TryGetValue(componentType, out var component))
+					component(null).Render(this, model);
+				else
+					Error($"MISSING COMPONENT TYPE '{componentType.Name}'");
+			}
+		}
 
 		public void Component<TComponent, TController, TModel>() 
             where TComponent : UiComponent<TModel>
             where TModel : class
         {
-            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<UiComponent>>>();
+            var components = Context.UiServices.GetRequiredService<Dictionary<Type, Func<Type, UiComponent>>>();
             if (components.TryGetValue(typeof(TComponent), out var component))
             {
 	            var settings = Context.UiServices.GetRequiredService<UiSettings>();
@@ -90,7 +129,7 @@ namespace Blowdart.UI
 				if (component is UiComponent<TModel> typed)
                     typed.Render(this, model);
                 else
-                    component().Render(this, model);
+                    component(null).Render(this, model);
             }
             else
                 Error($"MISSING COMPONENT TYPE '{typeof(TComponent).Name}'");

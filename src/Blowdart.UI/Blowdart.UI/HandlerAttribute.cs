@@ -9,7 +9,7 @@ namespace Blowdart.UI
         
         public HandlerAttribute(string template)
         {
-            Template = template;
+	        Template = template;
         }
 	}
 }

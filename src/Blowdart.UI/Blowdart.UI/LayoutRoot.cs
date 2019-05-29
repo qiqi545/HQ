@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
+using TypeKitchen;
 
 namespace Blowdart.UI
 {
@@ -13,28 +14,28 @@ namespace Blowdart.UI
 	    private readonly Dictionary<string, NameValueCollection> _meta = new Dictionary<string, NameValueCollection>();
 	    private readonly Dictionary<string, Action<Ui>> _handlers = new Dictionary<string, Action<Ui>>();
 	    private readonly Dictionary<string, UiSystem> _systems = new Dictionary<string, UiSystem>();
-
-		internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
+	    
+	    internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
 		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
 		internal IReadOnlyDictionary<string, UiSystem> Systems => _systems;
 
-        public Action<Ui> Root => Handlers["/"];
+        public Action<Ui> Root => Handlers[ForwardSlash];
 
         #region Default
 
         public LayoutRoot Default(Action<Ui> view)
         {
-            return Template("/", view);
+	        return Template(ForwardSlash, view);
         }
 
         public LayoutRoot Default<TService>(Action<Ui, dynamic> view)
         {
-            return Template<TService>("/", view);
+            return Template<TService>(ForwardSlash, view);
         }
 
         public LayoutRoot Default<TService, TModel>(Action<Ui, TModel> view) where TModel : class
         {
-            return Template<TService, TModel>("/", view);
+            return Template<TService, TModel>(ForwardSlash, view);
         }
 
         #endregion
@@ -65,11 +66,6 @@ namespace Blowdart.UI
             return this;
         }
 
-        private static string Normalize(string template)
-        {
-	        return !template.StartsWith("/") ? $"/{template}" : template;
-        }
-
 		#endregion
 
 		internal LayoutRoot AddHandler(string template, MethodInfo method)
@@ -82,14 +78,33 @@ namespace Blowdart.UI
 
 		internal LayoutRoot AddMeta(string template, NameValueCollection meta)
 		{
-			_meta.Add(template, meta);
+			_meta.Add(Normalize(template), meta);
 			return this;
 		}
 
 		internal LayoutRoot AddSystem(string template, UiSystem system)
 		{
-			_systems.Add(template, system);
+			_systems.Add(Normalize(template), system);
 			return this;
 		}
-    }
+
+		private const string ForwardSlash = "/";
+
+		private static string Normalize(string template)
+		{
+			if (string.IsNullOrWhiteSpace(template) || template.Equals(ForwardSlash, StringComparison.Ordinal))
+				return ForwardSlash;
+
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!template.StartsWith(ForwardSlash, StringComparison.Ordinal))
+					sb.Append('/');
+
+				if (template.EndsWith(ForwardSlash, StringComparison.Ordinal))
+					sb.Append(template, 0, template.Length - 1);
+				else
+					sb.Append(template);
+			});
+		}
+	}
 }
