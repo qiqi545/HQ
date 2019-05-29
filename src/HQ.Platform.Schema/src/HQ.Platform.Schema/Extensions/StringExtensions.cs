@@ -17,6 +17,7 @@
 
 using HQ.Common;
 using Microsoft.CodeAnalysis.CSharp;
+using TypeKitchen;
 
 namespace HQ.Platform.Schema.Extensions
 {
@@ -39,7 +40,7 @@ namespace HQ.Platform.Schema.Extensions
                 return value;
             }
 
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (IsCSharpKeyword(value))
                 {

@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Platform.Schema.Extensions
 {
@@ -23,7 +24,7 @@ namespace HQ.Platform.Schema.Extensions
     {
         public static string FullTypeString(this Models.Schema schema, string ns = null)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
                 sb.Append('.').Append(schema.TypeString());
