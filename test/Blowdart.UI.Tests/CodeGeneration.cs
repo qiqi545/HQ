@@ -5,7 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Xunit;
 using Xunit.Abstractions;
-using Blowdart.UI.Internal;
+using TypeExtensions = TypeKitchen.TypeExtensions;
 
 namespace Blowdart.UI.Tests
 {
@@ -840,7 +840,7 @@ wifi
 				if (i != 0)
 					sb.Append(", ");
 
-				var typeName = type.GetPreferredTypeName();
+				var typeName = TypeExtensions.GetPreferredTypeName(type);
 
 				sb.Append(typeName);
 				sb.Append(' ');

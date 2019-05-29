@@ -29,6 +29,11 @@ ui.on("x",
         Function(s)();
     });
 
+ui.on("r",
+    function() {
+        window.location.reload(true);
+    });
+
 ui.on("l",
     function(id, e) {
         console.log(`${id} ${e}`);

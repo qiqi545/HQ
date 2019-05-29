@@ -7,7 +7,8 @@ namespace Blowdart.UI.Web.Internal
     {
         public const string FirstTimeRender = "f";
         public const string Replace = "x";
-        public const string Log = "l";
+        public const string Reload = "r";
+		public const string Log = "l";
         public const string Error = "e";
     }
 }

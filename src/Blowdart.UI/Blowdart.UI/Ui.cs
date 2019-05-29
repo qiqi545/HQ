@@ -12,6 +12,7 @@ using Blowdart.UI.Internal.Execution;
 using Microsoft.Collections.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using TypeKitchen;
+using TypeExtensions = TypeKitchen.TypeExtensions;
 
 namespace Blowdart.UI
 {
@@ -290,5 +291,12 @@ namespace Blowdart.UI
         }
 
 		#endregion
+
+
+		public bool Invalidated { get; private set; }
+		public void Invalidate()
+		{
+			Invalidated = true;
+		}
     }
 }

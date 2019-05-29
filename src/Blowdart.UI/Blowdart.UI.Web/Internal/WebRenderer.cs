@@ -66,9 +66,9 @@ namespace Blowdart.UI.Web.Internal
 
 				renderTarget.Begin(system, WebUiContext.Build(context));
 				renderAction(renderTarget);
-                renderTarget.End();
+				renderTarget.End();
 
-                var bodySlug = $"<div id=\"{options.BodyElementId}\">";
+				var bodySlug = $"<div id=\"{options.BodyElementId}\">";
                 var scriptOpen = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">";
                 var scriptClose = "</script>";
                 var scriptSlug = scriptOpen + scriptClose;
@@ -143,7 +143,7 @@ namespace Blowdart.UI.Web.Internal
 
             return html;
         }
-        
+
         public static string LoadPageTemplate(IServiceProvider resolver, IOptions<UiServerOptions> options)
         {
             var fp = resolver.GetRequiredService<IFileProvider>();

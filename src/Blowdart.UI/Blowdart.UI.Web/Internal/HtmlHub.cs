@@ -52,6 +52,7 @@ namespace Blowdart.UI.Web.Internal
 
 			if (!_layoutRoot.Systems.TryGetValue(pageKey, out var system))
 				system = http.RequestServices.GetRequiredService<UiSystem>();
+
 			if (!(system is HtmlSystem htmlSystem))
 				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
@@ -61,11 +62,25 @@ namespace Blowdart.UI.Web.Internal
 			ui.Begin(system, context);
 			UpdateInputState(context, id, eventType, value, ui);
 			_layoutRoot.Root(ui);
-			ui.End();
+			
+			if (ui.Invalidated)
+			{
+				await Clients.Caller.SendAsync(MessageTypes.Reload);
+				return;
+			}
 
+			ui.End();
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
         }
-		
+
+        private void UiTick(string id, string eventType, string value, Ui ui, UiSystem system, WebUiContext context)
+        {
+	        ui.Begin(system, context);
+	        UpdateInputState(context, id, eventType, value, ui);
+	        _layoutRoot.Root(ui);
+	        ui.End();
+        }
+
         private static JsonPatchDocument DeserializeInputStateDelta(byte[] data)
         {
 	        Console.WriteLine($"side channel buffer size: {data?.Length ?? 0}");

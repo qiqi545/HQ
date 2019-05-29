@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
+using TypeExtensions = TypeKitchen.TypeExtensions;
 
 namespace Blowdart.UI.Web
 {
@@ -206,7 +207,7 @@ namespace Blowdart.UI.Web
 
         private static bool NotResolvableByContainer(ParameterInfo parameter)
         {
-	        return parameter.ParameterType.IsValueTypeOrNullableValueType();
+	        return TypeExtensions.IsValueTypeOrNullableValueType(parameter.ParameterType);
         }
 
         private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
