@@ -44,6 +44,7 @@ namespace HQ.Platform.Operations
             }
 
             services.AddValidOptions();
+            services.AddSaveOptions();
             services.AddScoped<IMetaProvider, OperationsMetaProvider>();
             services.Configure<OperationsApiOptions>(config);
             services.AddSingleton(config);

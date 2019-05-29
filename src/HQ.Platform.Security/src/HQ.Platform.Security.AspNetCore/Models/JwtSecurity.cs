@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -26,6 +27,7 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Sodium;
 
 namespace HQ.Platform.Security.AspNetCore.Models
 {
@@ -117,14 +119,33 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key));
+            var key = options.Tokens?.SigningKey ?? SelfCreateMissingKeys(options);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         }
 
         private static EncryptingCredentials BuildEncryptingCredentials(SecurityOptions options)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key));
+            var key = options.Tokens.EncryptionKey ?? options.Tokens.SigningKey ?? SelfCreateMissingKeys(options);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
+        }
+
+        private static string SelfCreateMissingKeys(SecurityOptions options)
+        {
+            if (options.Tokens.SigningKey == null)
+            {
+                Trace.TraceWarning("No JWT signing key found, creating temporary key.");
+                options.Tokens.SigningKey = Encoding.UTF8.GetString(SodiumCore.GetRandomBytes(32));
+            }
+
+            if (options.Tokens.EncryptionKey == null)
+            {
+                Trace.TraceWarning("No JWT encryption key found, using signing key.");
+                options.Tokens.EncryptionKey = options.Tokens.SigningKey;
+            }
+
+            return options.Tokens.SigningKey;
         }
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)
@@ -139,7 +160,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
                     ValidateAudience = true,
                     ValidAudience = options.Tokens.Audience,
                     RequireSignedTokens = false,
-                    TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.Key)),
+                    TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.EncryptionKey)),
                     ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
                     RoleClaimType = options.Claims.RoleClaim,
                     NameClaimType = options.Claims.UserNameClaim
