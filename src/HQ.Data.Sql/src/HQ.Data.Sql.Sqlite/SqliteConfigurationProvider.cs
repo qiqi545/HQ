@@ -19,7 +19,6 @@ using Dapper;
 using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
-using TypeKitchen;
 
 namespace HQ.Data.Sql.Sqlite
 {
@@ -42,7 +41,7 @@ namespace HQ.Data.Sql.Sqlite
 
         public bool Save<TOptions>(string key, TOptions instance)
         {
-            var accessor = ReadAccessor.Create(instance);
+            var map = instance.Unbind(key);
 
             var changed = false;
             using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
@@ -51,23 +50,24 @@ namespace HQ.Data.Sql.Sqlite
 
                 var t = db.BeginTransaction();
 
-                foreach (var entry in Data)
+                foreach (var entry in map)
                 {
-                    if (!entry.Key.StartsWith(key, StringComparison.Ordinal))
-                        continue; // not in this parent
+                    if (!Data.TryGetValue(entry.Key, out var value))
+                        continue; // deprecated?
 
-                    var propertyKey = entry.Key.Substring(key.Length + 1);
-                    if (!accessor.TryGetValue(instance, propertyKey, out var value))
-                        continue; // not in this child
+                    var before = value;
+                    var after = entry.Value;
 
-                    var valueString = value.ToString();
+                    if (before.Equals(after, StringComparison.Ordinal))
+                        continue; // no change
 
-                    var count = db.Execute(Update, new { entry.Key, Value = valueString }, t);
+                    var count = db.Execute(Update, new { entry.Key, Value = before }, t);
                     if (count == 0)
-                        count = db.Execute(Insert, new { entry.Key, Value = valueString }, t);
+                        count = db.Execute(Insert, new { entry.Key, Value = before }, t);
                     if (count > 0)
                         changed = true;
                 }
+
                 t.Commit();
             }
 
