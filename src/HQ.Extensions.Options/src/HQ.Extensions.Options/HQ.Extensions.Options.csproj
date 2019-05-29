@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
   </ItemGroup>
 
