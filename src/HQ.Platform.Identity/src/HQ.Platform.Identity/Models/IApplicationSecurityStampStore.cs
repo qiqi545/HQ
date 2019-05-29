@@ -20,8 +20,7 @@ using System.Threading.Tasks;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IApplicationSecurityStampStore<TApplication> : IApplicationStore<TApplication>
-        where TApplication : class
+    public interface IApplicationSecurityStampStore<TApplication> : IApplicationStore<TApplication> where TApplication : class
     {
         Task SetSecurityStampAsync(TApplication application, string stamp, CancellationToken cancellationToken);
         Task<string> GetSecurityStampAsync(TApplication application, CancellationToken cancellationToken);

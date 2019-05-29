@@ -31,7 +31,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class TenantStore<TTenant, TKey> : IQueryableTenantStore<TTenant>
+    public class TenantStore<TTenant, TKey> : IQueryableTenantStore<TTenant>, ITenantSecurityStampStore<TTenant>
         where TTenant : IdentityTenant<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -177,7 +177,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         public Task<string> GetTenantIdAsync(TTenant tenant, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(tenant?.Id.ToString());
+            return Task.FromResult(tenant?.Id?.ToString());
         }
 
         public Task<string> GetTenantNameAsync(TTenant tenant, CancellationToken cancellationToken)
@@ -246,6 +246,19 @@ namespace HQ.Platform.Identity.Stores.Sql
             _connection.SetTypeInfo(typeof(TTenant));
             var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
             return count;
+        }
+
+        public Task SetSecurityStampAsync(TTenant tenant, string stamp, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            tenant.SecurityStamp = stamp;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetSecurityStampAsync(TTenant tenant, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(tenant?.SecurityStamp);
         }
     }
 }

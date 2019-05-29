@@ -20,6 +20,6 @@ namespace HQ.Platform.Identity.Configuration
     public class ApplicationOptions
     {
         public string AllowedApplicationNameCharacters { get; set; } =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+ ";
     }
 }

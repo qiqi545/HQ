@@ -49,7 +49,7 @@ namespace HQ.Platform.Identity.Extensions
         {
             return new IdentityError
             {
-                Code = nameof(DuplicateTenantName), Description = Resources.FormatInvalidTenantName(tenantName)
+                Code = nameof(InvalidTenantName), Description = Resources.FormatInvalidTenantName(tenantName)
             };
         }
 
@@ -62,22 +62,22 @@ namespace HQ.Platform.Identity.Extensions
         }
 
         public static IdentityError InvalidApplicationName(this IdentityErrorDescriber describer,
-            string ApplicationName)
+            string applicationName)
         {
             return new IdentityError
             {
-                Code = nameof(DuplicateApplicationName),
-                Description = Resources.FormatInvalidApplicationName(ApplicationName)
+                Code = nameof(InvalidApplicationName),
+                Description = Resources.FormatInvalidApplicationName(applicationName)
             };
         }
 
         public static IdentityError DuplicateApplicationName(this IdentityErrorDescriber describer,
-            string ApplicationName)
+            string applicationName)
         {
             return new IdentityError
             {
                 Code = nameof(DuplicateApplicationName),
-                Description = Resources.FormatDuplicateApplicationName(ApplicationName)
+                Description = Resources.FormatDuplicateApplicationName(applicationName)
             };
         }
     }

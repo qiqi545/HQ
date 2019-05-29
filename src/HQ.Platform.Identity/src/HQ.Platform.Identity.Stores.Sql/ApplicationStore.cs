@@ -29,7 +29,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class ApplicationStore<TApplication, TKey> : IQueryableApplicationStore<TApplication>
+    public partial class ApplicationStore<TApplication, TKey> : IQueryableApplicationStore<TApplication>, IApplicationSecurityStampStore<TApplication>
         where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
@@ -175,7 +175,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         public Task<string> GetApplicationIdAsync(TApplication application, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(application?.Id.ToString());
+            return Task.FromResult(application?.Id?.ToString());
         }
 
         public Task<string> GetApplicationNameAsync(TApplication application, CancellationToken cancellationToken)
@@ -244,6 +244,19 @@ namespace HQ.Platform.Identity.Stores.Sql
             _connection.SetTypeInfo(typeof(TApplication));
             var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
             return count;
+        }
+
+        public Task SetSecurityStampAsync(TApplication application, string stamp, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            application.SecurityStamp = stamp;
+            return Task.CompletedTask;
+        }
+
+        public Task<string> GetSecurityStampAsync(TApplication application, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.FromResult(application?.SecurityStamp);
         }
     }
 }
