@@ -19,6 +19,7 @@ using System;
 using System.Collections.Immutable;
 using System.Text;
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Extensions.Metrics.Internal
 {
@@ -26,7 +27,7 @@ namespace HQ.Extensions.Metrics.Internal
     {
         public static Func<IImmutableDictionary<MetricName, IMetric>, string> Serialize = metrics =>
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append('[');
 

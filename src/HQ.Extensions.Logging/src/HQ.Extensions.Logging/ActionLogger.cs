@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using HQ.Common;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
+using TypeKitchen;
 
 namespace HQ.Extensions.Logging
 {
@@ -54,7 +55,7 @@ namespace HQ.Extensions.Logging
 
         private static string DefaultFormatter(object[] args)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 var logLevelString = GetLogLevelShorthand(args);
 

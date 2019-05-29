@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Extensions.Metrics.Internal
 {
@@ -32,7 +33,7 @@ namespace HQ.Extensions.Metrics.Internal
 
         public static string ToBase36(this ulong input)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 while (input != 0)
                 {
