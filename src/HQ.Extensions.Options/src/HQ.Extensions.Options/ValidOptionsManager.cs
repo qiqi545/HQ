@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options

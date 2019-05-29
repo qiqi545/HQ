@@ -16,72 +16,52 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using TypeKitchen;
 
 namespace HQ.Extensions.Options
 {
-    internal static class ConfigurationExtensions
+    public static class ConfigurationExtensions
     {
-        public static TOptions Valid<TOptions>(this TOptions instance, IServiceProvider serviceProvider)
+        public static Dictionary<string, string> Unbind(this object instance, string key)
         {
-            var results = Pooling.ListPool<ValidationResult>.Get();
-            try
+            var accessor = ReadAccessor.Create(instance);
+            var map = new Dictionary<string, string>();
+            foreach (var member in AccessorMembers.Create(instance, AccessorMemberScope.Public, AccessorMemberTypes.Properties))
             {
-                var context = new ValidationContext(instance, serviceProvider, null);
-                Validator.TryValidateObject(instance, context, results, true);
-                if (results.Count == 0)
+                var prefix = $"{key}:{member.Name}";
+                if (!accessor.TryGetValue(instance, member.Name, out var value))
+                    continue;
+
+                var type = member.Type;
+
+                if (type.IsValueTypeOrNullableValueType())
                 {
-                    return instance;
+                    map.Add(prefix, value?.ToString());
                 }
-
-                var message = Pooling.StringBuilderPool.Scoped(sb =>
+                else if (value is IEnumerable enumerable)//typeof(IEnumerable).IsAssignableFrom(type))
                 {
-                    sb.Append(typeof(TOptions).Name).Append(": ");
-                    sb.AppendLine();
-
-                    foreach (var result in results)
+                    var concat = Pooling.StringBuilderPool.Scoped(sb =>
                     {
-                        sb.Append(result.ErrorMessage);
-                        sb.Append(" [");
                         var count = 0;
-                        foreach (var field in result.MemberNames)
+                        foreach (var item in enumerable)
                         {
                             if (count != 0)
-                            {
-                                sb.Append(", ");
-                            }
-
-                            sb.Append(field);
+                                sb.Append(',');
+                            sb.Append(item);
                             count++;
                         }
-
-                        sb.AppendLine("]");
-                    }
-                });
-
-                throw new ValidationException(message);
+                    });
+                    map.Add(prefix, concat);
+                }
+                else
+                {
+                    foreach (var child in value.Unbind(prefix))
+                        map.Add(child.Key, child.Value);
+                }
             }
-            finally
-            {
-                Pooling.ListPool<ValidationResult>.Return(results);
-            }
-        }
-
-        public static bool IsValid<TOptions>(this TOptions instance, IServiceProvider serviceProvider)
-        {
-            var results = Pooling.ListPool<ValidationResult>.Get();
-            try
-            {
-                var context = new ValidationContext(instance, serviceProvider, null);
-                Validator.TryValidateObject(instance, context, results, true);
-                return results.Count == 0;
-            }
-            finally
-            {
-                Pooling.ListPool<ValidationResult>.Return(results);
-            }
+            return map;
         }
     }
 }

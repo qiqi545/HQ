@@ -15,6 +15,7 @@
 
 using System;
 using System.Linq;
+using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -56,7 +57,7 @@ namespace HQ.Extensions.Options
 
                 if (!current.IsValid(_serviceProvider))
                     continue; // don't allow saving invalid options
-
+                
                 if (saveProvider.Save(key, current))
                     saved = true;
             }
