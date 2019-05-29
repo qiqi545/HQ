@@ -9,7 +9,7 @@ namespace Blowdart.UI.Internal
 {
     public sealed class InvokeUiData : UiData
     {
-        public override TModel GetModel<TService, TModel>(string template, IServiceProvider serviceProvider)
+        public override TModel GetModel<TService, TModel>(string template, Ui serviceProvider)
         {
             var model = GetModel<TService>(template, serviceProvider);
             if (model == null)
@@ -17,27 +17,27 @@ namespace Blowdart.UI.Internal
             return (TModel) model;
         }
 
-        public override object GetModel<TService>(string template, IServiceProvider serviceProvider)
+        public override object GetModel<TService>(string template, Ui ui)
         {
-            return GetModel(template, typeof(TService), serviceProvider);
+            return GetModel(template, typeof(TService), ui);
         }
 
-        public override object GetModel(string template, Type serviceType, IServiceProvider serviceProvider)
+        public override object GetModel(string template, Type serviceType, Ui ui)
         {
-            return PopulateAndExecute(template, serviceType, null, null, serviceProvider);
+            return PopulateAndExecute(ui, null, serviceType, template);
         }
 
         public override object GetModel(string template, MethodInfo method, Ui ui)
         {
-            return PopulateAndExecute(template, method.DeclaringType, method, ui, ui.Context.UiServices);
+            return PopulateAndExecute(ui, method, method.DeclaringType, template);
         }
 
-        private static object PopulateAndExecute(string template, Type serviceType, MethodInfo callee, Ui ui, IServiceProvider serviceProvider)
+        private static object PopulateAndExecute(Ui ui, MethodInfo callee, Type serviceType, string template)
         {
-            var settings = serviceProvider.GetRequiredService<UiSettings>();
-            var layoutRoot = serviceProvider.GetRequiredService<LayoutRoot>();
+            var settings = ui.Context.UiServices.GetRequiredService<UiSettings>();
+            var layoutRoot = ui.Context.UiServices.GetRequiredService<LayoutRoot>();
 			
-			var target = Pools.AutoResolver.AutoResolve(serviceType, serviceProvider);
+			var target = Pools.AutoResolver.AutoResolve(serviceType, ui.Context.UiServices);
             var action = Pools.ActionPool.Get();
             try
             {
@@ -45,7 +45,7 @@ namespace Blowdart.UI.Internal
 	            system = system ?? settings.DefaultSystem ??
 	                     throw new ArgumentException("No registered system for the given template, and no default system to fall back on");
 				
-	            system.PopulateAction(settings, action, serviceProvider, template, target, callee, ui);
+	            system.PopulateAction(ui, settings, action, template, target, callee);
 
                 var result = action.Arguments == null
                     ? target.ExecuteMethod(action.MethodName)

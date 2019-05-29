@@ -64,17 +64,14 @@ namespace Blowdart.UI.Web
             return "<!-- STYLES -->";
         }
 
-        public override void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
+        public override void PopulateAction(Ui ui, UiSettings settings, UiAction action, string template, object target, MethodInfo callee = null)
         {
-			var http = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            var options = serviceProvider.GetRequiredService<IOptions<UiServerOptions>>();
+			var http = ui.Context.UiServices.GetRequiredService<IHttpContextAccessor>();
+            var options = ui.Context.UiServices.GetRequiredService<IOptions<UiServerOptions>>();
 
 			var request = http.HttpContext.Request;
 			var requestUri = new Uri(request.GetEncodedUrl(), UriKind.Absolute);
-
-			// if we don't use the HTTP service provider, we can't resolve any scoped services!
-			serviceProvider = http.HttpContext.RequestServices;
-
+			
 			var uriTemplate = new UriTemplate(template, caseInsensitiveParameterNames: true);
             
             //
@@ -82,7 +79,7 @@ namespace Blowdart.UI.Web
             var templateParameters = uriTemplate.GetParameters(requestUri);
             var parameters = templateParameters ?? new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
 
-            if (ui?.Context is WebUiContext context)
+            if (ui.Context is WebUiContext context)
             {
                 //
                 // Header Resolution (overwrites URI):
@@ -133,8 +130,8 @@ namespace Blowdart.UI.Web
 
             //
             // Routing:
-            action.MethodName = IsRootPath(requestUri, options) ? callee?.Name ?? settings.DefaultPageMethodName : requestUri.Segments.LastOrDefault();
-            
+            action.MethodName = callee?.Name ?? (IsRootPath(requestUri, options) ? settings.DefaultPageMethodName : requestUri.Segments.LastOrDefault());
+             
             //
             // Execution:
             var targetType = callee?.DeclaringType ?? target.GetType();
@@ -175,7 +172,7 @@ namespace Blowdart.UI.Web
                     if (parameter.ParameterType == typeof(Ui))
                     {
 	                    ui = ui ?? InlineElements.GetUi() ?? throw new ArgumentNullException(nameof(ui), 
-		                         $"No UI instance passed to {nameof(PopulateAction)} or found in this synchronization context");
+		                         $"No UI instance passed to PopulateAction or found in this synchronization context");
 
 	                    arguments.Add(ui);
                         continue;
@@ -189,7 +186,7 @@ namespace Blowdart.UI.Web
 
                     try
                     {
-	                    var argument = serviceProvider.GetService(parameter.ParameterType);
+	                    var argument = ui.Context.UiServices.GetService(parameter.ParameterType);
 	                    arguments.Add(argument);
 					}
                     catch (Exception exception)
@@ -214,8 +211,9 @@ namespace Blowdart.UI.Web
 
         private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
         {
-            return requestUri.Segments.Length == 1 && requestUri.Segments[0] == "/" || 
-                   requestUri.AbsolutePath == options.Value.HubPath;
+	        return requestUri.Segments.Length == 1 &&
+	               requestUri.Segments[0] == "/" ||
+	               requestUri.AbsolutePath == options.Value.HubPath;
         }
     }
 }

@@ -9,6 +9,8 @@ namespace Blowdart.UI
 
 	public interface IViewComponent<in TValue> : IViewComponent
 	{
+		void BeforeView(Ui ui);
 		void Render(Ui ui, AccessorMember field, TValue value);
+		void AfterView(Ui ui);
 	}
 }

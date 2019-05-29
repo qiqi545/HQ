@@ -51,7 +51,7 @@ namespace Blowdart.UI
         {
 			_handlers.Add(Normalize(template), ui =>
             {
-				view(ui, ui.Data.GetModel<TService>(template, ui.Context.UiServices));
+				view(ui, ui.Data.GetModel<TService>(template, ui));
             });
             return this;
         }
@@ -60,7 +60,7 @@ namespace Blowdart.UI
         {
 	        _handlers.Add(Normalize(template), ui =>
             {
-                view(ui, ui.Data.GetModel<TService, TModel>(template, ui.Context.UiServices));
+                view(ui, ui.Data.GetModel<TService, TModel>(template, ui));
             });
             return this;
         }

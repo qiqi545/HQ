@@ -8,7 +8,7 @@ using TypeKitchen;
 
 namespace Blowdart.UI.Web.SemanticUI
 {
-	public sealed class SemanticUiViewComponents : 
+	public sealed class SemanticUiForm : 
 		IViewComponent<string>,
 		IViewComponent<byte>,
 		IViewComponent<byte?>,
@@ -32,6 +32,20 @@ namespace Blowdart.UI.Web.SemanticUI
 		IViewComponent<Guid?>,
 		IViewComponent<ICollection>
 	{
+		public void BeforeView(Ui ui)
+		{
+			ui.BeginForm("ui form");
+		}
+
+		public void AfterView(Ui ui)
+		{
+			ui.BeginButton("ui button", type: "submit")
+				.Literal("Submit")
+				.EndButton();
+
+			ui.EndForm();
+		}
+
 		#region Templates
 
 		private static void Number<T>(Ui ui, AccessorMember field, T value)

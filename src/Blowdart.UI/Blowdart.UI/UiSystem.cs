@@ -17,14 +17,10 @@ namespace Blowdart.UI
             Trace.WriteLine($"UI error: {errorMessage} {(exception == null ? "" : $"{exception}")}");
         }
 
-        public virtual void PopulateAction(UiSettings settings, UiAction action, IServiceProvider serviceProvider, string template, object target, MethodInfo callee = null, Ui ui = null)
+        public virtual void PopulateAction(Ui ui, UiSettings settings, UiAction action, string template, object target, MethodInfo callee = null)
         {
             action.MethodName = callee?.Name ?? template ?? settings.DefaultPageMethodName;
             action.Arguments = null;
         }
-
-        public virtual void BeforeView(Ui ui) { }
-
-        public virtual void AfterView(Ui ui) { }
 	}
 }

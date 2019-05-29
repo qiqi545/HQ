@@ -85,7 +85,7 @@ namespace Blowdart.UI
             {
 	            var settings = Context.UiServices.GetRequiredService<UiSettings>();
 				
-				var model = Data.GetModel<TController, TModel>(settings.DefaultPageMethodName, Context.UiServices);
+				var model = Data.GetModel<TController, TModel>(settings.DefaultPageMethodName, this);
 
 				if (component is UiComponent<TModel> typed)
                     typed.Render(this, model);
@@ -102,9 +102,7 @@ namespace Blowdart.UI
 
 		public void View<TModel>(TModel model)
 		{
-			System?.BeforeView(this);
 			View(typeof(TModel), model);
-			System?.AfterView(this);
 		}
 
 		internal void View(Type type, object model)
