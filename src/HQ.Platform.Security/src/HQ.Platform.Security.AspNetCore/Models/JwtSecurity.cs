@@ -22,6 +22,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using HQ.Common;
+using HQ.Extensions.Cryptography;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -136,7 +137,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
             if (options.Tokens.SigningKey == null)
             {
                 Trace.TraceWarning("No JWT signing key found, creating temporary key.");
-                options.Tokens.SigningKey = Encoding.UTF8.GetString(SodiumCore.GetRandomBytes(32));
+                options.Tokens.SigningKey = Crypto.GetRandomString(64);
             }
 
             if (options.Tokens.EncryptionKey == null)
