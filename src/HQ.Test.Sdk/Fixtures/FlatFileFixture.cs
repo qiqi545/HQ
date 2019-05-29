@@ -21,6 +21,7 @@ using System.IO;
 using System.Text;
 using Bogus.DataSets;
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Test.Sdk.Fixtures
 {
@@ -42,7 +43,7 @@ namespace HQ.Test.Sdk.Fixtures
                 byte[] buffer;
                 if (!string.IsNullOrWhiteSpace(separator))
                 {
-                    buffer = encoding.GetBytes(StringBuilderPool.Scoped(sb =>
+                    buffer = encoding.GetBytes(Pooling.StringBuilderPool.Scoped(sb =>
                     {
                         var words = Lorem.Words(columnCount());
                         for (var j = 0; j < words.Length; j++)
