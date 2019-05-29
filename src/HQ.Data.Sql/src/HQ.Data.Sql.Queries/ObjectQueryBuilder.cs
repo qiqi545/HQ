@@ -20,6 +20,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -28,7 +29,7 @@ namespace HQ.Data.Sql.Queries
         public static string Build<T>(this ISqlDialect dialect, SortOptions sort = null, FieldOptions fields = null,
             FilterOptions filter = null, ProjectionOptions projections = null)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 // SELECT * FROM ...
                 sb.Append(ProjectionBuilder.Select<T>(dialect, fields, projections));
@@ -44,7 +45,7 @@ namespace HQ.Data.Sql.Queries
 
         public static string Count<T>(this ISqlDialect dialect, IDataDescriptor descriptor, FilterOptions filter = null)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 // SELECT COUNT(1) FROM ...
                 sb.Append(

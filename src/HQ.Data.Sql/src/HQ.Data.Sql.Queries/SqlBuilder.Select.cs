@@ -233,7 +233,7 @@ namespace HQ.Data.Sql.Queries
             if (orderBy?.Length > 0)
                 qp.sql = Dialect.OrderBy(qp.sql, orderBy);
 
-            var pageSql = StringBuilderPool.Scoped(sb => { Dialect.Page(qp.sql, sb); });
+            var pageSql = Pooling.StringBuilderPool.Scoped(sb => { Dialect.Page(qp.sql, sb); });
 
             qp.parameters.Add($"{Dialect.Parameter}Page", page);
             qp.parameters.Add($"{Dialect.Parameter}PerPage", perPage);

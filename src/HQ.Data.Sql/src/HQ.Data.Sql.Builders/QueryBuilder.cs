@@ -22,6 +22,7 @@ using System.Text;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -30,7 +31,7 @@ namespace HQ.Data.Sql.Builders
         public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
             IList<Filter> filters, IList<Projection> projections, IList<Sort> orderByColumns)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
             });
@@ -39,7 +40,7 @@ namespace HQ.Data.Sql.Builders
         public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
             IList<Filter> filters, IList<Projection> projections, IList<Tuple<string, string, bool>> orderByColumns)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
             });
@@ -48,7 +49,7 @@ namespace HQ.Data.Sql.Builders
         public static string Query<T>(this ISqlDialect d, string table, string schema, IList<string> columns,
             IList<Filter> filters, IList<Projection> projections, Expression<Func<T, object>>[] orderByColumns)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
             });

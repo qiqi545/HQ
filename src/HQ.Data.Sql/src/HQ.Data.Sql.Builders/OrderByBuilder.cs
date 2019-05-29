@@ -23,6 +23,7 @@ using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -30,18 +31,18 @@ namespace HQ.Data.Sql.Builders
     {
         public static string OrderBy(this ISqlDialect dialect, IList<Sort> columns)
         {
-            return StringBuilderPool.Scoped(sb => { AppendOrderBy(sb, dialect, columns); });
+            return Pooling.StringBuilderPool.Scoped(sb => { AppendOrderBy(sb, dialect, columns); });
         }
 
         public static string OrderBy(this ISqlDialect dialect, IList<Tuple<string, string, bool>> columns)
         {
-            return StringBuilderPool.Scoped(sb => { AppendOrderBy(sb, dialect, columns); });
+            return Pooling.StringBuilderPool.Scoped(sb => { AppendOrderBy(sb, dialect, columns); });
         }
 
         public static string OrderBy<T>(this ISqlDialect dialect, string sql,
             params Expression<Func<T, object>>[] orderBy)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append(sql);
                 AppendOrderBy(sb, dialect, orderBy);

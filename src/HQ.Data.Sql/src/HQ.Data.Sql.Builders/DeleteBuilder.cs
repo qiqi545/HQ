@@ -21,6 +21,7 @@ using HQ.Common;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -28,7 +29,7 @@ namespace HQ.Data.Sql.Builders
     {
         public static string Delete(this ISqlDialect d, string table, string schema)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);
@@ -37,7 +38,7 @@ namespace HQ.Data.Sql.Builders
 
         public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeDelete(descriptor, sb))
                     return;
@@ -49,7 +50,7 @@ namespace HQ.Data.Sql.Builders
 
         public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);
@@ -60,7 +61,7 @@ namespace HQ.Data.Sql.Builders
         public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<string> keys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeDelete(descriptor, sb))
                     return;
@@ -78,7 +79,7 @@ namespace HQ.Data.Sql.Builders
         public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys,
             List<string> parameters)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);
@@ -89,7 +90,7 @@ namespace HQ.Data.Sql.Builders
         public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<string> keys, List<string> parameters)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeDelete(descriptor, sb))
                     return;
@@ -106,7 +107,7 @@ namespace HQ.Data.Sql.Builders
 
         public static string Delete(this ISqlDialect d, string table, string schema, List<PropertyToColumn> keys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("DELETE FROM ");
                 sb.AppendTable(d, table, schema);

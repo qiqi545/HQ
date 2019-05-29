@@ -20,6 +20,7 @@ using HQ.Common;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -27,12 +28,12 @@ namespace HQ.Data.Sql.Builders
     {
         public static string Select(this ISqlDialect d, string table, string schema = "")
         {
-            return StringBuilderPool.Scoped(sb => { sb.Append("SELECT * FROM ").AppendTable(d, table, schema); });
+            return Pooling.StringBuilderPool.Scoped(sb => { sb.Append("SELECT * FROM ").AppendTable(d, table, schema); });
         }
 
         public static string Select(this ISqlDialect d, string table, string schema, List<string> keys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("SELECT * FROM ").AppendTable(d, table, schema).AppendWhereClause(d, keys);
             });
@@ -41,7 +42,7 @@ namespace HQ.Data.Sql.Builders
         public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
             List<string> keys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("SELECT ");
 
@@ -59,7 +60,7 @@ namespace HQ.Data.Sql.Builders
         public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
             List<string> keys, List<string> parameters)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("SELECT ");
 
@@ -79,7 +80,7 @@ namespace HQ.Data.Sql.Builders
         public static string Select(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<string> columns, List<string> keys, List<string> parameters)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (descriptor != null && !d.BeforeSelect(descriptor, sb))
                     return;

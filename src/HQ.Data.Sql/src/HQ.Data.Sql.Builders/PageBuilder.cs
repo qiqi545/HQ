@@ -17,6 +17,7 @@
 
 using HQ.Common;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -24,7 +25,7 @@ namespace HQ.Data.Sql.Builders
     {
         public static string Page(ISqlDialect d, string sql)
         {
-            return StringBuilderPool.Scoped(sb => { d.Page(sql, sb); });
+            return Pooling.StringBuilderPool.Scoped(sb => { d.Page(sql, sb); });
         }
     }
 }

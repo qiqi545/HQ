@@ -21,6 +21,7 @@ using System.Linq;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
@@ -28,7 +29,7 @@ namespace HQ.Data.Sql.Queries
     {
         public static string Select<T>(ISqlDialect dialect, FieldOptions fields, ProjectionOptions projections)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 // SELECT * FROM ...
                 sb.Append($"SELECT {BuildFields<T>(dialect, fields, projections)} " +
@@ -77,7 +78,7 @@ namespace HQ.Data.Sql.Queries
         {
             var source = BuildFieldSource<T>(options);
 
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append(string.Join(", ",
                     source.Select(a => $"r.{dialect.StartIdentifier}{a}{dialect.EndIdentifier}")));

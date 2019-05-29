@@ -21,6 +21,7 @@ using HQ.Common;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -29,7 +30,7 @@ namespace HQ.Data.Sql.Builders
         public static string InsertInto(this ISqlDialect d, string table, string schema, List<string> columns,
             bool returnKeys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("INSERT INTO ");
 
@@ -68,7 +69,7 @@ namespace HQ.Data.Sql.Builders
         public static string InsertInto(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<string> columns, bool returnKeys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeInsert(descriptor, sb))
                     return;
@@ -114,7 +115,7 @@ namespace HQ.Data.Sql.Builders
         public static string InsertInto(this ISqlDialect d, string table, string schema, List<PropertyToColumn> columns,
             bool returnKeys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("INSERT INTO ");
                 sb.AppendTable(d, table, schema).Append(" (");
@@ -153,7 +154,7 @@ namespace HQ.Data.Sql.Builders
         public static string InsertInto(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<PropertyToColumn> columns, bool returnKeys)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeInsert(descriptor, sb))
                     return;

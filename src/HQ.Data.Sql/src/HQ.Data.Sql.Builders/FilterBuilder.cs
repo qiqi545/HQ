@@ -23,6 +23,7 @@ using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -37,7 +38,7 @@ namespace HQ.Data.Sql.Builders
 
         public static string Where(this ISqlDialect d, params Filter[] filters)
         {
-            return StringBuilderPool.Scoped(sb => { AppendWhere(sb, d, filters); });
+            return Pooling.StringBuilderPool.Scoped(sb => { AppendWhere(sb, d, filters); });
         }
 
         internal static void AppendWhere(StringBuilder sb, ISqlDialect d, IList<Filter> filters)

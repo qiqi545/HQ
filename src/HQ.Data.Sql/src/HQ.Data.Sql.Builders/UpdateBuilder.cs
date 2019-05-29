@@ -22,6 +22,7 @@ using HQ.Common;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -32,7 +33,7 @@ namespace HQ.Data.Sql.Builders
         public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
             List<string> keys, string setSuffix = SetSuffix)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("UPDATE ");
                 sb.AppendTable(d, table, schema).Append(" SET ");
@@ -52,7 +53,7 @@ namespace HQ.Data.Sql.Builders
         public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<string> columns, List<string> keys, string setSuffix = SetSuffix)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeUpdate(descriptor, sb))
                     return;
@@ -86,7 +87,7 @@ namespace HQ.Data.Sql.Builders
             Debug.Assert(columns != null);
             Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
 
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("UPDATE ");
                 sb.AppendTable(d, table, schema).Append(" SET ");
@@ -110,7 +111,7 @@ namespace HQ.Data.Sql.Builders
             Debug.Assert(columns != null);
             Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
 
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeUpdate(descriptor, sb))
                     return;
@@ -142,7 +143,7 @@ namespace HQ.Data.Sql.Builders
         public static string Update(this ISqlDialect d, string table, string schema, List<PropertyToColumn> columns,
             List<string> keys, string setSuffix = SetSuffix)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("UPDATE ");
                 sb.AppendTable(d, table, schema).Append(" SET ");
@@ -164,7 +165,7 @@ namespace HQ.Data.Sql.Builders
         public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
             List<PropertyToColumn> columns, List<string> keys, string setSuffix = SetSuffix)
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 if (!d.BeforeUpdate(descriptor, sb))
                     return;

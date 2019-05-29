@@ -23,6 +23,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Extensions;
 using Humanizer;
+using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
@@ -37,7 +38,7 @@ namespace HQ.Data.Sql.Builders
         public static string Select(this ISqlDialect d, string table, string schema, IList<string> columns,
             IList<Projection> projections, IList<Filter> filters)
         {
-            return StringBuilderPool.Scoped(
+            return Pooling.StringBuilderPool.Scoped(
                 sb => { AppendSelect(sb, d, table, schema, columns, projections, filters); });
         }
 
