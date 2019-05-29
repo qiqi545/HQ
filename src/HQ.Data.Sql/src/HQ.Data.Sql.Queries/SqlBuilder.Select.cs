@@ -20,21 +20,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    // TODO no ToList via StringBank
-    // TODO remove hashKeysRewrite
-
     partial class SqlBuilder
     {
         public static Query Count<T>()
         {
-            return Count(GetDescriptor<T>(), null);
+            return Count(GetDescriptor<T>());
         }
 
         public static Query Count<T>(dynamic where)
@@ -218,11 +214,31 @@ namespace HQ.Data.Sql.Queries
             return new Query(qp.sql, qp.parameters);
         }
 
+        private static Query Count(IDataDescriptor descriptor)
+        {
+            var tableName = Dialect.ResolveTableName(descriptor);
+            var sql = Dialect.Count(descriptor, tableName, descriptor.Schema, null, null);
+            return new Query(sql);
+        }
+
         private static Query Count(IDataDescriptor descriptor, dynamic where)
         {
-            QueryAndParameters qp = BuildSelectQueryAndParameters(descriptor, new List<string> { Dialect.Count }, where);
+            object instance = where ?? new { };
+            var accessor = ReadAccessor.Create(instance.GetType());
 
-            return new Query(qp.sql, qp.parameters);
+            var whereHash = accessor.AsReadOnlyDictionary(instance);
+            var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+
+            var tableName = Dialect.ResolveTableName(descriptor);
+            var columnNames = Dialect.ResolveColumnNames(descriptor).ToList();
+
+            var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToList();
+            var parameters = whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
+            var parameterKeys = parameters.Keys.ToList();
+
+            var sql = Dialect.Count(descriptor, tableName, descriptor.Schema, whereFilter, parameterKeys);
+
+            return new Query(sql, parameters);
         }
 
         private static Query Select<T>(IDataDescriptor descriptor, List<string> columnFilter, dynamic where, int page,
@@ -267,7 +283,10 @@ namespace HQ.Data.Sql.Queries
 
         private struct QueryAndParameters
         {
+            // ReSharper disable once InconsistentNaming
             public string sql;
+
+            // ReSharper disable once InconsistentNaming
             public readonly Dictionary<string, object> parameters;
 
             public QueryAndParameters(string sql, Dictionary<string, object> parameters)

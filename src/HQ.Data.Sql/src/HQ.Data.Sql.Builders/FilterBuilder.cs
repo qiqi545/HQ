@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using HQ.Common;
 using HQ.Data.Contracts;
@@ -29,9 +28,14 @@ namespace HQ.Data.Sql.Builders
 {
     public static class FilterBuilder
     {
-        public static string Where(this ISqlDialect dialect, FilterOptions filterOptions)
+        public static string Where(this ISqlDialect d, FilterOptions filterOptions)
         {
-            var clauses = string.Join(" AND ", filterOptions.Fields.Select(f => dialect.Where(f)));
+            return d.Where(filterOptions.Fields);
+        }
+
+        public static string Where(this ISqlDialect d, List<Filter> filters)
+        {
+            var clauses = string.Join(" AND ", filters.Enumerate(f => d.Where(f)));
 
             return clauses;
         }

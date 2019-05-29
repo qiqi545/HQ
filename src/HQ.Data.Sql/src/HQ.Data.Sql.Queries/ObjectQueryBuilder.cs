@@ -15,10 +15,8 @@
 
 #endregion
 
-using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Builders;
-using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using TypeKitchen;
 
@@ -40,22 +38,6 @@ namespace HQ.Data.Sql.Queries
                 // ORDER BY ...
                 if (sort?.Fields.Count > 0)
                     sb.Append($" {SortingBuilder.OrderBy(dialect, sort)}");
-            });
-        }
-
-        public static string Count<T>(this ISqlDialect dialect, IDataDescriptor descriptor, FilterOptions filter = null)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                // SELECT COUNT(1) FROM ...
-                sb.Append(
-                    $"SELECT {dialect.Count} FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier}");
-
-                // WHERE ...
-                if (filter?.Fields.Count > 0)
-                    sb.Append($" {dialect.Where(filter)}");
-
-                dialect.AfterCount(descriptor, sb, filter?.Fields.Count > 0);
             });
         }
     }
