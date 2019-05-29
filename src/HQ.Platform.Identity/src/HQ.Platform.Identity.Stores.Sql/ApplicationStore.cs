@@ -81,7 +81,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
             Debug.Assert(inserted == 1);
 
-            if (_connection.TryGetLastInsertedId(out TKey insertedId))
+            if (application.Id == null && _connection.TryGetLastInsertedId(out TKey insertedId))
             {
                 application.Id = insertedId;
             }

@@ -34,7 +34,6 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetApplications")
-                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetApplications")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetApplications")
                 .WithColumn("Name").AsString(256).Nullable()
                 .WithColumn("NormalizedName").AsString(256).Nullable()
@@ -42,24 +41,23 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
                 ;
             Create.Table("AspNetApplicationRoles")
-                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetApplicationRoles")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetApplicationRoles")
                 .WithColumn("ApplicationId").AsString(450).NotNullable()
                 .WithColumn("RoleId").AsString(450).NotNullable()
                 ;
             Create.ForeignKey("FK_AspNetApplicationRoles_AspNetApplications")
-                .FromTable("AspNetApplicationRoles").ForeignColumns("TenantId", "ApplicationId")
-                .ToTable("AspNetApplications").PrimaryColumns("TenantId", "Id")
+                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId")
+                .ToTable("AspNetApplications").PrimaryColumns("Id")
                 .OnDelete(Rule.Cascade)
                 ;
             Create.ForeignKey("FK_AspNetApplicationRoles_AspNetRoles")
-                .FromTable("AspNetApplicationRoles").ForeignColumns("TenantId", "RoleId")
-                .ToTable("AspNetRole").PrimaryColumns("TenantId", "Id")
+                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId", "RoleId")
+                .ToTable("AspNetRole").PrimaryColumns("ApplicationId", "Id")
                 .OnDelete(Rule.Cascade)
                 ;
 
             Create.Table("AspNetRoles")
-                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
+                .WithColumn("ApplicationId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Id").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
                 .WithColumn("Name").AsString(256).Nullable()
                 .WithColumn("NormalizedName").AsString(256).Nullable()
@@ -86,15 +84,15 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 ;
 
             Create.Table("AspNetRoleClaims")
-                .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoleClaims")
+                .WithColumn("ApplicationId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetRoleClaims")
                 .WithColumn("RoleId").AsString(450).NotNullable()
                 .WithColumn("ClaimType").AsString(int.MaxValue).Nullable()
                 .WithColumn("ClaimValue").AsString(int.MaxValue).Nullable()
                 ;
             Create.ForeignKey("FK_AspNetRoleClaims_AspNetRoles")
-                .FromTable("AspNetRoleClaims").ForeignColumns("TenantId", "RoleId")
-                .ToTable("AspNetRole").PrimaryColumns("TenantId", "Id")
+                .FromTable("AspNetRoleClaims").ForeignColumns("ApplicationId", "RoleId")
+                .ToTable("AspNetRole").PrimaryColumns("ApplicationId", "Id")
                 .OnDelete(Rule.Cascade)
                 ;
 
@@ -126,12 +124,13 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
             Create.Table("AspNetUserRoles")
                 .WithColumn("TenantId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
+                .WithColumn("ApplicationId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 .WithColumn("UserId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 .WithColumn("RoleId").AsString(450).NotNullable().PrimaryKey("PK_AspNetUserRoles")
                 ;
             Create.ForeignKey("FK_AspNetUserRoles_AspNetRoles")
-                .FromTable("AspNetUserRoles").ForeignColumns("TenantId", "RoleId")
-                .ToTable("AspNetRoles").PrimaryColumns("TenantId", "Id")
+                .FromTable("AspNetUserRoles").ForeignColumns("ApplicationId", "RoleId")
+                .ToTable("AspNetRoles").PrimaryColumns("ApplicationId", "Id")
                 .OnDelete(Rule.Cascade)
                 ;
             Create.ForeignKey("FK_AspNetUserRoles_AspNetUsers")
@@ -162,15 +161,14 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
             Create.Index("RoleNameIndex").OnTable("AspNetRoles")
                 .OnColumn("NormalizedName").Unique()
-                .OnColumn("TenantId").Unique();
+                .OnColumn("ApplicationId").Unique();
 
             Create.Index("UserNameIndex").OnTable("AspNetUsers")
                 .OnColumn("NormalizedUserName").Unique()
                 .OnColumn("TenantId").Unique();
 
             Create.Index("ApplicationNameIndex").OnTable("AspNetApplications")
-                .OnColumn("NormalizedName").Unique()
-                .OnColumn("TenantId").Unique();
+                .OnColumn("NormalizedName").Unique();
         }
 
         public override void Down()
@@ -180,6 +178,8 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             Delete.Table("AspNetUserLogins");
             Delete.Table("AspNetUserRoles");
             Delete.Table("AspNetUserTokens");
+            Delete.Table("AspNetApplicationRoles");
+            Delete.Table("AspNetApplications");
             Delete.Table("AspNetRoles");
             Delete.Table("AspNetUsers");
             Delete.Table("AspNetTenants");
