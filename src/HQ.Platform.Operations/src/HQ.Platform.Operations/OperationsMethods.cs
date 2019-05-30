@@ -39,6 +39,7 @@ namespace HQ.Platform.Operations
                 var scope = x.Key.Substring(0, x.Key.Length - 2 /* `1 */);
 
                 var values = x.Distinct()
+                    .Where(t => !t.ContainsGenericParameters)
                     .Select(t =>
                     {
                         var valid = serviceProvider.TryBindOptions(t, false, out var options);
