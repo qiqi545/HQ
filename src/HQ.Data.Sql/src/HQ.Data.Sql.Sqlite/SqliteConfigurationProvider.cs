@@ -61,9 +61,9 @@ namespace HQ.Data.Sql.Sqlite
                     if (before.Equals(after, StringComparison.Ordinal))
                         continue; // no change
 
-                    var count = db.Execute(Update, new { entry.Key, Value = before }, t);
+                    var count = db.Execute(Update, new { entry.Key, Value = after }, t);
                     if (count == 0)
-                        count = db.Execute(Insert, new { entry.Key, Value = before }, t);
+                        count = db.Execute(Insert, new { entry.Key, Value = after }, t);
                     if (count > 0)
                         changed = true;
                 }
