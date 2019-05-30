@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,12 +28,11 @@ namespace HQ.Common.AspNetCore.Mvc
             // See: https://github.com/aspnet/Mvc/issues/5992
             var controllerAssembly = Assembly.GetCallingAssembly();
 
-            return services.AddMvc(o =>
-                {
-                    setupAction?.Invoke(o);
-                })
+            var mvc = services.AddMvc(o => { setupAction?.Invoke(o); })
                 .AddApplicationPart(controllerAssembly)
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            return mvc;
         }
     }
 }
