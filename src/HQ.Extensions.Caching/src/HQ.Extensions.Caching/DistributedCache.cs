@@ -11,6 +11,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 
+using SysOptions = Microsoft.Extensions.Options.Options;
+
 namespace HQ.Extensions.Caching
 {
     public class DistributedCache : ICache
@@ -22,7 +24,7 @@ namespace HQ.Extensions.Caching
         public DistributedCache(IOptions<CacheOptions> options, ISystemClock clock)
         {
             _serializer = new JsonCacheSerializer();
-            _cache = new MemoryDistributedCache(Options.Create(new MemoryDistributedCacheOptions
+            _cache = new MemoryDistributedCache(SysOptions.Create(new MemoryDistributedCacheOptions
             {
                 CompactionPercentage = 0.05,
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),

@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Common;
 using TypeKitchen;
 
 namespace HQ.Extensions.Metrics.Internal
