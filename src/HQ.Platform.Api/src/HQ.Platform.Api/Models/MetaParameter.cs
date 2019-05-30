@@ -12,12 +12,14 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
+
 namespace HQ.Platform.Api.Models
 {
     public class MetaParameter
     {
         public bool disabled { get; set; }
-        public MetaDescription description { get; set; }
+        //public MetaDescription description { get; set; }
+        public string description { get; set; }
         public string key { get; set; }
         public string value { get; set; }
     }

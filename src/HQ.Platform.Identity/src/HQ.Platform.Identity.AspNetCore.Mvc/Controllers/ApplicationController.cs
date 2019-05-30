@@ -34,7 +34,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = false)]
     [Authorize(Constants.Security.Policies.ManageApplications)]
     [MetaCategory("Identity", "Manages application access controls.")]
-    [DisplayName("Tenants")]
+    [DisplayName("Applications")]
     [MetaDescription("Manages system applications.")]
     public class ApplicationController<TApplication, TKey> : DataController
         where TApplication : IdentityApplication<TKey>

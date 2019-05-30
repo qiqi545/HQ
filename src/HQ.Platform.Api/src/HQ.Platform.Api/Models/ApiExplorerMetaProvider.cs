@@ -198,7 +198,8 @@ namespace HQ.Platform.Api.Models
                                 {
                                     key = _options.CurrentValue.Versioning.VersionParameter,
                                     value = revisionName,
-                                    description = MetaDescription.PlainText("Sets the version revision number for this API request.")
+                                    description = "Sets the version revision number for this API request."
+                                    // MetaDescription.PlainText("Sets the version revision number for this API request.")
                                 }
                             };
                         }
@@ -242,12 +243,12 @@ namespace HQ.Platform.Api.Models
                         new MetaParameter
                         {
                             disabled = false,
-                            description = new MetaDescription
+                            description = "", /* new MetaDescription
                             {
                                 content = "",
                                 type = Constants.MediaTypes.Markdown,
                                 version = null
-                            },
+                            },*/
                             key = Constants.HttpHeaders.ContentType,
                             value = Constants.MediaTypes.Json
                         }
