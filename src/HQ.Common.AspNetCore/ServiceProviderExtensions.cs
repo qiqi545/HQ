@@ -43,21 +43,23 @@ namespace HQ.Common.AspNetCore
         public static bool TryBindOptions(this IServiceProvider serviceProvider, Type optionsWrapperType, bool validate, out object options)
         {
             // IOptions<T>
-            var resolved = optionsWrapperType.GetGenericArguments()[0];
+            var arguments = optionsWrapperType.GetGenericArguments();
+            var resolved = arguments[0];
             while (resolved != null && resolved.IsGenericType)
             {
                 resolved = resolved.IsGenericTypeDefinition
-                    ? resolved.MakeGenericType(optionsWrapperType.GetGenericArguments())    // IOptions<TService<T1,...TN>>
+                    ? resolved.MakeGenericType(arguments)    // IOptions<TService<T1,...TN>>
                     : resolved.BaseType;                                                    // HubOptions<THub> -> HubOptions
             }
 
             var testingType = validate ? typeof(IValidOptions<>) : typeof(IOptions<>);
-            resolved = testingType.MakeGenericType(resolved);
+            
+            var targetType = testingType.MakeGenericType(resolved);
 
             try
             {
-                var instance = serviceProvider.GetService(resolved);
-                var property = resolved.GetProperty(nameof(IOptions<object>.Value));
+                var instance = serviceProvider.GetService(targetType);
+                var property = targetType.GetProperty(nameof(IOptions<object>.Value));
                 options = property?.GetValue(instance);
                 return options != null;
             }
