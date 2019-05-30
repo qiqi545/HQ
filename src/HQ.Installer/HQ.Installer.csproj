@@ -18,6 +18,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
     <ProjectReference Include="..\..\..\..\_BLOWDART\Blowdart.UI\src\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
     <ProjectReference Include="..\HQ\HQ.csproj" />
     <ProjectReference Include="..\HQ.Azure\HQ.Azure.csproj" />

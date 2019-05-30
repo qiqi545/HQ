@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -34,8 +34,10 @@
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\src\HQ.Extensions.Caching\**\*.cs" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -43,7 +45,7 @@
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
  
     <!-- Platform -->
     <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -114,17 +116,19 @@
     <Compile Remove="Data.Sql\obj\**" />
     <Compile Remove="Extensions.Caching\obj\**" />
     <Compile Remove="Extensions.CodeGeneration\obj\**" />
+    <Compile Remove="Extensions.Cryptography\obj\**" />
     <Compile Remove="Extensions.Dates\obj\**" />
     <Compile Remove="Extensions.DependencyInjection.AspNetCore\obj\**" />
     <Compile Remove="Extensions.DependencyInjection\obj\**" />
     <Compile Remove="Extensions.Financial\obj\**" />
+    <Compile Remove="Extensions.Logging\obj\**" />
     <Compile Remove="Extensions.Metrics.AspNetCore\obj\**" />
     <Compile Remove="Extensions.Metrics.Reporters.Console\obj\**" />
     <Compile Remove="Extensions.Metrics.Reporters.AppInsights\obj\**" />
     <Compile Remove="Extensions.Metrics.Reporters.ServerTiming\obj\**" />
     <Compile Remove="Extensions.Metrics\obj\**" />
     <Compile Remove="Extensions.Messaging\obj\**" />
-    <Compile Remove="Extensions.Logging\obj\**" />
+    <Compile Remove="Extensions.Options\obj\**" />
     <Compile Remove="Platform.Api\obj\**" />
     <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <Compile Remove="Platform.Identity.Stores.Sql\obj\**" />
@@ -154,15 +158,17 @@
     <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\src\HQ.Extensions.Caching\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**" />
+    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Financial\src\HQ.Extensions.Financial\obj\Debug\netstandard2.0\**" />
+    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**" />
     <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**" />
+    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\Debug\netstandard2.0\**" />
     <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\Debug\netstandard2.0\**" />
@@ -191,15 +197,17 @@
     <None Remove="Data.Streaming\obj\**" />
     <None Remove="Extensions.Caching\obj\**" />
     <None Remove="Extensions.CodeGeneration\obj\**" />
+    <None Remove="Extensions.Cryptography\obj\**" />
     <None Remove="Extensions.Dates\obj\**" />
     <None Remove="Extensions.DependencyInjection.AspNetCore\obj\**" />
     <None Remove="Extensions.DependencyInjection\obj\**" />
     <None Remove="Extensions.Financial\obj\**" />
+    <None Remove="Extensions.Logging\obj\**" />
     <None Remove="Extensions.Metrics.AspNetCore\obj\**" />
     <None Remove="Extensions.Metrics.Reporters.Console\obj\**" />
     <None Remove="Extensions.Metrics\obj\**" />
     <None Remove="Extensions.Messaging\obj\**" />
-    <None Remove="Extensions.Logging\obj\**" />
+    <None Remove="Extensions.Options\obj\**" />
     <None Remove="Platform.Api\obj\**" />
     <None Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
     <None Remove="Platform.Identity.Stores.Sql\obj\**" />
@@ -219,7 +227,7 @@
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Humanizer" Version="2.6.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.9.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
@@ -244,7 +252,6 @@
     <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta09" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
-    <PackageReference Include="Sodium.Core" Version="1.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
@@ -252,11 +259,13 @@
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="WyHash" Version="1.0.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\_BLOWDART\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
+    <ProjectReference Include="..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

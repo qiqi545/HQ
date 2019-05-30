@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,7 +11,6 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
@@ -20,22 +18,18 @@ using System.Diagnostics;
 using System.Reflection;
 using HQ.Data.Sql.Sqlite;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Options;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 
-namespace HQ.Installer
+namespace HQ.Template
 {
     public static class HqServer
     {
         private const string AppSettingsFileName = "appsettings";
         private const string AppSettingsFileExtension = ".json";
-
-        private const string ConfigSeedFileName = "seed.json";
-        private const string SettingsDatabaseFileName = "settings.db";
-
 
         public static void Start<TStartup>(string[] args) where TStartup : class
         {
@@ -69,36 +63,11 @@ namespace HQ.Installer
             Console.ForegroundColor = color;
         }
 
-        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args)
+        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, bool seedOnLoad = false)
         {
             hostBuilder.ConfigureAppConfiguration((context, config) =>
             {
-                var seedBuilder = new ConfigurationBuilder();
-
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                {
-                    foreach (var resourceName in assembly.GetManifestResourceNames())
-                    {
-                        if (!resourceName.EndsWith(ConfigSeedFileName))
-                            continue;
-
-                        var baseNamespace = resourceName.Replace("." + ConfigSeedFileName, "");
-                        var provider = new EmbeddedFileProvider(assembly, baseNamespace);
-                        seedBuilder.AddJsonFile(o =>
-                        {
-                            o.FileProvider = provider;
-                            o.Path = ConfigSeedFileName;
-                            o.Optional = false;
-                            o.ReloadOnChange = false;
-                        });
-                    }
-                }
-
-                IConfiguration configSeed = null;
-                if (seedBuilder.Sources.Count > 0)
-                    configSeed = seedBuilder.Build();
-
-                config.AddSqlite(SettingsDatabaseFileName, false, true, configSeed);
+                config.AddSqlite("settings.db", false, true, seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null);
 
                 config.AddJsonFile($"{AppSettingsFileName}.{AppSettingsFileExtension}", true, true)
                       .AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);

@@ -15,12 +15,11 @@
 
 #endregion
 
-namespace HQ.Installer
+namespace HQ.Template.UI.Models
 {
-    public enum DatabaseType
+    public class SignInModel
     {
-        DocumentDb,
-        SqlServer,
-        Sqlite
+        public string Email { get; set; }
+        public string Password { get; set; }
     }
 }

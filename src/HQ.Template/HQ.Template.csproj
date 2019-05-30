@@ -5,8 +5,10 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseRazorBuildServer>false</UseRazorBuildServer>
+    <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -16,18 +18,42 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="seed.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="runtime\Filters\" />
     <Folder Include="runtime\Attributes\" />
     <Folder Include="runtime\Models\" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
+    <PackageReference Include="HQ" Version="1.0.75" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HQ.Azure" Version="1.0.75" Condition="'$(Azure)'=='true'" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" Condition="'$(AppInsights)'=='true'" />
+    <PackageReference Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Version="2.2.0" Condition="'$(AppInsights)'=='true'" />
+    <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.9.1" Condition="'$(AppInsights)'=='true'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Use.cs" Link="content\Use.cs" />
+    <Content Update="Add.cs" Link="content\Add.cs" />
+  </ItemGroup>
+
   <!--#if(false)-->
   <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
   <ItemGroup>
-    <ProjectReference Include="..\HQ\HQ.csproj" />
+    <!--<ProjectReference Include="..\HQ\HQ.csproj" />
     <ProjectReference Include="..\HQ.Azure\HQ.Azure.csproj" />
-    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />
+    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />-->
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -67,7 +93,7 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.14</Version>
+    <Version>0.0.15</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
@@ -85,16 +111,6 @@
     <Azure>true</Azure>
   </PropertyGroup>
   <!--#endif-->
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Version="2.2.0" Condition="'$(AppInsights)'=='true'" />
-    <PackageReference Include="HQ" Version="1.0.70" />
-    <PackageReference Include="HQ.Azure" Version="1.0.70" Condition="'$(Azure)'=='true'" />
-    <PackageReference Include="HQ.Installer" Version="0.0.13" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
-  </ItemGroup>
 
 </Project>
  

@@ -16,19 +16,16 @@
 #endregion
 
 using System;
-using Blowdart.UI;
-using Blowdart.UI.Web;
-using Blowdart.UI.Web.SemanticUI;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
+using Lime.Web;
 
-namespace HQ.Installer
+namespace HQ.Template
 {
     public static class Use
     {
@@ -37,6 +34,13 @@ namespace HQ.Installer
         {
             Bootstrap.EnsureInitialized();
 
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
+                c.RoutePrefix = "docs/swagger";
+            });
+
+            app.UseLimeUi(root => { /* using implicit handlers */ });
             app.UseSecurityPolicies();
             app.UseOperationsApi();
             app.UsePlatformApi();
@@ -46,19 +50,9 @@ namespace HQ.Installer
             app.UseMvc(routes =>
             {
                 configureRoutes?.Invoke(routes);
-
                 routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
 
-            return app;
-        }
-
-        public static IApplicationBuilder UseAdminUi(this IApplicationBuilder app)
-        {
-            // TODO: this is a workaround for not being able to detect a UiSystem declared on an inner component
-            var settings = app.ApplicationServices.GetRequiredService<UiSettings>();
-            settings.DefaultSystem = new SemanticUi();
-            app.UseBlowdartUi(root => { });
             return app;
         }
     }

@@ -17,10 +17,12 @@
 
 using System;
 using System.Reflection;
-using Blowdart.UI;
-using Blowdart.UI.Web;
-using Blowdart.UI.Web.SemanticUI;
-using Demo.UI;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Swashbuckle.AspNetCore.Swagger;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
@@ -33,18 +35,20 @@ using HQ.Platform.Identity.Stores.Sql.Sqlite;
 using HQ.Platform.Identity.Stores.Sql.SqlServer;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Lime;
+using Lime.Web;
+using Lime.Web.SemanticUi;
+using HQ.Template.UI.Pages;
 
-namespace HQ.Installer
+namespace HQ.Template
 {
     public static class Add
     {
-        public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, Action<MvcOptions> setupAction = null)
+        public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfigurationRoot configurationRoot, Action<MvcOptions> setupAction = null)
         {
+            var config = configurationRoot.GetSection("HQ");
+
+            services.AddSingleton(configurationRoot);
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             services.AddSecurityPolicies(config.GetSection("Security"));
@@ -61,7 +65,7 @@ namespace HQ.Installer
             return services;
         }
 
-        public static IServiceCollection AddBackendServices(this IServiceCollection services, DatabaseType databaseType, string connectionString, IConfiguration dbConfig, IConfiguration config)
+        public static IServiceCollection AddBackendServices(this IServiceCollection services, string databaseType, string connectionString, IConfiguration dbConfig, IConfiguration config)
         {
             var identity = services
                 .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(
@@ -69,17 +73,17 @@ namespace HQ.Installer
 
             switch (databaseType)
             {
-                case DatabaseType.DocumentDb:
+                case "DocumentDb":
                     identity.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
                         connectionString, ConnectionScope.ByRequest,
                         dbConfig);
                     break;
-                case DatabaseType.SqlServer:
+                case "SqlServer":
                     identity.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
                         connectionString, ConnectionScope.ByRequest,
                         dbConfig);
                     break;
-                case DatabaseType.Sqlite:
+                case "Sqlite":
                     identity.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(
                         connectionString, ConnectionScope.ByRequest,
                         dbConfig);
@@ -88,11 +92,6 @@ namespace HQ.Installer
                     throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null);
             }
 
-            return services;
-        }
-
-        public static void AddAdminUi(this IServiceCollection services)
-        {
             UiConfig.Settings = settings =>
             {
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
@@ -106,8 +105,21 @@ namespace HQ.Installer
                 };
             };
 
-            services.AddBlowdartUi(services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>(),
+            services.AddLimeUi(services.BuildServiceProvider().GetRequiredService<IHostingEnvironment>(),
                 typeof(SemanticUi).Assembly);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.EnableAnnotations();
+                c.SwaggerDoc("swagger", new Info
+                {
+                    Title = "Sample API",
+                    Version = "v1"
+                });
+                c.DescribeAllEnumsAsStrings();
+            });
+
+            return services;
         }
     }
 }
