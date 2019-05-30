@@ -41,7 +41,7 @@ namespace HQ.Platform.Operations
                 var values = x.Distinct()
                     .Select(t =>
                     {
-                        var valid = serviceProvider.TryBindOptions(t, true, out var options);
+                        var valid = serviceProvider.TryBindOptions(t, false, out var options);
 
                         return new OperationsReports.OptionBindingReport
                         {
