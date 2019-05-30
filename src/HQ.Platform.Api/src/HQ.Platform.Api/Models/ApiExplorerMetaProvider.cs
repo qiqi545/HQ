@@ -258,6 +258,44 @@ namespace HQ.Platform.Api.Models
                 response = new List<dynamic>(),
                 protocolProfileBehavior = new { }
             };
+
+            //
+            // Token Capture:
+            if (item.name == "tokens")
+            {
+                item.@event.Add(new
+                {
+                    listen = "test",
+                    script = new
+                    {
+                        id = "66a87d23-bc0e-432c-acee-cb48d3704947",
+                        exec = new List<string>
+                        {
+                            "var data = JSON.parse(responseBody);\r",
+                            "postman.setGlobalVariable(\"accessToken\", data.accessToken);"
+                        },
+                        type = "text/javascript"
+                    }
+                });
+                item.request.body = new
+                {
+                    mode = "raw",
+                    raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
+                };
+            }
+
+            //
+            // Bearer:
+            if (item.request?.auth != null && item.request.auth.Equals("bearer", StringComparison.OrdinalIgnoreCase))
+            {
+                item.request.header.Add(new MetaParameter
+                {
+                    key = "Authorization",
+                    value = "Bearer {{accessToken}}",
+                    description = "Access Token",
+                    type = "text"
+                });
+            }
             return item;
         }
         

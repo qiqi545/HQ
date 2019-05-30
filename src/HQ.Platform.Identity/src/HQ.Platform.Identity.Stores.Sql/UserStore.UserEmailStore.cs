@@ -57,7 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.Username.ToUpperInvariant())
             {
                 return CreateSuperUserInstance();
             }
@@ -86,7 +86,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
             if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.Username.ToUpperInvariant())
             {
                 return new[] {CreateSuperUserInstance()};
             }

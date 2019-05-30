@@ -57,7 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.PhoneNumber?.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.PhoneNumber?.ToUpperInvariant())
             {
                 return CreateSuperUserInstance();
             }
@@ -75,7 +75,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.PhoneNumber?.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.PhoneNumber?.ToUpperInvariant())
             {
                 return new[] {CreateSuperUserInstance()};
             }

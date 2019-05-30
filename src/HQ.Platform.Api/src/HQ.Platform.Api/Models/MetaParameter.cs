@@ -22,5 +22,6 @@ namespace HQ.Platform.Api.Models
         public string description { get; set; }
         public string key { get; set; }
         public string value { get; set; }
+        public string type { get; set; }
     }
 }

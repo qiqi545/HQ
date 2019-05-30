@@ -54,8 +54,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
-        private readonly IOptions<PlatformApiOptions> _apiOptions;
-        private readonly IOptions<SecurityOptions> _securityOptions;
+        private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
+        private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
         private readonly IServerTimestampService _timestamps;
         private readonly ILogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
@@ -64,8 +64,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public TokenController(
             UserManager<TUser> userManager,
             IServerTimestampService timestamps,
-            IOptions<SecurityOptions> securityOptions,
-            IOptions<PlatformApiOptions> apiOptions,
+            IOptionsMonitor<SecurityOptions> securityOptions,
+            IOptionsMonitor<PlatformApiOptions> apiOptions,
             ILogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
         {
             _userManager = userManager;
@@ -146,8 +146,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 {
                     if (tenantContext.Tenant != null)
                     {
-                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
-                        claims.Add(new Claim(_securityOptions.Value.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
+                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
                     }
                 }
 
@@ -155,13 +155,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 {
                     if (applicationContext.Application != null)
                     {
-                        claims.Add(new Claim(_securityOptions.Value.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
-                        claims.Add(new Claim(_securityOptions.Value.Claims.ApplicationNameClaim, applicationContext.Application.Name));
+                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
+                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
                     }
                 }
 
                 var provider = user.ActLike<IUserIdProvider>();
-                var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.Value, _apiOptions.Value);
+                var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
 
                 return Ok(new {AccessToken = token});
             }

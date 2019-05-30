@@ -120,33 +120,31 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
         {
-            var key = options.Tokens?.SigningKey ?? SelfCreateMissingKeys(options);
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            MaybeSelfCreateMissingKeys(options);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.SigningKey));
             return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         }
 
         private static EncryptingCredentials BuildEncryptingCredentials(SecurityOptions options)
         {
-            var key = options.Tokens.EncryptionKey ?? options.Tokens.SigningKey ?? SelfCreateMissingKeys(options);
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            MaybeSelfCreateMissingKeys(options);
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.EncryptionKey));
             return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
-        private static string SelfCreateMissingKeys(SecurityOptions options)
+        private static void MaybeSelfCreateMissingKeys(SecurityOptions options)
         {
-            if (options.Tokens.SigningKey == null)
+            if (options.Tokens.SigningKey == null || options.Tokens.SigningKey == "PRIVATE-KEY-REPLACE-ME")
             {
                 Trace.TraceWarning("No JWT signing key found, creating temporary key.");
                 options.Tokens.SigningKey = Crypto.GetRandomString(64);
             }
 
-            if (options.Tokens.EncryptionKey == null)
+            if (options.Tokens.EncryptionKey == null || options.Tokens.EncryptionKey == "PRIVATE-KEY-REPLACE-ME")
             {
                 Trace.TraceWarning("No JWT encryption key found, using signing key.");
                 options.Tokens.EncryptionKey = options.Tokens.SigningKey;
             }
-
-            return options.Tokens.SigningKey;
         }
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)

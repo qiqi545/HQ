@@ -74,7 +74,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (user.NormalizedUserName == _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+            if (user.NormalizedUserName == _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
             {
                 return SuperUserRoles;
             }

@@ -45,12 +45,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>
     {
-        private readonly IOptions<IdentityApiOptions> _options;
         private readonly IRoleService<TRole> _roleService;
-        private readonly IOptions<SecurityOptions> _security;
 
-        public RoleController(IRoleService<TRole> roleService, IOptions<SecurityOptions> security,
-            IOptions<IdentityApiOptions> options)
+        private readonly IOptionsMonitor<IdentityApiOptions> _options;
+        private readonly IOptionsMonitor<SecurityOptions> _security;
+
+        public RoleController(IRoleService<TRole> roleService, IOptionsMonitor<SecurityOptions> security, IOptionsMonitor<IdentityApiOptions> options)
         {
             _roleService = roleService;
             _security = security;
@@ -80,7 +80,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             var result = await _roleService.CreateAsync(model);
 
             return result.Succeeded
-                ? Created($"{_options.Value.RootPath ?? string.Empty}/roles/{result.Data.Id}", result.Data)
+                ? Created($"{_options.CurrentValue.RootPath ?? string.Empty}/roles/{result.Data.Id}", result.Data)
                 : (IActionResult) BadRequest(result.Errors);
         }
 
@@ -151,7 +151,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 return NotFound();
             }
 
-            var issuer = _security.Value.Tokens.Issuer;
+            var issuer = _security.CurrentValue.Tokens.Issuer;
             var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
             var result = await _roleService.AddClaimAsync(role.Data, claim);
 

@@ -47,13 +47,12 @@ namespace HQ.Platform.Identity.Stores.Sql
         private const string SuperUserSecurityStamp = "A2ECC018-9B97-420B-815E-9D5B595BFA86";
         private const int SuperUserNumberId = int.MaxValue;
 
-        // ReSharper disable once StaticMemberInGenericType
         private readonly IDataConnection _connection;
-        private readonly IOptions<IdentityOptionsExtended> _identity;
         private readonly IPasswordHasher<TUser> _passwordHasher;
         private readonly IQueryableProvider<TUser> _queryable;
         private readonly RoleManager<TRole> _roles;
-        private readonly IOptions<SecurityOptions> _security;
+        private readonly IOptionsMonitor<IdentityOptionsExtended> _identity;
+        private readonly IOptionsMonitor<SecurityOptions> _security;
 
         private readonly TKey _tenantId;
         private readonly string _tenantName;
@@ -65,8 +64,8 @@ namespace HQ.Platform.Identity.Stores.Sql
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
             IQueryableProvider<TUser> queryable,
-            IOptions<IdentityOptionsExtended> identity,
-            IOptions<SecurityOptions> security,
+            IOptionsMonitor<IdentityOptionsExtended> identity,
+            IOptionsMonitor<SecurityOptions> security,
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
@@ -90,7 +89,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public CancellationToken CancellationToken { get; }
 
-        public bool SupportsSuperUser => _security?.Value?.SuperUser?.Enabled ?? false;
+        public bool SupportsSuperUser => _security?.CurrentValue?.SuperUser?.Enabled ?? false;
 
         public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
             CancellationToken cancellationToken)
@@ -98,7 +97,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
             {
                 return new[] {CreateSuperUserInstance()};
             }
@@ -177,7 +176,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
-                _security?.Value.SuperUser?.Username?.ToUpperInvariant())
+                _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
             {
                 return CreateSuperUserInstance();
             }
@@ -278,7 +277,7 @@ namespace HQ.Platform.Identity.Stores.Sql
                 superuser.Id = (TKey) (object) SuperUserNumberId;
             }
 
-            var options = _security?.Value.SuperUser;
+            var options = _security?.CurrentValue.SuperUser;
 
             superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
             superuser.NormalizedUserName = superuser.UserName?.ToUpperInvariant();
