@@ -7,7 +7,7 @@
     <Copyright>Copyright © Daniel Crenna &amp; Contributors. All rights reserved.</Copyright>
     <PackageIconUrl>https://raw.githubusercontent.com/lime-ui/lime/master/assets/logo.png</PackageIconUrl>
     <PackageProjectUrl>https://limeui.com</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/lime-ui/lime/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RepositoryUrl>https://github.com/lime-ui/lime</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>ui imgui c-sharp dotnet-standard</PackageTags>
