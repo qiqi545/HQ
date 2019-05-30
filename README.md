@@ -1,4 +1,4 @@
-# Lime.UI
+# LimeUI
 
 The portable, cross-platform, immediate mode UI for C#. 
 
