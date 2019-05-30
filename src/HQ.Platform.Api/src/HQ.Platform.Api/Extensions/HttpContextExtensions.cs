@@ -29,6 +29,12 @@ namespace HQ.Platform.Api.Extensions
 {
     public static class HttpContextExtensions
     {
+        public static async Task WriteResultAsJson(this IApplicationBuilder app, HttpContext context, string json, CancellationToken? cancellationToken = null)
+        {
+            context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
+            await context.Response.WriteAsync(json, cancellationToken ?? context.RequestAborted);
+        }
+
         public static async Task WriteResultAsJson(this IApplicationBuilder app, HttpContext context, object instance, CancellationToken? cancellationToken = null)
         {
             context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);

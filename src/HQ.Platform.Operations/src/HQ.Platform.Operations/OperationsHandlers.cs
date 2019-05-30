@@ -169,8 +169,7 @@ namespace HQ.Platform.Operations
             var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
             var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
             var cancel = new CancellationTokenSource(timeout);
-            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(),
-                cancel.Token);
+            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(), cancel.Token);
             var json = JsonSampleSerializer.Serialize(samples);
 
             await app.WriteResultAsJson(context, json);
