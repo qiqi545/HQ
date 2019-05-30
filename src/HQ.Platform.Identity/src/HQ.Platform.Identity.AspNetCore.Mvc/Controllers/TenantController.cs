@@ -55,11 +55,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Get()
         {
             var tenants = await _tenantService.GetAsync();
-            if (tenants?.Data == null || tenants.Data?.Count() == 0)
-            {
+            if (tenants?.Data == null)
                 return NotFound();
-            }
-
             return Ok(tenants.Data);
         }
 

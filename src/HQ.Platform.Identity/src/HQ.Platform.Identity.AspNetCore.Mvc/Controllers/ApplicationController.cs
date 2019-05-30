@@ -72,7 +72,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             var result = await _applicationService.CreateAsync(model);
 
             return result.Succeeded
-                ? Created($"{_options.Value.RootPath ?? string.Empty}/tenants/{result.Data.Id}", result.Data)
+                ? Created($"{_options.Value.RootPath ?? string.Empty}/applications/{result.Data.Id}", result.Data)
                 : (IActionResult)BadRequest(result.Errors);
         }
 
