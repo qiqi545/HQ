@@ -27,7 +27,8 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireAuthenticatedUserExtended(
             this AuthorizationPolicyBuilder builder, IServiceCollection services, SecurityOptions options)
         {
-            var requireAuthenticatedUser = new DenyAnonymousAuthorizationRequirementExtended(options);
+            var serviceProvider = services.BuildServiceProvider();
+            var requireAuthenticatedUser = new DenyAnonymousAuthorizationRequirementExtended(serviceProvider, options);
             services.AddSingleton<IAuthorizationHandler>(requireAuthenticatedUser);
             builder.AddRequirements(requireAuthenticatedUser);
             return builder;
@@ -36,7 +37,8 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireClaimExtended(this AuthorizationPolicyBuilder builder,
             IServiceCollection services, SecurityOptions security, string claimType, params string[] allowedValues)
         {
-            var requireClaim = new ClaimsAuthorizationRequirementExtended(security, claimType, allowedValues);
+            var serviceProvider = services.BuildServiceProvider();
+            var requireClaim = new ClaimsAuthorizationRequirementExtended(serviceProvider, security, claimType, allowedValues);
             services.AddSingleton<IAuthorizationHandler>(requireClaim);
             builder.AddRequirements(requireClaim);
             return builder;
@@ -45,7 +47,8 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireRoleExtended(this AuthorizationPolicyBuilder builder,
             IServiceCollection services, SecurityOptions options, params string[] allowedRoles)
         {
-            var requireRole = new RolesAuthorizationRequirementExtended(options, allowedRoles);
+            var serviceProvider = services.BuildServiceProvider();
+            var requireRole = new RolesAuthorizationRequirementExtended(serviceProvider, options, allowedRoles);
             services.AddSingleton<IAuthorizationHandler>(requireRole);
             builder.AddRequirements(requireRole);
             return builder;

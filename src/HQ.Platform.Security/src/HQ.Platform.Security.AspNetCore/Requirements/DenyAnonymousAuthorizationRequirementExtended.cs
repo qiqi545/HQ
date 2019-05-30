@@ -15,10 +15,17 @@
 
 #endregion
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -26,32 +33,52 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly SecurityOptions _options;
 
-        public DenyAnonymousAuthorizationRequirementExtended(SecurityOptions options)
+        public DenyAnonymousAuthorizationRequirementExtended(IServiceProvider serviceProvider, SecurityOptions options)
         {
+            _serviceProvider = serviceProvider;
             _options = options;
         }
 
         private bool SupportsSuperUser => _options.SuperUser?.Enabled ?? false;
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             DenyAnonymousAuthorizationRequirementExtended requirement)
         {
-            if (context.User != null)
+            var user = context.User;
+
+            //
+            // ASP.NET Core Identity is calling the requirement *before* validating and injecting the claim!
+            //
+            if (!user.Identity.IsAuthenticated)
             {
-                if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                if (_serviceProvider.GetService(typeof(IAuthenticationService)) is IAuthenticationService service && context.Resource is AuthorizationFilterContext filter)
                 {
-                    context.Succeed(requirement);
-                }
-                else if ((context.User.Identity == null ? 1 :
-                             context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
-                {
-                    context.Succeed(requirement);
+                    var result = await service.AuthenticateAsync(filter.HttpContext, JwtBearerDefaults.AuthenticationScheme);
+                    if (result.Succeeded)
+                    {
+                        user = result.Principal;
+                    }
                 }
             }
-
-            return Task.CompletedTask;
+            
+            if (user != null)
+            {
+                if (SupportsSuperUser && user.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                {
+                    context.Succeed(requirement);
+                }
+                else if ((context.User.Identity == null ? 1 : context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
+                {
+                    context.Succeed(requirement);
+                }
+                else
+                {
+                    context.Fail();
+                }
+            }
         }
     }
 }

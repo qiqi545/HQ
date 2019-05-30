@@ -20,7 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -28,10 +31,12 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<RolesAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly SecurityOptions _options;
 
-        public RolesAuthorizationRequirementExtended(SecurityOptions options, IEnumerable<string> allowedRoles)
+        public RolesAuthorizationRequirementExtended(IServiceProvider serviceProvider, SecurityOptions options, IEnumerable<string> allowedRoles)
         {
+            _serviceProvider = serviceProvider;
             _options = options;
             AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
@@ -40,12 +45,29 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
 
         public IEnumerable<string> AllowedRoles { get; }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             RolesAuthorizationRequirementExtended requirement)
         {
-            if (context.User != null)
+            var user = context.User;
+
+            //
+            // ASP.NET Core Identity is calling the requirement *before* validating and injecting the claim!
+            //
+            if (!user.Identity.IsAuthenticated)
             {
-                if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                if (_serviceProvider.GetService(typeof(IAuthenticationService)) is IAuthenticationService service && context.Resource is AuthorizationFilterContext filter)
+                {
+                    var result = await service.AuthenticateAsync(filter.HttpContext, JwtBearerDefaults.AuthenticationScheme);
+                    if (result.Succeeded)
+                    {
+                        user = result.Principal;
+                    }
+                }
+            }
+
+            if (user != null)
+            {
+                if (SupportsSuperUser && user.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
                 {
                     context.Succeed(requirement);
                 }
@@ -53,7 +75,7 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
                 var flag = false;
                 if (requirement.AllowedRoles != null && requirement.AllowedRoles.Any())
                 {
-                    flag = requirement.AllowedRoles.Any(r => context.User.IsInRole(r));
+                    flag = requirement.AllowedRoles.Any(r => user.IsInRole(r));
                 }
 
                 if (flag)
@@ -61,8 +83,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
                     context.Succeed(requirement);
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

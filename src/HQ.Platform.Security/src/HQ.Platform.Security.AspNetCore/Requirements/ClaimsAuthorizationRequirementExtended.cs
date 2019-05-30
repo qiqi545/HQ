@@ -20,7 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -28,20 +31,22 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
+        private readonly IServiceProvider _serviceProvider;
         private readonly SecurityOptions _options;
 
-        public ClaimsAuthorizationRequirementExtended(SecurityOptions options, string claimType,
+        public ClaimsAuthorizationRequirementExtended(IServiceProvider serviceProvider, SecurityOptions options, string claimType,
             IEnumerable<string> allowedValues)
         {
             var values = allowedValues.ToArray();
 
+            _serviceProvider = serviceProvider;
             _options = options;
             ClaimType = claimType;
             AllowedValues = values;
         }
 
-        public ClaimsAuthorizationRequirementExtended(SecurityOptions options, string claimType,
-            params string[] allowedValues) : this(options, claimType, allowedValues.AsEnumerable())
+        public ClaimsAuthorizationRequirementExtended(IServiceProvider serviceProvider, SecurityOptions options, string claimType,
+            params string[] allowedValues) : this(serviceProvider, options, claimType, allowedValues.AsEnumerable())
         {
         }
 
@@ -50,27 +55,42 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         public string ClaimType { get; }
         public IEnumerable<string> AllowedValues { get; }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
             ClaimsAuthorizationRequirementExtended requirement)
         {
-            if (context.User != null)
+            var user = context.User;
+
+            //
+            // ASP.NET Core Identity is calling the requirement *before* validating and injecting the claim!
+            //
+            if (!user.Identity.IsAuthenticated)
             {
-                if (SupportsSuperUser && context.User.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                if (_serviceProvider.GetService(typeof(IAuthenticationService)) is IAuthenticationService service && context.Resource is AuthorizationFilterContext filter)
+                {
+                    var result = await service.AuthenticateAsync(filter.HttpContext, JwtBearerDefaults.AuthenticationScheme);
+                    if (result.Succeeded)
+                    {
+                        user = result.Principal;
+                    }
+                }
+            }
+
+            if (user != null)
+            {
+                if (SupportsSuperUser && user.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
                 {
                     context.Succeed(requirement);
                 }
                 else if (requirement.AllowedValues == null || !requirement.AllowedValues.Any()
-                    ? context.User.Claims.Any(c =>
+                    ? user.Claims.Any(c =>
                         string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase))
-                    : context.User.Claims.Any(c =>
+                    : user.Claims.Any(c =>
                         string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase) &&
                         requirement.AllowedValues.Contains(c.Value, StringComparer.Ordinal)))
                 {
                     context.Succeed(requirement);
                 }
             }
-
-            return Task.CompletedTask;
         }
     }
 }

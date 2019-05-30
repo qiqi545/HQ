@@ -25,8 +25,8 @@ namespace HQ.Platform.Security.Configuration
         public string ApplicationNameClaim { get; set; } = "applicationName";
         public string UserIdClaim { get; set; } = "userId";
         public string UserNameClaim { get; set; } = "userName";
-        public string RoleClaim { get; set; } = "role";
-        public string EmailClaim { get; set; } = "email";
-        public string PermissionClaim { get; set; } = "permission";
+        public string RoleClaim { get; set; } = "userRole";
+        public string EmailClaim { get; set; } = "userEmail";
+        public string PermissionClaim { get; set; } = "userPermission";
     }
 }

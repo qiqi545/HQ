@@ -53,24 +53,28 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 x.AddPolicy(Constants.Security.Policies.ManageUsers,
                     b =>
                     {
+                        b.RequireAuthenticatedUserExtended(services, options);
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageUsers);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageRoles,
                     b =>
                     {
+                        b.RequireAuthenticatedUserExtended(services, options);
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageRoles);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageTenants,
                     b =>
                     {
+                        b.RequireAuthenticatedUserExtended(services, options);
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageTenants);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageApplications,
                     b =>
                     {
+                        b.RequireAuthenticatedUserExtended(services, options);
                         b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
                             ClaimValues.ManageApplications);
                     });

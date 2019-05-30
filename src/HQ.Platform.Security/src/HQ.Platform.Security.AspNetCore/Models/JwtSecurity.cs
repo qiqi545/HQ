@@ -21,17 +21,55 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Sodium;
 
 namespace HQ.Platform.Security.AspNetCore.Models
 {
+    public static class JwtBearerExtensions
+    {
+        public static AuthenticationBuilder AddJwtBearer(
+            this AuthenticationBuilder builder)
+        {
+            return builder.AddJwtBearer("Bearer", (Action<JwtBearerOptions>)(_ => { }));
+        }
+
+        public static AuthenticationBuilder AddJwtBearer(
+            this AuthenticationBuilder builder,
+            Action<JwtBearerOptions> configureOptions)
+        {
+            return builder.AddJwtBearer("Bearer", configureOptions);
+        }
+
+        public static AuthenticationBuilder AddJwtBearer(
+            this AuthenticationBuilder builder,
+            string authenticationScheme,
+            Action<JwtBearerOptions> configureOptions)
+        {
+            return builder.AddJwtBearer(authenticationScheme, (string)null, configureOptions);
+        }
+
+        public static AuthenticationBuilder AddJwtBearer(
+            this AuthenticationBuilder builder,
+            string authenticationScheme,
+            string displayName,
+            Action<JwtBearerOptions> configureOptions)
+        {
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
+            return builder.AddScheme<JwtBearerOptions, JwtBearerHandler>(authenticationScheme, displayName, configureOptions);
+        }
+    }
+
     public static class JwtSecurity
     {
         private static SigningCredentials _signing;
@@ -51,6 +89,14 @@ namespace HQ.Platform.Security.AspNetCore.Models
                 })
                 .AddJwtBearer(x =>
                 {
+                    x.Events = new JwtBearerEvents();
+                    x.Events.OnTokenValidated += OnTokenValidated;
+                    x.Events.OnMessageReceived += OnMessageReceived;
+                    x.Events.OnAuthenticationFailed += OnAuthenticationFailed;
+                    x.Events.OnChallenge += OnChallenge;
+
+                    x.SaveToken = true;
+
                     x.TokenValidationParameters = BuildTokenValidationParameters(options);
 #if DEBUG
                     x.IncludeErrorDetails = true;
@@ -61,6 +107,30 @@ namespace HQ.Platform.Security.AspNetCore.Models
 #endif
                 })
                 .AddCookie(cfg => cfg.SlidingExpiration = true);
+        }
+
+        private static Task OnTokenValidated(TokenValidatedContext arg)
+        {
+            Trace.TraceInformation(arg.ToString());
+            return Task.CompletedTask;
+        }
+
+        private static Task OnMessageReceived(MessageReceivedContext arg)
+        {
+            Trace.TraceInformation(arg.ToString());
+            return Task.CompletedTask;
+        }
+
+        private static Task OnChallenge(JwtBearerChallengeContext arg)
+        {
+            Trace.TraceInformation(arg.ToString());
+            return Task.CompletedTask;
+        }
+
+        private static Task OnAuthenticationFailed(AuthenticationFailedContext arg)
+        {
+            Trace.TraceInformation(arg.ToString());
+            return Task.CompletedTask;
         }
 
         public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PlatformApiOptions api) where TUser : IUserIdProvider
@@ -149,20 +219,25 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)
         {
+            var name = options.Claims.UserNameClaim;
+            var role = options.Claims.RoleClaim;
+            
             if (options.Tokens.Encrypt)
             {
                 return new TokenValidationParameters
                 {
+                    TokenDecryptionKeyResolver = TokenDecryptionKeyResolver,
                     ValidateIssuerSigningKey = false,
                     ValidIssuer = options.Tokens.Issuer,
                     ValidateLifetime = true,
                     ValidateAudience = true,
                     ValidAudience = options.Tokens.Audience,
                     RequireSignedTokens = false,
-                    TokenDecryptionKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.EncryptionKey)),
+                    IssuerSigningKey = _signing.Key,
+                    TokenDecryptionKey = _encrypting.Key,
                     ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
-                    RoleClaimType = options.Claims.RoleClaim,
-                    NameClaimType = options.Claims.UserNameClaim
+                    RoleClaimType = role,
+                    NameClaimType = name
                 };
             }
 
@@ -176,9 +251,14 @@ namespace HQ.Platform.Security.AspNetCore.Models
                 RequireSignedTokens = true,
                 IssuerSigningKey = _signing.Key,
                 ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
-                RoleClaimType = options.Claims.RoleClaim,
-                NameClaimType = options.Claims.UserNameClaim
+                RoleClaimType = role,
+                NameClaimType = name
             };
+        }
+
+        private static IEnumerable<SecurityKey> TokenDecryptionKeyResolver(string token, SecurityToken securityToken, string kid, TokenValidationParameters parameters)
+        {
+            yield return _encrypting.Key;
         }
     }
 }
