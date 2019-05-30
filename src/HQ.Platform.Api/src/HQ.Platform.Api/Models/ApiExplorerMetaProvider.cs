@@ -261,7 +261,7 @@ namespace HQ.Platform.Api.Models
 
             //
             // Token Capture:
-            if (item.name == "tokens")
+            if (item.name == "tokens" && item.request.method == "POST")
             {
                 item.@event.Add(new
                 {
