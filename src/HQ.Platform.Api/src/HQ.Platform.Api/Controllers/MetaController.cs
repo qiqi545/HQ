@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using System.Net;
-using HQ.Common;
 using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;

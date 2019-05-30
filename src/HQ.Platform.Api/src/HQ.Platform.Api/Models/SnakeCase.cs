@@ -15,7 +15,6 @@
 
 #endregion
 
-using HQ.Common;
 using TypeKitchen;
 
 namespace HQ.Platform.Api.Models

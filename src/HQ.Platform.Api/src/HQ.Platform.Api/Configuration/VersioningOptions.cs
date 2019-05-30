@@ -22,7 +22,7 @@ namespace HQ.Platform.Api.Configuration
 {
     public class VersioningOptions : FeatureToggle
     {
-        public bool RequireExplicitVersion { get; set; } = true;
+        public bool RequireExplicitVersion { get; set; } = false;
         public int ExplicitVersionRequiredStatusCode = (int) HttpStatusCode.NotFound;
 
         public bool EnableVersionHeader { get; set; } = false;
