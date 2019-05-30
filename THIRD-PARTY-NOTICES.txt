@@ -1,14 +1,14 @@
 #######################################################################
 
-Blowdart.UI uses third-party libraries and other materials, distributed 
-under different licenses than Blowdart.UI licensed components.
+LimeUI uses third-party libraries and other materials, distributed 
+under different licenses than Lime.UI licensed components.
 
 If we have omitted a notice here, please let us know by submitting
 an issue on GitHub, or by emailing support@blowdart.io
 
 #######################################################################
 
-Blowdart.UI integrates with, and borrows theming concepts from, Semantic-UI:
+LimeUI integrates with, and borrows theming concepts from, Semantic-UI:
 ----------------------------------------------------------------------------
 https://semantic-ui.mit-license.org/
 
@@ -33,7 +33,7 @@ https://semantic-ui.mit-license.org/
 	SOFTWARE.
 
 
-Blowdart.UI uses ObjectMethodExecutor from ASP.NET Extensions, as at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
+LimeUI uses ObjectMethodExecutor from ASP.NET Extensions, as at May 9th, 2017, commit 'f27f68628a3c5c598b0f4230fd6b17e81e13249f' 
 https://github.com/aspnet/Extensions/tree/f27f68628a3c5c598b0f4230fd6b17e81e13249f/shared/Microsoft.Extensions.ObjectMethodExecutor.Sources
 ------------------------------------------------------------------------------
 
@@ -51,7 +51,7 @@ https://github.com/aspnet/Extensions/tree/f27f68628a3c5c598b0f4230fd6b17e81e1324
 	specific language governing permissions and limitations under the License.
 
 
-Blowdart.UI uses a modified version of TavisSoftware.UriTemplates, as at March 18th, 2018, commit '2575dc8fbd55e5bcc49d6acf07eb3ebfac1161c8'
+LimeUI uses a modified version of TavisSoftware.UriTemplates, as at March 18th, 2018, commit '2575dc8fbd55e5bcc49d6acf07eb3ebfac1161c8'
 https://github.com/danielcrenna/Tavis.UriTemplates/tree/2575dc8fbd55e5bcc49d6acf07eb3ebfac1161c8
 ------------------------------------------------------------------------------
 

@@ -6,23 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="blowdart.json" />
+    <None Remove="lime.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="blowdart.json">
+    <Content Include="lime.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web.SemanticUI\Blowdart.UI.Web.SemanticUI.csproj" />
-    <ProjectReference Include="..\Blowdart.UI\Blowdart.UI.Web\Blowdart.UI.Web.csproj" />
-    <ProjectReference Include="..\Blowdart.UI\Blowdart.UI\Blowdart.UI.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <ProjectReference Include="..\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
+    <ProjectReference Include="..\Lime\Lime.Web\Lime.Web.csproj" />
+    <ProjectReference Include="..\Lime\Lime\Lime.csproj" />
   </ItemGroup>
 
 </Project>

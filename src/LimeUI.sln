@@ -1,0 +1,113 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.645
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A029D8DE-27BA-4A99-9EF4-7709C5AB8A9B}"
+	ProjectSection(SolutionItems) = preProject
+		..\.EDITORCONFIG = ..\.EDITORCONFIG
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D7D6149A-7097-4081-8F5F-ADE5968F4716}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{C4706789-D443-4786-9B06-831C1C217B16}"
+	ProjectSection(SolutionItems) = preProject
+		..\build\build.props = ..\build\build.props
+		..\build\package.props = ..\build\package.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Demo", "Demo\Demo.csproj", "{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7E10C7F2-F125-4D81-8603-C91857725793}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deps", "deps", "{ED78EBA5-DB31-46E7-8B2C-A3186FFE8519}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime", "Lime\Lime\Lime.csproj", "{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Theming", "Lime\Lime.Theming\Lime.Theming.csproj", "{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Web", "Lime\Lime.Web\Lime.Web.csproj", "{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Web.Bootstrap", "Lime\Lime.Web.Bootstrap\Lime.Web.Bootstrap.csproj", "{0E1D18E5-C54E-445C-8382-D50570BAC233}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Web.SemanticUi", "Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj", "{58171DC7-F2F6-4AFE-9F76-78984D627995}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Tests", "..\test\Lime.Tests\Lime.Tests.csproj", "{0F12FF6B-414A-4271-AE30-E0A6815453F7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeKitchen", "..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj", "{7A5180CC-C822-4B68-878C-0F5ED1789D15}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Package|Any CPU = Package|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B5BB93-1500-473B-A39F-2DBC9B0890EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Package|Any CPU.Build.0 = Package|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Package|Any CPU.Build.0 = Package|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Package|Any CPU.Build.0 = Package|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1D18E5-C54E-445C-8382-D50570BAC233}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Package|Any CPU.Build.0 = Package|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58171DC7-F2F6-4AFE-9F76-78984D627995}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Package|Any CPU.Build.0 = Package|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6C7B7092-5F98-4336-A9A5-06FC8C5539B0} = {D7D6149A-7097-4081-8F5F-ADE5968F4716}
+		{396F3E6E-27F2-43F2-8CF1-6C4C4B958B92} = {D7D6149A-7097-4081-8F5F-ADE5968F4716}
+		{F2730DA8-ED6A-4AE6-8BC8-83692DF5913B} = {D7D6149A-7097-4081-8F5F-ADE5968F4716}
+		{0E1D18E5-C54E-445C-8382-D50570BAC233} = {D7D6149A-7097-4081-8F5F-ADE5968F4716}
+		{58171DC7-F2F6-4AFE-9F76-78984D627995} = {D7D6149A-7097-4081-8F5F-ADE5968F4716}
+		{0F12FF6B-414A-4271-AE30-E0A6815453F7} = {7E10C7F2-F125-4D81-8603-C91857725793}
+		{7A5180CC-C822-4B68-878C-0F5ED1789D15} = {ED78EBA5-DB31-46E7-8B2C-A3186FFE8519}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E92F1BD3-54A1-47CC-9F2C-1F0FCEC2EFA7}
+	EndGlobalSection
+EndGlobal

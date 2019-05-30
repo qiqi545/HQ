@@ -2,16 +2,15 @@
 
   <PropertyGroup>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Authors>Blowdart Inc. &amp; Contributors</Authors>
-    <Company>Blowdart Inc.</Company>
-    <Description>Cross-platform, cross-modal, immediate-mode GUI.</Description>
-    <Copyright>Copyright © Blowdart Inc. All rights reserved.</Copyright>
-    <PackageIconUrl>https://raw.githubusercontent.com/blowdart-ui/Blowdart.UI/master/assets/logo.png</PackageIconUrl>
-    <PackageProjectUrl>https://blowdartui.com</PackageProjectUrl>
-    <PackageLicenseUrl>https://github.com/blowdart-ui/Blowdart.UI/blob/master/LICENSE</PackageLicenseUrl>
-    <RepositoryUrl>https://github.com/blowdart-ui</RepositoryUrl>
+    <Authors>Daniel Crenna &amp; Contributors</Authors>    
+    <Description>The portable, cross-platform, immediate mode UI for C#.</Description>
+    <Copyright>Copyright © Daniel Crenna &amp; Contributors. All rights reserved.</Copyright>
+    <PackageIconUrl>https://raw.githubusercontent.com/lime-ui/lime/master/assets/logo.png</PackageIconUrl>
+    <PackageProjectUrl>https://limeui.com</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/lime-ui/lime/blob/master/LICENSE</PackageLicenseUrl>
+    <RepositoryUrl>https://github.com/lime-ui/lime</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>ui imgui</PackageTags>
+    <PackageTags>ui imgui c-sharp dotnet-standard</PackageTags>
   </PropertyGroup>
 
 </Project>

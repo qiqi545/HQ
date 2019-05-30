@@ -1,3 +1,8 @@
-# Blowdart.UI
+# Lime.UI
 
-The Blowdart logo is (c) Blowdart, Inc. and is explicitly excluded from the project license.
+The portable, cross-platform, immediate mode UI for C#. 
+
+
+##### Logo
+
+The LimeUI logo is CC-BY-4.0 and sourced from [here](https://www.svgrepo.com/svg/286031/lime).

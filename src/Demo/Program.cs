@@ -1,14 +1,14 @@
 ﻿using System;
-using Blowdart.UI;
-using Blowdart.UI.Web;
-using Blowdart.UI.Web.SemanticUI;
+using Lime;
+using Lime.Web;
+using Lime.Web.SemanticUi;
 
-using static InlineElements;
+using static Lime.Web.InlineElements;
 
 namespace Demo
 {
 	[DeployOn(DeployTarget.Client)]
-	[SemanticUi, Title("Blowdart UI Demo")]
+	[SemanticUi, Title("Lime UI Demo")]
 	internal class Program
     {
         private static void Main(string[] args) => UiServer.Start(args);
