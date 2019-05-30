@@ -229,12 +229,12 @@ namespace HQ.Platform.Operations
                             key = "Content-Type",
                             value = "application/json",
                             disabled = false,
-                            description = new MetaDescription
+                            description = "", /*new MetaDescription
                             {
                                 content = "",
                                 type = "text/markdown",
                                 version = descriptor.Version
-                            }
+                            }*/
                         }
                     },
                     body = default(object)
