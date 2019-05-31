@@ -15,8 +15,8 @@
 
 #endregion
 
-using HQ.Common;
 using Microsoft.AspNetCore.Mvc;
+using TypeKitchen;
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
@@ -31,7 +31,7 @@ namespace HQ.Extensions.Caching.AspNetCore.Mvc
 
         public string Build()
         {
-            return StringBuilderPool.Scoped(sb =>
+            return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 foreach (var item in _context.RouteData.DataTokens)
                 {

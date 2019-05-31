@@ -20,6 +20,6 @@ namespace HQ.Extensions.Options
 {
     public interface ISaveOptions<out T> : IOptions<T> where T : class, new()
     {
-        bool TrySave(string key, Action<T> mutator);
+        bool TrySave(string key, Action<T> mutator = null);
     }
 }

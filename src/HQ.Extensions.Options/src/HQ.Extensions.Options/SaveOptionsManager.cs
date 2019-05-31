@@ -41,7 +41,7 @@ namespace HQ.Extensions.Options
         public TOptions Value => _monitor.CurrentValue;
         public TOptions Get(string name) => _monitor.Get(name);
 
-        public bool TrySave(string key, Action<TOptions> mutator)
+        public bool TrySave(string key, Action<TOptions> mutator = null)
         {
             var saved = false;
             foreach (var provider in _configuration.Providers.Reverse())
@@ -53,7 +53,7 @@ namespace HQ.Extensions.Options
                     continue; // key not found in this provider
 
                 var current = _monitor.CurrentValue;
-                mutator(current);
+                mutator?.Invoke(current);
 
                 if (!current.IsValid(_serviceProvider))
                     continue; // don't allow saving invalid options
