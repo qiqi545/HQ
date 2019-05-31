@@ -141,11 +141,12 @@ namespace HQ.Common
             ///     See: https://www.w3.org/TR/server-timing/
             /// </summary>
             public const string TimingAllowOrigin = "Timing-Allow-Origin";
-            
+
             /// <summary>
             ///     See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
             /// </summary>
             public const string Prefer = "Prefer";
+
             public const string PreferenceApplied = "Preference-Applied";
         }
 
@@ -182,6 +183,25 @@ namespace HQ.Common
         {
             public const string HealthCheck = "health.check";
             public const string MetricsSample = "metrics.sample";
+        }
+
+        public static class Tokens
+        {
+            public const string NoSigningKeySet = "PRIVATE-KEY-REPLACE-ME";
+            public const string NoEncryptionKeySet = "ENCRYPTION-KEY-REPLACE-ME";
+        }
+
+        public static class Claims
+        {
+            public const string ApplicationName = "appName";
+            public const string ApplicationId = "appId";
+            public const string TenantId = "tenantId";
+            public const string TenantName = "tenantName";
+            public const string Permission = "userPermission";
+            public const string Email = "userEmail";
+            public const string Role = "userRole";
+            public const string UserName = "userName";
+            public const string UserId = "userId";
         }
     }
 }
