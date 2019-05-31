@@ -202,19 +202,25 @@ namespace HQ.Platform.Security.AspNetCore.Models
             return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
-        private static void MaybeSelfCreateMissingKeys(SecurityOptions options)
+        public static bool MaybeSelfCreateMissingKeys(SecurityOptions options)
         {
-            if (options.Tokens.SigningKey == null || options.Tokens.SigningKey == "PRIVATE-KEY-REPLACE-ME")
+            bool changed = false;
+
+            if (options.Tokens.SigningKey == null || options.Tokens.SigningKey == Constants.Tokens.NoSigningKeySet)
             {
                 Trace.TraceWarning("No JWT signing key found, creating temporary key.");
                 options.Tokens.SigningKey = Crypto.GetRandomString(64);
+                changed = true;
             }
 
-            if (options.Tokens.EncryptionKey == null || options.Tokens.EncryptionKey == "PRIVATE-KEY-REPLACE-ME")
+            if (options.Tokens.EncryptionKey == null || options.Tokens.EncryptionKey == Constants.Tokens.NoEncryptionKeySet)
             {
                 Trace.TraceWarning("No JWT encryption key found, using signing key.");
                 options.Tokens.EncryptionKey = options.Tokens.SigningKey;
+                changed = true;
             }
+
+            return changed;
         }
 
         private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)

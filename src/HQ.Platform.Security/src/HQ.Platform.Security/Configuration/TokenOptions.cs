@@ -22,8 +22,8 @@ namespace HQ.Platform.Security.Configuration
     public class TokenOptions : FeatureToggle
     {
         public string Path { get; set; } = "tokens";
-        public string SigningKey { get; set; } = null;
-        public string EncryptionKey { get; set; } = null;
+        public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
+        public string EncryptionKey { get; set; } = Constants.Tokens.NoEncryptionKeySet;
         public string Issuer { get; set; } = "https://mysite.com";
         public string Audience { get; set; } = "https://mysite.com";
         public int TimeToLiveSeconds { get; set; } = 180;
