@@ -12,10 +12,7 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
-namespace HQ.Data.Sql.SqlServer.Configuration
+namespace HQ.Data.Sql.Sqlite.Configuration
 {
-    public class SqlServerOptions
-    {
-
-    }
+    public class SqliteBatchOption { }
 }

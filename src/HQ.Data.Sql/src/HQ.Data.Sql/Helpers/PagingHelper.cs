@@ -8,6 +8,7 @@
 
 using System.Linq;
 using System.Text.RegularExpressions;
+using PetaPoco.Utilities;
 
 // ReSharper disable once CheckNamespace
 namespace HQ.PetaPoco.Utilities

@@ -23,6 +23,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Queries;
+using HQ.Data.Sql.Sqlite.Configuration;
 using Microsoft.Data.Sqlite;
 
 namespace HQ.Data.Sql.Sqlite

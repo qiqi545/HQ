@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,16 +29,16 @@ using HQ.Data.Sql.SqlServer.Configuration;
 
 namespace HQ.Data.Sql.SqlServer
 {
-    public class SqlServerBatchDataOperation : IDataBatchOperation<SqlServerOptions>
+    public class SqlServerBatchDataOperation : IDataBatchOperation<SqlServerPreBatchStatus>
     {
         protected internal const string DefaultSchema = "dbo";
 
-        public async Task<(SqlServerOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
+        public async Task<(SqlServerPreBatchStatus, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
             IDbTransaction transaction = null,
             int? commandTimeout = null)
         {
             var database = connection.Database;
-            var settings = new SqlServerOptions
+            var settings = new SqlServerPreBatchStatus
             {
                 PageVerify = (await connection
                     .ExecuteAsync("SELECT page_verify_option_desc FROM sys.databases WHERE [NAME] = @Database",
@@ -58,7 +57,7 @@ namespace HQ.Data.Sql.SqlServer
         }
 
         public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
-            SqlServerOptions options,
+            SqlServerPreBatchStatus status,
             object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
             int? count = null,
             IDbTransaction transaction = null, int? commandTimeout = null,
@@ -88,14 +87,14 @@ namespace HQ.Data.Sql.SqlServer
             */
         }
 
-        public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerOptions options,
+        public async Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, SqlServerPreBatchStatus status,
             object userState,
             BatchSaveStrategy saveStrategy, IDbTransaction transaction = null, int? commandTimeout = null)
         {
             var database = connection.Database;
             await connection.ExecuteAsync("USE master");
-            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET PAGE_VERIFY {options.PageVerify};");
-            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET RECOVERY {options.RecoveryModel}");
+            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET PAGE_VERIFY {status.PageVerify};");
+            await connection.ExecuteAsync($"ALTER DATABASE [{database}] SET RECOVERY {status.RecoveryModel}");
             await connection.ExecuteAsync($"USE [{database}]");
         }
 

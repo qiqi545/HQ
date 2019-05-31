@@ -15,6 +15,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using Dapper;
 using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
@@ -61,6 +62,9 @@ namespace HQ.Data.Sql.Sqlite
                     if (before.Equals(after, StringComparison.Ordinal))
                         continue; // no change
 
+                    if (after == null)
+                        continue; // not null constraint violation
+                    
                     var count = db.Execute(Update, new { entry.Key, Value = after }, t);
                     if (count == 0)
                         count = db.Execute(Insert, new { entry.Key, Value = after }, t);

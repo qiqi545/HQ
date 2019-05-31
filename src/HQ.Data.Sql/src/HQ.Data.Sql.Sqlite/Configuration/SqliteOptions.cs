@@ -15,19 +15,7 @@
 
 #endregion
 
-using HQ.Data.Sql.Batching;
-using HQ.Data.Sql.Dialects;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace HQ.Data.Sql.DocumentDb
+namespace HQ.Data.Sql.Sqlite.Configuration
 {
-    public static class Add
-    {
-        public static void AddDocumentDbBatching(this IServiceCollection services)
-        {
-            services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
-            services.TryAddSingleton<ISqlDialect, DocumentDbDialect>();
-        }
-    }
+    public class SqliteOptions { }
 }
