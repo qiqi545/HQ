@@ -22,10 +22,13 @@ using HQ.Common;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.Sqlite;
+using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
+using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Data.Sql.Sqlite;
+using HQ.Data.Sql.Sqlite.Configuration;
 using HQ.Extensions.Metrics;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
@@ -33,6 +36,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Stores.Sql.Sqlite
@@ -79,9 +83,9 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             where TTenant : IdentityTenant<TKey>
             where TApplication : IdentityApplication<TKey>
         {
-            identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
+            var services = identityBuilder.Services;
 
-            var dialect = new SqliteDialect();
+            services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
             var builder = new SqliteConnectionStringBuilder(connectionString);
 
@@ -90,17 +94,18 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 configureDatabase?.Invoke(o);
             }
 
-            identityBuilder.Services.Configure<SqliteOptions>(ConfigureDatabase);
+            services.Configure<SqliteOptions>(ConfigureDatabase);
 
-            var serviceProvider = identityBuilder.Services.BuildServiceProvider();
+            var serviceProvider = services.BuildServiceProvider();
 
             var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
             configureDatabase?.Invoke(options);
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
-            identityBuilder.Services.AddSingleton(dialect);
-
+            var dialect = new SqliteDialect();
             SqlBuilder.Dialect = dialect;
+
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
+            services.AddSingleton(dialect);
 
             SimpleDataDescriptor.TableNameConvention = s =>
             {
@@ -124,13 +129,16 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
             DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
-            identityBuilder.Services.AddMetrics();
-            identityBuilder.Services.AddSingleton(dialect);
+            services.AddMetrics();
+            services.TryAddSingleton<ISqlDialect>(dialect);
+            services.TryAddSingleton(dialect);
 
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
+            services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
+            services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
+            services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
+            services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
+
+            services.AddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
 
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 

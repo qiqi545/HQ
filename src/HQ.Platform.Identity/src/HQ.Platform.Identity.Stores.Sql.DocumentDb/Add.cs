@@ -23,8 +23,10 @@ using HQ.Common;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.DocumentDb;
+using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
+using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.DocumentDb;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
@@ -33,6 +35,7 @@ using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Constants = HQ.Common.Constants;
 
@@ -82,9 +85,9 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             where TApplication : IdentityApplication<TKey>
         {
             var services = identityBuilder.Services;
+
             services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            var serviceProvider = services.BuildServiceProvider();
             var builder = new DocumentDbConnectionStringBuilder(connectionString);
 
             void ConfigureAction(DocumentDbOptions o)
@@ -94,13 +97,11 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
                 o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
             }
 
-            identityBuilder.Services.Configure<DocumentDbOptions>(ConfigureAction);
+            services.Configure<DocumentDbOptions>(ConfigureAction);
+
+            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
 
             var dialect = new DocumentDbDialect();
-            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString,
-                scope,
-                OnCommand<TKey>(), OnConnection);
-
             SqlBuilder.Dialect = dialect;
 
             SimpleDataDescriptor.TableNameConvention = s =>
@@ -122,15 +123,23 @@ namespace HQ.Platform.Identity.Stores.Sql.DocumentDb
             DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
             services.AddMetrics();
-            services.AddSingleton(dialect);
+            services.TryAddSingleton<ISqlDialect>(dialect);
+            services.TryAddSingleton(dialect);
+
             services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
             services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
             services.AddSingleton<IQueryableProvider<TTenant>, DocumentDbQueryableProvider<TTenant>>();
             services.AddSingleton<IQueryableProvider<TApplication>, DocumentDbQueryableProvider<TApplication>>();
 
+            services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>>(r => new DocumentDbBatchDataOperation(
+                r.GetRequiredService<IServerTimestampService>(),
+                r.GetRequiredService<IOptions<DocumentDbOptions>>(),
+                r.GetRequiredService<IOptions<DocumentDbBatchOptions>>()));
+
             var options = new DocumentDbOptions();
             ConfigureAction(options);
 
+            var serviceProvider = services.BuildServiceProvider();
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
             MigrateToLatest<TKey>(connectionString, identityOptions, options);

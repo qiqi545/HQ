@@ -25,6 +25,7 @@ using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.SqlServer;
 using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
+using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Data.Sql.SqlServer;
 using HQ.Extensions.Metrics;
@@ -33,6 +34,7 @@ using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Stores.Sql.SqlServer
@@ -81,9 +83,8 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             where TApplication : IdentityApplication<TKey>
         {
             var services = identityBuilder.Services;
-            services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            var serviceProvider = services.BuildServiceProvider();
+            services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
             var builder = new SqlConnectionStringBuilder(connectionString);
 
@@ -123,7 +124,8 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
             services.AddMetrics();
-            services.AddSingleton(dialect);
+            services.TryAddSingleton<ISqlDialect>(dialect);
+            services.TryAddSingleton(dialect);
 
             identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
             identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
@@ -133,6 +135,7 @@ namespace HQ.Platform.Identity.Stores.Sql.SqlServer
             var options = new SqlServerOptions();
             ConfigureAction(options);
 
+            var serviceProvider = services.BuildServiceProvider();
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
             MigrateToLatest<TKey>(connectionString, identityOptions, options);
