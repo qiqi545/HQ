@@ -25,17 +25,28 @@
     <Folder Include="runtime\Filters\" />
     <Folder Include="runtime\Attributes\" />
     <Folder Include="runtime\Models\" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
-    <PackageReference Include="HQ" Version="1.0.75" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+
+    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\**\*.cs" Link="runtime\Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\**\*.cs" Link="runtime\Filters\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\**\*.cs" Link="runtime\Models\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!--#if(false)-->
+  <PropertyGroup>
+    <DefineConstants>Sqlite;AppInsights</DefineConstants>
+    <AppInsights>true</AppInsights>
+    <Azure>true</Azure>
+    <DevTemplate>true</DevTemplate>
+  </PropertyGroup>
+  <!-- #endif -->
+
   <ItemGroup>
-    <PackageReference Include="HQ.Azure" Version="1.0.75" Condition="'$(Azure)'=='true'" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+
+  <!-- Azure -->
+  <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.6.1" Condition="'$(AppInsights)'=='true'" />
     <PackageReference Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Version="2.2.0" Condition="'$(AppInsights)'=='true'" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.9.1" Condition="'$(AppInsights)'=='true'" />
@@ -51,34 +62,9 @@
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
   <ItemGroup>
-    <!--<ProjectReference Include="..\HQ\HQ.csproj" />
-    <ProjectReference Include="..\HQ.Azure\HQ.Azure.csproj" />
-    <ProjectReference Include="..\HQ.Installer\HQ.Installer.csproj" />-->
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\ChildResourceFilterAttribute.cs" Link="runtime\Attributes\ChildResourceFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\FieldsFilterAttribute.cs" Link="runtime\Attributes\FieldsFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\FilterFilterAttribute.cs" Link="runtime\Attributes\FilterFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\ObjectTypeAttribute.cs" Link="runtime\Attributes\ObjectTypeAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\PageFilterAttribute.cs" Link="runtime\Attributes\PageFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\ProjectionFilterAttribute.cs" Link="runtime\Attributes\ProjectionFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\ResourceFilterAttribute.cs" Link="runtime\Attributes\ResourceFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\ResourceTypeAttribute.cs" Link="runtime\Attributes\ResourceTypeAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\SortFilterAttribute.cs" Link="runtime\Attributes\SortFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\StaticFilterAttribute.cs" Link="runtime\Attributes\StaticFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\StreamFilterAttribute.cs" Link="runtime\Attributes\StreamFilterAttribute.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestFieldsFilter.cs" Link="runtime\Filters\RestFieldsFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestFilterFilter.cs" Link="runtime\Filters\RestFilterFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestPageFilter.cs" Link="runtime\Filters\RestPageFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestProjectionFilter.cs" Link="runtime\Filters\RestProjectionFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestSearchFilter.cs" Link="runtime\Filters\RestSearchFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestSortFilter.cs" Link="runtime\Filters\RestSortFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\RestStreamFilter.cs" Link="runtime\Filters\RestStreamFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\IRestFilter.cs" Link="runtime\Models\IRestFilter.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\MustHaveQueryParameters.cs" Link="runtime\Models\MustHaveQueryParameters.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\RestMutationContextProvider.cs" Link="runtime\Models\RestMutationContextProvider.cs" />
-    <Compile Include="..\..\..\_LABS\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\RestQueryContextProvider.cs" Link="runtime\Models\RestQueryContextProvider.cs" />
     <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -106,9 +92,6 @@
     <Description>HQ.io Web Application</Description>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <DefineConstants>Sqlite;AppInsights</DefineConstants>
-    <AppInsights>true</AppInsights>
-    <Azure>true</Azure>
   </PropertyGroup>
   <!--#endif-->
 

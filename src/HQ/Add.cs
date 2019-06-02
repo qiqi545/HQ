@@ -98,10 +98,10 @@ namespace HQ.Template
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
                 {
-                    typeof(UiComponent).Assembly,   // Blowdart.UI
-                    typeof(HtmlSystem).Assembly,    // Blowdart.UI.Web
-                    typeof(SemanticUi).Assembly,    // Blowdart.UI.Web.Semantic.UI,
-                    typeof(Dashboard).Assembly,     // HQ
+                    typeof(UiComponent).Assembly,   // Lime
+                    typeof(HtmlSystem).Assembly,    // Lime.Web
+                    typeof(SemanticUi).Assembly,    // Lime.Web.Semantic.UI,
+                    typeof(Dashboard).Assembly,     // HQ.UI
                     Assembly.GetEntryAssembly()     // App
                 };
             };
