@@ -209,8 +209,6 @@ namespace Lime.Web
 		{
 			_standalone = true;
 
-	        Masthead();
-
             var config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("blowdart.json", optional: true)
@@ -289,6 +287,8 @@ namespace Lime.Web
 
 		internal static void BeforeStart(IServiceProvider serviceProvider)
 		{
+			Masthead();
+
 			HandlersAreNotFinished();
 
 			AddImplicitHandlers(serviceProvider);

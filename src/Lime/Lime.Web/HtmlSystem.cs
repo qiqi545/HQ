@@ -184,7 +184,7 @@ namespace Lime.Web
                     if (NotResolvableByContainer(parameter))
                     {
 	                    arguments.Add(parameter.ParameterType.IsValueType
-		                    ? Instancing.CreateInstance(parameter.ParameterType)
+		                    ? Activator.CreateInstance(parameter.ParameterType)
 		                    : null);
                         continue;
                     }
