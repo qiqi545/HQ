@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
