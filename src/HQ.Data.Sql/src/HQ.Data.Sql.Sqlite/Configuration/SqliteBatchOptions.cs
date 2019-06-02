@@ -14,5 +14,5 @@
 #endregion
 namespace HQ.Data.Sql.Sqlite.Configuration
 {
-    public class SqliteBatchOption { }
+    public class SqliteBatchOptions { }
 }
