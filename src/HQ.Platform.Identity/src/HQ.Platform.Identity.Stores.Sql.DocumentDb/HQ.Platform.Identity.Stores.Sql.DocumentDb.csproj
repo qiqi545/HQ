@@ -25,7 +25,7 @@
     <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
     <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql\HQ.Data.Sql.csproj" />
-    <ProjectReference Include="..\..\..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
