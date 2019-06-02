@@ -15,7 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj" />
     <ProjectReference Include="..\..\..\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
 
 </Project>

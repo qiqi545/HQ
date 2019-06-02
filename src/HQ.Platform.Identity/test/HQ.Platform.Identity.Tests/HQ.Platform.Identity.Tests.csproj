@@ -15,9 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
-    <ProjectReference Include="..\..\..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
     <ProjectReference Include="..\..\src\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
 
 </Project>

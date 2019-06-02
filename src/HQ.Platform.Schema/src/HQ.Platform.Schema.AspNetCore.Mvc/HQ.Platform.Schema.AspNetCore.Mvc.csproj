@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Platform.Schema\HQ.Platform.Schema.csproj" />
   </ItemGroup>
 

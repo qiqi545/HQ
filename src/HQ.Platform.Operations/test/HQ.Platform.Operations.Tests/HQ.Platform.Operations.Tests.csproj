@@ -14,8 +14,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
-  </ItemGroup>
-
 </Project>

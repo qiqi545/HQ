@@ -20,7 +20,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
-using HQ.Data.Sql.Sqlite;
 using HQ.Data.Sql.Sqlite.Configuration;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;

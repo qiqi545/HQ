@@ -100,7 +100,7 @@ namespace HQ.Test.Sdk
             where TPrototype : class, TInterface
         {
             return ServiceProvider?.GetService(typeof(TPrototype)) as TPrototype ??
-                   InstanceFactory.Default.CreateInstance<TPrototype>() ??
+                   Instancing.CreateInstance<TPrototype>() ??
                    Dummy<TPrototype>();
         }
 

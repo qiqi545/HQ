@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Data.Sql.SqlServer.Configuration
+namespace HQ.Data.Sql.SqlServer
 {
     public class SqlServerPreBatchStatus
     {

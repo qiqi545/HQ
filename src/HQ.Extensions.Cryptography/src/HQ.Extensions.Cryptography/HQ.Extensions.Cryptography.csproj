@@ -16,9 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
