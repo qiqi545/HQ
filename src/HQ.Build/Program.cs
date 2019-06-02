@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Text;
 using HQ.Extensions.Logging;
@@ -32,8 +33,8 @@ namespace HQ.Build
     public static class Program
     {
         private const string ApiKeyHeader = "X-API-KEY";
-        private const string ApiVersionHeader = "X-API-VERSION";
-        private const string VersionHashFile = ApiVersionHeader + ".txt";
+        private const string ETagHeader = "If-None-Match";
+        private const string VersionHashFile = ETagHeader + ".txt";
 
         public static void Main(params string[] args)
         {
@@ -48,7 +49,7 @@ namespace HQ.Build
 
         private static void Usage()
         {
-            Console.WriteLine("Usage: -c <endpoint> <key> <schemaDirectory> <outputDirectory> <namespace>");
+            Console.WriteLine("Usage: -c <endpoint> <key> <applicationId> <schemaDirectory> <outputDirectory> <namespace>");
         }
 
         private static void ParseCommandLine(IReadOnlyCollection<string> args)
@@ -72,6 +73,7 @@ namespace HQ.Build
                             }
 
                             var endpoint = arguments.Dequeue();
+                            Console.Out.WriteLine($"Endpoint: {endpoint}");
 
                             if (!Uri.TryCreate(endpoint, UriKind.Absolute, out _))
                             {
@@ -85,15 +87,19 @@ namespace HQ.Build
                                 return;
                             }
 
-                            var key = arguments.Dequeue();
-                            if (!Guid.TryParse(key, out _))
+                            var apiKey = arguments.Dequeue();
+                            Console.Out.WriteLine($"API Key: {apiKey}");
+
+                            if (!Guid.TryParse(apiKey, out _))
                             {
-                                Console.Error.WriteLine("Invalid key.");
+                                Console.Error.WriteLine("Invalid API key.");
                                 return;
                             }
 
                             var applicationId = arguments.Dequeue();
-                            if (!Guid.TryParse(key, out _))
+                            Console.Out.WriteLine($"API Key: {applicationId}");
+
+                            if (!Guid.TryParse(apiKey, out _))
                             {
                                 Console.Error.WriteLine("Invalid application ID.");
                                 return;
@@ -106,9 +112,11 @@ namespace HQ.Build
                             }
 
                             var source = arguments.Dequeue();
+                            Console.Out.WriteLine($"Source Directory: {source}");
+
                             if (!Directory.Exists(source))
                             {
-                                Console.Error.WriteLine("Invalid schema directory - does not exist.");
+                                Console.Error.WriteLine($"Invalid source directory - '{source}' does not exist.");
                                 return;
                             }
 
@@ -143,8 +151,9 @@ namespace HQ.Build
                             }
 
                             var target = arguments.Dequeue();
+                            Console.Out.WriteLine($"Target Directory: {target}");
                             Directory.CreateDirectory(target);
-
+                            
                             if (EndOfSubArguments(arguments))
                             {
                                 Console.Error.WriteLine("No application namespace specified.");
@@ -168,15 +177,14 @@ namespace HQ.Build
                                     },
                                     Headers = new WebHeaderCollection
                                     {
-                                        [ApiKeyHeader] = key,
+                                        [ApiKeyHeader] = apiKey,
                                         [HttpRequestHeader.ContentType] = "application/vnd.hq.archivist+json"
                                     }
                                 };
 
-                                if (File.Exists(VersionHashFile))
+                                if (File.Exists(VersionHashFile) && Directory.EnumerateFileSystemEntries(target).Any())
                                 {
-                                    var versionHash = File.ReadAllText(VersionHashFile);
-                                    wc.Headers.Add(ApiVersionHeader, versionHash);
+                                    wc.Headers.Add(ETagHeader, File.ReadAllText(VersionHashFile));
                                 }
 
                                 ServicePointManager.ServerCertificateValidationCallback = (sender, certificate, chain, errors) => true;
@@ -187,7 +195,7 @@ namespace HQ.Build
                                 for (int i = 0; i < headers.Count; i++)
                                 {
                                     var name = headers.GetKey(i);
-                                    if (!name.Equals(ApiVersionHeader, StringComparison.OrdinalIgnoreCase))
+                                    if (!name.Equals(ETagHeader, StringComparison.OrdinalIgnoreCase))
                                         continue;
                                     var value = headers.Get(i);
                                     File.WriteAllText(VersionHashFile, value);
@@ -202,7 +210,6 @@ namespace HQ.Build
                                         if (http.StatusCode == HttpStatusCode.NotModified)
                                         {
                                             Console.Out.WriteLine("No schema changes found.");
-                                            return;
                                         }
                                     }
                                 }
