@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ.Platform.Schema\HQ.Platform.Schema.csproj" />
+  </ItemGroup>
+
+</Project>

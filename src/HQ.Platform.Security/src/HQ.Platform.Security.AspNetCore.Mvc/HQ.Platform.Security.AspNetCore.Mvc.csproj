@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\..\..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
+  </ItemGroup>
+
+</Project>
