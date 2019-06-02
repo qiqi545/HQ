@@ -15,7 +15,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
-using TypeExtensions = TypeKitchen.TypeExtensions;
 
 namespace Lime.Web
 {
@@ -24,20 +23,23 @@ namespace Lime.Web
 	    private string _styles;
 	    private string _dom;
 	    private string _scripts;
+	    private string _document;
 
-	    public StringBuilder Styles;
+		public StringBuilder Styles;
 		public StringBuilder Dom;
 		public StringBuilder Scripts;
-
-		public string RenderStyles => _styles ?? Styles?.ToString();
-		public string RenderDom => _dom ?? Dom?.ToString();
-        public string RenderScripts => _scripts ?? Scripts?.ToString();
+		
+		public string RenderDocument => _document;
+		public string RenderStyles => _document != null ? throw new InvalidOperationException() : _styles ?? Styles?.ToString();
+		public string RenderDom => _document != null ? throw new InvalidOperationException() : _dom ?? Dom?.ToString();
+        public string RenderScripts => _document != null ? throw new InvalidOperationException() : _scripts ?? Scripts?.ToString();
         
 		public override void Begin(UiContext context = null)
 		{
 			_styles = null;
             _dom = null;
             _scripts = null;
+            _document = null;
 
             Styles = Pooling.StringBuilderPool.Get();
             Dom = Pooling.StringBuilderPool.Get();
@@ -181,7 +183,9 @@ namespace Lime.Web
 
                     if (NotResolvableByContainer(parameter))
                     {
-                        arguments.Add(null);
+	                    arguments.Add(parameter.ParameterType.IsValueType
+		                    ? Instancing.CreateInstance(parameter.ParameterType)
+		                    : null);
                         continue;
                     }
 
@@ -207,7 +211,7 @@ namespace Lime.Web
 
         private static bool NotResolvableByContainer(ParameterInfo parameter)
         {
-	        return TypeExtensions.IsValueTypeOrNullableValueType(parameter.ParameterType);
+	        return parameter.ParameterType.IsValueTypeOrNullableValueType();
         }
 
         private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
@@ -215,6 +219,11 @@ namespace Lime.Web
 	        return requestUri.Segments.Length == 1 &&
 	               requestUri.Segments[0] == "/" ||
 	               requestUri.AbsolutePath == options.Value.HubPath;
+        }
+
+        public void Document(string document)
+        {
+	        _document = document;
         }
     }
 }

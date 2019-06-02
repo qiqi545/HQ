@@ -4,7 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using AngleSharp;
+using AngleSharp.Html.Parser;
 using Lime.Web.Internal;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Lime.Web
 {
@@ -12,6 +16,20 @@ namespace Lime.Web
     {
         private static byte _indentLevel;
         private static readonly Stack<string> Elements = new Stack<string>();
+
+		public static Ui Html(this Ui ui, string relativePath)
+		{
+			var env = ui.Context.UiServices.GetRequiredService<IHostingEnvironment>();
+			var fileInfo = env.WebRootFileProvider.GetFileInfo(relativePath);
+			if (fileInfo.Exists)
+			{
+				var parser = new HtmlParser(new HtmlParserOptions());
+				var document = parser.ParseDocument(fileInfo.CreateReadStream());
+				var web = ui.WebSystem();
+				web.Document(document.ToHtml());
+			}
+			return ui;
+		}
 
         public static Ui Literal(this Ui ui, string text)
         {
@@ -208,7 +226,7 @@ namespace Lime.Web
 
 		#endregion
 		
-		private static HtmlSystem Html(this Ui ui)
+		private static HtmlSystem WebSystem(this Ui ui)
         {
             if (!(ui.System is HtmlSystem system))
                 throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
@@ -217,17 +235,17 @@ namespace Lime.Web
 
 		private static StringBuilder Styles(Ui ui)
 		{
-			return ui.Html().Styles;
+			return ui.WebSystem().Styles;
 		}
 
 		private static StringBuilder Dom(Ui ui)
         {
-            return ui.Html().Dom;
+            return ui.WebSystem().Dom;
         }
 
         private static StringBuilder Scripts(Ui ui)
         {
-            return ui.Html().Scripts;
+            return ui.WebSystem().Scripts;
         }
 
         private static Attributes Attr(object attr)
@@ -270,12 +288,8 @@ namespace Lime.Web
 
 		public static Ui Submit(this Ui ui, string label = "Submit", object attr = null)
 		{
-			return ui.Input(InputType.Submit, Attr(new { value = label }));
+			return ui.Input(InputType.Submit, Attr(attr, new { value = label }));
 		}
-
-		
-
-		
 	}
 
 }

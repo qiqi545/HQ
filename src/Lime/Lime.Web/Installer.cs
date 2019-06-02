@@ -24,14 +24,15 @@ namespace Lime.Web
     {
         internal static CompositeFileProvider ProviderContainer;
 
-        public static IServiceCollection AddLimeUi(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
+        public static IServiceCollection AddLimeUi(this IServiceCollection services, params Assembly[] uiAssemblies)
         {
-	        return AddLimeUi(services, env, false, uiAssemblies);
+	        return AddLimeUi(services, null, uiAssemblies);
         }
 
-        internal static IServiceCollection AddLimeUi(this IServiceCollection services, IHostingEnvironment env, bool standalone, params Assembly[] uiAssemblies)
+        public static IServiceCollection AddLimeUi(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
         {
-            AddUiResources(services, env, uiAssemblies);
+			if(env != null)
+				AddUiResources(services, env, uiAssemblies);
 
             services.AddHttpContextAccessor();
             services.AddSignalR(o => { });
@@ -92,12 +93,12 @@ namespace Lime.Web
             return services;
         }
 
-        public static void UseLimeUi(this IApplicationBuilder app, Action<LayoutRoot> layout)
+        public static void UseLimeUi(this IApplicationBuilder app, Action<LayoutRoot> layout = null)
         {
 			app.UseLimeUi(layout, false);
         }
 
-        internal static void UseLimeUi(this IApplicationBuilder app, Action<LayoutRoot> layout, bool standalone)
+		internal static void UseLimeUi(this IApplicationBuilder app, Action<LayoutRoot> layout, bool standalone)
         {
             var options = app.ApplicationServices.GetRequiredService<IOptions<UiServerOptions>>();
 
@@ -109,6 +110,7 @@ namespace Lime.Web
 				UiServer.BeforeStart(app.ApplicationServices);
 
 			app.UseStaticFiles();
+
             app.Map("/~", x =>
             {
                 x.UseStaticFiles(new StaticFileOptions(new SharedOptions
@@ -116,6 +118,7 @@ namespace Lime.Web
                     FileProvider = x.ApplicationServices.GetRequiredService<IFileProvider>()
                 }));
             });
+
             app.UseSignalR(r =>
             {
                 void SetMessagingModel(HttpConnectionDispatcherOptions o)
@@ -129,11 +132,10 @@ namespace Lime.Web
                     r.MapHub<LoggingHub>(options.Value.LoggingPath, SetMessagingModel);
             });
 
-            var template = WebRenderer.LoadPageTemplate(app.ApplicationServices, options);
             layout?.Invoke(app.ApplicationServices.GetRequiredService<LayoutRoot>());
-
 			app.Use(async (context, next) =>
 			{
+				var template = WebRenderer.GetPageTemplate(context.RequestServices);
 				if (!await WebRenderer.BuildUi(context.RequestServices.GetRequiredService<LayoutRoot>(), template, context))
 					await next();
 			});

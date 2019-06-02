@@ -20,7 +20,7 @@ namespace Lime
 		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
 		internal IReadOnlyDictionary<string, UiSystem> Systems => _systems;
 
-		public Action<Ui> Root => Handlers[ForwardSlash];
+		internal Action<Ui> Root => Handlers[ForwardSlash];
 
 		internal LayoutRoot AddHandler(string template, MethodInfo method)
 		{

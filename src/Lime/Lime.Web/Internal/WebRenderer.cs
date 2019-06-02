@@ -70,6 +70,9 @@ namespace Lime.Web.Internal
 				renderAction(renderTarget);
 				renderTarget.End();
 
+				if (htmlSystem.RenderDocument != null)
+					return htmlSystem.RenderDocument;
+
 				var bodySlug = $"<div id=\"{options.BodyElementId}\">";
 				var scriptOpen = $"<script type=\"text/javascript\" id=\"{options.ScriptElementId}\">";
 				var scriptClose = "</script>";
@@ -144,8 +147,15 @@ namespace Lime.Web.Internal
 			return html;
 		}
 
-		public static string LoadPageTemplate(IServiceProvider resolver, IOptions<UiServerOptions> options)
+		private static string _template;
+		public static string GetPageTemplate(IServiceProvider resolver)
 		{
+			return _template ?? (_template = LoadTemplate(resolver));
+		}
+
+		private static string LoadTemplate(IServiceProvider resolver)
+		{
+			var options = resolver.GetRequiredService<IOptions<UiServerOptions>>();
 			var fp = resolver.GetRequiredService<IFileProvider>();
 			var fi = fp.GetFileInfo(options.Value.TemplatePath);
 			string template;

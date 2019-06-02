@@ -75,7 +75,7 @@ namespace Lime.Web
             {
 	            Pools.AssemblyPool.Return(uiAssemblies);
             }
-			services.AddLimeUi(_env, _standalone, uiAssemblies);
+			services.AddLimeUi(_env, uiAssemblies);
 
 			_startup?.ExecuteMethod(services.BuildServiceProvider(), nameof(ConfigureServices), services);
         }
@@ -372,11 +372,12 @@ namespace Lime.Web
         private static void Masthead()
         {
             // Credit: http://patorjk.com/software/taag/
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(@"Powered By:
- __        __        __        __  ___         
-|__) |    /  \ |  | |  \  /\  |__)  |   |  | | 
-|__) |___ \__/ |/\| |__/ /~~\ |  \  |  .\__/ |                                               
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(@"Powered By:                              
+ __    _           _____ _____ 
+|  |  |_|_____ ___|  |  |     |
+|  |__| |     | -_|  |  |-   -|
+|_____|_|_|_|_|___|_____|_____|          
 ");
             Console.ForegroundColor = ConsoleColor.Gray;
         }
