@@ -1,0 +1,18 @@
+##################################################################
+
+HQ.io uses third-party libraries and other materials, distributed 
+under different licenses than HQ.io licensed components.
+
+If we have omitted a notice here, please let us know by submitting
+an issue on GitHub, or by emailing support@hq.io
+
+##################################################################
+
+Marked methods in LineReader's internals are derived from MimeKit's
+`MimeParser.cs` and `BoundStream.cs`, as of commit 'e9691023692b401eee45b83f5d7677a223cd36a6' 
+on January 1st, 2019: https://github.com/jstedfast/MimeKit/blob/e9691023692b401eee45b83f5d7677a223cd36a6/MimeKit/MimeParser.cs,
+
+Licensed under the MIT license:
+https://github.com/jstedfast/MimeKit/blob/e9691023692b401eee45b83f5d7677a223cd36a6/License.md
+
+Copyright (C) 2012-2019 Xamarin Inc.
