@@ -35,11 +35,10 @@ using HQ.Platform.Identity.Stores.Sql.Sqlite;
 using HQ.Platform.Identity.Stores.Sql.SqlServer;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
+using HQ.UI.Pages;
 using Lime;
 using Lime.Web;
 using Lime.Web.SemanticUi;
-using HQ.Template.UI.Pages;
-using HQ.UI.Pages;
 
 namespace HQ.Template
 {
@@ -98,10 +97,10 @@ namespace HQ.Template
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
                 {
-                    typeof(UiComponent).Assembly,   // Blowdart.UI
-                    typeof(HtmlSystem).Assembly,    // Blowdart.UI.Web
-                    typeof(SemanticUi).Assembly,    // Blowdart.UI.Web.Semantic.UI,
-                    typeof(Dashboard).Assembly,     // HQ
+                    typeof(UiComponent).Assembly,   // Lime
+                    typeof(HtmlSystem).Assembly,    // Lime.Web
+                    typeof(SemanticUi).Assembly,    // Lime.Web.Semantic.UI,
+                    typeof(Dashboard).Assembly,     // HQ.Template
                     Assembly.GetEntryAssembly()     // App
                 };
             };

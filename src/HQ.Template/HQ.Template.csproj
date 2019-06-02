@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <Import Project="$(ProjectDir)codegen.targets" />
 
@@ -22,10 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="UI\" />
     <Folder Include="runtime\Filters\" />
     <Folder Include="runtime\Attributes\" />
     <Folder Include="runtime\Models\" />
 
+    <!-- Default UI -->
+    <Compile Include="..\..\..\HQ.Labs\src\HQ.UI\**\*.cs" Exclude="..\..\..\HQ.Labs\src\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Serverless Runtime -->
     <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\**\*.cs" Link="runtime\Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\**\*.cs" Link="runtime\Filters\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\**\*.cs" Link="runtime\Models\%(RecursiveDir)%(Filename)%(Extension)" />
