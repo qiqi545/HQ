@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86CAB56B-4F45-4CF6-99BF-B21E19B4FE41}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\LICENSE.txt = ..\..\LICENSE.txt
+		..\..\LICENSE_FULL.txt = ..\..\LICENSE_FULL.txt
+		README.md = README.md
+		THIRD-PARTY-NOTICES.txt = THIRD-PARTY-NOTICES.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{75D03906-D54F-4FDD-953C-46B4B1803D07}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging", "src\HQ.Extensions.Messaging\HQ.Extensions.Messaging.csproj", "{D1988C03-593B-4508-97A3-CDC3C2EBA137}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Tests", "test\HQ.Extensions.Messaging.Tests\HQ.Extensions.Messaging.Tests.csproj", "{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B5D1C9BE-0BF9-4B78-AD38-009E10499C7E}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\build\build.props = ..\..\build\build.props
+		..\..\build\package.props = ..\..\build\package.props
+		..\..\build\version.props = ..\..\build\version.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Benchmarks", "test\HQ.Extensions.Messaging.Benchmarks\HQ.Extensions.Messaging.Benchmarks.csproj", "{D781CE15-B71E-49AC-898F-36C68498D37F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Package|Any CPU = Package|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Package|Any CPU.Build.0 = Package|Any CPU
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D781CE15-B71E-49AC-898F-36C68498D37F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D1988C03-593B-4508-97A3-CDC3C2EBA137} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
+		{FB5FBC77-64ED-440A-86C1-43E87FB0EB2C} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
+		{D781CE15-B71E-49AC-898F-36C68498D37F} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3021A61F-9383-4C4A-B162-D1C4C186AB90}
+	EndGlobalSection
+EndGlobal
