@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -18,213 +18,104 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
 
-    <Content Include="..\..\..\HQ.Common\src\HQ.Common\**\*.cs" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore\**\*.cs" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\**\*.cs" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-
     <!-- Strings -->
-    <EmbeddedResource Include="..\..\..\**\*.resx" Link="Strings\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\..\**\*.resx" Link="Strings\%(RecursiveDir)%(Filename)%(Extension)" />
 
+    <!-- Common -->
+    <Content Include="..\HQ.Common\**\*.cs" Exclude="..\HQ.Common\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Common.AspNetCore\**\*.cs" Exclude="..\HQ.Common.AspNetCore\obj\**\*" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Common.AspNetCore.Mvc\obj\**\*" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    
     <!-- Extensions -->
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Financial\src\HQ.Extensions.Financial\**\*.cs" Link="Extensions.Financial\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\src\HQ.Extensions.Caching\**\*.cs" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.AppInsights\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\**\*.cs" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Extensions\src\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
- 
-    <!-- Platform -->
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security\**\*.cs" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Schema\src\HQ.Platform.Schema\**\*.cs" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\**\*.cs" Link="Platform.Runtime.Rest\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Zero\src\HQ.Zero\**\*.cs" Link="Zero\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\**\*.cs" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\**\*.cs" Link="Test.Sdk.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Financial\src\HQ.Extensions.Financial\**\*.cs" Exclude="..\HQ.Extensions.Financial\src\HQ.Extensions.Financial\obj\**\*" Link="Extensions.Financial\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Exclude="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\**\*" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\**\*.cs" Exclude="..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\obj\**\*" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Exclude="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**\*" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
 
+    <Content Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\obj\**\*" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\obj\**\*" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.AppInsights\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.AppInsights\obj\**\*" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\obj\**\*" Link="Extensions.Metrics.Reporters.Console\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Platform -->
+    <Content Include="..\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\src\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Exclude="..\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\**\*" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Schema\src\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity\obj\**\*" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\**\*" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\**\*" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\**\*.cs" Exclude="..\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\obj\**\*" Link="Platform.Runtime.Rest\%(RecursiveDir)%(Filename)%(Extension)" />
+    
     <!-- Data -->
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts\**\*.cs" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\**\*.cs" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\**\*.cs" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql\**\*.cs" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Streaming\src\HQ.Data.Streaming\**\*.cs" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Builders\**\*.cs" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\**\*.cs" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\**\*.cs" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\**\*.cs" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Batching\**\*.cs" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\obj\**\*" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\obj\**\*" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Streaming\src\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Builders\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Builders\obj\**\*" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\obj\**\*" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Queries\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Queries\obj\**\*" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\obj\**\*" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Batching\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Batching\obj\**\*" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Testing -->
+    <Content Include="..\HQ.Test.Sdk\src\HQ.Test.Sdk\**\*.cs" Exclude="..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\**\*.cs" Exclude="..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\**\*" Link="Test.Sdk.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Default UI -->
+    <Compile Include="..\..\..\HQ.Labs\src\HQ.UI\**\*.cs" Exclude="..\..\..\HQ.Labs\src\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
 
   </ItemGroup>
 
   <!-- SQLite -->
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\bin\**" Link="Data.SessionManagement.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\bin\**" Link="Data.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\bin\**" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\obj\**\*" Link="Data.SessionManagement.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\obj\**\*" Link="Data.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
-    <PackageReference Include="Dapper" Version="1.50.7" />
-    <PackageReference Include="FluentMigrator.Runner" Version="3.1.3" />
   </ItemGroup>
 
   <!-- SQL Server -->
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\obj\**;..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\bin\**" Link="Data.SessionManagement.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\obj\**;..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\bin\**" Link="Data.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\**\*.cs" Exclude="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\obj\**;..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\bin\**" Link="Platform.Identity.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.7" />
-    <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
+    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\obj\**\*" Link="Data.SessionManagement.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\obj\**\*" Link="Data.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\obj\**\*" Link="Platform.Identity.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <!-- Azure Cosmos DB -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\obj\**\*" Link="Data.SessionManagement.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\obj\**\*" Link="Data.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\obj\**\*" Link="Platform.Identity.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Common\obj\**" />
-    <Compile Remove="Common.AspNetCore\obj\**" />
-    <Compile Remove="Common.AspNetCore.Mvc\obj\**" />
-    <Compile Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
-    <Compile Remove="Data.Contracts.Runtime\obj\**" />
-    <Compile Remove="Data.Contracts\obj\**" />
-    <Compile Remove="Data.SessionManagement\obj\**" />
-    <Compile Remove="Data.Streaming\obj\**" />
-    <Compile Remove="Data.Sql.Batching\obj\**" />
-    <Compile Remove="Data.Sql.Builders\obj\**" />
-    <Compile Remove="Data.Sql.Dapper\obj\**" />
-    <Compile Remove="Data.Sql.Descriptor\obj\**" />
-    <Compile Remove="Data.Sql.Queries\obj\**" />
-    <Compile Remove="Data.Sql\obj\**" />
-    <Compile Remove="Extensions.Caching\obj\**" />
-    <Compile Remove="Extensions.CodeGeneration\obj\**" />
-    <Compile Remove="Extensions.Cryptography\obj\**" />
-    <Compile Remove="Extensions.Dates\obj\**" />
-    <Compile Remove="Extensions.DependencyInjection.AspNetCore\obj\**" />
-    <Compile Remove="Extensions.DependencyInjection\obj\**" />
-    <Compile Remove="Extensions.Financial\obj\**" />
-    <Compile Remove="Extensions.Logging\obj\**" />
-    <Compile Remove="Extensions.Metrics.AspNetCore\obj\**" />
-    <Compile Remove="Extensions.Metrics.Reporters.Console\obj\**" />
-    <Compile Remove="Extensions.Metrics.Reporters.AppInsights\obj\**" />
-    <Compile Remove="Extensions.Metrics.Reporters.ServerTiming\obj\**" />
-    <Compile Remove="Extensions.Metrics\obj\**" />
-    <Compile Remove="Extensions.Messaging\obj\**" />
-    <Compile Remove="Extensions.Options\obj\**" />
-    <Compile Remove="Platform.Api\obj\**" />
-    <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
-    <Compile Remove="Platform.Identity.Stores.Sql\obj\**" />
-    <Compile Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
-    <Compile Remove="Platform.Identity\obj\**" />
-    <Compile Remove="Platform.Operations\obj\**" />
-    <Compile Remove="Platform.Security.AspNetCore\obj\**" />
-    <Compile Remove="Platform.Security\obj\**" />
-    <Compile Remove="Platform.Schema\obj\**" />
-    <Compile Remove="Platform.Runtime.Rest\obj\**" />
-    <Compile Remove="Test.Sdk.Xunit\obj\**" />
-    <Compile Remove="Test.Sdk\obj\**" />
-
-    <Content Remove="..\..\..\HQ.Common\src\HQ.Common\obj\**" />
-    <Content Remove="..\..\..\HQ.Common\src\HQ.Common.AspNetCore\obj\**" />
-    <Content Remove="..\..\..\HQ.Common\src\HQ.Common.AspNetCore.Mvc\obj\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\obj\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\obj\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Contracts\src\HQ.Data.Contracts\obj\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Batching\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Builders\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql.Queries\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Sql\src\HQ.Data.Sql\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Data\src\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Caching\src\HQ.Extensions.Caching\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Financial\src\HQ.Extensions.Financial\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.Console\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**" />
-    <Content Remove="..\..\..\HQ.Extensions\src\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Api\src\HQ.Platform.Api\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Identity\src\HQ.Platform.Identity\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Security\src\HQ.Platform.Security\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Platform\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\Debug\netstandard2.0\**" />
-    <Content Remove="..\..\..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\Debug\netstandard2.0\**" />
-
-    <None Remove="Common\obj\**" />
-    <None Remove="Common.AspNetCore\obj\**" />
-    <None Remove="Common.AspNetCore.Mvc\obj\**" />
-    <None Remove="Data.Contracts.AspNetCore.Mvc\obj\**" />
-    <None Remove="Data.Contracts.Runtime\obj\**" />
-    <None Remove="Data.Contracts\obj\**" />
-    <None Remove="Data.SessionManagement\obj\**" />
-    <None Remove="Data.Sql.Batching\obj\**" />
-    <None Remove="Data.Sql.Builders\obj\**" />
-    <None Remove="Data.Sql.Dapper\obj\**" />
-    <None Remove="Data.Sql.Descriptor\obj\**" />
-    <None Remove="Data.Sql.Queries\obj\**" />
-    <None Remove="Data.Sql\obj\**" />
-    <None Remove="Data.Streaming\obj\**" />
-    <None Remove="Extensions.Caching\obj\**" />
-    <None Remove="Extensions.CodeGeneration\obj\**" />
-    <None Remove="Extensions.Cryptography\obj\**" />
-    <None Remove="Extensions.Dates\obj\**" />
-    <None Remove="Extensions.DependencyInjection.AspNetCore\obj\**" />
-    <None Remove="Extensions.DependencyInjection\obj\**" />
-    <None Remove="Extensions.Financial\obj\**" />
-    <None Remove="Extensions.Logging\obj\**" />
-    <None Remove="Extensions.Metrics.AspNetCore\obj\**" />
-    <None Remove="Extensions.Metrics.Reporters.Console\obj\**" />
-    <None Remove="Extensions.Metrics\obj\**" />
-    <None Remove="Extensions.Messaging\obj\**" />
-    <None Remove="Extensions.Options\obj\**" />
-    <None Remove="Platform.Api\obj\**" />
-    <None Remove="Platform.Identity.AspNetCore.Mvc\obj\**" />
-    <None Remove="Platform.Identity.Stores.Sql\obj\**" />
-    <None Remove="Platform.Identity\obj\**" />
-    <None Remove="Platform.Operations\obj\**" />
-    <None Remove="Platform.Security.AspNetCore\obj\**" />
-    <None Remove="Platform.Security\obj\**" />
-    <None Remove="Platform.Schema\obj\**" />
-    <None Remove="Platform.Runtime.Rest\obj\**" />
-    <None Remove="Test.Sdk.Xunit\obj\**" />
-    <None Remove="Test.Sdk\obj\**" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="27.0.1" />
-    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Dapper" Version="1.50.7" />
     <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.6.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
@@ -253,6 +144,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
@@ -264,8 +156,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Extensions\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Theming\Lime.Theming.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
+    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
+    <ProjectReference Include="..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
