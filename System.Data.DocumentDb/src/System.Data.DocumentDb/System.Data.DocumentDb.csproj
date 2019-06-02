@@ -27,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\_BLOWDART\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
+    <ProjectReference Include="..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
   <!-- Push PackageId.Version.nupkg -->
