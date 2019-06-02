@@ -11,7 +11,7 @@ namespace HQ.Common.Tests
             var expected = new List<string> {"A", "B", "C"};
             var actual = new List<string>();
 
-            var enumerable = expected.SelfEnumerate();
+            var enumerable = expected.Enumerate();
             foreach (var value in enumerable)
                 actual.Add(value);
 

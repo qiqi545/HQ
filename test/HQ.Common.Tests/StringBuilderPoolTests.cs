@@ -13,6 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using TypeKitchen;
 using Xunit;
 
 namespace HQ.Common.Tests
@@ -22,13 +23,13 @@ namespace HQ.Common.Tests
         [Fact]
         public void Can_use_scoped_builder()
         {
-            var result = StringBuilderPool.Scoped(sb =>
+            var result = Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("This is a line.");
             });
             Assert.Equal("This is a line.", result);
 
-            result = StringBuilderPool.Scoped(sb =>
+            result = Pooling.StringBuilderPool.Scoped(sb =>
             {
                 sb.Append("This is a line.");
             }, 10, 4);
