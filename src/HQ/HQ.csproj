@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -55,6 +55,7 @@
     <Content Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Exclude="..\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\**\*" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Schema\src\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity\obj\**\*" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\**\*" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
