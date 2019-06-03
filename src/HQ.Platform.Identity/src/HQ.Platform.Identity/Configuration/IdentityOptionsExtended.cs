@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
@@ -41,6 +42,7 @@ namespace HQ.Platform.Identity.Configuration
 
         public bool Enabled { get; set; }
 
+        public IdentityType? DefaultIdentityType { get; set; } = null;
         public IdentityApiOptions Api { get; set; } = new IdentityApiOptions();
         public new UserOptionsExtended User { get; set; } = new UserOptionsExtended();
         public new PasswordOptionsExtended Password { get; set; } = new PasswordOptionsExtended();

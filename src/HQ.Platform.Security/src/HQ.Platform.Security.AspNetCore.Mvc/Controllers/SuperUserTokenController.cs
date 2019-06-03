@@ -27,7 +27,6 @@ using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.AspnetCore.Mvc.Models;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;

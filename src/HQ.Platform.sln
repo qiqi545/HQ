@@ -130,6 +130,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore.Mvc", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.AspNetCore.Mvc", "HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj", "{9CD66E1F-DA36-4AC1-8EED-A4882238C2B3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Security.AspNetCore.Mvc", "HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\HQ.Platform.Security.AspNetCore.Mvc.csproj", "{86449040-6CE6-416F-B39A-1D1E71778D24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -455,6 +457,12 @@ Global
 		{9CD66E1F-DA36-4AC1-8EED-A4882238C2B3}.Package|Any CPU.Build.0 = Package|Any CPU
 		{9CD66E1F-DA36-4AC1-8EED-A4882238C2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CD66E1F-DA36-4AC1-8EED-A4882238C2B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86449040-6CE6-416F-B39A-1D1E71778D24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -513,6 +521,7 @@ Global
 		{23664578-3517-44B6-AFF4-DC98F85BA1A8} = {69CEA518-88E3-42D1-A341-7518EA873434}
 		{34A27824-CC6F-4021-AE43-9D59583B567C} = {69CEA518-88E3-42D1-A341-7518EA873434}
 		{9CD66E1F-DA36-4AC1-8EED-A4882238C2B3} = {69CEA518-88E3-42D1-A341-7518EA873434}
+		{86449040-6CE6-416F-B39A-1D1E71778D24} = {99239AAE-96A7-4761-96C2-837EBC2CDF79}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
