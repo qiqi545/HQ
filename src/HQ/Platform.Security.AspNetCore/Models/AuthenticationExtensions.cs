@@ -26,68 +26,33 @@ using HQ.Common;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Sodium;
 
 namespace HQ.Platform.Security.AspNetCore.Models
 {
-    public static class JwtBearerExtensions
-    {
-        public static AuthenticationBuilder AddJwtBearer(
-            this AuthenticationBuilder builder)
-        {
-            return builder.AddJwtBearer("Bearer", (Action<JwtBearerOptions>)(_ => { }));
-        }
-
-        public static AuthenticationBuilder AddJwtBearer(
-            this AuthenticationBuilder builder,
-            Action<JwtBearerOptions> configureOptions)
-        {
-            return builder.AddJwtBearer("Bearer", configureOptions);
-        }
-
-        public static AuthenticationBuilder AddJwtBearer(
-            this AuthenticationBuilder builder,
-            string authenticationScheme,
-            Action<JwtBearerOptions> configureOptions)
-        {
-            return builder.AddJwtBearer(authenticationScheme, (string)null, configureOptions);
-        }
-
-        public static AuthenticationBuilder AddJwtBearer(
-            this AuthenticationBuilder builder,
-            string authenticationScheme,
-            string displayName,
-            Action<JwtBearerOptions> configureOptions)
-        {
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());
-            return builder.AddScheme<JwtBearerOptions, JwtBearerHandler>(authenticationScheme, displayName, configureOptions);
-        }
-    }
-
-    public static class JwtSecurity
+    public static class AuthenticationExtensions
     {
         private static SigningCredentials _signing;
         private static EncryptingCredentials _encrypting;
-        
+
         public static void AddAuthentication(this IServiceCollection services, SecurityOptions options)
         {
             _signing = _signing ?? BuildSigningCredentials(options);
             _encrypting = _encrypting ?? BuildEncryptingCredentials(options);
 
-            services
-                .AddAuthentication(x =>
-                {
-                    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(x =>
+            var authBuilder = services.AddAuthentication(x =>
+            {
+                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
+
+            if (options.Tokens.Enabled)
+            {
+                authBuilder.AddJwtBearer(x =>
                 {
                     x.Events = new JwtBearerEvents();
                     x.Events.OnTokenValidated += OnTokenValidated;
@@ -102,11 +67,32 @@ namespace HQ.Platform.Security.AspNetCore.Models
                     x.IncludeErrorDetails = true;
                     x.RequireHttpsMetadata = false;
 #else
-					x.IncludeErrorDetails = false;
-					x.RequireHttpsMetadata = true;
+				    x.IncludeErrorDetails = false;
+				    x.RequireHttpsMetadata = true;
 #endif
-                })
-                .AddCookie(cfg => cfg.SlidingExpiration = true);
+                });
+            }
+            
+            if (options.Cookies.Enabled)
+            {
+                authBuilder.AddCookie(cfg =>
+                {
+                    cfg.Cookie.SameSite = SameSiteMode.Lax;
+                    cfg.Cookie.Expiration = TimeSpan.FromSeconds(options.Tokens.TimeToLiveSeconds);
+                    cfg.Cookie.MaxAge = cfg.Cookie.Expiration;
+                    cfg.Cookie.HttpOnly = false;
+                    cfg.Cookie.IsEssential = true;
+                    cfg.Cookie.Name = Constants.Cookies.IdentityName;
+                    cfg.Cookie.Path = options.Tokens.Path;
+                    cfg.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                    cfg.Cookie.Domain = options.Tokens.Issuer;
+
+                    cfg.LoginPath = "/signin";
+                    cfg.LogoutPath = "/signout";
+                    cfg.AccessDeniedPath = null;
+                    cfg.SlidingExpiration = true;
+                });
+            }
         }
 
         private static Task OnTokenValidated(TokenValidatedContext arg)

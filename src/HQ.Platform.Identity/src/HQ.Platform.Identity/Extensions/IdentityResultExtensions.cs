@@ -42,17 +42,56 @@ namespace HQ.Platform.Identity.Extensions
 
         public static Operation<T> ToOperation<T>(this IdentityResult result, T data)
         {
-            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}"))
-                .ToList();
+            var errors = result.Errors.Select(x => new Error(ErrorEvents.IdentityError, $"{x.Code} - {x.Description}")).ToList();
             var operation = new Operation<T>(data, errors);
             if (result.Succeeded)
             {
-                operation.Result =
-                    operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
+                operation.Result = operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
             }
             else
             {
                 operation.Result = OperationResult.Error;
+            }
+
+            return operation;
+        }
+
+        public static Operation<TUser> NotFound<TUser>()
+        {
+            var operation = new Operation<TUser>();
+            operation.Data = default;
+            operation.Result = OperationResult.Error;
+            operation.Errors.Add(new Error(ErrorEvents.NotFound, "User is not found."));
+            return operation;
+        }
+
+        public static Operation<TUser> ToOperation<TUser>(this SignInResult result, TUser user)
+        {
+            var operation = new Operation<TUser>(user);
+
+            if (!result.Succeeded)
+            {
+                operation.Result = OperationResult.Refused;
+
+                if (result.IsLockedOut)
+                {
+                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"001 - User is locked out."));
+                }
+
+                if (result.IsNotAllowed)
+                {
+                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"002 - User is not allowed to sign in."));
+                }
+
+                if (result.RequiresTwoFactor)
+                {
+                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"003 - User requires multi-factor authentication."));
+                }
+            }
+
+            if (result.Succeeded)
+            {
+                operation.Result = operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
             }
 
             return operation;

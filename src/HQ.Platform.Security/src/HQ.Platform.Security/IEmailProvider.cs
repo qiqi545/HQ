@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,24 +11,18 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
-
-using System;
-using HQ.Platform.Security;
-using Microsoft.AspNetCore.Identity;
-
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Security
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey>, IEmailProvider, IPhoneNumberProvider
-        where TKey : IEquatable<TKey>
+    public interface IEmailProvider
     {
-        public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
+        string Email { get; }
+        bool EmailConfirmed { get; }
     }
 
-    public class IdentityUserExtended : IdentityUserExtended<string>
+    public interface IPhoneNumberProvider
     {
-
+        string PhoneNumber { get; }
+        bool PhoneNumberConfirmed { get; }
     }
 }

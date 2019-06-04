@@ -75,7 +75,7 @@ namespace HQ.Platform.Security.AspNetCore
                 });
             }
             
-            if (options.Tokens.Enabled)
+            if (options.Tokens.Enabled || options.Cookies.Enabled)
             {
                 services.AddAuthentication(options);
             }

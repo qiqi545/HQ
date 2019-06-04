@@ -14,4 +14,5 @@ IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND&#xD;
 LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT&#xD;
 LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR&#xD;
 PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific&#xD;
-language governing rights and limitations under the RPL.</s:String></wpf:ResourceDictionary>
+language governing rights and limitations under the RPL.</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Sqlite/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

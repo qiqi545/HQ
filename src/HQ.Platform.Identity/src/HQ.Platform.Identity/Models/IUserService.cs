@@ -22,6 +22,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
+using HQ.Platform.Security.AspnetCore.Mvc.Models;
 
 namespace HQ.Platform.Identity.Models
 {
@@ -44,6 +45,7 @@ namespace HQ.Platform.Identity.Models
         Task<Operation<TUser>> FindByPhoneNumberAsync(string phoneNumber);
         Task<Operation<TUser>> FindByLoginAsync(string loginProvider, string providerKey);
         Task<Operation<TUser>> FindByAsync(Expression<Func<TUser, bool>> predicate);
+        Task<Operation<TUser>> FindByIdentity(IdentityType identityType, string identity);
 
         Task<Operation<IList<string>>> GetRolesAsync(TUser user);
         Task<Operation> AddToRoleAsync(TUser user, string role);

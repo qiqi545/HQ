@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
@@ -32,25 +33,43 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
             }
         }
 
-        public static IActionResult ToResult<T>(this Operation<T> operation, Func<object, IActionResult> inner = null)
+        public static IActionResult ToResult<T>(this Operation<T> operation,
+            Func<object, IActionResult> inner = null,
+            HttpStatusCode forbidStatusCode = HttpStatusCode.Forbidden)
         {
             switch (operation.Result)
             {
                 case OperationResult.Refused:
-                    return new ForbidResult();
+                    switch (forbidStatusCode)
+                    {
+                        case HttpStatusCode.Unauthorized:
+                            return new UnauthorizedObjectResult(AggregateErrors(operation));
+                    }
+                    return new ForbidResult( /* Forbid does not permit a body */ );
                 case OperationResult.Succeeded:
                     return inner == null ? new OkObjectResult(operation.Data) : inner.Invoke(operation.Data);
             }
 
-            var error = operation.Errors.Count > 1
-                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
-                : operation.Errors[0];
+            if (operation.Data == null)
+                return new NotFoundObjectResult(new ErrorResult(
+                    new Error(ErrorEvents.ResourceMissing, "Resource not found.", 404, operation.Errors)
+                ));
+
+            var error = AggregateErrors(operation);
 
             if (operation.Result == OperationResult.Error)
                 return new ErrorResult(error);
 
             return inner != null ? inner(new { operation.Data, Errors = error}) :
                 operation.Succeeded ? new OkErrorObjectResult<T>(operation.Data, error) : new ErrorResult(error);
+        }
+
+        private static Error AggregateErrors(Operation operation)
+        {
+            var error = operation.HasErrors
+                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
+                : operation.Errors[0];
+            return error;
         }
     }
 }

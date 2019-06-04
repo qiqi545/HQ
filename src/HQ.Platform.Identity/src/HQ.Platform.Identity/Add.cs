@@ -114,19 +114,6 @@ namespace HQ.Platform.Identity
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            /*
-                services.AddOptions().AddLogging();
-                services.TryAddScoped<IUserValidator<TUser>, UserValidator<TUser>>();
-                services.TryAddScoped<IPasswordValidator<TUser>, PasswordValidator<TUser>>();
-                services.TryAddScoped<IPasswordHasher<TUser>, PasswordHasher<TUser>>();
-                services.TryAddScoped<ILookupNormalizer, UpperInvariantLookupNormalizer>();
-                services.TryAddScoped<IdentityErrorDescriber>();
-                services.TryAddScoped<IUserClaimsPrincipalFactory<TUser>, UserClaimsPrincipalFactory<TUser>>();
-                services.TryAddScoped<UserManager<TUser>, UserManager<TUser>>();
-                if (setupAction != null)
-                  services.Configure<IdentityOptions>(setupAction);
-                return new IdentityBuilder(typeof (TUser), services);
-             */
             var identityBuilder = services.AddIdentityCore<TUser>(o =>
             {
                 var x = new IdentityOptionsExtended(o);
@@ -168,7 +155,7 @@ namespace HQ.Platform.Identity
             services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();
             services.AddScoped<IApplicationService<TApplication>, ApplicationService<TApplication, TUser, TKey>>();
             services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
-            services.AddScoped<ISignInService<TUser>, SignInService<TUser, TKey>>();
+            services.AddScoped<ISignInService<TUser, TTenant, TApplication, TKey>, SignInService<TUser, TTenant, TApplication, TKey>>();
 
             // untyped forwarding
             services.AddTransient<IApplicationService>(r => r.GetService<IApplicationService<TApplication>>());

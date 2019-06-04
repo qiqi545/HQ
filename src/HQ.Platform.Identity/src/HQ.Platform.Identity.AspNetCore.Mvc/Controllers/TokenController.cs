@@ -22,21 +22,21 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.AspNetCore.Mvc.Models;
-using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
 using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -55,22 +55,22 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
+        private readonly IHttpContextAccessor _http;
+
         private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
         private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
-        private readonly IServerTimestampService _timestamps;
+        private readonly ISignInService<TUser, TTenant, TApplication, TKey> _signInService;
         private readonly ILogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
-        private readonly UserManager<TUser> _userManager;
-
         public TokenController(
-            UserManager<TUser> userManager,
-            IServerTimestampService timestamps,
+            IHttpContextAccessor http,
+            ISignInService<TUser, TTenant, TApplication, TKey> signInService,
             IOptionsMonitor<SecurityOptions> securityOptions,
             IOptionsMonitor<PlatformApiOptions> apiOptions,
             ILogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
         {
-            _userManager = userManager;
-            _timestamps = timestamps;
+            _http = http;
+            _signInService = signInService;
             _securityOptions = securityOptions;
             _apiOptions = apiOptions;
             _logger = logger;
@@ -87,7 +87,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                return Ok(User.GetClaims());
+                return Ok(User.Claims());
             }
 
             return Unauthorized();
@@ -102,72 +102,21 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 return error;
             }
 
-            TUser user;
-            switch (model.IdentityType)
+            var operation = await _signInService.SignInAsync(model.IdentityType, model.Identity, model.Password, true);
+            if (!operation.Succeeded)
             {
-                case IdentityType.Username:
-                    user = await _userManager.FindByNameAsync(model.Identity);
-                    break;
-                case IdentityType.Email:
-                    user = await _userManager.FindByEmailAsync(model.Identity);
-                    if (!user.EmailConfirmed)
-                    {
-                        return NotFound();
-                    }
-                    break;
-                case IdentityType.PhoneNumber:
-                    user = await _userManager.FindByPhoneNumberAsync(model.Identity);
-                    if (!user.PhoneNumberConfirmed)
-                    {
-                        return NotFound();
-                    }
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                return operation.ToResult();
             }
 
-            if (user == null)
-            {
-                return NotFound();
-            }
+            Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
 
-            if (user.LockoutEnd.HasValue && user.LockoutEnd > _timestamps.GetCurrentTime())
-            {
-                return Forbid();
-            }
+            var user = operation.Data;
+            var claims = _http.HttpContext.User.Claims;
 
-            if (await _userManager.CheckPasswordAsync(user, model.Password))
-            {
-                Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
+            var provider = user.ActLike<IUserIdProvider>();
+            var token = AuthenticationExtensions.CreateToken(provider, claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
 
-                var claims = await _userManager.GetClaimsAsync(user);
-
-                if (HttpContext.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext)
-                {
-                    if (tenantContext.Tenant != null)
-                    {
-                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
-                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
-                    }
-                }
-
-                if (HttpContext.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext)
-                {
-                    if (applicationContext.Application != null)
-                    {
-                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
-                        claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
-                    }
-                }
-
-                var provider = user.ActLike<IUserIdProvider>();
-                var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
-
-                return Ok(new {AccessToken = token});
-            }
-
-            return Unauthorized();
+            return Ok(new { AccessToken = token });
         }
     }
 }

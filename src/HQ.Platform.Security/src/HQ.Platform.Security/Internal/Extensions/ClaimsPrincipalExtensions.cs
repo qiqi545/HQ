@@ -24,7 +24,7 @@ namespace HQ.Platform.Security.Internal.Extensions
 {
     internal static class ClaimsPrincipalExtensions
     {
-        public static ExpandoObject GetClaims(this ClaimsPrincipal user)
+        public static IDictionary<string, object> Claims(this ClaimsPrincipal user)
         {
             IDictionary<string, object> result = new ExpandoObject();
 
@@ -33,7 +33,7 @@ namespace HQ.Platform.Security.Internal.Extensions
                 return (ExpandoObject) result;
             }
 
-            var claims = user.GetClaimsList();
+            var claims = user.ClaimsList();
 
             foreach (var claim in claims)
             {
@@ -50,7 +50,7 @@ namespace HQ.Platform.Security.Internal.Extensions
             return (ExpandoObject) result;
         }
 
-        private static IDictionary<string, IList<string>> GetClaimsList(this ClaimsPrincipal user)
+        private static IDictionary<string, IList<string>> ClaimsList(this ClaimsPrincipal user)
         {
             IDictionary<string, IList<string>> claims = new Dictionary<string, IList<string>>();
             foreach (var claim in user?.Claims ?? Enumerable.Empty<Claim>())

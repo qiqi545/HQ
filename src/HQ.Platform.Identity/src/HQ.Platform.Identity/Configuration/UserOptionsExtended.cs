@@ -39,5 +39,6 @@ namespace HQ.Platform.Identity.Configuration
         public bool RequireEmailPhoneNumberOrUsername { get; set; } = false;
 
         public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
+        public bool LockoutEnabled { get; set; } = true;
     }
 }

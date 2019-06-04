@@ -191,6 +191,11 @@ namespace HQ.Common
             public const string NoEncryptionKeySet = "ENCRYPTION-KEY-REPLACE-ME";
         }
 
+        public static class Cookies
+        {
+            public const string IdentityName = "auth";
+        }
+
         public static class Claims
         {
             public const string ApplicationName = "appName";

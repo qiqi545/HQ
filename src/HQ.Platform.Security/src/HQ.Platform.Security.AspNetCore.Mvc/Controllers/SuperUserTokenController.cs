@@ -70,7 +70,7 @@ namespace HQ.Platform.Security.AspnetCore.Mvc.Controllers
                 return Unauthorized();
 
             if (User.Identity.IsAuthenticated)
-                return Ok(User.GetClaims());
+                return Ok(User.Claims());
 
             return Unauthorized();
 #endif
@@ -122,7 +122,7 @@ namespace HQ.Platform.Security.AspnetCore.Mvc.Controllers
                     new Claim(ClaimTypes.Role, nameof(SecurityOptions.SuperUser))
                 };
                 var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
-                var token = JwtSecurity.CreateToken(provider, claims, _securityOptions.Value, _apiOptions.Value);
+                var token = AuthenticationExtensions.CreateToken(provider, claims, _securityOptions.Value, _apiOptions.Value);
                 return Ok(new { AccessToken = token });
             }
 

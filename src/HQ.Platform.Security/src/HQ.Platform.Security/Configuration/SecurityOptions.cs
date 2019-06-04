@@ -19,6 +19,7 @@ namespace HQ.Platform.Security.Configuration
 {
     public class SecurityOptions
     {
+        // ReSharper disable once InconsistentNaming
         public SuperUserOptions SuperUser { get; set; } = new SuperUserOptions();
         public ClaimOptions Claims { get; set; } = new ClaimOptions();
         public TokenOptions Tokens { get; set; } = new TokenOptions();
@@ -26,6 +27,9 @@ namespace HQ.Platform.Security.Configuration
         public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
         public WebServerOptions WebServer { get; set; } = new WebServerOptions();
         public CorsOptions Cors { get; set; }
+        public CookieOptions Cookies { get; set; } = new CookieOptions();
+
+
         public SecurityOptions() : this(false) { }
 
         public SecurityOptions(bool forBinding = false)

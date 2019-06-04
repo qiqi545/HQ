@@ -16,40 +16,147 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
+using HQ.Platform.Api.Extensions;
+using HQ.Platform.Api.Models;
+using HQ.Platform.Identity.Configuration;
+using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
+using HQ.Platform.Security;
+using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Services
 {
-    public class SignInService<TUser, TKey> : ISignInService<TUser> where TUser :
-        IdentityUserExtended<TKey>
+    public class SignInService<TUser, TTenant, TApplication, TKey> : ISignInService<TUser, TTenant, TApplication, TKey>
+        where TUser : IdentityUserExtended<TKey>, IEmailProvider, IPhoneNumberProvider
+        where TTenant : IdentityTenant<TKey>
+        where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
+        private readonly UserManager<TUser> _userManager;
         private readonly SignInManager<TUser> _signInManager;
 
-        public SignInService(SignInManager<TUser> signInManager)
+        private readonly IHttpContextAccessor _http;
+        private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
+        private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+
+        public SignInService(IHttpContextAccessor http,
+            UserManager<TUser> userManager,
+            SignInManager<TUser> signInManager,
+            IOptionsMonitor<IdentityOptionsExtended> identityOptions,
+            IOptionsMonitor<SecurityOptions> securityOptions)
         {
+            _http = http;
+            _userManager = userManager;
             _signInManager = signInManager;
+            _identityOptions = identityOptions;
+            _securityOptions = securityOptions;
         }
 
-        public async Task<Operation> SignIn(TUser user, bool isPersistent, string authenticationMethod = null)
+        public async Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password, bool isPersistent)
         {
-            await _signInManager.SignInAsync(user, isPersistent, authenticationMethod);
-            return Operation.CompletedWithoutErrors;
+            TUser user = default;
+            try
+            {
+                user = await _userManager.FindByIdentityAsync(identityType, identity);
+                if (user == null)
+                    return IdentityResultExtensions.NotFound<TUser>();
+
+                var result = await _signInManager.CheckPasswordSignInAsync(user, password, _identityOptions.CurrentValue.User.LockoutEnabled);
+
+                if (result.Succeeded)
+                {
+                    var claims = await BuildClaimsAsync(user, _http.HttpContext);
+                    var principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
+
+                    if (_securityOptions.CurrentValue.Tokens.Enabled)
+                    {
+                        await SignInSchemeAsync(JwtBearerDefaults.AuthenticationScheme, principal, isPersistent);
+                    }
+
+                    if (_securityOptions.CurrentValue.Cookies.Enabled)
+                    {
+                        await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, isPersistent);
+                    }
+                }
+
+                return result.ToOperation(user);
+            }
+            catch (Exception ex)
+            {
+                var operation = IdentityResult.Failed(new IdentityError
+                {
+                    Code = ex.GetType().Name,
+                    Description = ex.Message
+                }).ToOperation(user);
+
+                return operation;
+            }
         }
 
-        public async Task<Operation> SignOut()
+        private async Task SignInSchemeAsync(string scheme, ClaimsPrincipal principal, bool isPersistent)
         {
-            /*
-            await _signInManager.Context.SignOutAsync(IdentityConstants.ApplicationScheme);
-            await _signInManager.Context.SignOutAsync(IdentityConstants.ExternalScheme);
-            await _signInManager.Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
-            */
+            var properties = new AuthenticationProperties
+            {
+                IsPersistent = isPersistent
+            };
+            await _http.HttpContext.SignInAsync(scheme, principal, properties);
+        }
 
-            await _signInManager.SignOutAsync();
-            return Operation.CompletedWithoutErrors;
+        public async Task<Operation> SignOutAsync(TUser user)
+        {
+            try
+            {
+                await _signInManager.SignOutAsync();
+                return Operation.CompletedWithoutErrors;
+            }
+            catch (Exception ex)
+            {
+                var operation = IdentityResult.Failed(new IdentityError
+                {
+                    Code = ex.GetType().Name,
+                    Description = ex.Message
+                }).ToOperation();
+
+                return operation;
+            }
+        }
+
+        private async Task<IList<Claim>> BuildClaimsAsync(TUser user, HttpContext context)
+        {
+            var claims = await _userManager.GetClaimsAsync(user);
+
+            if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext)
+            {
+                if (tenantContext.Tenant != null)
+                {
+                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
+                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+                }
+            }
+
+            if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext)
+            {
+                if (applicationContext.Application != null)
+                {
+                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim,
+                        $"{applicationContext.Application.Id}"));
+                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim,
+                        applicationContext.Application.Name));
+                }
+            }
+
+            return claims;
         }
     }
 }

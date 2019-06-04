@@ -27,6 +27,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
+using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Services
@@ -48,7 +49,7 @@ namespace HQ.Platform.Identity.Services
 
         public async Task<Operation<int>> GetCountAsync()
         {
-            var result = await _userManager.GetCountAsync();
+            var result = await _userManager.CountAsync();
             var operation = new Operation<int>(result);
             return operation;
         }
@@ -125,6 +126,11 @@ namespace HQ.Platform.Identity.Services
         public async Task<Operation<TUser>> FindByAsync(Expression<Func<TUser, bool>> predicate)
         {
             return new Operation<TUser>(await _queryableProvider.SafeQueryable.FirstOrDefaultAsync(predicate));
+        }
+
+        public async Task<Operation<TUser>> FindByIdentity(IdentityType identityType, string identity)
+        {
+            return new Operation<TUser>(await _userManager.FindByIdentityAsync(identityType, identity));
         }
 
         #endregion
