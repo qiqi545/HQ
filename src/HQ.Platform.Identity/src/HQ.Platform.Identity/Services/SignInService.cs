@@ -79,11 +79,6 @@ namespace HQ.Platform.Identity.Services
                     var claims = await BuildClaimsAsync(user, _http.HttpContext);
                     var principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
 
-                    if (_securityOptions.CurrentValue.Tokens.Enabled)
-                    {
-                        await SignInSchemeAsync(JwtBearerDefaults.AuthenticationScheme, principal, isPersistent);
-                    }
-
                     if (_securityOptions.CurrentValue.Cookies.Enabled)
                     {
                         await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, isPersistent);
