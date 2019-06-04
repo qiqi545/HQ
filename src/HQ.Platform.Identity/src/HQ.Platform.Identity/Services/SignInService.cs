@@ -77,11 +77,10 @@ namespace HQ.Platform.Identity.Services
                 if (result.Succeeded)
                 {
                     var claims = await BuildClaimsAsync(user, _http.HttpContext);
-                    var principal = new ClaimsPrincipal(new ClaimsIdentity(claims));
-
+                    
                     if (_securityOptions.CurrentValue.Cookies.Enabled)
                     {
-                        await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, isPersistent);
+                        await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims, isPersistent);
                     }
                 }
 
@@ -99,8 +98,9 @@ namespace HQ.Platform.Identity.Services
             }
         }
 
-        private async Task SignInSchemeAsync(string scheme, ClaimsPrincipal principal, bool isPersistent)
+        private async Task SignInSchemeAsync(string scheme, IEnumerable<Claim> claims, bool isPersistent)
         {
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
             var properties = new AuthenticationProperties
             {
                 IsPersistent = isPersistent
