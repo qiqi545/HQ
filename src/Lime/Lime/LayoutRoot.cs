@@ -15,14 +15,28 @@ namespace Lime
 		private readonly Dictionary<string, Action<Ui>> _handlers = new Dictionary<string, Action<Ui>>();
 		private readonly Dictionary<string, NameValueCollection> _meta = new Dictionary<string, NameValueCollection>();
 		private readonly Dictionary<string, UiSystem> _systems = new Dictionary<string, UiSystem>();
+		private readonly Dictionary<string, Action<UiContext>> _filters = new Dictionary<string, Action<UiContext>>();
 
 		internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
 		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
 		internal IReadOnlyDictionary<string, UiSystem> Systems => _systems;
+		internal IReadOnlyDictionary<string, Action<UiContext>> Filters => _filters;
 
 		internal Action<Ui> Root => Handlers[ForwardSlash];
 
-		internal LayoutRoot AddHandler(string template, MethodInfo method)
+		public LayoutRoot AddFilter(Action<UiContext> filter)
+		{
+			_filters["*"] = filter;
+			return this;
+		}
+
+		public LayoutRoot AddFilter(string template, Action<UiContext> filter)
+		{
+			_filters[template] = filter;
+			return this;
+		}
+
+		public LayoutRoot AddHandler(string template, MethodInfo method)
 		{
 			return Template(template, ui =>
 			{
@@ -30,13 +44,13 @@ namespace Lime
 			});
 		}
 
-		internal LayoutRoot AddMeta(string template, NameValueCollection meta)
+		public LayoutRoot AddMeta(string template, NameValueCollection meta)
 		{
 			_meta.Add(Normalize(template), meta);
 			return this;
 		}
 
-		internal LayoutRoot AddSystem(string template, UiSystem system)
+		public LayoutRoot AddSystem(string template, UiSystem system)
 		{
 			_systems.Add(Normalize(template), system);
 			return this;

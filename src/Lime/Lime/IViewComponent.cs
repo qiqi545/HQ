@@ -5,9 +5,7 @@ using TypeKitchen;
 
 namespace Lime
 {
-	public interface IViewComponent
-	{
-	}
+	public interface IViewComponent { }
 
 	public interface IViewComponent<in TValue> : IViewComponent
 	{

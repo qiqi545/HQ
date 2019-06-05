@@ -34,10 +34,12 @@ namespace Lime.Internal
 
 		private static object PopulateAndExecute(Ui ui, MethodInfo callee, Type serviceType, string template)
 		{
-			var settings = ui.Context.UiServices.GetRequiredService<UiSettings>();
-			var layoutRoot = ui.Context.UiServices.GetRequiredService<LayoutRoot>();
+			var serviceProvider = ui.Context.UiServices;
 
-			var target = Pools.AutoResolver.AutoResolve(serviceType, ui.Context.UiServices);
+			var settings = serviceProvider.GetRequiredService<UiSettings>();
+			var layoutRoot = serviceProvider.GetRequiredService<LayoutRoot>();
+
+			var target = Pools.AutoResolver.AutoResolve(serviceType, serviceProvider);
 			var action = Pools.ActionPool.Get();
 			try
 			{
@@ -47,6 +49,16 @@ namespace Lime.Internal
 					         "No registered system for the given template, and no default system to fall back on");
 
 				system.PopulateAction(ui, settings, action, template, target, callee);
+
+				if (layoutRoot.Filters.TryGetValue("*", out var filter))
+				{
+					filter(ui.Context);
+				}
+
+				if (layoutRoot.Filters.TryGetValue(template, out filter))
+				{
+					filter(ui.Context);
+				}
 
 				var result = action.Arguments == null
 					? target.ExecuteMethod(action.MethodName)
