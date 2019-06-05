@@ -51,6 +51,7 @@ namespace Lime.Web
 	        _styles = RenderStyles;
             _dom = RenderDom;
             _scripts = RenderScripts;
+            _document = RenderDocument;
 
             Pooling.StringBuilderPool.Return(Styles);
 			Pooling.StringBuilderPool.Return(Dom);

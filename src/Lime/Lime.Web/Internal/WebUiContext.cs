@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.JsonPatch;
@@ -38,6 +39,15 @@ namespace Lime.Web.Internal
 		public QueryCollection Query { get; }
 		public ImmutableArray<InputState> InputState { get; set; }
 
+		public override ClaimsPrincipal User
+		{
+			get
+			{
+				var http = UiServices.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+				return http?.HttpContext.User;
+			}
+		}
+
 		public override void Clear()
 		{
 			base.Clear();
@@ -61,7 +71,8 @@ namespace Lime.Web.Internal
 
 			var context = new WebUiContext
 			{
-				UiServices = http.RequestServices, TraceIdentifier = http.TraceIdentifier, User = http.User
+				UiServices = http.RequestServices,
+				TraceIdentifier = http.TraceIdentifier
 			};
 
 			if (request.Headers != null)

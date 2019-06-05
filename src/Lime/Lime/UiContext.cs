@@ -9,8 +9,8 @@ namespace Lime
 	public class UiContext
 	{
 		public IServiceProvider UiServices { get; internal set; }
-		public string TraceIdentifier { get; internal set; }
-		public ClaimsPrincipal User { get; internal set; }
+		public virtual string TraceIdentifier { get; internal set; }
+		public virtual ClaimsPrincipal User { get; private set; }
 
 		public virtual void Clear()
 		{

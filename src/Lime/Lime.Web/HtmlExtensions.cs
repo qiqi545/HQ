@@ -225,7 +225,14 @@ namespace Lime.Web
 		}
 
 		#endregion
-		
+
+		internal static WebUiContext WebContext(this Ui ui)
+		{
+			if (!(ui.Context is WebUiContext context))
+				throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
+			return context;
+		}
+
 		private static HtmlSystem WebSystem(this Ui ui)
         {
             if (!(ui.System is HtmlSystem system))
