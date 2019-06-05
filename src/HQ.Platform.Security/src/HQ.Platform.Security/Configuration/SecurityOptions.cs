@@ -29,7 +29,6 @@ namespace HQ.Platform.Security.Configuration
         public CorsOptions Cors { get; set; }
         public CookieOptions Cookies { get; set; } = new CookieOptions();
 
-
         public SecurityOptions() : this(false) { }
 
         public SecurityOptions(bool forBinding = false)

@@ -26,8 +26,10 @@ using HQ.Common;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -72,25 +74,35 @@ namespace HQ.Platform.Security.AspNetCore.Models
 #endif
                 });
             }
-            
+
             if (options.Cookies.Enabled)
             {
                 authBuilder.AddCookie(cfg =>
                 {
-                    cfg.Cookie.SameSite = SameSiteMode.Lax;
+                    cfg.Cookie.Name = options.Cookies.IdentityName;
+                    cfg.LoginPath = options.Cookies.SignInPath;
+                    cfg.LogoutPath = options.Cookies.SignOutPath;
+                    cfg.AccessDeniedPath = options.Cookies.ForbidPath;
+                    cfg.ReturnUrlParameter = options.Cookies.ReturnOperator;
+                    cfg.Events = new CookieAuthenticationEvents
+                    {
+                        OnSigningIn = context =>
+                        {
+                            if (options.Cookies.Domain == null)
+                                context.Options.Cookie.Domain = context.HttpContext.Request.Host.Value;
+                            return Task.CompletedTask;
+                        }
+                    };
+                    cfg.SlidingExpiration = options.Tokens.AllowRefresh;
+                    cfg.ClaimsIssuer = options.Tokens.Issuer;
                     cfg.Cookie.Expiration = TimeSpan.FromSeconds(options.Tokens.TimeToLiveSeconds);
-                    cfg.Cookie.MaxAge = cfg.Cookie.Expiration;
-                    cfg.Cookie.HttpOnly = false;
-                    cfg.Cookie.IsEssential = true;
-                    cfg.Cookie.Name = Constants.Cookies.IdentityName;
-                    cfg.Cookie.Path = options.Tokens.Path;
-                    cfg.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-                    cfg.Cookie.Domain = options.Tokens.Issuer;
 
-                    cfg.LoginPath = "/signin";
-                    cfg.LogoutPath = "/signout";
-                    cfg.AccessDeniedPath = null;
-                    cfg.SlidingExpiration = true;
+                    cfg.Cookie.Path = "/";
+                    cfg.Cookie.HttpOnly = true;
+                    cfg.Cookie.IsEssential = true;
+                    cfg.Cookie.SameSite = SameSiteMode.Strict;
+                    cfg.Cookie.MaxAge = cfg.Cookie.Expiration;
+                    cfg.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 });
             }
         }
@@ -213,7 +225,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
         {
             var name = options.Claims.UserNameClaim;
             var role = options.Claims.RoleClaim;
-            
+
             if (options.Tokens.Encrypt)
             {
                 return new TokenValidationParameters

@@ -30,7 +30,6 @@ using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -45,6 +44,7 @@ namespace HQ.Platform.Identity.Services
     {
         private readonly UserManager<TUser> _userManager;
         private readonly SignInManager<TUser> _signInManager;
+        private readonly IAuthenticationService _authentication;
 
         private readonly IHttpContextAccessor _http;
         private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
@@ -53,12 +53,14 @@ namespace HQ.Platform.Identity.Services
         public SignInService(IHttpContextAccessor http,
             UserManager<TUser> userManager,
             SignInManager<TUser> signInManager,
+            IAuthenticationService authentication,
             IOptionsMonitor<IdentityOptionsExtended> identityOptions,
             IOptionsMonitor<SecurityOptions> securityOptions)
         {
             _http = http;
             _userManager = userManager;
             _signInManager = signInManager;
+            _authentication = authentication;
             _identityOptions = identityOptions;
             _securityOptions = securityOptions;
         }
@@ -77,10 +79,19 @@ namespace HQ.Platform.Identity.Services
                 if (result.Succeeded)
                 {
                     var claims = await BuildClaimsAsync(user, _http.HttpContext);
-                    
+
                     if (_securityOptions.CurrentValue.Cookies.Enabled)
                     {
-                        await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme, claims, isPersistent);
+                        try
+                        {
+                            await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                                claims, isPersistent);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                            throw;
+                        }
                     }
                 }
 
@@ -100,12 +111,9 @@ namespace HQ.Platform.Identity.Services
 
         private async Task SignInSchemeAsync(string scheme, IEnumerable<Claim> claims, bool isPersistent)
         {
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
-            var properties = new AuthenticationProperties
-            {
-                IsPersistent = isPersistent
-            };
-            await _http.HttpContext.SignInAsync(scheme, principal, properties);
+            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
+            var properties = new AuthenticationProperties { IsPersistent = isPersistent };
+            await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
         }
 
         public async Task<Operation> SignOutAsync(TUser user)
@@ -131,24 +139,16 @@ namespace HQ.Platform.Identity.Services
         {
             var claims = await _userManager.GetClaimsAsync(user);
 
-            if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext)
+            if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext && tenantContext.Tenant != null)
             {
-                if (tenantContext.Tenant != null)
-                {
-                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
-                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
-                }
+                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
+                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
             }
 
-            if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext)
+            if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext && applicationContext.Application != null)
             {
-                if (applicationContext.Application != null)
-                {
-                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim,
-                        $"{applicationContext.Application.Id}"));
-                    claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim,
-                        applicationContext.Application.Name));
-                }
+                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
+                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
             }
 
             return claims;

@@ -15,6 +15,7 @@
 
 #endregion
 
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Common
@@ -194,6 +195,10 @@ namespace HQ.Common
         public static class Cookies
         {
             public const string IdentityName = "auth";
+            public const string SignInPath = "/signin";
+            public const string SignOutPath = "/signout";
+            public const string ForbidPath = "/denied";
+            public const string ReturnOperator = "return";
         }
 
         public static class Claims

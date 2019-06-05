@@ -29,5 +29,6 @@ namespace HQ.Platform.Security.Configuration
         public int TimeToLiveSeconds { get; set; } = 180;
         public bool Encrypt { get; set; } = true;
         public int ClockSkewSeconds { get; set; } = 10;
+        public bool AllowRefresh { get; set; } = true;
     }
 }
