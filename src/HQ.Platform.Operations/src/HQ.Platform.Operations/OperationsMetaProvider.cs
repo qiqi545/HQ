@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Mime;
 using HQ.Common;
 using HQ.Platform.Api.Models;
 using Microsoft.Extensions.Options;

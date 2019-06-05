@@ -29,7 +29,7 @@ namespace HQ.Platform.Operations
 {
     internal static class OperationsMethods
     {
-        public static OperationsReports.OptionsReport GetOptionsReport(IServiceProvider serviceProvider)
+        public static OperationsReports.OptionsReport OptionsReport(IServiceProvider serviceProvider)
         {
             var report = new OperationsReports.OptionsReport();
 
@@ -73,7 +73,7 @@ namespace HQ.Platform.Operations
             return report;
         }
 
-        public static OperationsReports.ServicesReport GetServicesReport(IServiceProvider serviceProvider)
+        public static OperationsReports.ServicesReport ServicesReport(IServiceProvider serviceProvider)
         {
             var services = serviceProvider.GetRequiredService<IServiceCollection>();
 

@@ -45,7 +45,7 @@ namespace HQ.Platform.Operations
 
                 try
                 {
-                    var report = OperationsMethods.GetOptionsReport(_serviceProvider);
+                    var report = OperationsMethods.OptionsReport(_serviceProvider);
 
                     status = report.HasErrors ? HealthStatus.Unhealthy : HealthStatus.Healthy;
                     data = status != HealthStatus.Healthy
@@ -99,7 +99,7 @@ namespace HQ.Platform.Operations
 
                 try
                 {
-                    var report = OperationsMethods.GetServicesReport(_serviceProvider);
+                    var report = OperationsMethods.ServicesReport(_serviceProvider);
 
                     status = report.MissingRegistrations.Count > 0 ? HealthStatus.Degraded : HealthStatus.Healthy;
                     data = status == HealthStatus.Healthy

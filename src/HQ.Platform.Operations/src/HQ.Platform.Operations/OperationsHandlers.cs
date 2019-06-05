@@ -208,12 +208,12 @@ namespace HQ.Platform.Operations
 
         public static Task GetServicesDebugHandler(HttpContext context, IApplicationBuilder app)
         {
-            return app.WriteResultAsJson(context, OperationsMethods.GetServicesReport(context.RequestServices));
+            return app.WriteResultAsJson(context, OperationsMethods.ServicesReport(context.RequestServices));
         }
 
         public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
         {
-            return app.WriteResultAsJson(context, OperationsMethods.GetOptionsReport(app.ApplicationServices));
+            return app.WriteResultAsJson(context, OperationsMethods.OptionsReport(app.ApplicationServices));
         }
 
         public static Task GetFeaturesDebugHandler(HttpContext context, IApplicationBuilder app)
