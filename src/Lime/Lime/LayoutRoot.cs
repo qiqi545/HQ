@@ -15,22 +15,22 @@ namespace Lime
 		private readonly Dictionary<string, Action<Ui>> _handlers = new Dictionary<string, Action<Ui>>();
 		private readonly Dictionary<string, NameValueCollection> _meta = new Dictionary<string, NameValueCollection>();
 		private readonly Dictionary<string, UiSystem> _systems = new Dictionary<string, UiSystem>();
-		private readonly Dictionary<string, Action<UiContext>> _filters = new Dictionary<string, Action<UiContext>>();
+		private readonly Dictionary<string, Action<MethodInfo, UiContext>> _filters = new Dictionary<string, Action<MethodInfo, UiContext>>();
 
 		internal IReadOnlyDictionary<string, NameValueCollection> Meta => _meta;
 		internal IReadOnlyDictionary<string, Action<Ui>> Handlers => _handlers;
 		internal IReadOnlyDictionary<string, UiSystem> Systems => _systems;
-		internal IReadOnlyDictionary<string, Action<UiContext>> Filters => _filters;
+		internal IReadOnlyDictionary<string, Action<MethodInfo, UiContext>> Filters => _filters;
 
 		internal Action<Ui> Root => Handlers[ForwardSlash];
 
-		public LayoutRoot AddFilter(Action<UiContext> filter)
+		public LayoutRoot AddGlobalFilter(Action<MethodInfo, UiContext> filter)
 		{
 			_filters["*"] = filter;
 			return this;
 		}
 
-		public LayoutRoot AddFilter(string template, Action<UiContext> filter)
+		public LayoutRoot AddFilter(string template, Action<MethodInfo, UiContext> filter)
 		{
 			_filters[template] = filter;
 			return this;

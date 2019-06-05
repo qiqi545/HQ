@@ -52,12 +52,12 @@ namespace Lime.Internal
 
 				if (layoutRoot.Filters.TryGetValue("*", out var filter))
 				{
-					filter(ui.Context);
+					filter(callee, ui.Context);
 				}
 
 				if (layoutRoot.Filters.TryGetValue(template, out filter))
 				{
-					filter(ui.Context);
+					filter(callee, ui.Context);
 				}
 
 				var result = action.Arguments == null
