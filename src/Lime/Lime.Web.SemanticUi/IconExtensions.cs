@@ -14,12 +14,12 @@ namespace Lime.Web.SemanticUi
 		private static readonly Dictionary<Enum, string> Interned = new Dictionary<Enum, string>();
 
 		public static Ui Icon<T>(this Ui ui, T icon, NamedColors color = NamedColors.Unspecified,
-			NamedSizes size = NamedSizes.Unspecified, bool active = false, string label = null) where T : Enum
+			NamedSizes size = NamedSizes.Unspecified, bool active = false, string label = null, bool fitted = true) where T : Enum
 		{
 			var sb = Pooling.StringBuilderPool.Get();
 			try
 			{
-				ui.BeginI(sb.AppendClass<T>(icon, active, color, size));
+				ui.BeginI(sb.AppendClass<T>(icon, active, color, size, fitted));
 				if (!string.IsNullOrWhiteSpace(label))
 					ui.Literal(label);
 				ui.EndI();
@@ -32,7 +32,7 @@ namespace Lime.Web.SemanticUi
 		}
 
 		private static string AppendClass<T>(this StringBuilder sb, Enum icon, bool active, NamedColors color,
-			NamedSizes size)
+			NamedSizes size, bool fitted)
 		{
 			sb.AppendEnumNameAsWord<T>(icon);
 			sb.Append(" icon");
@@ -42,6 +42,8 @@ namespace Lime.Web.SemanticUi
 				sb.AppendEnumNameAsWord<NamedColors>(color);
 			if (size != NamedSizes.Unspecified)
 				sb.AppendEnumNameAsWord<NamedSizes>(size);
+			if (fitted)
+				sb.Append(" fitted");
 			return sb.ToString();
 		}
 

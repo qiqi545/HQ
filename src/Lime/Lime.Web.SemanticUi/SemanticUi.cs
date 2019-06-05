@@ -31,6 +31,7 @@ namespace Lime.Web.SemanticUi
 <!-- Semantic-UI -->
 <script type=""text/javascript"" src=""~/lib/jquery/dist/jquery.slim.min.js""></script>
 <script type=""text/javascript"" src=""~/lib/semantic-ui/semantic.min.js""></script>
+<script type=""text/javascript"" src=""~/lib/semantic-ui/components/dropdown.min.js""></script>
 <script type=""text/javascript"" src=""~/lib/semantic-ui-log.js""></script>";
 			return scripts;
 		}
