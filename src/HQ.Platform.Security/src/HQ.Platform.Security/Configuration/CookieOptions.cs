@@ -14,15 +14,14 @@
 #endregion
 
 using HQ.Common;
-using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Security.Configuration
 {
     public class CookieOptions : FeatureToggle
     {
-        public PathString SignInPath { get; set; } = Constants.Cookies.SignInPath;
-        public PathString SignOutPath { get; set; } = Constants.Cookies.SignOutPath;
-        public PathString ForbidPath { get; set; } = Constants.Cookies.ForbidPath;
+        public string SignInPath { get; set; } = Constants.Cookies.SignInPath;
+        public string SignOutPath { get; set; } = Constants.Cookies.SignOutPath;
+        public string ForbidPath { get; set; } = Constants.Cookies.ForbidPath;
         public string ReturnOperator { get; set; } = Constants.Cookies.ReturnOperator;
         public string IdentityName { get; set; } = Constants.Cookies.IdentityName;
         public string Domain { get; set; } = null;

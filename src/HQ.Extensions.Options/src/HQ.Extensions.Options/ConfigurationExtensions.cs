@@ -40,7 +40,7 @@ namespace HQ.Extensions.Options
                 {
                     map.Add(prefix, value?.ToString());
                 }
-                else if (value is IEnumerable enumerable)//typeof(IEnumerable).IsAssignableFrom(type))
+                else if (value is IEnumerable enumerable)
                 {
                     var concat = Pooling.StringBuilderPool.Scoped(sb =>
                     {
