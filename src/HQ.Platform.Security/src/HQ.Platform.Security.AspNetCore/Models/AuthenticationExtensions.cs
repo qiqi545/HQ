@@ -88,7 +88,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
                     {
                         OnSigningIn = context =>
                         {
-                            if (options.Cookies.Domain == null)
+                            if (string.IsNullOrWhiteSpace(options.Cookies.Domain))
                                 context.Options.Cookie.Domain = context.HttpContext.Request.Host.Value;
                             return Task.CompletedTask;
                         }
