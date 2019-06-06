@@ -132,7 +132,15 @@ namespace Lime.Web
                     r.MapHub<LoggingHub>(options.Value.LoggingPath, SetMessagingModel);
             });
 
-            layout?.Invoke(app.ApplicationServices.GetRequiredService<LayoutRoot>());
+            var root = app.ApplicationServices.GetRequiredService<LayoutRoot>();
+
+            root.AddGlobalFilter(async (caller, context) =>
+            {
+	            await HtmlSystem.TryAuthenticateRequestAsync(caller, context);
+            });
+
+            layout?.Invoke(root);
+
 			app.Use(async (context, next) =>
 			{
 				var template = WebRenderer.GetPageTemplate(context.RequestServices);

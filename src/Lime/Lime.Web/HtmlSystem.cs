@@ -6,9 +6,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 using Lime.Internal;
 using Lime.Internal.UriTemplates;
 using Lime.Web.Internal;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -132,82 +135,117 @@ namespace Lime.Web
                 }
             }
 
-            //
-            // Routing:
             action.MethodName = callee?.Name ?? (IsRootPath(requestUri, options) ? settings.DefaultPageMethodName : requestUri.Segments.LastOrDefault());
              
-            //
-            // Execution:
-            var targetType = callee?.DeclaringType ?? target.GetType();
-            var parameterValues = parameters.Values.ToArray();
-            var executor = targetType.GetExecutor(action.MethodName, parameterValues);
-            if (executor.SameMethodParameters(parameterValues))
-            {
-                action.Arguments = parameterValues;
-                return;
-            }
+            ArgumentsFromParameters(ui, action, target, callee, parameters);
+        }
 
-            var arguments = Pooling.ListPool<object>.Get();
-            try
-            {
-                foreach (var parameter in executor.MethodParameters)
-                {
-                    if (parameters.TryGetValue(parameter.Name, out var parameterValue))
-                    {
-                        if (parameterValue is StringValues multiString)
-                        {
-                            if (parameter.ParameterType == typeof(string))
-                            {
-	                            arguments.Add(string.IsNullOrWhiteSpace(multiString) ? null : string.Join(",", multiString));
-                            }
-                            else
-                            {
-                                arguments.Add(multiString);
-                            }
-                        }
-                        else
-                        {
-                            arguments.Add(parameterValue);
-                        }
+        private static void ArgumentsFromParameters(Ui ui, UiAction action, object target, MemberInfo callee, IDictionary<string, object> parameters)
+        {
+	        var targetType = callee?.DeclaringType ?? target.GetType();
+	        var parameterValues = parameters.Values.ToArray();
+	        var executor = targetType.GetExecutor(action.MethodName, parameterValues);
+	        if (executor.SameMethodParameters(parameterValues))
+	        {
+		        action.Arguments = parameterValues;
+		        return;
+	        }
 
-                        continue;
-                    }
+	        var arguments = Pooling.ListPool<object>.Get();
+	        try
+	        {
+		        foreach (var parameter in executor.MethodParameters)
+		        {
+					//
+					// Exact match:
+			        if (parameters.TryGetValue(parameter.Name, out var parameterValue))
+			        {
+				        AddArgument(parameterValue, parameter);
+				        continue;
+			        }
 
-                    if (parameter.ParameterType == typeof(Ui))
-                    {
-	                    ui = ui ?? InlineElements.GetUi() ?? throw new ArgumentNullException(nameof(ui), 
-		                         $"No UI instance passed to PopulateAction or found in this synchronization context");
+					// 
+					// Inline context:
+			        if (parameter.ParameterType == typeof(Ui))
+			        {
+				        ui = ui ?? InlineElements.GetUi() ?? throw new ArgumentNullException(nameof(ui),
+					             $"No UI instance passed to PopulateAction or found in this synchronization context");
 
-	                    arguments.Add(ui);
-                        continue;
-                    }
+				        arguments.Add(ui);
+				        continue;
+			        }
+					
+					//
+					// Model binding:
+					if (parameter.ParameterType.IsClass && !parameter.ParameterType.IsAbstract)
+			        {
+						var accessor = WriteAccessor.Create(parameter.ParameterType, out var members);
+						object instance = null;
+						foreach (var member in members)
+				        {
+					        if (!parameters.TryGetValue(member.Name, out parameterValue))
+					        {
+						        if (NotResolvableByContainer(parameter))
+						        {
+							        parameterValue = parameter.ParameterType.IsValueType
+								        ? Instancing.CreateInstance(parameter.ParameterType)
+								        : null;
+						        }
+						        else
+						        {
+							        parameterValue = ui.Context.UiServices.GetService(parameter.ParameterType);
+						        }
+					        }
+							
+					        instance = instance ?? Instancing.CreateInstance(parameter.ParameterType);
+					        accessor.TrySetValue(instance, member.Name, parameterValue);
+				        }
 
-                    if (NotResolvableByContainer(parameter))
-                    {
-	                    arguments.Add(parameter.ParameterType.IsValueType
-		                    ? Activator.CreateInstance(parameter.ParameterType)
-		                    : null);
-                        continue;
-                    }
+						if (instance != null)
+							continue;
+			        }
 
-                    try
-                    {
-	                    var argument = ui.Context.UiServices.GetService(parameter.ParameterType);
-	                    arguments.Add(argument);
-					}
-                    catch (Exception exception)
-                    {
-	                    Console.WriteLine(exception);
-	                    throw;
-                    }
-                }
+					// 
+					// Fallback instancing:
+			        if (NotResolvableByContainer(parameter))
+			        {
+				        arguments.Add(parameter.ParameterType.IsValueType
+					        ? Instancing.CreateInstance(parameter.ParameterType)
+					        : null);
+				        continue;
+			        }
 
-                action.Arguments = arguments.ToArray();
-            }
-            finally
-            {
-                Pooling.ListPool<object>.Return(arguments);
-            }
+					//
+					// Dependency resolution:
+					var argument = ui.Context.UiServices.GetService(parameter.ParameterType);
+					arguments.Add(argument);
+				}
+
+		        action.Arguments = arguments.ToArray();
+	        }
+	        finally
+	        {
+		        Pooling.ListPool<object>.Return(arguments);
+	        }
+
+	        void AddArgument(object parameterValue, ParameterInfo parameter)
+	        {
+		        if (parameterValue is StringValues multiString)
+		        {
+			        if (parameter.ParameterType == typeof(string))
+			        {
+				        arguments.Add(string.IsNullOrWhiteSpace(multiString) ? null : string.Join(",", multiString));
+			        }
+			        else
+			        {
+				        arguments.Add(multiString);
+			        }
+		        }
+		        else
+		        {
+			        arguments.Add(parameterValue);
+		        }
+	        }
         }
 
         private static bool NotResolvableByContainer(ParameterInfo parameter)
@@ -226,5 +264,70 @@ namespace Lime.Web
         {
 	        _document = document;
         }
-    }
+
+        public static async Task TryAuthenticateRequestAsync(ICustomAttributeProvider provider, UiContext context)
+		{
+			var schemeProvider = context.UiServices.GetService<IAuthenticationSchemeProvider>();
+			if (schemeProvider == null)
+				return;
+
+			var declaredSchemeNames = Pooling.HashSetPool.Get();
+			try
+			{
+				if (provider.HasAttribute<AuthorizeAttribute>())
+				{
+					foreach (var authorize in provider.GetAttributes<AuthorizeAttribute>())
+					{
+						if (authorize?.AuthenticationSchemes == null)
+						{
+							declaredSchemeNames.Add("*");
+							break;
+						}
+
+						foreach (var schemeName in authorize.AuthenticationSchemes.Split(new[] { "," },
+							StringSplitOptions.RemoveEmptyEntries))
+						{
+							declaredSchemeNames.Add(schemeName);
+						}
+					}
+				}
+
+				if (declaredSchemeNames.Count == 0)
+					return;
+
+				var httpContext = context.UiServices.GetRequiredService<IHttpContextAccessor>().HttpContext;
+				if (httpContext == null)
+					return;
+
+				var authenticationSchemes = await schemeProvider.GetAllSchemesAsync();
+				var availableSchemes = authenticationSchemes.OrderBy(x => declaredSchemeNames).ToList();
+				if (availableSchemes.Count == 0)
+					return;
+
+				var anyScheme = declaredSchemeNames.Contains("*");
+
+				AuthenticationScheme first = null;
+				foreach (var scheme in availableSchemes)
+				{
+					if (!anyScheme && !declaredSchemeNames.Contains(scheme.Name))
+						continue;
+					first = first ?? scheme;
+					var authenticated = await httpContext.AuthenticateAsync(scheme.Name);
+					if (!authenticated.Succeeded)
+						continue;
+					httpContext.User = authenticated.Principal;
+					return;
+				}
+
+				if (first == null)
+					throw new ArgumentNullException("Expected at least one authentication scheme");
+
+				await httpContext.ChallengeAsync(first.Name);
+			}
+			finally
+			{
+				Pooling.HashSetPool.Return(declaredSchemeNames);
+			}
+		}
+	}
 }

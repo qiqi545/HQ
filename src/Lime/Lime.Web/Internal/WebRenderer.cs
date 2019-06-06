@@ -171,6 +171,10 @@ namespace Lime.Web.Internal
 
 		private static async Task WriteResponseAsync(string html, HttpContext context)
 		{
+			if (context.Response.HasStarted)
+				return;
+			if (context.Response.StatusCode != 0)
+				return;
 			var options = context.RequestServices.GetRequiredService<IOptions<UiServerOptions>>();
 			context.Response.StatusCode = (int) HttpStatusCode.OK;
 			context.Response.ContentType = options.Value.ContentType;
