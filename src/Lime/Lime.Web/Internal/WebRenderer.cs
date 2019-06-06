@@ -171,14 +171,19 @@ namespace Lime.Web.Internal
 
 		private static async Task WriteResponseAsync(string html, HttpContext context)
 		{
-			if (context.Response.HasStarted)
-				return;
-			if (context.Response.StatusCode != 0)
+			if (context.IsTerminal())
 				return;
 			var options = context.RequestServices.GetRequiredService<IOptions<UiServerOptions>>();
-			context.Response.StatusCode = (int) HttpStatusCode.OK;
 			context.Response.ContentType = options.Value.ContentType;
 			await context.Response.WriteAsync(html, Encoding.UTF8, context.RequestAborted);
+		}
+
+		private static bool IsTerminal(this HttpContext context)
+		{
+			return context.Response.HasStarted ||
+			       context.Response.StatusCode != (int) HttpStatusCode.OK ||
+			       context.Response.ContentType != null ||
+			       context.Response.ContentLength.HasValue && context.Response.ContentLength > 0;
 		}
 	}
 }
