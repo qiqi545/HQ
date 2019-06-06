@@ -12,13 +12,6 @@ using TypeKitchen;
 
 namespace Lime
 {
-	public static class InlineElements
-	{
-		[ThreadStatic] private static Ui _ui;
-		internal static void SetUi(Ui threadUi) => _ui = threadUi;
-		internal static Ui GetUi() => _ui;
-	}
-
 	public abstract class UiSystem
 	{
 		public abstract void Begin(UiContext context = null);
