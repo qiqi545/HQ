@@ -15,45 +15,16 @@
 
 #endregion
 
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
-    public class InMemoryMetricsStore : IMetricsStore
+    public class InMemoryMetricsStore : InMemoryKeyValueStore<MetricName, IMetric>, IMetricsStore
     {
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
             ImmutableDictionary.Create<MetricName, IMetric>();
-
-        private readonly ConcurrentDictionary<MetricName, IMetric> _metrics;
-
-        public InMemoryMetricsStore()
-        {
-            _metrics = new ConcurrentDictionary<MetricName, IMetric>();
-        }
-
-        public IMetric GetOrAdd(MetricName name, IMetric metric)
-        {
-            return _metrics.GetOrAdd(name, metric);
-        }
-
-        public IMetric this[MetricName name] => _metrics[name];
-
-        public bool TryGetValue(MetricName name, out IMetric metric)
-        {
-            return _metrics.TryGetValue(name, out metric);
-        }
-
-        public bool Contains(MetricName name)
-        {
-            return _metrics.ContainsKey(name);
-        }
-
-        public void AddOrUpdate<T>(MetricName name, T metric) where T : IMetric
-        {
-            _metrics.AddOrUpdate(name, metric, (n, m) => m);
-        }
 
         public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
         {
@@ -63,7 +34,7 @@ namespace HQ.Extensions.Metrics
             }
 
             var filtered = new Dictionary<MetricName, IMetric>();
-            foreach (var entry in _metrics)
+            foreach (var entry in _memory)
             {
                 switch (entry.Value)
                 {
@@ -80,12 +51,6 @@ namespace HQ.Extensions.Metrics
             }
 
             return filtered.ToImmutableDictionary();
-        }
-
-        public bool Clear()
-        {
-            _metrics.Clear();
-            return true;
         }
     }
 }

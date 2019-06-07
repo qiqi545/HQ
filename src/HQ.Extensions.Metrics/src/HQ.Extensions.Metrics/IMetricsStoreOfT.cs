@@ -16,17 +16,13 @@
 #endregion
 
 using System.Collections.Immutable;
+using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsStore<TFilter> where TFilter : IMetric
+    public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
+        where TFilter : IMetric
     {
-        TFilter this[MetricName name] { get; }
-        TFilter GetOrAdd(MetricName name, TFilter metric);
-        bool TryGetValue(MetricName name, out TFilter metric);
-        bool Contains(MetricName name);
-        void AddOrUpdate<T>(MetricName name, T metric) where T : TFilter;
         IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
-        bool Clear();
     }
 }

@@ -21,42 +21,16 @@ using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
-    public class CacheMetricsStore : IMetricsStore
+    public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
     {
+        private readonly ICache _cache;
+
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
             ImmutableDictionary.Create<MetricName, IMetric>();
 
-        private readonly ICache _metrics;
-
-        public CacheMetricsStore(ICache metrics)
+        public CacheMetricsStore(ICache cache) : base(cache, Common.Constants.Categories.Metrics)
         {
-            _metrics = metrics;
-        }
-
-        public IMetric this[MetricName name] => _metrics.Get<IMetric>(name.CacheKey);
-
-        public IMetric GetOrAdd(MetricName name, IMetric metric)
-        {
-            var m = _metrics.GetOrAdd(name.CacheKey, metric);
-            UpdateManifest(name);
-            return m;
-        }
-
-        public bool TryGetValue(MetricName name, out IMetric metric)
-        {
-            metric = _metrics.Get<IMetric>(name.CacheKey);
-            return metric != null;
-        }
-
-        public bool Contains(MetricName name)
-        {
-            return TryGetValue(name, out _);
-        }
-
-        public void AddOrUpdate<T>(MetricName name, T metric) where T : IMetric
-        {
-            _metrics.Set(name.CacheKey, metric);
-            UpdateManifest(name);
+            _cache = cache;
         }
 
         public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
@@ -67,7 +41,7 @@ namespace HQ.Extensions.Metrics
             }
 
             var filtered = new Dictionary<MetricName, IMetric>();
-            foreach (var entry in _metrics.Get<List<MetricName>>(Common.Constants.Categories.Metrics))
+            foreach (var entry in _cache.Get<List<MetricName>>(Common.Constants.Categories.Metrics))
             {
                 switch (entry.Class.Name)
                 {
@@ -78,35 +52,13 @@ namespace HQ.Extensions.Metrics
                     case nameof(TimerMetric) when typeFilter.HasFlagFast(MetricType.Timer):
                         continue;
                     default:
-                        filtered.Add(entry, _metrics.Get<IMetric>(entry.CacheKey));
+                        filtered.Add(entry, _cache.Get<IMetric>(entry.CacheKey));
                         break;
                 }
             }
 
             return filtered.ToImmutableDictionary();
         }
-
-        public bool Clear()
-        {
-            if (!(_metrics is IClearable clear))
-            {
-                return false;
-            }
-
-            clear.Clear();
-            return true;
-        }
-
-        private void UpdateManifest(MetricName name)
-        {
-            var list = _metrics.GetOrAdd(Common.Constants.Categories.Metrics, () => new List<MetricName>());
-            if (list.Contains(name))
-            {
-                return;
-            }
-
-            list.Add(name);
-            _metrics.Set(Common.Constants.Categories.Metrics, list);
-        }
     }
 }
+

@@ -17,7 +17,5 @@
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsStore : IMetricsStore<IMetric>
-    {
-    }
+    public interface IMetricsStore : IMetricsStore<IMetric> { }
 }
