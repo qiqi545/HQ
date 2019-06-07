@@ -37,15 +37,16 @@ namespace HQ.Common
 
         public static class ContextKeys
         {
-            public const string DynamicViewLocation = "DynamicViewLocation";
-            public const string JsonMultiCase = "JsonMultiCase";
-            public const string JsonTrim = "JsonTrim";
-            public const string JsonPrettyPrint = "JsonPrettyPrint";
-            public const string CacheArgument = "cache";
-            public const string CacheKeyArgument = "cacheKey";
-            public const string Tenant = "tenant";
-            public const string Application = "application";
-            public const string Version = "version";
+            public const string DynamicViewLocation = nameof(DynamicViewLocation);
+            public const string JsonMultiCase = nameof(JsonMultiCase);
+            public const string JsonTrim = nameof(JsonTrim);
+            public const string JsonPrettyPrint = nameof(JsonPrettyPrint);
+            public const string CacheArgument = nameof(CacheArgument);
+            public const string CacheKeyArgument = nameof(CacheKeyArgument);
+            public const string Tenant = nameof(Tenant);
+            public const string Application = nameof(Application);
+            public const string Version = nameof(Version);
+            public const string AnonymousUserId = nameof(AnonymousUserId);
         }
 
         public static class PlatformRoutes
@@ -195,6 +196,7 @@ namespace HQ.Common
         public static class Cookies
         {
             public const string IdentityName = "auth";
+            public const string AnonymousIdentityName = "auth-anon";
             public const string SignInPath = "/signin";
             public const string SignOutPath = "/signout";
             public const string ForbidPath = "/denied";

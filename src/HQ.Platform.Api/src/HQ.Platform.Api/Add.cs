@@ -26,6 +26,7 @@ using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.Routing;
@@ -55,6 +56,21 @@ namespace HQ.Platform.Api
             services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 
+            services.AddForwardedHeaders();
+
+            return services;
+        }
+
+        internal static IServiceCollection AddForwardedHeaders(this IServiceCollection services)
+        {
+            services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                // Needed for proxy, cohort analysis, domain-based multi-tenancy, etc.
+                options.ForwardedHeaders =
+                    ForwardedHeaders.XForwardedFor |        // context.Connection.RemoteIpAddress
+                    ForwardedHeaders.XForwardedProto |      // context.Request.Scheme
+                    ForwardedHeaders.XForwardedHost;        // context.Request.Host
+            });
             return services;
         }
 

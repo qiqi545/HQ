@@ -49,7 +49,7 @@ namespace HQ.Common.AspNetCore
             {
                 resolved = resolved.IsGenericTypeDefinition
                     ? resolved.MakeGenericType(arguments)    // IOptions<TService<T1,...TN>>
-                    : resolved.BaseType;                                                    // HubOptions<THub> -> HubOptions
+                    : resolved.BaseType;                     // HubOptions<THub> -> HubOptions
             }
 
             var testingType = validate ? typeof(IValidOptions<>) : typeof(IOptions<>);

@@ -17,17 +17,21 @@
 
 using System;
 using System.Linq;
-using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using CookieOptions = Microsoft.AspNetCore.Http.CookieOptions;
 
 namespace HQ.Platform.Api
 {
@@ -35,6 +39,7 @@ namespace HQ.Platform.Api
     {
         public static IApplicationBuilder UsePlatformApi(this IApplicationBuilder app, bool snapshot = true)
         {
+            app.UseForwardedHeaders();
             app.UseCors();
             app.UseResponseCompression();
 
@@ -43,6 +48,7 @@ namespace HQ.Platform.Api
             app.UseResourceRewriting(snapshot);
             app.UseRequestLimiting(snapshot);
             app.UseJsonMultiCase(snapshot);
+            app.UseAnonymousIdentification();
 
             return app;
         }
@@ -332,6 +338,72 @@ namespace HQ.Platform.Api
 
                 await next();
             }
+        }
+
+        #endregion
+
+
+        #region Anonymous Users
+
+        public static IApplicationBuilder UseAnonymousIdentification(this IApplicationBuilder app)
+        {
+            app.Use(async (context, next) =>
+            {
+                var options = context.RequestServices.GetService<IOptionsMonitor<SecurityOptions>>();
+                if (!options.CurrentValue.Cookies.Enabled)
+                {
+                    await next();
+                    return;
+                }
+
+                var name = options.CurrentValue.Cookies.AnonymousIdentityName
+                    ?? Constants.Cookies.AnonymousIdentityName;
+
+                var hasCookie = false;
+                if (context.Request.Cookies.TryGetValue(name, out var value) &&
+                    !string.IsNullOrWhiteSpace(value))
+                {
+                    context.Response.Cookies.Delete(name);
+                    hasCookie = true;
+                }
+
+                if (context.User.Identity.IsAuthenticated || !context.Request.IsHttps)
+                {
+                    await next();
+                    return;
+                }
+
+                var anonymousId = hasCookie
+                    ? Encoding.UTF8.GetString(Base64UrlTextEncoder.Decode(value))
+                    : null;
+                
+                if (string.IsNullOrWhiteSpace(anonymousId))
+                    anonymousId = Guid.NewGuid().ToString();
+
+                context.Items.Add(Constants.ContextKeys.AnonymousUserId, anonymousId);
+                value = Base64UrlTextEncoder.Encode(Encoding.UTF8.GetBytes(anonymousId));
+
+                context.Response.Cookies.Append(name, value, context.BuildAnonymousUserCookie(options.CurrentValue));
+                await next();
+            });
+
+            return app;
+        }
+
+        private static CookieOptions BuildAnonymousUserCookie(this HttpContext context, SecurityOptions options)
+        {
+            var builder = new CookieBuilder
+            {
+                Name = options.Cookies.AnonymousIdentityName,
+                Expiration = null,
+                Path = "/",
+                HttpOnly = true,
+                IsEssential = false,
+                SameSite = SameSiteMode.Strict,
+                MaxAge = null,
+                SecurePolicy = CookieSecurePolicy.Always
+            };
+            return builder.Build(context);
         }
 
         #endregion

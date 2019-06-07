@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
@@ -23,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Platform.Security\src\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>
 
 </Project>
