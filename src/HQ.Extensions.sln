@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{86CAB56B-4F45-4CF6-99BF-B21E19B4FE41}"
 	ProjectSection(SolutionItems) = preProject
@@ -87,6 +87,14 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts", "HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj", "{50C4AA5C-F2A9-403A-8F2C-14A43F2D7419}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Options", "HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj", "{58472F2D-F3D5-4B6B-8A3F-3DB6389B9B56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.Localization", "HQ.Extensions.Localization\HQ.Extensions.Localization.csproj", "{BBFE279F-6689-40C4-B6CC-5B1B8A431061}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore", "HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj", "{DC29342C-2567-4276-B24A-8E77B5FBD169}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Common.AspNetCore.Mvc", "HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj", "{BFE0D225-0BEB-4368-B6FD-D30B48974A39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.SplitTesting", "HQ.Extensions.Metrics.SplitTesting\HQ.Extensions.Metrics.SplitTesting.csproj", "{6A85BACD-E340-4014-A877-AD7492C909B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -287,6 +295,30 @@ Global
 		{58472F2D-F3D5-4B6B-8A3F-3DB6389B9B56}.Package|Any CPU.Build.0 = Package|Any CPU
 		{58472F2D-F3D5-4B6B-8A3F-3DB6389B9B56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{58472F2D-F3D5-4B6B-8A3F-3DB6389B9B56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Package|Any CPU.Build.0 = Package|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC29342C-2567-4276-B24A-8E77B5FBD169}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Package|Any CPU.Build.0 = Package|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A85BACD-E340-4014-A877-AD7492C909B1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -324,6 +356,10 @@ Global
 		{4CF43659-206B-47E1-87B2-282F4EAF03E2} = {9F6392BF-9411-434A-A9DC-7C60D590DAD9}
 		{50C4AA5C-F2A9-403A-8F2C-14A43F2D7419} = {9F6392BF-9411-434A-A9DC-7C60D590DAD9}
 		{58472F2D-F3D5-4B6B-8A3F-3DB6389B9B56} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
+		{BBFE279F-6689-40C4-B6CC-5B1B8A431061} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
+		{DC29342C-2567-4276-B24A-8E77B5FBD169} = {9F6392BF-9411-434A-A9DC-7C60D590DAD9}
+		{BFE0D225-0BEB-4368-B6FD-D30B48974A39} = {9F6392BF-9411-434A-A9DC-7C60D590DAD9}
+		{6A85BACD-E340-4014-A877-AD7492C909B1} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3021A61F-9383-4C4A-B162-D1C4C186AB90}

@@ -60,112 +60,112 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
+    <xsd:import keyspace="http://www.w3.org/XML/1998/keyspace" />
+    <xsd:element key="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+          <xsd:element key="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element key="value" type="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute key="key" use="required" type="xsd:string" />
+              <xsd:attribute key="type" type="xsd:string" />
+              <xsd:attribute key="mimetype" type="xsd:string" />
               <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="assembly">
+          <xsd:element key="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute key="alias" type="xsd:string" />
+              <xsd:attribute key="key" type="xsd:string" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="data">
+          <xsd:element key="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element key="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element key="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute key="key" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute key="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute key="mimetype" type="xsd:string" msdata:Ordinal="4" />
               <xsd:attribute ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
-          <xsd:element name="resheader">
+          <xsd:element key="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element key="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute key="key" type="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
       </xsd:complexType>
     </xsd:element>
   </xsd:schema>
-  <resheader name="resmimetype">
+  <resheader key="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
-  <resheader name="version">
+  <resheader key="version">
     <value>2.0</value>
   </resheader>
-  <resheader name="reader">
+  <resheader key="reader">
     <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <resheader name="writer">
+  <resheader key="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ApplicationNotFound" xml:space="preserve">
+  <data key="ApplicationNotFound" xml:space="preserve">
     <value>Application not found.</value>
   </data>
-  <data name="DuplicateApplicationName" xml:space="preserve">
-    <value>Application name '{0}' is already taken.</value>
+  <data key="DuplicateApplicationName" xml:space="preserve">
+    <value>Application key '{0}' is already taken.</value>
   </data>
-  <data name="DuplicatePhoneNumber" xml:space="preserve">
+  <data key="DuplicatePhoneNumber" xml:space="preserve">
     <value>Phone number '{0}' is already taken.</value>
   </data>
-  <data name="DuplicateTenantName" xml:space="preserve">
-    <value>Tenant name '{0}' is already taken.</value>
+  <data key="DuplicateTenantName" xml:space="preserve">
+    <value>Tenant key '{0}' is already taken.</value>
   </data>
-  <data name="InvalidApplicationName" xml:space="preserve">
-    <value>Application name '{0}' is invalid.</value>
+  <data key="InvalidApplicationName" xml:space="preserve">
+    <value>Application key '{0}' is invalid.</value>
   </data>
-  <data name="InvalidPhoneNumber" xml:space="preserve">
+  <data key="InvalidPhoneNumber" xml:space="preserve">
     <value>Phone number '{0}' is invalid.</value>
   </data>
-  <data name="InvalidTenantName" xml:space="preserve">
-    <value>Tenant name '{0}' is invalid.</value>
+  <data key="InvalidTenantName" xml:space="preserve">
+    <value>Tenant key '{0}' is invalid.</value>
   </data>
-  <data name="MustHaveEmailPhoneOrUsername" xml:space="preserve">
+  <data key="MustHaveEmailPhoneOrUsername" xml:space="preserve">
     <value>Must have an email address, phone number, or email address to register.</value>
   </data>
-  <data name="NullApplicationSecurityStamp" xml:space="preserve">
+  <data key="NullApplicationSecurityStamp" xml:space="preserve">
     <value>Application security stamp cannot be null.</value>
   </data>
-  <data name="NullTenantSecurityStamp" xml:space="preserve">
+  <data key="NullTenantSecurityStamp" xml:space="preserve">
     <value>Tenant security stamp cannot be null.</value>
   </data>
-  <data name="RoleNotFound" xml:space="preserve">
+  <data key="RoleNotFound" xml:space="preserve">
     <value>Role not found.</value>
   </data>
-  <data name="StoreNotIApplicationSecurityStampStore" xml:space="preserve">
+  <data key="StoreNotIApplicationSecurityStampStore" xml:space="preserve">
     <value>Store does not implement IApplicationSecurityStampStore&lt;TApplication&gt;.</value>
   </data>
-  <data name="StoreNotIQueryableApplicationStore" xml:space="preserve">
+  <data key="StoreNotIQueryableApplicationStore" xml:space="preserve">
     <value>Store does not implement IQueryableApplicationStore&lt;TApplication&gt;.</value>
   </data>
-  <data name="StoreNotIQueryableTenantStore" xml:space="preserve">
+  <data key="StoreNotIQueryableTenantStore" xml:space="preserve">
     <value>Store does not implement IQueryableTenantStore&lt;TTenant&gt;.</value>
   </data>
-  <data name="StoreNotITenantSecurityStampStore" xml:space="preserve">
+  <data key="StoreNotITenantSecurityStampStore" xml:space="preserve">
     <value>Store does not implement ITenantSecurityStampStore&lt;TTenant&gt;.</value>
   </data>
-  <data name="TenantNotFound" xml:space="preserve">
+  <data key="TenantNotFound" xml:space="preserve">
     <value>Tenant not found.</value>
   </data>
-  <data name="UserNotFound" xml:space="preserve">
+  <data key="UserNotFound" xml:space="preserve">
     <value>User not found.</value>
   </data>
 </root>

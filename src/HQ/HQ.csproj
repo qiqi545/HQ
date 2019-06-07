@@ -39,7 +39,6 @@
     <Content Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
-
     <Content Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.AspNetCore\obj\**\*" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />

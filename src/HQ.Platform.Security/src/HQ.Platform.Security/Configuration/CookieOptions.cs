@@ -23,6 +23,7 @@ namespace HQ.Platform.Security.Configuration
         public string SignOutPath { get; set; } = Constants.Cookies.SignOutPath;
         public string ForbidPath { get; set; } = Constants.Cookies.ForbidPath;
         public string ReturnOperator { get; set; } = Constants.Cookies.ReturnOperator;
+        public string AnonymousIdentityName { get; set; } = Constants.Cookies.AnonymousIdentityName;
         public string IdentityName { get; set; } = Constants.Cookies.IdentityName;
         public string Domain { get; set; } = null;
     }

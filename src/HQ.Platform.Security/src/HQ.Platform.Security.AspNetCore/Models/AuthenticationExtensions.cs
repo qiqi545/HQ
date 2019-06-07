@@ -29,7 +29,6 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -79,7 +78,6 @@ namespace HQ.Platform.Security.AspNetCore.Models
             {
                 authBuilder.AddCookie(cfg =>
                 {
-                    cfg.Cookie.Name = options.Cookies.IdentityName;
                     cfg.LoginPath = options.Cookies.SignInPath;
                     cfg.LogoutPath = options.Cookies.SignOutPath;
                     cfg.AccessDeniedPath = options.Cookies.ForbidPath;
@@ -95,8 +93,9 @@ namespace HQ.Platform.Security.AspNetCore.Models
                     };
                     cfg.SlidingExpiration = options.Tokens.AllowRefresh;
                     cfg.ClaimsIssuer = options.Tokens.Issuer;
-                    cfg.Cookie.Expiration = TimeSpan.FromSeconds(options.Tokens.TimeToLiveSeconds);
 
+                    cfg.Cookie.Name = options.Cookies.IdentityName;
+                    cfg.Cookie.Expiration = TimeSpan.FromSeconds(options.Tokens.TimeToLiveSeconds);
                     cfg.Cookie.Path = "/";
                     cfg.Cookie.HttpOnly = true;
                     cfg.Cookie.IsEssential = true;
