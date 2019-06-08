@@ -21,7 +21,7 @@ namespace HQ.Platform.Security.Configuration
 {
     public class TokenOptions : FeatureToggle
     {
-        public string Path { get; set; } = "tokens";
+        public string Path { get; set; } = Constants.Tokens.DefaultPath;
         public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
         public string EncryptionKey { get; set; } = Constants.Tokens.NoEncryptionKeySet;
         public string Issuer { get; set; } = "https://mysite.com";

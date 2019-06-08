@@ -82,16 +82,13 @@ namespace HQ.Platform.Identity.Services
 
                     if (_securityOptions.CurrentValue.Cookies.Enabled)
                     {
-                        try
-                        {
-                            await SignInSchemeAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                                claims, isPersistent);
-                        }
-                        catch (Exception e)
-                        {
-                            Console.WriteLine(e);
-                            throw;
-                        }
+                        const string scheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
+                        var properties = new AuthenticationProperties { IsPersistent = isPersistent };
+                        await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
+
+                        _http.HttpContext.User = principal;
                     }
                 }
 
@@ -108,14 +105,7 @@ namespace HQ.Platform.Identity.Services
                 return operation;
             }
         }
-
-        private async Task SignInSchemeAsync(string scheme, IEnumerable<Claim> claims, bool isPersistent)
-        {
-            var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
-            var properties = new AuthenticationProperties { IsPersistent = isPersistent };
-            await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
-        }
-
+        
         public async Task<Operation> SignOutAsync(TUser user)
         {
             try

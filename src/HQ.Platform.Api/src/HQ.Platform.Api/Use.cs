@@ -229,7 +229,7 @@ namespace HQ.Platform.Api
                 await next();
             }
         }
-        
+
         #region Versioning
 
         // See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
@@ -324,7 +324,7 @@ namespace HQ.Platform.Api
                                 Tenant = new TTenant
                                 {
                                     Name = o.DefaultTenantName,
-                                    Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey))
+                                    Id = (TKey)(Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ?? default(TKey))
                                 }
                             });
                         }
@@ -350,6 +350,7 @@ namespace HQ.Platform.Api
             app.Use(async (context, next) =>
             {
                 var options = context.RequestServices.GetService<IOptionsMonitor<SecurityOptions>>();
+
                 if (!options.CurrentValue.Cookies.Enabled)
                 {
                     await next();
@@ -357,7 +358,7 @@ namespace HQ.Platform.Api
                 }
 
                 var name = options.CurrentValue.Cookies.AnonymousIdentityName
-                    ?? Constants.Cookies.AnonymousIdentityName;
+                           ?? Constants.Cookies.AnonymousIdentityName;
 
                 var hasCookie = false;
                 if (context.Request.Cookies.TryGetValue(name, out var value) &&
@@ -365,6 +366,13 @@ namespace HQ.Platform.Api
                 {
                     context.Response.Cookies.Delete(name);
                     hasCookie = true;
+                }
+
+                if (options.CurrentValue.Tokens.Enabled &&
+                    context.Request.Path.StartsWithSegments(options.CurrentValue.Tokens.Path))
+                {
+                    await next();
+                    return;
                 }
 
                 if (context.User.Identity.IsAuthenticated || !context.Request.IsHttps)
@@ -376,7 +384,7 @@ namespace HQ.Platform.Api
                 var anonymousId = hasCookie
                     ? Encoding.UTF8.GetString(Base64UrlTextEncoder.Decode(value))
                     : null;
-                
+
                 if (string.IsNullOrWhiteSpace(anonymousId))
                     anonymousId = Guid.NewGuid().ToString();
 

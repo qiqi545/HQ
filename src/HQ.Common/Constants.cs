@@ -130,6 +130,7 @@ namespace HQ.Common
             public const string TotalPages = "X-Total-Pages";
 
             public const string TenantHeader = "X-Tenant";
+            public const string TraceParent = "traceparent";
 
             /// <summary>
             ///     See: https://www.w3.org/TR/server-timing/
@@ -188,6 +189,7 @@ namespace HQ.Common
         {
             public const string NoSigningKeySet = "PRIVATE-KEY-REPLACE-ME";
             public const string NoEncryptionKeySet = "ENCRYPTION-KEY-REPLACE-ME";
+            public const string DefaultPath = "/tokens";
         }
 
         public static class Cookies
