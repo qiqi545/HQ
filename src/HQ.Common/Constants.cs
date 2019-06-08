@@ -15,9 +15,6 @@
 
 #endregion
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
-
 namespace HQ.Common
 {
     public static class Constants

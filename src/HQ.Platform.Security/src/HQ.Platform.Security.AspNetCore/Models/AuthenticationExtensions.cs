@@ -130,7 +130,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
             return Task.CompletedTask;
         }
 
-        public static string CreateToken<TUser>(TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PlatformApiOptions api) where TUser : IUserIdProvider
+        public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims, SecurityOptions security, PlatformApiOptions api) where TUser : IUserIdProvider
         {
             var now = DateTimeOffset.Now;
             var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);

@@ -18,16 +18,12 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Extensions.Logging;
 using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Extensions;
-using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
@@ -39,7 +35,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
@@ -60,14 +55,14 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
         private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
         private readonly ISignInService<TUser, TTenant, TApplication, TKey> _signInService;
-        private readonly ILogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
+        private readonly ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
         public TokenController(
             IHttpContextAccessor http,
             ISignInService<TUser, TTenant, TApplication, TKey> signInService,
             IOptionsMonitor<SecurityOptions> securityOptions,
             IOptionsMonitor<PlatformApiOptions> apiOptions,
-            ILogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
+            ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
         {
             _http = http;
             _signInService = signInService;
@@ -82,11 +77,15 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         {
             if (User.Identity == null)
             {
+                _logger.Trace(() => "User is unauthorized");
+
                 return Unauthorized();
             }
 
             if (User.Identity.IsAuthenticated)
             {
+                _logger.Trace(() => "{User} verified token", User.Identity.Name);
+
                 return Ok(User.Claims());
             }
 
@@ -113,9 +112,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             var user = operation.Data;
             var claims = _http.HttpContext.User.Claims;
 
-            var provider = user.ActLike<IUserIdProvider>();
-            var token = AuthenticationExtensions.CreateToken(provider, claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
-
+            var identity = user.ActLike<IUserIdProvider>();
+            var token = identity.CreateToken(claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
+            
             return Ok(new { AccessToken = token });
         }
     }

@@ -23,22 +23,22 @@ namespace HQ.Extensions.Logging
     /// <inheritdoc />
     public interface ISafeLogger : ILogger
     {
-        void Trace(Func<string> message);
-        void Trace(Func<string> message, Exception exception);
+        void Trace(Func<string> message, params object[] args);
+        void Trace(Func<string> message, Exception exception, params object[] args);
 
-        void Debug(Func<string> message);
-        void Debug(Func<string> message, Exception exception);
+        void Debug(Func<string> message, params object[] args);
+        void Debug(Func<string> message, Exception exception, params object[] args);
 
-        void Info(Func<string> message);
-        void Info(Func<string> message, Exception exception);
+        void Info(Func<string> message, params object[] args);
+        void Info(Func<string> message, Exception exception, params object[] args);
 
-        void Warn(Func<string> message);
-        void Warn(Func<string> message, Exception exception);
+        void Warn(Func<string> message, params object[] args);
+        void Warn(Func<string> message, Exception exception, params object[] args);
 
-        void Error(Func<string> message);
-        void Error(Func<string> message, Exception exception);
+        void Error(Func<string> message, params object[] args);
+        void Error(Func<string> message, Exception exception, params object[] args);
 
-        void Critical(Func<string> message);
-        void Critical(Func<string> message, Exception exception);
+        void Critical(Func<string> message, params object[] args);
+        void Critical(Func<string> message, Exception exception, params object[] args);
     }
 }

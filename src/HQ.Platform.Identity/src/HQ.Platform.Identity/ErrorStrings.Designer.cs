@@ -70,7 +70,7 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Application name &apos;{0}&apos; is already taken..
+        ///   Looks up a localized string similar to Application key &apos;{0}&apos; is already taken..
         /// </summary>
         internal static string DuplicateApplicationName {
             get {
@@ -88,7 +88,7 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tenant name &apos;{0}&apos; is already taken..
+        ///   Looks up a localized string similar to Tenant key &apos;{0}&apos; is already taken..
         /// </summary>
         internal static string DuplicateTenantName {
             get {
@@ -97,7 +97,7 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Application name &apos;{0}&apos; is invalid..
+        ///   Looks up a localized string similar to Application key &apos;{0}&apos; is invalid..
         /// </summary>
         internal static string InvalidApplicationName {
             get {
@@ -115,7 +115,7 @@ namespace HQ.Platform.Identity {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tenant name &apos;{0}&apos; is invalid..
+        ///   Looks up a localized string similar to Tenant key &apos;{0}&apos; is invalid..
         /// </summary>
         internal static string InvalidTenantName {
             get {

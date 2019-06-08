@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Threading;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
@@ -23,82 +24,89 @@ namespace HQ.Extensions.Logging
     public class SafeLogger : ISafeLogger
     {
         private readonly ILogger _inner;
+        private volatile int _safe;
 
         public SafeLogger(ILogger inner)
         {
             _inner = inner;
         }
 
-        public void Trace(Func<string> message)
+        public void Trace(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Trace))
-                _inner.LogTrace(message());
+            SafeLog(LogLevel.Trace, message, args);
         }
 
-        public void Trace(Func<string> message, Exception exception)
+        public void Trace(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Trace))
-                _inner.LogTrace(exception, message());
+            SafeLog(LogLevel.Trace, message, exception, args);
         }
 
-        public void Debug(Func<string> message)
+        public void Debug(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Debug))
-                _inner.LogDebug(message());
+            SafeLog(LogLevel.Debug, message, args);
         }
 
-        public void Debug(Func<string> message, Exception exception)
+        public void Debug(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Debug))
-                _inner.LogDebug(exception, message());
+            SafeLog(LogLevel.Debug, message, exception, args);
         }
 
-        public void Info(Func<string> message)
+        public void Info(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Information))
-                _inner.LogInformation(message());
+            SafeLog(LogLevel.Information, message, args);
         }
 
-        public void Info(Func<string> message, Exception exception)
+        public void Info(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Information))
-                _inner.LogInformation(exception, message());
+            SafeLog(LogLevel.Information, message, exception, args);
         }
 
-        public void Warn(Func<string> message)
+        public void Warn(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Warning))
-                _inner.LogWarning(message());
+            SafeLog(LogLevel.Warning, message, args);
         }
 
-        public void Warn(Func<string> message, Exception exception)
+        public void Warn(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Warning))
-                _inner.LogWarning(exception, message());
+            SafeLog(LogLevel.Warning, message, exception, args);
         }
 
-        public void Error(Func<string> message)
+        public void Error(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Error))
-                _inner.LogError(message());
+            SafeLog(LogLevel.Error, message, args);
         }
 
-        public void Error(Func<string> message, Exception exception)
+        public void Error(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Error))
-                _inner.LogError(exception, message());
+            SafeLog(LogLevel.Error, message, exception, args);
         }
 
-        public void Critical(Func<string> message)
+        public void Critical(Func<string> message, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Critical))
-                _inner.LogCritical(message());
+            SafeLog(LogLevel.Critical, message, args);
         }
 
-        public void Critical(Func<string> message, Exception exception)
+        public void Critical(Func<string> message, Exception exception, params object[] args)
         {
-            if (_inner.IsEnabled(LogLevel.Critical))
-                _inner.LogCritical(exception, message());
+            SafeLog(LogLevel.Critical, message, exception, args);
+        }
+
+        private void SafeLog(LogLevel logLevel, Func<string> message, Exception exception, params object[] args)
+        {
+            if (!_inner.IsEnabled(logLevel))
+                return;
+
+            Interlocked.Exchange(ref _safe, 1);
+            this.Log(logLevel, exception, message(), args);
+        }
+
+        private void SafeLog(LogLevel logLevel, Func<string> message, params object[] args)
+        {
+            if (!_inner.IsEnabled(logLevel))
+                return;
+
+            Interlocked.Exchange(ref _safe, 1);
+            this.Log(logLevel, message(), args);
         }
 
         #region ILogger
@@ -106,7 +114,10 @@ namespace HQ.Extensions.Logging
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception,
             Func<TState, Exception, string> formatter)
         {
+            if (_safe != 1)
+                throw new InvalidOperationException("Logging operation was called in an unsafe way.");
             _inner.Log(logLevel, eventId, state, exception, formatter);
+            Interlocked.Exchange(ref _safe, 0);
         }
 
         public bool IsEnabled(LogLevel logLevel)
