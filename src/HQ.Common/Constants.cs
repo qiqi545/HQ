@@ -179,12 +179,6 @@ namespace HQ.Common
             public const string Unspecified = Binary;
         }
 
-        public static class Events
-        {
-            public const string HealthCheck = "health.check";
-            public const string MetricsSample = "metrics.sample";
-        }
-
         public static class Tokens
         {
             public const string NoSigningKeySet = "PRIVATE-KEY-REPLACE-ME";

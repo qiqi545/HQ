@@ -21,8 +21,8 @@ namespace HQ.Extensions.Metrics.Reporters.AppInsights
 {
     public class AppInsightsMetricsReporterOptions : FeatureToggle
     {
-        public string HealthCheckEventName { get; set; } = Common.Constants.Events.HealthCheck;
-        public string MetricsSampleEventName { get; set; } = Common.Constants.Events.MetricsSample;
+        public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
+        public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
 
         public bool PublishHealthy { get; set; } = false;
         public bool PublishHealthChecks { get; set; } = true;
