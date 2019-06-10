@@ -1,9 +1,8 @@
 using HQ.Common;
-using HQ.Extensions.Cryptography;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Logging
+namespace HQ.Extensions.Correlation
 {
     public static class Use
     {
@@ -14,7 +13,7 @@ namespace HQ.Extensions.Logging
             app.Use(async (context, next) =>
             {
                 if (!context.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent, out var traceContext))
-                    context.Request.Headers.Add(Constants.HttpHeaders.TraceParent, traceContext = GenerateTraceContext());
+                    context.Request.Headers.Add(Constants.HttpHeaders.TraceParent, traceContext = TraceContext.New().Header);
 
                 context.TraceIdentifier = traceContext;
 
@@ -25,13 +24,6 @@ namespace HQ.Extensions.Logging
             });
 
             return app;
-        }
-
-        private static string GenerateTraceContext()
-        {
-            var traceId = Crypto.GetRandomString(16 * 2);//.ToLowerInvariant();
-            var parentId = Crypto.GetRandomString(8 * 2).ToLowerInvariant();
-            return $"00-{traceId}-{parentId}-00";
         }
     }
 }
