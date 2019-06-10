@@ -21,45 +21,40 @@ using HQ.Extensions.Logging;
 using HQ.Test.Sdk.Assertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.TraceSource;
 
 namespace HQ.Test.Sdk
 {
     public abstract class ServiceUnderTest : TestScope, IDisposable
     {
-        private ILogger<ServiceUnderTest> _logger;
+        protected ILogger<ServiceUnderTest> Logger;
 
         public IAssert Assert => Should.Assert;
 
-        protected ServiceUnderTest()
+        protected ServiceUnderTest() : this(null)
         {
             InitializeServiceProvider();
 
-            TryInstallLogging(ServiceProvider);
+            TryInstallLogging();
 
-            Trace.Listeners.Add(new ActionTraceListener(message =>
-            {
-                var outputProvider = AmbientContext.OutputProvider;
-                if (outputProvider?.IsAvailable != true)
-                    return;
-                outputProvider.WriteLine(message);
-            }));
+            TryInstallTracing();
         }
 
         protected ServiceUnderTest(IServiceProvider serviceProvider)
         {
-            ServiceProvider = serviceProvider;
+            if(serviceProvider == null)
+                InitializeServiceProvider();
+            else
+                ServiceProvider = serviceProvider;
 
-            TryInstallLogging(serviceProvider);
+            TryInstallLogging();
 
-            Trace.Listeners.Add(new ActionTraceListener(message =>
-            {
-                var outputProvider = AmbientContext.OutputProvider;
-                if (outputProvider?.IsAvailable != true)
-                    return;
-                outputProvider.WriteLine(message);
-            }));
+            TryInstallTracing();
         }
 
+        public virtual void ConfigureServices(IServiceCollection services) { }
+
+        
         private void InitializeServiceProvider()
         {
             var services = new ServiceCollection();
@@ -67,32 +62,34 @@ namespace HQ.Test.Sdk
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        public virtual void ConfigureServices(IServiceCollection services) { }
-
-        public void Dispose()
+        protected void TryInstallLogging()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+            if (ServiceProvider?.GetService<ILoggerFactory>() != null)
+                return;
 
-        private void TryInstallLogging(IServiceProvider serviceProvider)
-        {
-            var loggerFactory = serviceProvider?.GetService<ILoggerFactory>();
+            var loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
             loggerFactory = loggerFactory ?? DefaultLoggerFactory;
             loggerFactory.AddProvider(CreateLoggerProvider());
-            _logger = loggerFactory.CreateLogger<ServiceUnderTest>();
+            Logger = loggerFactory.CreateLogger<ServiceUnderTest>();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void TryInstallTracing()
         {
-            if (disposing)
+            if (ServiceProvider?.GetService<TraceSourceLoggerProvider>() != null)
+                return;
+
+            Trace.Listeners.Add(new ActionTraceListener(message =>
             {
-            }
+                var outputProvider = AmbientContext.OutputProvider;
+                if (outputProvider?.IsAvailable != true)
+                    return;
+                outputProvider.WriteLine(message);
+            }));
         }
 
         public override ILogger GetLogger()
         {
-            return ServiceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? _logger;
+            return ServiceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? Logger;
         }
 
         protected static IServiceProvider CreateServiceProvider(IServiceFixture fixture)
@@ -101,6 +98,19 @@ namespace HQ.Test.Sdk
             fixture.ConfigureServices(services);
             fixture.ServiceProvider = services.BuildServiceProvider();
             return fixture.ServiceProvider;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+            }
         }
     }
 }

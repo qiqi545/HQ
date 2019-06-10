@@ -15,44 +15,24 @@
 
 #endregion
 
-using System;
-using System.Diagnostics;
 using System.Net.Http;
-using HQ.Extensions.Logging;
-using HQ.Test.Sdk.Assertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.TraceSource;
 
 namespace HQ.Test.Sdk
 {
-    public abstract class SystemUnderTest<T> : TestScope, ILogger<T>, IDisposable where T : class
+    public abstract class SystemUnderTest<T> : ServiceUnderTest, ILogger<T> where T : class
     {
         private readonly WebHostFixture<T> _systemUnderTest;
-        private ILogger<SystemUnderTest<T>> _logger;
-
-        public IAssert Assert => Should.Assert;
-
+        
         protected SystemUnderTest()
         {
             _systemUnderTest = new WebHostFixture<T>(this);
         }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public virtual void Configuration(IConfiguration config)
-        {
-        }
-
-        public virtual void ConfigureServices(IServiceCollection services)
-        {
-        }
+        
+        public virtual void Configuration(IConfiguration config) { }
 
         public virtual void Configure(IApplicationBuilder app)
         {
@@ -68,38 +48,15 @@ namespace HQ.Test.Sdk
             return _systemUnderTest.CreateClient();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
                 _systemUnderTest?.Dispose();
         }
-
-        private void TryInstallLogging()
-        {
-            var loggerFactory = ServiceProvider.GetService<ILoggerFactory>();
-            loggerFactory = loggerFactory ?? DefaultLoggerFactory;
-            loggerFactory.AddProvider(CreateLoggerProvider());
-
-            _logger = loggerFactory.CreateLogger<SystemUnderTest<T>>();
-        }
-
-        private void TryInstallTracing()
-        {
-            if (ServiceProvider.GetService<TraceSourceLoggerProvider>() != null)
-                return;
-
-            Trace.Listeners.Add(new ActionTraceListener(message =>
-            {
-                var outputProvider = AmbientContext.OutputProvider;
-                if (outputProvider?.IsAvailable != true)
-                    return;
-                outputProvider.WriteLine(message);
-            }));
-        }
-
+        
         public override ILogger GetLogger()
         {
-            return ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? _logger;
+            return ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? Logger;
         }
     }
 }
