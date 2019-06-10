@@ -38,7 +38,7 @@ namespace HQ.Test.Sdk
         internal const string DefaultAppSettingsFileExtension = ".json";
         internal const string DefaultAppSettingsFilePath = DefaultAppSettingsFileName + DefaultAppSettingsFileExtension;
 
-        internal readonly TestServer server;
+        internal readonly TestServer Server;
 
         public WebHostFixture(SystemUnderTest<T> systemUnderTest)
         {
@@ -48,17 +48,17 @@ namespace HQ.Test.Sdk
 
             var b = Create(config, configureServices, configure);
 
-            server = new TestServer(b);
+            Server = new TestServer(b);
         }
 
         public void Dispose()
         {
-            server?.Dispose();
+            Server?.Dispose();
         }
 
         public HttpClient CreateClient()
         {
-            return server.CreateClient();
+            return Server.CreateClient();
         }
 
         private static void ConfigureAppConfiguration(IHostingEnvironment env, TestSettings testSettings,
