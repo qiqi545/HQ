@@ -211,6 +211,11 @@ namespace HQ.Platform.Operations
             return app.WriteResultAsJson(context, OperationsMethods.ServicesReport(context.RequestServices));
         }
 
+        public static Task GetHostedServicesDebugHandler(HttpContext context, IApplicationBuilder app)
+        {
+            return app.WriteResultAsJson(context, OperationsMethods.HostedServicesReport(context.RequestServices));
+        }
+
         public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
         {
             return app.WriteResultAsJson(context, OperationsMethods.OptionsReport(app.ApplicationServices));

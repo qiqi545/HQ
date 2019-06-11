@@ -146,8 +146,12 @@ namespace HQ.Common
             ///     See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
             /// </summary>
             public const string Prefer = "Prefer";
-
             public const string PreferenceApplied = "Preference-Applied";
+
+            public const string RateLimitLimit = "X-Rate-Limit-Limit";
+            public const string RateLimitRemaining = "X-Rate-Limit-Remaining";
+            public const string RateLimitReset = "X-Rate-Limit-Reset";
+            public const string RetryAfter = "Retry-After";
         }
 
         public static class HttpVerbs

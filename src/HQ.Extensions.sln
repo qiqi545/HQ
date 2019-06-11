@@ -104,6 +104,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk", "HQ.Test.Sdk\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk.Xunit", "HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj", "{A438ACA1-C044-4F73-AEF6-6DEEBE047B7C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.Scheduling", "HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj", "{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -351,6 +353,12 @@ Global
 		{A438ACA1-C044-4F73-AEF6-6DEEBE047B7C}.Package|Any CPU.Build.0 = Package|Any CPU
 		{A438ACA1-C044-4F73-AEF6-6DEEBE047B7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A438ACA1-C044-4F73-AEF6-6DEEBE047B7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -396,6 +404,7 @@ Global
 		{BAD2C5E8-D574-42DC-8E9B-A1B3F482000F} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
 		{DE8CFCCD-1AB7-4964-B258-50F13C40622D} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
 		{A438ACA1-C044-4F73-AEF6-6DEEBE047B7C} = {75D03906-D54F-4FDD-953C-46B4B1803D07}
+		{92F3CB2F-B915-4495-B74A-D1207C0C3A8E} = {0B53FC5B-9F62-4F9D-BB04-6EDD67DB264D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3021A61F-9383-4C4A-B162-D1C4C186AB90}

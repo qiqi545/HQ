@@ -114,6 +114,20 @@ namespace HQ.Platform.Operations
                 folder.item.Add(MapFrom(descriptor));
             }
 
+            if (options.EnableHostedServicesDebugging)
+            {
+                var descriptor = new EndpointDescriptor
+                {
+                    Auth = auth,
+                    Name = "Hosted Services Diagnostics",
+                    Description = "Used to introspect services managed by the underlying host.",
+                    Method = HttpMethod.Get,
+                    Url = $"{baseUri}/{rootPath + options.HostedServicesDebuggingPath}",
+                    Version = versionString
+                };
+                folder.item.Add(MapFrom(descriptor));
+            }
+
             if (options.EnableMetricsEndpoint)
             {
                 var descriptor = new EndpointDescriptor

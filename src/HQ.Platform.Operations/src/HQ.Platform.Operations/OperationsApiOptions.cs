@@ -36,6 +36,9 @@ namespace HQ.Platform.Operations
         public bool EnableServicesDebugging { get; set; } = true;
         public string ServicesDebuggingPath { get; set; } = "/services";
 
+        public bool EnableHostedServicesDebugging { get; set; } = true;
+        public string HostedServicesDebuggingPath { get; set; } = "/background";
+
         public bool EnableFeatureDebugging { get; set; } = true;
         public string FeatureDebuggingPath { get; set; } = "/features";
 
@@ -51,6 +54,7 @@ namespace HQ.Platform.Operations
 
         public bool EnableMetricsEndpoint { get; set; } = true;
         public string MetricsEndpointPath { get; set; } = "/metrics";
+
         public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
     }
 }
