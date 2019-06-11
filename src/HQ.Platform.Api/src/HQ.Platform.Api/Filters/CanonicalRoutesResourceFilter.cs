@@ -143,7 +143,7 @@ namespace HQ.Platform.Api.Filters
                     }
                 }
 
-                redirectToUrl = sb.ToString();
+                redirectToUrl = canonical ? null : sb.ToString();
             }
             finally
             {

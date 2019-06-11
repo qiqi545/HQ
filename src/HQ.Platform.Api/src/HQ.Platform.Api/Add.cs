@@ -52,7 +52,12 @@ namespace HQ.Platform.Api
             services.AddGzipCompression();
             
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
-            services.AddSingleton<IConfigureOptions<RouteOptions>, PlatformApiRouteOptions>();
+            services.AddOptions<RouteOptions>().Configure<IOptions<PlatformApiOptions>>((o, x) =>
+            {
+                o.AppendTrailingSlash = x.Value.CanonicalRoutes.AppendTrailingSlash;
+                o.LowercaseUrls = x.Value.CanonicalRoutes.LowercaseUrls;
+                o.LowercaseQueryStrings = x.Value.CanonicalRoutes.LowercaseQueryStrings;
+            });
             services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 

@@ -17,6 +17,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
 {
@@ -27,6 +28,12 @@ namespace HQ.Extensions.Logging
             services.TryAddScoped<ISafeLogger, SafeLogger>();
             services.TryAddScoped(typeof(ISafeLogger<>), typeof(SafeLogger<>));
             return services;
+        }
+
+        public static ILoggingBuilder AddSafeLogging(this ILoggingBuilder builder)
+        {
+            builder.Services.AddSafeLogging();
+            return builder;
         }
     }
 }

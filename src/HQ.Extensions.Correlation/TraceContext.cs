@@ -22,7 +22,7 @@ namespace HQ.Extensions.Correlation
 {
     public struct TraceContext
     {
-        public byte Version { get; set; }
+        public byte Version => 0;
         public byte[] TraceId { get; set; }
         public byte[] ParentId { get; set; }
         public TraceFlags Flags { get; set; }
@@ -33,7 +33,6 @@ namespace HQ.Extensions.Correlation
         {
             var context = new TraceContext
             {
-                Version = 0,
                 TraceId = Crypto.GetRandomBytes(16),
                 ParentId = Crypto.GetRandomBytes(8),
                 Flags = TraceFlags.None
@@ -41,6 +40,6 @@ namespace HQ.Extensions.Correlation
             return context;
         }
 
-        public StringValues Header => $"{Version:x2}-{Crypto.BinToHex(TraceId)}-{Crypto.BinToHex(ParentId)}-{Flags:x2}";
+        public StringValues Header => $"00-{Crypto.BinToHex(TraceId)}-{Crypto.BinToHex(ParentId)}-{Flags:x}";
     }
 }

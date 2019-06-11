@@ -24,13 +24,19 @@ namespace HQ.Common.AspNetCore.Mvc
     {
         public static IMvcBuilder AddDynamicMvc(this IServiceCollection services, Action<MvcOptions> setupAction = null)
         {
+            return services.AddDynamicMvc(setupAction, Assembly.GetCallingAssembly());
+        }
+
+        public static IMvcBuilder AddDynamicMvc(this IServiceCollection services, Action<MvcOptions> setupAction,
+            params Assembly[] controllerAssemblies)
+        {
+            var mvc = services.AddMvc(o => { setupAction?.Invoke(o); });
+
             // See: https://github.com/aspnet/Mvc/issues/5992
-            var controllerAssembly = Assembly.GetCallingAssembly();
+            foreach (var controllerAssembly in controllerAssemblies)
+                mvc.AddApplicationPart(controllerAssembly);
 
-            var mvc = services.AddMvc(o => { setupAction?.Invoke(o); })
-                .AddApplicationPart(controllerAssembly)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            mvc.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             return mvc;
         }
     }
