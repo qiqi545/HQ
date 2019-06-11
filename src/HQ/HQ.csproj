@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -36,8 +36,9 @@
     <Content Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Exclude="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\**\*" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\**\*.cs" Exclude="..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\obj\**\*" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Exclude="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**\*" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Correlation\**\*.cs" Exclude="..\HQ.Extensions.Correlation\obj\**\*" Link="Extensions.Correlation\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Extensions.Deployment\src\HQ.Extensions.Deployment\**\*.cs" Exclude="..\HQ.Extensions.Deployment\src\HQ.Extensions.Deployment\obj\**\*" Link="Extensions.Deployment\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Deployment\**\*.cs" Exclude="..\HQ.Extensions.Deployment\obj\**\*" Link="Extensions.Deployment\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -88,6 +89,7 @@
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
   </ItemGroup>
 
@@ -107,6 +109,11 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
     <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
+  </ItemGroup>
+
+  <!-- Azure -->
+  <ItemGroup>
+    <Content Include="..\HQ.Extensions.Deployment.Azure\**\*.cs" Exclude="..\HQ.Extensions.Deployment.Azure\obj\**\*" Link="Extensions.Deployment.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
