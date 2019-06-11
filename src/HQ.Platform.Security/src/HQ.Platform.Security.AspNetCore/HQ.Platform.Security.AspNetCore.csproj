@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
     <ProjectReference Include="..\..\..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>

@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Common;
+using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
@@ -32,12 +33,12 @@ namespace HQ.Platform.Security.AspNetCore
 {
     public static class Add
     {
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
         {
-            return AddSecurityPolicies(services, config.Bind);
+            return AddSecurityPolicies(services, logger, config.Bind);
         }
 
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, ISafeLogger logger = null, 
             Action<SecurityOptions> configureSecurityAction = null)
         {
             Bootstrap.EnsureInitialized();
@@ -51,6 +52,8 @@ namespace HQ.Platform.Security.AspNetCore
             var cors = options.Cors;
             if (cors.Enabled)
             {
+                logger?.Trace(()=> "CORS enabled.");
+
                 services.AddCors(o =>
                 {
                     o.AddDefaultPolicy(builder =>
@@ -77,6 +80,8 @@ namespace HQ.Platform.Security.AspNetCore
             
             if (options.Tokens.Enabled || options.Cookies.Enabled)
             {
+                logger?.Trace(() => "Authentication enabled.");
+
                 services.AddAuthentication(options);
             }
 
@@ -88,6 +93,8 @@ namespace HQ.Platform.Security.AspNetCore
 
                 if (options.SuperUser.Enabled)
                 {
+                    logger?.Trace(() => "SuperUser enabled.");
+
                     x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
                         builder => { builder.RequireRoleExtended(services, options, ClaimValues.SuperUser); });
                 }
@@ -95,6 +102,8 @@ namespace HQ.Platform.Security.AspNetCore
 
             if (options.Https.Enabled)
             {
+                logger?.Trace(() => "HTTPS enabled.");
+
                 services.AddHttpsRedirection(o =>
                 {
                     o.HttpsPort = null;
@@ -103,6 +112,8 @@ namespace HQ.Platform.Security.AspNetCore
 
                 if (options.Https.Hsts.Enabled)
                 {
+                    logger?.Trace(() => "HSTS enabled.");
+
                     services.AddHsts(o =>
                     {
                         o.MaxAge = options.Https.Hsts.HstsMaxAge;
