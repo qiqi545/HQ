@@ -22,6 +22,12 @@ namespace HQ.Platform.Operations
 {
     internal static class OperationsReports
     {
+        public class HostedServicesReport
+        {
+            public List<string> Services { get; set; } = new List<string>();
+        }
+
+
         public class ServicesReport
         {
             public HashSet<string> MissingRegistrations { get; set; }

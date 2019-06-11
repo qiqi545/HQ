@@ -103,6 +103,15 @@ namespace HQ.Platform.Operations
                 }
 
                 if (options.Value != null &&
+                    options.Value.EnableHostedServicesDebugging &&
+                    !string.IsNullOrWhiteSpace(options.Value.HostedServicesDebuggingPath) &&
+                    context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.HostedServicesDebuggingPath))
+                {
+                    await OperationsHandlers.GetHostedServicesDebugHandler(context, app);
+                    return;
+                }
+
+                if (options.Value != null &&
                     options.Value.EnableMetricsEndpoint &&
                     !string.IsNullOrWhiteSpace(options.Value.MetricsEndpointPath) &&
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.MetricsEndpointPath))
@@ -145,6 +154,16 @@ namespace HQ.Platform.Operations
                     context.Request.Path.Value.StartsWith(options.Value.RootPath + options.Value.CacheDebuggingPath))
                 {
                     await OperationsHandlers.GetCacheDebugHandler(context, app);
+                    return;
+                }
+
+                if (options.Value != null &&
+                    options.Value.EnableEnvironmentEndpoint &&
+                    !string.IsNullOrWhiteSpace(options.Value.EnvironmentEndpointPath) &&
+                    context.Request.Path.Value.StartsWith(
+                        options.Value.RootPath + options.Value.EnvironmentEndpointPath))
+                {
+                    await OperationsHandlers.GetEnvironmentHandler(app, context);
                     return;
                 }
 

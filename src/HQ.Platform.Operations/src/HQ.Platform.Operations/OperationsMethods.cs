@@ -23,6 +23,7 @@ using System.Text.RegularExpressions;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations
@@ -129,6 +130,19 @@ namespace HQ.Platform.Operations
                 }).ToList()
             };
 
+            return report;
+        }
+
+        public static OperationsReports.HostedServicesReport HostedServicesReport(IServiceProvider serviceProvider)
+        {
+            var report = new OperationsReports.HostedServicesReport();
+            var hostedServices = serviceProvider.GetServices<IHostedService>();
+
+            foreach (var hostedService in hostedServices)
+            {
+                report.Services.Add(hostedService.GetType().Name);
+            }
+            
             return report;
         }
     }
