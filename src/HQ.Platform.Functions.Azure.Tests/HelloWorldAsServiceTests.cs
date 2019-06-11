@@ -11,7 +11,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Functions.Azure.Tests
 {
-    public class HelloWorldTests : ServiceUnderTest
+    public class HelloWorldAsServiceTests : ServiceUnderTest
     {
         [Test]
         public async Task With_query_string_and_body()
@@ -19,8 +19,9 @@ namespace HQ.Platform.Functions.Azure.Tests
             var query = new Dictionary<string, StringValues>();
             query.TryAdd("name", "HQ");
             const string body = "";
-            
-            var result = await HelloWorld.Run(CreateHttpRequest(query, body), this);
+
+            var functions = new HelloWorld();
+            var result = await functions.Run(CreateHttpRequest(query, body), this);
             var resultObject = (OkObjectResult)result;
             Assert.Equal("Hello, HQ", resultObject.Value);
         }
@@ -31,7 +32,8 @@ namespace HQ.Platform.Functions.Azure.Tests
             var query = new Dictionary<string, StringValues>();
             const string body = "{\"name\":\"HQ\"}";
 
-            var result = await HelloWorld.Run(CreateHttpRequest(query, body), this);
+            var functions = new HelloWorld();
+            var result = await functions.Run(CreateHttpRequest(query, body), this);
             var resultObject = (OkObjectResult)result;
             Assert.Equal("Hello, HQ", resultObject.Value);
         }
@@ -42,7 +44,8 @@ namespace HQ.Platform.Functions.Azure.Tests
             var query = new Dictionary<string, StringValues>();
             const string body = "";
 
-            var result = await HelloWorld.Run(CreateHttpRequest(query, body), this);
+            var functions = new HelloWorld();
+            var result = await functions.Run(CreateHttpRequest(query, body), this);
             var resultObject = (BadRequestObjectResult)result;
             Assert.Equal("Please pass a name on the query string or in the request body", resultObject.Value);
         }

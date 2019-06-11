@@ -26,10 +26,10 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Functions.Azure
 {
-    public static class HelloWorld
+    public class HelloWorld
     {
         [FunctionName("HelloWorld")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]
             HttpRequest req,
             ILogger log)

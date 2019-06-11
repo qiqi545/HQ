@@ -25,11 +25,11 @@ namespace HQ.Test.Sdk
 {
     public abstract class SystemUnderTest<T> : ServiceUnderTest, ILogger<T> where T : class
     {
-        private readonly WebHostFixture<T> _systemUnderTest;
+        private readonly SystemHostFixture<T> _systemUnderTest;
         
-        protected SystemUnderTest()
+        protected SystemUnderTest(SystemTopology topology = SystemTopology.Web)
         {
-            _systemUnderTest = new WebHostFixture<T>(this);
+            _systemUnderTest = new SystemHostFixture<T>(this, topology);
         }
         
         public virtual void Configuration(IConfiguration config) { }

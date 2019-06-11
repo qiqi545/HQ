@@ -53,7 +53,6 @@ namespace HQ.Test.Sdk
         }
 
         public virtual void ConfigureServices(IServiceCollection services) { }
-
         
         private void InitializeServiceProvider()
         {

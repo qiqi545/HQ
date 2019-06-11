@@ -27,12 +27,15 @@ using HQ.Test.Sdk.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+
 namespace HQ.Test.Sdk
 {
-    public sealed class WebHostFixture<T> : IDisposable where T : class
+    public sealed class SystemHostFixture<T> : IFunctionsHostBuilder, IDisposable where T : class
     {
         internal const string DefaultAppSettingsFileName = "appsettings";
         internal const string DefaultAppSettingsFileExtension = ".json";
@@ -40,15 +43,15 @@ namespace HQ.Test.Sdk
 
         internal readonly TestServer Server;
 
-        public WebHostFixture(SystemUnderTest<T> systemUnderTest)
+        public IServiceCollection Services { get; private set; }
+
+        public SystemHostFixture(SystemUnderTest<T> systemUnderTest, SystemTopology topology)
         {
             var config = new[] {new Action<IConfiguration>(systemUnderTest.Configuration)};
             var configureServices = new[] {new Action<IServiceCollection>(systemUnderTest.ConfigureServices)};
             var configure = new[] {new Action<IApplicationBuilder>(systemUnderTest.Configure)};
 
-            var b = Create(config, configureServices, configure);
-
-            Server = new TestServer(b);
+            Server = new TestServer(CreateWebHostBuilder(config, configureServices, configure, topology));
         }
 
         public void Dispose()
@@ -106,12 +109,11 @@ namespace HQ.Test.Sdk
             c.AddEnvironmentVariables();
         }
 
-        private static IWebHostBuilder Create
-        (
-            ICollection<Action<IConfiguration>> configuration,
+        private IWebHostBuilder CreateWebHostBuilder
+        (ICollection<Action<IConfiguration>> configuration,
             ICollection<Action<IServiceCollection>> configureServices,
-            ICollection<Action<IApplicationBuilder>> configure
-        )
+            ICollection<Action<IApplicationBuilder>> configure,
+            SystemTopology topology)
         {
             T startup = null;
             IConfiguration config = null;
@@ -150,12 +152,17 @@ namespace HQ.Test.Sdk
                             action(config);
 
                         container.Register(startup);
-                        container.InvokeMethod<T>("ConfigureServices");
+
+                        var methodName = topology == SystemTopology.Web ? "ConfigureServices" : nameof(FunctionsStartup.Configure);
+                        container.InvokeMethod<T>(methodName);
                         foreach (var action in configureServices)
                             action(serviceCollection);
                     }
-                })
-                .Configure(app =>
+                });
+
+            if (topology == SystemTopology.Web)
+            {
+                builder.Configure(app =>
                 {
                     Debug.Assert(services != null);
                     Debug.Assert(config != null);
@@ -180,13 +187,22 @@ namespace HQ.Test.Sdk
                             action(app);
                     }
                 });
+            }
 
-            var applicationKey = builder.GetSetting(WebHostDefaults.ApplicationKey);
-            var assemblyName = applicationKey ?? typeof(T).Assembly.GetName().Name;
-            if (applicationKey != assemblyName)
-                builder.UseSetting(WebHostDefaults.ApplicationKey, assemblyName);
+            UseAssemblyForSetting<T>(builder, WebHostDefaults.ApplicationKey);
+            UseAssemblyForSetting<T>(builder, WebHostDefaults.StartupAssemblyKey);
+
+            Services = services;
 
             return builder;
+        }
+
+        private static void UseAssemblyForSetting<TStartup>(IWebHostBuilder builder, string key)
+        {
+            var applicationKey = builder.GetSetting(key);
+            var assemblyName = applicationKey ?? typeof(TStartup).Assembly.GetName().Name;
+            if (applicationKey != assemblyName)
+                builder.UseSetting(key, assemblyName);
         }
 
         private static TestSettings BuildTestSettings(string contentRootPath, string environmentName)
