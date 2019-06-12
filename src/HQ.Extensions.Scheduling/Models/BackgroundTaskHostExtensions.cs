@@ -34,6 +34,7 @@ namespace HQ.Extensions.Scheduling.Models
         ///     default constructor.
         /// </typeparam>
         /// <param name="host"></param>
+        /// <param name="task"></param>
         /// <param name="options">
         ///     Allows configuring task-specific features. Note that this is NOT invoked at invocation time
         ///     lazily, but at scheduling time (i.e. immediately).
@@ -76,7 +77,7 @@ namespace HQ.Extensions.Scheduling.Models
 
         private static bool QueueForExecution(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options, object instance = null)
         {
-            task = NewTask(host.Options, type, instance);
+            task = NewTask(host.Options, host.Serializer, type, instance);
 
             options?.Invoke(task); // <-- at this stage, task should have a RunAt set by the user or it will be default
 
@@ -104,19 +105,19 @@ namespace HQ.Extensions.Scheduling.Models
                 return host.AttemptTask(task, false);
             }
 
-            host.Options.Store?.Save(task);
+            host.Store?.Save(task);
             return true;
         }
 
-        private static BackgroundTask NewTask(BackgroundTaskOptions options, Type type, object instance = null)
+        private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type, object instance = null)
         {
             var handlerInfo = new HandlerInfo(type.Namespace, type.Name);
             if (instance != null)
             {
-                handlerInfo.Instance = options.HandlerSerializer.Serialize(instance);
+                handlerInfo.Instance = serializer?.Serialize(instance);
             }
 
-            var task = new BackgroundTask { Handler = options.HandlerSerializer.Serialize(handlerInfo) };
+            var task = new BackgroundTask { Handler = serializer?.Serialize(handlerInfo) };
             options.ProvisionTask(task);
             return task;
         }

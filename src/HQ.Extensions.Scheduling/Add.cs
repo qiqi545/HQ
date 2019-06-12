@@ -36,7 +36,9 @@ namespace HQ.Extensions.Scheduling
         {
             if(configureAction != null)
                 services.Configure(configureAction);
-            services.TryAddSingleton<ITypeResolver, ReflectionTypeResolver>();
+            services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
+            services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
+            services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
             services.TryAddSingleton<BackgroundTaskHost>();
             services.TryAddSingleton<IHostedService, BackgroundTaskService>();
             return services;

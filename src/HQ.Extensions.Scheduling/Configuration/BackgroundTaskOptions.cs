@@ -28,8 +28,6 @@ namespace HQ.Extensions.Scheduling.Configuration
         {
             // System:
             DelayTasks = true;
-            TypeResolver = new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies());
-            Store = new InMemoryBackgroundTaskStore();
             SleepInterval = TimeSpan.FromSeconds(60);
             CleanupInterval = TimeSpan.FromMinutes(5);
             Concurrency = 0;
@@ -37,7 +35,6 @@ namespace HQ.Extensions.Scheduling.Configuration
             MaximumAttempts = 25;
             MaximumRuntime = TimeSpan.FromHours(4);
             IntervalFunction = i => TimeSpan.FromSeconds(5 + Math.Pow(i, 4));
-            HandlerSerializer = new JsonHandlerSerializer();
 
             // Per-Task:
             DeleteOnFailure = false;
@@ -46,24 +43,9 @@ namespace HQ.Extensions.Scheduling.Configuration
             Priority = 0;
         }
 
-        [IgnoreDataMember]
-        public IHandlerSerializer HandlerSerializer { get; set; }
-
-        /// <summary>
-        ///     The backend used to find handler type info; default is built-in reflection.
-        /// </summary>
-        [IgnoreDataMember]
-        public ITypeResolver TypeResolver { get; set; }
-
-        /// <summary>
-        ///     The backend used to coordinate scheduling; default is in-memory.
-        /// </summary>
-        [IgnoreDataMember]
-        public IBackgroundTaskStore Store { get; set; }
-
         /// <summary>
         ///     The function responsible for calculating the next attempt date after a tasks fails;
-        ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential backoff)
+        ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential back-off)
         /// </summary>
         [IgnoreDataMember]
         public Func<int, TimeSpan> IntervalFunction { get; set; }

@@ -15,10 +15,15 @@
 
 #endregion
 
+using Newtonsoft.Json;
+
 namespace HQ.Extensions.Scheduling.Models
 {
-    public interface IHandlerSerializer
+    public class JsonBackgroundTaskSerializer : IBackgroundTaskSerializer
     {
-        string Serialize(object instance);
+        public string Serialize(object instance)
+        {
+            return JsonConvert.SerializeObject(instance);
+        }
     }
 }

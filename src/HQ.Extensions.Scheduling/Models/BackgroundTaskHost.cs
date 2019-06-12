@@ -37,29 +37,33 @@ namespace HQ.Extensions.Scheduling.Models
     {
         private const string NoHandlerState = "{}";
 
-        private static readonly IDictionary<HandlerInfo, Handler> HandlerCache =
+        private static readonly IDictionary<HandlerInfo, Handler> HandlerCache = 
             new ConcurrentDictionary<HandlerInfo, Handler>();
 
         private static readonly IDictionary<Type, HandlerHooks> MethodCache =
             new ConcurrentDictionary<Type, HandlerHooks>();
 
         private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
-        private readonly ISafeLogger<BackgroundTaskHost> _logger;
         private readonly ConcurrentDictionary<Handler, HandlerHooks> _pending;
-
         private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
-        private readonly IOptionsMonitor<BackgroundTaskOptions> _settings;
+        
         private readonly IServerTimestampService _timestamps;
-        private PushQueue<IEnumerable<BackgroundTask>> _background;
+        private readonly ITypeResolver _typeResolver;
 
         private CancellationTokenSource _cancel;
-        private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
         private QueuedTaskScheduler _scheduler;
+        private PushQueue<IEnumerable<BackgroundTask>> _background;
+        private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
 
-        public BackgroundTaskHost(IServerTimestampService timestamps, IOptionsMonitor<BackgroundTaskOptions> settings,
-            ISafeLogger<BackgroundTaskHost> logger)
+        private readonly ISafeLogger<BackgroundTaskHost> _logger;
+        private readonly IOptionsMonitor<BackgroundTaskOptions> _settings;
+
+        public BackgroundTaskHost(IServerTimestampService timestamps, IBackgroundTaskStore store, IBackgroundTaskSerializer serializer, ITypeResolver typeResolver, IOptionsMonitor<BackgroundTaskOptions> settings, ISafeLogger<BackgroundTaskHost> logger)
         {
             _timestamps = timestamps;
+            Store = store;
+            Serializer = serializer;
+            _typeResolver = typeResolver;
             _settings = settings;
             _logger = logger;
             settings.OnChange(OnSettingsChanged);
@@ -73,13 +77,23 @@ namespace HQ.Extensions.Scheduling.Models
             _background = new PushQueue<IEnumerable<BackgroundTask>>();
             _background.Attach(WithPendingTasks);
             _background.AttachBacklog(WithOverflowTasks);
-            _background.AttachUndeliverable(x => WithFailedTasks(x));
+            _background.AttachUndeliverable(WithFailedTasks);
 
             // maintenance thread
             _maintenance = new PushQueue<IEnumerable<BackgroundTask>>();
             _maintenance.Attach(WithHangingTasks);
             _maintenance.AttachBacklog(WithHangingTasks);
-            _maintenance.AttachUndeliverable(x => WithFailedTasks(x));
+            _maintenance.AttachUndeliverable(WithFailedTasks);
+        }
+
+        public IBackgroundTaskStore Store
+        {
+            get;
+        }
+
+        public IBackgroundTaskSerializer Serializer
+        {
+            get;
         }
 
         public BackgroundTaskOptions Options
@@ -91,8 +105,6 @@ namespace HQ.Extensions.Scheduling.Models
                 var @readonly = new BackgroundTaskOptions
                 {
                     DelayTasks = settings.DelayTasks,
-                    TypeResolver = settings.TypeResolver,
-                    Store = settings.Store,
                     Concurrency = settings.Concurrency,
                     SleepInterval = settings.SleepInterval,
                     IntervalFunction = settings.IntervalFunction,
@@ -124,12 +136,12 @@ namespace HQ.Extensions.Scheduling.Models
 
         private IEnumerable<BackgroundTask> EnqueueTasks()
         {
-            return _settings.CurrentValue.Store.GetAndLockNextAvailable(_settings.CurrentValue.ReadAhead);
+            return Store.GetAndLockNextAvailable(_settings.CurrentValue.ReadAhead);
         }
 
         private IEnumerable<BackgroundTask> HangingTasks()
         {
-            return _settings.CurrentValue.Store.GetHangingTasks();
+            return Store.GetHangingTasks();
         }
 
         public void Start(bool immediate = false)
@@ -202,7 +214,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
-                        _settings.CurrentValue.Store.Delete(task);
+                        Store.Delete(task);
                     }
                     else
                     {
@@ -214,7 +226,7 @@ namespace HQ.Extensions.Scheduling.Models
                     task.RunAt += _settings.CurrentValue.IntervalFunction(task.Attempts);
                 }
 
-                _settings.CurrentValue.Store.Save(task);
+                Store.Save(task);
             }
 
             return true;
@@ -296,7 +308,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
-                        _settings.CurrentValue.Store.Delete(task);
+                        Store.Delete(task);
                         deleted = true;
                     }
 
@@ -307,7 +319,7 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 if (task.DeleteOnSuccess.HasValue && task.DeleteOnSuccess.Value)
                 {
-                    _settings.CurrentValue.Store.Delete(task);
+                    Store.Delete(task);
                     deleted = true;
                 }
 
@@ -344,7 +356,7 @@ namespace HQ.Extensions.Scheduling.Models
                         Tags = task.Tags
                     };
 
-                    _settings.CurrentValue.Store.Save(clone);
+                    Store.Save(clone);
                 }
             }
 
@@ -356,7 +368,7 @@ namespace HQ.Extensions.Scheduling.Models
             // unlock for other workers
             task.LockedAt = null;
             task.LockedBy = null;
-            _settings.CurrentValue.Store.Save(task);
+            Store.Save(task);
         }
 
         private static bool JobWillFail(BackgroundTask task)
@@ -435,7 +447,7 @@ namespace HQ.Extensions.Scheduling.Models
             if (!HandlerCache.TryGetValue(handlerInfo, out var handler))
             {
                 var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
-                var type = _settings.CurrentValue.TypeResolver.FindByName(typeName);
+                var type = _typeResolver.FindByName(typeName);
                 if (type != null)
                 {
                     object instance;
