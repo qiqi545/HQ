@@ -47,31 +47,42 @@ namespace HQ.Extensions.Scheduling.Models
         ///     depending on configuration. If `false`, it either failed to schedule or failed during execution, depending on
         ///     configuration.
         /// </returns>
-        public static bool ScheduleAsync<T>(this BackgroundTaskHost host, Action<BackgroundTask> options = null,
-            Action<T> configure = null) where T : class, new()
+        public static bool TryScheduleTask<T>(this BackgroundTaskHost host, out BackgroundTask task, Action<BackgroundTask> options = null, Action<T> configure = null) where T : class, new()
         {
             if (configure == null)
-            {
-                return QueueForExecution<T>(host, options);
-            }
+                return host.QueueForExecution<T>(out task, options);
 
-            var instance = (T) Instancing.CreateInstance(typeof(T));
+            var instance = Instancing.CreateInstance<T>();
             configure(instance);
 
-            return QueueForExecution<T>(host, options, instance);
+            return host.QueueForExecution<T>(out task, options, instance);
         }
 
-        private static bool QueueForExecution<T>(this BackgroundTaskHost producer, Action<BackgroundTask> options,
-            object instance = null)
+        public static bool TryScheduleTask(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options = null, Action<object> configure = null)
         {
-            var task = NewTask<T>(producer.Settings, instance);
+            if (configure == null)
+                return host.QueueForExecution(type, out task, options);
+
+            var instance = Instancing.CreateInstance(type);
+            configure(instance);
+
+            return host.QueueForExecution(type, out task, options, instance);
+        }
+
+        private static bool QueueForExecution<T>(this BackgroundTaskHost host, out BackgroundTask task, Action<BackgroundTask> options, object instance = null)
+        {
+            return host.QueueForExecution(typeof(T), out task, options, instance);
+        }
+
+        private static bool QueueForExecution(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options, object instance = null)
+        {
+            task = NewTask(host.Options, type, instance);
 
             options?.Invoke(task); // <-- at this stage, task should have a RunAt set by the user or it will be default
 
             if (!string.IsNullOrWhiteSpace(task.Expression) && !task.HasValidExpression)
             {
-                throw new ArgumentException(
-                    "The provided CRON expression is invalid. Have you tried the CronTemplates?");
+                throw new ArgumentException("The provided CRON expression is invalid. Have you tried CronTemplates?");
             }
 
             // Handle when no start time is provided up front
@@ -88,28 +99,26 @@ namespace HQ.Extensions.Scheduling.Models
             // Set the "Start" property only once, equal to the very first RunAt 
             task.Start = task.RunAt;
 
-            if (!producer.Settings.DelayTasks)
+            if (!host.Options.DelayTasks)
             {
-                return producer.AttemptTask(task, false);
+                return host.AttemptTask(task, false);
             }
 
-            producer.Settings.Store?.Save(task);
+            host.Options.Store?.Save(task);
             return true;
         }
 
-        private static BackgroundTask NewTask<T>(BackgroundTaskSettings settings, object instance = null)
+        private static BackgroundTask NewTask(BackgroundTaskOptions options, Type type, object instance = null)
         {
-            var type = typeof(T);
-
             var handlerInfo = new HandlerInfo(type.Namespace, type.Name);
             if (instance != null)
             {
-                handlerInfo.Instance = settings.HandlerSerializer.Serialize(instance);
+                handlerInfo.Instance = options.HandlerSerializer.Serialize(instance);
             }
 
-            var scheduledTask = new BackgroundTask {Handler = settings.HandlerSerializer.Serialize(handlerInfo)};
-            settings.ProvisionTask(scheduledTask);
-            return scheduledTask;
+            var task = new BackgroundTask { Handler = options.HandlerSerializer.Serialize(handlerInfo) };
+            options.ProvisionTask(task);
+            return task;
         }
     }
 }

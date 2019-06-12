@@ -15,31 +15,39 @@
 
 #endregion
 
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
+using System;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
-namespace HQ.Extensions.Scheduling.Models
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
-    public class BackgroundTaskService : IHostedService
+    public class MustHaveQueryParametersAttribute : Attribute, IActionConstraint
     {
-        private readonly BackgroundTaskHost _host;
+        private readonly string[] _matchAll;
 
-        public BackgroundTaskService(BackgroundTaskHost host)
+        public MustHaveQueryParametersAttribute(params string[] matchAll)
         {
-            _host = host;
+            _matchAll = matchAll;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _host.Start();
-            return Task.CompletedTask;
-        }
+        public int Order => 0;
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public bool Accept(ActionConstraintContext context)
         {
-            _host.Stop(cancellationToken);
-            return Task.CompletedTask;
+            var query = context.RouteContext.HttpContext.Request.Query;
+            if (query.Count != _matchAll.Length)
+            {
+                return false;
+            }
+
+            foreach (var key in _matchAll)
+            {
+                if (!query.ContainsKey(key))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

@@ -16,18 +16,20 @@
 #endregion
 
 using System;
+using System.Runtime.Serialization;
+using HQ.Common;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Configuration
 {
-    public class BackgroundTaskSettings
+    public class BackgroundTaskOptions : FeatureToggle
     {
-        public BackgroundTaskSettings()
+        public BackgroundTaskOptions()
         {
             // System:
             DelayTasks = true;
             TypeResolver = new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies());
-            Store = new InMemoryScheduleStore();
+            Store = new InMemoryBackgroundTaskStore();
             SleepInterval = TimeSpan.FromSeconds(60);
             CleanupInterval = TimeSpan.FromMinutes(5);
             Concurrency = 0;
@@ -44,22 +46,32 @@ namespace HQ.Extensions.Scheduling.Configuration
             Priority = 0;
         }
 
+        [IgnoreDataMember]
         public IHandlerSerializer HandlerSerializer { get; set; }
-
-        /// <summary>
-        ///     Whether or not tasks are delayed or executed immediately; default is true
-        /// </summary>
-        public bool DelayTasks { get; set; }
 
         /// <summary>
         ///     The backend used to find handler type info; default is built-in reflection.
         /// </summary>
+        [IgnoreDataMember]
         public ITypeResolver TypeResolver { get; set; }
 
         /// <summary>
         ///     The backend used to coordinate scheduling; default is in-memory.
         /// </summary>
-        public IScheduleStore Store { get; set; }
+        [IgnoreDataMember]
+        public IBackgroundTaskStore Store { get; set; }
+
+        /// <summary>
+        ///     The function responsible for calculating the next attempt date after a tasks fails;
+        ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential backoff)
+        /// </summary>
+        [IgnoreDataMember]
+        public Func<int, TimeSpan> IntervalFunction { get; set; }
+
+        /// <summary>
+        ///     Whether or not tasks are delayed or executed immediately; default is true
+        /// </summary>
+        public bool DelayTasks { get; set; }
 
         /// <summary>
         ///     The time to delay before checking for available tasks in the backing store. Default is 60 seconds.
@@ -86,12 +98,6 @@ namespace HQ.Extensions.Scheduling.Configuration
         ///     The maximum number of attempts made before failing a task permanently; default is 25.
         /// </summary>
         public int MaximumAttempts { get; set; }
-
-        /// <summary>
-        ///     The function responsible for calculating the next attempt date after a tasks fails;
-        ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential backoff)
-        /// </summary>
-        public Func<int, TimeSpan> IntervalFunction { get; set; }
 
         /// <summary>
         ///     The maximum time each task is allowed before being cancelled; default is 4 hours.

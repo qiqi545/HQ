@@ -30,21 +30,21 @@ namespace HQ.Common.AspNetCore.Mvc
         [NonAction]
         public IActionResult NotModified()
         {
-            return StatusCode((int) HttpStatusCode.NotModified);
+            return StatusCode(HttpStatusCode.NotModified);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public IActionResult Gone()
         {
-            return StatusCode((int) HttpStatusCode.Gone);
+            return StatusCode(HttpStatusCode.Gone);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public IActionResult UnsupportedMediaType(object value = null)
         {
-            return StatusCode((int) HttpStatusCode.UnsupportedMediaType, value);
+            return StatusCode(HttpStatusCode.UnsupportedMediaType, value);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -52,7 +52,7 @@ namespace HQ.Common.AspNetCore.Mvc
         public IActionResult SeeOther(string location)
         {
             Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode((int) HttpStatusCode.SeeOther);
+            return StatusCode(HttpStatusCode.SeeOther);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -60,14 +60,35 @@ namespace HQ.Common.AspNetCore.Mvc
         public IActionResult Created(string location)
         {
             Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode((int) HttpStatusCode.Created);
+            return StatusCode(HttpStatusCode.Created);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public IActionResult NotAcceptable()
+        {
+            return StatusCode(HttpStatusCode.NotAcceptable);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public IActionResult NotImplemented()
         {
-            return StatusCode((int)HttpStatusCode.NotImplemented);
+            return StatusCode(HttpStatusCode.NotImplemented);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public IActionResult StatusCode(HttpStatusCode code)
+        {
+            return StatusCode((int)code);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public IActionResult StatusCode(HttpStatusCode code, object value)
+        {
+            return StatusCode((int)code, value);
         }
 
         #endregion

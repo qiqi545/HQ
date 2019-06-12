@@ -50,6 +50,8 @@
     <Content Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Scheduling\**\*.cs" Exclude="..\HQ.Extensions.Scheduling\obj\**\*" Link="Extensions.Scheduling\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Scheduling.Sql\**\*.cs" Exclude="..\HQ.Extensions.Scheduling.Sql\obj\**\*" Link="Extensions.Scheduling.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
 
     <!-- Platform -->
     <Content Include="..\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\src\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -146,12 +148,14 @@
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta09" />
+    <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="System.Reactive" Version="4.1.5" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />

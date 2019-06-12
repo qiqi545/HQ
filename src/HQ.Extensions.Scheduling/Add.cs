@@ -15,17 +15,30 @@
 
 #endregion
 
+using System;
+using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 
 namespace HQ.Extensions.Scheduling
 {
     public static class Add
     {
-        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services)
+        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddSingleton<IHostedService, BackgroundTaskService>();
+            return services.AddBackgroundTasks(configuration.Bind);
+        }
+
+        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services, Action<BackgroundTaskOptions> configureAction = null)
+        {
+            if(configureAction != null)
+                services.Configure(configureAction);
+            services.TryAddSingleton<ITypeResolver, ReflectionTypeResolver>();
+            services.TryAddSingleton<BackgroundTaskHost>();
+            services.TryAddSingleton<IHostedService, BackgroundTaskService>();
             return services;
         }
     }

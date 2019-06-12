@@ -22,7 +22,7 @@ namespace HQ.Extensions.Scheduling.Models
 {
     public interface ITypeResolver
     {
-        Type FindTypeByName(string typeName);
+        Type FindByName(string typeName);
         IEnumerable<Type> GetAncestors(Type type);
     }
 }

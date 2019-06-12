@@ -37,7 +37,7 @@ namespace HQ.Platform.Operations
         public string ServicesDebuggingPath { get; set; } = "/services";
 
         public bool EnableHostedServicesDebugging { get; set; } = true;
-        public string HostedServicesDebuggingPath { get; set; } = "/background";
+        public string HostedServicesDebuggingPath { get; set; } = "/hostedServices";
 
         public bool EnableFeatureDebugging { get; set; } = true;
         public string FeatureDebuggingPath { get; set; } = "/features";

@@ -48,7 +48,7 @@ namespace HQ.Extensions.Scheduling.Models
         private readonly ConcurrentDictionary<Handler, HandlerHooks> _pending;
 
         private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
-        private readonly IOptionsMonitor<BackgroundTaskSettings> _settings;
+        private readonly IOptionsMonitor<BackgroundTaskOptions> _settings;
         private readonly IServerTimestampService _timestamps;
         private PushQueue<IEnumerable<BackgroundTask>> _background;
 
@@ -56,7 +56,7 @@ namespace HQ.Extensions.Scheduling.Models
         private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
         private QueuedTaskScheduler _scheduler;
 
-        public BackgroundTaskHost(IServerTimestampService timestamps, IOptionsMonitor<BackgroundTaskSettings> settings,
+        public BackgroundTaskHost(IServerTimestampService timestamps, IOptionsMonitor<BackgroundTaskOptions> settings,
             ISafeLogger<BackgroundTaskHost> logger)
         {
             _timestamps = timestamps;
@@ -82,13 +82,13 @@ namespace HQ.Extensions.Scheduling.Models
             _maintenance.AttachUndeliverable(x => WithFailedTasks(x));
         }
 
-        public BackgroundTaskSettings Settings
+        public BackgroundTaskOptions Options
         {
             get
             {
                 var settings = _settings.CurrentValue;
 
-                var @readonly = new BackgroundTaskSettings
+                var @readonly = new BackgroundTaskOptions
                 {
                     DelayTasks = settings.DelayTasks,
                     TypeResolver = settings.TypeResolver,
@@ -115,7 +115,7 @@ namespace HQ.Extensions.Scheduling.Models
             GC.SuppressFinalize(this);
         }
 
-        private void OnSettingsChanged(BackgroundTaskSettings changed)
+        private void OnSettingsChanged(BackgroundTaskOptions changed)
         {
             _logger.Info(() => "Background task settings changed, recycling the host.");
             Stop();
@@ -172,10 +172,10 @@ namespace HQ.Extensions.Scheduling.Models
             _maintenance.Stop(immediate);
         }
 
-        private bool WithFailedTasks(IEnumerable<BackgroundTask> tasks)
+        private void WithFailedTasks(IEnumerable<BackgroundTask> tasks)
         {
             // This should be impossible; we only use the pipeline to seed from a backing store, which is all or nothing
-            return WithPendingTasks(tasks);
+            WithPendingTasks(tasks);
         }
 
         private bool WithOverflowTasks(IEnumerable<BackgroundTask> tasks)
@@ -435,7 +435,7 @@ namespace HQ.Extensions.Scheduling.Models
             if (!HandlerCache.TryGetValue(handlerInfo, out var handler))
             {
                 var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
-                var type = _settings.CurrentValue.TypeResolver.FindTypeByName(typeName);
+                var type = _settings.CurrentValue.TypeResolver.FindByName(typeName);
                 if (type != null)
                 {
                     object instance;

@@ -26,14 +26,14 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Sql
 {
-    public class SqlScheduleStore : IScheduleStore
+    public class SqlBackgroundTaskStore : IBackgroundTaskStore
     {
         private static readonly List<string> NoTags = new List<string>();
         private readonly string _connectionString;
         private readonly string _schema;
         private readonly string _tablePrefix;
 
-        public SqlScheduleStore(string connectionString, string schema = "dbo", string tablePrefix = "BackgroundTask")
+        public SqlBackgroundTaskStore(string connectionString, string schema = "dbo", string tablePrefix = "BackgroundTask")
         {
             _connectionString = connectionString;
             _schema = schema;

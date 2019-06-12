@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,34 +11,11 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
-
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
-
-namespace HQ.Extensions.Scheduling.Models
+namespace HQ.Platform.Api.Models
 {
-    public class BackgroundTaskService : IHostedService
+    public class CreateBackgroundTaskModel
     {
-        private readonly BackgroundTaskHost _host;
-
-        public BackgroundTaskService(BackgroundTaskHost host)
-        {
-            _host = host;
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _host.Start();
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            _host.Stop(cancellationToken);
-            return Task.CompletedTask;
-        }
+        public string TaskType { get; set; }
     }
 }

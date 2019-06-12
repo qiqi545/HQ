@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public interface IScheduleStore
+    public interface IBackgroundTaskStore
     {
         IList<BackgroundTask> GetAll();
         IList<BackgroundTask> GetByAllTags(params string[] tags);

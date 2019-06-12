@@ -156,7 +156,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Functions.Azure
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Scheduling", "HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj", "{B0D86E8B-7F1D-4298-9CC0-B0C7FBB716ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.Scheduling.Sql", "HQ.Extensions.Scheduling.Sql\HQ.Extensions.Scheduling.Sql.csproj", "{04E9BA74-1D68-45C2-9413-86A9FEAA47A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Scheduling.Sql", "HQ.Extensions.Scheduling.Sql\HQ.Extensions.Scheduling.Sql.csproj", "{04E9BA74-1D68-45C2-9413-86A9FEAA47A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Runtime.Rest", "HQ.Platform.Runtime.Rest\HQ.Platform.Runtime.Rest.csproj", "{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.Runtime", "HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\HQ.Data.Contracts.Runtime.csproj", "{F2BB4882-AA0B-48C8-AD5F-506D840B9575}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -561,6 +565,18 @@ Global
 		{04E9BA74-1D68-45C2-9413-86A9FEAA47A5}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{04E9BA74-1D68-45C2-9413-86A9FEAA47A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04E9BA74-1D68-45C2-9413-86A9FEAA47A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Package|Any CPU.Build.0 = Package|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Package|Any CPU.Build.0 = Package|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -632,6 +648,8 @@ Global
 		{76D301FF-1CE0-4B06-B157-780E540B120D} = {E1CB0E99-87C2-4FF3-B411-0929BE392F44}
 		{B0D86E8B-7F1D-4298-9CC0-B0C7FBB716ED} = {2D0EF5B9-EA9D-4AAE-9B9C-F90C6B0FD731}
 		{04E9BA74-1D68-45C2-9413-86A9FEAA47A5} = {2D0EF5B9-EA9D-4AAE-9B9C-F90C6B0FD731}
+		{7076AF6F-1893-45AE-96EF-3DA54A9B4A50} = {99239AAE-96A7-4761-96C2-837EBC2CDF79}
+		{F2BB4882-AA0B-48C8-AD5F-506D840B9575} = {5974502D-7659-4276-A027-56F50630A52F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}

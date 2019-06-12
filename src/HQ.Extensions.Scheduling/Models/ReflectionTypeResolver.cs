@@ -35,7 +35,7 @@ namespace HQ.Extensions.Scheduling.Models
         {
         }
 
-        public Type FindTypeByName(string typeName)
+        public Type FindByName(string typeName)
         {
             var mscorlib = typeof(object).GetTypeInfo().Assembly;
             var loadedTypes = _assemblies.Where(a => !a.IsDynamic && a != mscorlib).SelectMany(a => a.GetTypes());

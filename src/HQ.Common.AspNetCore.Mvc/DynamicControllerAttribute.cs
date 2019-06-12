@@ -32,13 +32,16 @@ namespace HQ.Common.AspNetCore.Mvc
             if (types.Length == 0)
                 return;
 
-            controller.ControllerName = Pooling.StringBuilderPool.Scoped(sb =>
+            if (controller.ControllerType.IsGenericType)
             {
-                var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
-                sb.Append(controllerName);
-                foreach (var type in types)
-                    sb.Append($"_{type.Name}");
-            });
+                controller.ControllerName = Pooling.StringBuilderPool.Scoped(sb =>
+                {
+                    var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
+                    sb.Append(controllerName);
+                    foreach (var type in types)
+                        sb.Append($"_{type.Name}");
+                });
+            }
         }
     }
 }

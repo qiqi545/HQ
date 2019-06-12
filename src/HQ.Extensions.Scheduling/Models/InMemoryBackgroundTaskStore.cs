@@ -23,13 +23,13 @@ using HQ.Common;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class InMemoryScheduleStore : IScheduleStore
+    public class InMemoryBackgroundTaskStore : IBackgroundTaskStore
     {
         private static int _identity;
 
         private readonly IDictionary<int, HashSet<BackgroundTask>> _tasks;
 
-        public InMemoryScheduleStore()
+        public InMemoryBackgroundTaskStore()
         {
             _tasks = new ConcurrentDictionary<int, HashSet<BackgroundTask>>();
         }

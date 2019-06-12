@@ -25,8 +25,8 @@ namespace HQ.Extensions.Logging
     {
         public static IServiceCollection AddSafeLogging(this IServiceCollection services)
         {
-            services.TryAddScoped<ISafeLogger, SafeLogger>();
-            services.TryAddScoped(typeof(ISafeLogger<>), typeof(SafeLogger<>));
+            services.TryAddSingleton<ISafeLogger, SafeLogger>();
+            services.TryAddSingleton(typeof(ISafeLogger<>), typeof(SafeLogger<>));
             return services;
         }
 

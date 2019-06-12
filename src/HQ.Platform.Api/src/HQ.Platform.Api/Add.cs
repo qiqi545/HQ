@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Extensions.Caching;
+using HQ.Extensions.Scheduling;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -47,10 +48,11 @@ namespace HQ.Platform.Api
             services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
             services.Configure<PlatformApiOptions>(config);
 
+            services.AddForwardedHeaders();
             services.AddHttpCaching();
             services.AddCanonicalRoutes();
             services.AddGzipCompression();
-            
+            services.AddBackgroundTasks();
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
             services.AddOptions<RouteOptions>().Configure<IOptions<PlatformApiOptions>>((o, x) =>
             {
@@ -60,8 +62,6 @@ namespace HQ.Platform.Api
             });
             services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
-
-            services.AddForwardedHeaders();
 
             return services;
         }
