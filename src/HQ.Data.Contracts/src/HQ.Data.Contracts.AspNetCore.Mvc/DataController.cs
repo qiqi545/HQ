@@ -31,24 +31,21 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
         [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public bool Valid(object model, out ErrorResult error, params object[] args)
         {
-            if (!TryValidateModel(model))
-            {
-                var validationError = ConvertModelStateToError();
-                error = new ErrorResult(validationError);
-                return false;
-            }
-
-            error = null;
-            return true;
+            return ValidOrError(model, out error, args);
         }
 
         [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public bool ValidModelState(out ErrorResult error, params object[] args)
         {
-            if (!TryValidateModel(ModelState))
+            return ValidOrError(ModelState, out error, args);
+        }
+
+        private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
+        {
+            if (!TryValidateModel(instance))
             {
                 var validationError = ConvertModelStateToError();
-                error = new ErrorResult(validationError);
+                error = new ErrorResult(validationError, args);
                 return false;
             }
 

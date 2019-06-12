@@ -12,10 +12,19 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
+
+using HQ.Data.Contracts.DataAnnotations;
+
 namespace HQ.Platform.Api.Models
 {
     public class CreateBackgroundTaskModel
     {
+        [RequiredOnlyOne]
+        [RequiredIfNotPresent(nameof(TaskCode))]
         public string TaskType { get; set; }
+
+        [RequiredOnlyOne]
+        [RequiredIfNotPresent(nameof(TaskType))]
+        public string TaskCode { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
                 case OperationResult.SucceededWithErrors:
                 {
                     var errors = operation.Errors.Count > 1
-                        ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
+                        ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, HttpStatusCode.InternalServerError, operation.Errors)
                         : operation.Errors[0];
 
                     var error = new ErrorResult(errors);
@@ -52,7 +52,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
             if (operation.Data == null)
                 return new NotFoundObjectResult(new ErrorResult(
-                    new Error(ErrorEvents.ResourceMissing, "Resource not found.", 404, operation.Errors)
+                    new Error(ErrorEvents.ResourceMissing, "Resource not found.", HttpStatusCode.NotFound, operation.Errors)
                 ));
 
             var error = AggregateErrors(operation);
@@ -67,7 +67,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
         private static Error AggregateErrors(Operation operation)
         {
             var error = operation.HasErrors
-                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, 500, operation.Errors)
+                ? new Error(ErrorEvents.AggregateErrors, ErrorStrings.AggregateErrors, HttpStatusCode.InternalServerError, operation.Errors)
                 : operation.Errors[0];
             return error;
         }

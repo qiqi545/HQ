@@ -23,7 +23,6 @@ using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Controllers
 {
@@ -80,7 +79,7 @@ namespace HQ.Platform.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateBackgroundTask(CreateBackgroundTaskModel model)
+        public IActionResult CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
         {
             if (!Valid(model, out var error))
                 return error;

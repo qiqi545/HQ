@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
@@ -27,17 +28,20 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
         public static Error ConvertModelStateToError(this ControllerExtended controller)
         {
             var errors = new List<Error>();
+
             foreach (var modelState in controller.ModelState.Values)
-            foreach (var error in modelState.Errors)
             {
-                var message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
-                    ? error.ErrorMessage
-                    : error.Exception.Message;
-                errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
+                foreach (var error in modelState.Errors)
+                {
+                    var message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
+                        ? error.ErrorMessage
+                        : error.Exception.Message;
+
+                    errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
+                }
             }
 
-            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422,
-                errors);
+            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422, errors.Distinct());
             return validationError;
         }
 
