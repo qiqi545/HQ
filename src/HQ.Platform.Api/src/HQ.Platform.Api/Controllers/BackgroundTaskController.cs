@@ -34,9 +34,10 @@ namespace HQ.Platform.Api.Controllers
     [MetaDescription("Manages background tasks.")]
     public class BackgroundTaskController : DataController
     {
+        private readonly BackgroundTaskHost _host;
+
         private readonly IBackgroundTaskStore _store;
         private readonly ITypeResolver _typeResolver;
-        private readonly BackgroundTaskHost _host;
         private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 
         public BackgroundTaskController(IBackgroundTaskStore store, ITypeResolver typeResolver, BackgroundTaskHost host, IOptionsMonitor<BackgroundTaskOptions> options)
@@ -59,10 +60,10 @@ namespace HQ.Platform.Api.Controllers
             return Ok(_store.GetAll());
         }
 
-        [HttpGet, MustHaveQueryParameters]
-        public IActionResult GetBackgroundTasksByTag([FromQuery] StringValues tags)
+        [HttpGet, MustHaveQueryParameters("tags")]
+        public IActionResult GetBackgroundTasksByTag([FromQuery] string tags)
         {
-            return Ok(_store.GetByAnyTags(tags));
+            return Ok(_store.GetByAnyTags(tags.Split(new [] { "," }, StringSplitOptions.RemoveEmptyEntries)));
         }
 
         [HttpGet("{id}")]
