@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -63,7 +63,7 @@
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity\obj\**\*" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\obj\**\*" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\obj\**\*" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\**\*.cs" Exclude="..\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\obj\**\*" Link="Platform.Runtime.Rest\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Runtime.Rest\**\*.cs" Exclude="..\HQ.Platform.Runtime.Rest\obj\**\*" Link="Platform.Runtime.Rest\%(RecursiveDir)%(Filename)%(Extension)" />
     
     <!-- Data -->
     <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
