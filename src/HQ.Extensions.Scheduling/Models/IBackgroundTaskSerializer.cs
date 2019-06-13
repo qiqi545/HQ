@@ -15,10 +15,14 @@
 
 #endregion
 
+using System;
+
 namespace HQ.Extensions.Scheduling.Models
 {
     public interface IBackgroundTaskSerializer
     {
         string Serialize(object instance);
+        T Deserialize<T>(string serialized);
+        object Deserialize(string serialized, Type type);
     }
 }

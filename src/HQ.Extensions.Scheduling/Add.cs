@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling
 {
@@ -34,13 +35,16 @@ namespace HQ.Extensions.Scheduling
 
         public static IServiceCollection AddBackgroundTasks(this IServiceCollection services, Action<BackgroundTaskOptions> configureAction = null)
         {
-            if(configureAction != null)
+            if (configureAction != null)
                 services.Configure(configureAction);
+
             services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
             services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
             services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
             services.TryAddSingleton<BackgroundTaskHost>();
-            services.TryAddSingleton<IHostedService, BackgroundTaskService>();
+
+            services.AddSingleton<IHostedService, BackgroundTaskService>();
+
             return services;
         }
     }

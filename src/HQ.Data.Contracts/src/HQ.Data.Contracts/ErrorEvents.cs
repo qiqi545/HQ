@@ -19,13 +19,25 @@ namespace HQ.Data.Contracts
 {
     public static class ErrorEvents
     {
-        public const long ValidationFailed = 1;
-        public const long FieldDoesNotMatch = 2;
-        public const long InvalidPageParameter = 3;
-        public const long RequestEntityTooLarge = 4;
-        public const long InvalidRequest = 5;
-        public const long ResourceMissing = 6;
-        public const long NotImplemented = 7;
-        public const long AggregateErrors = 8;
+        /// <summary>
+        /// The request was improperly structured, to the point it could not be validated.
+        /// </summary>
+        public const long InvalidRequest = 1001;
+
+        /// <summary>
+        /// The request was evaluated, but failed validation
+        /// </summary>
+        public const long ValidationFailed = 1001;
+
+
+
+        public const long FieldDoesNotMatch = 1002;
+        public const long AggregateErrors = 1004;
+        public const long IdentityError = 1005;
+        public const long ResourceMissing = 1006;
+        public const long ResourceNotImplemented = 1007;
+        public const long InvalidPageParameter = 1008;
+        public const long RequestEntityTooLarge = 1009;
+        public const long CouldNotAcceptWork = 1010;
     }
 }

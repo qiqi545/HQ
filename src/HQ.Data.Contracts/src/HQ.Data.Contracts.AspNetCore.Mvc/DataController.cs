@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Net;
 using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +23,28 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
     public class DataController : ControllerExtended
     {
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        public IActionResult BadRequestError(long eventId, string errorMessage, params object[] args)
+        {
+            var error = new Error(eventId, errorMessage, HttpStatusCode.BadRequest);
+            return new ErrorResult(error, args);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        public IActionResult NotAcceptableError(long eventId, string errorMessage, params object[] args)
+        {
+            var error = new Error(eventId, errorMessage, HttpStatusCode.NotAcceptable);
+            return new ErrorResult(error, args);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        public IActionResult NotFoundError(long eventId, string errorMessage, params object[] args)
+        {
+            var error = new Error(eventId, errorMessage, HttpStatusCode.NotFound);
+            return new ErrorResult(error, args);
+        }
+
+
         [ApiExplorerSettings(IgnoreApi = true), NonAction]
         public IActionResult Error(Error error, params object[] args)
         {

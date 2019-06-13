@@ -90,7 +90,7 @@ namespace HQ.Platform.Identity.Services
         {
             var application = await _applicationManager.FindByIdAsync(id);
             return application == null
-                ? new Operation<TApplication>(new Error(ErrorEvents.NotFound, ErrorStrings.ApplicationNotFound,
+                ? new Operation<TApplication>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ApplicationNotFound,
                     HttpStatusCode.NotFound))
                 : new Operation<TApplication>(application);
         }

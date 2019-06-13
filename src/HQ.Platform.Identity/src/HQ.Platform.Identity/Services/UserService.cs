@@ -98,7 +98,7 @@ namespace HQ.Platform.Identity.Services
         {
             var user = await _userManager.FindByIdAsync(id);
             return user == null
-                ? new Operation<TUser>(new Error(ErrorEvents.NotFound, ErrorStrings.UserNotFound,
+                ? new Operation<TUser>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.UserNotFound,
                     HttpStatusCode.NotFound))
                 : new Operation<TUser>(user);
         }

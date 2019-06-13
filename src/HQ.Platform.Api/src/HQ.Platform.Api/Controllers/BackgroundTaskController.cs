@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -23,9 +24,19 @@ using HQ.Platform.Api.Attributes;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Controllers
 {
+    public class HelloWorld
+    {
+        public bool Perform()
+        {
+            Console.WriteLine("Hello, World!");
+            return true;
+        }
+    }
+
     [Route("ops/tasks")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
@@ -50,7 +61,11 @@ namespace HQ.Platform.Api.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            return Ok(_options.CurrentValue);
+            var taskTypeNames = _typeResolver.FindByMethodName(nameof(HQ.Extensions.Scheduling.Hooks.Handler.Perform))
+                .Where(x => !x.IsInterface && !x.IsAbstract)
+                .Select(x => x.Name);
+
+            return Ok(new { Options = _options.CurrentValue, TaskTypes = taskTypeNames });
         }
 
         [HttpGet]
@@ -62,18 +77,18 @@ namespace HQ.Platform.Api.Controllers
         [HttpGet, MustHaveQueryParameters("tags")]
         public IActionResult GetBackgroundTasksByTag([FromQuery] string tags)
         {
-            return Ok(_store.GetByAnyTags(tags.Split(new [] { "," }, StringSplitOptions.RemoveEmptyEntries)));
+            return Ok(_store.GetByAnyTags(tags.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)));
         }
 
         [HttpGet("{id}")]
         public IActionResult GetBackgroundTaskById(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-                return Error(new Error(ErrorEvents.ValidationFailed, "Invalid task ID."));
+                return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
             var task = _store.GetById(taskId);
             if (task == null)
-                return NotFound();
+                return NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
 
             return Ok(task);
         }
@@ -84,21 +99,32 @@ namespace HQ.Platform.Api.Controllers
             if (!Valid(model, out var error))
                 return error;
 
-            var type = _typeResolver.FindByName(model.TaskType);
-            if (type == null)
-                return BadRequest(new { Message = "Unrecognized task type."});
-            
-            if (!_host.TryScheduleTask(type, out var task))
-                return NotAcceptable();
+            if (!string.IsNullOrWhiteSpace(model.TaskType))
+            {
+                var type = _typeResolver.FindByFullName(model.TaskType) ?? _typeResolver.FindFirstByName(model.TaskType);
+                if (type == null)
+                    return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}", model.TaskType);
 
-            return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
+                if (!_host.TryScheduleTask(type, out var task, t =>
+                {
+                    if (model.Tags?.Length > 0)
+                        t.Tags.AddRange(model.Tags);
+                }))
+                {
+                    return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
+                }
+
+                return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
+            }
+
+            return NotImplemented();
         }
 
         [HttpDelete("{id}")]
         public IActionResult DeleteBackgroundTask(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-                return Error(new Error(ErrorEvents.ValidationFailed, "Invalid task ID."));
+                return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
             var task = _store.GetById(taskId);
             if (task == null)

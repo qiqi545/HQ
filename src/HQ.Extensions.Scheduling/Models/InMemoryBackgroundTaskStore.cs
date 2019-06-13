@@ -56,6 +56,7 @@ namespace HQ.Extensions.Scheduling.Models
         {
             if (!_tasks.TryGetValue(task.Priority, out var tasks))
             {
+                task.CreatedAt = DateTimeOffset.UtcNow; ;
                 _tasks.Add(task.Priority, tasks = new HashSet<BackgroundTask>());
             }
 

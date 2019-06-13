@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using Newtonsoft.Json;
 
 namespace HQ.Extensions.Scheduling.Models
@@ -24,6 +25,16 @@ namespace HQ.Extensions.Scheduling.Models
         public string Serialize(object instance)
         {
             return JsonConvert.SerializeObject(instance);
+        }
+
+        public T Deserialize<T>(string serialized)
+        {
+            return JsonConvert.DeserializeObject<T>(serialized);
+        }
+
+        public object Deserialize(string serialized, Type type)
+        {
+            return JsonConvert.DeserializeObject(serialized, type);
         }
     }
 }

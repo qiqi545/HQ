@@ -26,5 +26,7 @@ namespace HQ.Platform.Api.Models
         [RequiredOnlyOne]
         [RequiredIfNotPresent(nameof(TaskType))]
         public string TaskCode { get; set; }
+
+        public string[] Tags { get; set; }
     }
 }

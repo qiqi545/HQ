@@ -89,7 +89,7 @@ namespace HQ.Extensions.Scheduling.Models
             // Handle when no start time is provided up front
             if (task.RunAt == default)
             {
-                task.RunAt = DateTimeOffset.UtcNow;
+                task.RunAt = host.GetCurrentTime();
 
                 if (task.NextOccurrence.HasValue)
                 {

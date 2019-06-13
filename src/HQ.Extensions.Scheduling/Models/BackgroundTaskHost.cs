@@ -29,15 +29,15 @@ using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Internal;
 using ImpromptuInterface;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
+using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class BackgroundTaskHost : IDisposable
+    public class BackgroundTaskHost : IDisposable, IServerTimestampService
     {
         private const string NoHandlerState = "{}";
 
-        private static readonly IDictionary<HandlerInfo, Handler> HandlerCache = 
+        private static readonly IDictionary<HandlerInfo, Handler> HandlerCache =
             new ConcurrentDictionary<HandlerInfo, Handler>();
 
         private static readonly IDictionary<Type, HandlerHooks> MethodCache =
@@ -46,7 +46,7 @@ namespace HQ.Extensions.Scheduling.Models
         private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
         private readonly ConcurrentDictionary<Handler, HandlerHooks> _pending;
         private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
-        
+
         private readonly IServerTimestampService _timestamps;
         private readonly ITypeResolver _typeResolver;
 
@@ -169,7 +169,8 @@ namespace HQ.Extensions.Scheduling.Models
         {
             var options = new ParallelOptions
             {
-                CancellationToken = cancellationToken, MaxDegreeOfParallelism = ResolveConcurrency()
+                CancellationToken = cancellationToken,
+                MaxDegreeOfParallelism = ResolveConcurrency()
             };
 
             Parallel.ForEach(_pending.Where(entry => entry.Value.OnHalt != null), options,
@@ -249,11 +250,11 @@ namespace HQ.Extensions.Scheduling.Models
                 subjects.Add(started, task);
             }
 
-            Parallel.ForEach(pendingTasks, new ParallelOptions {MaxDegreeOfParallelism = ResolveConcurrency()},
+            Parallel.ForEach(pendingTasks, new ParallelOptions { MaxDegreeOfParallelism = ResolveConcurrency() },
                 performer =>
                 {
                     var task = subjects[performer.Key];
-                    if (Task.WaitAll(new[] {performer.Key}, task.MaximumRuntime.GetValueOrDefault()))
+                    if (Task.WaitAll(new[] { performer.Key }, task.MaximumRuntime.GetValueOrDefault()))
                     {
                         return;
                     }
@@ -287,6 +288,7 @@ namespace HQ.Extensions.Scheduling.Models
         private bool AttemptCycle(BackgroundTask task, out Exception exception)
         {
             task.Attempts++;
+
             var success = Perform(task, out exception);
             if (!success)
             {
@@ -443,45 +445,54 @@ namespace HQ.Extensions.Scheduling.Models
 
         private Handler CreateOrGetHandler(BackgroundTask task)
         {
-            var handlerInfo = JsonConvert.DeserializeObject<HandlerInfo>(task.Handler);
-            if (!HandlerCache.TryGetValue(handlerInfo, out var handler))
+            try
             {
-                var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
-                var type = _typeResolver.FindByName(typeName);
-                if (type != null)
+                var handlerInfo = Serializer.Deserialize<HandlerInfo>(task.Handler);
+
+                if (!HandlerCache.TryGetValue(handlerInfo, out var handler))
                 {
-                    object instance;
-                    if (!string.IsNullOrWhiteSpace(handlerInfo.Instance) &&
-                        !handlerInfo.Instance.Equals(NoHandlerState))
+                    var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
+                    var type = _typeResolver.FindByFullName(typeName) ?? _typeResolver.FindFirstByName(typeName);
+                    if (type != null)
                     {
-                        try
+                        object instance;
+                        if (!string.IsNullOrWhiteSpace(handlerInfo.Instance) &&
+                            !handlerInfo.Instance.Equals(NoHandlerState))
                         {
-                            instance = JsonConvert.DeserializeObject(handlerInfo.Instance, type);
+                            try
+                            {
+                                instance = Serializer.Deserialize(handlerInfo.Instance, type);
+                            }
+                            catch (Exception)
+                            {
+                                instance = null;
+                            }
                         }
-                        catch (Exception)
+                        else
                         {
-                            instance = null;
+                            instance = Instancing.CreateInstance(type);
                         }
-                    }
-                    else
-                    {
-                        instance = Activator.CreateInstance(type);
-                    }
 
-                    if (instance == null)
-                    {
-                        return null;
-                    }
+                        if (instance == null)
+                        {
+                            return null;
+                        }
 
-                    handler = TryWrapHook<Handler>(instance);
-                    if (handler != null)
-                    {
-                        HandlerCache.Add(handlerInfo, handler);
+                        handler = TryWrapHook<Handler>(instance);
+                        if (handler != null)
+                        {
+                            HandlerCache.Add(handlerInfo, handler);
+                        }
                     }
                 }
-            }
 
-            return handler;
+                return handler;
+            }
+            catch (Exception e)
+            {
+                _logger.Error(() => "Error creating handler for task", e);
+                throw;
+            }
         }
 
         private static HandlerHooks CacheOrCreateMethods(Handler handler)
@@ -590,5 +601,12 @@ namespace HQ.Extensions.Scheduling.Models
             _maintenance?.Dispose();
             _maintenance = null;
         }
+
+        public DateTimeOffset GetCurrentTime()
+        {
+            return _timestamps.GetCurrentTime();
+        }
+
+        public DateTimeOffset UtcNow => _timestamps.UtcNow;
     }
 }

@@ -61,7 +61,7 @@ namespace HQ.Platform.Identity.Extensions
             var operation = new Operation<TUser>();
             operation.Data = default;
             operation.Result = OperationResult.Error;
-            operation.Errors.Add(new Error(ErrorEvents.NotFound, "User is not found."));
+            operation.Errors.Add(new Error(ErrorEvents.ResourceMissing, "User is not found."));
             return operation;
         }
 

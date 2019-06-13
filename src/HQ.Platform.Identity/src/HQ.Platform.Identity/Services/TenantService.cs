@@ -90,7 +90,7 @@ namespace HQ.Platform.Identity.Services
         {
             var tenant = await _tenantManager.FindByIdAsync(id);
             return tenant == null
-                ? new Operation<TTenant>(new Error(ErrorEvents.NotFound, ErrorStrings.TenantNotFound,
+                ? new Operation<TTenant>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.TenantNotFound,
                     HttpStatusCode.NotFound))
                 : new Operation<TTenant>(tenant);
         }

@@ -96,7 +96,7 @@ namespace HQ.Platform.Identity.Services
         {
             var role = await _roleManager.FindByIdAsync(id);
             return role == null
-                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.RoleNotFound,
+                ? new Operation<TRole>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.RoleNotFound,
                     HttpStatusCode.NotFound))
                 : new Operation<TRole>(role);
         }
@@ -105,7 +105,7 @@ namespace HQ.Platform.Identity.Services
         {
             var role = await _roleManager.FindByNameAsync(roleName);
             return role == null
-                ? new Operation<TRole>(new Error(ErrorEvents.NotFound, ErrorStrings.RoleNotFound,
+                ? new Operation<TRole>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.RoleNotFound,
                     HttpStatusCode.NotFound))
                 : new Operation<TRole>(role);
         }
