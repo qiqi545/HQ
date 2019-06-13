@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Stores.Sql.Models;
 using HQ.Platform.Security;
 using Microsoft.AspNetCore.Identity;
@@ -74,7 +75,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (user.NormalizedUserName == _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
+            if (user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Username))
             {
                 return SuperUserRoles;
             }
@@ -127,7 +128,8 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             var query = SqlBuilder.Select<TRole>(new
             {
-                NormalizedName = roleName?.ToUpperInvariant(), TenantId = _tenantId
+                NormalizedName = _lookupNormalizer.MaybeNormalize(roleName),
+                TenantId = _tenantId
             });
             _connection.SetTypeInfo(typeof(TRole));
             var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);

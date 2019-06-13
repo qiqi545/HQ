@@ -24,6 +24,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Stores.Sql.Models;
 using HQ.Platform.Security;
 using Microsoft.AspNetCore.Identity;
@@ -38,8 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var claims = new List<Claim>();
 
-            if (SupportsSuperUser && user.NormalizedUserName?.ToUpperInvariant() ==
-                _security.CurrentValue.SuperUser?.Username.ToUpperInvariant())
+            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_security.CurrentValue.SuperUser?.Username))
             {
                 var superUser = CreateSuperUserInstance();
                 claims.TryAddClaim(_security.CurrentValue.Claims.UserIdClaim, $"{superUser.Id}");

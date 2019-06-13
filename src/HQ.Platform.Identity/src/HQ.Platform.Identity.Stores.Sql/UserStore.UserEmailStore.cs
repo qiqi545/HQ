@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -56,8 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         public async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.Email.ToUpperInvariant())
+            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Email))
             {
                 return CreateSuperUserInstance();
             }
@@ -85,8 +85,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.Email.ToUpperInvariant())
+            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Email))
             {
                 return new[] {CreateSuperUserInstance()};
             }

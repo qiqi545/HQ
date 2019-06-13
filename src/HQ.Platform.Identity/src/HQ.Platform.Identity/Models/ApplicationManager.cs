@@ -21,6 +21,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Platform.Identity.Configuration;
+using HQ.Platform.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -104,7 +105,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(applicationName));
             }
 
-            applicationName = NormalizeKey(applicationName);
+            applicationName = KeyNormalizer.MaybeNormalize(applicationName);
 
             var application = await _applicationStore.FindByNameAsync(applicationName, CancellationToken);
             if (application != null || !Options.Stores.ProtectPersonalData)
@@ -140,7 +141,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(email));
             }
 
-            email = NormalizeKey(email);
+            email = KeyNormalizer.MaybeNormalize(email);
 
             if (!(_userStore is IUserEmailStoreExtended<TUser> emailStore))
             {
@@ -243,7 +244,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(username));
             }
 
-            username = NormalizeKey(username);
+            username = KeyNormalizer.MaybeNormalize(username);
 
             var users = await _userStore.FindAllByNameAsync(username, CancellationToken);
             if (users != null || !Options.Stores.ProtectPersonalData)
@@ -401,7 +402,9 @@ namespace HQ.Platform.Identity.Models
 
         public virtual async Task UpdateNormalizedApplicationNameAsync(TApplication application)
         {
-            var normalizedName = ProtectPersonalData(NormalizeKey(await GetApplicationNameAsync(application)));
+            var applicationName = await GetApplicationNameAsync(application);
+            ;
+            var normalizedName = ProtectPersonalData(KeyNormalizer.MaybeNormalize(applicationName));
             await _applicationStore.SetNormalizedApplicationNameAsync(application, normalizedName, CancellationToken);
         }
 
@@ -417,11 +420,6 @@ namespace HQ.Platform.Identity.Models
                 var keyRing = _serviceProvider.GetService(typeof(ILookupProtectorKeyRing)) as ILookupProtectorKeyRing;
                 return service?.Protect(keyRing?.CurrentKeyId, data);
             }
-        }
-
-        public virtual string NormalizeKey(string key)
-        {
-            return KeyNormalizer != null ? KeyNormalizer.Normalize(key) : key;
         }
 
         protected virtual void Dispose(bool disposing)

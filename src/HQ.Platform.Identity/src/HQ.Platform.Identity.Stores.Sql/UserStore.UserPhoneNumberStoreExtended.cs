@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Data.Sql.Queries;
+using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 
 namespace HQ.Platform.Identity.Stores.Sql
@@ -56,8 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.PhoneNumber?.ToUpperInvariant())
+            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.PhoneNumber))
             {
                 return CreateSuperUserInstance();
             }
@@ -74,8 +74,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && phoneNumber?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.PhoneNumber?.ToUpperInvariant())
+            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.PhoneNumber))
             {
                 return new[] {CreateSuperUserInstance()};
             }

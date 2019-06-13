@@ -36,12 +36,13 @@ namespace HQ.Platform.Identity.Services
     {
         private readonly IQueryableProvider<TRole> _queryableProvider;
         private readonly RoleManager<TRole> _roleManager;
+        private readonly ILookupNormalizer _lookupNormalizer;
         private readonly IRoleStoreExtended<TRole> _roleStore;
 
-        public RoleService(RoleManager<TRole> roleManager, IRoleStoreExtended<TRole> roleStore,
-            IQueryableProvider<TRole> queryableProvider)
+        public RoleService(RoleManager<TRole> roleManager, ILookupNormalizer lookupNormalizer, IRoleStoreExtended<TRole> roleStore, IQueryableProvider<TRole> queryableProvider)
         {
             _roleManager = roleManager;
+            _lookupNormalizer = lookupNormalizer;
             _roleStore = roleStore;
             _queryableProvider = queryableProvider;
         }
@@ -66,7 +67,7 @@ namespace HQ.Platform.Identity.Services
             var role = (TRole) FormatterServices.GetUninitializedObject(typeof(TRole));
             role.Name = model.Name;
             role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
-            role.NormalizedName = model.Name?.ToUpperInvariant();
+            role.NormalizedName = _lookupNormalizer.MaybeNormalize(model.Name);
             
             var result = await _roleManager.CreateAsync(role);
             return result.ToOperation(role);

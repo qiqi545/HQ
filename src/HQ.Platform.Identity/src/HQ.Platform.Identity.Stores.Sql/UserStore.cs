@@ -53,6 +53,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly RoleManager<TRole> _roles;
         private readonly IOptionsMonitor<IdentityOptionsExtended> _identity;
         private readonly IOptionsMonitor<SecurityOptions> _security;
+        private readonly ILookupNormalizer _lookupNormalizer;
 
         private readonly TKey _tenantId;
         private readonly string _tenantName;
@@ -66,6 +67,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             IQueryableProvider<TUser> queryable,
             IOptionsMonitor<IdentityOptionsExtended> identity,
             IOptionsMonitor<SecurityOptions> security,
+            ILookupNormalizer lookupNormalizer, 
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
@@ -83,6 +85,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             _identity = identity;
             _security = security;
+            _lookupNormalizer = lookupNormalizer;
         }
 
         public IQueryable<TUser> Users => MaybeQueryable();
@@ -91,15 +94,13 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public bool SupportsSuperUser => _security?.CurrentValue?.SuperUser?.Enabled ?? false;
 
-        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
-            CancellationToken cancellationToken)
+        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Username))
             {
-                return new[] {CreateSuperUserInstance()};
+                return new[] { CreateSuperUserInstance() };
             }
 
             var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
@@ -175,8 +176,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName?.ToUpperInvariant() ==
-                _security?.CurrentValue.SuperUser?.Username?.ToUpperInvariant())
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Username))
             {
                 return CreateSuperUserInstance();
             }
@@ -280,11 +280,11 @@ namespace HQ.Platform.Identity.Stores.Sql
             var options = _security?.CurrentValue.SuperUser;
 
             superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
-            superuser.NormalizedUserName = superuser.UserName?.ToUpperInvariant();
-            superuser.PhoneNumber = options?.PhoneNumber?.ToUpperInvariant() ?? SuperUserDefaultPhoneNumber;
+            superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalize(superuser.UserName);
+            superuser.PhoneNumber = _lookupNormalizer.MaybeNormalize(options?.PhoneNumber ?? SuperUserDefaultPhoneNumber);
             superuser.PhoneNumberConfirmed = true;
             superuser.Email = options?.Email ?? SuperUserDefaultEmail;
-            superuser.NormalizedEmail = options?.Email?.ToUpperInvariant() ?? SuperUserDefaultEmail.ToUpperInvariant();
+            superuser.NormalizedEmail = _lookupNormalizer.MaybeNormalize(options?.Email ?? SuperUserDefaultEmail);
             superuser.EmailConfirmed = true;
             superuser.LockoutEnabled = false;
             superuser.TwoFactorEnabled = false;
