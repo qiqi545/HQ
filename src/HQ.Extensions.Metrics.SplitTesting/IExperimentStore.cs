@@ -13,6 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Data.Contracts.Runtime;
 using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics.SplitTesting

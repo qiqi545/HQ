@@ -17,7 +17,6 @@
 
 using System;
 using HQ.Extensions.Scheduling.Configuration;
-using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling.Models
 {
@@ -34,6 +33,7 @@ namespace HQ.Extensions.Scheduling.Models
         ///     default constructor.
         /// </typeparam>
         /// <param name="host"></param>
+        /// <param name="type"></param>
         /// <param name="task"></param>
         /// <param name="options">
         ///     Allows configuring task-specific features. Note that this is NOT invoked at invocation time
@@ -48,42 +48,20 @@ namespace HQ.Extensions.Scheduling.Models
         ///     depending on configuration. If `false`, it either failed to schedule or failed during execution, depending on
         ///     configuration.
         /// </returns>
-        public static bool TryScheduleTask<T>(this BackgroundTaskHost host, out BackgroundTask task, Action<BackgroundTask> options = null, Action<T> configure = null) where T : class, new()
+        public static bool TryScheduleTask(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options = null)
         {
-            if (configure == null)
-                return host.QueueForExecution<T>(out task, options);
-
-            var instance = Instancing.CreateInstance<T>();
-            configure(instance);
-
-            return host.QueueForExecution<T>(out task, options, instance);
+            return host.QueueForExecution(type, out task, options);
         }
-
-        public static bool TryScheduleTask(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options = null, Action<object> configure = null)
+        
+        private static bool QueueForExecution(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options)
         {
-            if (configure == null)
-                return host.QueueForExecution(type, out task, options);
-
-            var instance = Instancing.CreateInstance(type);
-            configure(instance);
-
-            return host.QueueForExecution(type, out task, options, instance);
-        }
-
-        private static bool QueueForExecution<T>(this BackgroundTaskHost host, out BackgroundTask task, Action<BackgroundTask> options, object instance = null)
-        {
-            return host.QueueForExecution(typeof(T), out task, options, instance);
-        }
-
-        private static bool QueueForExecution(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options, object instance = null)
-        {
-            task = NewTask(host.Options, host.Serializer, type, instance);
+            task = NewTask(host.Options, host.Serializer, type);
 
             options?.Invoke(task); // <-- at this stage, task should have a RunAt set by the user or it will be default
 
             if (!string.IsNullOrWhiteSpace(task.Expression) && !task.HasValidExpression)
             {
-                throw new ArgumentException("The provided CRON expression is invalid. Have you tried CronTemplates?");
+                throw new ArgumentException("The provided CRON expression is invalid.");
             }
 
             // Handle when no start time is provided up front
@@ -109,14 +87,9 @@ namespace HQ.Extensions.Scheduling.Models
             return true;
         }
 
-        private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type, object instance = null)
+        private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type)
         {
             var handlerInfo = new HandlerInfo(type.Namespace, type.Name);
-            if (instance != null)
-            {
-                handlerInfo.Instance = serializer?.Serialize(instance);
-            }
-
             var task = new BackgroundTask { Handler = serializer?.Serialize(handlerInfo) };
             options.ProvisionTask(task);
             return task;

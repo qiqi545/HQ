@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\..\HQ.Platform.Security\src\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+  </ItemGroup>
+
 </Project>

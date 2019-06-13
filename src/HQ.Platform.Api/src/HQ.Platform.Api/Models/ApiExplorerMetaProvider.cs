@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using HQ.Common;
-using HQ.Platform.Api.Attributes;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;

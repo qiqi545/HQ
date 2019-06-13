@@ -17,7 +17,7 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using HQ.Extensions.Caching;
+using HQ.Data.Contracts.Runtime;
 
 namespace HQ.Extensions.Metrics
 {
@@ -34,7 +34,7 @@ namespace HQ.Extensions.Metrics
             }
 
             var filtered = new Dictionary<MetricName, IMetric>();
-            foreach (var entry in _memory)
+            foreach (var entry in Memory)
             {
                 switch (entry.Value)
                 {

@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,23 +11,19 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
-using HQ.Common;
 
-namespace HQ.Platform.Api.Attributes
+namespace HQ.Extensions.Scheduling.Models
 {
-    public class MetaDescriptionAttribute : Attribute
+    public class ExecutionException : Exception
     {
-        public string Content { get; }
-        public string MediaType { get; }
-
-        public MetaDescriptionAttribute(string content, string mediaType = Constants.MediaTypes.Markdown)
+        public ExecutionException(ExecutionContext context, string message) : base(message)
         {
-            Content = content;
-            MediaType = mediaType;
+            Context = context;
         }
+
+        public ExecutionContext Context { get; set; }
     }
 }

@@ -23,11 +23,13 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Data.Contracts.Runtime;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Internal;
 using ImpromptuInterface;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
@@ -35,11 +37,6 @@ namespace HQ.Extensions.Scheduling.Models
 {
     public class BackgroundTaskHost : IDisposable, IServerTimestampService
     {
-        private const string NoHandlerState = "{}";
-
-        private static readonly IDictionary<HandlerInfo, Handler> HandlerCache =
-            new ConcurrentDictionary<HandlerInfo, Handler>();
-
         private static readonly IDictionary<Type, HandlerHooks> MethodCache =
             new ConcurrentDictionary<Type, HandlerHooks>();
 
@@ -47,6 +44,7 @@ namespace HQ.Extensions.Scheduling.Models
         private readonly ConcurrentDictionary<Handler, HandlerHooks> _pending;
         private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
 
+        private readonly IServiceProvider _backgroundServices;
         private readonly IServerTimestampService _timestamps;
         private readonly ITypeResolver _typeResolver;
 
@@ -58,8 +56,16 @@ namespace HQ.Extensions.Scheduling.Models
         private readonly ISafeLogger<BackgroundTaskHost> _logger;
         private readonly IOptionsMonitor<BackgroundTaskOptions> _settings;
 
-        public BackgroundTaskHost(IServerTimestampService timestamps, IBackgroundTaskStore store, IBackgroundTaskSerializer serializer, ITypeResolver typeResolver, IOptionsMonitor<BackgroundTaskOptions> settings, ISafeLogger<BackgroundTaskHost> logger)
+        public BackgroundTaskHost(
+            IServiceProvider backgroundServices,
+            IServerTimestampService timestamps,
+            IBackgroundTaskStore store,
+            IBackgroundTaskSerializer serializer,
+            ITypeResolver typeResolver,
+            IOptionsMonitor<BackgroundTaskOptions> settings,
+            ISafeLogger<BackgroundTaskHost> logger)
         {
+            _backgroundServices = backgroundServices;
             _timestamps = timestamps;
             Store = store;
             Serializer = serializer;
@@ -173,8 +179,10 @@ namespace HQ.Extensions.Scheduling.Models
                 MaxDegreeOfParallelism = ResolveConcurrency()
             };
 
+            var context = ProvisionExecutionContext(cancellationToken);
+
             Parallel.ForEach(_pending.Where(entry => entry.Value.OnHalt != null), options,
-                e => { e.Value.OnHalt.Halt(immediate); });
+                e => { e.Value.OnHalt.Halt(context, immediate); });
 
             _pending.Clear();
 
@@ -183,6 +191,13 @@ namespace HQ.Extensions.Scheduling.Models
 
             _background.Stop(immediate);
             _maintenance.Stop(immediate);
+        }
+
+        private static ExecutionContext ProvisionExecutionContext(CancellationToken cancellationToken)
+        {
+            var services = new ServiceCollection();
+            var context = new ExecutionContext(services.BuildServiceProvider(), new InMemoryKeyValueStore<string, object>(), cancellationToken);
+            return context;
         }
 
         private void WithFailedTasks(IEnumerable<BackgroundTask> tasks)
@@ -211,7 +226,7 @@ namespace HQ.Extensions.Scheduling.Models
                 task.LockedBy = null;
                 task.LastError = ErrorStrings.ExceededRuntime;
 
-                if (JobWillFail(task))
+                if (TaskIsTerminal(task))
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
@@ -306,7 +321,7 @@ namespace HQ.Extensions.Scheduling.Models
 
             if (!success)
             {
-                if (JobWillFail(task))
+                if (TaskIsTerminal(task))
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
@@ -373,17 +388,15 @@ namespace HQ.Extensions.Scheduling.Models
             Store.Save(task);
         }
 
-        private static bool JobWillFail(BackgroundTask task)
+        private static bool TaskIsTerminal(BackgroundTask task)
         {
             return task.Attempts >= task.MaximumAttempts;
         }
 
         private bool Perform(BackgroundTask task, out Exception exception)
         {
-            var success = false;
-
             // Acquire the handler:
-            var handler = CreateOrGetHandler(task);
+            var handler = CreateHandler(task);
 
             if (handler == null)
             {
@@ -392,101 +405,71 @@ namespace HQ.Extensions.Scheduling.Models
                 return false;
             }
 
-            // Acquire and cache method manifest:
-            var methods = CacheOrCreateMethods(handler);
+            var hooks = GetOrCreateMethodHooks(handler);
+            var context = ProvisionExecutionContext(_cancel.Token);
 
-            _pending.TryAdd(handler, methods);
+            _pending.TryAdd(handler, hooks);
             try
             {
                 // Before:
-                var before = methods.OnBefore?.Before();
+                hooks.OnBefore?.Before(context);
 
                 // Handler:
-                if (!before.HasValue || before.Value)
+                if (context.Continue)
                 {
-                    success = handler.Perform();
+                    handler.Perform(context);
                 }
 
                 // Success:
-                if (success)
+                if (context.Successful)
                 {
-                    methods.OnSuccess?.Success();
+                    hooks.OnSuccess?.Success(context);
                 }
 
                 // Failure:
-                if (JobWillFail(task))
+                if (TaskIsTerminal(task))
                 {
-                    methods.OnFailure?.Failure();
+                    hooks.OnFailure?.Failure(context);
                 }
 
                 // After:
-                methods.OnAfter?.After();
+                hooks.OnAfter?.After(context);
 
                 exception = null;
             }
-            catch (OperationCanceledException oce)
+            catch (OperationCanceledException e)
             {
                 task.LastError = "Cancelled";
-                exception = oce;
+                exception = e;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                task.LastError = ex.Message;
-                methods?.OnError?.Error(ex);
-                exception = ex;
+                task.LastError = e.Message;
+                hooks?.OnError?.Error(context, e);
+                exception = e;
             }
             finally
             {
                 _pending.TryRemove(handler, out _);
             }
 
-            return success;
+            return context.Successful;
         }
 
-        private Handler CreateOrGetHandler(BackgroundTask task)
+        private Handler CreateHandler(BackgroundTask task)
         {
             try
             {
                 var handlerInfo = Serializer.Deserialize<HandlerInfo>(task.Handler);
 
-                if (!HandlerCache.TryGetValue(handlerInfo, out var handler))
-                {
-                    var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
-                    var type = _typeResolver.FindByFullName(typeName) ?? _typeResolver.FindFirstByName(typeName);
-                    if (type != null)
-                    {
-                        object instance;
-                        if (!string.IsNullOrWhiteSpace(handlerInfo.Instance) &&
-                            !handlerInfo.Instance.Equals(NoHandlerState))
-                        {
-                            try
-                            {
-                                instance = Serializer.Deserialize(handlerInfo.Instance, type);
-                            }
-                            catch (Exception)
-                            {
-                                instance = null;
-                            }
-                        }
-                        else
-                        {
-                            instance = Instancing.CreateInstance(type);
-                        }
+                var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
+                var type = _typeResolver.FindByFullName(typeName) ?? _typeResolver.FindFirstByName(typeName);
+                if (type == null)
+                    return null;
 
-                        if (instance == null)
-                        {
-                            return null;
-                        }
+                var instance = _backgroundServices.AutoResolve(type);
 
-                        handler = TryWrapHook<Handler>(instance);
-                        if (handler != null)
-                        {
-                            HandlerCache.Add(handlerInfo, handler);
-                        }
-                    }
-                }
-
-                return handler;
+                return instance == null ? null : TryWrapHook<Handler>(instance);
             }
             catch (Exception e)
             {
@@ -495,7 +478,7 @@ namespace HQ.Extensions.Scheduling.Models
             }
         }
 
-        private static HandlerHooks CacheOrCreateMethods(Handler handler)
+        private static HandlerHooks GetOrCreateMethodHooks(Handler handler)
         {
             var handlerType = handler.GetType();
             if (!MethodCache.TryGetValue(handlerType, out var methods))

@@ -15,13 +15,20 @@
 
 #endregion
 
-using HQ.Extensions.Scheduling.Models;
+using System;
+using HQ.Common;
 
-namespace HQ.Extensions.Scheduling.Hooks
+namespace HQ.Data.Contracts.Attributes
 {
-    // ReSharper disable once InconsistentNaming
-    public interface After : Method
+    public class MetaDescriptionAttribute : Attribute
     {
-        void After(ExecutionContext context);
+        public string Content { get; }
+        public string MediaType { get; }
+
+        public MetaDescriptionAttribute(string content, string mediaType = Constants.MediaTypes.Markdown)
+        {
+            Content = content;
+            MediaType = mediaType;
+        }
     }
 }

@@ -67,38 +67,38 @@
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" implementationType="xsd:string" minOccurs="0" />
               </xsd:sequence>
-              <xsd:attributes name="name" use="required" type="xsd:string" />
-              <xsd:attributes name="type" type="xsd:string" />
-              <xsd:attributes name="mimetype" type="xsd:string" />
+              <xsd:attributes name="name" use="required" implementationType="xsd:string" />
+              <xsd:attributes name="implementationType" implementationType="xsd:string" />
+              <xsd:attributes name="mimeimplementationType" implementationType="xsd:string" />
               <xsd:attributes ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attributes name="alias" type="xsd:string" />
-              <xsd:attributes name="name" type="xsd:string" />
+              <xsd:attributes name="alias" implementationType="xsd:string" />
+              <xsd:attributes name="name" implementationType="xsd:string" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" implementationType="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" implementationType="xsd:string" minOccurs="0" msdata:Ordinal="2" />
               </xsd:sequence>
-              <xsd:attributes name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attributes name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attributes name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attributes name="name" implementationType="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attributes name="implementationType" implementationType="xsd:string" msdata:Ordinal="3" />
+              <xsd:attributes name="mimeimplementationType" implementationType="xsd:string" msdata:Ordinal="4" />
               <xsd:attributes ref="xml:space" />
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" implementationType="xsd:string" minOccurs="0" msdata:Ordinal="1" />
               </xsd:sequence>
-              <xsd:attributes name="name" type="xsd:string" use="required" />
+              <xsd:attributes name="name" implementationType="xsd:string" use="required" />
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -139,6 +139,6 @@
     <value>Validation failed.</value>
   </data>
   <data name="TypeIsNotAnOpenGeneric" xml:space="preserve">
-    <value>The provided type is not an open generic type</value>
+    <value>The provided implementationType is not an open generic implementationType</value>
   </data>
 </root>

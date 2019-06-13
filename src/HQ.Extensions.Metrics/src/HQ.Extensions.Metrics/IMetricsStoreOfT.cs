@@ -16,7 +16,7 @@
 #endregion
 
 using System.Collections.Immutable;
-using HQ.Extensions.Caching;
+using HQ.Data.Contracts.Runtime;
 
 namespace HQ.Extensions.Metrics
 {

@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,22 +12,25 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
-using HQ.Data.Contracts.DataAnnotations;
+using System;
+using HQ.Common;
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Data.Contracts.Attributes
 {
-    public class CreateBackgroundTaskModel
+    public class MetaCategoryAttribute : Attribute
     {
-        [RequiredOnlyOne]
-        [RequiredIfNotPresent(nameof(TaskCode))]
-        public string TaskType { get; set; }
+        public string Name { get; }
+        public string Description { get; }
+        public string DescriptionMediaType { get; set; }
 
-        [RequiredOnlyOne]
-        [RequiredIfNotPresent(nameof(TaskType))]
-        public string TaskCode { get; set; }
-
-        public string[] Tags { get; set; }
+        public MetaCategoryAttribute(string name, string description, string descriptionMediaType = Constants.MediaTypes.Markdown)
+        {
+            Name = name;
+            Description = description;
+            DescriptionMediaType = descriptionMediaType;
+        }
     }
 }

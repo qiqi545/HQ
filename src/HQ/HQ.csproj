@@ -63,6 +63,7 @@
     <!-- Platform -->
     <Content Include="..\HQ.Platform.Api\src\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\src\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\**\*.cs" Exclude="..\HQ.Platform.Operations\src\HQ.Platform.Operations\obj\**\*" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Functions\**\*.cs" Exclude="..\HQ.Platform.Functions\obj\**\*" Link="Platform.Functions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />

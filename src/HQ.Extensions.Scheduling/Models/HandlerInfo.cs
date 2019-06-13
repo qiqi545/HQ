@@ -22,9 +22,7 @@ namespace HQ.Extensions.Scheduling.Models
 {
     public class HandlerInfo : IEquatable<HandlerInfo>
     {
-        public HandlerInfo( /* Required for serialization */)
-        {
-        }
+        public HandlerInfo( /* Required for serialization */) { }
 
         public HandlerInfo(string @namespace, string entrypoint)
         {
@@ -34,7 +32,6 @@ namespace HQ.Extensions.Scheduling.Models
 
         public string Namespace { get; set; }
         public string Entrypoint { get; set; }
-        public string Instance { get; set; }
 
         #region Equality
 
@@ -50,8 +47,7 @@ namespace HQ.Extensions.Scheduling.Models
                 return true;
             }
 
-            return string.Equals(Namespace, other.Namespace) && string.Equals(Entrypoint, other.Entrypoint) &&
-                   string.Equals(Instance, other.Instance);
+            return string.Equals(Namespace, other.Namespace) && string.Equals(Entrypoint, other.Entrypoint);
         }
 
         public override bool Equals(object obj)
@@ -71,7 +67,7 @@ namespace HQ.Extensions.Scheduling.Models
                 return false;
             }
 
-            return Equals((HandlerInfo) obj);
+            return Equals((HandlerInfo)obj);
         }
 
         public override int GetHashCode()
@@ -80,7 +76,7 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 var hashCode = Namespace != null ? Namespace.GetHashCode() : 0;
                 hashCode = (hashCode * 397) ^ (Entrypoint != null ? Entrypoint.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (Instance != null ? Instance.GetHashCode() : 0);
+                hashCode = (hashCode * 397);
                 return hashCode;
             }
         }
@@ -119,8 +115,7 @@ namespace HQ.Extensions.Scheduling.Models
                     return false;
                 }
 
-                return string.Equals(x.Namespace, y.Namespace) && string.Equals(x.Entrypoint, y.Entrypoint) &&
-                       string.Equals(x.Instance, y.Instance);
+                return string.Equals(x.Namespace, y.Namespace) && string.Equals(x.Entrypoint, y.Entrypoint);
             }
 
             public int GetHashCode(HandlerInfo obj)
@@ -129,7 +124,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     var hashCode = obj.Namespace != null ? obj.Namespace.GetHashCode() : 0;
                     hashCode = (hashCode * 397) ^ (obj.Entrypoint != null ? obj.Entrypoint.GetHashCode() : 0);
-                    hashCode = (hashCode * 397) ^ (obj.Instance != null ? obj.Instance.GetHashCode() : 0);
+                    hashCode = (hashCode * 397);
                     return hashCode;
                 }
             }

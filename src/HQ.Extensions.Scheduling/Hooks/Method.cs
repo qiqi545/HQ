@@ -17,7 +17,6 @@
 
 namespace HQ.Extensions.Scheduling.Hooks
 {
-    public interface Method
-    {
-    }
+    // ReSharper disable once InconsistentNaming
+    public interface Method { }
 }

@@ -14,33 +14,29 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Scheduling.Configuration;
+using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
-using HQ.Platform.Api.Attributes;
-using HQ.Platform.Api.Models;
+using HQ.Platform.Functions.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
-namespace HQ.Platform.Api.Controllers
-{
-    public class HelloWorld
-    {
-        public bool Perform()
-        {
-            Console.WriteLine("Hello, World!");
-            return true;
-        }
-    }
+using Error = HQ.Data.Contracts.Error;
 
+namespace HQ.Platform.Functions.Controllers
+{
     [Route("ops/tasks")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
     [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+    [DisplayName("Background Tasks")]
     [MetaDescription("Manages background tasks.")]
     public class BackgroundTaskController : DataController
     {
@@ -61,7 +57,7 @@ namespace HQ.Platform.Api.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            var taskTypeNames = _typeResolver.FindByMethodName(nameof(HQ.Extensions.Scheduling.Hooks.Handler.Perform))
+            var taskTypeNames = _typeResolver.FindByMethodName(nameof(Handler.Perform))
                 .Where(x => !x.IsInterface && !x.IsAbstract)
                 .Select(x => x.Name);
 
