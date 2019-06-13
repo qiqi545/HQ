@@ -13,7 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Extensions.Caching
+namespace HQ.Data.Contracts.Runtime
 {
     public interface IKeyValueStore<in TKey, TValue>
     {

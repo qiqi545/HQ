@@ -15,42 +15,42 @@
 
 using System.Collections.Concurrent;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Data.Contracts.Runtime
 {
     public class InMemoryKeyValueStore<TKey, TValue> : IKeyValueStore<TKey, TValue>
     {
-        protected readonly ConcurrentDictionary<TKey, TValue> _memory;
+        protected readonly ConcurrentDictionary<TKey, TValue> Memory;
 
         public InMemoryKeyValueStore()
         {
-            _memory = new ConcurrentDictionary<TKey, TValue>();
+            Memory = new ConcurrentDictionary<TKey, TValue>();
         }
 
         public TValue GetOrAdd(TKey name, TValue metric)
         {
-            return _memory.GetOrAdd(name, metric);
+            return Memory.GetOrAdd(name, metric);
         }
 
-        public TValue this[TKey name] => _memory[name];
+        public TValue this[TKey name] => Memory[name];
 
-        public bool TryGetValue(TKey name, out TValue metric)
+        public bool TryGetValue(TKey name, out TValue value)
         {
-            return _memory.TryGetValue(name, out metric);
+            return Memory.TryGetValue(name, out value);
         }
 
         public bool Contains(TKey name)
         {
-            return _memory.ContainsKey(name);
+            return Memory.ContainsKey(name);
         }
 
         public void AddOrUpdate<T>(TKey name, T metric) where T : TValue
         {
-            _memory.AddOrUpdate(name, metric, (n, m) => m);
+            Memory.AddOrUpdate(name, metric, (n, m) => m);
         }
 
         public bool Clear()
         {
-            _memory.Clear();
+            Memory.Clear();
             return true;
         }
     }
