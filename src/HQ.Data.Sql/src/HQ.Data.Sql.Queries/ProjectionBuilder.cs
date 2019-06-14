@@ -27,13 +27,18 @@ namespace HQ.Data.Sql.Queries
 {
     public static class ProjectionBuilder
     {
-        public static string Select<T>(ISqlDialect dialect, FieldOptions fields, ProjectionOptions projections)
+        public static string Select<T>(this ISqlDialect dialect, FieldOptions fields, ProjectionOptions projections)
+        {
+            return Select(dialect, typeof(T), fields, projections);
+        }
+
+        public static string Select(this ISqlDialect dialect, Type type, FieldOptions fields, ProjectionOptions projections)
         {
             return Pooling.StringBuilderPool.Scoped(sb =>
             {
                 // SELECT * FROM ...
-                sb.Append($"SELECT {BuildFields<T>(dialect, fields, projections)} " +
-                          $"FROM {dialect.StartIdentifier}{typeof(T).Name}{dialect.EndIdentifier} r ");
+                sb.Append($"SELECT {BuildFields(dialect, type, fields, projections)} " +
+                          $"FROM {dialect.StartIdentifier}{type.Name}{dialect.EndIdentifier} r ");
 
                 if (projections?.Fields == null)
                     return;
@@ -49,18 +54,10 @@ namespace HQ.Data.Sql.Queries
                     switch (projection.Type)
                     {
                         case ProjectionType.OneToOne:
-                            /*
-                                INNER JOIN Role r0 ON r0.Id = x0.RoleId
-                            */
                             sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
                             break;
                         case ProjectionType.OneToMany:
-                            /*
-                                INNER JOIN UserRole x0 ON x0.UserId = r.Id
-                                INNER JOIN Role r0 ON r0.Id = x0.RoleId
-                            */
-                            sb.Append(
-                                $"INNER JOIN {typeof(T).Name}{name} x{joins} ON x{joins}.{typeof(T).Name}Id = r.Id ");
+                            sb.Append($"INNER JOIN {type.Name}{name} x{joins} ON x{joins}.{type.Name}Id = r.Id ");
                             sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
                             break;
                         case ProjectionType.Scalar:
@@ -74,9 +71,9 @@ namespace HQ.Data.Sql.Queries
             });
         }
 
-        private static string BuildFields<T>(ISqlDialect dialect, FieldOptions options, ProjectionOptions projections)
+        private static string BuildFields(this ISqlDialect dialect, Type type, FieldOptions options, ProjectionOptions projections)
         {
-            var source = BuildFieldSource<T>(options);
+            var source = BuildFieldSource(type, options);
 
             return Pooling.StringBuilderPool.Scoped(sb =>
             {
@@ -87,20 +84,20 @@ namespace HQ.Data.Sql.Queries
                     return;
 
                 var joins = 0;
-                foreach (var projection in projections?.Fields)
+                foreach (var projection in projections.Fields)
                 {
                     sb.Append($", r{joins}.*");
                     joins++;
                 }
             });
         }
-
-        private static IOrderedEnumerable<string> BuildFieldSource<T>(FieldOptions options)
+        
+        private static IOrderedEnumerable<string> BuildFieldSource(Type type, FieldOptions options)
         {
             IOrderedEnumerable<string> source;
             if (options?.Fields == null || options.Fields.Count == 0)
             {
-                var memberSet = GetProjectionMembersNames(typeof(T));
+                var memberSet = GetProjectionMembersNames(type);
 
                 source = memberSet.OrderBy(a => a);
             }
