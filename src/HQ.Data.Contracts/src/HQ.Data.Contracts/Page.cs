@@ -23,25 +23,8 @@ using System.Runtime.Serialization;
 namespace HQ.Data.Contracts
 {
     [DataContract]
-    public class Page<T> : IPage<T>
+    public class Page : IPage
     {
-        private readonly IEnumerable<T> _source;
-
-        public Page(IEnumerable<T> source, int count, int index, int size, long totalCount)
-        {
-            _source = source;
-
-            Index = index;
-            Size = size;
-            Count = count;
-            TotalCount = totalCount;
-            TotalPages = (int)Math.Ceiling(TotalCount / (double)Count);
-            HasPreviousPage = Index > 1;
-            HasNextPage = Index < TotalPages - 1;
-            Start = Count * Index - Count + 1;
-            End = Start + Count - 1;
-        }
-
         [DataMember]
         public int Index { get; set; }
 
@@ -69,7 +52,41 @@ namespace HQ.Data.Contracts
         [DataMember]
         public int End { get; set; }
 
-        public IEnumerator<T> GetEnumerator()
+        private readonly IEnumerable _source;
+
+        public Page(IEnumerable source, int count, int index, int size, long totalCount)
+        {
+            _source = source;
+
+            Index = index;
+            Size = size;
+            Count = count;
+            TotalCount = totalCount;
+            TotalPages = (int)Math.Ceiling(TotalCount / (double)Count);
+            HasPreviousPage = Index > 1;
+            HasNextPage = Index < TotalPages - 1;
+            Start = Count * Index - Count + 1;
+            End = Start + Count - 1;
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return _source.GetEnumerator();
+        }
+    }
+
+    [DataContract]
+    public class Page<T> : Page, IPage<T>
+    {
+        private readonly IEnumerable<T> _source;
+
+        public Page(IEnumerable<T> source, int count, int index, int size, long totalCount) : base(source, count, index, size, totalCount)
+        {
+            // ReSharper disable once PossibleMultipleEnumeration
+            _source = source;
+        }
+
+        public new IEnumerator<T> GetEnumerator()
         {
             return _source.GetEnumerator();
         }

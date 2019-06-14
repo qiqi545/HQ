@@ -15,9 +15,12 @@
 
 #endregion
 
+using System.Collections;
 using System.Collections.Generic;
 
 namespace HQ.Data.Contracts
 {
-    public interface IPage<out T> : IPageHeader, IEnumerable<T> { }
+    public interface IPage<out T> : IPage, IEnumerable<T> { }
+
+    public interface IPage : IPageHeader, IEnumerable { }
 }
