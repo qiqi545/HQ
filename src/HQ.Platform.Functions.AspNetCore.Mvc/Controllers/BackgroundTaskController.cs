@@ -92,7 +92,44 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
             return Ok(task);
         }
 
+        [HttpPost("every/{minutes?}")]
+        [MetaDescription("Creates a frequently repeating background task.")]
+        public IActionResult CreateFrequentBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int minutes = 0)
+        {
+            model.Expression = CronTemplates.Minutely(minutes);
+
+            return CreateBackgroundTask(model);
+        }
+
+        [HttpPost("daily/{atHour?}/{atMinute?}")]
+        [MetaDescription("Creates a daily repeating background task.")]
+        public IActionResult CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        {
+            model.Expression = CronTemplates.Daily(atHour, atMinute);
+
+            return CreateBackgroundTask(model);
+        }
+
+        [HttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}")]
+        [MetaDescription("Creates a weekly repeating background task.")]
+        public IActionResult CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        {
+            model.Expression = CronTemplates.WeekDaily(dayOfWeek, atHour, atMinute);
+
+            return CreateBackgroundTask(model);
+        }
+
+        [HttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}")]
+        [MetaDescription("Creates a monthly repeating background task.")]
+        public IActionResult CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        {
+            model.Expression = CronTemplates.Monthly(atDay, atHour, atMinute);
+
+            return CreateBackgroundTask(model);
+        }
+
         [HttpPost]
+        [MetaDescription("Creates a background task.")]
         public IActionResult CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
         {
             if (!Valid(model, out var error))
@@ -108,6 +145,9 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
                 {
                     if (model.Tags?.Length > 0)
                         t.Tags.AddRange(model.Tags);
+
+                    if (!string.IsNullOrWhiteSpace(model.Expression))
+                        t.Expression = model.Expression;
                 }))
                 {
                     return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");

@@ -65,7 +65,7 @@ namespace HQ.Extensions.Scheduling.Models
 
         private static string ValueOrStar(int value)
         {
-            return value == 0 ? "*" : "*/" + value;
+            return value == 0 ? "*" : $"*/{value}";
         }
     }
 }

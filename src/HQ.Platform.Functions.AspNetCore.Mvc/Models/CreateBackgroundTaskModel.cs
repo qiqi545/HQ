@@ -28,5 +28,7 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
         public string TaskCode { get; set; }
 
         public string[] Tags { get; set; }
+
+        public string Expression { get; set; }
     }
 }
