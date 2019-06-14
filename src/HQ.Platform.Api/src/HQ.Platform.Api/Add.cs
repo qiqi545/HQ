@@ -52,7 +52,6 @@ namespace HQ.Platform.Api
             services.AddHttpCaching();
             services.AddCanonicalRoutes();
             services.AddGzipCompression();
-            services.AddBackgroundTasks();
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
             services.AddOptions<RouteOptions>().Configure<IOptions<PlatformApiOptions>>((o, x) =>
             {

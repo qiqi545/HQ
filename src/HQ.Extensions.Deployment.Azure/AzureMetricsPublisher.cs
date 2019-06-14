@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.AppInsights;
 
@@ -22,8 +23,10 @@ namespace HQ.Extensions.Deployment.Azure
 {
     public class AzureMetricsPublisher : ICloudMetricsPublisher<AzureOptions>
     {
-        public void AddCloudMetricsPublisher(IMetricsBuilder builder, AzureOptions options)
+        public void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, AzureOptions options)
         {
+            logger.Info(() => "Adding Application Insights Metrics & Health Checks Reporting");
+
             builder.PushToApplicationInsights(p =>
             {
                 p.MetricsSampleEventName = Constants.Events.MetricsSample;

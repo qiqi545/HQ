@@ -26,7 +26,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
     {
         public IEnumerable<Type> ControllerTypes => new[]
         {
-            typeof(UserController<,,>), typeof(RoleController<,>), typeof(TenantController<,>),
+            typeof(UserController<,,>),
+            typeof(RoleController<,>),
+            typeof(TenantController<,>),
             typeof(ApplicationController<,>)
         };
 

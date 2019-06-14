@@ -43,7 +43,7 @@ namespace HQ.Extensions.Scheduling
             services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
             services.TryAddSingleton<BackgroundTaskHost>();
 
-            services.AddSingleton<IHostedService, BackgroundTaskService>();
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BackgroundTaskService>());
 
             return services;
         }

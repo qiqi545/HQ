@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,24 +27,23 @@ namespace HQ.Extensions.Deployment
 {
     public static class CloudExtensions
     {
-        public static void ConfigureCloudServices(this ILoggingBuilder builder, params ICloudOptions[] clouds)
+        public static void ConfigureCloudLogging(this ILoggingBuilder builder, params ICloudOptions[] clouds)
         {
             foreach (var cloud in clouds)
             {
                 var method = typeof(CloudExtensions).GetMethod(nameof(AddCloudLogging))
                     ?.MakeGenericMethod(cloud.GetType());
-                method?.Invoke(null, new object[] {builder, cloud});
+                method?.Invoke(null, new object[] {builder, cloud });
             }
         }
 
-        public static IServiceCollection AddCloudServices(this IServiceCollection services,
-            params ICloudOptions[] clouds)
+        public static IServiceCollection AddCloudServices(this IServiceCollection services, ISafeLogger logger, params ICloudOptions[] clouds)
         {
             foreach (var cloud in clouds)
             {
                 var method = typeof(CloudExtensions).GetMethod(nameof(AddCloudTelemetry))
                     ?.MakeGenericMethod(cloud.GetType());
-                method?.Invoke(null, new object[] {services, cloud});
+                method?.Invoke(null, new object[] {services, logger, cloud });
             }
 
             services.AddMetrics(builder =>
@@ -52,7 +52,7 @@ namespace HQ.Extensions.Deployment
                 {
                     var method = typeof(CloudExtensions).GetMethod(nameof(AddCloudMetricsPublisher))
                         ?.MakeGenericMethod(cloud.GetType());
-                    method?.Invoke(null, new object[] {builder, cloud});
+                    method?.Invoke(null, new object[] {builder, logger, cloud });
                 }
             });
             return services;
@@ -64,25 +64,25 @@ namespace HQ.Extensions.Deployment
             foreach (var module in ScanForTypesImplementing<ICloudLogger<T>>())
             {
                 var method = typeof(ICloudLogger<T>).GetMethod(nameof(ICloudLogger<T>.AddCloudLogger));
-                method?.Invoke(module, new object[] {builder, options});
+                method?.Invoke(module, new object[] {builder, options });
             }
 
             return builder;
         }
 
-        public static IServiceCollection AddCloudTelemetry<T>(this IServiceCollection services, ICloudOptions options)
+        public static IServiceCollection AddCloudTelemetry<T>(this IServiceCollection services, ISafeLogger logger, ICloudOptions options)
             where T : ICloudOptions
         {
             foreach (var module in ScanForTypesImplementing<ICloudTelemetry<T>>())
             {
                 var method = typeof(ICloudTelemetry<T>).GetMethod(nameof(ICloudTelemetry<T>.AddCloudTelemetry));
-                method?.Invoke(module, new object[] {services, options});
+                method?.Invoke(module, new object[] {services, logger, options });
             }
 
             return services;
         }
 
-        public static IMetricsBuilder AddCloudMetricsPublisher<T>(this IMetricsBuilder builder, ICloudOptions options)
+        public static IMetricsBuilder AddCloudMetricsPublisher<T>(this IMetricsBuilder builder, ISafeLogger logger, ICloudOptions options)
             where T : ICloudOptions
         {
             foreach (var module in ScanForTypesImplementing<ICloudMetricsPublisher<T>>())
@@ -90,7 +90,7 @@ namespace HQ.Extensions.Deployment
                 var method =
                     typeof(ICloudMetricsPublisher<T>).GetMethod(nameof(ICloudMetricsPublisher<T>
                         .AddCloudMetricsPublisher));
-                method?.Invoke(module, new object[] {builder, options});
+                method?.Invoke(module, new object[] {builder, logger, options });
             }
 
             return builder;

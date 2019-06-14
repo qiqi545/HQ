@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Deployment.Azure
@@ -23,6 +24,8 @@ namespace HQ.Extensions.Deployment.Azure
     {
         public void AddCloudLogger(ILoggingBuilder builder, AzureOptions options)
         {
+            Trace.TraceInformation("Adding Application Insights Logging");
+
             builder.AddApplicationInsights(o =>
             {
                 o.IncludeScopes = true;
