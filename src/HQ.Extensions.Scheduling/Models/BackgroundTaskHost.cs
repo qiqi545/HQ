@@ -54,7 +54,7 @@ namespace HQ.Extensions.Scheduling.Models
         private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
 
         private readonly ISafeLogger<BackgroundTaskHost> _logger;
-        private readonly IOptionsMonitor<BackgroundTaskOptions> _settings;
+        private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 
         public BackgroundTaskHost(
             IServiceProvider backgroundServices,
@@ -62,7 +62,7 @@ namespace HQ.Extensions.Scheduling.Models
             IBackgroundTaskStore store,
             IBackgroundTaskSerializer serializer,
             ITypeResolver typeResolver,
-            IOptionsMonitor<BackgroundTaskOptions> settings,
+            IOptionsMonitor<BackgroundTaskOptions> options,
             ISafeLogger<BackgroundTaskHost> logger)
         {
             _backgroundServices = backgroundServices;
@@ -70,9 +70,9 @@ namespace HQ.Extensions.Scheduling.Models
             Store = store;
             Serializer = serializer;
             _typeResolver = typeResolver;
-            _settings = settings;
+            _options = options;
             _logger = logger;
-            settings.OnChange(OnSettingsChanged);
+            options.OnChange(OnSettingsChanged);
 
             _schedulers = new ConcurrentDictionary<int, TaskScheduler>();
             _factories = new ConcurrentDictionary<TaskScheduler, TaskFactory>();
@@ -106,17 +106,17 @@ namespace HQ.Extensions.Scheduling.Models
         {
             get
             {
-                var settings = _settings.CurrentValue;
+                var settings = _options.CurrentValue;
 
                 var @readonly = new BackgroundTaskOptions
                 {
                     DelayTasks = settings.DelayTasks,
                     Concurrency = settings.Concurrency,
-                    SleepInterval = settings.SleepInterval,
+                    SleepIntervalSeconds = settings.SleepIntervalSeconds,
                     IntervalFunction = settings.IntervalFunction,
                     ReadAhead = settings.ReadAhead,
                     MaximumAttempts = settings.MaximumAttempts,
-                    MaximumRuntime = settings.MaximumRuntime,
+                    MaximumRuntimeSeconds = settings.MaximumRuntimeSeconds,
                     DeleteOnError = settings.DeleteOnError,
                     DeleteOnFailure = settings.DeleteOnFailure,
                     DeleteOnSuccess = settings.DeleteOnSuccess,
@@ -135,14 +135,14 @@ namespace HQ.Extensions.Scheduling.Models
 
         private void OnSettingsChanged(BackgroundTaskOptions changed)
         {
-            _logger.Info(() => "Background task settings changed, recycling the host.");
+            _logger.Info(() => "Background task options changed, recycling the host.");
             Stop();
             Start();
         }
 
         private IEnumerable<BackgroundTask> EnqueueTasks()
         {
-            return Store.GetAndLockNextAvailable(_settings.CurrentValue.ReadAhead);
+            return Store.GetAndLockNextAvailable(_options.CurrentValue.ReadAhead);
         }
 
         private IEnumerable<BackgroundTask> HangingTasks()
@@ -157,7 +157,7 @@ namespace HQ.Extensions.Scheduling.Models
                 _scheduler = new QueuedTaskScheduler(ResolveConcurrency());
             }
 
-            _background.Produce(EnqueueTasks, _settings.CurrentValue.SleepInterval);
+            _background.Produce(EnqueueTasks, TimeSpan.FromSeconds(_options.CurrentValue.SleepIntervalSeconds));
             _background.Start(immediate);
 
             _maintenance.Produce(HangingTasks, TimeSpan.FromMinutes(1));
@@ -166,9 +166,9 @@ namespace HQ.Extensions.Scheduling.Models
 
         private int ResolveConcurrency()
         {
-            return _settings.CurrentValue.Concurrency == 0
+            return _options.CurrentValue.Concurrency == 0
                 ? Environment.ProcessorCount
-                : _settings.CurrentValue.Concurrency;
+                : _options.CurrentValue.Concurrency;
         }
 
         public void Stop(CancellationToken cancellationToken = default, bool immediate = false)
@@ -239,7 +239,7 @@ namespace HQ.Extensions.Scheduling.Models
                 }
                 else
                 {
-                    task.RunAt += _settings.CurrentValue.IntervalFunction(task.Attempts);
+                    task.RunAt += _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
                 }
 
                 Store.Save(task);
@@ -307,7 +307,7 @@ namespace HQ.Extensions.Scheduling.Models
             var success = Perform(task, out exception);
             if (!success)
             {
-                task.RunAt = _timestamps.GetCurrentTime() + _settings.CurrentValue.IntervalFunction(task.Attempts);
+                task.RunAt = _timestamps.GetCurrentTime() + _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
             }
 
             return success;

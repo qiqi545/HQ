@@ -15,12 +15,13 @@
 
 #endregion
 
+using HQ.Common;
 using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class IdentityOptionsExtended : IdentityOptions
+    public class IdentityOptionsExtended : IdentityOptions, IFeatureToggle
     {
         public IdentityOptionsExtended() { }
 
@@ -41,7 +42,6 @@ namespace HQ.Platform.Identity.Configuration
         }
 
         public bool Enabled { get; set; }
-
         public IdentityType? DefaultIdentityType { get; set; } = null;
         public IdentityApiOptions Api { get; set; } = new IdentityApiOptions();
         public new UserOptionsExtended User { get; set; } = new UserOptionsExtended();

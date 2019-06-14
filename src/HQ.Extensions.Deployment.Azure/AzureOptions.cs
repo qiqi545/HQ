@@ -21,6 +21,8 @@ namespace HQ.Extensions.Deployment.Azure
 {
     public class AzureOptions : ICloudOptions
     {
+        public string SubscriptionId { get; set; }
+
         public ApplicationInsightsServiceOptions ApplicationInsights { get; set; } =
             new ApplicationInsightsServiceOptions();
     }

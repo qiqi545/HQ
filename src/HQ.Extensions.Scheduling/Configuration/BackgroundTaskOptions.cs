@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Runtime.Serialization;
 using HQ.Common;
 using HQ.Extensions.Scheduling.Models;
 
@@ -28,13 +27,13 @@ namespace HQ.Extensions.Scheduling.Configuration
         {
             // System:
             DelayTasks = true;
-            SleepInterval = TimeSpan.FromSeconds(60);
-            CleanupInterval = TimeSpan.FromMinutes(5);
+            SleepIntervalSeconds = 60;
+            CleanupIntervalSeconds = 300;
             Concurrency = 0;
             ReadAhead = 5;
             MaximumAttempts = 25;
-            MaximumRuntime = TimeSpan.FromHours(4);
-            IntervalFunction = i => TimeSpan.FromSeconds(5 + Math.Pow(i, 4));
+            MaximumRuntimeSeconds = 180;
+            IntervalFunction = IntervalFunction.ExponentialBackoff;
 
             // Per-Task:
             DeleteOnFailure = false;
@@ -47,8 +46,7 @@ namespace HQ.Extensions.Scheduling.Configuration
         ///     The function responsible for calculating the next attempt date after a tasks fails;
         ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential back-off)
         /// </summary>
-        [IgnoreDataMember]
-        public Func<int, TimeSpan> IntervalFunction { get; set; }
+        public IntervalFunction IntervalFunction { get; set; }
 
         /// <summary>
         ///     Whether or not tasks are delayed or executed immediately; default is true
@@ -58,12 +56,12 @@ namespace HQ.Extensions.Scheduling.Configuration
         /// <summary>
         ///     The time to delay before checking for available tasks in the backing store. Default is 60 seconds.
         /// </summary>
-        public TimeSpan SleepInterval { get; set; }
+        public int SleepIntervalSeconds { get; set; }
 
         /// <summary>
-        ///     The time to delay before checking for hanging tasks in the backing store. Default is 5 minutes.
+        ///     The time to delay before checking for hanging tasks in the backing store. Default is 3 minutes.
         /// </summary>
-        public TimeSpan CleanupInterval { get; set; }
+        public int CleanupIntervalSeconds { get; set; }
 
         /// <summary>
         ///     The number of threads available for performing tasks; default is 0.
@@ -82,9 +80,9 @@ namespace HQ.Extensions.Scheduling.Configuration
         public int MaximumAttempts { get; set; }
 
         /// <summary>
-        ///     The maximum time each task is allowed before being cancelled; default is 4 hours.
+        ///     The maximum time each task is allowed before being cancelled; default is 3 minutes.
         /// </summary>
-        public TimeSpan MaximumRuntime { get; set; }
+        public int MaximumRuntimeSeconds { get; set; }
 
         /// <summary>
         ///     Whether or not failed tasks are deleted from the backend store; default is false.
@@ -110,7 +108,7 @@ namespace HQ.Extensions.Scheduling.Configuration
         /// <summary> Set task values that have defaults if not provided by the user. </summary>
         public void ProvisionTask(BackgroundTask task)
         {
-            task.MaximumRuntime = task.MaximumRuntime ?? MaximumRuntime;
+            task.MaximumRuntime = task.MaximumRuntime ?? TimeSpan.FromSeconds(MaximumRuntimeSeconds);
             task.MaximumAttempts = task.MaximumAttempts ?? MaximumAttempts;
             task.DeleteOnSuccess = task.DeleteOnSuccess ?? DeleteOnSuccess;
             task.DeleteOnFailure = task.DeleteOnFailure ?? DeleteOnFailure;

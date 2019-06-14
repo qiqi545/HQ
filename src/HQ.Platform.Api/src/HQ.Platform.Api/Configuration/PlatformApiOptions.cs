@@ -16,7 +16,6 @@
 #endregion
 
 using System.Reflection;
-using HQ.Extensions.Scheduling.Configuration;
 
 namespace HQ.Platform.Api.Configuration
 {
@@ -32,6 +31,5 @@ namespace HQ.Platform.Api.Configuration
         public VersioningOptions Versioning { get; set; } = new VersioningOptions();
         public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
         public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
-        public BackgroundTaskOptions BackgroundTasks { get; set; } = new BackgroundTaskOptions();
     }
 }

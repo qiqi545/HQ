@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Scheduling;
+using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Conventions;
 using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Functions.AspNetCore.Mvc.Models;
@@ -19,18 +21,26 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = null)
+        public static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, IConfiguration backgroundTasksConfig, string rootPath = "/ops")
+        {
+            return AddBackgroundTasksApi(mvcBuilder, securityConfig.Bind, backgroundTasksConfig.Bind, rootPath);
+        }
+
+        public static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, Action<BackgroundTaskOptions> configureTasks = null, string rootPath = "/ops")
         {
             var services = mvcBuilder.Services;
 
-            services.AddBackgroundTasks();
+            if (configureSecurity != null)
+                services.Configure(configureSecurity);
+
+            services.AddBackgroundTasks(configureTasks);
             services.AddRestRuntime();
             
-            var securityOptions = new SecurityOptions();
-            securityConfig.Bind(securityOptions);
-
             services.AddAuthorization(x =>
             {
+                var securityOptions = new SecurityOptions();
+                configureSecurity?.Invoke(securityOptions);
+
                 x.AddPolicy(Constants.Security.Policies.ManageBackgroundTasks, b =>
                 {
                     b.RequireAuthenticatedUserExtended(services, securityOptions);

@@ -41,7 +41,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [MetaCategory("Identity", "Manages application access controls.")]
+    [MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
     [DisplayName("Tokens")]
     [MetaDescription("Manages authentication tokens.")]
     public class TokenController<TUser, TTenant, TApplication, TKey> : DataController
@@ -114,7 +114,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
             var identity = user.ActLike<IUserIdProvider>();
             var token = identity.CreateToken(claims, _securityOptions.CurrentValue, _apiOptions.CurrentValue);
-            
+
             return Ok(new { AccessToken = token });
         }
     }
