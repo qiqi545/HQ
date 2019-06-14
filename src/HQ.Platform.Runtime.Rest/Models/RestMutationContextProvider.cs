@@ -53,6 +53,7 @@ namespace HQ.Platform.Runtime.Rest.Models
             using (var sr = new StreamReader(source.Body))
             {
                 var json = sr.ReadToEnd();
+
                 BuildHandleData(context, json);
             }
         }

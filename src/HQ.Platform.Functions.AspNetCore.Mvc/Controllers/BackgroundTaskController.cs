@@ -33,9 +33,9 @@ using Error = HQ.Data.Contracts.Error;
 
 namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
 {
-    [DisplayName("Background Tasks")]
     [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages background tasks.")]
+    [DisplayName("Background Tasks")]
     [Route("tasks")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
@@ -46,6 +46,7 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
 
         private readonly IBackgroundTaskStore _store;
         private readonly ITypeResolver _typeResolver;
+
         private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 
         public BackgroundTaskController(IBackgroundTaskStore store, ITypeResolver typeResolver, BackgroundTaskHost host, IOptionsMonitor<BackgroundTaskOptions> options)

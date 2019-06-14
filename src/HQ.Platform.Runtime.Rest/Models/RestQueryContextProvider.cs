@@ -32,21 +32,19 @@ namespace HQ.Platform.Runtime.Rest.Models
             _filters = filters;
         }
 
-        public IEnumerable<QueryContext> Parse(HttpContext source)
+        public IEnumerable<QueryContext> Parse<T>(HttpContext source)
         {
-            return Parse(source.User, source.Request.QueryString.Value);
+            return Parse<T>(source.User, source.Request.QueryString.Value);
         }
 
-        public IEnumerable<QueryContext> Parse(ClaimsPrincipal user, string source)
+        public IEnumerable<QueryContext> Parse<T>(ClaimsPrincipal user, string source)
         {
-            var context = new QueryContext(user);
-
-            // context.Type = ...
+            var context = new QueryContext(user)
+            {
+                Type = typeof(T),
+            };
 
             BuildHandleData(context, source);
-
-            // context.Handle = ...
-
             yield return context;
         }
 

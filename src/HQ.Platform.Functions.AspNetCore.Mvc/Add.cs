@@ -7,6 +7,7 @@ using HQ.Platform.Api.Conventions;
 using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Operations;
+using HQ.Platform.Runtime.Rest;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
@@ -23,6 +24,7 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc
             var services = mvcBuilder.Services;
 
             services.AddBackgroundTasks();
+            services.AddRestRuntime();
             
             var securityOptions = new SecurityOptions();
             securityConfig.Bind(securityOptions);
