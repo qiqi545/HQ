@@ -27,7 +27,7 @@ namespace HQ.Data.Contracts
 
         Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null);
 
-        Task<Operation<IStream<IObject>>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<Operation<IStream<IObject>>> GetAsync(Type type, IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 
     public interface IObjectGetRepository<T> where T : IObject
