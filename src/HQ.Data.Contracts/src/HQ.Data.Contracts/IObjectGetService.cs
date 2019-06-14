@@ -32,12 +32,12 @@ namespace HQ.Data.Contracts
             FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 
-    public interface IObjectGetService<T> where T : IObject
+    public interface IObjectGetService<TObject> where TObject : IObject
     {
-        Task<IPage<T>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<IPage<TObject>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
-        Task<T> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
+        Task<TObject> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
 
-        Task<IStream<T>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
+        Task<IStream<TObject>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
     }
 }

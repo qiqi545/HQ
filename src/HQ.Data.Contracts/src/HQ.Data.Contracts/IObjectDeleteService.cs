@@ -29,11 +29,11 @@ namespace HQ.Data.Contracts
         Task DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
     }
 
-    public interface IObjectDeleteService<in T> where T : IObject
+    public interface IObjectDeleteService<in TObject> where TObject : IObject
     {
         Task<ObjectDelete> DeleteAsync(long id);
-        Task<ObjectDelete> DeleteAsync(T @object);
+        Task<ObjectDelete> DeleteAsync(TObject @object);
         Task DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null);
-        Task DeleteAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null);
+        Task DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null);
     }
 }

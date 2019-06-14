@@ -25,15 +25,13 @@ namespace HQ.Data.Contracts
     {
         Task<ObjectSave> SaveAsync(Type type, IObject @object);
         Task<ObjectSave> SaveAsync(Type type, IObject @object, List<string> fields);
-
-        Task SaveAsync(Type type, IEnumerable<IObject> objects, BatchSaveStrategy strategy, long startingAt = 0,
-            int? count = null);
+        Task SaveAsync(Type type, IEnumerable<IObject> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null);
     }
 
-    public interface IObjectSaveService<in T> where T : IObject
+    public interface IObjectSaveService<in TObject> where TObject : IObject
     {
-        Task<ObjectSave> SaveAsync(T @object);
-        Task<ObjectSave> SaveAsync(T @object, List<string> fields);
-        Task SaveAsync(IEnumerable<T> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null);
+        Task<ObjectSave> SaveAsync(TObject @object);
+        Task<ObjectSave> SaveAsync(TObject @object, List<string> fields);
+        Task SaveAsync(IEnumerable<TObject> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null);
     }
 }
