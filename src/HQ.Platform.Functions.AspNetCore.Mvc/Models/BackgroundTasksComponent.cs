@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,18 +11,22 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-namespace HQ.Platform.Security
+using System;
+using System.Collections.Generic;
+using HQ.Platform.Api.Conventions;
+using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
+
+namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
 {
-    public static class ClaimValues
+    internal class BackgroundTasksComponent : IDynamicComponent
     {
-        public const string SuperUser = "superuser";
-        public const string ManageUsers = "manage_users";
-        public const string ManageRoles = "manage_roles";
-        public const string ManageTenants = "manage_tenants";
-        public const string ManageApplications = "manage_applications";
-        public const string ManageBackgroundTasks = "manage_background_tasks";
+        public IEnumerable<Type> ControllerTypes => new[]
+        {
+            typeof(BackgroundTaskController)
+        };
+
+        public Func<string> Namespace { get; set; }
     }
 }

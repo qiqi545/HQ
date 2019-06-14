@@ -15,7 +15,7 @@
 
 using HQ.Data.Contracts.DataAnnotations;
 
-namespace HQ.Platform.Functions.Models
+namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
 {
     public class CreateBackgroundTaskModel
     {

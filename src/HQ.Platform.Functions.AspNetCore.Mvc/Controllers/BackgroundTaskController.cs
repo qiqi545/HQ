@@ -16,6 +16,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -23,21 +24,22 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
-using HQ.Platform.Functions.Models;
+using HQ.Platform.Functions.AspNetCore.Mvc.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-
 using Error = HQ.Data.Contracts.Error;
 
-namespace HQ.Platform.Functions.Controllers
+namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
 {
-    [Route("ops/tasks")]
+    [DisplayName("Background Tasks")]
+    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+    [MetaDescription("Manages background tasks.")]
+    [Route("tasks")]
     [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
-    [DisplayName("Background Tasks")]
-    [MetaDescription("Manages background tasks.")]
+    [Authorize(Constants.Security.Policies.ManageBackgroundTasks)]
     public class BackgroundTaskController : DataController
     {
         private readonly BackgroundTaskHost _host;

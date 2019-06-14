@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -30,9 +32,13 @@ namespace HQ.Platform.Functions
         {
             context.TryGetData(RequestUriKey, out string uriString);
             if (!Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out var uri))
+            {
                 context.Fail();
+            }
             else
+            {
                 context.AddData(RequestUriKey, uri);
+            }
         }
 
         public void Perform(ExecutionContext context)
@@ -44,7 +50,8 @@ namespace HQ.Platform.Functions
                 using (var client = new HttpClient(handler))
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-                    var response = client.SendAsync(request, context.CancellationToken).ConfigureAwait(false).GetAwaiter().GetResult();
+                    var response = client.SendAsync(request, context.CancellationToken).ConfigureAwait(false)
+                        .GetAwaiter().GetResult();
 
                     if (response.IsSuccessStatusCode)
                     {

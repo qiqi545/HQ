@@ -75,6 +75,7 @@ namespace HQ.Common
                 public const string ManageApplications = "ManageApplications";
                 public const string ManageUsers = "ManageUsers";
                 public const string ManageRoles = "ManageRoles";
+                public const string ManageBackgroundTasks = "ManageBackgroundTasks";
             }
         }
 
