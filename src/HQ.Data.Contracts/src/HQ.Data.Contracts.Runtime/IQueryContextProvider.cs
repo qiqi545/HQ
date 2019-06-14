@@ -23,7 +23,7 @@ namespace HQ.Data.Contracts.Runtime
 {
     public interface IQueryContextProvider
     {
-        IEnumerable<QueryContext> Parse(HttpContext source);
-        IEnumerable<QueryContext> Parse(ClaimsPrincipal user, string source);
+        IEnumerable<QueryContext> Parse<T>(HttpContext source);
+        IEnumerable<QueryContext> Parse<T>(ClaimsPrincipal user, string source);
     }
 }

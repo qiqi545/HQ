@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
@@ -26,7 +25,6 @@ namespace HQ.Data.Contracts.Runtime
     {
         public ClaimsPrincipal User { get; }
         public Type Type { get; set; }
-        public MethodInfo Handle { get; set; }
         public List<Error> Errors { get; } = new List<Error>();
 
         public FieldOptions Fields { get; set; }
@@ -41,11 +39,9 @@ namespace HQ.Data.Contracts.Runtime
             User = user;
         }
 
-        public object Execute(IObjectSaveRepository repository)
+        public object Execute(IObjectGetRepository repository)
         {
-            var parameters = new object[] { Sorting, Paging, Streaming, Fields, Filters, Projections };
-
-            return Handle?.Invoke(repository, parameters);
+            return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
         }
     }
 }

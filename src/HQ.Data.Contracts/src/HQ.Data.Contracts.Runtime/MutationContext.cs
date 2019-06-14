@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
@@ -26,7 +25,6 @@ namespace HQ.Data.Contracts.Runtime
     {
         public ClaimsPrincipal User { get; }
         public Type Type { get; set; }
-        public MethodInfo Handle { get; set; }
         public ICollection<Error> Errors { get; } = new List<Error>();
         public dynamic Body { get; set; }
 
@@ -37,9 +35,7 @@ namespace HQ.Data.Contracts.Runtime
 
         public object Execute(IObjectSaveRepository repository)
         {
-            var parameters = new object[] {Body};
-
-            return Handle?.Invoke(repository, parameters);
+            return repository.SaveAsync(Type, Body);
         }
     }
 }
