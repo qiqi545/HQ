@@ -27,7 +27,6 @@ using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -81,11 +80,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             });
 
             services.Configure<IdentityApiOptions>(apiConfig);
-            services.Configure<RazorViewEngineOptions>(x =>
-            {
-                x.ViewLocationExpanders.Add(new DynamicViewLocationExpander<TUser>());
-            });
-
+           
             mvc.AddControllers<TUser, TRole, TTenant, TApplication, TKey>();
 
             services.AddSingleton<IDynamicComponent>(r =>
