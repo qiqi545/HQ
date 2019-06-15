@@ -17,6 +17,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using HQ.Common;
+using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Platform.Security.Configuration
 {
@@ -34,6 +35,7 @@ namespace HQ.Platform.Security.Configuration
 
         [Required]
         [DataType(DataType.Text)]
+        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string Username
         {
             get => Enabled ? _username : null;
@@ -42,6 +44,7 @@ namespace HQ.Platform.Security.Configuration
 
         [Required]
         [DataType(DataType.Password)]
+        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string Password
         {
             get => Enabled ? _password : null;
@@ -49,6 +52,7 @@ namespace HQ.Platform.Security.Configuration
         }
 
         [DataType(DataType.PhoneNumber)]
+        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string PhoneNumber
         {
             get => Enabled ? _phoneNumber : null;
@@ -56,6 +60,7 @@ namespace HQ.Platform.Security.Configuration
         }
 
         [DataType(DataType.EmailAddress)]
+        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string Email
         {
             get => Enabled ? _email : null;
