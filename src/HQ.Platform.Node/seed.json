@@ -1,0 +1,196 @@
+{
+  "HQ": {
+    "Api": {
+      "ApiName": "HQ.Template",
+      "ApiVersion": "1.0",
+      "RequestLimits": {
+        "Enabled": true,
+        "MaxRequestSizeBytes": 30000000
+      },
+      "JsonConversion": {
+        "Enabled": true,
+        "MultiCaseOperator": "case",
+        "EnvelopeOperator": "envelope",
+        "EnvelopeEnabled": false,
+        "TrimOperator": "trim",
+        "TrimEnabled": true,
+        "PrettyPrintOperator": "prettyPrint",
+        "PrettyPrintEnabled": true
+      },
+      "MethodOverrides": {
+        "Enabled": true,
+        "MethodOverrideHeader": "X-Http-Method-Override",
+        "AllowedMethodOverrides": [ "DELETE", "HEAD", "PUT" ]
+      },
+      "ResourceRewriting": {
+        "Enabled": true,
+        "ActionHeader": "X-Action"
+      },
+      "Versioning": {
+        "Enabled": true,
+        "RequireExplicitVersion": true,
+        "ExplicitVersionRequiredStatusCode": 404,
+        "EnableVersionHeader": false,
+        "VersionHeader": "X-Api-Version",
+        "EnableVersionParameter": true,
+        "VersionParameter": "api-version",
+        "EnableVersionPath": true,
+        "VersionPathPrefix": "v",
+        "VersionLifetimeSeconds": null,
+        "VersionAgnosticPaths": [ "/", "/ops", "/tokens", "/auth", "/meta" ]
+      },
+      "MultiTenancy": {
+        "Enabled": true,
+        "RequireTenant": false,
+        "TenantRequiredStatusCode": 404,
+        "DefaultTenantId": "0",
+        "DefaultTenantName": "defaultTenant",
+        "TenantHeader": "X-Api-Tenant",
+        "TenantLifetimeSeconds": null,
+        "ApplicationHeader": "X-Api-Application",
+        "ApplicationLifetimeSeconds": null,
+        "PartitionStrategy": "shared"
+      },
+      "CanonicalRoutes": {
+        "Enabled": true,
+        "LowercaseUrls": true,
+        "LowercaseQueryStrings": false,
+        "AppendTrailingSlash": false
+      }
+    },
+    "Ops": {
+      "RootPath": "/ops",
+      "EnableRequestProfiling": true,
+      "RequestProfilingHeader": "Server-Timing",
+      "EnableRouteDebugging": true,
+      "RouteDebuggingPath": "/routes",
+      "EnableEnvironmentEndpoint": true,
+      "EnvironmentEndpointPath": "/env",
+      "EnableOptionsDebugging": true,
+      "OptionsDebuggingPath": "/options",
+      "EnableServicesDebugging": true,
+      "ServicesDebuggingPath": "/services",
+      "EnableHostedServicesDebugging": true,
+      "HostedServicesDebuggingPath": "/hostedServices",
+      "EnableHealthChecksEndpoints": true,
+      "HealthCheckLivePath": "/ping",
+      "HealthCheckPath": "/health",
+      "EnableFeatureDebugging": true,
+      "FeatureDebuggingPath": "/features",
+      "EnableCacheDebugging": true,
+      "CacheDebuggingPath": "/caches",
+      "EnableMetricsEndpoint": true,
+      "MetricsEndpointPath": "/metrics",
+      "MetricsOptions": {
+        "SampleTimeoutSeconds": 30,
+        "TypeFilter": "None",
+        "EnableServerTiming": true
+      }
+    },
+    "Security": {
+      "SuperUser": {
+        "Enabled": false,
+        "Username": null,
+        "Email": null,
+        "PhoneNumber": null,
+        "Password": null
+      },
+      "Tokens": {
+        "Enabled": true,
+        "Path": "/tokens",
+        "SigningKey": "PRIVATE-KEY-REPLACE-ME",
+        "EncryptionKey": "PRIVATE-KEY-REPLACE-ME",
+        "Issuer": "https://mysite.com",
+        "Audience": "https://mysite.com",
+        "TimeToLiveSeconds": 180,
+        "Encrypt": true,
+        "ClockSkewSeconds": 10,
+        "AllowRefresh": true 
+      },
+      "Cookies": {
+        "Enabled": true,
+        "IdentityName": "auth",
+        "AnonymousIdentityName": "auth-anon",
+        "SignInPath": "/signin",
+        "SignOutPath": "/signout",
+        "ForbidPath": "/denied",
+        "ReturnOperator": "return",
+        "Domain": null 
+      }, 
+      "Claims": {
+        "TenantIdClaim": "tenantId",
+        "TenantNameClaim": "tenantName",
+        "ApplicationIdClaim": "appId",
+        "ApplicationNameClaim": "appName",
+        "UserIdClaim": "userId",
+        "UsernameClaim": "userName",
+        "RoleClaim": "userRole",
+        "EmailClaim": "userEmail",
+        "PermissionClaim": "userPermission"
+      },
+      "Https": {
+        "Enabled": true,
+        "Hsts": {
+          "Enabled": true,
+          "HstsStage": "One",
+          "HstsIncludeSubdomains": true,
+          "HstsPreload": false
+        }
+      },
+      "BlockLists": {
+        "Enabled": true,
+        "PasswordBlockLists": [],
+        "UsernameBlockLists": []
+      },
+      "WebServer": {
+        "MaxConcurrentConnections": 100,
+        "MaxConcurrentUpgradedConnections": 100,
+        "MaxRequestBodySize": 10240
+      },
+      "Cors": {
+        "Origins": [ "*" ],
+        "Methods": [ "*" ],
+        "Headers": [ "*" ],
+        "ExposedHeaders": [],
+        "AllowCredentials": true,
+        "AllowOriginWildcards": true,
+        "PreflightMaxAge": null
+      }
+    },
+    "Identity": {
+      "RootPath": "/auth",
+      "DefaultIdentityType": "Email", 
+      "User": {
+        "RequireUniqueEmail": true,
+        "RequireUniqueUsername": true,
+        "RequireUniquePhoneNumber": true,
+        "RequireEmail": false,
+        "RequirePhoneNumber": false,
+        "RequireUsername": false,
+        "RequireEmailPhoneNumberOrUsername": true,
+        "AllowedPhoneNumberCharacters": "0123456789",
+        "LockoutEnabled": true 
+      },
+      "Stores": {
+        "CreateIfNotExists": true,
+        "MigrateOnStartup": true
+      },
+      "SignIn": {
+        "RequireConfirmedEmail": false,
+        "RequireConfirmedPhoneNumber": false
+      },
+      "Password": {
+        "RequireDigit": false,
+        "RequireLowercase": false,
+        "RequireNonAlphanumeric": false,
+        "RequireUppercase": false,
+        "RequiredLength": 6,
+        "RequiredUniqueChars": 1,
+        "HashStrategy": "pbkdf2"
+      },
+      "Tenant": {
+        "AllowedTenantNameCharacters": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"
+      }
+    }
+  }
+}

@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="seed.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="UI\" />
   </ItemGroup>
 
