@@ -30,6 +30,7 @@ using Lime.Web;
 using Lime.Web.SemanticUi;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Node.UI
