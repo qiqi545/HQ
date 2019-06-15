@@ -12,17 +12,12 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
+
 namespace HQ.Platform.Security
 {
     public interface IEmailProvider
     {
         string Email { get; }
         bool EmailConfirmed { get; }
-    }
-
-    public interface IPhoneNumberProvider
-    {
-        string PhoneNumber { get; }
-        bool PhoneNumberConfirmed { get; }
     }
 }

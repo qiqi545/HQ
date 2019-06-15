@@ -25,5 +25,6 @@ namespace HQ.Platform.Security
         public const string ManageTenants = "manage_tenants";
         public const string ManageApplications = "manage_applications";
         public const string ManageBackgroundTasks = "manage_background_tasks";
+        public const string ManageConfiguration = "manage_configuration";
     }
 }

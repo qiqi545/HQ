@@ -33,10 +33,10 @@ namespace HQ.Data.Contracts
         {
             var list = new List<Error>();
             if (Page < 1)
-                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.PageRangeInvalid,
+                list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PageRangeInvalid,
                     HttpStatusCode.BadRequest));
             if (PerPage > options.PerPageMax)
-                list.Add(new Error(ErrorEvents.InvalidPageParameter, ErrorStrings.PerPageTooHigh,
+                list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PerPageTooHigh,
                     HttpStatusCode.RequestEntityTooLarge));
 
             errors = list;

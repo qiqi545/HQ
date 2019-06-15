@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.ServerTiming\HQ.Extensions.Metrics.Reporters.ServerTiming.csproj" />
     <ProjectReference Include="..\..\..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
     <ProjectReference Include="..\..\..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

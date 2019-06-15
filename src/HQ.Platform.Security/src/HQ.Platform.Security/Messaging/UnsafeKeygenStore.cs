@@ -31,7 +31,6 @@ namespace HQ.Platform.Security.Messaging
                     return Task.FromResult(OneTimeAuth.GenerateKey());
                 case KeyType.PrivateKey:
                     throw new NotImplementedException();
-                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(keyType), keyType, null);
             }

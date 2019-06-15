@@ -15,7 +15,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using Dapper;
 using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;

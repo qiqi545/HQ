@@ -29,15 +29,19 @@ namespace HQ.Data.Contracts
         /// </summary>
         public const long ValidationFailed = 1001;
 
+        /// <summary>
+        /// The request is valid, but could expose sensitive data.
+        /// </summary>
+        public const long UnsafeRequest = 1002;
 
 
-        public const long FieldDoesNotMatch = 1002;
+        public const long FieldDoesNotMatch = 1003;
         public const long AggregateErrors = 1004;
         public const long IdentityError = 1005;
         public const long ResourceMissing = 1006;
         public const long ResourceNotImplemented = 1007;
-        public const long InvalidPageParameter = 1008;
+        public const long InvalidParameter = 1008;
         public const long RequestEntityTooLarge = 1009;
-        public const long CouldNotAcceptWork = 1010;
+        public const long CouldNotAcceptWork = 1011;
     }
 }
