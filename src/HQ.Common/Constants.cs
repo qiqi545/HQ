@@ -70,12 +70,13 @@ namespace HQ.Common
         {
             public static class Policies
             {
-                public const string SuperUserOnly = "SuperUserOnly";
-                public const string ManageTenants = "ManageTenants";
-                public const string ManageApplications = "ManageApplications";
-                public const string ManageUsers = "ManageUsers";
-                public const string ManageRoles = "ManageRoles";
-                public const string ManageBackgroundTasks = "ManageBackgroundTasks";
+                public const string SuperUserOnly = nameof(SuperUserOnly);
+                public const string ManageTenants = nameof(ManageTenants);
+                public const string ManageApplications = nameof(ManageApplications);
+                public const string ManageUsers = nameof(ManageUsers);
+                public const string ManageRoles = nameof(ManageRoles);
+                public const string ManageBackgroundTasks = nameof(ManageBackgroundTasks);
+                public const string ManageConfiguration = nameof(ManageConfiguration);
             }
         }
 
