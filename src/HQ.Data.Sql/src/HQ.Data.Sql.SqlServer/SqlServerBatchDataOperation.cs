@@ -25,7 +25,6 @@ using Dapper;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
-using HQ.Data.Sql.SqlServer.Configuration;
 
 namespace HQ.Data.Sql.SqlServer
 {

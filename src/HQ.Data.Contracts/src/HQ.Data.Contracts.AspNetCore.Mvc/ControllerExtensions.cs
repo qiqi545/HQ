@@ -41,7 +41,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
                 }
             }
 
-            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422, errors.Distinct());
+            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422,
+                errors.Distinct());
             return validationError;
         }
 

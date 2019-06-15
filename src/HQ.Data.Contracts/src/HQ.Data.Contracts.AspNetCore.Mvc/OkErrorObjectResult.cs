@@ -29,12 +29,11 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
         protected override void FormatError()
         {
             if (Arguments.Length > 0)
-                Error.Message = string.Format(Error.Message, Arguments);
-            Value = new
             {
-                data = _data,
-                error = Error
-            };
+                Error.Message = string.Format(Error.Message, Arguments);
+            }
+
+            Value = new {data = _data, error = Error};
             StatusCode = 200;
         }
     }

@@ -23,15 +23,15 @@ namespace HQ.Data.Contracts.Runtime
 {
     public class MutationContext
     {
-        public ClaimsPrincipal User { get; }
-        public Type Type { get; set; }
-        public ICollection<Error> Errors { get; } = new List<Error>();
-        public dynamic Body { get; set; }
-
         public MutationContext(ClaimsPrincipal user)
         {
             User = user;
         }
+
+        public ClaimsPrincipal User { get; }
+        public Type Type { get; set; }
+        public ICollection<Error> Errors { get; } = new List<Error>();
+        public dynamic Body { get; set; }
 
         public object Execute(IObjectSaveRepository repository)
         {

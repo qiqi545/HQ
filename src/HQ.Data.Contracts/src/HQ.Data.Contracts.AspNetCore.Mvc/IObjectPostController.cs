@@ -15,33 +15,16 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
-    public class QueryContext
+    public interface IObjectPostController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
     {
-        public QueryContext(ClaimsPrincipal user)
-        {
-            User = user;
-        }
-
-        public ClaimsPrincipal User { get; }
-        public Type Type { get; set; }
-        public List<Error> Errors { get; } = new List<Error>();
-
-        public FieldOptions Fields { get; set; }
-        public SortOptions Sorting { get; set; }
-        public PageOptions Paging { get; set; }
-        public StreamOptions Streaming { get; set; }
-        public FilterOptions Filters { get; set; }
-        public ProjectionOptions Projections { get; set; }
-
-        public object Execute(IObjectGetRepository repository)
-        {
-            return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
-        }
+        Task<IActionResult> PostAsync([FromBody] T @object);
+        Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
     }
 }

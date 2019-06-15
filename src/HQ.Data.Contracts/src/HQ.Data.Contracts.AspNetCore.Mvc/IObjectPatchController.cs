@@ -16,42 +16,16 @@
 #endregion
 
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Morcatko.AspNetCore.JsonMergePatch;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
-    public class ErrorResult : ObjectResult
+    public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
     {
-        protected readonly object[] Arguments;
-        protected readonly Error Error;
-
-        public ErrorResult(Error error, params object[] args) : base(error)
-        {
-            Error = error;
-            Arguments = args;
-        }
-
-        public override async Task ExecuteResultAsync(ActionContext context)
-        {
-            FormatError();
-            await base.ExecuteResultAsync(context);
-        }
-
-        public override void ExecuteResult(ActionContext context)
-        {
-            FormatError();
-            base.ExecuteResult(context);
-        }
-
-        protected virtual void FormatError()
-        {
-            if (Arguments.Length > 0)
-            {
-                Error.Message = string.Format(Error.Message, Arguments);
-            }
-
-            Value = Error;
-            StatusCode = Error.StatusCode;
-        }
+        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
+        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
     }
 }

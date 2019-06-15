@@ -97,10 +97,9 @@ namespace HQ.Data.SessionManagement.DocumentDb
 
                 // IMPORTANT: This is a direct call, there is no ADO.NET pass-through here. This means that
                 // the JSON.NET serializer configuration is the only step in converting the typed document into
-                // and object (to be serialized again back to JSON in the output).
+                // an object (to be serialized again back to JSON in the output).
 
-                var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
             }
         }

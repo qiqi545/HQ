@@ -23,44 +23,56 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
     public class DataController : ControllerExtended
     {
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult BadRequestError(long eventId, string errorMessage, params object[] args)
         {
             var error = new Error(eventId, errorMessage, HttpStatusCode.BadRequest);
             return new ErrorResult(error, args);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult NotAcceptableError(long eventId, string errorMessage, params object[] args)
         {
             var error = new Error(eventId, errorMessage, HttpStatusCode.NotAcceptable);
             return new ErrorResult(error, args);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult NotFoundError(long eventId, string errorMessage, params object[] args)
         {
             var error = new Error(eventId, errorMessage, HttpStatusCode.NotFound);
             return new ErrorResult(error, args);
         }
 
-
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult Error(Error error, params object[] args)
         {
             return new ErrorResult(error, args);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public bool Valid(object model, out ErrorResult error, params object[] args)
         {
             return ValidOrError(model, out error, args);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public bool ValidModelState(out ErrorResult error, params object[] args)
         {
             return ValidOrError(ModelState, out error, args);
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public Error ConvertModelStateToError()
+        {
+            return ControllerExtensions.ConvertModelStateToError(this);
         }
 
         private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
@@ -74,12 +86,6 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
             error = null;
             return true;
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true), NonAction]
-        public Error ConvertModelStateToError()
-        {
-            return ControllerExtensions.ConvertModelStateToError(this);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -131,7 +131,6 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="27.0.1" />
     <PackageReference Include="Dapper" Version="1.60.6" />
-    <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.6.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
