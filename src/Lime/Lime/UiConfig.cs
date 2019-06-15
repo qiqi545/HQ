@@ -33,7 +33,7 @@ namespace Lime
 				if (settings.Data == null)
 					settings.Data = new InvokeUiData();
 
-				Pools.AutoResolver = new NoContainer(r, settings.ComponentAssemblies);
+				Pools.AutoResolver = new NoContainer(settings.ComponentAssemblies);
 
 				return settings;
 			});
@@ -57,14 +57,11 @@ namespace Lime
 		{
 			var settings = r.GetRequiredService<UiSettings>();
 			var componentTypes = r.GetRequiredService<ComponentTypes>();
-			var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+			var autoResolver = new NoContainer(settings.ComponentAssemblies);
 			var byType = componentTypes.ToDictionary(k => k, v =>
 			{
-				return new Func<Type, UiComponent>(c =>
-				{
-					return autoResolver.GetService(c == null ? v : c) as UiComponent ??
-					       Instancing.CreateInstance<UiComponent>();
-				});
+				return new Func<Type, UiComponent>(c => autoResolver.GetService(c ?? v) as UiComponent ??
+				                                        Instancing.CreateInstance<UiComponent>());
 			});
 			return byType;
 		}
@@ -73,7 +70,7 @@ namespace Lime
 		{
 			var settings = r.GetRequiredService<UiSettings>();
 			var componentTypes = r.GetRequiredService<ComponentTypes>();
-			var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+			var autoResolver = new NoContainer(settings.ComponentAssemblies);
 			var byName = componentTypes
 				.Select(x => new
 				{
@@ -89,7 +86,7 @@ namespace Lime
 		{
 			var settings = r.GetRequiredService<UiSettings>();
 			var componentTypes = r.GetRequiredService<ViewComponentTypes>();
-			var autoResolver = new NoContainer(r, settings.ComponentAssemblies);
+			var autoResolver = new NoContainer(settings.ComponentAssemblies);
 
 			var lookup = new Dictionary<Type, Func<IViewComponent>>();
 			foreach (var componentType in componentTypes)

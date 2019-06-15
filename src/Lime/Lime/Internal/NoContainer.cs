@@ -25,7 +25,7 @@ namespace Lime.Internal
 
 		public bool ThrowIfCantResolve { get; set; }
 
-		public NoContainer(IServiceProvider fallbackProvider = null, IEnumerable<Assembly> fallbackAssemblies = null) =>
+		public NoContainer(IEnumerable<Assembly> fallbackAssemblies = null) =>
 			_fallbackAssemblies = (fallbackAssemblies ?? Enumerable.Empty<Assembly>()).Distinct();
 
 		#region Register

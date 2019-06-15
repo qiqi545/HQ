@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Lime.Internal;
 using Lime.Internal.UriTemplates;
 using Lime.Web.Internal;
 using Microsoft.AspNetCore.Authentication;
@@ -16,7 +15,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
 using TypeKitchen;
 
 namespace Lime.Web
@@ -139,9 +137,7 @@ namespace Lime.Web
              
             PopulateArguments(ui, action, target, callee, parameters);
         }
-
-        
-        
+		
 
         private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
         {
@@ -156,7 +152,14 @@ namespace Lime.Web
         }
 
         public static async Task TryAuthenticateRequestAsync(ICustomAttributeProvider provider, UiContext context)
-		{
+        {
+	        var httpContext = context.UiServices.GetRequiredService<IHttpContextAccessor>().HttpContext;
+	        if (httpContext == null)
+		        return;
+
+			if (httpContext.Response.HasStarted)
+				return;
+
 			var schemeProvider = context.UiServices.GetService<IAuthenticationSchemeProvider>();
 			if (schemeProvider == null)
 				return;
@@ -185,10 +188,6 @@ namespace Lime.Web
 				if (declaredSchemeNames.Count == 0)
 					return;
 
-				var httpContext = context.UiServices.GetRequiredService<IHttpContextAccessor>().HttpContext;
-				if (httpContext == null)
-					return;
-
 				var authenticationSchemes = await schemeProvider.GetAllSchemesAsync();
 				var availableSchemes = authenticationSchemes.OrderBy(x => declaredSchemeNames).ToList();
 				if (availableSchemes.Count == 0)
@@ -208,7 +207,7 @@ namespace Lime.Web
 					httpContext.User = authenticated.Principal;
 					return;
 				}
-
+				
 				if (first == null)
 					throw new ArgumentNullException("Expected at least one authentication scheme");
 

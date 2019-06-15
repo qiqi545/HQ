@@ -66,7 +66,9 @@ namespace Lime.Web.Internal
 				if (!(system is HtmlSystem htmlSystem))
 					throw new NotSupportedException(ErrorStrings.MustUseHtmlSystem);
 
-				renderTarget.Begin(system, WebUiContext.Build(context));
+				var uiContext = WebUiContext.Build(context);
+
+				renderTarget.Begin(system, uiContext);
 				renderAction(renderTarget);
 				renderTarget.End();
 

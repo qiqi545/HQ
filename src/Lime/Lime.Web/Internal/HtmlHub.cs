@@ -73,14 +73,6 @@ namespace Lime.Web.Internal
 			await Clients.Caller.SendAsync(MessageTypes.Replace, htmlSystem.RenderDom, htmlSystem.RenderScripts);
 		}
 
-		private void UiTick(string id, string eventType, string value, Ui ui, UiSystem system, WebUiContext context)
-		{
-			ui.Begin(system, context);
-			UpdateInputState(context, id, eventType, value, ui);
-			_layoutRoot.Root(ui);
-			ui.End();
-		}
-
 		private static JsonPatchDocument DeserializeInputStateDelta(byte[] data)
 		{
 			Console.WriteLine($"side channel buffer size: {data?.Length ?? 0}");
