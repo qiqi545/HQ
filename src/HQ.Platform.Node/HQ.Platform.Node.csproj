@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="UI\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HQ.Extensions.Correlation\HQ.Extensions.Correlation.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Functions.AspNetCore.Mvc\HQ.Platform.Functions.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\HQ.Platform.Identity.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+  </ItemGroup>
+
+</Project>
