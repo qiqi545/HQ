@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.452
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.705
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{07F7D32E-D69B-4411-A921-3C9B51E00D96}"
 	ProjectSection(SolutionItems) = preProject
@@ -133,6 +133,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Functions", "HQ.Platform.Functions\HQ.Platform.Functions.csproj", "{D45FC53F-583A-49D2-859B-31F78A0B7E40}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "data", "data", "{5974502D-7659-4276-A027-56F50630A52F}"
+	ProjectSection(SolutionItems) = preProject
+		HQ.Data.Contracts.Versioning\BufferWriteExtensions.cs = HQ.Data.Contracts.Versioning\BufferWriteExtensions.cs
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "extensions", "extensions", "{2D0EF5B9-EA9D-4AAE-9B9C-F90C6B0FD731}"
 EndProject
@@ -160,7 +163,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Functions.AspNe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Sql.Implementation", "HQ.Data.Sql.Implementation\HQ.Data.Sql.Implementation.csproj", "{544D2B14-AD9E-42A5-B744-E65B6731AF96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Platform.Node", "HQ.Platform.Node\HQ.Platform.Node.csproj", "{C343281B-0852-4381-8FF0-509D80653CE8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Node", "HQ.Platform.Node\HQ.Platform.Node.csproj", "{C343281B-0852-4381-8FF0-509D80653CE8}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime", "..\..\LimeUI\src\Lime\Lime\Lime.csproj", "{1DCF80A0-7AE3-4F8F-9926-1A9A22374414}"
 EndProject
@@ -171,6 +174,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lime.Web.SemanticUi", "..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj", "{C63357F1-4474-417F-977D-AA9D78F3B2C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{83EE29CB-2FF8-4992-B86D-7FE8693CBA12}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Streaming", "HQ.Data.Streaming\src\HQ.Data.Streaming\HQ.Data.Streaming.csproj", "{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.Versioning", "HQ.Data.Contracts.Versioning\HQ.Data.Contracts.Versioning.csproj", "{2ADDF1CA-448E-4052-AF29-0F03537E938C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Contracts.Versioning.Tests", "HQ.Data.Contracts.Versioning.Tests\HQ.Data.Contracts.Versioning.Tests.csproj", "{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -611,6 +620,24 @@ Global
 		{C63357F1-4474-417F-977D-AA9D78F3B2C6}.Package|Any CPU.Build.0 = Package|Any CPU
 		{C63357F1-4474-417F-977D-AA9D78F3B2C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C63357F1-4474-417F-977D-AA9D78F3B2C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Package|Any CPU.Build.0 = Package|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -688,6 +715,9 @@ Global
 		{024C31FE-E71C-494C-B5FB-4C421662D69C} = {69CEA518-88E3-42D1-A341-7518EA873434}
 		{6DFCAF27-D710-45A2-8C3F-2D93F04F315F} = {69CEA518-88E3-42D1-A341-7518EA873434}
 		{C63357F1-4474-417F-977D-AA9D78F3B2C6} = {69CEA518-88E3-42D1-A341-7518EA873434}
+		{8EA382C8-DFAD-457F-A49A-C36A4A6251F9} = {5974502D-7659-4276-A027-56F50630A52F}
+		{2ADDF1CA-448E-4052-AF29-0F03537E938C} = {5974502D-7659-4276-A027-56F50630A52F}
+		{1FC7CB14-8FEC-4AA8-A153-813890FEDD94} = {5974502D-7659-4276-A027-56F50630A52F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
