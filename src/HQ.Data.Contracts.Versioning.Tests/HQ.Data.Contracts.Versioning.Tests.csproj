@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts.Versioning\HQ.Data.Contracts.Versioning.csproj" />
+    <ProjectReference Include="..\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

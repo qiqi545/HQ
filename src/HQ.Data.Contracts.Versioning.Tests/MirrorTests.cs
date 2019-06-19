@@ -17,7 +17,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 using Xunit;
 
 namespace HQ.Data.Contracts.Versioning.Tests
@@ -43,7 +42,7 @@ namespace HQ.Data.Contracts.Versioning.Tests
         {
             var person = new V1.Person {Name = "Kawhi"};
 
-            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.Name)];
+            var buffer = new byte[person.BufferSize];
             var ms = new MemoryStream(buffer);
             person.Serialize(ms);
             Assert.Equal(ms.Length, buffer.Length);
@@ -58,8 +57,7 @@ namespace HQ.Data.Contracts.Versioning.Tests
         {
             var person = new V2.Person {FirstName = "Kawhi", LastName = "Leonard"};
 
-            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.FirstName) + 1 + sizeof(int) +
-                                  Encoding.UTF8.GetByteCount(person.LastName)];
+            var buffer = new byte[person.BufferSize];
             var ms = new MemoryStream(buffer);
             person.Serialize(ms);
             Assert.Equal(ms.Length, buffer.Length);
