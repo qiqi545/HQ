@@ -31,9 +31,6 @@ namespace HQ.Data.Sql.Tests.Builders
         [InlineData(DatabaseType.Sqlite,
             "SELECT * FROM Customer ORDER BY FirstName",
             "SELECT * FROM Customer WHERE FirstName > :LastFirstName ORDER BY FirstName LIMIT :PerPage")]
-        [InlineData(DatabaseType.MySql,
-            "SELECT * FROM Customer ORDER BY FirstName",
-            "SELECT * FROM Customer ORDER BY FirstName LIMIT @PerPage OFFSET @Page")]
         [InlineData(DatabaseType.SqlServer,
             "SELECT * FROM Customer",
             ";WITH pages AS ( SELECT Id FROM Customer ORDER BY [Id] OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) SELECT * FROM Customer WHERE EXISTS (SELECT 1 FROM pages WHERE pages.Id = p.Id)")]

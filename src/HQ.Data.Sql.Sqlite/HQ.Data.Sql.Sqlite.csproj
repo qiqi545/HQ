@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\..\HQ\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -22,10 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Batching\HQ.Data.Sql.Batching.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
   </ItemGroup>
 
 </Project>

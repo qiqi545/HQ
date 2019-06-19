@@ -18,7 +18,6 @@
 using System;
 using System.Text.RegularExpressions;
 using HQ.Data.Sql.Dialects;
-using HQ.Data.Sql.MySql;
 using HQ.Data.Sql.Sqlite;
 using HQ.Data.Sql.SqlServer;
 using Xunit;
@@ -31,7 +30,6 @@ namespace HQ.Data.Sql.Tests.Builders
         public enum DatabaseType
         {
             Sqlite,
-            MySql,
             SqlServer
         }
 
@@ -50,8 +48,6 @@ namespace HQ.Data.Sql.Tests.Builders
                     return new SqliteDialect();
                 case DatabaseType.SqlServer:
                     return new SqlServerDialect();
-                case DatabaseType.MySql:
-                    return new MySqlDialect();
                 default:
                     return NoDialect.Default;
             }

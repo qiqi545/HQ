@@ -6,8 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HQ.Test.Sdk" Version="1.0.38" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -16,11 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Builders\HQ.Data.Sql.Builders.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.MySql\HQ.Data.Sql.MySql.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql\HQ.Data.Sql.csproj" />
