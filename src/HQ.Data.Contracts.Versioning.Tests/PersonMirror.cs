@@ -48,10 +48,13 @@ namespace HQ.Data.Contracts.Versioning.Tests
                 {
                     var offset = 1;
                     if (_buffer.ReadBoolean(0))
-                        offset += 4 + _buffer.ReadInt32(1);
+                    {
+                        offset += sizeof(int) + _buffer.ReadInt32(1);
+                    }
+
                     return _buffer.ReadString(offset);
                 }
-            } 
+            }
 
             public PersonMirror(ReadOnlySpan<byte> buffer)
             {

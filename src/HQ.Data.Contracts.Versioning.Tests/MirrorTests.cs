@@ -18,32 +18,36 @@
 using System;
 using System.IO;
 using System.Text;
+using HQ.Data.Contracts.Versioning.Tests.V1;
 using Xunit;
+using PersonMirror = HQ.Data.Contracts.Versioning.Tests.V2.PersonMirror;
 
 namespace HQ.Data.Contracts.Versioning.Tests
 {
     public class MirrorTests
     {
         [Fact]
-        public void ReadTests_Simple()
+        public void ReadTests_NextVersion()
         {
-            var person = new V2.Person { FirstName = "Kawhi", LastName = "Leonard"};
-            
-            var ms = new MemoryStream();
-            person.Serialize(ms);
+            var person = new Person {Name = "Kawhi"};
 
-            var span = ms.GetBuffer().AsSpan();
-            var mirror = new V2.PersonMirror(span);
-            Assert.Equal(person.FirstName, mirror.FirstName);
-            Assert.Equal(person.LastName, mirror.LastName);
+            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.Name)];
+            var ms = new MemoryStream(buffer);
+            person.Serialize(ms);
+            Assert.Equal(ms.Length, buffer.Length);
+
+            var span = buffer.AsSpan();
+            var mirror = new PersonMirror(span);
+            Assert.Equal(person.Name, mirror.FirstName);
         }
 
         [Fact]
         public void ReadTests_PreviousVersion()
         {
-            var person = new V2.Person { FirstName = "Kawhi", LastName = "Leonard" };
-            
-            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.FirstName) + 1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.LastName)];
+            var person = new V2.Person {FirstName = "Kawhi", LastName = "Leonard"};
+
+            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.FirstName) + 1 + sizeof(int) +
+                                  Encoding.UTF8.GetByteCount(person.LastName)];
             var ms = new MemoryStream(buffer);
             person.Serialize(ms);
             Assert.Equal(ms.Length, buffer.Length);
@@ -54,18 +58,17 @@ namespace HQ.Data.Contracts.Versioning.Tests
         }
 
         [Fact]
-        public void ReadTests_NextVersion()
+        public void ReadTests_Simple()
         {
-            var person = new V1.Person { Name = "Kawhi" };
-            
-            var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.Name)];
-            var ms = new MemoryStream(buffer);
-            person.Serialize(ms);
-            Assert.Equal(ms.Length, buffer.Length);
+            var person = new V2.Person {FirstName = "Kawhi", LastName = "Leonard"};
 
-            var span = buffer.AsSpan();
-            var mirror = new V2.PersonMirror(span);
-            Assert.Equal(person.Name, mirror.FirstName);
+            var ms = new MemoryStream();
+            person.Serialize(ms);
+
+            var span = ms.GetBuffer().AsSpan();
+            var mirror = new PersonMirror(span);
+            Assert.Equal(person.FirstName, mirror.FirstName);
+            Assert.Equal(person.LastName, mirror.LastName);
         }
     }
 }
