@@ -1,9 +1,0 @@
-##################################################################
-
-HQ.io uses third-party libraries and other materials, distributed 
-under different licenses than HQ.io licensed components.
-
-If we have omitted a notice here, please let us know by submitting
-an issue on GitHub, or by emailing support@hq.io
-
-##################################################################

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -13,11 +13,12 @@
     <PackageReference Include="libsodium" Version="1.0.17.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="WyHash" Version="1.0.2" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\..\..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>
 
 </Project>
