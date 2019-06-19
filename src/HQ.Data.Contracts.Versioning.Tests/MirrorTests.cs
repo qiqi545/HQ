@@ -18,18 +18,30 @@
 using System;
 using System.IO;
 using System.Text;
-using HQ.Data.Contracts.Versioning.Tests.V1;
 using Xunit;
-using PersonMirror = HQ.Data.Contracts.Versioning.Tests.V2.PersonMirror;
 
 namespace HQ.Data.Contracts.Versioning.Tests
 {
     public class MirrorTests
     {
         [Fact]
+        public void ReadTests_SameVersion()
+        {
+            var person = new V2.Person { FirstName = "Kawhi", LastName = "Leonard" };
+
+            var ms = new MemoryStream();
+            person.Serialize(ms);
+
+            var span = ms.GetBuffer().AsSpan();
+            var mirror = new V2.PersonMirror(span);
+            Assert.Equal(person.FirstName, mirror.FirstName);
+            Assert.Equal(person.LastName, mirror.LastName);
+        }
+
+        [Fact]
         public void ReadTests_NextVersion()
         {
-            var person = new Person {Name = "Kawhi"};
+            var person = new V1.Person {Name = "Kawhi"};
 
             var buffer = new byte[1 + sizeof(int) + Encoding.UTF8.GetByteCount(person.Name)];
             var ms = new MemoryStream(buffer);
@@ -37,7 +49,7 @@ namespace HQ.Data.Contracts.Versioning.Tests
             Assert.Equal(ms.Length, buffer.Length);
 
             var span = buffer.AsSpan();
-            var mirror = new PersonMirror(span);
+            var mirror = new V2.PersonMirror(span);
             Assert.Equal(person.Name, mirror.FirstName);
         }
 
@@ -58,17 +70,52 @@ namespace HQ.Data.Contracts.Versioning.Tests
         }
 
         [Fact]
-        public void ReadTests_Simple()
+        public void WriteTests_SameVersion_MultipleRows()
         {
-            var person = new V2.Person {FirstName = "Kawhi", LastName = "Leonard"};
+            var person1 = new V1.Person { Name = "Kawhi" };
+            var person2 = new V1.Person { Name = "Kyle" };
 
-            var ms = new MemoryStream();
-            person.Serialize(ms);
+            var buffer = new byte[person1.BufferSize + person2.BufferSize];
+            var ms = new MemoryStream(buffer);
+            person1.Serialize(ms);
+            person2.Serialize(ms);
+            Assert.Equal(ms.Length, buffer.Length);
 
-            var span = ms.GetBuffer().AsSpan();
-            var mirror = new PersonMirror(span);
-            Assert.Equal(person.FirstName, mirror.FirstName);
-            Assert.Equal(person.LastName, mirror.LastName);
+            var span = buffer.AsSpan();
+
+            var row1 = new V1.PersonMirror(span);
+            Assert.Equal(person1.Name, row1.Name);
+
+            var row2 = new V1.PersonMirror(span.Slice(person1.BufferSize));
+            Assert.Equal(person2.Name, row2.Name);
+        }
+
+        [Fact]
+        public void WriteTests_DifferentVersions_MultipleRows()
+        {
+            var person1 = new V1.Person { Name = "Kawhi" };
+            var person2 = new V2.Person { FirstName = "Kyle", LastName = "Lowry"};
+
+            var buffer = new byte[person1.BufferSize + person2.BufferSize];
+            var ms = new MemoryStream(buffer);
+            person1.Serialize(ms);
+            person2.Serialize(ms);
+            Assert.Equal(ms.Length, buffer.Length);
+
+            var span = buffer.AsSpan();
+
+            var row11 = new V1.PersonMirror(span);
+            Assert.Equal(person1.Name, row11.Name);
+
+            var row12 = new V2.PersonMirror(span);
+            Assert.Equal(person1.Name, row12.FirstName);
+
+            var row21 = new V1.PersonMirror(span.Slice(person1.BufferSize));
+            Assert.Equal(person2.FirstName, row21.Name);
+
+            var row22 = new V2.PersonMirror(span.Slice(person1.BufferSize));
+            Assert.Equal(person2.FirstName, row22.FirstName);
+            Assert.Equal(person2.LastName, row22.LastName);
         }
     }
 }

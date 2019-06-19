@@ -15,6 +15,8 @@
 
 #endregion
 
+using System.Text;
+
 namespace HQ.Data.Contracts.Versioning.Tests
 {
     namespace V1
@@ -22,6 +24,8 @@ namespace HQ.Data.Contracts.Versioning.Tests
         public class Person
         {
             public string Name { get; set; }
+
+            public int BufferSize => 1 + sizeof(int) + Encoding.UTF8.GetByteCount(Name);
         }
     }
 
@@ -31,6 +35,10 @@ namespace HQ.Data.Contracts.Versioning.Tests
         {
             public string FirstName { get; set; }
             public string LastName { get; set; }
+
+            public int BufferSize =>
+                1 + sizeof(int) + Encoding.UTF8.GetByteCount(FirstName) +
+                1 + sizeof(int) + Encoding.UTF8.GetByteCount(LastName);
         }
     }
 }

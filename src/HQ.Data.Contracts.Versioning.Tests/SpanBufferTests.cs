@@ -23,6 +23,20 @@ namespace HQ.Data.Contracts.Versioning.Tests
     public class SpanBufferTests
     {
         [Fact]
+        public void Empty_is_empty()
+        {
+            var buffer = new SpanBuffer<byte>(2);
+
+            var a = new byte[0].AsSpan();
+            var b = new byte[0].AsSpan();
+
+            buffer.Add(a);
+            buffer.Add(b);
+
+            Assert.True(buffer.IsEmpty);
+        }
+
+        [Fact]
         public void Can_combine_two_spans_in_one_span_buffer()
         {
             var buffer = new SpanBuffer<byte>(2);
@@ -39,23 +53,10 @@ namespace HQ.Data.Contracts.Versioning.Tests
             buffer.Add(b);
 
             var length = 1 + sizeof(int) + 1 + /* A */
-                         1 + sizeof(int) + 1; /* B */
+                         1 + sizeof(int) + 1;  /* B */
 
             Assert.Equal(length, buffer.Length);
-        }
-
-        [Fact]
-        public void Empty_is_empty()
-        {
-            var buffer = new SpanBuffer<byte>(2);
-
-            var a = new byte[0].AsSpan();
-            var b = new byte[0].AsSpan();
-
-            buffer.Add(a);
-            buffer.Add(b);
-
-            Assert.True(buffer.IsEmpty);
+            Assert.False(buffer.IsEmpty);
         }
     }
 }

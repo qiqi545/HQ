@@ -39,6 +39,9 @@ namespace HQ.Data.Contracts.Versioning
 
                 foreach (var member in members)
                 {
+                    if (!member.CanWrite)
+                        continue;
+
                     var value = accessor[subject, member.Name];
 
                     switch (value)
