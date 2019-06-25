@@ -1,13 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
+    <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>

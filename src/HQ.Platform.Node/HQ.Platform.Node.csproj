@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
+
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
@@ -13,28 +17,32 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
+    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
+    <ProjectReference Include="..\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Correlation\HQ.Extensions.Correlation.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Functions.AspNetCore.Mvc\HQ.Platform.Functions.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.AspNetCore.Mvc\HQ.Platform.Identity.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+    <ProjectReference Include="..\HQ.Platform.Identity.AspNetCore.Mvc\HQ.Platform.Identity.AspNetCore.Mvc.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>

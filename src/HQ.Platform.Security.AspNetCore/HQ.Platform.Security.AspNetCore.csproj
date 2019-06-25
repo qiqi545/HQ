@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\..\..\build\version.props" />
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>
 

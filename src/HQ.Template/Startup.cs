@@ -15,75 +15,36 @@
 
 #endregion
 
-#if (DocumentDb)
-using HQ.Data.Sql.DocumentDb;
-#elif (SqlServer)
-using HQ.Data.Sql.SqlServer;
-#else
-using HQ.Data.Sql.Sqlite;
-#endif
-
-using HQ.Extensions.Metrics;
+using HQ.Extensions.Deployment;
+using HQ.Extensions.Deployment.Azure;
+using HQ.Extensions.Logging;
 using HQ.Platform.Node;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-#if AppInsights
-using HQ.Extensions.Metrics.Reporters.AppInsights;
-using Constants = HQ.Common.Constants;
-#endif
-
 namespace HQ.Template
 {
     public class Startup
     {
-        public static void Main(string[] args) => Server.Start<Startup>(args);
+        public static void Main(string[] args) => Server.Start<Startup>(args, GetCloudOptions);
 
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
+        private readonly ISafeLogger<Startup> _logger;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
         {
             _configuration = configuration;
             _environment = environment;
+            _logger = logger;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHq(_environment, (IConfigurationRoot)_configuration);
-
-#if DocumentDb
-            const string dbType = "DocumentDb";
-#elif SqlServer
-            const string dbType = "SqlServer";
-#else
-            const string dbType = "Sqlite";
-#endif
-            services.AddBackendServices(dbType, _configuration.GetConnectionString("DefaultConnection"), _configuration.GetSection("DbOptions"), _configuration.GetSection("HQ"));
-
-            //services.AddGenerated<SqliteOptions>(_configuration.GetSection("HQ").GetSection("Security"))
-
-#if AppInsights
-            services.AddApplicationInsightsTelemetry(_configuration.GetSection("Azure").GetSection("ApplicationInsights"));
-#endif
-
-            services.AddMetrics(o =>
-            {
-#if AppInsights
-                o.PushToApplicationInsights(p =>
-                {
-                    p.MetricsSampleEventName = Extensions.Metrics.Constants.Events.MetricsSample;
-                    p.HealthCheckEventName = Extensions.Metrics.Constants.Events.HealthCheck;
-                    p.PublishHealthChecks = true;
-                    p.PublishHealthy = false;
-                    p.PublishMetrics = true;
-                });
-#endif
-            });
+            services.AddHq(_environment, _configuration, _logger, mvc => { /* custom MVC configuration */ }, GetCloudOptions(_configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -94,7 +55,12 @@ namespace HQ.Template
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHq();
+            app.UseHq(_logger, routes => { /* custom MVC routes */});
+        }
+
+        private static ICloudOptions[] GetCloudOptions(IConfiguration config)
+        {
+            return new ICloudOptions[] { config.GetSection("Cloud").Get<AzureOptions>() };
         }
     }
 }
