@@ -74,24 +74,20 @@
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Schema\src\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\src\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
-
+    
     <!-- Data -->
-    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts.Runtime\obj\**\*" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Data.Contracts\src\HQ.Data.Contracts.AspNetCore.Mvc\obj\**\*" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Streaming\src\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Builders\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Builders\obj\**\*" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Dapper\obj\**\*" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Queries\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Queries\obj\**\*" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Descriptor\obj\**\*" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Batching\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Batching\obj\**\*" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts.Runtime\**\*.cs" Exclude="..\HQ.Data.Contracts.Runtime\obj\**\*" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Data.Contracts.AspNetCore.Mvc\obj\**\*" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Builders\**\*.cs" Exclude="..\HQ.Data.Sql.Builders\obj\**\*" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Dapper\**\*.cs" Exclude="..\HQ.Data.Sql.Dapper\obj\**\*" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Queries\**\*.cs" Exclude="..\HQ.Data.Sql.Queries\obj\**\*" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Descriptor\**\*.cs" Exclude="..\HQ.Data.Sql.Descriptor\obj\**\*" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Batching\**\*.cs" Exclude="..\HQ.Data.Sql.Batching\obj\**\*" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
 
-    <!-- Testing -->
-    <Content Include="..\HQ.Test.Sdk\src\HQ.Test.Sdk\**\*.cs" Exclude="..\HQ.Test.Sdk\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\**\*.cs" Exclude="..\HQ.Test.Sdk\src\HQ.Test.Sdk.Xunit\obj\**\*" Link="Test.Sdk.Xunit\%(RecursiveDir)%(Filename)%(Extension)" />
-  
   </ItemGroup>
 
   <!-- SQLite -->
@@ -101,7 +97,7 @@
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
   </ItemGroup>
 
@@ -119,7 +115,7 @@
     <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\obj\**\*" Link="Platform.Identity.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.1" />
     <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
   </ItemGroup>
 
@@ -156,7 +152,7 @@
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
-    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0-beta09" />
+    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
@@ -182,7 +178,6 @@
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
-
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">
     <Copy SourceFiles="%(Content.Identity)" DestinationFiles="%(Content.Link)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'%(Content.Link)' != ''" />
