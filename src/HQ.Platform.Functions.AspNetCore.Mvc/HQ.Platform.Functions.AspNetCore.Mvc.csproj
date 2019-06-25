@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Platform.Functions\HQ.Platform.Functions.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
     <ProjectReference Include="..\HQ.Platform.Runtime.Rest\HQ.Platform.Runtime.Rest.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\src\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />

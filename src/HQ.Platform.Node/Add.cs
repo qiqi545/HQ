@@ -88,8 +88,7 @@ namespace HQ.Platform.Node
                 .AddIdentityApplicationContextStore<IdentityApplication>();
             services.AddVersioning(versioning);
             services.AddDynamicMvc(setupAction, typeof(IdentityApplication).Assembly)
-                .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string
-                >(identityApi, security)
+                .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
                 .AddBackgroundTasksApi(security, tasks)
                 .AddConfigurationApi(security)
                 ;
@@ -148,11 +147,11 @@ namespace HQ.Platform.Node
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
                 {
-                    typeof(UiComponent).Assembly, // Lime
-                    typeof(HtmlSystem).Assembly, // Lime.Web
-                    typeof(SemanticUi).Assembly, // Lime.Web.SemanticUi
-                    typeof(Dashboard).Assembly, // HQ.UI
-                    Assembly.GetEntryAssembly() // App
+                    typeof(UiComponent).Assembly,   // Lime
+                    typeof(HtmlSystem).Assembly,    // Lime.Web
+                    typeof(SemanticUi).Assembly,    // Lime.Web.SemanticUi
+                    typeof(Dashboard).Assembly,     // HQ.UI
+                    Assembly.GetEntryAssembly()     // App
                 };
             };
 

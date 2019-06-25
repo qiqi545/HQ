@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Data.Contracts\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Builders\HQ.Data.Sql.Builders.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />

@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Correlation\HQ.Extensions.Correlation.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
     <ProjectReference Include="..\HQ.Platform.Api\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
@@ -21,7 +25,7 @@
     <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql\HQ.Platform.Identity.Stores.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
     <ProjectReference Include="..\HQ.Platform.Operations\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
     <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
     <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
