@@ -20,20 +20,6 @@
     "9B8316F4-6D55-4917-A18B-34F64DA84CFB"
   ],
   "symbols": {
-    "key": {
-      "type": "parameter",
-      "datatype": "string",
-      "isRequired": true,
-      "replaces": "PRIVATE-KEY-REPLACE-ME",
-      "description": "This is your HQ private key. It must match the key provided by your HQ.io Administrator. This key is used for signing, as well as for accessing the code generation service."
-    },
-    "applicationId": {
-      "type": "parameter",
-      "datatype": "string",
-      "isRequired": true,
-      "replaces": "APPLICATION-ID-REPLACE-ME",
-      "description": "This is your HQ application ID. It must match a valid application ID in your account. All schema changes are applied to the specified application."
-    },
     "db": {
       "type": "parameter",
       "datatype": "choice",

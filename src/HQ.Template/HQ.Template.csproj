@@ -1,6 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
-
-  <Import Project="$(ProjectDir)codegen.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -11,25 +9,13 @@
     <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <HQEndpoint>https://build.hq.io</HQEndpoint>
-    <HQKey>PRIVATE-KEY-REPLACE-ME</HQKey>
-    <HQApplicationId>APPLICATION-ID-REPLACE-ME</HQApplicationId>
-  </PropertyGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="seed.json" />
   </ItemGroup>
 
   <ItemGroup>
-
-    <!-- Default UI -->
-    <Compile Include="..\..\..\HQ.Labs\src\HQ.UI\**\*.cs" Exclude="..\..\..\HQ.Labs\src\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
-
-    <!-- Serverless Runtime -->
-    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Attributes\**\*.cs" Link="runtime\Attributes\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Filters\**\*.cs" Link="runtime\Filters\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\..\..\HQ.Labs\src\HQ.Platform.Runtime.Rest\src\HQ.Platform.Runtime.Rest\Models\**\*.cs" Link="runtime\Models\%(RecursiveDir)%(Filename)%(Extension)" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
   <!--#if(false)-->
@@ -39,26 +25,6 @@
     <Azure>true</Azure>
     <DevTemplate>true</DevTemplate>
   </PropertyGroup>
-  <!-- #endif -->
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
-    <ProjectReference Include="..\HQ\HQ.csproj" />
-  </ItemGroup>
-
-  <!-- Azure -->
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" Condition="'$(AppInsights)'=='true'" />
-    <PackageReference Include="Microsoft.AspNetCore.ApplicationInsights.HostingStartup" Version="2.2.0" Condition="'$(AppInsights)'=='true'" />
-    <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.10.0" Condition="'$(AppInsights)'=='true'" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="Use.cs" Link="content\Use.cs" />
-    <Content Update="Add.cs" Link="content\Add.cs" />
-  </ItemGroup>
-
-  <!--#if(false)-->
   <Target Name="PublishBinariesToNuGet" AfterTargets="Pack" Condition="'$(Configuration)'=='Package'">
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
@@ -66,16 +32,10 @@
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Compile Remove="UI\**" />
-    <Content Remove="UI\**" />
-    <EmbeddedResource Remove="UI\**" />
-    <None Remove="UI\**" />
-    <Content Remove="codegen.targets" />
-    <None Remove="codegen.targets" />
     <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Update="HQ.Template.sln;pack.bat;.template.config\template.json;*.targets">
+    <None Update="HQ.Template.sln;pack.bat;.template.config\template.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -92,7 +52,7 @@
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
     <EnableDefaultContentItems>false</EnableDefaultContentItems>
     <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
-    <PackageIconUrl>https://raw.githubusercontent.com/hq-io/Shared/master/assets/320x320.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ/master/assets/320x320.png</PackageIconUrl>
     <PackageTags>hq hq-io dotnet-standard serverless platform</PackageTags>
     <PackageType>template</PackageType>
     <PackageProjectUrl>https://hq.io</PackageProjectUrl>
@@ -103,4 +63,3 @@
   <!--#endif-->
 
 </Project>
- 
