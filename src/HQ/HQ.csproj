@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -92,9 +92,9 @@
 
   <!-- SQLite -->
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.Sqlite\obj\**\*" Link="Data.SessionManagement.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.Sqlite\obj\**\*" Link="Data.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement.Sqlite\**\*.cs" Exclude="..\HQ.Data.SessionManagement.Sqlite\obj\**\*" Link="Data.SessionManagement.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Data.Sql.Sqlite\obj\**\*" Link="Data.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
@@ -103,16 +103,16 @@
 
   <!-- SQL Server -->
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.SqlServer\obj\**\*" Link="Data.SessionManagement.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.SqlServer\obj\**\*" Link="Data.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.SqlServer\obj\**\*" Link="Platform.Identity.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement.SqlServer\**\*.cs" Exclude="..\HQ.Data.SessionManagement.SqlServer\obj\**\*" Link="Data.SessionManagement.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Data.Sql.SqlServer\obj\**\*" Link="Data.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity.Stores.Sql.SqlServer\**\*.cs" Exclude="..\HQ.Platform.Identity.Stores.Sql.SqlServer\obj\**\*" Link="Platform.Identity.Stores.Sql.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <!-- Azure Cosmos DB -->
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Content Include="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\**\*.cs" Exclude="..\HQ.Data.SessionManagement\src\HQ.Data.SessionManagement.DocumentDb\obj\**\*" Link="Data.SessionManagement.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Data.Sql\src\HQ.Data.Sql.DocumentDb\obj\**\*" Link="Data.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Platform.Identity\src\HQ.Platform.Identity.Stores.Sql.DocumentDb\obj\**\*" Link="Platform.Identity.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.SessionManagement.DocumentDb\**\*.cs" Exclude="..\HQ.Data.SessionManagement.DocumentDb\obj\**\*" Link="Data.SessionManagement.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Data.Sql.DocumentDb\obj\**\*" Link="Data.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity.Stores.Sql.DocumentDb\**\*.cs" Exclude="..\HQ.Platform.Identity.Stores.Sql.DocumentDb\obj\**\*" Link="Platform.Identity.Stores.Sql.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.1" />
@@ -122,6 +122,12 @@
   <!-- Azure -->
   <ItemGroup>
     <Content Include="..\HQ.Extensions.Deployment.Azure\**\*.cs" Exclude="..\HQ.Extensions.Deployment.Azure\obj\**\*" Link="Extensions.Deployment.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Data.Streaming\src\**" />
+    <Content Remove="..\HQ.Data.Streaming\src\HQ.Data.Streaming\obj\**" />
+    <EmbeddedResource Remove="Data.Streaming\src\**" />
+    <None Remove="Data.Streaming\src\**" />
   </ItemGroup>
 
   <ItemGroup>

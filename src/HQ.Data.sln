@@ -92,6 +92,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement.S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.SessionManagement", "HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj", "{9CABEAF1-D62E-4DAA-BEFE-4195732237B0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Data.Streaming", "HQ.Data.Streaming\HQ.Data.Streaming.csproj", "{B2682414-22AC-4193-8FAD-4B2403442632}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -291,6 +293,12 @@ Global
 		{9CABEAF1-D62E-4DAA-BEFE-4195732237B0}.Package|Any CPU.Build.0 = Package|Any CPU
 		{9CABEAF1-D62E-4DAA-BEFE-4195732237B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CABEAF1-D62E-4DAA-BEFE-4195732237B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Package|Any CPU.Build.0 = Package|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2682414-22AC-4193-8FAD-4B2403442632}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -328,6 +336,7 @@ Global
 		{A78CB543-CD10-4C4A-8D08-901AEBE63105} = {66D434A7-B35B-4575-871A-69FF67453B01}
 		{80E3CEB4-100F-437E-931A-BD98C300EA24} = {66D434A7-B35B-4575-871A-69FF67453B01}
 		{9CABEAF1-D62E-4DAA-BEFE-4195732237B0} = {9DA0C30E-512B-4B4D-86F3-B056240A83CF}
+		{B2682414-22AC-4193-8FAD-4B2403442632} = {9DA0C30E-512B-4B4D-86F3-B056240A83CF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {21616B0E-9998-4952-AA9F-6F7930A6F76C}

@@ -22,10 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UI\" />
-    <Folder Include="runtime\Filters\" />
-    <Folder Include="runtime\Attributes\" />
-    <Folder Include="runtime\Models\" />
 
     <!-- Default UI -->
     <Compile Include="..\..\..\HQ.Labs\src\HQ.UI\**\*.cs" Exclude="..\..\..\HQ.Labs\src\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -70,6 +66,12 @@
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Compile Remove="UI\**" />
+    <Content Remove="UI\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="UI\**" />
+    <Content Remove="codegen.targets" />
+    <None Remove="codegen.targets" />
     <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

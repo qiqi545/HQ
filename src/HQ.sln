@@ -8,10 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\build\build.props = ..\build\build.props
 		..\LICENSE.txt = ..\LICENSE.txt
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
-		..\build\package.props = ..\build\package.props
 		..\README.md = ..\README.md
 		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
-		..\build\version.props = ..\build\version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ", "HQ\HQ.csproj", "{1EA761A7-0D88-4000-ADEC-B7D1F294093D}"

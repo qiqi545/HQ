@@ -24,6 +24,7 @@ using HQ.Data.Sql.Sqlite;
 #endif
 
 using HQ.Extensions.Metrics;
+using HQ.Platform.Node;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -38,7 +39,7 @@ namespace HQ.Template
 {
     public class Startup
     {
-        public static void Main(string[] args) => HqServer.Start<Startup>(args);
+        public static void Main(string[] args) => Server.Start<Startup>(args);
 
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
@@ -75,8 +76,8 @@ namespace HQ.Template
 #if AppInsights
                 o.PushToApplicationInsights(p =>
                 {
-                    p.MetricsSampleEventName = Common.Constants.Events.MetricsSample;
-                    p.HealthCheckEventName = Common.Constants.Events.HealthCheck;
+                    p.MetricsSampleEventName = Extensions.Metrics.Constants.Events.MetricsSample;
+                    p.HealthCheckEventName = Extensions.Metrics.Constants.Events.HealthCheck;
                     p.PublishHealthChecks = true;
                     p.PublishHealthy = false;
                     p.PublishMetrics = true;
