@@ -1,9 +1,11 @@
+using HQ.Test.Sdk;
 using Xunit;
 
 namespace HQ.Platform.Identity.Tests.Sqlite
 {
-    public class SqliteRoleServiceTests : RoleServiceTests, IClassFixture<SqliteFixture>
+    public class SqliteRoleServiceTests : RoleServiceTests, IClassFixture<IdentitySqliteFixture>
     {
-        public SqliteRoleServiceTests(SqliteFixture fixture) : base(CreateServiceProvider(fixture)) { }
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public SqliteRoleServiceTests(IdentitySqliteFixture fixture) : base(CreateServiceProvider(fixture)) { }
     }
 }

@@ -13,30 +13,13 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Threading.Tasks;
-using HQ.Platform.Identity.Models;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Xunit;
-using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
-namespace HQ.Platform.Identity.Tests
+namespace HQ.Platform.Identity.Tests.Sqlite
 {
-    public abstract class TenantServiceTests : ServiceUnderTest
+    public class SqliteApplicationServiceTests : ApplicationServiceTests, IClassFixture<IdentitySqliteFixture>
     {
-        protected TenantServiceTests(IServiceProvider serviceProvider) : base(serviceProvider) { }
-
-        [Test]
-        public async Task Can_create_tenant()
-        {
-            var service = ServiceProvider.GetRequiredService<ITenantService<IdentityTenant>>();
-            var tenant = await service.CreateAsync(new CreateTenantModel
-            {
-                Name = "MyTenant",
-                ConcurrencyStamp = $"{Guid.NewGuid()}"
-            });
-            Assert.NotNull(tenant);
-            Assert.NotNull(tenant.Data);
-        }
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public SqliteApplicationServiceTests(IdentitySqliteFixture fixture) : base(CreateServiceProvider(fixture)) { }
     }
 }

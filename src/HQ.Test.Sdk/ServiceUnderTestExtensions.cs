@@ -13,30 +13,24 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Threading.Tasks;
-using HQ.Platform.Identity.Models;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Xunit;
+using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Identity.Tests
+namespace HQ.Test.Sdk
 {
-    public abstract class TenantServiceTests : ServiceUnderTest
+    public static class ServiceUnderTestExtensions
     {
-        protected TenantServiceTests(IServiceProvider serviceProvider) : base(serviceProvider) { }
-
-        [Test]
-        public async Task Can_create_tenant()
+        public static void SetAsAuthenticated(this ServiceUnderTest test, string authenticationType = "Bearer", params Claim[] claims)
         {
-            var service = ServiceProvider.GetRequiredService<ITenantService<IdentityTenant>>();
-            var tenant = await service.CreateAsync(new CreateTenantModel
-            {
-                Name = "MyTenant",
-                ConcurrencyStamp = $"{Guid.NewGuid()}"
-            });
-            Assert.NotNull(tenant);
-            Assert.NotNull(tenant.Data);
+            var manifest = claims ?? Enumerable.Empty<Claim>();
+            var identity = new ClaimsIdentity(manifest, authenticationType);
+            var principal = new ClaimsPrincipal(identity);
+
+            var accessor = test.ServiceProvider.GetRequiredService<IHttpContextAccessor>();
+            accessor.HttpContext = new DefaultHttpContext();
+            accessor.HttpContext.User = principal;
         }
     }
 }

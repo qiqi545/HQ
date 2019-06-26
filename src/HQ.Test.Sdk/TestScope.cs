@@ -34,7 +34,7 @@ namespace HQ.Test.Sdk
     public abstract class TestScope : ILogger
     {
         protected readonly ILoggerFactory DefaultLoggerFactory = new LoggerFactory();
-        protected IServiceProvider ServiceProvider;
+        public IServiceProvider ServiceProvider;
 
         protected static ActionLoggerProvider CreateLoggerProvider()
         {

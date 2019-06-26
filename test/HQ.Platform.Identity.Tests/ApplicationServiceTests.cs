@@ -29,7 +29,14 @@ namespace HQ.Platform.Identity.Tests
         [Test]
         public async Task Can_create_application()
         {
-            var service = ServiceProvider.GetRequiredService<IApplicationService<IdentityRoleExtended>>();
+            var service = ServiceProvider.GetRequiredService<IApplicationService<IdentityApplication>>();
+            var application = await service.CreateAsync(new CreateApplicationModel
+            {
+                Name = "MyApplication",
+                ConcurrencyStamp = $"{Guid.NewGuid()}"
+            });
+            Assert.NotNull(application);
+            Assert.NotNull(application.Data);
         }
     }
 }
