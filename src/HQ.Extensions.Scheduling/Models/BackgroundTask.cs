@@ -17,7 +17,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using HQ.Data.Contracts.DataAnnotations;
 using NCrontab;
 using Newtonsoft.Json;
 
@@ -41,6 +43,8 @@ namespace HQ.Extensions.Scheduling.Models
         public DateTimeOffset? SucceededAt { get; set; }
         public DateTimeOffset? LockedAt { get; set; }
         public string LockedBy { get; set; }
+
+        [NotMapped]
         public List<string> Tags { get; set; } = new List<string>();
 
         public string Expression { get; set; }
@@ -50,6 +54,7 @@ namespace HQ.Extensions.Scheduling.Models
         public bool ContinueOnFailure { get; set; } = true;
         public bool ContinueOnError { get; set; } = true;
 
+        [Computed]
         public bool RunningOvertime
         {
             get
@@ -80,11 +85,11 @@ namespace HQ.Extensions.Scheduling.Models
             }
         }
 
-        [JsonIgnore] public DateTimeOffset? NextOccurrence => GetNextOccurence();
-        [JsonIgnore] public DateTimeOffset? LastOccurrence => GetLastOccurrence();
-        [JsonIgnore] public IEnumerable<DateTimeOffset> AllOccurrences => GetAllOccurrences();
+        [JsonIgnore, Computed] public DateTimeOffset? NextOccurrence => GetNextOccurence();
+        [JsonIgnore, Computed] public DateTimeOffset? LastOccurrence => GetLastOccurrence();
+        [JsonIgnore, Computed] public IEnumerable<DateTimeOffset> AllOccurrences => GetAllOccurrences();
 
-        [JsonIgnore]
+        [JsonIgnore, Computed]
         public bool HasValidExpression
         {
             get

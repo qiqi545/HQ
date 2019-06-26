@@ -34,6 +34,7 @@ namespace HQ.Extensions.Scheduling.Configuration
             MaximumAttempts = 25;
             MaximumRuntimeSeconds = 180;
             IntervalFunction = IntervalFunction.ExponentialBackoff;
+            Store = new StoreOptions();
 
             // Per-Task:
             DeleteOnFailure = false;
@@ -104,6 +105,8 @@ namespace HQ.Extensions.Scheduling.Configuration
         ///     highest priority
         /// </summary>
         public int Priority { get; set; }
+        
+        public StoreOptions Store { get; set; }
 
         /// <summary> Set task values that have defaults if not provided by the user. </summary>
         public void ProvisionTask(BackgroundTask task)

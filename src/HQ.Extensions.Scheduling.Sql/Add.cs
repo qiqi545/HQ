@@ -1,5 +1,6 @@
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -19,7 +20,7 @@ namespace HQ.Extensions.Scheduling.Sql
 
             services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.BackgroundTasks);
 
-            services.TryAddSingleton<SqlBackgroundTaskStore>();
+            services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlBackgroundTaskStore>());
             return builder;
         }
     }

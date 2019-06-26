@@ -18,11 +18,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Descriptor;
+using HQ.Data.Sql.Queries;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Sql
@@ -55,7 +57,6 @@ namespace HQ.Extensions.Scheduling.Sql
             return GetByAnyTagsWithTags(tags, db, t);
         }
 
-
         public IList<BackgroundTask> GetByAllTags(params string[] tags)
         {
             var db = _db.Current;
@@ -77,9 +78,9 @@ namespace HQ.Extensions.Scheduling.Sql
                 UpdateScheduledTask(task, db, t);
             }
 
-            UpdateTagMapping(task, db, t);
+            // UpdateTagMapping(task, db, t);
 
-            t.Commit();
+            t?.Commit();
         }
 
         public void Delete(BackgroundTask task)
@@ -178,17 +179,14 @@ WHERE
 
         private void InsertScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
         {
-            var sql = $@"
-INSERT INTO {TaskTable} 
-    (Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError) 
-VALUES
-    (@Priority, @Attempts, @Handler, @RunAt, @MaximumRuntime, @MaximumAttempts, @DeleteOnSuccess, @DeleteOnFailure, @DeleteOnError, @Expression, @Start, @End, @ContinueOnSuccess, @ContinueOnFailure, @ContinueOnError);
+            var query = SqlBuilder.Insert(task);
+            _db.SetTypeInfo(typeof(BackgroundTask));
+            var inserted = _db.Current.Execute(query.Sql, query.Parameters);
+            Debug.Assert(inserted == 1);
 
-SELECT MAX(Id) FROM {TaskTable};
-";
-            task.Id = db.Query<int>(sql, task, t).Single();
-            task.CreatedAt = db.Query<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t)
-                .Single();
+            // TODO map-backs
+            //task.Id = db.Query<int>(sql, task, t).Single();
+            //task.CreatedAt = db.Query<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t).Single();
         }
 
         private void LockTasks(IReadOnlyCollection<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)

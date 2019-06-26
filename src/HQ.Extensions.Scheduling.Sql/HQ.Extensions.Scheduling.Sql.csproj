@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
   </ItemGroup>
 
