@@ -24,6 +24,7 @@ namespace HQ.Data.SessionManagement
     {
         IDbConnection Current { get; }
         void SetTypeInfo(Type type);
+        void SetTypeInfo<T>();
         bool TryGetLastInsertedId<TKey>(out TKey key);
     }
 }

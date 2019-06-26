@@ -41,6 +41,11 @@ namespace HQ.Data.SessionManagement
             _type = type;
         }
 
+        public void SetTypeInfo<T>()
+        {
+            _type = typeof(T);
+        }
+
         public bool TryGetLastInsertedId<TKey>(out TKey key)
         {
             if (!(Current is WrapDbConnection wrapped))
