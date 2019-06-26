@@ -40,21 +40,6 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 .WithColumn("SecurityStamp").AsString(int.MaxValue).Nullable()
                 .WithColumn("ConcurrencyStamp").AsString(int.MaxValue).Nullable()
                 ;
-            Create.Table("AspNetApplicationRoles")
-                .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetApplicationRoles")
-                .WithColumn("ApplicationId").AsString(450).NotNullable()
-                .WithColumn("RoleId").AsString(450).NotNullable()
-                ;
-            Create.ForeignKey("FK_AspNetApplicationRoles_AspNetApplications")
-                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId")
-                .ToTable("AspNetApplications").PrimaryColumns("Id")
-                .OnDelete(Rule.Cascade)
-                ;
-            Create.ForeignKey("FK_AspNetApplicationRoles_AspNetRoles")
-                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId", "RoleId")
-                .ToTable("AspNetRole").PrimaryColumns("ApplicationId", "Id")
-                .OnDelete(Rule.Cascade)
-                ;
 
             Create.Table("AspNetRoles")
                 .WithColumn("ApplicationId").AsString(450).NotNullable().PrimaryKey("PK_AspNetRoles")
@@ -81,6 +66,22 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 .WithColumn("LockoutEnd").AsDateTime().Nullable()
                 .WithColumn("LockoutEnabled").AsBoolean().NotNullable()
                 .WithColumn("AccessFailedCount").AsInt32().NotNullable()
+                ;
+
+            Create.Table("AspNetApplicationRoles")
+                .WithColumn("Id").AsInt32().Identity().NotNullable().PrimaryKey("PK_AspNetApplicationRoles")
+                .WithColumn("ApplicationId").AsString(450).NotNullable()
+                .WithColumn("RoleId").AsString(450).NotNullable()
+                ;
+            Create.ForeignKey("FK_AspNetApplicationRoles_AspNetApplications")
+                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId")
+                .ToTable("AspNetApplications").PrimaryColumns("Id")
+                .OnDelete(Rule.Cascade)
+                ;
+            Create.ForeignKey("FK_AspNetApplicationRoles_AspNetRoles")
+                .FromTable("AspNetApplicationRoles").ForeignColumns("ApplicationId", "RoleId")
+                .ToTable("AspNetRole").PrimaryColumns("ApplicationId", "Id")
+                .OnDelete(Rule.Cascade)
                 ;
 
             Create.Table("AspNetRoleClaims")

@@ -25,7 +25,6 @@ namespace HQ.Platform.Identity.Models
         where TKey : IEquatable<TKey>
     {
         public TKey TenantId { get; set; }
-        public TKey ApplicationId { get; set; }
     }
 
     public class IdentityUserExtended : IdentityUserExtended<string>

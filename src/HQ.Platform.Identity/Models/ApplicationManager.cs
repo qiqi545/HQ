@@ -36,12 +36,10 @@ namespace HQ.Platform.Identity.Models
     {
         private readonly IApplicationStore<TApplication> _applicationStore;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IUserStoreExtended<TUser> _userStore;
         private bool _disposed;
 
         public ApplicationManager(
             IApplicationStore<TApplication> applicationStore,
-            IUserStoreExtended<TUser> userStore,
             IEnumerable<IApplicationValidator<TApplication, TUser, TKey>> applicationValidators,
             IOptions<IdentityOptionsExtended> optionsAccessor,
             ILookupNormalizer keyNormalizer,
@@ -49,7 +47,6 @@ namespace HQ.Platform.Identity.Models
             ILogger<ApplicationManager<TApplication, TUser, TKey>> logger)
         {
             _applicationStore = applicationStore;
-            _userStore = userStore;
             _serviceProvider = serviceProvider;
 
             Logger = logger;
@@ -132,157 +129,7 @@ namespace HQ.Platform.Identity.Models
 
             return null;
         }
-
-        public virtual async Task<IEnumerable<TApplication>> FindByEmailAsync(string email)
-        {
-            ThrowIfDisposed();
-            if (email == null)
-            {
-                throw new ArgumentNullException(nameof(email));
-            }
-
-            email = KeyNormalizer.MaybeNormalize(email);
-
-            if (!(_userStore is IUserEmailStoreExtended<TUser> emailStore))
-            {
-                throw new NotSupportedException();
-            }
-
-            var users = await emailStore.FindAllByEmailAsync(email, CancellationToken);
-            if (users != null || !Options.Stores.ProtectPersonalData)
-            {
-                if (!(users is IEnumerable<IdentityUserExtended> ext))
-                {
-                    throw new NotSupportedException();
-                }
-
-                var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                return await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-            }
-
-            var protector = _serviceProvider.GetService(typeof(ILookupProtector)) as ILookupProtector;
-            if (!(_serviceProvider.GetService(typeof(ILookupProtectorKeyRing)) is ILookupProtectorKeyRing service) ||
-                protector == null)
-            {
-                return null;
-            }
-
-            foreach (var allKeyId in service.GetAllKeyIds())
-            {
-                users = await emailStore.FindAllByEmailAsync(protector.Protect(allKeyId, email), CancellationToken);
-
-                if (users is IEnumerable<IdentityUserExtended> ext)
-                {
-                    var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                    var applications = await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-                    if (applications != null)
-                    {
-                        return applications;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public virtual async Task<IEnumerable<TApplication>> FindByPhoneNumberAsync(string phoneNumber)
-        {
-            ThrowIfDisposed();
-            if (phoneNumber == null)
-            {
-                throw new ArgumentNullException(nameof(phoneNumber));
-            }
-
-            if (!(_userStore is IUserPhoneNumberStoreExtended<TUser> phoneStore))
-            {
-                throw new NotSupportedException();
-            }
-
-            var users = await phoneStore.FindAllByPhoneNumberAsync(phoneNumber, CancellationToken);
-            if (users != null || !Options.Stores.ProtectPersonalData)
-            {
-                if (!(users is IEnumerable<IdentityUserExtended> ext))
-                {
-                    throw new NotSupportedException();
-                }
-
-                var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                return await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-            }
-
-            var protector = _serviceProvider.GetService(typeof(ILookupProtector)) as ILookupProtector;
-            if (!(_serviceProvider.GetService(typeof(ILookupProtectorKeyRing)) is ILookupProtectorKeyRing service) ||
-                protector == null)
-            {
-                return null;
-            }
-
-            foreach (var allKeyId in service.GetAllKeyIds())
-            {
-                users = await phoneStore.FindAllByPhoneNumberAsync(protector.Protect(allKeyId, phoneNumber),
-                    CancellationToken);
-
-                if (users is IEnumerable<IdentityUserExtended> ext)
-                {
-                    var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                    var applications = await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-                    if (applications != null)
-                    {
-                        return applications;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        public virtual async Task<IEnumerable<TApplication>> FindByUserNameAsync(string username)
-        {
-            ThrowIfDisposed();
-            if (username == null)
-            {
-                throw new ArgumentNullException(nameof(username));
-            }
-
-            username = KeyNormalizer.MaybeNormalize(username);
-
-            var users = await _userStore.FindAllByNameAsync(username, CancellationToken);
-            if (users != null || !Options.Stores.ProtectPersonalData)
-            {
-                if (!(users is IEnumerable<IdentityUserExtended> ext))
-                {
-                    throw new NotSupportedException();
-                }
-
-                var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                return await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-            }
-
-            var protector = _serviceProvider.GetService(typeof(ILookupProtector)) as ILookupProtector;
-            if (!(_serviceProvider.GetService(typeof(ILookupProtectorKeyRing)) is ILookupProtectorKeyRing service) ||
-                protector == null)
-            {
-                return null;
-            }
-
-            foreach (var allKeyId in service.GetAllKeyIds())
-            {
-                users = await _userStore.FindAllByNameAsync(protector.Protect(allKeyId, username), CancellationToken);
-
-                if (users is IEnumerable<IdentityUserExtended> ext)
-                {
-                    var applicationIds = ext.Select(x => $"{x.ApplicationId}");
-                    var applications = await _applicationStore.FindByIdsAsync(applicationIds, CancellationToken);
-                    if (applications != null)
-                    {
-                        return applications;
-                    }
-                }
-            }
-
-            return null;
-        }
-
+        
         public virtual async Task<IdentityResult> CreateAsync(TApplication application)
         {
             ThrowIfDisposed();

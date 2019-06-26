@@ -83,9 +83,7 @@ namespace HQ.Platform.Identity.Services
             var deleted = await _applicationManager.DeleteAsync(operation.Data);
             return deleted.ToOperation();
         }
-
         
-
         public async Task<Operation<TApplication>> FindByIdAsync(string id)
         {
             var application = await _applicationManager.FindByIdAsync(id);
@@ -98,21 +96,6 @@ namespace HQ.Platform.Identity.Services
         public async Task<Operation<TApplication>> FindByNameAsync(string name)
         {
             return new Operation<TApplication>(await _applicationManager.FindByNameAsync(name));
-        }
-
-        public async Task<Operation<IEnumerable<TApplication>>> FindByPhoneNumberAsync(string phoneNumber)
-        {
-            return new Operation<IEnumerable<TApplication>>(await _applicationManager.FindByPhoneNumberAsync(phoneNumber));
-        }
-
-        public async Task<Operation<IEnumerable<TApplication>>> FindByEmailAsync(string email)
-        {
-            return new Operation<IEnumerable<TApplication>>(await _applicationManager.FindByEmailAsync(email));
-        }
-
-        public async Task<Operation<IEnumerable<TApplication>>> FindByUserNameAsync(string username)
-        {
-            return new Operation<IEnumerable<TApplication>>(await _applicationManager.FindByUserNameAsync(username));
         }
     }
 }

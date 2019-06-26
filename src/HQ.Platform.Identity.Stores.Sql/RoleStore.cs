@@ -61,7 +61,6 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            role.TenantId = _tenantId;
             role.ApplicationId = _applicationId;
             role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 

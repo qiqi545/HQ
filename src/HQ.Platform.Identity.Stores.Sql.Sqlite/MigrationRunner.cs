@@ -68,7 +68,6 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                     new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
             }
 
-            ;
             runner.MigrateUp();
         }
     }

@@ -21,7 +21,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Models
 {
     public class AspNetRoleClaims<TKey>
     {
-        [Required] public TKey TenantId { get; set; }
+        [Required] public TKey ApplicationId { get; set; }
 
         [Required] public TKey RoleId { get; set; }
 

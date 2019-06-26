@@ -22,7 +22,6 @@ namespace HQ.Platform.Identity.Models
 {
     public class IdentityRoleExtended<TKey> : IdentityRole<TKey> where TKey : IEquatable<TKey>
     {
-        public TKey TenantId { get; set; }
         public TKey ApplicationId { get; set; }
     }
 

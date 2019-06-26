@@ -115,7 +115,6 @@ namespace HQ.Platform.Identity.Stores.Sql
             cancellationToken.ThrowIfCancellationRequested();
 
             user.TenantId = _tenantId;
-            user.ApplicationId = _applicationId;
             user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
             if (user.Id == null)

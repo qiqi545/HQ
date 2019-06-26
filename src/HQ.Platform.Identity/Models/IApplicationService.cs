@@ -35,9 +35,5 @@ namespace HQ.Platform.Identity.Models
 
         Task<Operation<TApplication>> FindByIdAsync(string id);
         Task<Operation<TApplication>> FindByNameAsync(string name);
-
-        Task<Operation<IEnumerable<TApplication>>> FindByPhoneNumberAsync(string phoneNumber);
-        Task<Operation<IEnumerable<TApplication>>> FindByEmailAsync(string email);
-        Task<Operation<IEnumerable<TApplication>>> FindByUserNameAsync(string username);
     }
 }
