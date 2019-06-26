@@ -18,10 +18,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using Dapper;
 using HQ.Common;
+using HQ.Data.SessionManagement;
+using HQ.Data.Sql.Descriptor;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Sql
@@ -29,13 +30,13 @@ namespace HQ.Extensions.Scheduling.Sql
     public class SqlBackgroundTaskStore : IBackgroundTaskStore
     {
         private static readonly List<string> NoTags = new List<string>();
-        private readonly string _connectionString;
+        private readonly IDataConnection _db;
         private readonly string _schema;
         private readonly string _tablePrefix;
 
-        public SqlBackgroundTaskStore(string connectionString, string schema = "dbo", string tablePrefix = "BackgroundTask")
+        public SqlBackgroundTaskStore(IDataConnection db, string schema = "dbo", string tablePrefix = "BackgroundTask")
         {
-            _connectionString = connectionString;
+            _db = db;
             _schema = schema;
             _tablePrefix = tablePrefix;
         }
@@ -46,61 +47,49 @@ namespace HQ.Extensions.Scheduling.Sql
 
         public IList<BackgroundTask> GetByAnyTags(params string[] tags)
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
+            var descriptor = SimpleDataDescriptor.Create<BackgroundTask>();
+            _db.SetTypeInfo<BackgroundTask>();
 
-                var t = InTransaction(db);
-
-                return GetByAnyTagsWithTags(tags, db, t);
-            }
+            var db = _db.Current;
+            IDbTransaction t = null;
+            return GetByAnyTagsWithTags(tags, db, t);
         }
 
 
         public IList<BackgroundTask> GetByAllTags(params string[] tags)
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                return GetByAllTagsWithTags(tags, db, t);
-            }
+            var db = _db.Current;
+            IDbTransaction t = null;
+            return GetByAllTagsWithTags(tags, db, t);
         }
 
         public void Save(BackgroundTask task)
         {
-            using (var db = new SqlConnection(_connectionString))
+            var db = _db.Current;
+            IDbTransaction t = null;
+
+            if (task.Id == 0)
             {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                if (task.Id == 0)
-                {
-                    InsertScheduledTask(task, db, t);
-                }
-                else
-                {
-                    UpdateScheduledTask(task, db, t);
-                }
-
-                UpdateTagMapping(task, db, t);
-
-                t.Commit();
+                InsertScheduledTask(task, db, t);
             }
+            else
+            {
+                UpdateScheduledTask(task, db, t);
+            }
+
+            UpdateTagMapping(task, db, t);
+
+            t.Commit();
         }
 
         public void Delete(BackgroundTask task)
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
+            var db = _db.Current;
+            db.Open();
 
-                var t = InTransaction(db);
+            IDbTransaction t = null;
 
-                var sql = $@"
+            var sql = $@"
 -- Primary relationship:
 DELETE FROM {TagsTable} WHERE ScheduledTaskId = @Id;
 DELETE FROM {TaskTable} WHERE Id = @Id;
@@ -109,76 +98,51 @@ DELETE FROM {TaskTable} WHERE Id = @Id;
 DELETE FROM {TagTable}
 WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 ";
-                db.Execute(sql, task, t);
+            db.Execute(sql, task, t);
 
-                t.Commit();
-            }
+            t.Commit();
         }
 
         public IList<BackgroundTask> GetAndLockNextAvailable(int readAhead)
         {
-            using (var db = new SqlConnection(_connectionString))
+            var db = _db.Current;
+            db.Open();
+
+            IDbTransaction t = null;
+
+            var tasks = GetUnlockedTasksWithTags(readAhead, db, t);
+
+            if (tasks.Any())
             {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                var tasks = GetUnlockedTasksWithTags(readAhead, db, t);
-
-                if (tasks.Any())
-                {
-                    LockTasks(tasks, db, t);
-                }
-
-                t.Commit();
-
-                return tasks;
+                LockTasks(tasks, db, t);
             }
+
+            t?.Commit();
+
+            return tasks;
         }
 
         public BackgroundTask GetById(int id)
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                var task = GetByIdWithTags(id, db, t);
-
-                return task;
-            }
+            var db = _db.Current;
+            IDbTransaction t = null;
+            var task = GetByIdWithTags(id, db, t);
+            return task;
         }
 
         public IList<BackgroundTask> GetHangingTasks()
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                var locked = GetLockedTasksWithTags(db, t);
-
-                return locked.Where(st => st.RunningOvertime).ToList();
-            }
+            var db = _db.Current;
+            IDbTransaction t = null;
+            var locked = GetLockedTasksWithTags(db, t);
+            return locked.Where(st => st.RunningOvertime).ToList();
         }
 
         public IList<BackgroundTask> GetAll()
         {
-            using (var db = new SqlConnection(_connectionString))
-            {
-                db.Open();
-
-                var t = InTransaction(db);
-
-                return GetAllWithTags(db, t);
-            }
-        }
-
-        private static SqlTransaction InTransaction(SqlConnection db)
-        {
-            return db.BeginTransaction(IsolationLevel.Serializable);
+            var db = _db.Current;
+            IDbTransaction t = null;
+            return GetAllWithTags(db, t);
         }
 
         private void UpdateScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
@@ -226,7 +190,6 @@ SELECT MAX(Id) FROM {TaskTable};
             task.CreatedAt = db.Query<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t)
                 .Single();
         }
-
 
         private void LockTasks(IReadOnlyCollection<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
         {
@@ -337,7 +300,7 @@ ORDER BY {TagTable}.Name ASC
             return QueryWithSplitOnTags(db, t, sql);
         }
 
-        private IList<BackgroundTask> GetByAnyTagsWithTags(string[] tags, SqlConnection db, SqlTransaction t)
+        private IList<BackgroundTask> GetByAnyTagsWithTags(string[] tags, IDbConnection db, IDbTransaction t = null)
         {
             var matchSql = $@"
 SELECT st.*
@@ -369,7 +332,7 @@ ORDER BY {TagTable}.Name ASC
             return QueryWithSplitOnTags(db, t, fetchSql, new {Ids = ids});
         }
 
-        private IList<BackgroundTask> GetByAllTagsWithTags(string[] tags, IDbConnection db, SqlTransaction t)
+        private IList<BackgroundTask> GetByAllTagsWithTags(string[] tags, IDbConnection db, IDbTransaction t)
         {
             var matchSql = $@"
 SELECT st.*
