@@ -21,8 +21,9 @@ namespace HQ.Common
     {
         public static class ConnectionSlots
         {
-            public const string Identity = "Identity";
-            public const string Default = "Default";
+            public const string Identity = nameof(Identity);
+            public const string Default = nameof(Default);
+            public const string BackgroundTasks = nameof(BackgroundTasks);
         }
 
         public static class Sql

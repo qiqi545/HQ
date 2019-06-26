@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Extensions.Scheduling.Sqlite\HQ.Extensions.Scheduling.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />

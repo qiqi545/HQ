@@ -88,11 +88,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
             var builder = new SqliteConnectionStringBuilder(connectionString);
 
-            void ConfigureDatabase(SqliteOptions o)
-            {
-                configureDatabase?.Invoke(o);
-            }
-
+            void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }
             services.Configure<SqliteOptions>(ConfigureDatabase);
 
             var serviceProvider = services.BuildServiceProvider();
@@ -104,8 +100,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             SqlBuilder.Dialect = dialect;
 
             identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
-            services.AddSingleton(dialect);
-
+            
             SimpleDataDescriptor.TableNameConvention = s =>
             {
                 switch (s)
@@ -137,7 +132,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
             services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
 
-            services.AddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
+            services.TryAddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
 
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 

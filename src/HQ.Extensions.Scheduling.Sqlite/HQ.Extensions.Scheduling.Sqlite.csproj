@@ -1,10 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Scheduling.Sql\HQ.Extensions.Scheduling.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
   </ItemGroup>
 
