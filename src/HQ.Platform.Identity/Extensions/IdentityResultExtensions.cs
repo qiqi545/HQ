@@ -29,8 +29,7 @@ namespace HQ.Platform.Identity.Extensions
             var operation = new Operation(errors.ToList());
             if (result.Succeeded)
             {
-                operation.Result =
-                    operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
+                operation.Result = operation.HasErrors ? OperationResult.SucceededWithErrors : OperationResult.Succeeded;
             }
             else
             {

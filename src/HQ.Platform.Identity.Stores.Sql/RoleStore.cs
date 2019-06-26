@@ -23,6 +23,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Common.AspNetCore;
+using HQ.Data.Contracts;
+using HQ.Data.Contracts.Components;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
@@ -33,6 +35,7 @@ using Microsoft.AspNetCore.Identity;
 namespace HQ.Platform.Identity.Stores.Sql
 {
     public partial class RoleStore<TKey, TRole> :
+        IComponentStore<TKey, TRole>,
         IRoleStoreExtended<TRole>,
         IQueryableRoleStore<TRole>
         where TRole : IdentityRoleExtended<TKey>
@@ -56,7 +59,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         }
 
         public IQueryable<TRole> Roles => MaybeQueryable();
-
+        
         public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -172,9 +175,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             return role;
         }
 
-        public void Dispose()
-        {
-        }
+        public void Dispose() { }
 
         public CancellationToken CancellationToken { get; }
 
@@ -210,5 +211,15 @@ namespace HQ.Platform.Identity.Stores.Sql
             var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
             return count;
         }
+
+        #region Component Store
+
+        async Task<Operation<ObjectSave>> IComponentStore<TKey, TRole>.CreateAsync(TRole role, CancellationToken cancellationToken)
+        {
+            var result = await CreateAsync(role, cancellationToken);
+            return result.ToOperation(ObjectSave.Created);
+        }
+
+        #endregion
     }
 }
