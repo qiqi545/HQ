@@ -55,7 +55,7 @@ namespace HQ.Data.Sql.Descriptor
 
             foreach (var property in accessors)
             {
-                if (Exists(property) || property.HasAttribute<IgnoreDataMemberAttribute>())
+                if (Exists(property) || property.HasAttribute<NotMappedAttribute>())
                     continue;
 
                 var column = new PropertyToColumn(property);
