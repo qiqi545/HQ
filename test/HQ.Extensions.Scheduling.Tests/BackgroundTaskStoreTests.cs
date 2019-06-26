@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Xunit;
 
@@ -7,12 +8,27 @@ namespace HQ.Extensions.Scheduling.Tests
 {
     public abstract class BackgroundTaskStoreTests : ServiceUnderTest
     {
-        protected BackgroundTaskStoreTests(IServiceProvider serviceProvider) : base(serviceProvider) { }
+        private readonly IBackgroundTaskStore _store;
+
+        protected BackgroundTaskStoreTests(IServiceProvider serviceProvider) : base(serviceProvider)
+        {
+            _store = ServiceProvider.GetService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
+        }
 
         [Test]
-        public async Task Can_create_background_task()
+        public void Can_create_background_task()
         {
-            
+            var task = new BackgroundTask
+            {
+                Start = DateTimeOffset.UtcNow,
+                Handler = "NoHandler",
+                MaximumRuntime = TimeSpan.FromSeconds(10),
+                MaximumAttempts = 10,
+                DeleteOnError = true,
+                DeleteOnFailure = false,
+                DeleteOnSuccess = true
+            };
+            _store.Save(task);
         }
     }
 }
