@@ -13,15 +13,32 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Data.SessionManagement.DocumentDb
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace HQ.Data.Sql.DocumentDb
 {
-    public class DocumentDbOptions
+    public abstract class DocumentBase<T> : IDocument
     {
-        public string Endpoint { get; set; }
-        public string AuthKey { get; set; }
-        public string DatabaseId { get; set; }
-        public string CollectionId { get; set; }
-        public int? OfferThroughput { get; set; } = 400;
-        public bool SharedCollection { get; set; }
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        [JsonProperty("documentType")]
+        public string DocumentType
+        {
+            get => typeof(T).Name;
+            set
+            {
+                if (value != typeof(T).Name)
+                    throw new InvalidOperationException();
+            }
+        }
+
+        [NotMapped]
+        [JsonConverter(typeof(UnixDateTimeConverter))]
+        [JsonProperty(PropertyName = "_ts")]
+        public virtual DateTime Timestamp { get; internal set; }
     }
 }

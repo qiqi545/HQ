@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,17 +12,17 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
-namespace HQ.Data.SessionManagement.DocumentDb
+using Newtonsoft.Json;
+
+namespace HQ.Data.Sql.DocumentDb
 {
-    public class DocumentDbOptions
+    public interface IDocument
     {
-        public string Endpoint { get; set; }
-        public string AuthKey { get; set; }
-        public string DatabaseId { get; set; }
-        public string CollectionId { get; set; }
-        public int? OfferThroughput { get; set; } = 400;
-        public bool SharedCollection { get; set; }
+        [JsonProperty("id")] string Id { get; }
+
+        [JsonProperty("documentType")] string DocumentType { get; }
     }
 }

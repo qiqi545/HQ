@@ -35,7 +35,7 @@ namespace HQ.Data.Sql.DocumentDb
         public char? Quote => '\'';
         public string Count => "VALUE COUNT(1)";
         public string SetSuffix => string.Empty;
-        
+
         public bool SupportsSelectStar => true;
 
         public bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
@@ -161,7 +161,10 @@ namespace HQ.Data.Sql.DocumentDb
         private bool ResolveDocumentType(IDataDescriptor descriptor, IList<string> keys, IList<string> parameters)
         {
             if (parameters.Contains(Discriminator))
+            {
                 return true;
+            }
+
             keys.Add(ResolveColumnName(descriptor, Discriminator));
             parameters.Add(Discriminator);
             return true;

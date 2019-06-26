@@ -90,7 +90,10 @@ namespace HQ.Data.Sql.DocumentDb
                 var document = (IDictionary<string, object>) @object;
                 document.Add("DocumentType", typeof(TData).Name);
                 foreach (var property in descriptor.Inserted)
+                {
                     document.Add(property.ColumnName, property.Property.Get(x));
+                }
+
                 return @object;
             }
 
@@ -142,6 +145,7 @@ namespace HQ.Data.Sql.DocumentDb
 
                     break;
                 }
+
                 case BatchSaveStrategy.Update:
                 {
                     // ReSharper disable once PossibleMultipleEnumeration
@@ -154,7 +158,9 @@ namespace HQ.Data.Sql.DocumentDb
                             var type = typeof(SetUpdateOperation<>).MakeGenericType(p.Property.Type);
                             var ctor = type.GetConstructor(new[] {typeof(string), p.Property.Type});
                             if (ctor == null)
+                            {
                                 return null;
+                            }
 
                             var operation =
                                 (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
@@ -170,6 +176,7 @@ namespace HQ.Data.Sql.DocumentDb
 
                     break;
                 }
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(saveStrategy), saveStrategy, null);
             }

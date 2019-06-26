@@ -18,11 +18,13 @@
     <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.4.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Batching\HQ.Data.Sql.Batching.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
