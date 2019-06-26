@@ -50,8 +50,9 @@ namespace HQ.Data.Sql.Queries
             }
             else
             {
-                // WHERE is explicitly provided 
-                whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
+                // WHERE is explicitly provided
+                var accessor = ReadAccessor.Create(where.GetType());
+                whereHash = ReadAccessorExtensions.AsReadOnlyDictionary(accessor, where);
                 var whereHashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
                 whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToList();
             }

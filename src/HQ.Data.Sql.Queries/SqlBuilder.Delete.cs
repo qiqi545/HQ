@@ -49,9 +49,9 @@ namespace HQ.Data.Sql.Queries
             else
             {
                 // WHERE is explicitly provided 
-                whereHash = ReadAccessor.Create(where.GetType()).AsReadOnlyDictionary(where);
-                var whereHashKeysRewrite =
-                    whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+                var accessor = ReadAccessor.Create(where);
+                whereHash = ReadAccessorExtensions.AsReadOnlyDictionary(accessor, where);
+                var whereHashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
                 whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeysRewrite.Keys).ToList();
             }
 
@@ -65,28 +65,26 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Delete(IDataDescriptor descriptor, object instance)
         {
-            var whereHash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
-            var whereHashKeyRewrite =
-                whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+            var accessor = ReadAccessor.Create(instance);
+            var whereHash = accessor.AsReadOnlyDictionary(instance);
+            var whereHashKeyRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+
             var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeyRewrite.Keys).ToList();
-
-            return Delete(descriptor, whereFilter, whereHash);
-        }
-
-        private static Query Delete(IDataDescriptor descriptor, List<string> whereFilter,
-            IReadOnlyDictionary<string, object> whereHash)
-        {
-            var whereHashKeyRewrite =
-                whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
-            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
-                key => whereHash[whereHashKeyRewrite[key]]);
+            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}", key => whereHash[whereHashKeyRewrite[key]]);
             var whereParameters = whereParams.Keys.ToList();
 
-            var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter,
-                whereParameters);
-            var @params = ReadAccessor.Create(whereParams.GetType()).AsReadOnlyDictionary(whereParams);
+            var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
+            return new Query(sql, whereParams);
+        }
 
-            return new Query(sql, @params);
+        private static Query Delete(IDataDescriptor descriptor, List<string> whereFilter, IReadOnlyDictionary<string, object> whereHash)
+        {
+            var whereHashKeyRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}", key => whereHash[whereHashKeyRewrite[key]]);
+            var whereParameters = whereParams.Keys.ToList();
+
+            var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
+            return new Query(sql, whereParams);
         }
     }
 }
