@@ -18,4 +18,8 @@
     <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
+  </ItemGroup>
+
 </Project>

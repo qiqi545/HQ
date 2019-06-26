@@ -2,13 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.1.1" />
-    <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.29" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -17,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Platform.Functions.Azure\HQ.Platform.Functions.Azure.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Platform.Functions.Azure\HQ.Platform.Functions.Azure.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using System.Threading;
 using HQ.Common;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
@@ -142,7 +141,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
 
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, options);
+            MigrateToLatest<TKey>(connectionString, identityOptions);
 
             return identityBuilder;
         }
@@ -164,19 +163,18 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
             };
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
-            SqliteOptions options) where TKey : IEquatable<TKey>
+        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions) where TKey : IEquatable<TKey>
         {
-            var runner = new MigrationRunner(connectionString, options);
+            var runner = new SqliteMigrationRunner(connectionString);
 
             if (identityOptions.Stores.CreateIfNotExists)
             {
-                runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+                runner.CreateDatabaseIfNotExists();
             }
 
             if (identityOptions.Stores.MigrateOnStartup)
             {
-                runner.MigrateUp(CancellationToken.None);
+                runner.MigrateUp(typeof(CreateIdentitySchema).Assembly, typeof(CreateIdentitySchema).Namespace);
             }
         }
     }

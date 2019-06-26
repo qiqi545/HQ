@@ -13,11 +13,17 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Data.Sql.Sqlite
+using Microsoft.Extensions.DependencyInjection;
+
+namespace HQ.Extensions.Scheduling
 {
-    public enum SeedStrategy
+    public class BackgroundTaskBuilder
     {
-        InsertIfNotExists,
-        InsertIfEmpty
+        public IServiceCollection Services { get; }
+
+        public BackgroundTaskBuilder(IServiceCollection services)
+        {
+            Services = services;
+        }
     }
 }

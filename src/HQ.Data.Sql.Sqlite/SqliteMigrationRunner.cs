@@ -13,11 +13,24 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System.IO;
+using HQ.Data.Sql.Migration;
+using Microsoft.Data.Sqlite;
+
 namespace HQ.Data.Sql.Sqlite
 {
-    public enum SeedStrategy
+    public class SqliteMigrationRunner : MigrationRunner
     {
-        InsertIfNotExists,
-        InsertIfEmpty
+        public SqliteMigrationRunner(string connectionString) : base(connectionString) { }
+
+        public override void CreateDatabaseIfNotExists()
+        {
+            var builder = new SqliteConnectionStringBuilder(ConnectionString) { Mode = SqliteOpenMode.ReadWriteCreate };
+            if (File.Exists(builder.DataSource))
+                return;
+            var connection = new SqliteConnection(builder.ConnectionString);
+            connection.Open();
+            connection.Close();
+        }
     }
 }

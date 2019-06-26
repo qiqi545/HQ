@@ -28,12 +28,12 @@ namespace HQ.Extensions.Scheduling
 {
     public static class Add
     {
-        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services, IConfiguration configuration)
+        public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services, IConfiguration configuration)
         {
             return services.AddBackgroundTasks(configuration.Bind);
         }
 
-        public static IServiceCollection AddBackgroundTasks(this IServiceCollection services, Action<BackgroundTaskOptions> configureAction = null)
+        public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services, Action<BackgroundTaskOptions> configureAction = null)
         {
             if (configureAction != null)
                 services.Configure(configureAction);
@@ -45,7 +45,7 @@ namespace HQ.Extensions.Scheduling
 
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BackgroundTaskService>());
 
-            return services;
+            return new BackgroundTaskBuilder(services);
         }
     }
 }

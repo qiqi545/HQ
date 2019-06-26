@@ -15,48 +15,36 @@
 
 #endregion
 
-using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
-using HQ.Data.Sql.Sqlite.Configuration;
-using Microsoft.Data.Sqlite;
+using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Identity.Stores.Sql.Sqlite
+namespace HQ.Data.Sql.Migration
 {
-    public class MigrationRunner
+    public abstract class MigrationRunner
     {
-        private readonly string _connectionString;
-        private readonly SqliteOptions _options;
+        protected readonly string ConnectionString;
 
-        public MigrationRunner(string connectionString, SqliteOptions options)
+        protected MigrationRunner(string connectionString)
         {
-            _connectionString = connectionString;
-            _options = options;
+            ConnectionString = connectionString;
         }
 
-        public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
-        {
-            var builder = new SqliteConnectionStringBuilder(_connectionString) {Mode = SqliteOpenMode.ReadWriteCreate};
-            if (!File.Exists(builder.DataSource))
-            {
-                var connection = new SqliteConnection(builder.ConnectionString);
-                await connection.OpenAsync(cancellationToken);
-                connection.Close();
-            }
-        }
+        public abstract void CreateDatabaseIfNotExists();
 
-        public void MigrateUp(CancellationToken cancellationToken)
+        public void MigrateUp(Assembly assembly, string ns)
         {
             var container = new ServiceCollection()
                 .AddFluentMigratorCore()
                 .ConfigureRunner(
                     builder => builder
                         .AddSQLite()
-                        .WithGlobalConnectionString(_connectionString)
-                        .ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
+                        .WithGlobalConnectionString(ConnectionString)
+                        .ScanIn(assembly).For.Migrations())
                 .BuildServiceProvider();
 
             var runner = container.GetRequiredService<IMigrationRunner>();
@@ -64,8 +52,7 @@ namespace HQ.Platform.Identity.Stores.Sql.Sqlite
                 defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
             {
                 var source = container.GetRequiredService<IFilteringMigrationSource>();
-                defaultRunner.MigrationLoader =
-                    new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
+                defaultRunner.MigrationLoader = new NamespaceMigrationInformationLoader(ns, source, defaultLoader);
             }
 
             runner.MigrateUp();
