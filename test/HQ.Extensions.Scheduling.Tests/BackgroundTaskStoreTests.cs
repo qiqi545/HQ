@@ -45,8 +45,8 @@ namespace HQ.Extensions.Scheduling.Tests
                 DeleteOnFailure = false,
                 DeleteOnSuccess = true
             };
-            _store.Save(task);
-            _store.Delete(task);
+            Assert.True(_store.Save(task), "Did not save");
+            Assert.True(_store.Delete(task), "Did not delete");
         }
     }
 }

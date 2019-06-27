@@ -177,7 +177,7 @@ WHERE
         
         public bool Delete(BackgroundTask task)
         {
-            var query = SqlBuilder.Delete<BackgroundTask>(task);
+            var query = SqlBuilder.Delete<BackgroundTask>();
             _db.SetTypeInfo(typeof(BackgroundTask));
             var deleted = _db.Current.Execute(query.Sql, query.Parameters);
             return deleted == 1;
