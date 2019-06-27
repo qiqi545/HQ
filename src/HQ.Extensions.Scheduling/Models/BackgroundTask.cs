@@ -27,7 +27,7 @@ namespace HQ.Extensions.Scheduling.Models
 {
     public class BackgroundTask
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public int Priority { get; set; }
         public int Attempts { get; set; }
         public string Handler { get; set; }

@@ -28,8 +28,8 @@ namespace HQ.Extensions.Scheduling.Models
 
         IList<BackgroundTask> GetHangingTasks();
 
-        void Save(BackgroundTask task);
-        void Delete(BackgroundTask task);
+        bool Save(BackgroundTask task);
+        bool Delete(BackgroundTask task);
         IList<BackgroundTask> GetAndLockNextAvailable(int readAhead);
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Xunit;
@@ -29,6 +28,24 @@ namespace HQ.Extensions.Scheduling.Tests
                 DeleteOnSuccess = true
             };
             _store.Save(task);
+            Assert.True(task.Id != 0);
+        }
+
+        [Test]
+        public void Can_delete_background_task()
+        {
+            var task = new BackgroundTask
+            {
+                Start = DateTimeOffset.UtcNow,
+                Handler = "NoHandler",
+                MaximumRuntime = TimeSpan.FromSeconds(10),
+                MaximumAttempts = 10,
+                DeleteOnError = true,
+                DeleteOnFailure = false,
+                DeleteOnSuccess = true
+            };
+            _store.Save(task);
+            _store.Delete(task);
         }
     }
 }

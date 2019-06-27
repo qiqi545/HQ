@@ -52,7 +52,7 @@ namespace HQ.Extensions.Scheduling.Models
             return query.ToList();
         }
 
-        public void Save(BackgroundTask task)
+        public bool Save(BackgroundTask task)
         {
             if (!_tasks.TryGetValue(task.Priority, out var tasks))
             {
@@ -64,15 +64,20 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 tasks.Add(task);
                 task.Id = ++_identity;
+                return true;
             }
+
+            return false;
         }
 
-        public void Delete(BackgroundTask task)
+        public bool Delete(BackgroundTask task)
         {
             if (_tasks.TryGetValue(task.Priority, out var tasks))
             {
                 tasks.Remove(task);
+                return true;
             }
+            return false;
         }
 
         public IList<BackgroundTask> GetAndLockNextAvailable(int readAhead)

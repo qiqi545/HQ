@@ -24,7 +24,7 @@ namespace HQ.Extensions.Scheduling.Sqlite
         public override void Up()
         {
             Create.Table(nameof(BackgroundTask))
-                .WithColumn("Id").AsString(450).NotNullable().PrimaryKey($"PK_{nameof(BackgroundTask)}")
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .WithColumn("Priority").AsInt32().NotNullable().WithDefaultValue(0)
                 .WithColumn("Attempts").AsInt32().NotNullable().WithDefaultValue(0)
                 .WithColumn("Handler").AsString(int.MaxValue).NotNullable()

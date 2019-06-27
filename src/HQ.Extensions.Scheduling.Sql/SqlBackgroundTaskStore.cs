@@ -64,46 +64,6 @@ namespace HQ.Extensions.Scheduling.Sql
             return GetByAllTagsWithTags(tags, db, t);
         }
 
-        public void Save(BackgroundTask task)
-        {
-            var db = _db.Current;
-            IDbTransaction t = null;
-
-            if (task.Id == 0)
-            {
-                InsertScheduledTask(task, db, t);
-            }
-            else
-            {
-                UpdateScheduledTask(task, db, t);
-            }
-
-            // UpdateTagMapping(task, db, t);
-
-            t?.Commit();
-        }
-
-        public void Delete(BackgroundTask task)
-        {
-            var db = _db.Current;
-            db.Open();
-
-            IDbTransaction t = null;
-
-            var sql = $@"
--- Primary relationship:
-DELETE FROM {TagsTable} WHERE ScheduledTaskId = @Id;
-DELETE FROM {TaskTable} WHERE Id = @Id;
-
--- Remove any orphaned tags:
-DELETE FROM {TagTable}
-WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
-";
-            db.Execute(sql, task, t);
-
-            t.Commit();
-        }
-
         public IList<BackgroundTask> GetAndLockNextAvailable(int readAhead)
         {
             var db = _db.Current;
@@ -146,7 +106,29 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
             return GetAllWithTags(db, t);
         }
 
-        private void UpdateScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
+        public bool Save(BackgroundTask task)
+        {
+            var db = _db.Current;
+            IDbTransaction t = null;
+
+            if (!task.Id.HasValue)
+            {
+                if (!InsertScheduledTask(task, db, t))
+                    return false;
+            }
+            else
+            {
+                if (!UpdateScheduledTask(task, db, t))
+                    return false;
+            }
+
+            // UpdateTagMapping(task, db, t);
+
+            t?.Commit();
+            return true;
+        }
+
+        private bool UpdateScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
         {
             var sql = $@"
 UPDATE {TaskTable} 
@@ -174,19 +156,44 @@ SET
 WHERE 
     Id = @Id
 ";
-            db.Execute(sql, task, t);
+            return db.Execute(sql, task, t) == 1;
         }
 
-        private void InsertScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
+        private bool InsertScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
         {
-            var query = SqlBuilder.Insert(task);
+            var query = SqlBuilder.Insert(task, true);
             _db.SetTypeInfo(typeof(BackgroundTask));
-            var inserted = _db.Current.Execute(query.Sql, query.Parameters);
-            Debug.Assert(inserted == 1);
+            var id = _db.Current.QuerySingle<int>(query.Sql, query.Parameters);
+            return id != 0;
 
             // TODO map-backs
-            //task.Id = db.Query<int>(sql, task, t).Single();
             //task.CreatedAt = db.Query<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t).Single();
+        }
+
+        public bool Delete(BackgroundTask task)
+        {
+            var query = SqlBuilder.Delete<BackgroundTask>(task);
+            _db.SetTypeInfo(typeof(BackgroundTask));
+            var deleted = _db.Current.Execute(query.Sql, query.Parameters);
+            return deleted == 1;
+
+            var db = _db.Current;
+            db.Open();
+
+            IDbTransaction t = null;
+
+            var sql = $@"
+-- Primary relationship:
+DELETE FROM {TagsTable} WHERE ScheduledTaskId = @Id;
+DELETE FROM {TaskTable} WHERE Id = @Id;
+
+-- Remove any orphaned tags:
+DELETE FROM {TagTable}
+WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
+";
+            db.Execute(sql, task, t);
+
+            t.Commit();
         }
 
         private void LockTasks(IReadOnlyCollection<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
@@ -368,9 +375,9 @@ ORDER BY {TagTable}.Name ASC
             var lookup = new Dictionary<int, BackgroundTask>();
             db.Query<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
             {
-                if (!lookup.TryGetValue(s.Id, out var task))
+                if (!lookup.TryGetValue(s.Id.GetValueOrDefault(), out var task))
                 {
-                    lookup.Add(s.Id, task = s);
+                    lookup.Add(s.Id.GetValueOrDefault(), task = s);
                 }
 
                 if (tag != null)
