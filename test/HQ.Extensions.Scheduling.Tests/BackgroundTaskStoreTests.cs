@@ -29,6 +29,7 @@ namespace HQ.Extensions.Scheduling.Tests
             };
             _store.Save(task);
             Assert.True(task.Id != 0);
+            Assert.True(task.CreatedAt != default);
         }
 
         [Test]

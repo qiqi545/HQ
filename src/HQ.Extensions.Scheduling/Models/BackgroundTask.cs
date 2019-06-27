@@ -37,6 +37,8 @@ namespace HQ.Extensions.Scheduling.Models
         public bool? DeleteOnSuccess { get; set; }
         public bool? DeleteOnFailure { get; set; }
         public bool? DeleteOnError { get; set; }
+
+        [Computed]
         public DateTimeOffset CreatedAt { get; set; }
         public string LastError { get; set; }
         public DateTimeOffset? FailedAt { get; set; }

@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using Dapper;
 using HQ.Common;
+using HQ.Data.Contracts;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Queries;
@@ -113,12 +114,12 @@ namespace HQ.Extensions.Scheduling.Sql
 
             if (!task.Id.HasValue)
             {
-                if (!InsertScheduledTask(task, db, t))
+                if (!InsertScheduledTask(task, t))
                     return false;
             }
             else
             {
-                if (!UpdateScheduledTask(task, db, t))
+                if (!UpdateScheduledTask(task, t))
                     return false;
             }
 
@@ -128,7 +129,22 @@ namespace HQ.Extensions.Scheduling.Sql
             return true;
         }
 
-        private bool UpdateScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
+        private bool InsertScheduledTask(BackgroundTask task, IDbTransaction t)
+        {
+            var query = SqlBuilder.Insert(task, true);
+            _db.SetTypeInfo(typeof(BackgroundTask));
+            var id = _db.Current.QuerySingle<int>(query.Sql, query.Parameters);
+            if (id == 0)
+                return false;
+            
+            // TODO timestamp mapping should be automatic
+            var getTimeStamp = SqlBuilder.Select<BackgroundTask>(new[] {nameof (IObject.CreatedAt) }, new {Id = id});
+            var createdAtString = _db.Current.QuerySingle<string>(getTimeStamp.Sql, getTimeStamp.Parameters);
+            task.CreatedAt = DateTimeOffset.Parse(createdAtString);
+            return true;
+        }
+
+        private bool UpdateScheduledTask(BackgroundTask task, IDbTransaction t)
         {
             var sql = $@"
 UPDATE {TaskTable} 
@@ -156,20 +172,9 @@ SET
 WHERE 
     Id = @Id
 ";
-            return db.Execute(sql, task, t) == 1;
+            return _db.Current.Execute(sql, task, t) == 1;
         }
-
-        private bool InsertScheduledTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var query = SqlBuilder.Insert(task, true);
-            _db.SetTypeInfo(typeof(BackgroundTask));
-            var id = _db.Current.QuerySingle<int>(query.Sql, query.Parameters);
-            return id != 0;
-
-            // TODO map-backs
-            //task.CreatedAt = db.Query<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t).Single();
-        }
-
+        
         public bool Delete(BackgroundTask task)
         {
             var query = SqlBuilder.Delete<BackgroundTask>(task);

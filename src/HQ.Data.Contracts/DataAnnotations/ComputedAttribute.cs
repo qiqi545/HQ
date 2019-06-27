@@ -19,8 +19,6 @@ namespace HQ.Data.Contracts.DataAnnotations
 {
     public class ComputedAttribute : DatabaseGeneratedAttribute
     {
-        public ComputedAttribute() : base(DatabaseGeneratedOption.Computed)
-        {
-        }
+        public ComputedAttribute() : base(DatabaseGeneratedOption.Computed) { }
     }
 }
