@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Data.Sql.Dapper;
+using HQ.Data.Sql.Queries;
 using HQ.Data.Sql.Tests.Fakes;
 using HQ.Data.Sql.Tests.Models;
 using Xunit;
@@ -35,7 +36,7 @@ namespace HQ.Data.Sql.Tests.Dapper
         [Fact]
         public void Insert_one()
         {
-            var db = new FakeDbConnection();
+            var db = new FakeDbConnection(SqlBuilder.Dialect);
             db.Insert(new User {Email = "good@email.com"});
             var query = db.GetLastQuery();
 

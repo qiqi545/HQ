@@ -1,4 +1,5 @@
 using System.Data;
+using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Tests.Fakes
 {
@@ -8,7 +9,7 @@ namespace HQ.Data.Sql.Tests.Fakes
         public void Commit() { }
         public void Rollback() { }
 
-        public IDbConnection Connection => new FakeDbConnection();
+        public IDbConnection Connection => new FakeDbConnection(SqlBuilder.Dialect);
         public IsolationLevel IsolationLevel => IsolationLevel.Chaos;
     }
 }
