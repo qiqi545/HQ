@@ -61,7 +61,7 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Select<T>(dynamic where, params Expression<Func<T, object>>[] orderBy)
         {
-            Query query = Select(GetDescriptor<T>(), null, where);
+            Query query = Select(descriptor: GetDescriptor<T>(), columnFilter: null, where: where);
 
             if (orderBy?.Length > 0)
                 query.Sql = Dialect.OrderBy(query.Sql, orderBy);
@@ -86,7 +86,7 @@ namespace HQ.Data.Sql.Queries
             return Select(GetDescriptor<T>(), null, where, page, perPage, orderBy);
         }
 
-        public static Query Select<T>(List<string> columns, params Expression<Func<T, object>>[] orderBy)
+        public static Query Select<T>(IList<string> columns, params Expression<Func<T, object>>[] orderBy)
         {
             var descriptor = GetDescriptor<T>();
             var columnFilter = Dialect.ResolveColumnNames(descriptor).Intersect(columns).ToList();
@@ -267,7 +267,7 @@ namespace HQ.Data.Sql.Queries
             var hashKeysRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
             var tableName = Dialect.ResolveTableName(descriptor);
-            var columnNames = Dialect.ResolveColumnNames(descriptor).ToList();
+            var columnNames = Dialect.ResolveColumnNames(descriptor).OrderBy(x => x).ToList();
 
             var whereFilter = columnNames.Intersect(hashKeysRewrite.Keys).ToList();
             var parameters = whereFilter.ToDictionary(key => $"{hashKeysRewrite[key]}", key => whereHash[hashKeysRewrite[key]]);
@@ -278,6 +278,7 @@ namespace HQ.Data.Sql.Queries
                 columnFilter ?? columns, whereFilter,
                 parameterKeys);
 
+            parameters = parameters.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
             return new QueryAndParameters(sql, parameters);
         }
 

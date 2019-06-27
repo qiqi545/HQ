@@ -25,9 +25,17 @@ namespace HQ.Data.Sql.Queries
 {
     partial class SqlBuilder
     {
+        public static Query DeleteAll<T>()
+        {
+            var descriptor = GetDescriptor<T>();
+            var sql = Dialect.Delete(Dialect.ResolveTableName(descriptor), descriptor.Schema);
+            return new Query(sql);
+        }
+
         public static Query Delete<T>(dynamic where = null)
         {
-            return Delete(GetDescriptor<T>(), where);
+            var descriptor = GetDescriptor<T>();
+            return Delete<T>(descriptor, where);
         }
 
         public static Query Delete<T>(IDataDescriptor instance, dynamic where = null)
@@ -60,7 +68,8 @@ namespace HQ.Data.Sql.Queries
             var whereParameters = whereParams.Keys.ToList();
 
             var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
-            return new Query(sql, whereParams);
+            var parameters = whereParams.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
+            return new Query(sql, parameters);
         }
 
         public static Query Delete(object instance)
@@ -81,7 +90,8 @@ namespace HQ.Data.Sql.Queries
             var whereParameters = whereParams.Keys.ToList();
 
             var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
-            return new Query(sql, whereParams);
+            var parameters = whereParams.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
+            return new Query(sql, parameters);
         }
     }
 }

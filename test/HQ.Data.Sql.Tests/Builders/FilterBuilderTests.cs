@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Contracts;
@@ -32,74 +33,80 @@ namespace HQ.Data.Sql.Tests.Builders
                 new Filter {Type = FilterType.Join, Field = "Id", Operator = FilterOperator.NotEqual, Value = 1},
                 new Filter {Type = FilterType.Join, Field = "Email", Operator = FilterOperator.NotEqual, Value = "NULL"}
             );
-            Assert.Equal("WHERE c0.Id <> 1 AND c0.Email IS NOT NULL", sql);
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Id <> 1 AND {c}0.Email IS NOT NULL", sql);
         }
 
         [Fact]
         public void Is_join_not_null()
         {
-            var sql = NoDialect.Default.Where(new Filter
-                {Type = FilterType.Join, Field = "Email", Operator = FilterOperator.NotEqual, Value = "NULL"});
-            Assert.Equal("WHERE c0.Email IS NOT NULL", sql);
+            var sql = NoDialect.Default.Where(new Filter {Type = FilterType.Join, Field = "Email", Operator = FilterOperator.NotEqual, Value = "NULL"});
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Email IS NOT NULL", sql);
         }
 
         [Fact]
         public void Is_join_null()
         {
             var sql = NoDialect.Default.Where(new Filter {Type = FilterType.Join, Field = "Email", Value = "NULL"});
-            Assert.Equal("WHERE c0.Email IS NULL", sql);
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Email IS NULL", sql);
         }
 
         [Fact]
         public void Is_join_scalar()
         {
             var sql = NoDialect.Default.Where(new Filter {Type = FilterType.Join, Field = "Id", Value = 1});
-            Assert.Equal("WHERE c0.Id = 1", sql);
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Id = 1", sql);
         }
 
         [Fact]
         public void Is_not_join_scalar()
         {
-            var sql = NoDialect.Default.Where(new Filter
-                {Type = FilterType.Join, Field = "Id", Operator = FilterOperator.NotEqual, Value = 1});
-            Assert.Equal("WHERE c0.Id <> 1", sql);
+            var sql = NoDialect.Default.Where(new Filter {Type = FilterType.Join, Field = "Id", Operator = FilterOperator.NotEqual, Value = 1});
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Id <> 1", sql);
         }
 
         [Fact]
         public void Is_not_join_scalar_parameter()
         {
-            var sql = NoDialect.Default.Where(new Filter
-                {Type = FilterType.Join, Field = "Id", Operator = FilterOperator.NotEqual, Value = "@Id"});
-            Assert.Equal("WHERE c0.Id <> @Id", sql);
+            var sql = NoDialect.Default.Where(new Filter{Type = FilterType.Join, Field = "Id", Operator = FilterOperator.NotEqual, Value = "@Id"});
+            var c = Constants.Sql.ChildAlias;
+            Assert.Equal($"WHERE {c}0.Id <> @Id", sql);
         }
 
         [Fact]
         public void Is_not_null()
         {
-            var sql = NoDialect.Default.Where(new Filter
-                {Field = "Email", Operator = FilterOperator.NotEqual, Value = "NULL"});
-            Assert.Equal("WHERE p.Email IS NOT NULL", sql);
+            var sql = NoDialect.Default.Where(new Filter {Field = "Email", Operator = FilterOperator.NotEqual, Value = "NULL"});
+            var p = Constants.Sql.ParentAlias;
+            Assert.Equal($"WHERE {p}.Email IS NOT NULL", sql);
         }
 
         [Fact]
         public void Is_not_scalar()
         {
             var sql = NoDialect.Default.Where(new Filter {Field = "Id", Operator = FilterOperator.NotEqual, Value = 1});
-            Assert.Equal("WHERE p.Id <> 1", sql);
+            var p = Constants.Sql.ParentAlias;
+            Assert.Equal($"WHERE {p}.Id <> 1", sql);
         }
 
         [Fact]
         public void Is_null()
         {
             var sql = NoDialect.Default.Where(new Filter {Field = "Email", Value = "NULL"});
-            Assert.Equal("WHERE p.Email IS NULL", sql);
+            var p = Constants.Sql.ParentAlias;
+            Assert.Equal($"WHERE {p}.Email IS NULL", sql);
         }
 
         [Fact]
         public void Is_scalar()
         {
             var sql = NoDialect.Default.Where(new Filter {Field = "Id", Value = 1});
-            Assert.Equal("WHERE p.Id = 1", sql);
+            var p = Constants.Sql.ParentAlias;
+            Assert.Equal($"WHERE {p}.Id = 1", sql);
         }
     }
 }

@@ -130,12 +130,13 @@ namespace HQ.Data.Sql.Builders
                         sb.Append(", ");
                 }
 
-                if (!d.BeforeWhere(descriptor, sb, keys, whereParameters))
-                    return;
-
-                sb.AppendWhereClause(d, keys, whereParameters);
-
-                d.AfterWhere(descriptor, sb, keys);
+                if (whereParameters.Count > 0)
+                {
+                    if (!d.BeforeWhere(descriptor, sb, keys, whereParameters))
+                        return;
+                    sb.AppendWhereClause(d, keys, whereParameters);
+                    d.AfterWhere(descriptor, sb, keys);
+                }
             });
         }
 

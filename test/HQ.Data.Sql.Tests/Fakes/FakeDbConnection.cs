@@ -15,57 +15,47 @@
 
 #endregion
 
-using System;
 using System.Data;
+using System.Linq;
+using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Tests.Fakes
 {
     public class FakeDbConnection : IDbConnection
     {
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        private readonly ISqlDialect _dialect;
+
+        private FakeDbCommand _command;
+
+        public void Dispose() { }
 
         public IDbTransaction BeginTransaction()
         {
-            throw new NotImplementedException();
+            return new FakeDbTransaction();
         }
 
-        public IDbTransaction BeginTransaction(IsolationLevel il)
+        public FakeDbConnection(ISqlDialect dialect)
         {
-            throw new NotImplementedException();
+            _dialect = dialect;
         }
 
-        public void ChangeDatabase(string databaseName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Close()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IDbCommand CreateCommand()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Open()
-        {
-            throw new NotImplementedException();
-        }
+        public IDbTransaction BeginTransaction(IsolationLevel il) => new FakeDbTransaction();
+        public void ChangeDatabase(string databaseName) { }
+        public void Close() { }
+        public IDbCommand CreateCommand() => _command = new FakeDbCommand();
+        public void Open() { }
 
         public string ConnectionString { get; set; }
-        public int ConnectionTimeout { get; }
-        public string Database { get; }
-        public ConnectionState State { get; }
+        public int ConnectionTimeout => 0;
+        public string Database => null;
+        public ConnectionState State => ConnectionState.Closed;
 
         public Query GetLastQuery()
         {
-            throw new NotImplementedException();
+            var parameters = _command.Parameters.Cast<FakeDbParameter>().ToDictionary(x => $"{_dialect.Parameter}{x.ParameterName}", v => v.Value);
+
+            return new Query(_command.CommandText, parameters);
         }
     }
 }

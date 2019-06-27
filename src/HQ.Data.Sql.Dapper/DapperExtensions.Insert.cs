@@ -23,12 +23,12 @@ namespace HQ.Data.Sql.Dapper
 {
     partial class DapperExtensions
     {
-        public static T Insert<T>(this IDbConnection connection, T instance, IDbTransaction transaction = null,
-            int? commandTimeout = null) where T : class
+        public static T Insert<T>(this IDbConnection connection, T instance, IDbTransaction transaction = null, int? commandTimeout = null) where T : class
         {
             var insert = SqlBuilder.Insert(instance);
             var sql = insert.Sql;
-            connection.Execute(sql, Prepare(insert.Parameters), transaction, commandTimeout);
+            var parameters = Prepare(insert.Parameters);
+            connection.Execute(sql, parameters, transaction, commandTimeout);
             return instance;
         }
     }

@@ -36,7 +36,7 @@ namespace HQ.Data.Sql.Tests.Queries
         public void Bad_where_clause_is_filtered_out()
         {
             var descriptor = SimpleDataDescriptor.Create<User>();
-            var query = SqlBuilder.Delete(descriptor, new {Email = "good@email.com", Foo = "Bar"});
+            var query = SqlBuilder.Delete(descriptor, new { Email = "good@email.com", Foo = "Bar" });
             Assert.Equal("DELETE FROM User WHERE Email = @Email", query.Sql);
             Assert.Equal(1, query.Parameters.Count);
             Assert.Equal("good@email.com", query.Parameters["@Email"]);
@@ -46,8 +46,15 @@ namespace HQ.Data.Sql.Tests.Queries
         [Fact]
         public void Delete_all()
         {
-            var query = SqlBuilder.Delete<User>();
+            var query = SqlBuilder.DeleteAll<User>();
             Assert.Equal("DELETE FROM User", query.Sql);
+        }
+
+        [Fact]
+        public void Delete_by_id()
+        {
+            var query = SqlBuilder.Delete<User>();
+            Assert.Equal("DELETE FROM User WHERE Id = @Id", query.Sql);
         }
 
         [Fact]

@@ -33,7 +33,7 @@ namespace HQ.Data.Sql.Tests.Builders
             "SELECT * FROM Customer WHERE FirstName > :LastFirstName ORDER BY FirstName LIMIT :PerPage")]
         [InlineData(DatabaseType.SqlServer,
             "SELECT * FROM Customer",
-            ";WITH pages AS ( SELECT Id FROM Customer ORDER BY [Id] OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) SELECT * FROM Customer WHERE EXISTS (SELECT 1 FROM pages WHERE pages.Id = p.Id)")]
+            ";WITH pages AS ( SELECT Id FROM Customer ORDER BY [Id] OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) SELECT * FROM Customer WHERE EXISTS (SELECT 1 FROM pages WHERE pages.Id = r.Id)")]
         public void Can_page_with_expected_results(DatabaseType t, string q, string e)
         {
             BuildAndCompare(t, e, d => PageBuilder.Page(d, q));

@@ -19,16 +19,15 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
 
 namespace HQ.Data.Sql.Tests.Models
 {
     [Table("User")]
     public class User : EmailEntity, IUser
     {
-        [IgnoreDataMember] public Account Account { get; set; }
+        [NotMapped] public Account Account { get; set; }
 
-        [IgnoreDataMember] public List<Role> Roles { get; set; }
+        [NotMapped] public List<Role> Roles { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTimeOffset CreatedAt { get; set; }

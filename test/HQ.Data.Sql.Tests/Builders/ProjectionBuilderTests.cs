@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Contracts;
@@ -43,10 +44,14 @@ namespace HQ.Data.Sql.Tests.Builders
             var sql = d.Select("Customer", "dbo", new[] {"Id", "Email"}, projections, filters);
 
             _console.WriteLine(sql);
-            Assert.Equal("SELECT p.Id, p.Email, p0.* " +
-                         "FROM dbo.Customer p " +
-                         "LEFT JOIN CustomerOrder c0 ON c0.CustomerId = p.Id " +
-                         "LEFT JOIN Order p0 ON p0.Id = c0.OrderId", sql);
+
+            var p = Constants.Sql.ParentAlias;
+            var c = Constants.Sql.ChildAlias;
+
+            Assert.Equal($"SELECT {p}.Id, {p}.Email, {p}0.* " +
+                         $"FROM dbo.Customer {p} " +
+                         $"LEFT JOIN CustomerOrder {c}0 ON {c}0.CustomerId = {p}.Id " +
+                         $"LEFT JOIN Order {p}0 ON {p}0.Id = {c}0.OrderId", sql);
         }
 
         [Fact]
@@ -58,10 +63,13 @@ namespace HQ.Data.Sql.Tests.Builders
             var d = NoDialect.Default;
             var sql = d.Select("Customer", "dbo", new[] {"Id", "Email"}, projections, filters);
 
+            var p = Constants.Sql.ParentAlias;
+            var c = Constants.Sql.ChildAlias;
+
             _console.WriteLine(sql);
-            Assert.Equal("SELECT p.Id, p.Email, p0.* " +
-                         "FROM dbo.Customer p " +
-                         "LEFT JOIN Address p0 ON p0.Id = p.AddressId", sql);
+            Assert.Equal($"SELECT {p}.Id, {p}.Email, {p}0.* " +
+                         $"FROM dbo.Customer {p} " +
+                         $"LEFT JOIN Address {p}0 ON {p}0.Id = {p}.AddressId", sql);
         }
     }
 }

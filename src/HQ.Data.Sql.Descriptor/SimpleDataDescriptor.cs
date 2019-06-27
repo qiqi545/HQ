@@ -22,7 +22,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Runtime.Serialization;
 using HQ.Common;
 using HQ.Data.Sql.Descriptor.Attributes;
 using TypeKitchen;
@@ -180,7 +179,7 @@ namespace HQ.Data.Sql.Descriptor
             var tableAttributes = type.GetCustomAttributes(typeof(TableAttribute), true);
             if (tableAttributes.Length > 0 && tableAttributes[0] is TableAttribute attribute)
             {
-                descriptor.Table = TableNameConvention?.Invoke(attribute.Name);
+                descriptor.Table = TableNameConvention?.Invoke(attribute.Name) ?? attribute.Name;
                 descriptor.Schema = attribute.Schema;
             }
             else

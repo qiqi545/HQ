@@ -64,7 +64,7 @@ namespace HQ.Data.Sql.Dapper
             return result;
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection connection, List<string> columns,
+        public static IEnumerable<T> Query<T>(this IDbConnection connection, IList<string> columns,
             IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null,
             CommandType? commandType = null, params Expression<Func<T, object>>[] orderBy) where T : class
         {

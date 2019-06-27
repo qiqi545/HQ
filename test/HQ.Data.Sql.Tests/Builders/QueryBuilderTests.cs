@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Common;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Contracts;
@@ -64,13 +65,16 @@ namespace HQ.Data.Sql.Tests.Builders
 
             _console.WriteLine(sql);
 
-            Assert.Equal("SELECT p.Id, p.Username, p.CreatedAt, p0.*, p1.* " +
-                         "FROM dbo.User p " +
-                         "LEFT JOIN Account p0 ON p0.Id = p.AccountId " +
-                         "LEFT JOIN UserRole c1 ON c1.UserId = p.Id " +
-                         "LEFT JOIN Role p1 ON p1.Id = c1.RoleId " +
-                         "WHERE p.Id = @Id " +
-                         "ORDER BY CreatedAt DESC", sql);
+            var p = Constants.Sql.ParentAlias;
+            var c = Constants.Sql.ChildAlias;
+
+            Assert.Equal($"SELECT {p}.Id, {p}.Username, {p}.CreatedAt, {p}0.*, {p}1.* " +
+                         $"FROM dbo.User {p} " +
+                         $"LEFT JOIN Account {p}0 ON {p}0.Id = {p}.AccountId " +
+                         $"LEFT JOIN UserRole {c}1 ON {c}1.UserId = {p}.Id " +
+                         $"LEFT JOIN Role {p}1 ON {p}1.Id = {c}1.RoleId " +
+                         $"WHERE {p}.Id = @Id " +
+                         $"ORDER BY CreatedAt DESC", sql);
         }
     }
 }
