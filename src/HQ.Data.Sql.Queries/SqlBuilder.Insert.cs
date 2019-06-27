@@ -28,25 +28,25 @@ namespace HQ.Data.Sql.Queries
 
     partial class SqlBuilder
     {
-        public static Query Insert<T>(T entity)
+        public static Query Insert<T>(T entity, bool returnKeys = false)
         {
-            return Insert(entity, GetDescriptor<T>());
+            return Insert(entity, GetDescriptor<T>(), returnKeys);
         }
 
-        public static Query Insert<T>(T instance, IDataDescriptor descriptor)
+        public static Query Insert<T>(T instance, IDataDescriptor descriptor, bool returnKeys = false)
         {
-            return Insert(instance as object, descriptor);
+            return Insert(instance as object, descriptor, returnKeys);
         }
 
-        public static Query Insert(object instance)
+        public static Query Insert(object instance, bool returnKeys = false)
         {
-            return Insert(instance, GetDescriptor(instance.GetType()));
+            return Insert(instance, GetDescriptor(instance.GetType()), returnKeys);
         }
 
-        public static Query Insert(object instance, IDataDescriptor descriptor)
+        public static Query Insert(object instance, IDataDescriptor descriptor, bool returnKeys = false)
         {
             var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
-            var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns, false);
+            var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns, returnKeys);
             var hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
             var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
             var keys = columns.Intersect(hashKeysRewrite.Keys);

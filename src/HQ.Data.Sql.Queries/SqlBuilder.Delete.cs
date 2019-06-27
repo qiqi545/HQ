@@ -65,7 +65,9 @@ namespace HQ.Data.Sql.Queries
 
         public static Query Delete(object instance)
         {
-            return Delete(GetDescriptor(instance.GetType()), instance);
+            var descriptor = GetDescriptor(instance.GetType());
+
+            return Delete(descriptor, instance);
         }
 
         public static Query Delete(IDataDescriptor descriptor, object instance)
