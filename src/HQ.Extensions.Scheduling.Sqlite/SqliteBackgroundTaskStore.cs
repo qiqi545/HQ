@@ -154,7 +154,7 @@ VALUES
 SELECT MAX(Id) FROM {TaskTable};
 ";
             task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
-            var createdAtString = await db.QuerySingleAsync<string>($"SELECT \"CreatedAt\" FROM {TaskTable} WHERE Id = :Id", task, t);
+            var createdAtString = await db.QuerySingleAsync<string>($"SELECT \"CreatedAt\" FROM {TaskTable} WHERE \"Id\" = :Id", new { task.Id }, t);
             task.CreatedAt = DateTimeOffset.Parse(createdAtString);
         }
 
