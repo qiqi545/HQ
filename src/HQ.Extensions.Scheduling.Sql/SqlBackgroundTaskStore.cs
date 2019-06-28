@@ -109,7 +109,6 @@ namespace HQ.Extensions.Scheduling.Sql
 
         public bool Save(BackgroundTask task)
         {
-            var db = _db.Current;
             IDbTransaction t = null;
 
             if (!task.Id.HasValue)
@@ -140,6 +139,8 @@ namespace HQ.Extensions.Scheduling.Sql
             // TODO timestamp mapping should be automatic
             var getTimeStamp = SqlBuilder.Select<BackgroundTask>(new[] {nameof (IObject.CreatedAt) }, new {Id = id});
             var createdAtString = _db.Current.QuerySingle<string>(getTimeStamp.Sql, getTimeStamp.Parameters);
+
+            task.Id = id;
             task.CreatedAt = DateTimeOffset.Parse(createdAtString);
             return true;
         }
@@ -177,7 +178,7 @@ WHERE
         
         public bool Delete(BackgroundTask task)
         {
-            var query = SqlBuilder.Delete<BackgroundTask>();
+            var query = SqlBuilder.Delete<BackgroundTask>(task);
             _db.SetTypeInfo(typeof(BackgroundTask));
             var deleted = _db.Current.Execute(query.Sql, query.Parameters);
             return deleted == 1;

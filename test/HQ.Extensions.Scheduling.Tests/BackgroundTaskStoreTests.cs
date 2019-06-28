@@ -27,8 +27,9 @@ namespace HQ.Extensions.Scheduling.Tests
                 DeleteOnFailure = false,
                 DeleteOnSuccess = true
             };
-            _store.Save(task);
-            Assert.True(task.Id != 0);
+
+            Assert.True(_store.Save(task));
+            Assert.True(task.Id.HasValue && task.Id != 0);
             Assert.True(task.CreatedAt != default);
         }
 
@@ -45,7 +46,11 @@ namespace HQ.Extensions.Scheduling.Tests
                 DeleteOnFailure = false,
                 DeleteOnSuccess = true
             };
-            Assert.True(_store.Save(task), "Did not save");
+
+            Assert.True(_store.Save(task));
+            Assert.True(task.Id.HasValue && task.Id != 0);
+            Assert.True(task.CreatedAt != default);
+            
             Assert.True(_store.Delete(task), "Did not delete");
         }
     }
