@@ -29,22 +29,24 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using TypeKitchen;
 
 namespace HQ.Data.Sql.DocumentDb
 {
     public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
     {
-        private readonly ITypeReadAccessor _accessor;
+        private readonly ITypeReadAccessor _reads;
+        private readonly ITypeWriteAccessor _writes;
+
         private readonly DocumentClient _client;
         private readonly IOptions<DocumentDbOptions> _options;
-
+        
         public DocumentDbRepository(IOptions<DocumentDbOptions> options)
         {
-            _accessor = ReadAccessor.Create(typeof(T));
+            _reads = ReadAccessor.Create(typeof(T));
+            _writes = WriteAccessor.Create(typeof(T));
             _options = options;
-            _client = new DocumentClient(EndpointUri, options.Value.AuthKey, JsonConvert.DefaultSettings());
+            _client = new DocumentClient(EndpointUri, options.Value.AuthKey /*, JsonConvert.DefaultSettings() */);
 
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();
@@ -56,9 +58,11 @@ namespace HQ.Data.Sql.DocumentDb
 
         public async Task<Document> CreateAsync(T item)
         {
-            await BeforeSave(item);
+            await BeforeSaveAsync(item);
 
-            return await _client.CreateDocumentAsync(CollectionUri, item);
+            var document = await _client.CreateDocumentAsync(CollectionUri, item);
+            
+            return document;
         }
 
         public async Task<T> RetrieveAsync(string id)
@@ -135,7 +139,14 @@ namespace HQ.Data.Sql.DocumentDb
             await _client.DeleteDocumentAsync(DocumentUri(id));
         }
 
-        private async Task BeforeSave(T item)
+        private async Task BeforeSaveAsync(T item)
+        {
+            await ValidateUniqueFields(item);
+
+            await TryUpdateAutoIncrementingValues(item);
+        }
+
+        private async Task ValidateUniqueFields(T item)
         {
             IQueryable<T> queryable = null;
             foreach (var member in AccessorMembers.Create(typeof(T)))
@@ -147,7 +158,7 @@ namespace HQ.Data.Sql.DocumentDb
 
                 queryable = queryable ?? CreateDocumentQuery();
                 queryable = queryable.Where(ComputedPredicate<T>.AsExpression(member.Name, ExpressionOperator.Equal,
-                    _accessor[item, member.Name]));
+                    _reads[item, member.Name]));
             }
 
             if (queryable == null)
@@ -160,6 +171,24 @@ namespace HQ.Data.Sql.DocumentDb
             if (results.Count > 0)
             {
                 throw new DataException("Creating document would violate unique constraints for the document type.");
+            }
+        }
+        
+        private async Task TryUpdateAutoIncrementingValues(T item)
+        {
+            foreach (var member in AccessorMembers.Create(typeof(T)))
+            {
+                if (!member.HasAttribute<AutoIncrementAttribute>())
+                    continue;
+
+                if (_reads[item, member.Name] == default)
+                    continue;
+
+                var value = await _client.GetNextValueForSequenceAsync($"AutoIncrement_{typeof(T).Name}_{member.Name}",
+                    _options.Value.DatabaseId, _options.Value.CollectionId);
+
+                var typed = Convert.ChangeType(value, member.Type);
+                _writes[item, member.Name] = typed;
             }
         }
 
@@ -223,13 +252,20 @@ namespace HQ.Data.Sql.DocumentDb
 
         private static async Task<List<T>> GetResultsAsync(IDocumentQuery<T> query)
         {
-            var results = new List<T>();
-            while (query.HasMoreResults)
+            try
             {
-                results.AddRange(await query.ExecuteNextAsync<T>());
+                var results = new List<T>();
+                while (query.HasMoreResults)
+                {
+                    results.AddRange(await query.ExecuteNextAsync<T>());
+                }
+                return results;
             }
-
-            return results;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
     }
 }

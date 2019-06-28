@@ -1,3 +1,4 @@
+using System;
 using System.Data.DocumentDb;
 using HQ.Extensions.Scheduling.DocumentDb;
 using HQ.Test.Sdk.Data;
@@ -12,10 +13,12 @@ namespace HQ.Extensions.Scheduling.Tests.DocumentDb
             // WARNING: this currently points to local emulator storage
             const string connectionString = "AccountEndpoint=https://localhost:8081/;" +
                                             "AccountKey=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==;" +
-                                            "Database=Shared;" +
-                                            "DefaultCollection=BackgroundTasks";
+                                            "Database=Tests;";
 
-            var builder = new DocumentDbConnectionStringBuilder(connectionString);
+            var builder = new DocumentDbConnectionStringBuilder(connectionString)
+            {
+                DefaultCollection = $"{Guid.NewGuid().ToString("N").ToUpperInvariant()}"
+            };
 
             services.AddBackgroundTasks(o => { })
                 .AddDocumentDbBackgroundTasksStore(o =>

@@ -14,9 +14,8 @@
 #endregion
 
 using System;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
-using UnixDateTimeConverter = Newtonsoft.Json.Converters.UnixDateTimeConverter;
 
 namespace HQ.Data.Sql.DocumentDb
 {
@@ -35,8 +34,7 @@ namespace HQ.Data.Sql.DocumentDb
                     throw new InvalidOperationException();
             }
         }
-
-        [NotMapped]
+        
         [JsonConverter(typeof(UnixDateTimeConverter))]
         [JsonProperty(PropertyName = "_ts")]
         public virtual DateTime Timestamp { get; internal set; }

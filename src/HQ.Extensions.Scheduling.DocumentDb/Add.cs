@@ -1,5 +1,4 @@
 using System;
-using System.Data.DocumentDb;
 using HQ.Common;
 using HQ.Data.SessionManagement.DocumentDb;
 using HQ.Data.Sql.DocumentDb;
@@ -22,18 +21,17 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 
         public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureDatabase = null)
         {
-            Bootstrap.EnsureInitialized();
+            Bootstrap.SetDefaultJsonSettings();
 
             var services = builder.Services;
 
+            services.AddMetrics();
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
             services.AddScoped<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
             services.Configure(configureDatabase);
-
-            services.AddMetrics();
+            
             var serviceProvider = services.BuildServiceProvider();
-
             var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
 
             var dbOptions = new DocumentDbOptions();

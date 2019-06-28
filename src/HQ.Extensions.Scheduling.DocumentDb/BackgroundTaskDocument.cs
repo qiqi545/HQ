@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using HQ.Data.Contracts.Attributes;
 using HQ.Data.Sql.DocumentDb;
 using HQ.Extensions.Scheduling.Models;
 using Newtonsoft.Json;
@@ -35,7 +36,7 @@ namespace HQ.Extensions.Scheduling.DocumentDb
             ContinueOnSuccess = task.ContinueOnSuccess;
             ContinueOnFailure = task.ContinueOnFailure;
             ContinueOnError = task.ContinueOnError;
-
+            
             Tags = task.Tags ?? new List<string>();
         }
 
@@ -67,9 +68,11 @@ namespace HQ.Extensions.Scheduling.DocumentDb
             task.ContinueOnError = document.ContinueOnError;
 
             task.Tags = document.Tags;
+            task.CreatedAt = document.Timestamp;
             return task;
         }
 
+        [AutoIncrement]
         public int TaskId { get; set; }
         public int Priority { get; set; }
         public int Attempts { get; set; }

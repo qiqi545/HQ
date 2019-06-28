@@ -28,7 +28,7 @@ namespace HQ.Test.Sdk.Data
                 throw new InvalidOperationException();
             Directory.CreateDirectory(outputDir);
 
-            var database = $"{Guid.NewGuid().ToString("N").ToUpper()}";
+            var database = $"{Guid.NewGuid().ToString("N").ToUpperInvariant()}";
             var builder = new SqlConnectionStringBuilder(ConnectionString) { InitialCatalog = "master" };
             using (var connection = new SqlConnection(builder.ConnectionString))
             {

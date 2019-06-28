@@ -20,7 +20,12 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 
         public async Task<BackgroundTask> GetByIdAsync(int id)
         {
-            return await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == id);
+            var task =  await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == id);
+            // ReSharper disable once UseNullPropagation (implicit conversion will fail)
+            // ReSharper disable once ConvertIfStatementToReturnStatement (implicit conversion will fail)
+            if (task == null)
+                return null;
+            return task;
         }
 
         public async Task<IEnumerable<BackgroundTask>> GetAllAsync()
@@ -53,20 +58,23 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 
         public async Task<bool> SaveAsync(BackgroundTask task)
         {
+            var document = new BackgroundTaskDocument(task);
+
             if (task.Id == 0)
             {
-                await _repository.CreateAsync(new BackgroundTaskDocument(task));
+                await _repository.CreateAsync(document);
+                task.Id = document.TaskId;
                 return true;
             }
 
-            var document = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
-            if (document == null)
+            var existing = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
+            if (existing == null)
             {
-                await _repository.CreateAsync(new BackgroundTaskDocument(task));
+                await _repository.CreateAsync(document);
                 return true;
             }
 
-            await _repository.UpdateAsync(document.Id, new BackgroundTaskDocument(task));
+            await _repository.UpdateAsync(existing.Id, document);
             return true;
         }
 

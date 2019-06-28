@@ -1,8 +1,9 @@
 using System;
-using System.IO;
-using HQ.Data.SessionManagement;
-using Microsoft.Data.Sqlite;
+using HQ.Data.SessionManagement.DocumentDb;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace HQ.Test.Sdk.Data
 {
@@ -14,18 +15,9 @@ namespace HQ.Test.Sdk.Data
 
         public void Dispose()
         {
-            var connection = ServiceProvider?.GetRequiredService<IDataConnection>();
-            if (!(connection?.Current is WrapDbConnection wrapped) || !(wrapped.Inner is SqliteConnection sqlite))
-                return;
-
-            sqlite.Close();
-            sqlite.Dispose();
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-
-            if (sqlite.DataSource != null)
-                File.Delete(sqlite.DataSource);
+            var options = ServiceProvider.GetRequiredService<IOptions<DocumentDbOptions>>();
+            var client = new DocumentClient(new Uri(options.Value.Endpoint), options.Value.AuthKey, JsonConvert.DefaultSettings());
+            client.DeleteDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(options.Value.DatabaseId, options.Value.CollectionId));
         }
     }
 }
