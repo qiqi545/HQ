@@ -15,48 +15,50 @@
 
 #endregion
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using HQ.Common;
 
 namespace HQ.Extensions.Scheduling.Models
 {
     public class InMemoryBackgroundTaskStore : IBackgroundTaskStore
     {
+        private readonly IServerTimestampService _timestamps;
         private static int _identity;
 
         private readonly IDictionary<int, HashSet<BackgroundTask>> _tasks;
 
-        public InMemoryBackgroundTaskStore()
+        public InMemoryBackgroundTaskStore(IServerTimestampService timestamps)
         {
+            _timestamps = timestamps;
             _tasks = new ConcurrentDictionary<int, HashSet<BackgroundTask>>();
         }
 
-        public IList<BackgroundTask> GetByAnyTags(params string[] tags)
+        public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
         {
-            var all = GetAll();
+            var all = await GetAllAsync();
 
             var query = all.Where(a => { return tags.Any(tag => a.Tags.Contains(tag)); });
 
             return query.ToList();
         }
 
-        public IList<BackgroundTask> GetByAllTags(params string[] tags)
+        public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
         {
-            var all = GetAll();
+            var all = await GetAllAsync();
 
             var query = all.Where(a => { return tags.All(tag => a.Tags.Contains(tag)); });
 
             return query.ToList();
         }
 
-        public bool Save(BackgroundTask task)
+        public Task<bool> SaveAsync(BackgroundTask task)
         {
             if (!_tasks.TryGetValue(task.Priority, out var tasks))
             {
-                task.CreatedAt = DateTimeOffset.UtcNow; ;
+                task.CreatedAt = _timestamps.GetCurrentTime();
                 _tasks.Add(task.Priority, tasks = new HashSet<BackgroundTask>());
             }
 
@@ -64,28 +66,28 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 tasks.Add(task);
                 task.Id = ++_identity;
-                return true;
+                return Task.FromResult(true);
             }
 
-            return false;
+            return Task.FromResult(false);
         }
 
-        public bool Delete(BackgroundTask task)
+        public Task<bool> DeleteAsync(BackgroundTask task)
         {
             if (_tasks.TryGetValue(task.Priority, out var tasks))
             {
                 tasks.Remove(task);
-                return true;
+                return Task.FromResult(true);
             }
-            return false;
+            return Task.FromResult(false);
         }
 
-        public IList<BackgroundTask> LockNextAvailable(int readAhead)
+        public Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
         {
             var all = _tasks.SelectMany(t => t.Value);
 
             // None locked, failed or succeeded, must be due, ordered by due time then priority
-            var now = DateTimeOffset.UtcNow;
+            var now = _timestamps.GetCurrentTime();
 
             var query = all
                 .Where(t => !t.FailedAt.HasValue && !t.SucceededAt.HasValue && !t.LockedAt.HasValue)
@@ -106,24 +108,26 @@ namespace HQ.Extensions.Scheduling.Models
                 }
             }
 
-            return tasks.ToList();
+            return Task.FromResult(tasks.AsEnumerable());
         }
 
-        public BackgroundTask GetById(int id)
+        public Task<BackgroundTask> GetByIdAsync(int id)
         {
-            return _tasks.SelectMany(t => t.Value).SingleOrDefault(t => t.Id == id);
+            return Task.FromResult(_tasks.SelectMany(t => t.Value).SingleOrDefault(t => t.Id == id));
         }
 
-        public IList<BackgroundTask> GetHangingTasks()
+        public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
         {
-            return GetAll().Where(t => t.RunningOvertime).ToList();
+            var tasks = await GetAllAsync();
+
+            return tasks.Where(t => t.RunningOvertime).ToList();
         }
 
-        public IList<BackgroundTask> GetAll()
+        public Task<IEnumerable<BackgroundTask>> GetAllAsync()
         {
             IEnumerable<BackgroundTask> all = _tasks.SelectMany(t => t.Value).OrderBy(t => t.Priority);
 
-            return all.ToList();
+            return Task.FromResult(all);
         }
     }
 }

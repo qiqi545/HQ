@@ -37,17 +37,11 @@ namespace HQ.Extensions.Scheduling.Models
         public bool? DeleteOnSuccess { get; set; }
         public bool? DeleteOnFailure { get; set; }
         public bool? DeleteOnError { get; set; }
-
-        [Computed]
-        public DateTimeOffset CreatedAt { get; set; }
         public string LastError { get; set; }
         public DateTimeOffset? FailedAt { get; set; }
         public DateTimeOffset? SucceededAt { get; set; }
         public DateTimeOffset? LockedAt { get; set; }
         public string LockedBy { get; set; }
-
-        [NotMapped]
-        public List<string> Tags { get; set; } = new List<string>();
 
         public string Expression { get; set; }
         public DateTimeOffset Start { get; set; }
@@ -57,34 +51,39 @@ namespace HQ.Extensions.Scheduling.Models
         public bool ContinueOnError { get; set; } = true;
 
         [Computed]
-        public bool RunningOvertime
+        public DateTimeOffset CreatedAt { get; set; }
+
+        [NotMapped]
+        public List<string> Tags { get; set; } = new List<string>();
+
+        [Computed]
+        public bool RunningOvertime => IsRunningOvertime();
+
+        private bool IsRunningOvertime()
         {
-            get
+            if (!LockedAt.HasValue)
             {
-                if (!LockedAt.HasValue)
-                {
-                    return false;
-                }
-
-                if (!MaximumRuntime.HasValue)
-                {
-                    return false;
-                }
-
-                var now = DateTimeOffset.UtcNow;
-                var elapsed = LockedAt.Value - now;
-
-                // overtime = 125% of maximum runtime
-                var overage = (long) (MaximumRuntime.Value.Ticks / 0.25f);
-                var overtime = MaximumRuntime.Value + new TimeSpan(overage);
-
-                if (elapsed >= overtime)
-                {
-                    return true;
-                }
-
                 return false;
             }
+
+            if (!MaximumRuntime.HasValue)
+            {
+                return false;
+            }
+
+            var now = DateTimeOffset.UtcNow;
+            var elapsed = LockedAt.Value - now;
+
+            // overtime = 125% of maximum runtime
+            var overage = (long) (MaximumRuntime.Value.Ticks / 0.25f);
+            var overtime = MaximumRuntime.Value + new TimeSpan(overage);
+
+            if (elapsed >= overtime)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         [JsonIgnore, Computed] public DateTimeOffset? NextOccurrence => GetNextOccurence();

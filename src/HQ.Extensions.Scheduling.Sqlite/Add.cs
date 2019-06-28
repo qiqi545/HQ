@@ -1,5 +1,4 @@
 using System;
-using System.Data;
 using Dapper;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.Sqlite;
@@ -14,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Extensions.Scheduling.Sqlite
@@ -75,70 +75,6 @@ namespace HQ.Extensions.Scheduling.Sqlite
             if (options.Store.MigrateOnStartup)
             {
                 runner.MigrateUp(typeof(CreateBackgroundTasksSchema).Assembly, typeof(CreateBackgroundTasksSchema).Namespace);
-            }
-        }
-
-        public class TimeSpanHandler : SqlMapper.TypeHandler<TimeSpan?>
-        {
-            protected TimeSpanHandler() { }
-
-            public static readonly TimeSpanHandler Default = new TimeSpanHandler();
-
-            public override void SetValue(IDbDataParameter parameter, TimeSpan? value)
-            {
-                if (value.HasValue)
-                {
-                    parameter.Value = value.Value;
-                }
-                else
-                {
-                    parameter.Value = DBNull.Value;
-                }
-            }
-
-            public override TimeSpan? Parse(object value)
-            {
-                switch (value)
-                {
-                    case null:
-                        return null;
-                    case TimeSpan timeSpan:
-                        return timeSpan;
-                    default:
-                        return TimeSpan.Parse(value.ToString());
-                }
-            }
-        }
-
-        public class DateTimeOffsetHandler : SqlMapper.TypeHandler<DateTimeOffset?>
-        {
-            protected DateTimeOffsetHandler() { }
-
-            public static readonly DateTimeOffsetHandler Default = new DateTimeOffsetHandler();
-
-            public override void SetValue(IDbDataParameter parameter, DateTimeOffset? value)
-            {
-                if (value.HasValue)
-                {
-                    parameter.Value = value.Value;
-                }
-                else
-                {
-                    parameter.Value = DBNull.Value;
-                }
-            }
-
-            public override DateTimeOffset? Parse(object value)
-            {
-                switch (value)
-                {
-                    case null:
-                        return null;
-                    case DateTimeOffset offset:
-                        return offset;
-                    default:
-                        return Convert.ToDateTime(value);
-                }
             }
         }
     }

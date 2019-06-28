@@ -83,7 +83,7 @@ namespace HQ.Extensions.Scheduling.Models
                 return host.AttemptTask(task, false);
             }
 
-            host.Store?.Save(task);
+            host.Store?.SaveAsync(task);
             return true;
         }
 

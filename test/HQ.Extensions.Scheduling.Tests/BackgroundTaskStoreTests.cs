@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
@@ -17,105 +19,105 @@ namespace HQ.Extensions.Scheduling.Tests
         }
 
         [Test, Isolated]
-        public void Adding_tags_synchronizes_with_store()
+        public async Task Adding_tags_synchronizes_with_store()
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            var created = Store.GetById(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
             created.Tags.Add("b");
-            Store.Save(created);
+            await Store.SaveAsync(created);
 
             created.Tags.Add("c");
-            Store.Save(created);
+            await Store.SaveAsync(created);
 
-            var all = Store.GetAll();
-            Assert.Equal(1, all.Count);
-            Assert.Equal(3, all[0].Tags.Count);
+            var all = await Store.GetAllAsync();
+            Assert.Equal(1, all.Count());
+            Assert.Equal(3, all.Single().Tags.Count);
         }
 
         [Test, Isolated]
-        public void Can_delete_tasks_with_tags()
+        public async Task Can_delete_tasks_with_tags()
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
             create.Tags.Add("b");
             create.Tags.Add("c");
 
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            var created = Store.GetById(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
-            Store.Delete(create);
+            await Store.DeleteAsync(create);
 
-            var deleted = Store.GetById(create.Id);
+            var deleted = await Store.GetByIdAsync(create.Id);
             Assert.Null(deleted);
         }
 
         [Test, Isolated]
-        public void Can_save_multiple_tasks_with_tags()
+        public async Task Can_save_multiple_tasks_with_tags()
         {
             var first = CreateNewTask();
             first.Tags.Add("one");
-            Store.Save(first);
+            await Store.SaveAsync(first);
 
             var second = CreateNewTask();
             second.Tags.Add("two");
-            Store.Save(second);
+            await Store.SaveAsync(second);
 
-            var tasks = Store.GetByAllTags("one");
-            Assert.True(tasks.Count == 1);
-            Assert.True(tasks[0].Tags.Count == 1);
+            var tasks = await Store.GetByAllTagsAsync("one");
+            Assert.True(tasks.Count() == 1);
+            Assert.True(tasks.Single().Tags.Count == 1);
 
-            Store.Delete(second);
+            await Store.DeleteAsync(second);
         }
 
         [Test, Isolated]
-        public void Can_search_for_all_tags()
+        public async Task Can_search_for_all_tags()
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
             create.Tags.Add("b");
             create.Tags.Add("c");
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            var created = Store.GetById(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
-            // GetByAllTags (miss):
-            var all = Store.GetByAllTags("a", "b", "c", "d");
-            Assert.Equal(0, all.Count);
+            // GetByAllTagsAsync (miss):
+            var all = await Store.GetByAllTagsAsync("a", "b", "c", "d");
+            Assert.Equal(0, all.Count());
 
-            // GetByAnyTags (hit):
-            all = Store.GetByAllTags("a", "b", "c");
-            Assert.Equal(1, all.Count);
-            Assert.Equal(3, all[0].Tags.Count);
+            // GetByAnyTagsAsync (hit):
+            all = await Store.GetByAllTagsAsync("a", "b", "c");
+            Assert.Equal(1, all.Count());
+            Assert.Equal(3, all.Single().Tags.Count);
         }
 
         [Test, Isolated]
-        public void Can_search_for_any_tags()
+        public async Task Can_search_for_any_tags()
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
             create.Tags.Add("b");
             create.Tags.Add("c");
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            var created = Store.GetById(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
-            // GetByAllTags (miss):
-            var all = Store.GetByAnyTags("e");
-            Assert.Equal(0, all.Count);
+            // GetByAllTagsAsync (miss):
+            var all = await Store.GetByAnyTagsAsync("e");
+            Assert.Equal(0, all.Count());
 
-            // GetByAnyTags (hit):
-            all = Store.GetByAnyTags("e", "a");
-            Assert.Equal(1, all.Count);
-            Assert.Equal(3, all[0].Tags.Count);
+            // GetByAnyTagsAsync (hit):
+            all = await Store.GetByAnyTagsAsync("e", "a");
+            Assert.Equal(1, all.Count());
+            Assert.Equal(3, all.Single().Tags.Count);
         }
 
         [Test, Isolated]
@@ -124,85 +126,85 @@ namespace HQ.Extensions.Scheduling.Tests
             var create = CreateNewTask();
 
             Assert.True(create.Id == 0);
-            Store.Save(create);
+            Store.SaveAsync(create);
             Assert.False(create.Id == 0);
 
-            var created = Store.GetById(create.Id);
+            var created = Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
             Assert.Equal(create.Id, created.Id);
         }
 
         [Test, Isolated]
-        public void Locked_tasks_are_not_visible_to_future_fetches()
+        public async Task Locked_tasks_are_not_visible_to_future_fetches()
         {
             var created = CreateNewTask();
 
-            Store.Save(created);
+            await Store.SaveAsync(created);
 
-            var locked = Store.LockNextAvailable(int.MaxValue);
-            Assert.False(locked.Count == 0, "did not retrieve at least one unlocked task");
+            var locked = await  Store.LockNextAvailableAsync(int.MaxValue);
+            Assert.False(!locked.Any(), "did not retrieve at least one unlocked task");
 
-            locked = Store.LockNextAvailable(int.MaxValue);
-            Assert.True(locked.Count == 0, "there was at least one unlocked task after locking all of them");
+            locked = await Store.LockNextAvailableAsync(int.MaxValue);
+            Assert.True(!locked.Any(), "there was at least one unlocked task after locking all of them");
         }
 
         [Test, Isolated]
-        public void Removing_tags_synchronizes_with_store()
+        public async Task Removing_tags_synchronizes_with_store()
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
             create.Tags.Add("b");
             create.Tags.Add("c");
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            var created = Store.GetById(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
             create.Tags.Remove("a");
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
-            // GetAll:
-            var all = Store.GetAll();
-            Assert.Equal(1, all.Count);
-            Assert.Equal(2, all[0].Tags.Count);
+            // GetAllAsync:
+            var all = await Store.GetAllAsync();
+            Assert.Equal(1, all.Count());
+            Assert.Equal(2, all.First().Tags.Count);
 
             // GetById:
-            var byId = Store.GetById(create.Id);
+            var byId = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(byId);
             Assert.Equal(2, byId.Tags.Count);
 
             create.Tags.Clear();
-            Store.Save(create);
+            await Store.SaveAsync(create);
 
             // GetById:
-            byId = Store.GetById(create.Id);
+            byId = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(byId);
             Assert.True(byId.Tags.Count == 0);
         }
 
         [Test, Isolated]
-        public void Tags_are_saved_with_tasks()
+        public async Task Tags_are_saved_with_tasks()
         {
             var created = CreateNewTask();
             created.Tags.Add("a");
             created.Tags.Add("b");
             created.Tags.Add("c");
-            Store.Save(created);
+            await Store.SaveAsync(created);
 
-            // GetAll:
-            var all = Store.GetAll();
-            Assert.Equal(1, all.Count);
-            Assert.Equal(3, all[0].Tags.Count);
+            // GetAllAsync:
+            var all = await Store.GetAllAsync();
+            Assert.Equal(1, all.Count());
+            Assert.Equal(3, all.Single().Tags.Count);
 
             // GetById:
-            var byId = Store.GetById(created.Id);
+            var byId = await Store.GetByIdAsync(created.Id);
             Assert.NotNull(byId);
             Assert.Equal(3, byId.Tags.Count);
 
-            // LockNextAvailable:
-            var locked = Store.LockNextAvailable(1);
-            Assert.Equal(1, locked.Count);
-            Assert.Equal(3, locked[0].Tags.Count);
+            // LockNextAvailableAsync:
+            var locked = await Store.LockNextAvailableAsync(1);
+            Assert.Equal(1, locked.Count());
+            Assert.Equal(3, locked.Single().Tags.Count);
         }
 
         private static BackgroundTask CreateNewTask()

@@ -142,12 +142,12 @@ namespace HQ.Extensions.Scheduling.Models
 
         private IEnumerable<BackgroundTask> EnqueueTasks()
         {
-            return Store.LockNextAvailable(_options.CurrentValue.ReadAhead);
+            return Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult();
         }
 
         private IEnumerable<BackgroundTask> HangingTasks()
         {
-            return Store.GetHangingTasks();
+            return Store.GetHangingTasksAsync().GetAwaiter().GetResult();
         }
 
         public void Start(bool immediate = false)
@@ -230,7 +230,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
-                        Store.Delete(task);
+                        Store.DeleteAsync(task);
                     }
                     else
                     {
@@ -242,7 +242,7 @@ namespace HQ.Extensions.Scheduling.Models
                     task.RunAt += _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
                 }
 
-                Store.Save(task);
+                Store.SaveAsync(task);
             }
 
             return true;
@@ -325,7 +325,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
-                        Store.Delete(task);
+                        Store.DeleteAsync(task);
                         deleted = true;
                     }
 
@@ -336,7 +336,7 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 if (task.DeleteOnSuccess.HasValue && task.DeleteOnSuccess.Value)
                 {
-                    Store.Delete(task);
+                    Store.DeleteAsync(task);
                     deleted = true;
                 }
 
@@ -373,7 +373,7 @@ namespace HQ.Extensions.Scheduling.Models
                         Tags = task.Tags
                     };
 
-                    Store.Save(clone);
+                    Store.SaveAsync(clone);
                 }
             }
 
@@ -385,7 +385,7 @@ namespace HQ.Extensions.Scheduling.Models
             // unlock for other workers
             task.LockedAt = null;
             task.LockedBy = null;
-            Store.Save(task);
+            Store.SaveAsync(task);
         }
 
         private static bool TaskIsTerminal(BackgroundTask task)

@@ -16,20 +16,21 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HQ.Extensions.Scheduling.Models
 {
     public interface IBackgroundTaskStore
     {
-        BackgroundTask GetById(int id);
+        Task<BackgroundTask> GetByIdAsync(int id);
 
-        IList<BackgroundTask> GetAll();
-        IList<BackgroundTask> GetByAllTags(params string[] tags);
-        IList<BackgroundTask> GetByAnyTags(params string[] tags);
-        IList<BackgroundTask> GetHangingTasks();
+        Task<IEnumerable<BackgroundTask>> GetAllAsync();
+        Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags);
+        Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags);
+        Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync();
 
-        bool Save(BackgroundTask task);
-        bool Delete(BackgroundTask task);
-        IList<BackgroundTask> LockNextAvailable(int readAhead);
+        Task<bool> SaveAsync(BackgroundTask task);
+        Task<bool> DeleteAsync(BackgroundTask task);
+        Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead);
     }
 }
