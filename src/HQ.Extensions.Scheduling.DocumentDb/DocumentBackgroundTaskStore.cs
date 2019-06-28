@@ -37,14 +37,20 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 
         public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
         {
-            var tasks = await _repository.RetrieveAsync(x => x.Tags.All(tags.Contains));
+            // DB doesn't support All expression, so we have to project Any then filter it client-side
+            // ReSharper disable once ConvertClosureToMethodGroup (DB doesn't recognize method groups)
+            var tasks = await _repository.RetrieveAsync(x => x.Tags.Any(t => tags.Contains(t)));
 
-            return tasks.Select(x => (BackgroundTask)x);
+            // Reduce "any" to "all" on the client
+            var all = tasks.Where(x => tags.All(t => x.Tags.Contains(t)));
+
+            return all.Select(x => (BackgroundTask)x);
         }
 
         public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
         {
-            var tasks = await _repository.RetrieveAsync(x => x.Tags.Any(tags.Contains));
+            // ReSharper disable once ConvertClosureToMethodGroup (DB doesn't recognize method groups)
+            var tasks = await _repository.RetrieveAsync(x => x.Tags.Any(t => tags.Contains(t)));
 
             return tasks.Select(x => (BackgroundTask)x);
         }
@@ -75,6 +81,7 @@ namespace HQ.Extensions.Scheduling.DocumentDb
             }
 
             document.Id = existing.Id;
+
             await _repository.UpdateAsync(existing.Id, document);
             return true;
         }
@@ -94,9 +101,9 @@ namespace HQ.Extensions.Scheduling.DocumentDb
             var now = _timestamps.GetCurrentTime();
 
             var tasks = (await _repository.RetrieveAsync(x =>
-                !x.LockedAt.HasValue &&
-                !x.FailedAt.HasValue &&
-                !x.SucceededAt.HasValue &&
+                x.LockedAt == null &&
+                x.FailedAt == null &&
+                x.SucceededAt == null &&
                 x.RunAt <= now)).ToList();
 
             foreach (var task in tasks)

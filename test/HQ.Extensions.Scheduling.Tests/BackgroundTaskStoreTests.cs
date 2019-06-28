@@ -1,21 +1,25 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Data;
 using HQ.Test.Sdk.Xunit;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Tests
 {
     public abstract class BackgroundTaskStoreTests : ServiceUnderTest
     {
         protected readonly IBackgroundTaskStore Store;
+        private readonly IServerTimestampService _timestamps;
 
         protected BackgroundTaskStoreTests(IServiceProvider serviceProvider) : base(serviceProvider)
         {
-            Store = ServiceProvider.GetService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
+            Store = ServiceProvider.GetRequiredService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
+            _timestamps = ServiceProvider.GetRequiredService(typeof(IServerTimestampService)) as IServerTimestampService;
         }
 
         [Test, Isolated]
@@ -90,7 +94,7 @@ namespace HQ.Extensions.Scheduling.Tests
 
             // GetByAllTagsAsync (miss):
             var all = await Store.GetByAllTagsAsync("a", "b", "c", "d");
-            Assert.Equal(0, all.Count());
+            Assert.Equal(0, all.Count(), "Result returned that doesn't contain all tags");
 
             // GetByAnyTagsAsync (hit):
             all = await Store.GetByAllTagsAsync("a", "b", "c");
@@ -121,15 +125,15 @@ namespace HQ.Extensions.Scheduling.Tests
         }
 
         [Test, Isolated]
-        public void Inserts_new_task()
+        public async Task Inserts_new_task()
         {
             var create = CreateNewTask();
 
             Assert.True(create.Id == 0);
-            Store.SaveAsync(create);
+            await Store.SaveAsync(create);
             Assert.False(create.Id == 0);
 
-            var created = Store.GetByIdAsync(create.Id);
+            var created = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
             Assert.Equal(create.Id, created.Id);
         }
@@ -141,7 +145,7 @@ namespace HQ.Extensions.Scheduling.Tests
 
             await Store.SaveAsync(created);
 
-            var locked = await  Store.LockNextAvailableAsync(int.MaxValue);
+            var locked = await Store.LockNextAvailableAsync(int.MaxValue);
             Assert.False(!locked.Any(), "did not retrieve at least one unlocked task");
 
             locked = await Store.LockNextAvailableAsync(int.MaxValue);
@@ -163,12 +167,10 @@ namespace HQ.Extensions.Scheduling.Tests
             create.Tags.Remove("a");
             await Store.SaveAsync(create);
 
-            // GetAllAsync:
             var all = await Store.GetAllAsync();
             Assert.Equal(1, all.Count());
             Assert.Equal(2, all.First().Tags.Count);
 
-            // GetById:
             var byId = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(byId);
             Assert.Equal(2, byId.Tags.Count);
@@ -176,7 +178,6 @@ namespace HQ.Extensions.Scheduling.Tests
             create.Tags.Clear();
             await Store.SaveAsync(create);
 
-            // GetById:
             byId = await Store.GetByIdAsync(create.Id);
             Assert.NotNull(byId);
             Assert.True(byId.Tags.Count == 0);
@@ -191,23 +192,20 @@ namespace HQ.Extensions.Scheduling.Tests
             created.Tags.Add("c");
             await Store.SaveAsync(created);
 
-            // GetAllAsync:
             var all = await Store.GetAllAsync();
             Assert.Equal(1, all.Count());
             Assert.Equal(3, all.Single().Tags.Count);
 
-            // GetById:
             var byId = await Store.GetByIdAsync(created.Id);
             Assert.NotNull(byId);
             Assert.Equal(3, byId.Tags.Count);
 
-            // LockNextAvailableAsync:
             var locked = await Store.LockNextAvailableAsync(1);
             Assert.Equal(1, locked.Count());
             Assert.Equal(3, locked.Single().Tags.Count);
         }
 
-        private static BackgroundTask CreateNewTask()
+        private BackgroundTask CreateNewTask()
         {
             var task = new BackgroundTask();
             var options = new BackgroundTaskOptions();
@@ -219,6 +217,7 @@ namespace HQ.Extensions.Scheduling.Tests
             task.DeleteOnError = options.DeleteOnError;
             task.DeleteOnFailure = options.DeleteOnFailure;
             task.DeleteOnSuccess = options.DeleteOnSuccess;
+            task.RunAt = _timestamps.GetCurrentTime();
 
             return task;
         }
