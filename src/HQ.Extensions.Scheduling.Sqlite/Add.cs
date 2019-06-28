@@ -1,5 +1,6 @@
 using System;
 using Dapper;
+using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.Sqlite;
 using HQ.Data.Sql.Dialects;
@@ -40,6 +41,7 @@ namespace HQ.Extensions.Scheduling.Sqlite
 
             services.AddDatabaseConnection<SqliteConnectionFactory>(connectionString, scope, Constants.ConnectionSlots.BackgroundTasks);
 
+            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 
             var dialect = new SqliteDialect();

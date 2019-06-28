@@ -25,6 +25,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.SqlServer
@@ -34,19 +35,42 @@ namespace HQ.Extensions.Scheduling.SqlServer
         private static readonly List<string> NoTags = new List<string>();
         private readonly string _schema;
         private readonly string _tablePrefix;
-
-        private readonly IDataConnection _db;
         
-        public SqlServerBackgroundTaskStore(IDataConnection db, string schema = "dbo", string tablePrefix = nameof(BackgroundTask))
+        private readonly IDataConnection _db;
+        private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
+
+        public SqlServerBackgroundTaskStore(IDataConnection db, string schema = "dbo", string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
         {
             _db = db;
             _schema = schema;
             _tablePrefix = tablePrefix;
+            _logger = logger;
         }
 
         internal string TaskTable => $"[{_schema}].[{_tablePrefix}]";
         internal string TagTable => $"[{_schema}].[{_tablePrefix}_Tag]";
         internal string TagsTable => $"[{_schema}].[{_tablePrefix}_Tags]";
+
+        private IDbTransaction BeginTransaction(SqlConnection db, out bool owner)
+        {
+            if (_db.Transaction != null)
+            {
+                owner = false;
+                return _db.Transaction;
+            }
+            _logger?.Debug(() => "Owner-initiated transaction occurred.");
+            var transaction = db.BeginTransaction(IsolationLevel.Serializable);
+            _db.Transaction = transaction;
+            owner = true;
+            return transaction;
+        }
+
+        private void CommitTransaction(IDbTransaction t)
+        {
+            t.Commit();
+            _db.Transaction = null;
+            _logger?.Debug(() => "Owner-committed transaction occurred.");
+        }
 
         public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
         {
@@ -60,53 +84,6 @@ namespace HQ.Extensions.Scheduling.SqlServer
             var db = _db.Current;
             var t = BeginTransaction((SqlConnection) db, out _);
             return await GetByAllTagsWithTagsAsync(tags, db, t);
-        }
-
-        public async Task<bool> SaveAsync(BackgroundTask task)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out var owner);
-            if (task.Id == 0)
-                await InsertBackgroundTaskAsync(task, db, t);
-            else
-                await UpdateBackgroundTaskAsync(task, db, t);
-
-            await UpdateTagMapping(task, db, t);
-
-            if (owner)
-                t.Commit();
-            return true;
-        }
-        
-        public async Task<bool> DeleteAsync(BackgroundTask task)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out var owner);
-            var sql = $@"
--- Primary relationship:
-DELETE FROM {TagsTable} WHERE BackgroundTaskId = @Id;
-DELETE FROM {TaskTable} WHERE Id = @Id;
-
--- Remove any orphaned tags:
-DELETE FROM {TagTable}
-WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
-";
-            await db.ExecuteAsync(sql, task, t);
-            if (owner)
-                t.Commit();
-            return true;
-        }
-
-        public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out var owner);
-            var tasks = await GetUnlockedTasksWithTags(readAhead, db, t);
-            if (tasks.Any())
-                await LockTasksAsync(tasks, db, t);
-            if (owner)
-                t.Commit();
-            return tasks;
         }
         
         public Task<BackgroundTask> GetByIdAsync(int id)
@@ -130,91 +107,6 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
             var db = _db.Current;
             var t = BeginTransaction((SqlConnection) db, out _);
             return GetAllWithTagsAsync(db, t);
-        }
-
-        private IDbTransaction BeginTransaction(SqlConnection db, out bool owner)
-        {
-            if (_db.Transaction != null)
-            {
-                owner = false;
-                return _db.Transaction;
-            }
-            var transaction = db.BeginTransaction(IsolationLevel.Serializable);
-            _db.Transaction = transaction;
-            owner = true;
-            return transaction;
-        }
-        
-        private async Task UpdateBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
-UPDATE {TaskTable} 
-SET 
-    Priority = @Priority, 
-    Attempts = @Attempts, 
-    Handler = @Handler, 
-    RunAt = @RunAt, 
-    MaximumRuntime = @MaximumRuntime, 
-    MaximumAttempts = @MaximumAttempts, 
-    DeleteOnSuccess = @DeleteOnSuccess,
-    DeleteOnFailure = @DeleteOnFailure,
-    DeleteOnError = @DeleteOnError,
-    Expression = @Expression, 
-    Start = @Start, 
-    [End] = @End,
-    ContinueOnSuccess = @ContinueOnSuccess,
-    ContinueOnFailure = @ContinueOnFailure,
-    ContinueOnError = @ContinueOnError,
-    LastError = @LastError,
-    FailedAt = @FailedAt, 
-    SucceededAt = @SucceededAt, 
-    LockedAt = @LockedAt, 
-    LockedBy = @LockedBy
-WHERE 
-    Id = @Id
-";
-            await db.ExecuteAsync(sql, task, t);
-        }
-
-        private async Task InsertBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
-INSERT INTO {TaskTable} 
-    (Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError) 
-VALUES
-    (@Priority, @Attempts, @Handler, @RunAt, @MaximumRuntime, @MaximumAttempts, @DeleteOnSuccess, @DeleteOnFailure, @DeleteOnError, @Expression, @Start, @End, @ContinueOnSuccess, @ContinueOnFailure, @ContinueOnError);
-
-SELECT MAX(Id) FROM {TaskTable};
-";
-            task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
-            task.CreatedAt = (await db.QueryAsync<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t)).Single();
-        }
-
-        private async Task LockTasksAsync(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
-UPDATE {TaskTable}  
-SET 
-    LockedAt = @Now, 
-    LockedBy = @User 
-WHERE Id IN 
-    @Ids
-";
-            var now = DateTime.Now;
-            var user = LockedIdentity.Get();
-
-            await db.ExecuteAsync(sql, new
-            {
-                Now = now,
-                Ids = tasks.Select(task => task.Id),
-                User = user
-            }, t);
-
-            foreach (var task in tasks)
-            {
-                task.LockedAt = now;
-                task.LockedBy = user;
-            }
         }
 
         private async Task<IEnumerable<BackgroundTask>> GetLockedTasksWithTagsAsync(IDbConnection db, IDbTransaction t)
@@ -374,6 +266,125 @@ ORDER BY {TagTable}.Name ASC
 
             var result = lookup.Values.ToList();
             return result;
+        }
+
+        public async Task<bool> SaveAsync(BackgroundTask task)
+        {
+            var db = _db.Current;
+            var t = BeginTransaction((SqlConnection)db, out var owner);
+            if (task.Id == 0)
+                await InsertBackgroundTaskAsync(task, db, t);
+            else
+                await UpdateBackgroundTaskAsync(task, db, t);
+
+            await UpdateTagMapping(task, db, t);
+
+            if (owner)
+                CommitTransaction(t);
+            return true;
+        }
+
+        public async Task<bool> DeleteAsync(BackgroundTask task)
+        {
+            var db = _db.Current;
+            var t = BeginTransaction((SqlConnection)db, out var owner);
+            var sql = $@"
+-- Primary relationship:
+DELETE FROM {TagsTable} WHERE BackgroundTaskId = @Id;
+DELETE FROM {TaskTable} WHERE Id = @Id;
+
+-- Remove any orphaned tags:
+DELETE FROM {TagTable}
+WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
+";
+            await db.ExecuteAsync(sql, task, t);
+            if (owner)
+                CommitTransaction(t);
+            return true;
+        }
+
+        private async Task UpdateBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+        {
+            var sql = $@"
+UPDATE {TaskTable} 
+SET 
+    Priority = @Priority, 
+    Attempts = @Attempts, 
+    Handler = @Handler, 
+    RunAt = @RunAt, 
+    MaximumRuntime = @MaximumRuntime, 
+    MaximumAttempts = @MaximumAttempts, 
+    DeleteOnSuccess = @DeleteOnSuccess,
+    DeleteOnFailure = @DeleteOnFailure,
+    DeleteOnError = @DeleteOnError,
+    Expression = @Expression, 
+    Start = @Start, 
+    [End] = @End,
+    ContinueOnSuccess = @ContinueOnSuccess,
+    ContinueOnFailure = @ContinueOnFailure,
+    ContinueOnError = @ContinueOnError,
+    LastError = @LastError,
+    FailedAt = @FailedAt, 
+    SucceededAt = @SucceededAt, 
+    LockedAt = @LockedAt, 
+    LockedBy = @LockedBy
+WHERE 
+    Id = @Id
+";
+            await db.ExecuteAsync(sql, task, t);
+        }
+
+        private async Task InsertBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+        {
+            var sql = $@"
+INSERT INTO {TaskTable} 
+    (Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError) 
+VALUES
+    (@Priority, @Attempts, @Handler, @RunAt, @MaximumRuntime, @MaximumAttempts, @DeleteOnSuccess, @DeleteOnFailure, @DeleteOnError, @Expression, @Start, @End, @ContinueOnSuccess, @ContinueOnFailure, @ContinueOnError);
+
+SELECT MAX(Id) FROM {TaskTable};
+";
+            task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
+            task.CreatedAt = (await db.QueryAsync<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t)).Single();
+        }
+
+        public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
+        {
+            var db = _db.Current;
+            var t = BeginTransaction((SqlConnection)db, out var owner);
+            var tasks = await GetUnlockedTasksWithTags(readAhead, db, t);
+            if (tasks.Any())
+                await LockTasksAsync(tasks, db, t);
+            if (owner)
+                CommitTransaction(t);
+            return tasks;
+        }
+
+        private async Task LockTasksAsync(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
+        {
+            var sql = $@"
+UPDATE {TaskTable}  
+SET 
+    LockedAt = @Now, 
+    LockedBy = @User 
+WHERE Id IN 
+    @Ids
+";
+            var now = DateTime.Now;
+            var user = LockedIdentity.Get();
+
+            await db.ExecuteAsync(sql, new
+            {
+                Now = now,
+                Ids = tasks.Select(task => task.Id),
+                User = user
+            }, t);
+
+            foreach (var task in tasks)
+            {
+                task.LockedAt = now;
+                task.LockedBy = user;
+            }
         }
 
         private async Task UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)

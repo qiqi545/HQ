@@ -6,6 +6,7 @@ using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Data.Sql.SqlServer;
 using HQ.Data.Sql.SqlServer.Configuration;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
@@ -33,6 +34,8 @@ namespace HQ.Extensions.Scheduling.SqlServer
 
             if(scope == ConnectionScope.ByRequest)
                 services.AddHttpContextAccessor();
+
+            services.AddSafeLogging();
 
             services.AddDatabaseConnection<SqlServerConnectionFactory>(connectionString, scope, Common.Constants.ConnectionSlots.BackgroundTasks);
 

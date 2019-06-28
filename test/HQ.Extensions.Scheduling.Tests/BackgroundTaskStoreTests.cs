@@ -217,7 +217,7 @@ namespace HQ.Extensions.Scheduling.Tests
             task.DeleteOnError = options.DeleteOnError;
             task.DeleteOnFailure = options.DeleteOnFailure;
             task.DeleteOnSuccess = options.DeleteOnSuccess;
-            task.RunAt = _timestamps.GetCurrentTime();
+            task.RunAt = _timestamps.GetCurrentTime().LocalDateTime;
 
             return task;
         }
