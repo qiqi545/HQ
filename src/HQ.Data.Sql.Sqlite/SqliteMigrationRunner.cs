@@ -14,8 +14,9 @@
 #endregion
 
 using System.IO;
-using HQ.Data.Sql.Migration;
+using FluentMigrator.Runner;
 using Microsoft.Data.Sqlite;
+using MigrationRunner = HQ.Data.Sql.Migration.MigrationRunner;
 
 namespace HQ.Data.Sql.Sqlite
 {
@@ -31,6 +32,11 @@ namespace HQ.Data.Sql.Sqlite
             var connection = new SqliteConnection(builder.ConnectionString);
             connection.Open();
             connection.Close();
+        }
+
+        public override void ConfigureMigrator(IMigrationRunnerBuilder builder)
+        {
+            builder.AddSQLite();
         }
     }
 }

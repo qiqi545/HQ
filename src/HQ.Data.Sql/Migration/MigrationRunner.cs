@@ -16,8 +16,6 @@
 #endregion
 
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
 using HQ.Platform.Identity.Stores.Sql;
@@ -36,15 +34,20 @@ namespace HQ.Data.Sql.Migration
 
         public abstract void CreateDatabaseIfNotExists();
 
+        public abstract void ConfigureMigrator(IMigrationRunnerBuilder builder);
+
         public void MigrateUp(Assembly assembly, string ns)
         {
             var container = new ServiceCollection()
                 .AddFluentMigratorCore()
                 .ConfigureRunner(
-                    builder => builder
-                        .AddSQLite()
-                        .WithGlobalConnectionString(ConnectionString)
-                        .ScanIn(assembly).For.Migrations())
+                    builder =>
+                    {
+                        ConfigureMigrator(builder);
+                        builder
+                            .WithGlobalConnectionString(ConnectionString)
+                            .ScanIn(assembly).For.Migrations();
+                    })
                 .BuildServiceProvider();
 
             var runner = container.GetRequiredService<IMigrationRunner>();
