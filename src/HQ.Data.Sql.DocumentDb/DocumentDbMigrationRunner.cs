@@ -1,6 +1,8 @@
+using System;
 using System.Data.DocumentDb;
 using System.Net;
 using System.Threading.Tasks;
+using HQ.Data.SessionManagement.DocumentDb;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
@@ -8,26 +10,27 @@ namespace HQ.Data.Sql.DocumentDb
 {
     public class DocumentDbMigrationRunner
     {
-        private readonly DocumentDbConnectionStringBuilder _builder;
-        private readonly DocumentClient _client;
+        private readonly DocumentDbOptions _options;
 
-        public DocumentDbMigrationRunner(string connectionString)
+        public DocumentClient Client { get; }
+
+        public DocumentDbMigrationRunner(DocumentDbOptions options)
         {
-            _builder = new DocumentDbConnectionStringBuilder(connectionString);
-            _client = _builder.Build();
+            _options = options;
+            Client = new DocumentClient(new Uri(options.Endpoint), options.AuthKey, Defaults.JsonSettings);
         }
 
         public async Task CreateDatabaseIfNotExistsAsync()
         {
             try
             {
-                await _client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_builder.Database));
+                await Client.ReadDatabaseAsync(UriFactory.CreateDatabaseUri(_options.DatabaseId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDatabaseAsync(new Database { Id = _builder.Database });
+                    await Client.CreateDatabaseAsync(new Database { Id = _options.DatabaseId });
                 }
                 else
                 {

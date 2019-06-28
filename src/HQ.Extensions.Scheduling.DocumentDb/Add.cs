@@ -15,17 +15,19 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 {
     public static class Add
     {
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, string connectionString, IConfiguration databaseConfig = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, IConfiguration databaseConfig = null)
         {
-            return builder.AddDocumentDbBackgroundTasksStore(connectionString, databaseConfig.Bind);
+            return builder.AddDocumentDbBackgroundTasksStore(databaseConfig.Bind);
         }
 
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, string connectionString, Action<DocumentDbOptions> configureDatabase = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureDatabase = null)
         {
             Bootstrap.EnsureInitialized();
 
             var services = builder.Services;
 
+            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
+            services.AddScoped<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
             services.Configure(configureDatabase);
 
@@ -37,14 +39,14 @@ namespace HQ.Extensions.Scheduling.DocumentDb
             var dbOptions = new DocumentDbOptions();
             configureDatabase?.Invoke(dbOptions);
 
-            MigrateToLatest(connectionString, options.Value, dbOptions);
+            MigrateToLatest(options.Value, dbOptions);
 
             return builder;
         }
 
-        private static void MigrateToLatest(string connectionString, BackgroundTaskOptions taskOptions, DocumentDbOptions dbOptions)
+        private static void MigrateToLatest(BackgroundTaskOptions taskOptions, DocumentDbOptions dbOptions)
         {
-            var runner = new DocumentDbMigrationRunner(connectionString);
+            var runner = new DocumentDbMigrationRunner(dbOptions);
 
             if (taskOptions.Store.CreateIfNotExists)
             {
@@ -53,10 +55,7 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 
             if (taskOptions.Store.MigrateOnStartup)
             {
-                var builder = new DocumentDbConnectionStringBuilder(connectionString);
-                var client = builder.Build();
-
-                var schema = new CreateBackgroundTasksSchema(client, dbOptions);
+                var schema = new CreateBackgroundTasksSchema(runner.Client, dbOptions);
                 schema.Up().GetAwaiter().GetResult();
             }
         }
