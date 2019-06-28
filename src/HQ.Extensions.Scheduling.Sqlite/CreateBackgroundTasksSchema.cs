@@ -48,13 +48,11 @@ namespace HQ.Extensions.Scheduling.Sqlite
                 .WithColumn("End").AsDateTime().Nullable()
                 ;
             Create.Table($"{nameof(BackgroundTask)}_Tag")
-                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
-                .Unique() // CLUSTERED INDEX + UNIQUE (Faster Lookups)
-                .WithColumn("Name").AsString().NotNullable().Indexed() // ORDER BY ScheduledTask_Tag.Name ASC
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().Unique() // CLUSTERED INDEX + UNIQUE (Faster Lookups)
+                .WithColumn("Name").AsString().NotNullable().Unique()
                 ;
             Create.Table($"{nameof(BackgroundTask)}_Tags")
-                .WithColumn("Id").AsInt32().PrimaryKey().Identity()
-                .Unique() // CLUSTERED INDEX + UNIQUE (Faster Lookups)
+                .WithColumn("Id").AsInt32().PrimaryKey().Identity().Unique() // CLUSTERED INDEX + UNIQUE (Faster Lookups)
                 .WithColumn($"{nameof(BackgroundTask)}Id").AsInt32().ForeignKey($"{nameof(BackgroundTask)}", "Id").NotNullable().Indexed()
                 .WithColumn("TagId").AsInt32().ForeignKey($"{nameof(BackgroundTask)}_Tag", "Id").NotNullable().Indexed()
                 ;
