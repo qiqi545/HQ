@@ -1,49 +1,106 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using HQ.Common;
+using HQ.Data.Sql.DocumentDb;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.DocumentDb
 {
     public class DocumentBackgroundTaskStore : IBackgroundTaskStore
     {
-        public BackgroundTask GetById(int id)
+        private readonly IDocumentDbRepository<BackgroundTaskDocument> _repository;
+        private readonly IServerTimestampService _timestamps;
+
+        public DocumentBackgroundTaskStore(IDocumentDbRepository<BackgroundTaskDocument> repository, IServerTimestampService timestamps)
         {
-            throw new NotImplementedException();
+            _repository = repository;
+            _timestamps = timestamps;
         }
 
-        public IList<BackgroundTask> GetAll()
+        public async Task<BackgroundTask> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == id);
         }
 
-        public IList<BackgroundTask> GetByAllTags(params string[] tags)
+        public async Task<IEnumerable<BackgroundTask>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var tasks = await _repository.RetrieveAsync();
+
+            return tasks.Select(x => (BackgroundTask) x);
         }
 
-        public IList<BackgroundTask> GetByAnyTags(params string[] tags)
+        public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
         {
-            throw new NotImplementedException();
+            var tasks = await _repository.RetrieveAsync(x => x.Tags.All(tags.Contains));
+
+            return tasks.Select(x => (BackgroundTask)x);
         }
 
-        public IList<BackgroundTask> GetHangingTasks()
+        public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
         {
-            throw new NotImplementedException();
+            var tasks = await _repository.RetrieveAsync(x => x.Tags.Any(tags.Contains));
+
+            return tasks.Select(x => (BackgroundTask)x);
         }
 
-        public bool Save(BackgroundTask task)
+        public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
         {
-            throw new NotImplementedException();
+            var tasks = await _repository.RetrieveAsync(x => x.LockedAt.HasValue);
+
+            return tasks.Select(x => (BackgroundTask) x).Where(x => x.RunningOvertime);
         }
 
-        public bool Delete(BackgroundTask task)
+        public async Task<bool> SaveAsync(BackgroundTask task)
         {
-            throw new NotImplementedException();
+            if (task.Id == 0)
+            {
+                await _repository.CreateAsync(new BackgroundTaskDocument(task));
+                return true;
+            }
+
+            var document = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
+            if (document == null)
+            {
+                await _repository.CreateAsync(new BackgroundTaskDocument(task));
+                return true;
+            }
+
+            await _repository.UpdateAsync(document.Id, new BackgroundTaskDocument(task));
+            return true;
         }
 
-        public IList<BackgroundTask> LockNextAvailable(int readAhead)
+        public async Task<bool> DeleteAsync(BackgroundTask task)
         {
-            throw new NotImplementedException();
+            var document = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
+            if (document == null)
+                return false;
+
+            await _repository.DeleteAsync(document.Id);
+            return true;
+        }
+
+        public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
+        {
+            var now = _timestamps.GetCurrentTime();
+
+            var tasks = (await _repository.RetrieveAsync(x =>
+                !x.LockedAt.HasValue &&
+                !x.FailedAt.HasValue &&
+                !x.SucceededAt.HasValue &&
+                x.RunAt <= now)).ToList();
+
+            foreach (var task in tasks)
+            {
+                task.LockedAt = now;
+                task.LockedBy = LockedIdentity.Get();
+                await _repository.UpdateAsync(task.Id, task);
+            }
+
+            return tasks
+                .OrderBy(x => x.RunAt)
+                .ThenBy(x => x.Priority)
+                .Select(x => (BackgroundTask) x);
         }
     }
 }

@@ -16,7 +16,7 @@
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+using UnixDateTimeConverter = Newtonsoft.Json.Converters.UnixDateTimeConverter;
 
 namespace HQ.Data.Sql.DocumentDb
 {

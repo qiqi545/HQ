@@ -50,9 +50,7 @@ namespace HQ.Data.Sql.DocumentDb
             CreateCollectionIfNotExistsAsync().Wait();
         }
 
-        private Uri CollectionUri =>
-            UriFactory.CreateDocumentCollectionUri(_options.Value.DatabaseId, _options.Value.CollectionId);
-
+        private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Value.DatabaseId, _options.Value.CollectionId);
         private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Value.DatabaseId);
         private Uri EndpointUri => new Uri(_options.Value.Endpoint);
 
@@ -97,6 +95,34 @@ namespace HQ.Data.Sql.DocumentDb
             var query = predicate != null ? queryable.Where(predicate).AsDocumentQuery() : queryable.AsDocumentQuery();
 
             return await GetResultsAsync(query);
+        }
+
+        public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            var results = await RetrieveAsync(predicate);
+
+            return results.Single();
+        }
+
+        public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            var results = await RetrieveAsync(predicate);
+
+            return results.SingleOrDefault();
+        }
+
+        public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            var results = await RetrieveAsync(predicate);
+
+            return results.First();
+        }
+
+        public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+        {
+            var results = await RetrieveAsync(predicate);
+
+            return results.FirstOrDefault();
         }
 
         public async Task<Document> UpdateAsync(string id, T item)
