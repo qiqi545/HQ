@@ -91,11 +91,14 @@ namespace HQ.Test.Sdk
             return ServiceProvider?.GetService<ILogger<ServiceUnderTest>>() ?? Logger;
         }
 
+        public static IServiceFixture AmbientServiceFixture { get; private set; }
+
         protected static IServiceProvider CreateServiceProvider(IServiceFixture fixture)
         {
             var services = new ServiceCollection();
             fixture.ConfigureServices(services);
             fixture.ServiceProvider = services.BuildServiceProvider();
+            AmbientServiceFixture = fixture;
             return fixture.ServiceProvider;
         }
 

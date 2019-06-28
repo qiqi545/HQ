@@ -21,15 +21,15 @@ namespace HQ.Extensions.Scheduling.Models
 {
     public interface IBackgroundTaskStore
     {
+        BackgroundTask GetById(int id);
+
         IList<BackgroundTask> GetAll();
         IList<BackgroundTask> GetByAllTags(params string[] tags);
         IList<BackgroundTask> GetByAnyTags(params string[] tags);
-        BackgroundTask GetById(int id);
-
         IList<BackgroundTask> GetHangingTasks();
 
         bool Save(BackgroundTask task);
         bool Delete(BackgroundTask task);
-        IList<BackgroundTask> GetAndLockNextAvailable(int readAhead);
+        IList<BackgroundTask> LockNextAvailable(int readAhead);
     }
 }

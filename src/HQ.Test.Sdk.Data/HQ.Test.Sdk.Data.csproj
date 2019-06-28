@@ -5,7 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
     <ProjectReference Include="..\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 

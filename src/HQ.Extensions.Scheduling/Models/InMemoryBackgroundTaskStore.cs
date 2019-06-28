@@ -80,7 +80,7 @@ namespace HQ.Extensions.Scheduling.Models
             return false;
         }
 
-        public IList<BackgroundTask> GetAndLockNextAvailable(int readAhead)
+        public IList<BackgroundTask> LockNextAvailable(int readAhead)
         {
             var all = _tasks.SelectMany(t => t.Value);
 

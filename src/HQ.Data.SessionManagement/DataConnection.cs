@@ -74,6 +74,8 @@ namespace HQ.Data.SessionManagement
                 return _current.Connection;
             }
         }
+
+        public IDbTransaction Transaction { get; set; }
     }
 }
 

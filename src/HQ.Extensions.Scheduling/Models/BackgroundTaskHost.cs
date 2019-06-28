@@ -142,7 +142,7 @@ namespace HQ.Extensions.Scheduling.Models
 
         private IEnumerable<BackgroundTask> EnqueueTasks()
         {
-            return Store.GetAndLockNextAvailable(_options.CurrentValue.ReadAhead);
+            return Store.LockNextAvailable(_options.CurrentValue.ReadAhead);
         }
 
         private IEnumerable<BackgroundTask> HangingTasks()
