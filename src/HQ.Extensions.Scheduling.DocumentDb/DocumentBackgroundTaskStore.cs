@@ -74,6 +74,7 @@ namespace HQ.Extensions.Scheduling.DocumentDb
                 return true;
             }
 
+            document.Id = existing.Id;
             await _repository.UpdateAsync(existing.Id, document);
             return true;
         }

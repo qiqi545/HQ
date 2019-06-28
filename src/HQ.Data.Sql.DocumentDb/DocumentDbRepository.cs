@@ -29,6 +29,7 @@ using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using TypeKitchen;
 
 namespace HQ.Data.Sql.DocumentDb
@@ -46,7 +47,9 @@ namespace HQ.Data.Sql.DocumentDb
             _reads = ReadAccessor.Create(typeof(T));
             _writes = WriteAccessor.Create(typeof(T));
             _options = options;
-            _client = new DocumentClient(EndpointUri, options.Value.AuthKey /*, JsonConvert.DefaultSettings() */);
+
+            var defaultSettings = new JsonSerializerSettings();
+            _client = new DocumentClient(EndpointUri, options.Value.AuthKey, defaultSettings);
 
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();

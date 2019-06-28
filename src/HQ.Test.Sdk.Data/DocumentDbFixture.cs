@@ -17,7 +17,8 @@ namespace HQ.Test.Sdk.Data
         {
             var options = ServiceProvider.GetRequiredService<IOptions<DocumentDbOptions>>();
             var client = new DocumentClient(new Uri(options.Value.Endpoint), options.Value.AuthKey, JsonConvert.DefaultSettings());
-            client.DeleteDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(options.Value.DatabaseId, options.Value.CollectionId));
+            client.DeleteDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(options.Value.DatabaseId, options.Value.CollectionId))
+                .GetAwaiter().GetResult();
         }
     }
 }
