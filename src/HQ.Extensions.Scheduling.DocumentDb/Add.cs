@@ -1,7 +1,6 @@
 using System;
 using System.Data.DocumentDb;
 using HQ.Common;
-using HQ.Data.SessionManagement;
 using HQ.Data.SessionManagement.DocumentDb;
 using HQ.Data.Sql.DocumentDb;
 using HQ.Extensions.Metrics;
@@ -16,25 +15,16 @@ namespace HQ.Extensions.Scheduling.DocumentDb
 {
     public static class Add
     {
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, string connectionString, IConfiguration databaseConfig = null)
         {
-            return builder.AddDocumentDbBackgroundTasksStore(connectionString, scope, databaseConfig.Bind);
+            return builder.AddDocumentDbBackgroundTasksStore(connectionString, databaseConfig.Bind);
         }
 
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<DocumentDbOptions> configureDatabase = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, string connectionString, Action<DocumentDbOptions> configureDatabase = null)
         {
             Bootstrap.EnsureInitialized();
 
             var services = builder.Services;
-            
-            if (scope == ConnectionScope.ByRequest)
-            {
-                services.AddHttpContextAccessor();
-            }
 
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
             services.Configure(configureDatabase);

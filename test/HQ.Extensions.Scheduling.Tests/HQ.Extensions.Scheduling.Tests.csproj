@@ -24,8 +24,4 @@
     <ProjectReference Include="..\..\src\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DocumentDb\" />
-  </ItemGroup>
-
 </Project>
