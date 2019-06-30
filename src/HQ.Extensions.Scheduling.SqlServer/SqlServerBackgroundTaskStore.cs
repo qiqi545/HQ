@@ -55,6 +55,7 @@ namespace HQ.Extensions.Scheduling.SqlServer
         {
             if (_db.Transaction != null)
             {
+                _logger?.Debug(() => "Transaction is already initiated; we are not the owner.");
                 owner = false;
                 return _db.Transaction;
             }
