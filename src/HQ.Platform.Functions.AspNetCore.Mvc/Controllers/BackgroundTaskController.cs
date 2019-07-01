@@ -60,7 +60,7 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            var taskTypeNames = _typeResolver.FindByMethodName(nameof(Handler.Perform))
+            var taskTypeNames = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync))
                 .Where(x => !x.IsInterface && !x.IsAbstract)
                 .Select(x => x.Name);
 
@@ -141,7 +141,7 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
                 if (type == null)
                     return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}", model.TaskType);
 
-                if (!_host.TryScheduleTask(type, out var task, t =>
+                if (!_host.TryScheduleTaskAsync(type, out var task, t =>
                 {
                     if (model.Tags?.Length > 0)
                         t.Tags.AddRange(model.Tags);

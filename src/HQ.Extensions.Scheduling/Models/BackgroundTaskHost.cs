@@ -182,7 +182,7 @@ namespace HQ.Extensions.Scheduling.Models
             var context = ProvisionExecutionContext(cancellationToken);
 
             Parallel.ForEach(_pending.Where(entry => entry.Value.OnHalt != null), options,
-                e => { e.Value.OnHalt.Halt(context, immediate); });
+                async e => { await e.Value.OnHalt.HaltAsync(context, immediate); });
 
             _pending.Clear();
 
@@ -259,7 +259,7 @@ namespace HQ.Extensions.Scheduling.Models
                 var cancel = new CancellationTokenSource();
                 var taskFactory = _factories[scheduler];
 
-                var started = taskFactory.StartNew(() => { AttemptTask(task); }, cancel.Token);
+                var started = taskFactory.StartNew(async () => { await AttemptTaskAsync(task); }, cancel.Token);
 
                 pendingTasks.Add(started, cancel);
                 subjects.Add(started, task);
@@ -281,31 +281,31 @@ namespace HQ.Extensions.Scheduling.Models
             return true;
         }
 
-        internal bool AttemptTask(BackgroundTask task, bool persist = true)
+        internal async Task<bool> AttemptTaskAsync(BackgroundTask task, bool persist = true)
         {
             if (_cancel.IsCancellationRequested)
             {
                 return false;
             }
-
-            var success = AttemptCycle(task, out var exception);
+            
+            var success = await AttemptCycleAsync(task);
 
             if (persist)
             {
-                UpdateTask(task, success, exception);
+                await UpdateTaskAsync(task, success.Item1, success.Item2);
             }
 
             _cancel.Token.ThrowIfCancellationRequested();
 
-            return success;
+            return (success.Item1);
         }
 
-        private bool AttemptCycle(BackgroundTask task, out Exception exception)
+        private async Task<(bool, Exception)> AttemptCycleAsync(BackgroundTask task)
         {
             task.Attempts++;
 
-            var success = Perform(task, out exception);
-            if (!success)
+            var success = await PerformAsync(task);
+            if (!success.Item1)
             {
                 task.RunAt = _timestamps.GetCurrentTime() + _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
             }
@@ -313,7 +313,7 @@ namespace HQ.Extensions.Scheduling.Models
             return success;
         }
 
-        private void UpdateTask(BackgroundTask task, bool success, Exception exception)
+        private async Task UpdateTaskAsync(BackgroundTask task, bool success, Exception exception)
         {
             var deleted = false;
 
@@ -325,7 +325,7 @@ namespace HQ.Extensions.Scheduling.Models
                 {
                     if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
                     {
-                        Store.DeleteAsync(task);
+                        await Store.DeleteAsync(task);
                         deleted = true;
                     }
 
@@ -336,7 +336,7 @@ namespace HQ.Extensions.Scheduling.Models
             {
                 if (task.DeleteOnSuccess.HasValue && task.DeleteOnSuccess.Value)
                 {
-                    Store.DeleteAsync(task);
+                    await Store.DeleteAsync(task);
                     deleted = true;
                 }
 
@@ -373,7 +373,7 @@ namespace HQ.Extensions.Scheduling.Models
                         Tags = task.Tags
                     };
 
-                    Store.SaveAsync(clone);
+                    await Store.SaveAsync(clone);
                 }
             }
 
@@ -385,7 +385,7 @@ namespace HQ.Extensions.Scheduling.Models
             // unlock for other workers
             task.LockedAt = null;
             task.LockedBy = null;
-            Store.SaveAsync(task);
+            await Store.SaveAsync(task);
         }
 
         private static bool TaskIsTerminal(BackgroundTask task)
@@ -393,7 +393,7 @@ namespace HQ.Extensions.Scheduling.Models
             return task.Attempts >= task.MaximumAttempts;
         }
 
-        private bool Perform(BackgroundTask task, out Exception exception)
+        private async Task<(bool, Exception)> PerformAsync(BackgroundTask task)
         {
             // Acquire the handler:
             var handler = CreateHandler(task);
@@ -401,39 +401,46 @@ namespace HQ.Extensions.Scheduling.Models
             if (handler == null)
             {
                 task.LastError = ErrorStrings.InvalidHandler;
-                exception = null;
-                return false;
+                return (false, null);
             }
 
             var hooks = GetOrCreateMethodHooks(handler);
             var context = ProvisionExecutionContext(_cancel.Token);
 
             _pending.TryAdd(handler, hooks);
+
+            Exception exception;
             try
             {
                 // Before:
-                hooks.OnBefore?.Before(context);
+                if (hooks.OnBefore != null)
+                {
+                    await hooks.OnBefore.BeforeAsync(context);
+                }
 
                 // Handler:
                 if (context.Continue)
                 {
-                    handler.Perform(context);
+                    await handler.PerformAsync(context);
                 }
 
                 // Success:
-                if (context.Successful)
+                if (context.Successful && hooks.OnSuccess != null)
                 {
-                    hooks.OnSuccess?.Success(context);
+                    await hooks.OnSuccess.SuccessAsync(context);
                 }
 
                 // Failure:
-                if (TaskIsTerminal(task))
+                if (TaskIsTerminal(task) && hooks.OnFailure != null)
                 {
-                    hooks.OnFailure?.Failure(context);
+                    await hooks.OnFailure.FailureAsync(context);
                 }
 
                 // After:
-                hooks.OnAfter?.After(context);
+                if (hooks.OnAfter != null)
+                {
+                    await hooks.OnAfter?.AfterAsync(context);
+                }
 
                 exception = null;
             }
@@ -445,7 +452,7 @@ namespace HQ.Extensions.Scheduling.Models
             catch (Exception e)
             {
                 task.LastError = e.Message;
-                hooks?.OnError?.Error(context, e);
+                hooks?.OnError?.ErrorAsync(context, e);
                 exception = e;
             }
             finally
@@ -453,7 +460,7 @@ namespace HQ.Extensions.Scheduling.Models
                 _pending.TryRemove(handler, out _);
             }
 
-            return context.Successful;
+            return (context.Successful, exception);
         }
 
         private Handler CreateHandler(BackgroundTask task)
@@ -478,6 +485,7 @@ namespace HQ.Extensions.Scheduling.Models
             }
         }
 
+        // ReSharper disable once InconsistentNaming
         private static HandlerHooks GetOrCreateMethodHooks(Handler handler)
         {
             var handlerType = handler.GetType();

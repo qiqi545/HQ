@@ -16,19 +16,23 @@
 #endregion
 
 using System;
-using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling.Sqlite;
-using HQ.Test.Sdk.Data;
+using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Extensions.Scheduling.Tests.Sqlite
+namespace HQ.Extensions.Scheduling.Tests
 {
-    public class SchedulingSqliteFixture : SqliteFixture
+    public class InMemoryBackgroundTaskFixture : IServiceFixture
     {
-        public override void ConfigureServices(IServiceCollection services)
+        public void Dispose()
         {
-            services.AddBackgroundTasks(o => { })
-                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive, o => { });
+            
         }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddBackgroundTasks();
+        }
+
+        public IServiceProvider ServiceProvider { get; set; }
     }
 }

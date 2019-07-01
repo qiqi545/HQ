@@ -17,6 +17,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
@@ -24,7 +25,7 @@ using HQ.Extensions.Scheduling.Models;
 namespace HQ.Platform.Functions
 {
     [Description("A test function for diagnostic purposes.")]
-    public class TestFunction : Before, Handler, After, Success, Failure, Halt
+    public class TestFunction : Before, Handler, After, Success, Failure, Halt, Error
     {
         private readonly ISafeLogger<TestFunction> _logger;
 
@@ -33,39 +34,46 @@ namespace HQ.Platform.Functions
             _logger = logger;
         }
 
-        public void After(ExecutionContext context)
+        public Task AfterAsync(ExecutionContext context)
         {
             _logger.Debug(() => $"{nameof(After)} executed.");
+            return Task.CompletedTask;
         }
 
-        public void Before(ExecutionContext context)
+        public Task BeforeAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(Before)} executed.");
+            _logger.Debug(() => $"{nameof(BeforeAsync)} executed.");
+            return Task.CompletedTask;
         }
 
-        public void Failure(ExecutionContext context)
+        public Task FailureAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(Failure)} executed.");
+            _logger.Debug(() => $"{nameof(FailureAsync)} executed.");
+            return Task.CompletedTask;
         }
 
-        public void Halt(ExecutionContext context, bool immediate)
+        public Task HaltAsync(ExecutionContext context, bool immediate)
         {
             _logger.Debug(() => $"{nameof(Halt)} executed{(immediate ? " immediately" : "")}.");
+            return Task.CompletedTask;
         }
 
-        public void Perform(ExecutionContext context)
+        public Task PerformAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(Perform)} executed.");
+            _logger.Debug(() => $"{nameof(PerformAsync)} executed.");
+            return Task.CompletedTask;
         }
 
-        public void Success(ExecutionContext context)
+        public Task SuccessAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(Success)} executed.");
+            _logger.Debug(() => $"{nameof(SuccessAsync)} executed.");
+            return Task.CompletedTask;
         }
 
-        public void Error(ExecutionContext context, Exception error)
+        public Task ErrorAsync(ExecutionContext context, Exception error)
         {
             _logger.Debug(() => $"{nameof(Error)} executed with error {error.Message}");
+            return Task.CompletedTask;
         }
     }
 }

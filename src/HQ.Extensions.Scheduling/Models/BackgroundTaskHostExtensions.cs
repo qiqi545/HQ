@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Configuration;
 
 namespace HQ.Extensions.Scheduling.Models
@@ -28,34 +29,25 @@ namespace HQ.Extensions.Scheduling.Models
         ///     expression, relative to now, will be selected as the start time.
         ///     Otherwise, the task will be scheduled for now.
         /// </summary>
-        /// <typeparam name="T">
-        ///     The type of the task. The task is created at trigger time. The trigger type must have a
-        ///     default constructor.
-        /// </typeparam>
         /// <param name="host"></param>
         /// <param name="type"></param>
-        /// <param name="task"></param>
         /// <param name="options">
         ///     Allows configuring task-specific features. Note that this is NOT invoked at invocation time
         ///     lazily, but at scheduling time (i.e. immediately).
-        /// </param>
-        /// <param name="configure">
-        ///     Allows setting parameters on the scheduled task. Note that this is NOT invoked at invocation
-        ///     time lazily, but at scheduling time (i.e. immediately).
         /// </param>
         /// <returns>
         ///     Whether the scheduled operation was successful; if `true`, it was either scheduled or ran successfully,
         ///     depending on configuration. If `false`, it either failed to schedule or failed during execution, depending on
         ///     configuration.
         /// </returns>
-        public static bool TryScheduleTask(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options = null)
+        public static Task<(bool, BackgroundTask)> TryScheduleTaskAsync(this BackgroundTaskHost host, Type type, Action<BackgroundTask> options = null)
         {
-            return host.QueueForExecution(type, out task, options);
+            return host.QueueForExecutionAsync(type, options);
         }
         
-        private static bool QueueForExecution(this BackgroundTaskHost host, Type type, out BackgroundTask task, Action<BackgroundTask> options)
+        private static async Task<(bool, BackgroundTask)> QueueForExecutionAsync(this BackgroundTaskHost host, Type type, Action<BackgroundTask> options)
         {
-            task = NewTask(host.Options, host.Serializer, type);
+            var task = NewTask(host.Options, host.Serializer, type);
 
             options?.Invoke(task); // <-- at this stage, task should have a RunAt set by the user or it will be default
 
@@ -80,11 +72,15 @@ namespace HQ.Extensions.Scheduling.Models
 
             if (!host.Options.DelayTasks)
             {
-                return host.AttemptTask(task, false);
+                return (await host.AttemptTaskAsync(task, false), task);
             }
 
-            host.Store?.SaveAsync(task);
-            return true;
+            if (host.Store != null)
+            {
+                await host.Store.SaveAsync(task);
+            }
+
+            return (true, task);
         }
 
         private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type)

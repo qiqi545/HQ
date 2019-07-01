@@ -405,6 +405,7 @@ namespace HQ.Extensions.Scheduling.Internal
             });
         }
 
+        // ReSharper disable once InconsistentNaming
         private BlockingCollection<T> GetProductionSource()
         {
             BlockingCollection<T> source;

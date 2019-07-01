@@ -16,19 +16,24 @@
 #endregion
 
 using System;
-using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling.Sqlite;
-using HQ.Test.Sdk.Data;
-using Microsoft.Extensions.DependencyInjection;
+using HQ.Extensions.Scheduling.Models;
+using Xunit;
 
-namespace HQ.Extensions.Scheduling.Tests.Sqlite
+namespace HQ.Extensions.Scheduling.Tests
 {
-    public class SchedulingSqliteFixture : SqliteFixture
-    {
-        public override void ConfigureServices(IServiceCollection services)
-        {
-            services.AddBackgroundTasks(o => { })
-                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive, o => { });
-        }
-    }
+	public class OccurrenceTests
+	{
+		[Fact]
+		public void Occurrence_is_in_UTC()
+		{
+			var task = new BackgroundTask();
+			task.RunAt = DateTimeOffset.UtcNow;
+
+			task.Expression = CronTemplates.Daily(1, 3, 30);
+			var next = task.NextOccurrence;
+			Assert.NotNull(next);
+			Assert.True(next.Value.Hour == 3);
+			Assert.Equal(next.Value.Hour, next.Value.UtcDateTime.Hour);
+		}
+	}
 }

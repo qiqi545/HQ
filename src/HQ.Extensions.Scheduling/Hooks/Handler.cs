@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Hooks
@@ -22,6 +23,6 @@ namespace HQ.Extensions.Scheduling.Hooks
     // ReSharper disable once InconsistentNaming
     public interface Handler : Method
     {
-        void Perform(ExecutionContext context);
+        Task PerformAsync(ExecutionContext context);
     }
 }

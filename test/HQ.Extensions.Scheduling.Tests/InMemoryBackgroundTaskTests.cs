@@ -15,20 +15,16 @@
 
 #endregion
 
-using System;
-using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling.Sqlite;
-using HQ.Test.Sdk.Data;
-using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
-namespace HQ.Extensions.Scheduling.Tests.Sqlite
+namespace HQ.Extensions.Scheduling.Tests
 {
-    public class SchedulingSqliteFixture : SqliteFixture
-    {
-        public override void ConfigureServices(IServiceCollection services)
+    public class InMemoryBackgroundTaskTests : BackgroundTaskStoreTests, IClassFixture<InMemoryBackgroundTaskFixture>
+	{
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public InMemoryBackgroundTaskTests(InMemoryBackgroundTaskFixture fixture) : base(CreateServiceProvider(fixture))
         {
-            services.AddBackgroundTasks(o => { })
-                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive, o => { });
+
         }
-    }
+	}
 }

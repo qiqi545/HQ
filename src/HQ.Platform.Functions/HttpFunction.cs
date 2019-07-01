@@ -18,6 +18,7 @@
 using System;
 using System.ComponentModel;
 using System.Net.Http;
+using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 
@@ -28,7 +29,7 @@ namespace HQ.Platform.Functions
     {
         private const string RequestUriKey = "RequestUri";
 
-        public void Before(ExecutionContext context)
+        public Task BeforeAsync(ExecutionContext context)
         {
             context.TryGetData(RequestUriKey, out string uriString);
             if (!Uri.TryCreate(uriString, UriKind.RelativeOrAbsolute, out var uri))
@@ -39,9 +40,10 @@ namespace HQ.Platform.Functions
             {
                 context.AddData(RequestUriKey, uri);
             }
+            return Task.CompletedTask;
         }
 
-        public void Perform(ExecutionContext context)
+        public async Task PerformAsync(ExecutionContext context)
         {
             context.TryGetData(RequestUriKey, out Uri requestUri);
 
@@ -50,8 +52,7 @@ namespace HQ.Platform.Functions
                 using (var client = new HttpClient(handler))
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-                    var response = client.SendAsync(request, context.CancellationToken).ConfigureAwait(false)
-                        .GetAwaiter().GetResult();
+                    var response = await client.SendAsync(request, context.CancellationToken);
 
                     if (response.IsSuccessStatusCode)
                     {
