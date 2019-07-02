@@ -12,7 +12,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj" />
-    <ProjectReference Include="..\HQ.Test.Sdk.Xunit\HQ.Test.Sdk.Xunit.csproj" />
     <ProjectReference Include="..\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 

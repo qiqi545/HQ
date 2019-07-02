@@ -27,7 +27,7 @@ namespace HQ.Test.Sdk.Xunit
         "HQ.Test.Sdk.Xunit"
 #endif
     )]
-    public class DataDrivenTest : TheoryAttribute
+    public class DataDrivenTestAttribute : TheoryAttribute
     {
         public string[] Environments { get; set; }
 
