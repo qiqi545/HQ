@@ -17,13 +17,14 @@
 
 using System;
 using HQ.Extensions.Scheduling.Models;
-using Xunit;
+using HQ.Test.Sdk;
+using HQ.Test.Sdk.Xunit;
 
 namespace HQ.Extensions.Scheduling.Tests
 {
-	public class OccurrenceTests
+	public class OccurrenceTests : UnitUnderTest
 	{
-		[Fact]
+		[Test]
 		public void Occurrence_is_in_UTC()
 		{
 			var task = new BackgroundTask();

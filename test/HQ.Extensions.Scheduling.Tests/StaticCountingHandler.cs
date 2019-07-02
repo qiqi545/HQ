@@ -15,18 +15,20 @@
 
 #endregion
 
+using System.Threading.Tasks;
+using HQ.Extensions.Scheduling.Hooks;
+using HQ.Extensions.Scheduling.Models;
+
 namespace HQ.Extensions.Scheduling.Tests
 {
-	public class StaticCountingHandler
+	public class StaticCountingHandler : Handler
 	{
 		public static int Count { get; set; }
-
-		public string SomeOption { get; set; }
-
-		public bool Perform()
-		{
-			Count++;
-			return true;
-		}
-	}
+        
+        public Task PerformAsync(ExecutionContext context)
+        {
+            Count++;
+            return Task.CompletedTask;
+        }
+    }
 }

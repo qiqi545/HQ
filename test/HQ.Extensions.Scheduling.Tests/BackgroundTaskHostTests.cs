@@ -22,15 +22,15 @@ using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
+using HQ.Test.Sdk;
 using HQ.Test.Sdk.Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-using Xunit;
 
 namespace HQ.Extensions.Scheduling.Tests
 {
-	public class ScheduledProducerTests
+	public class BackgroundTaskHostTests : UnitUnderTest
 	{
 		[Test]
 		public async Task Queues_for_delayed_execution()
@@ -41,17 +41,15 @@ namespace HQ.Extensions.Scheduling.Tests
                 o.Concurrency = 1;
                 o.SleepIntervalSeconds = 1;
             });
-            await host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o => { o.RunAt = DateTimeOffset.UtcNow + TimeSpan.FromMilliseconds(300); });
+            await host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o => { o.RunAt =
+                DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1); });
 
             host.Start(); // <-- starts background thread to poll for tasks
             
-            Assert.True(StaticCountingHandler.Count == 0,
-				"handler should not have queued immediately since tasks are delayed");
-			await Task.Delay(1000); // <-- should poll for tasks about 10 times
-			Assert.True(StaticCountingHandler.Count > 0,
-				"handler should have executed since we scheduled it in the future");
-			Assert.True(StaticCountingHandler.Count == 1,
-				"handler should have only executed once since it does not repeat");
+            Assert.True(StaticCountingHandler.Count == 0, "handler should not have queued immediately since tasks are delayed");
+			await Task.Delay(2000); // <-- enough time for the next occurrence
+            Assert.True(StaticCountingHandler.Count > 0, "handler should have executed since we scheduled it in the future");
+			Assert.True(StaticCountingHandler.Count == 1, "handler should have only executed once since it does not repeat");
 		}
 
         [Test]
@@ -63,18 +61,21 @@ namespace HQ.Extensions.Scheduling.Tests
                 o.Concurrency = 1;
                 o.SleepIntervalSeconds = 1;
             });
-            host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o => o.RepeatIndefinitely(CronTemplates.Minutely()));
+            host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o =>
+            {
+                o.RunAt = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1);
+                o.RepeatIndefinitely(CronTemplates.Secondly(1));
+            });
             host.Start(); // <-- starts background thread to poll for tasks
 
-            Assert.True(StaticCountingHandler.Count == 0,
-                "handler should not have queued immediately since tasks are delayed");
+            Assert.True(StaticCountingHandler.Count == 0, "handler should not have queued immediately since tasks are delayed");
             Thread.Sleep(TimeSpan.FromSeconds(2)); // <-- enough time for the next occurrence
-            Assert.True(StaticCountingHandler.Count > 0,
-                "handler should have executed since we scheduled it in the future");
+            Assert.True(StaticCountingHandler.Count > 0, "handler should have executed since we scheduled it in the future");
+            Thread.Sleep(TimeSpan.FromSeconds(2)); // <-- enough time for the next occurrence
             Assert.Equal(2, StaticCountingHandler.Count);
         }
 
-		[Fact]
+		[Test]
 		public void Queues_for_immediate_execution()
 		{
             var host = CreateBackgroundTaskHost(o => { o.DelayTasks = false; });
@@ -84,7 +85,7 @@ namespace HQ.Extensions.Scheduling.Tests
 				"handler should have queued immediately since tasks are not delayed");
 		}
 
-		[Fact]
+		[Test]
 		public void Starts_and_stops()
 		{
             var host = CreateBackgroundTaskHost(o => { });

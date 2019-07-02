@@ -16,6 +16,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
@@ -29,6 +30,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
+
 using Error = HQ.Data.Contracts.Error;
 
 namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
@@ -68,69 +70,79 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetBackgroundTasks()
+        public async Task<IActionResult> GetBackgroundTasks()
         {
-            return Ok(_store.GetAll());
+            return Ok(await _store.GetAllAsync());
         }
 
         [HttpGet, MustHaveQueryParameters("tags")]
-        public IActionResult GetBackgroundTasksByTag([FromQuery] string tags)
+        public async Task<IActionResult> GetBackgroundTasksByTag([FromQuery] string tags)
         {
-            return Ok(_store.GetByAnyTags(tags.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)));
+            return Ok(await _store.GetByAnyTagsAsync(tags.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)));
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetBackgroundTaskById(string id)
+        public async Task<IActionResult> GetBackgroundTaskById(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
                 return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
-            var task = _store.GetById(taskId);
+            var task = await _store.GetByIdAsync(taskId);
             if (task == null)
                 return NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
 
             return Ok(task);
         }
 
-        [HttpPost("every/{minutes?}")]
-        [MetaDescription("Creates a frequently repeating background task.")]
-        public IActionResult CreateFrequentBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int minutes = 0)
+        [HttpPost("secondly/{seconds?}")]
+        [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N second(s).")]
+        public async Task<IActionResult> CreateFrequentBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int seconds = 0)
         {
-            model.Expression = CronTemplates.Minutely(minutes);
+            model.Expression = CronTemplates.Secondly(seconds);
 
-            return CreateBackgroundTask(model);
+            return await CreateBackgroundTask(model);
         }
 
-        [HttpPost("daily/{atHour?}/{atMinute?}")]
+
+        [HttpPost("minutely/{minutes?}/{atSecond?}")]
+        [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N minute(s).")]
+        public async Task<IActionResult> CreateMinutelyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int minutes = 0, [FromRoute] int atSecond = 0)
+        {
+            model.Expression = CronTemplates.Minutely(minutes, atSecond);
+
+            return await CreateBackgroundTask(model);
+        }
+
+        [HttpPost("daily/{atHour?}/{atMinute?}/{atSecond?}")]
         [MetaDescription("Creates a daily repeating background task.")]
-        public IActionResult CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        public async Task<IActionResult> CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
         {
-            model.Expression = CronTemplates.Daily(atHour, atMinute);
+            model.Expression = CronTemplates.Daily(atHour, atMinute, atSecond);
 
-            return CreateBackgroundTask(model);
+            return await CreateBackgroundTask(model);
         }
 
-        [HttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}")]
+        [HttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}/{atSecond?}")]
         [MetaDescription("Creates a weekly repeating background task.")]
-        public IActionResult CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        public async Task<IActionResult> CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
         {
-            model.Expression = CronTemplates.WeekDaily(dayOfWeek, atHour, atMinute);
+            model.Expression = CronTemplates.Weekly(dayOfWeek, atHour, atMinute, atSecond);
 
-            return CreateBackgroundTask(model);
+            return await CreateBackgroundTask(model);
         }
 
-        [HttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}")]
+        [HttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}/{atSecond?}")]
         [MetaDescription("Creates a monthly repeating background task.")]
-        public IActionResult CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0)
+        public async Task<IActionResult> CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
         {
-            model.Expression = CronTemplates.Monthly(atDay, atHour, atMinute);
+            model.Expression = CronTemplates.Monthly(atDay, atHour, atMinute, atSecond);
 
-            return CreateBackgroundTask(model);
+            return await CreateBackgroundTask(model);
         }
 
         [HttpPost]
         [MetaDescription("Creates a background task.")]
-        public IActionResult CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
+        public async Task<IActionResult> CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
         {
             if (!Valid(model, out var error))
                 return error;
@@ -141,35 +153,37 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
                 if (type == null)
                     return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}", model.TaskType);
 
-                if (!_host.TryScheduleTaskAsync(type, out var task, t =>
+                var result = await _host.TryScheduleTaskAsync(type, t =>
                 {
                     if (model.Tags?.Length > 0)
                         t.Tags.AddRange(model.Tags);
 
                     if (!string.IsNullOrWhiteSpace(model.Expression))
                         t.Expression = model.Expression;
-                }))
+                });
+
+                if (!result.Item1)
                 {
                     return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
                 }
 
-                return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
+                return Accepted(new Uri($"{Request.Path}/{result.Item2.Id}", UriKind.Relative));
             }
 
             return NotImplemented();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteBackgroundTask(string id)
+        public async Task<IActionResult> DeleteBackgroundTask(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
                 return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
-            var task = _store.GetById(taskId);
+            var task = await _store.GetByIdAsync(taskId);
             if (task == null)
                 return NotFound();
 
-            _store.Delete(task);
+            await _store.DeleteAsync(task);
             return NoContent();
         }
     }
