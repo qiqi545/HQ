@@ -171,7 +171,8 @@ namespace HQ.Extensions.Scheduling.Models
 
         private CrontabSchedule TryParseCron()
         {
-            return string.IsNullOrWhiteSpace(Expression) ? null : CrontabSchedule.TryParse(Expression);
+            return string.IsNullOrWhiteSpace(Expression) ? null :
+                !CronTemplates.TryParse(Expression, out var schedule) ? null : schedule;
         }
     }
 }

@@ -18,7 +18,6 @@
 using System;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
-using HQ.Test.Sdk.Xunit;
 
 namespace HQ.Extensions.Scheduling.Tests
 {
@@ -27,11 +26,9 @@ namespace HQ.Extensions.Scheduling.Tests
 		[Test]
 		public void Occurrence_is_in_UTC()
 		{
-			var task = new BackgroundTask();
-			task.RunAt = DateTimeOffset.UtcNow;
+            var task = new BackgroundTask {RunAt = DateTimeOffset.UtcNow, Expression = CronTemplates.Daily(1, 3, 30)};
 
-			task.Expression = CronTemplates.Daily(1, 3, 30);
-			var next = task.NextOccurrence;
+            var next = task.NextOccurrence;
 			Assert.NotNull(next);
 			Assert.True(next.Value.Hour == 3);
 			Assert.Equal(next.Value.Hour, next.Value.UtcDateTime.Hour);
