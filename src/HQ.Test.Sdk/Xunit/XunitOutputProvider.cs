@@ -21,23 +21,23 @@ namespace HQ.Test.Sdk.Xunit
 {
     public sealed class XunitOutputProvider : IOutputProvider
     {
-        internal TestOutputHelper inner;
+        internal TestOutputHelper Inner;
 
         public XunitOutputProvider()
         {
-            inner = new TestOutputHelper();
+            Inner = new TestOutputHelper();
         }
 
-        public bool IsAvailable => inner != null;
+        public bool IsAvailable => Inner != null;
 
         public void WriteLine(string message)
         {
-            inner.WriteLine(message);
+            Inner.WriteLine(message);
         }
 
         public void WriteLine(string format, params object[] args)
         {
-            inner.WriteLine(format, args);
+            Inner.WriteLine(format, args);
         }
     }
 }

@@ -44,14 +44,14 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 
             Should.Assert = new XunitAssert();
 
-            var testOutputHelper = xunitOutputProvider.inner;
+            var testOutputHelper = xunitOutputProvider.Inner;
             testOutputHelper.Initialize(MessageBus, Test);
 
             var time = await InvokeTestMethodAsync(aggregator);
 
             var buffer = testOutputHelper.Output;
             testOutputHelper.Uninitialize();
-            xunitOutputProvider.inner = null;
+            xunitOutputProvider.Inner = null;
 
             return Tuple.Create(time, buffer);
         }

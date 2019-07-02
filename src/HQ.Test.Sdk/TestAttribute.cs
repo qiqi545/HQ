@@ -19,14 +19,14 @@ using System;
 using Xunit;
 using Xunit.Sdk;
 
-namespace HQ.Test.Sdk.Xunit
+namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
     [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TestCaseDiscoverer",
 #if PLATFORM
         "HQ.Platform"
 #else
-        "HQ.Test.Sdk.Xunit"
+        "HQ.Test.Sdk"
 #endif
     )]
     public class TestAttribute : FactAttribute

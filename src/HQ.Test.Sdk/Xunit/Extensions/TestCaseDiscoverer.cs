@@ -36,37 +36,7 @@ namespace HQ.Test.Sdk.Xunit.Extensions
         public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions,
             ITestMethod testMethod, IAttributeInfo factAttribute)
         {
-            var scopes = factAttribute.GetNamedArgument<string[]>("Environments");
-            if (scopes?.Length > 0)
-            {
-                var env = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name);
-                if (env != null && !scopes.Contains(env, StringComparer.OrdinalIgnoreCase))
-                {
-                    yield return new SkipTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
-                        discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod,
-                        $"This test does not apply in '{env}' environment, skipping.");
-                    yield break;
-                }
-            }
-
-            yield return new TestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
-                discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod);
-        }
-    }
-
-    public class TheoryDiscoverer : IXunitTestCaseDiscoverer
-    {
-        private readonly IMessageSink _diagnosticMessageSink;
-
-        public TheoryDiscoverer(IMessageSink diagnosticMessageSink)
-        {
-            _diagnosticMessageSink = diagnosticMessageSink;
-        }
-
-        public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions,
-            ITestMethod testMethod, IAttributeInfo factAttribute)
-        {
-            var scopes = factAttribute.GetNamedArgument<string[]>("Environments");
+            var scopes = factAttribute.GetNamedArgument<string[]>(nameof(DataDrivenTestAttribute.Environments));
             if (scopes?.Length > 0)
             {
                 var env = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name);
