@@ -18,7 +18,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Test.Sdk
+namespace HQ.Test.Sdk.Extensions
 {
     public static class ServiceUnderTestExtensions
     {

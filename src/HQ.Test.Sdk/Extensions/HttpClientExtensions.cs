@@ -23,7 +23,7 @@ using HQ.Common;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace HQ.Test.Sdk
+namespace HQ.Test.Sdk.Extensions
 {
     public static class HttpClientExtensions
     {

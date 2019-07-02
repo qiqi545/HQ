@@ -18,7 +18,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Test.Sdk
+namespace HQ.Test.Sdk.Extensions
 {
     public static class ServiceCollectionExtensions
     {
