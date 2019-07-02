@@ -17,7 +17,7 @@
 
 namespace HQ.Test.Sdk.Assertions
 {
-    public interface IShould<out T> where T : class
+    public interface IShould<out T>
     {
         T Value { get; }
     }

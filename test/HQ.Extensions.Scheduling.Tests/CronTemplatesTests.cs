@@ -18,7 +18,6 @@
 using System;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
-using HQ.Test.Sdk.Xunit;
 using NCrontab;
 using Xunit;
 

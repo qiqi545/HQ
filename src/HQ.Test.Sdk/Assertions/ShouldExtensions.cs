@@ -21,7 +21,7 @@ namespace HQ.Test.Sdk.Assertions
 {
     public static class ShouldExtensions
     {
-        public static IShould<T> Should<T>(this T value) where T : class
+        public static IShould<T> Should<T>(this T value)
         {
             return new {Value = value}.ActLike<IShould<T>>();
         }

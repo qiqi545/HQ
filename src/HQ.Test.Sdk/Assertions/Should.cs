@@ -25,6 +25,11 @@ namespace HQ.Test.Sdk.Assertions
     {
         public static IAssert Assert { get; set; }
 
+        public static void Be<T>(this IShould<T> @this, T other)
+        {
+            Assert.Equal(@this.Value, other);
+        }
+
         public static void BeOk(this IShould<HttpResponseMessage> response)
         {
             Assert.NotNull(response);
