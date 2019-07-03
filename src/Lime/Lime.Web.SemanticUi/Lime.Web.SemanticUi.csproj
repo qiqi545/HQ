@@ -8,6 +8,7 @@
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <LangVersion>7.3</LangVersion>
+    <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\Lime.Theming\Lime.Theming.csproj" />
     <ProjectReference Include="..\Lime.Web\Lime.Web.csproj" />
     <ProjectReference Include="..\Lime\Lime.csproj" />
   </ItemGroup>
