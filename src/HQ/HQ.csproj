@@ -167,7 +167,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Theming\Lime.Theming.csproj" />
     <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
     <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
     <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
