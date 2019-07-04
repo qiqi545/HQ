@@ -23,7 +23,6 @@ using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Data;
-using HQ.Test.Sdk.Xunit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Tests
