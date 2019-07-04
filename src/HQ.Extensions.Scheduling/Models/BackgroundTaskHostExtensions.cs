@@ -59,7 +59,7 @@ namespace HQ.Extensions.Scheduling.Models
             // Handle when no start time is provided up front
             if (task.RunAt == default)
             {
-                task.RunAt = host.GetCurrentTime();
+                task.RunAt = host.GetCurrentZonedTime();
 
                 if (task.NextOccurrence.HasValue)
                 {

@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
 using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
@@ -27,7 +28,7 @@ namespace HQ.Extensions.Caching
     {
         public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> cacheOptions, IOptions<MemoryCacheOptions> memoryCacheOptions) : base(cache, cacheOptions, memoryCacheOptions) { }
 
-        public InProcessCache(IOptions<CacheOptions> cacheOptions) : base(cacheOptions) { }
+        public InProcessCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
 
         #region Set
 

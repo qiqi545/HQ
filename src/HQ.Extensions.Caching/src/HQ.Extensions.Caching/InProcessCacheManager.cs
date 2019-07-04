@@ -19,6 +19,7 @@ using System;
 using System.Reflection;
 using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
+using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -37,14 +38,14 @@ namespace HQ.Extensions.Caching
             _memoryCacheOptions = memoryCacheOptions.Value;
         }
 
-        protected InProcessCacheManager(IOptions<CacheOptions> cacheOptions)
+        protected InProcessCacheManager(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps)
         {
             _memoryCacheOptions = new MemoryCacheOptions
             {
                 CompactionPercentage = 0.05,
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
                 SizeLimit = cacheOptions.Value.MaxSizeBytes,
-                Clock = new LocalServerTimestampService()
+                Clock = new ServerTimestampServiceSystemClock(timestamps)
             };
             Cache = new MemoryCache(_memoryCacheOptions);
             CacheOptions = cacheOptions;

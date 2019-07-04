@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,19 +11,23 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System;
-using Newtonsoft.Json;
+using HQ.Common;
+using Microsoft.Extensions.Internal;
 
-namespace HQ.Common
+namespace HQ.Extensions.Caching.Internal
 {
-    public class LocalServerTimestampService : IServerTimestampService
+    internal class ServerTimestampServiceSystemClock : ISystemClock
     {
-        public DateTimeZone GetCurrentZonedTime() => new DateTimeZone(GetCurrentTime(), TimeZoneInfo.Local);
-        public DateTimeOffset GetCurrentTime() => DateTimeOffset.Now;
-        public long GetCurrentTimestamp() => GetCurrentTime().Ticks;
-        public JsonSerializerSettings GetDateTimeSerializerSettings() => Bootstrap.CreateDefaultJsonSerializerSettings();
+        private readonly IServerTimestampService _timestamps;
+
+        public ServerTimestampServiceSystemClock(IServerTimestampService timestamps)
+        {
+            _timestamps = timestamps;
+        }
+
+        public DateTimeOffset UtcNow => _timestamps.GetCurrentTime().ToUniversalTime();
     }
 }

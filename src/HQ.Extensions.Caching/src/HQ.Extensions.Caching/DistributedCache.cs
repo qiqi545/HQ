@@ -21,7 +21,7 @@ namespace HQ.Extensions.Caching
         private readonly IOptions<CacheOptions> _options;
         private readonly ICacheSerializer _serializer;
 
-        public DistributedCache(IOptions<CacheOptions> options, ISystemClock clock)
+        public DistributedCache(IOptions<CacheOptions> options, ISystemClock clock, IServerTimestampService timestamps)
         {
             _serializer = new JsonCacheSerializer();
             _cache = new MemoryDistributedCache(SysOptions.Create(new MemoryDistributedCacheOptions
@@ -29,7 +29,7 @@ namespace HQ.Extensions.Caching
                 CompactionPercentage = 0.05,
                 ExpirationScanFrequency = TimeSpan.FromMinutes(1.0),
                 SizeLimit = null,
-                Clock = clock ?? new LocalServerTimestampService()
+                Clock = clock ?? new ServerTimestampServiceSystemClock(timestamps)
             }));
             _options = options;
         }

@@ -31,6 +31,7 @@ using HQ.Extensions.Scheduling.Internal;
 using ImpromptuInterface;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling.Models
@@ -593,11 +594,28 @@ namespace HQ.Extensions.Scheduling.Models
             _maintenance = null;
         }
 
+        #region Timestamp Passthrough
+
+        public DateTimeZone GetCurrentZonedTime()
+        {
+            return _timestamps.GetCurrentZonedTime();
+        }
+
         public DateTimeOffset GetCurrentTime()
         {
             return _timestamps.GetCurrentTime();
         }
 
-        public DateTimeOffset UtcNow => _timestamps.UtcNow;
+        public long GetCurrentTimestamp()
+        {
+            return _timestamps.GetCurrentTimestamp();
+        }
+
+        public JsonSerializerSettings GetDateTimeSerializerSettings()
+        {
+            return _timestamps.GetDateTimeSerializerSettings();
+        }
+
+        #endregion
     }
 }

@@ -43,24 +43,28 @@ namespace HQ.Common
         {
             JsonConvert.DefaultSettings = () =>
             {
-                var settings = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.None,
-                    
-                    ContractResolver = new ContractResolver(),
-                    Formatting = Formatting.Indented,
-                    NullValueHandling = NullValueHandling.Include,
-                    DefaultValueHandling = DefaultValueHandling.Include,
-
-                    DateTimeZoneHandling = DateTimeZoneHandling.Utc,
-                    DateParseHandling = DateParseHandling.DateTimeOffset,
-                    DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                    DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
-                };
-                settings.Converters.Add(new StringEnumConverter());
+                var settings = CreateDefaultJsonSerializerSettings();
 
                 return settings;
             };
+        }
+
+        public static JsonSerializerSettings CreateDefaultJsonSerializerSettings()
+        {
+            var settings = new JsonSerializerSettings
+            {
+                ContractResolver = new ContractResolver(),
+                TypeNameHandling = TypeNameHandling.None,
+                Formatting = Formatting.Indented,
+                NullValueHandling = NullValueHandling.Include,
+                DefaultValueHandling = DefaultValueHandling.Include,
+                DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+                DateParseHandling = DateParseHandling.DateTimeOffset,
+                DateFormatHandling = DateFormatHandling.IsoDateFormat,
+                DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
+            };
+            settings.Converters.Add(new StringEnumConverter());
+            return settings;
         }
 
         public class ContractResolver : DefaultContractResolver
