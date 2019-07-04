@@ -43,10 +43,15 @@ namespace HQ.Platform.Api
     {
         public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
         {
+            return services.AddPlatformApi(config.Bind);
+        }
+
+        public static IServiceCollection AddPlatformApi(this IServiceCollection services, Action<PlatformApiOptions> configureAction = null)
+        {
             Bootstrap.EnsureInitialized();
 
             services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
-            services.Configure<PlatformApiOptions>(config);
+            services.Configure(configureAction);
 
             services.AddForwardedHeaders();
             services.AddHttpCaching();
