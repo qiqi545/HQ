@@ -44,6 +44,8 @@ namespace PackagePrep
 
             var command = args[0];
 
+            ConsoleColor color = Console.ForegroundColor;
+
             if (command.Equals("tokenize", StringComparison.OrdinalIgnoreCase))
             {
                 var path = args[1];
@@ -54,10 +56,16 @@ namespace PackagePrep
                 Console.WriteLine("Namespace: " + rootNamespace);
 
                 foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     File.Delete(file);
+                    Console.WriteLine($"DEL {file}");
+                }
 
                 foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
                 {
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+
                     rootNamespace = rootNamespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                     var text = File.ReadAllText(file, Encoding.UTF8);
@@ -68,8 +76,11 @@ namespace PackagePrep
 
                     var code = sb.ToString();
                     File.WriteAllText(file + ".pp", code, Encoding.UTF8);
+                    Console.WriteLine($"SAV {file}.pp");
                 }
             }
+
+            Console.ForegroundColor = color;
 
             if (command.Equals("nuspec"))
             {
