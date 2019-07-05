@@ -50,5 +50,27 @@ namespace HQ.Common.Tests.Numerics
             Assert.Equal(wholePart, v.WholePart);
             Assert.Equal(fraction, v.Fraction);
         }
+
+        [Test]
+        public void BasicTests_Conversion()
+        {
+            FixedNumber @float = 123.123f;
+            Assert.Equal(123, @float.WholePart);
+            Assert.Equal(123, @float.Fraction);
+            Assert.Equal(6, @float.Precision);
+            Assert.Equal(3, @float.Scale);
+
+            FixedNumber @double = 123.123d;
+            Assert.Equal(123, @double.WholePart);
+            Assert.Equal(123, @double.Fraction);
+            Assert.Equal(6, @double.Precision);
+            Assert.Equal(3, @double.Scale);
+
+            FixedNumber @decimal = 123.123m;
+            Assert.Equal(123, @decimal.WholePart);
+            Assert.Equal(123, @decimal.Fraction);
+            Assert.Equal(6, @decimal.Precision);
+            Assert.Equal(3, @decimal.Scale);
+        }
     }
 }

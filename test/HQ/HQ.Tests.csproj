@@ -31,11 +31,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
+    <ProjectReference Include="..\..\src\HQ\HQ.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+
+    <!-- Test Framework -->
+    <Content Include="..\..\src\HQ.Test.Sdk.Data\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk.Data\obj\**\*" Link="Test.Sdk.Data\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\..\src\HQ.Test.Sdk\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
 
     <!-- Common -->
     <Content Include="..\HQ.Common.Tests\**\*.cs" Exclude="..\HQ.Common.Tests\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />

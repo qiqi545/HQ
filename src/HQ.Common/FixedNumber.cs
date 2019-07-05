@@ -23,8 +23,7 @@ namespace HQ.Common.Numerics
 {
     public struct FixedNumber : IComparable<FixedNumber>, IEquatable<FixedNumber>
     {
-        private BigInteger _value;
-        private int _scale;
+        private readonly BigInteger _value;
 
         public int WholePart
         {
@@ -44,38 +43,11 @@ namespace HQ.Common.Numerics
             }
         }
 
-        public int Precision
-        {
-            get => _value == 0 ? 1 : 1 + (int)Math.Log10(Math.Abs((long)_value));
-            set => Scale = value - _scale;
-        }
+        public int Precision => _value == 0 ? 1 : 1 + (int)Math.Log10(Math.Abs((long)_value));
 
         public int Scale
         {
-            get => _scale;
-            set
-            {
-                if (_scale == value)
-                {
-                    return;
-                }
-
-                BigInteger newValue;
-                if (_scale < value)
-                {
-                    var exponent = (byte) (value - _scale);
-                    newValue = _value * BigInteger.Pow(10, exponent);
-                }
-                else
-                {
-                    var exponent = (byte) (_scale - value);
-                    var divisor = BigInteger.Pow(10, exponent);
-                    newValue = BigInteger.DivRem(_value, divisor, out _);
-                }
-
-                _value = newValue;
-                _scale = value;
-            }
+            get;
         }
 
         public int Sign => _value.Sign;
@@ -83,19 +55,34 @@ namespace HQ.Common.Numerics
         public FixedNumber(int value, int scale = 0)
         {
             _value = value;
-            _scale = scale;
+            Scale = scale;
         }
 
         public FixedNumber(long value, int scale = 0)
         {
             _value = value;
-            _scale = scale;
+            Scale = scale;
         }
 
         private FixedNumber(BigInteger value, int scale)
         {
             _value = value;
-            _scale = scale;
+            Scale = scale;
+        }
+
+        public static implicit operator FixedNumber(float value)
+        {
+            return Parse(value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public static implicit operator FixedNumber(double value)
+        {
+            return Parse(value.ToString(CultureInfo.InvariantCulture));
+        }
+
+        public static implicit operator FixedNumber(decimal value)
+        {
+            return Parse(value.ToString(CultureInfo.InvariantCulture));
         }
 
         #region Operators
@@ -109,77 +96,77 @@ namespace HQ.Common.Numerics
         {
             var value = -x._value;
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator -(FixedNumber x, FixedNumber y)
         {
             var value = (int)(x._value - y._value);
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator -(FixedNumber x, int y)
         {
-            var value = x._value - new BigInteger(y * Math.Pow(10, x._scale));
+            var value = x._value - new BigInteger(y * Math.Pow(10, x.Scale));
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator +(FixedNumber x, FixedNumber y)
         {
             var value = x._value + y._value;
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator +(FixedNumber x, int y)
         {
-            var value = x._value + new BigInteger(y * Math.Pow(10, x._scale));
+            var value = x._value + new BigInteger(y * Math.Pow(10, x.Scale));
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator *(FixedNumber x, FixedNumber y)
         {
             var value = (int)(x._value * y._value);
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator *(FixedNumber x, int y)
         {
             var value = (int) (x._value * y);
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator *(int x, FixedNumber y)
         {
             var value = (int) (x * y._value);
 
-            return new FixedNumber(value, y._scale);
+            return new FixedNumber(value, y.Scale);
         }
 
         public static FixedNumber operator /(FixedNumber x, FixedNumber y)
         {
             var value = (int)(x._value / y._value);
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator >>(FixedNumber x, int shift)
         {
             var value = (int) x._value >> shift;
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         public static FixedNumber operator <<(FixedNumber x, int shift)
         {
             var value = (int)x._value << shift;
 
-            return new FixedNumber(value, x._scale);
+            return new FixedNumber(value, x.Scale);
         }
 
         #endregion
@@ -227,24 +214,24 @@ namespace HQ.Common.Numerics
         public int CompareTo(FixedNumber other)
         {
             var compare = _value.CompareTo(other._value);
-            return compare != 0 ? compare : _scale.CompareTo(other._scale);
+            return compare != 0 ? compare : Scale.CompareTo(other.Scale);
         }
 
         public bool Equals(FixedNumber other)
         {
-            return _value.Equals(other._value) && _scale.Equals(other._scale);
+            return _value.Equals(other._value) && Scale.Equals(other.Scale);
         }
 
         public override bool Equals(object obj)
         {
-            return obj is FixedNumber @fixed && @fixed._value == _value && @fixed._scale == _scale;
+            return obj is FixedNumber @fixed && @fixed._value == _value && @fixed.Scale == Scale;
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_value.GetHashCode() * 397) ^ _scale;
+                return (_value.GetHashCode() * 397) ^ Scale;
             }
         }
 
@@ -266,7 +253,7 @@ namespace HQ.Common.Numerics
                 var wholePart = (int) @decimal;
                 var trimmed = (@decimal % 1.0m).ToString(CultureInfo.InvariantCulture).TrimEnd('0');
                 var fractionalPart = trimmed.Substring(trimmed.IndexOf('.') + 1);
-                result = new FixedNumber(int.Parse($"{wholePart}{fractionalPart}"), fractionalPart.Length);
+                result = new FixedNumber(BigInteger.Parse($"{wholePart}{fractionalPart}"), fractionalPart.Length);
                 return true;
             }
 
