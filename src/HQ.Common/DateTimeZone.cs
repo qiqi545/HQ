@@ -31,6 +31,9 @@ namespace HQ.Common
         private readonly DateTimeOffset _instant;
         private readonly TimeZoneInfo _timeZone;
 
+        public static DateTimeZone Now => new DateTimeZone(DateTimeOffset.UtcNow, TimeZoneInfo.Local);
+        public static DateTimeZone UtcNow => new DateTimeZone(DateTimeOffset.UtcNow, TimeZoneInfo.Utc);
+
         public DateTimeOffset DateTimeOffset => TimeZoneInfo.ConvertTime(_instant, _timeZone);
         
         /// <summary> Creates a <see cref="DateTimeZone"/> instance based on the most prevalent time zone associated with the provided instant's time zone offset </summary>
@@ -172,6 +175,7 @@ namespace HQ.Common
         #region DateTimeOffset Passthrough
 
         public DateTime UtcDateTime => DateTimeOffset.UtcDateTime;
+        public TimeSpan Offset => DateTimeOffset.Offset;
 
         #endregion
     }

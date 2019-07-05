@@ -15,7 +15,6 @@
 
 using System;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Xunit;
 
 namespace HQ.Common.Tests
