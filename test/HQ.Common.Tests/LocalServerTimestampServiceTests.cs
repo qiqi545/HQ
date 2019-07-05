@@ -22,7 +22,7 @@ namespace HQ.Common.Tests
             {
                 var currentTimestamp = service.GetCurrentTimestamp();
                 var deserialized = new DateTimeOffset(new DateTime(currentTimestamp));
-                Assert.True(deserialized.Offset != TimeSpan.Zero);
+                Assert.True(TimeZoneInfo.Local.BaseUtcOffset == TimeSpan.Zero || deserialized.Offset != TimeSpan.Zero);
             }
 
             {
