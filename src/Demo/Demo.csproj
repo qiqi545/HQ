@@ -6,11 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="lime.json" />
+    <None Remove="ui.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="lime.json">
+    <Content Include="ui.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -20,9 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
-    <ProjectReference Include="..\Lime\Lime.Web\Lime.Web.csproj" />
-    <ProjectReference Include="..\Lime\Lime\Lime.csproj" />
+    <ProjectReference Include="..\HQ.UI.Web.SemanticUi\HQ.UI.Web.SemanticUi.csproj" />
   </ItemGroup>
 
 </Project>

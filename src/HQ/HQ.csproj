@@ -168,9 +168,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web.SemanticUi\Lime.Web.SemanticUi.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime.Web\Lime.Web.csproj" />
-    <ProjectReference Include="..\..\..\LimeUI\src\Lime\Lime\Lime.csproj" />
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>

@@ -1,14 +1,14 @@
 ﻿using System;
-using Lime;
-using Lime.Web;
-using Lime.Web.SemanticUi;
-
-using static Lime.Web.InlineElements;
+using HQ.UI;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
+	
+using static HQ.UI.Web.InlineElements;
 
 namespace Demo
 {
 	[DeployOn(DeployTarget.Client)]
-	[SemanticUi, Title("Lime UI Demo")]
+	[SemanticUi, Title("HQ UI Demo")]
 	internal class Program
     {
         private static void Main(string[] args) => UiServer.Start(args);
