@@ -197,8 +197,6 @@ namespace HQ.UI.Web
 
 		internal static void BeforeStart(IServiceProvider serviceProvider)
 		{
-			Masthead();
-
 			HandlersAreNotFinished();
 
 			AddImplicitHandlers(serviceProvider);
@@ -274,20 +272,7 @@ namespace HQ.UI.Web
 
 			Process.Start(startInfo);
 		}
-
-		private static void Masthead()
-		{
-			// Credit: http://patorjk.com/software/taag/
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine(@"Powered By:                              
- __    _           _____ _____ 
-|  |  |_|_____ ___|  |  |     |
-|  |__| |     | -_|  |  |-   -|
-|_____|_|_|_|_|___|_____|_____|          
-");
-			Console.ForegroundColor = ConsoleColor.Gray;
-		}
-
+		
 		#region Start Methods
 
 		public static void Start<TStartup>(string[] args, Action<LayoutRoot> layout)

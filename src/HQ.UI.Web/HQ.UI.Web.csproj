@@ -15,12 +15,12 @@
     <EmbeddedResource Include="ErrorStrings.resx">
       <LogicalName>ErrorStrings.resx</LogicalName>
     </EmbeddedResource>
+    <EmbeddedResource Include="lib\**\*" />
+    <EmbeddedResource Include="wasm\**\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="lib\**" />
     <Compile Remove="wasm\**" />
-    <None Remove="lib\**" />
     <None Remove="wasm\**" />
   </ItemGroup>
 
