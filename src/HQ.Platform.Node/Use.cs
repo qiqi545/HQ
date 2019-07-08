@@ -23,7 +23,7 @@ using HQ.Platform.Api;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using Lime.Web;
+using HQ.UI.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -43,7 +43,7 @@ namespace HQ.Platform.Node
                 c.RoutePrefix = "docs/swagger";
             });
 
-            app.UseLimeUi(root => { });
+            app.UseUi(root => { });
             app.UseSecurityPolicies();
             app.UseOperationsApi();
             app.UsePlatformApi();

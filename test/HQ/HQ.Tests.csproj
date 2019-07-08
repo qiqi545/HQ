@@ -40,6 +40,10 @@
     <!-- Common -->
     <Content Include="..\HQ.Common.Tests\**\*.cs" Exclude="..\HQ.Common.Tests\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     
+    <!-- Platform -->
+    <Content Include="..\HQ.Platform.Security.Tests\**\*.cs" Exclude="..\HQ.Platform.Security.Tests\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
+
+
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

@@ -18,9 +18,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Lime;
-using Lime.Web;
-using Lime.Web.SemanticUi;
+using HQ.UI;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
 using TypeKitchen;
 
 namespace HQ.Platform.Node.UI.Shared

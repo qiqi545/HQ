@@ -18,9 +18,9 @@
 using System;
 using HQ.Platform.Node.UI.Models;
 using HQ.Platform.Security.AspnetCore.Mvc.Models;
-using Lime;
-using Lime.Web;
-using Lime.Web.SemanticUi;
+using HQ.UI;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
 
 namespace HQ.Platform.Node.UI.Pages
 {

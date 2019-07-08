@@ -16,8 +16,8 @@
 #endregion
 
 using HQ.Platform.Node.UI.Shared;
-using Lime;
-using Lime.Web;
+using HQ.UI;
+using HQ.UI.Web;
 
 namespace HQ.Platform.Node.UI.Pages
 {

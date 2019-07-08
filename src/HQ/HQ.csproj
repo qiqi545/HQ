@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
@@ -89,6 +89,11 @@
     <Content Include="..\HQ.Data.Sql.Descriptor\**\*.cs" Exclude="..\HQ.Data.Sql.Descriptor\obj\**\*" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Sql.Batching\**\*.cs" Exclude="..\HQ.Data.Sql.Batching\obj\**\*" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
 
+    <!-- UI -->
+    <Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
+
   </ItemGroup>
 
   <!-- SQLite -->
@@ -98,7 +103,9 @@
     <Content Include="..\HQ.Platform.Identity.Stores.Sql.Sqlite\**\*.cs" Exclude="..\HQ.Platform.Identity.Stores.Sql.Sqlite\obj\**\*" Link="Platform.Identity.Stores.Sql.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="AngleSharp" Version="0.12.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.4" />
   </ItemGroup>
 

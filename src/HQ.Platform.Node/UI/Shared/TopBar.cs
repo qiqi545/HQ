@@ -15,9 +15,9 @@
 
 #endregion
 
-using Lime;
-using Lime.Web;
-using Lime.Web.SemanticUi;
+using HQ.UI;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;

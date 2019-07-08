@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Shared;
-using Lime;
+using HQ.UI;
 
 namespace HQ.Platform.Node.UI.Pages
 {

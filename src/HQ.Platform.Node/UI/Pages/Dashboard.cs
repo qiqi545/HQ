@@ -24,10 +24,10 @@ using HQ.Platform.Node.UI.Models;
 using HQ.Platform.Node.UI.Shared;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
-using Lime;
-using Lime.Theming;
-using Lime.Web;
-using Lime.Web.SemanticUi;
+using HQ.UI;
+using HQ.UI.Theming;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

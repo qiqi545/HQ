@@ -18,8 +18,8 @@
 using System.Reflection;
 using HQ.Common;
 using HQ.Platform.Node.UI.Pages;
-using Lime;
-using Lime.Web;
+using HQ.UI;
+using HQ.UI.Web;
 
 namespace HQ.Platform.Node.UI.Shared
 {

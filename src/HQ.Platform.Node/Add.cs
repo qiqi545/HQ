@@ -36,9 +36,9 @@ using HQ.Platform.Identity.Stores.Sql.SqlServer;
 using HQ.Platform.Node.UI.Pages;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using Lime;
-using Lime.Web;
-using Lime.Web.SemanticUi;
+using HQ.UI;
+using HQ.UI.Web;
+using HQ.UI.Web.SemanticUi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -155,7 +155,7 @@ namespace HQ.Platform.Node
                 };
             };
 
-            services.AddLimeUi(env, typeof(SemanticUi).Assembly);
+            services.AddUi(env, typeof(SemanticUi).Assembly);
 
             services.AddSwaggerGen(c =>
             {
