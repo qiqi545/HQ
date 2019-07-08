@@ -50,7 +50,14 @@ namespace HQ.Test.Sdk.Assertions
 			Assert.NotNull(response.Value, userMessage, userMessageArgs);
 			Assert.True(response.Value.Headers.Contains(header), userMessage, userMessageArgs);
 		}
-		
+
+        public static void NotHaveHeader(this IShould<HttpResponseMessage> response, string header, string userMessage = null, params object[] userMessageArgs)
+        {
+	        Assert.NotNull(response, userMessage, userMessageArgs);
+	        Assert.NotNull(response.Value, userMessage, userMessageArgs);
+	        Assert.False(response.Value.Headers.Contains(header), userMessage, userMessageArgs);
+        }
+
 		public static void HaveBody(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
         {
             Assert.NotNull(response, userMessage, userMessageArgs);

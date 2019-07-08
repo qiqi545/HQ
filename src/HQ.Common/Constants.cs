@@ -71,7 +71,9 @@ namespace HQ.Common
         {
             public static class Policies
             {
-                public const string SuperUserOnly = nameof(SuperUserOnly);
+	            public const string CorsPolicy = nameof(CorsPolicy);
+
+				public const string SuperUserOnly = nameof(SuperUserOnly);
                 public const string ManageTenants = nameof(ManageTenants);
                 public const string ManageApplications = nameof(ManageApplications);
                 public const string ManageUsers = nameof(ManageUsers);
@@ -135,10 +137,16 @@ namespace HQ.Common
             public const string TenantHeader = "X-Tenant";
             public const string TraceParent = "traceparent";
 
-            /// <summary>
-            ///     See: https://www.w3.org/TR/server-timing/
-            /// </summary>
-            public const string ServerTiming = "Server-Timing";
+            public const string Origin = "Origin";
+			public const string AccessControlRequestMethod = "Access-Control-Request-Method";
+			public const string AccessControlRequestHeaders = "Access-Control-Request-Headers";
+            public const string AccessControlAllowOrigin = "Access-Control-Allow-Origin";
+			public const string AccessControlAllowHeaders = "Access-Control-Allow-Headers";
+
+			/// <summary>
+			///     See: https://www.w3.org/TR/server-timing/
+			/// </summary>
+			public const string ServerTiming = "Server-Timing";
 
             /// <summary>
             ///     See: https://www.w3.org/TR/server-timing/

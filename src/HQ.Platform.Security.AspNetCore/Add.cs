@@ -26,6 +26,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,7 +58,7 @@ namespace HQ.Platform.Security.AspNetCore
 
                 services.AddCors(o =>
                 {
-                    o.AddDefaultPolicy(builder =>
+                    o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
                     {
                         builder
                             .WithOrigins(cors.Origins ?? new[] { "*" })
@@ -76,6 +77,11 @@ namespace HQ.Platform.Security.AspNetCore
                         if (cors.PreflightMaxAgeSeconds.HasValue)
                             builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
                     });
+                });
+
+                services.AddMvc(o =>
+                {
+	                o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
                 });
             }
             

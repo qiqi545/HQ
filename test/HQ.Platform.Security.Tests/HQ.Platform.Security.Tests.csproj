@@ -14,4 +14,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
+  </ItemGroup>
+
 </Project>

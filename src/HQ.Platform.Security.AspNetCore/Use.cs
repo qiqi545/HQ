@@ -13,6 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Common;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
@@ -27,7 +28,7 @@ namespace HQ.Platform.Security.AspNetCore
                 return app;
 
             if (options.Value.Cors.Enabled)
-	            app.UseCors();
+	            app.UseCors(Constants.Security.Policies.CorsPolicy);
 
             if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled)
                 app.UseAuthentication();

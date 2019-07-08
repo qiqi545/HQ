@@ -188,6 +188,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Scheduling.Do
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalTestAssembly", "..\..\TypeKitchen\test\ExternalTestAssembly\ExternalTestAssembly.csproj", "{AF971410-9156-492D-9A33-8453E85B5B7F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Security.Tests", "..\test\HQ.Platform.Security.Tests\HQ.Platform.Security.Tests.csproj", "{3D4A5347-FE1D-4C61-8935-67ECB18EB238}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -669,6 +671,12 @@ Global
 		{AF971410-9156-492D-9A33-8453E85B5B7F}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{AF971410-9156-492D-9A33-8453E85B5B7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF971410-9156-492D-9A33-8453E85B5B7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -753,6 +761,7 @@ Global
 		{4D6CE7B2-2871-4D43-B9B8-A609DC5ABF9E} = {46F131B6-30BF-47EF-81A9-82D8A35E0482}
 		{8F05D584-8756-4C8D-8C75-2B144CEE7497} = {46F131B6-30BF-47EF-81A9-82D8A35E0482}
 		{AF971410-9156-492D-9A33-8453E85B5B7F} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
+		{3D4A5347-FE1D-4C61-8935-67ECB18EB238} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
