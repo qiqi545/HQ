@@ -33,9 +33,9 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations
@@ -45,41 +45,47 @@ namespace HQ.Platform.Operations
         public static IServiceCollection AddOperationsApi(this IServiceCollection services,
             IHostingEnvironment environment, IConfiguration config)
         {
-            Bootstrap.EnsureInitialized();
-
-            if (!environment.IsDevelopment())
-            {
-                services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
-            }
-
-            services.AddValidOptions();
-            services.AddSaveOptions();
-            services.AddScoped<IMetaProvider, OperationsMetaProvider>();
-            services.Configure<OperationsApiOptions>(config);
-            services.AddSingleton(config);
-            services.TryAddSingleton(services);
-
-            services.AddMetrics(c =>
-            {
-                c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
-                    HealthStatus.Unhealthy, new[] {"ops", "startup"});
-
-                c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
-                    HealthStatus.Unhealthy, new[] {"ops", "startup"});
-
-                c.AddServerTimingReporter(o =>
-                {
-                    o.Enabled = true;
-                    o.Filter = "*";
-                    o.Rendering = ServerTimingRendering.Verbose;
-                    o.AllowedOrigins = "*";
-                });
-            });
-
-            return services;
+	        return AddOperationsApi(services, environment, config.Bind);
         }
 
-        public static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+        public static IServiceCollection AddOperationsApi(this IServiceCollection services,
+	        IHostingEnvironment environment, Action<OperationsApiOptions> configureAction = null)
+        {
+	        Bootstrap.EnsureInitialized();
+
+	        if (!environment.IsDevelopment())
+	        {
+		        services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
+	        }
+
+	        services.AddValidOptions();
+	        services.AddSaveOptions();
+	        services.AddScoped<IMetaProvider, OperationsMetaProvider>();
+
+			if(configureAction != null)
+				services.Configure(configureAction);
+
+	        services.AddMetrics(c =>
+	        {
+		        c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
+			        HealthStatus.Unhealthy, new[] { "ops", "startup" });
+
+		        c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
+			        HealthStatus.Unhealthy, new[] { "ops", "startup" });
+
+		        c.AddServerTimingReporter(o =>
+		        {
+			        o.Enabled = true;
+			        o.Filter = "*";
+			        o.Rendering = ServerTimingRendering.Verbose;
+			        o.AllowedOrigins = "*";
+		        });
+	        });
+
+	        return services;
+        }
+
+		public static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
         {
             return AddConfigurationApi(mvcBuilder, securityConfig.Bind, rootPath);
         }

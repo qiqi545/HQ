@@ -43,6 +43,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace HQ.Platform.Node
@@ -76,10 +77,12 @@ namespace HQ.Platform.Node
             var ops = hq.GetSection("Ops");
             var tasks = hq.GetSection("BackgroundTasks");
 
-            //
-            // Core Services:
-            services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
-            services.AddSingleton(configRoot);
+            services.TryAddSingleton(configRoot);
+            services.TryAddSingleton(services);
+
+			//
+			// Core Services:
+			services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
             services.AddSecurityPolicies(security, logger);
             services.AddOperationsApi(env, ops);
             services.AddPlatformApi(api);

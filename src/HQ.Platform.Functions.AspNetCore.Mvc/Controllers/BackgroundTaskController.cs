@@ -96,13 +96,12 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
 
         [HttpPost("secondly/{seconds?}")]
         [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N second(s).")]
-        public async Task<IActionResult> CreateFrequentBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int seconds = 0)
+        public async Task<IActionResult> CreateSecondlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int seconds = 0)
         {
             model.Expression = CronTemplates.Secondly(seconds);
 
             return await CreateBackgroundTask(model);
         }
-
 
         [HttpPost("minutely/{minutes?}/{atSecond?}")]
         [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N minute(s).")]
