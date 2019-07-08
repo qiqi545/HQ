@@ -40,9 +40,7 @@ namespace HQ.Platform.Api
         public static IApplicationBuilder UsePlatformApi(this IApplicationBuilder app, bool snapshot = true)
         {
             app.UseForwardedHeaders();
-            app.UseCors();
             app.UseResponseCompression();
-
             app.UseCanonicalRoutes(snapshot);
             app.UseMethodOverrides(snapshot);
             app.UseResourceRewriting(snapshot);
