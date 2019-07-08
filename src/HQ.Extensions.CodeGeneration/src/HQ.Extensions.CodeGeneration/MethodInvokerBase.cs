@@ -29,6 +29,9 @@ namespace HQ.Extensions.CodeGeneration
                 return null;
 
             var method = MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
+            if (method == null)
+	            return null;
+
             var parameters = MethodFactory.Default.GetOrCacheParametersForMethod(method);
 
             var args = new object[parameters.Length];
