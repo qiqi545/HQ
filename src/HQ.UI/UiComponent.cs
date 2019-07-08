@@ -17,7 +17,6 @@
 
 using System;
 using System.Reflection;
-using HQ.UI.Internal;
 
 namespace HQ.UI
 {
@@ -34,7 +33,7 @@ namespace HQ.UI
 				var modelType = componentType.BaseType.GetGenericArguments()[0];
 				var getMethod = new Func<MethodInfo>(() =>
 					componentType.GetMethod(nameof(Render), new[] {typeof(Ui), modelType}));
-				TypeExtensions.ExecuteMethodFunction(this, $"{componentType.Name}_{nameof(Render)}_{modelType.Name}",
+				Internal.TypeExtensions.ExecuteMethodFunction(this, $"{componentType.Name}_{nameof(Render)}_{modelType.Name}",
 					getMethod, ui, model);
 			}
 			else
