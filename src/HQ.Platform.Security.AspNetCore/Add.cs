@@ -36,11 +36,11 @@ namespace HQ.Platform.Security.AspNetCore
     {
         public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
         {
-            return AddSecurityPolicies(services, logger, config.Bind);
+            return AddSecurityPolicies(services, config.Bind, logger);
         }
 
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, ISafeLogger logger = null, 
-            Action<SecurityOptions> configureSecurityAction = null)
+        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
+	        Action<SecurityOptions> configureSecurityAction = null, ISafeLogger logger = null)
         {
             Bootstrap.EnsureInitialized();
             Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));

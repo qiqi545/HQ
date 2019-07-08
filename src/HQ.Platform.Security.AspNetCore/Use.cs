@@ -26,15 +26,20 @@ namespace HQ.Platform.Security.AspNetCore
             if (!(app.ApplicationServices.GetService(typeof(IOptions<SecurityOptions>)) is IOptions<SecurityOptions> options))
                 return app;
 
-            if (options.Value.Tokens.Enabled)
+            if (options.Value.Cors.Enabled)
+	            app.UseCors();
+
+            if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled)
                 app.UseAuthentication();
 
-            if (!options.Value.Https.Enabled)
-                return app;
+            if (options.Value.Https.Enabled)
+            {
+	            app.UseHttpsRedirection();
 
-            app.UseHttpsRedirection();
+	            return !options.Value.Https.Hsts.Enabled ? app : app.UseHsts();
+            }
 
-            return !options.Value.Https.Hsts.Enabled ? app : app.UseHsts();
+            return app;
         }
     }
 }
