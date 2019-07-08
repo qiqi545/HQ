@@ -21,7 +21,7 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Configuration
 {
-    public class BackgroundTaskOptions : FeatureToggle
+    public class BackgroundTaskOptions : FeatureToggle, IProtectedFeature
     {
         public BackgroundTaskOptions()
         {
@@ -105,8 +105,10 @@ namespace HQ.Extensions.Scheduling.Configuration
         ///     highest priority
         /// </summary>
         public int Priority { get; set; }
-        
-        public StoreOptions Store { get; set; }
+
+        public string Policy { get; set; } = Constants.Security.Policies.ManageBackgroundTasks;
+
+		public StoreOptions Store { get; set; }
 
         /// <summary> Set task values that have defaults if not provided by the user. </summary>
         public void ProvisionTask(BackgroundTask task)

@@ -17,7 +17,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -26,7 +25,7 @@ using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Platform.Functions.AspNetCore.Mvc.Models;
-using Microsoft.AspNetCore.Authorization;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
@@ -39,9 +38,9 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
     [MetaDescription("Manages background tasks.")]
     [DisplayName("Background Tasks")]
     [Route("tasks")]
-    [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageBackgroundTasks)]
+	[DynamicController]
+    [DynamicAuthorize(typeof(BackgroundTaskOptions))]
     public class BackgroundTaskController : DataController
     {
         private readonly BackgroundTaskHost _host;

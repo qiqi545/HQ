@@ -73,6 +73,7 @@ namespace HQ.Common
             {
 	            public const string CorsPolicy = nameof(CorsPolicy);
 
+				public const string NoPolicy = nameof(NoPolicy);
 				public const string SuperUserOnly = nameof(SuperUserOnly);
                 public const string ManageTenants = nameof(ManageTenants);
                 public const string ManageApplications = nameof(ManageApplications);

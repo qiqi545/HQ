@@ -16,10 +16,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;

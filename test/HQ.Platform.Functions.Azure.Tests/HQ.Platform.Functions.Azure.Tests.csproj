@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Platform.Functions.AspNetCore.Mvc\HQ.Platform.Functions.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\..\src\HQ.Platform.Functions.Azure\HQ.Platform.Functions.Azure.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>

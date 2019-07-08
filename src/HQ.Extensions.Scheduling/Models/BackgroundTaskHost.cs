@@ -581,10 +581,10 @@ namespace HQ.Extensions.Scheduling.Models
                 _cancel = null;
             }
 
-            _factories.Clear();
-            _schedulers.Clear();
+            _factories?.Clear();
+            _schedulers?.Clear();
 
-            _scheduler.Dispose();
+            _scheduler?.Dispose();
             _scheduler = null;
 
             _background?.Dispose();

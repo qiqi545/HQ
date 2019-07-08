@@ -31,14 +31,7 @@ namespace HQ.Test.Sdk
 
         public IAssert Assert => Should.Assert;
 
-        protected ServiceUnderTest() : this(null)
-        {
-            InitializeServiceProvider();
-
-            TryInstallLogging();
-
-            TryInstallTracing();
-        }
+        protected ServiceUnderTest() : this(null) { }
 
         protected ServiceUnderTest(IServiceProvider serviceProvider)
         {

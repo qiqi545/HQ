@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -27,6 +28,7 @@ using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -35,19 +37,28 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvc, IConfiguration apiConfig, IConfiguration securityConfig)
+        public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder, IConfiguration apiConfig, IConfiguration securityConfig)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            var services = mvc.Services;
+            var services = mvcBuilder.Services;
 
             var options = new SecurityOptions();
             securityConfig.Bind(options);
 
-            services.AddAuthorization(x =>
+            // See: https://github.com/aspnet/Mvc/issues/5992
+            mvcBuilder.AddApplicationPart(typeof(IdentityApplication).Assembly);
+            services.AddOptions<MvcOptions>()
+	            .Configure<IEnumerable<IDynamicComponent>>((o, x) =>
+	            {
+		            if (o.Conventions.FirstOrDefault(c => c.GetType() == typeof(DynamicComponentConvention)) == null)
+			            o.Conventions.Add(new DynamicComponentConvention(x));
+	            });
+
+			services.AddAuthorization(x =>
             {
                 x.AddPolicy(Constants.Security.Policies.ManageUsers,
                     b =>
@@ -81,7 +92,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 
             services.Configure<IdentityApiOptions>(apiConfig);
            
-            mvc.AddControllers<TUser, TRole, TTenant, TApplication, TKey>();
+            mvcBuilder.AddControllers<TUser, TRole, TTenant, TApplication, TKey>();
 
             services.AddSingleton<IDynamicComponent>(r =>
             {
@@ -95,7 +106,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 return new TokensComponent {Namespace = () => o.Value.Tokens?.Path ?? string.Empty};
             });
 
-            return mvc;
+            return mvcBuilder;
         }
 
         private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvc)

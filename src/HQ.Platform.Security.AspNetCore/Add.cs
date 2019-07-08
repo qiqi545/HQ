@@ -26,14 +26,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Security.AspNetCore
 {
-    public static class Add
+	public static class Add
     {
         public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
         {
@@ -51,7 +53,10 @@ namespace HQ.Platform.Security.AspNetCore
             services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
             services.ConfigureOptions<ConfigureWebServer>();
 
-            var cors = options.Cors;
+			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
+            services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
+			
+			var cors = options.Cors;
             if (cors.Enabled)
             {
                 logger?.Trace(()=> "CORS enabled.");
@@ -91,8 +96,8 @@ namespace HQ.Platform.Security.AspNetCore
 
                 services.AddAuthentication(options);
             }
-
-            if (options.Tokens.Enabled)
+			
+			if (options.Tokens.Enabled)
             {
 				services.AddAuthorization(x =>
 				{

@@ -18,7 +18,6 @@
 using System;
 using System.Reflection;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.DocumentDb;
 using HQ.Data.Sql.Sqlite.Configuration;
@@ -90,7 +89,7 @@ namespace HQ.Platform.Node
                 .AddIdentityTenantContextStore<IdentityTenant>()
                 .AddIdentityApplicationContextStore<IdentityApplication>();
             services.AddVersioning(versioning);
-            services.AddDynamicMvc(setupAction, typeof(IdentityApplication).Assembly)
+            services.AddMvc(setupAction)
                 .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
                 .AddBackgroundTasksApi(security, tasks)
                 .AddConfigurationApi(security)

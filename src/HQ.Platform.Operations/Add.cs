@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -31,6 +32,7 @@ using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -97,7 +99,16 @@ namespace HQ.Platform.Operations
             if (configureSecurity != null)
                 services.Configure(configureSecurity);
 
-            services.AddAuthorization(x =>
+            // See: https://github.com/aspnet/Mvc/issues/5992
+            mvcBuilder.AddApplicationPart(typeof(ConfigurationController).Assembly);
+            services.AddOptions<MvcOptions>()
+	            .Configure<IEnumerable<IDynamicComponent>>((o, x) =>
+	            {
+		            if (o.Conventions.FirstOrDefault(c => c.GetType() == typeof(DynamicComponentConvention)) == null)
+			            o.Conventions.Add(new DynamicComponentConvention(x));
+	            });
+
+			services.AddAuthorization(x =>
             {
                 var securityOptions = new SecurityOptions();
                 configureSecurity?.Invoke(securityOptions);

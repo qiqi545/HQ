@@ -13,28 +13,10 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System.Net.Http;
-using System.Threading.Tasks;
-using HQ.Test.Sdk;
-
-namespace HQ.Platform.Functions.Azure.Tests
+namespace HQ.Common
 {
-    public class HelloWorldAsSystemTests : SystemUnderTest<Startup>
-    {
-        private readonly HttpClient _client;
-
-        public HelloWorldAsSystemTests() : base(SystemTopology.Functions)
-        {
-            _client = CreateClient();
-        }
-
-        [Test]
-        public async Task With_query_string_and_body()
-        {
-            var response = await _client.GetAsync("/HelloWorld?name=HQ");
-            response.EnsureSuccessStatusCode();
-            var body = await response.Content.ReadAsStringAsync();
-            Assert.Equal("Hello, HQ", body);
-        }
-    }
+	public interface IProtectedFeature
+	{
+		string Policy { get; }
+	}
 }
