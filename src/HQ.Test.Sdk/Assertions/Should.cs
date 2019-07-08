@@ -30,34 +30,41 @@ namespace HQ.Test.Sdk.Assertions
             Assert.Equal(@this.Value, other);
         }
 
-        public static void BeOk(this IShould<HttpResponseMessage> response)
+        public static void BeOk(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
         {
-            Assert.NotNull(response);
-            Assert.NotNull(response.Value);
-            Assert.True(response.Value.IsSuccessStatusCode);
+            Assert.NotNull(response, userMessage, userMessageArgs);
+            Assert.NotNull(response.Value, userMessage, userMessageArgs);
+            Assert.True(response.Value.IsSuccessStatusCode, userMessage, userMessageArgs);
         }
 
-        public static void HaveStatus(this IShould<HttpResponseMessage> response, HttpStatusCode statusCode)
-        {
-            Assert.NotNull(response);
-            Assert.NotNull(response.Value);
-            Assert.True(response.Value.StatusCode == statusCode);
-        }
+        public static void HaveStatus(this IShould<HttpResponseMessage> response, HttpStatusCode statusCode, string userMessage = null, params object[] userMessageArgs)
+		{
+            Assert.NotNull(response, userMessage, userMessageArgs);
+			Assert.NotNull(response.Value, userMessage, userMessageArgs);
+			Assert.True(response.Value.StatusCode == statusCode, userMessage, userMessageArgs);
+		}
 
-        public static void HaveBody(this IShould<HttpResponseMessage> response)
+        public static void HaveHeader(this IShould<HttpResponseMessage> response, string header, string userMessage = null, params object[] userMessageArgs)
+		{
+	        Assert.NotNull(response, userMessage, userMessageArgs);
+			Assert.NotNull(response.Value, userMessage, userMessageArgs);
+			Assert.True(response.Value.Headers.Contains(header), userMessage, userMessageArgs);
+		}
+		
+		public static void HaveBody(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
         {
-            Assert.NotNull(response);
-            Assert.NotNull(response.Value);
-            Assert.True(response.Value.Content != null);
-        }
+            Assert.NotNull(response, userMessage, userMessageArgs);
+			Assert.NotNull(response.Value, userMessage, userMessageArgs);
+			Assert.True(response.Value.Content != null, userMessage, userMessageArgs);
+		}
 
-        public static void HaveBodyOfType<T>(this IShould<HttpResponseMessage> response)
-        {
-            Assert.NotNull(response);
-            Assert.NotNull(response.Value);
-            Assert.NotNull(response.Value.Content);
+        public static void HaveBodyOfType<T>(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
+		{
+            Assert.NotNull(response, userMessage, userMessageArgs);
+			Assert.NotNull(response.Value, userMessage, userMessageArgs);
+			Assert.NotNull(response.Value.Content, userMessage, userMessageArgs);
 
-            var json = response.Value.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
+			var json = response.Value.Content.ReadAsStringAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             Assert.NotEmpty(json);
 
             var body = JsonConvert.DeserializeObject<T>(json);

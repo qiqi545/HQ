@@ -23,9 +23,16 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Test.Sdk
 {
+	public class NoStartup { }
+
+	public abstract class SystemUnderTest : SystemUnderTest<NoStartup>
+	{
+
+	}
+
     public abstract class SystemUnderTest<T> : ServiceUnderTest, ILogger<T> where T : class
     {
-        private readonly SystemHostFixture<T> _systemUnderTest;
+		private readonly SystemHostFixture<T> _systemUnderTest;
         
         protected SystemUnderTest(SystemTopology topology = SystemTopology.Web)
         {
