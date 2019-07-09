@@ -189,7 +189,6 @@ namespace HQ.Data.Contracts.Versioning
         #region NotSupported
 
         /// <inheritdoc />
-        [Obsolete("Equals() on Span will always throw an exception. Use == instead.")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override bool Equals(object obj)
         {
@@ -197,7 +196,6 @@ namespace HQ.Data.Contracts.Versioning
         }
 
         /// <returns></returns>
-        [Obsolete("GetHashCode() on Span will always throw an exception.")]
         [EditorBrowsable(EditorBrowsableState.Never)]
         public override int GetHashCode()
         {
