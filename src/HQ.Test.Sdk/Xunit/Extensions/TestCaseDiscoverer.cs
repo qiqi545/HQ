@@ -36,8 +36,8 @@ namespace HQ.Test.Sdk.Xunit.Extensions
         public IEnumerable<IXunitTestCase> Discover(ITestFrameworkDiscoveryOptions discoveryOptions,
             ITestMethod testMethod, IAttributeInfo factAttribute)
         {
-            var scopes = factAttribute.GetNamedArgument<string[]>(nameof(DataDrivenTestAttribute.Environments));
-            if (scopes?.Length > 0)
+	        var scopes = ResolveScopes(testMethod, factAttribute);
+	        if (scopes?.Count > 0)
             {
                 var env = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name);
                 if (env != null && !scopes.Contains(env, StringComparer.OrdinalIgnoreCase))
@@ -51,6 +51,20 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 
             yield return new TestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
                 discoveryOptions.MethodDisplayOptionsOrDefault(), testMethod);
+        }
+
+        private static List<string> ResolveScopes(ITestMethod testMethod, IAttributeInfo factAttribute)
+        {
+	        var scopes = new List<string>();
+
+	        foreach (var attribute in testMethod.TestClass.Class.GetCustomAttributes(typeof(TestEnvironmentAttribute)))
+	        {
+		        scopes.AddRange(attribute.GetNamedArgument<string[]>(nameof(TestAttribute.Environments)));
+	        }
+
+	        scopes.AddRange(factAttribute.GetNamedArgument<string[]>(nameof(TestAttribute.Environments)));
+
+	        return scopes;
         }
     }
 }

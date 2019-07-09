@@ -22,7 +22,7 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 {
     public class SkippedDataRowTestCase :TestCase
     {
-        private string skipReason;
+        private string _skipReason;
 
         /// <summary />
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -68,27 +68,27 @@ namespace HQ.Test.Sdk.Xunit.Extensions
             object[] testMethodArguments = null)
             : base(diagnosticMessageSink, defaultMethodDisplay, defaultMethodDisplayOptions, testMethod, testMethodArguments)
         {
-            this.skipReason = skipReason;
+            _skipReason = skipReason;
         }
 
         /// <inheritdoc />
         public override void Deserialize(IXunitSerializationInfo data)
         {
             base.Deserialize(data);
-            this.skipReason = data.GetValue<string>("SkipReason");
+            _skipReason = data.GetValue<string>("SkipReason");
         }
 
         /// <inheritdoc />
         protected override string GetSkipReason(IAttributeInfo factAttribute)
         {
-            return this.skipReason;
+            return _skipReason;
         }
 
         /// <inheritdoc />
         public override void Serialize(IXunitSerializationInfo data)
         {
             base.Serialize(data);
-            data.AddValue("SkipReason", (object)this.skipReason, (Type)null);
+            data.AddValue("SkipReason", _skipReason);
         }
     }
 }
