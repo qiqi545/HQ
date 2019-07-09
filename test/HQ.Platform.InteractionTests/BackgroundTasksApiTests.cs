@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Functions.Azure.Tests
+namespace HQ.Platform.InteractionTests
 {
 	public class BackgroundTasksApiTests : SystemUnderTest
 	{

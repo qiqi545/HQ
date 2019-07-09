@@ -7,7 +7,7 @@ using HQ.Test.Sdk.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Security.Tests
+namespace HQ.Platform.InteractionTests
 {
 	public class CorsTests : SystemUnderTest
 	{

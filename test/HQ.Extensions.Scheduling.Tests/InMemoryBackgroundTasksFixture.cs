@@ -15,16 +15,35 @@
 
 #endregion
 
-using Xunit;
+using System;
+using HQ.Extensions.Scheduling.Models;
+using HQ.Test.Sdk;
+using HQ.Test.Sdk.Data;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Tests
 {
-    public class InMemoryBackgroundTaskTests : BackgroundTaskStoreTests, IClassFixture<InMemoryBackgroundTasksFixture>
-	{
-        // ReSharper disable once SuggestBaseTypeForParameter
-        public InMemoryBackgroundTaskTests(InMemoryBackgroundTasksFixture fixture) : base(CreateServiceProvider(fixture))
-        {
+    public class InMemoryBackgroundTasksFixture : IServiceFixture, ISupportIsolation
+    {
+        public void Dispose() { }
 
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddBackgroundTasks();
         }
-	}
+
+        public IServiceProvider ServiceProvider { get; set; }
+
+        public void StartIsolation()
+        {
+			if (ServiceProvider.GetRequiredService<IBackgroundTaskStore>() is InMemoryBackgroundTaskStore memory)
+				memory.Clear();
+		}
+
+        public void EndIsolation()
+        {
+			if (ServiceProvider.GetRequiredService<IBackgroundTaskStore>() is InMemoryBackgroundTaskStore memory)
+				memory.Clear();
+		}
+    }
 }

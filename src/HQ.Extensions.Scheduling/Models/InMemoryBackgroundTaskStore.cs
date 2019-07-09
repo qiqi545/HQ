@@ -129,5 +129,10 @@ namespace HQ.Extensions.Scheduling.Models
 
             return Task.FromResult(all);
         }
+
+        public void Clear()
+        {
+	        _tasks.Clear();
+        }
     }
 }
