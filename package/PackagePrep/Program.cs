@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -55,16 +56,31 @@ namespace PackagePrep
                 Console.WriteLine("Path: " + path);
                 Console.WriteLine("Namespace: " + rootNamespace);
 
-                foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                var lastWriteTimeUtc = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories)
+	                .ToDictionary(k => $"{k}.pp", v => new FileInfo(v).LastWriteTimeUtc);
+                
+				foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
+				{
+					var info = new FileInfo(file);
+					if (info.LastWriteTimeUtc > lastWriteTimeUtc[file])
+					{
+						// Console.ForegroundColor = ConsoleColor.DarkGray;
+						// Console.WriteLine($"SKIP {file}");
+						continue;
+					}
+
+					Console.ForegroundColor = ConsoleColor.DarkRed;
                     File.Delete(file);
                     Console.WriteLine($"DEL {file}");
                 }
 
                 foreach (var file in Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+					var targetFileName = file + ".pp";
+					if (File.Exists(targetFileName))
+						continue;
+
+					Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                     rootNamespace = rootNamespace.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
@@ -75,7 +91,7 @@ namespace PackagePrep
                     sb.AppendLine(text);
 
                     var code = sb.ToString();
-                    File.WriteAllText(file + ".pp", code, Encoding.UTF8);
+                    File.WriteAllText(targetFileName, code, Encoding.UTF8);
                     Console.WriteLine($"SAV {file}.pp");
                 }
             }
