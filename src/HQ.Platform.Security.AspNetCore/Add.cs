@@ -50,11 +50,12 @@ namespace HQ.Platform.Security.AspNetCore
 
             var options = new SecurityOptions(true);
             configureSecurityAction?.Invoke(options);
-            services.Configure<SecurityOptions>(o => { configureSecurityAction?.Invoke(o); });
+
+            services.Configure(configureSecurityAction);
             services.ConfigureOptions<ConfigureWebServer>();
 
-			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
-            services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
+            services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
+			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
 			
 			var cors = options.Cors;
             if (cors.Enabled)

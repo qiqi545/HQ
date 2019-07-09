@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using HQ.Platform.Api.Conventions;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Operations.Controllers;
 
 namespace HQ.Platform.Operations.Models

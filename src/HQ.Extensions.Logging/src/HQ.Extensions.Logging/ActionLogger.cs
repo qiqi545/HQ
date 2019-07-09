@@ -34,7 +34,7 @@ namespace HQ.Extensions.Logging
             Func<object[], string> formatter = null)
         {
             _writeLine = writeLine;
-            _formatter = DefaultFormatter;
+            _formatter = formatter ?? DefaultFormatter;
             _categoryName = categoryName;
         }
 

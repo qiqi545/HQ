@@ -1,6 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Extensions.Scheduling.Models;
 using HQ.Platform.Functions.AspNetCore.Mvc;
+using HQ.Platform.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.Configuration;
 using HQ.Test.Sdk;
@@ -15,19 +17,15 @@ namespace HQ.Platform.Functions.Azure.Tests
 	{
 		public override void ConfigureServices(IServiceCollection services)
 		{
-			void ConfigureSecurityAction(SecurityOptions o)
-			{
-				o.Cors.Enabled = false;
-				o.Https.Enabled = false;
-				o.Tokens.Enabled = false;
-				o.Cookies.Enabled = false;
-			}
-
-			services.AddSecurityPolicies(ConfigureSecurityAction);
-
 			services.AddMvc()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-				.AddBackgroundTasksApi(ConfigureSecurityAction, o =>
+				.AddBackgroundTasksApi(o =>
+				{
+					o.Cors.Enabled = false;
+					o.Https.Enabled = false;
+					o.Tokens.Enabled = false;
+					o.Cookies.Enabled = false;
+				}, o =>
 				{
 					o.Policy = null;
 				});
@@ -41,13 +39,21 @@ namespace HQ.Platform.Functions.Azure.Tests
 		}
 
 		[Test]
-		public async Task Get_all_background_tasks()
+		public async Task Options_discovers_available_tasks()
 		{
-			using (var client = CreateClient())
+			await Act<BackgroundTaskOptionsView>("/ops/tasks", view =>
 			{
-                var response = await client.GetAsync("/ops/tasks");
-                response.Should().BeOk();
-			}
+				Assert.NotEmpty(view.TaskTypes);
+			});
+		}
+
+		[Test]
+		public async Task Get_no_background_tasks_when_none_added()
+		{
+			await Act<IEnumerable<BackgroundTask>>("/ops/tasks", tasks =>
+			{
+				Assert.Empty(tasks);
+			});
 		}
 	}
 }

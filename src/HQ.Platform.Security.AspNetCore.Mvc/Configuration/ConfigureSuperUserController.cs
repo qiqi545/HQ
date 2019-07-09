@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Platform.Api.Conventions;
+using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

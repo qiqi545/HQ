@@ -19,7 +19,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Xml;
 using HQ.Common;
-using HQ.Platform.Api.Conventions;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using Microsoft.AspNetCore.Mvc;

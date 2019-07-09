@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Platform.Api.Conventions;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Security.AspnetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Configuration

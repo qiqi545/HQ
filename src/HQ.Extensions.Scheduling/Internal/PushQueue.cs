@@ -362,18 +362,19 @@ namespace HQ.Extensions.Scheduling.Internal
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposing)
-            {
-                return;
-            }
+	        if (!disposing)
+	        {
+		        return;
+	        }
 
-            if (Running)
-            {
-                Stop();
-            }
+	        if (Running)
+	        {
+		        Stop();
+	        }
 
-            _background?.Dispose();
-            _background = null;
+	        if (_background != null && _background.IsCompleted)
+		        _background?.Dispose();
+			_background = null;
             _cancel?.Dispose();
             _cancel = null;
         }

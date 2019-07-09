@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,22 +12,17 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
+namespace HQ.Common.AspNetCore.Mvc
 {
-	internal class BackgroundTasksComponent : IDynamicComponent
-    {
-        public IEnumerable<Type> ControllerTypes => new[]
-        {
-            typeof(BackgroundTaskController)
-        };
-
-        public Func<string> Namespace { get; set; }
-    }
+	public interface IDynamicComponent
+	{
+		IEnumerable<Type> ControllerTypes { get; }
+		Func<string> Namespace { get; }
+	}
 }

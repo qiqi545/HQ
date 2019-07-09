@@ -61,11 +61,13 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-            var taskTypeNames = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync))
+	        var typesWithPerformMethod = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync));
+			
+	        var taskTypeNames = typesWithPerformMethod
                 .Where(x => !x.IsInterface && !x.IsAbstract)
                 .Select(x => x.Name);
 
-            return Ok(new { Options = _options.CurrentValue, TaskTypes = taskTypeNames });
+            return Ok(new BackgroundTaskOptionsView { Options = _options.CurrentValue, TaskTypes = taskTypeNames });
         }
 
         [HttpGet]

@@ -21,17 +21,17 @@ using Microsoft.AspNetCore.Routing;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-    public static class Use
-    {
-        public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
-            Action<IRouteBuilder> configureRoutes)
-        {
-            return app.UseMvc(routes =>
-            {
-                configureRoutes?.Invoke(routes);
+	public static class Use
+	{
+		public static IApplicationBuilder UseMvcWithDefaultRoute(this IApplicationBuilder app,
+			Action<IRouteBuilder> configureRoutes)
+		{
+			return app.UseMvc(routes =>
+			{
+				configureRoutes?.Invoke(routes);
 
-                routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
-            });
-        }
-    }
+				routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+			});
+		}
+	}
 }

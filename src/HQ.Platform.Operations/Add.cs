@@ -24,11 +24,11 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Extensions.Options;
-using HQ.Platform.Api.Conventions;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
+using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
@@ -99,14 +99,11 @@ namespace HQ.Platform.Operations
             if (configureSecurity != null)
                 services.Configure(configureSecurity);
 
-            // See: https://github.com/aspnet/Mvc/issues/5992
-            mvcBuilder.AddApplicationPart(typeof(ConfigurationController).Assembly);
-            services.AddOptions<MvcOptions>()
-	            .Configure<IEnumerable<IDynamicComponent>>((o, x) =>
-	            {
-		            if (o.Conventions.FirstOrDefault(c => c.GetType() == typeof(DynamicComponentConvention)) == null)
-			            o.Conventions.Add(new DynamicComponentConvention(x));
-	            });
+            services.AddValidOptions();
+            services.AddSaveOptions();
+
+			services.AddSecurityPolicies(configureSecurity);
+			mvcBuilder.AddFeature<ConfigurationController>();
 
 			services.AddAuthorization(x =>
             {

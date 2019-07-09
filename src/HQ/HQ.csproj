@@ -24,7 +24,7 @@
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
 
     <!-- Strings (RESX compilation must sit exactly relative to the namespace it is consumed by -->
-    <EmbeddedResource Include="..\..\src\HQ.Data.Contracts\src\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
+    <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <Compile Update="**\ErrorStrings.Designer.cs">

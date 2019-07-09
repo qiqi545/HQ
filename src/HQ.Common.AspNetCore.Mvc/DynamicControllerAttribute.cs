@@ -21,24 +21,24 @@ using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-    public class DynamicControllerAttribute : Attribute, IControllerModelConvention
-    {
-        public void Apply(ControllerModel controller)
-        {
-            if (!controller.ControllerType.IsGenericType)
-                return;
+	public class DynamicControllerAttribute : Attribute, IControllerModelConvention
+	{
+		public void Apply(ControllerModel controller)
+		{
+			if (!controller.ControllerType.IsGenericType)
+				return;
 
-            var types = controller.ControllerType.GetGenericArguments();
-            if (types.Length == 0)
-                return;
+			var types = controller.ControllerType.GetGenericArguments();
+			if (types.Length == 0)
+				return;
 
-            controller.ControllerName = Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
-                sb.Append(controllerName);
-                foreach (var type in types)
-                    sb.Append($"_{type.Name}");
-            });
-        }
-    }
+			controller.ControllerName = Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				var controllerName = controller.ControllerType.Name.Replace($"Controller`{types.Length}", string.Empty);
+				sb.Append(controllerName);
+				foreach (var type in types)
+					sb.Append($"_{type.Name}");
+			});
+		}
+	}
 }

@@ -7,12 +7,12 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
-using HQ.Platform.Api.Conventions;
 using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Runtime.Rest;
 using HQ.Platform.Security;
+using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
@@ -39,17 +39,12 @@ namespace HQ.Platform.Functions.AspNetCore.Mvc
 
 			services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 			services.AddSafeLogging();
-            services.AddBackgroundTasks(configureTasks);
+
+			services.AddSecurityPolicies(configureSecurity);
+			services.AddBackgroundTasks(configureTasks);
             services.AddRestRuntime();
 
-			// See: https://github.com/aspnet/Mvc/issues/5992
-			mvcBuilder.AddApplicationPart(typeof(BackgroundTaskController).Assembly);
-			services.AddOptions<MvcOptions>()
-				.Configure<IEnumerable<IDynamicComponent>>((o, x) =>
-				{
-					if (o.Conventions.FirstOrDefault(c => c.GetType() == typeof(DynamicComponentConvention)) == null)
-						o.Conventions.Add(new DynamicComponentConvention(x));
-				});
+            mvcBuilder.AddFeature<BackgroundTaskController>();
 
 			services.AddAuthorization(x =>{
                 var securityOptions = new SecurityOptions();

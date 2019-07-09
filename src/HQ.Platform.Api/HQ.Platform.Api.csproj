@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Attributes\**" />
+    <EmbeddedResource Remove="Attributes\**" />
+    <None Remove="Attributes\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
@@ -22,10 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Attributes\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\src\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />

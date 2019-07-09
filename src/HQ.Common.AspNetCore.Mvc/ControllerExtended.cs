@@ -22,115 +22,115 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-    public class ControllerExtended : Controller
-    {
-        #region Additional IActionResult Helpers
+	public class ControllerExtended : Controller
+	{
+		#region Additional IActionResult Helpers
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult NotModified()
-        {
-            return StatusCode(HttpStatusCode.NotModified);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult NotModified()
+		{
+			return StatusCode(HttpStatusCode.NotModified);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult Gone()
-        {
-            return StatusCode(HttpStatusCode.Gone);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult Gone()
+		{
+			return StatusCode(HttpStatusCode.Gone);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult UnsupportedMediaType(object value = null)
-        {
-            return StatusCode(HttpStatusCode.UnsupportedMediaType, value);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult UnsupportedMediaType(object value = null)
+		{
+			return StatusCode(HttpStatusCode.UnsupportedMediaType, value);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult SeeOther(string location)
-        {
-            Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode(HttpStatusCode.SeeOther);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult SeeOther(string location)
+		{
+			Response.Headers[Constants.HttpHeaders.Location] = location;
+			return StatusCode(HttpStatusCode.SeeOther);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult Created(string location)
-        {
-            Response.Headers[Constants.HttpHeaders.Location] = location;
-            return StatusCode(HttpStatusCode.Created);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult Created(string location)
+		{
+			Response.Headers[Constants.HttpHeaders.Location] = location;
+			return StatusCode(HttpStatusCode.Created);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult NotAcceptable()
-        {
-            return StatusCode(HttpStatusCode.NotAcceptable);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult NotAcceptable()
+		{
+			return StatusCode(HttpStatusCode.NotAcceptable);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult NotImplemented()
-        {
-            return StatusCode(HttpStatusCode.NotImplemented);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult NotImplemented()
+		{
+			return StatusCode(HttpStatusCode.NotImplemented);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult StatusCode(HttpStatusCode code)
-        {
-            return StatusCode((int)code);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult StatusCode(HttpStatusCode code)
+		{
+			return StatusCode((int) code);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult StatusCode(HttpStatusCode code, object value)
-        {
-            return StatusCode((int)code, value);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult StatusCode(HttpStatusCode code, object value)
+		{
+			return StatusCode((int) code, value);
+		}
 
-        #endregion
+		#endregion
 
-        #region Dispatch
+		#region Dispatch
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public T TryOperation<T>(string localizedErrorMessage, Func<T> operation, string action = "")
-        {
-            try
-            {
-                var result = operation();
-                if (result is bool flag && !flag)
-                    ModelState.TryAddModelError(action, localizedErrorMessage);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                ModelState.TryAddModelException(action, ex);
-                return default;
-            }
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public T TryOperation<T>(string localizedErrorMessage, Func<T> operation, string action = "")
+		{
+			try
+			{
+				var result = operation();
+				if (result is bool flag && !flag)
+					ModelState.TryAddModelError(action, localizedErrorMessage);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				ModelState.TryAddModelException(action, ex);
+				return default;
+			}
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public Task<T> TryOperationAsync<T>(string localizedErrorMessage, Task<T> operation, string action = "")
-        {
-            try
-            {
-                var result = operation.Result;
-                if (result is bool flag && !flag)
-                    ModelState.TryAddModelError(action, localizedErrorMessage);
-                return Task.FromResult(result);
-            }
-            catch (Exception ex)
-            {
-                ModelState.TryAddModelException(action, ex);
-                return Task.FromResult(default(T));
-            }
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<T> TryOperationAsync<T>(string localizedErrorMessage, Task<T> operation, string action = "")
+		{
+			try
+			{
+				var result = operation.Result;
+				if (result is bool flag && !flag)
+					ModelState.TryAddModelError(action, localizedErrorMessage);
+				return Task.FromResult(result);
+			}
+			catch (Exception ex)
+			{
+				ModelState.TryAddModelException(action, ex);
+				return Task.FromResult(default(T));
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

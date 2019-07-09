@@ -14,7 +14,6 @@
 #endregion
 
 using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace HQ.Platform.Security.AspNetCore
@@ -23,9 +22,9 @@ namespace HQ.Platform.Security.AspNetCore
 	{
 		private readonly IServiceProvider _serviceProvider;
 
-		public DynamicAuthorizeModelProvider(IServiceProvider urlHelperFactory)
+		public DynamicAuthorizeModelProvider(IServiceProvider serviceProvider)
 		{
-			_serviceProvider = urlHelperFactory;
+			_serviceProvider = serviceProvider;
 		}
 
 		public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
@@ -34,13 +33,24 @@ namespace HQ.Platform.Security.AspNetCore
 		{
 			foreach (var controllerModel in context.Result.Controllers)
 			{
-				controllerModel.Attributes
-					.OfType<DynamicAuthorizeAttribute>().ToList()
-					.ForEach(a => a.ServiceProvider = _serviceProvider);
+				foreach (var o in controllerModel.Attributes)
+				{
+					if (o is DynamicAuthorizeAttribute attribute)
+					{
+						attribute.ServiceProvider = _serviceProvider;
+					}
+				}
 
-				controllerModel.Actions.SelectMany(a => a.Attributes)
-					.OfType<DynamicAuthorizeAttribute>().ToList()
-					.ForEach(a => a.ServiceProvider = _serviceProvider);
+				foreach (var a in controllerModel.Actions)
+				{
+					foreach (var o in a.Attributes)
+					{
+						if (o is DynamicAuthorizeAttribute attribute)
+						{
+							attribute.ServiceProvider = _serviceProvider;
+						}
+					}
+				}
 			}
 		}
 
