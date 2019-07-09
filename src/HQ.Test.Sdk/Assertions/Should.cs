@@ -25,10 +25,15 @@ namespace HQ.Test.Sdk.Assertions
     {
         public static IAssert Assert { get; set; }
 
-        public static void Be<T>(this IShould<T> @this, T other)
-        {
-            Assert.Equal(@this.Value, other);
+        public static void Be<T>(this IShould<T> @this, T other, string userMessage = null, params object[] userMessageArgs)
+		{
+            Assert.Equal(@this.Value, other, userMessage, userMessageArgs);
         }
+
+        public static void NotBeNull<T>(this IShould<T> @this, string userMessage = null, params object[] userMessageArgs)
+		{
+			Assert.NotNull(@this.Value, userMessage, userMessageArgs);
+		}
 
         public static void BeOk(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
         {

@@ -15,11 +15,15 @@
 
 #endregion
 
+using System;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using HQ.Test.Sdk.Assertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace HQ.Test.Sdk
 {
@@ -27,19 +31,51 @@ namespace HQ.Test.Sdk
 
 	public abstract class SystemUnderTest : SystemUnderTest<NoStartup>
 	{
+		protected async Task Act<TResponse>(string pathString, Action<TResponse> assert = null,
+			Action<HttpRequestMessage> arrange = null, [CallerMemberName] string callerMemberNameOrMethod = null)
+		{
+			using (var client = CreateClient())
+			{
+				var method = ResolveHttpMethod(callerMemberNameOrMethod);
 
+				var response = await Extensions.HttpClientExtensions.SendWithoutBodyAsync<TResponse>(client, method, pathString, arrange);
+				response.Should().BeOk();
+
+				if(response.Data != null)
+					LogTrace(JsonConvert.SerializeObject(response.Data));
+				response.Data.Should().NotBeNull();
+
+				assert?.Invoke(response.Data);
+			}
+		}
+
+		private static string ResolveHttpMethod(string callerMemberNameOrMethod)
+		{
+			var method = string.IsNullOrWhiteSpace(callerMemberNameOrMethod)
+				? "GET"
+				: callerMemberNameOrMethod.IndexOf('_') == -1
+					? "GET"
+					: callerMemberNameOrMethod.Substring(0, callerMemberNameOrMethod.IndexOf('_'))
+						.ToUpperInvariant();
+			return method;
+		}
 	}
 
     public abstract class SystemUnderTest<T> : ServiceUnderTest, ILogger<T> where T : class
     {
 		private readonly SystemHostFixture<T> _systemUnderTest;
-        
-        protected SystemUnderTest(SystemTopology topology = SystemTopology.Web)
-        {
+
+		protected SystemUnderTest(SystemTopology topology = SystemTopology.Web)
+		{
             _systemUnderTest = new SystemHostFixture<T>(this, topology);
         }
-        
-        public virtual void Configuration(IConfiguration config) { }
+
+		protected override void InitializeServiceProvider()
+		{
+			/* defer configuration until host startup */
+		}
+
+		public virtual void Configuration(IConfiguration config) { }
 
         public virtual void Configure(IApplicationBuilder app)
         {
@@ -63,7 +99,9 @@ namespace HQ.Test.Sdk
         
         public override ILogger GetLogger()
         {
-            return ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>() ?? Logger;
+	        // var logger = ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>();
+
+	        return Logger;
         }
     }
 }

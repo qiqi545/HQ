@@ -35,19 +35,24 @@ namespace HQ.Test.Sdk
 
         protected ServiceUnderTest(IServiceProvider serviceProvider)
         {
-            if(serviceProvider == null)
-                InitializeServiceProvider();
-            else
-                ServiceProvider = serviceProvider;
+	        Initialize(serviceProvider);
+        }
 
-            TryInstallLogging();
+        private void Initialize(IServiceProvider serviceProvider)
+        {
+	        if (serviceProvider == null)
+		        InitializeServiceProvider();
+	        else
+		        ServiceProvider = serviceProvider;
 
-            TryInstallTracing();
+	        TryInstallLogging();
+
+	        TryInstallTracing();
         }
 
         public virtual void ConfigureServices(IServiceCollection services) { }
-        
-        private void InitializeServiceProvider()
+
+        protected virtual void InitializeServiceProvider()
         {
             var services = new ServiceCollection();
             ConfigureServices(services);
@@ -56,12 +61,14 @@ namespace HQ.Test.Sdk
 
         protected void TryInstallLogging()
         {
-            if (ServiceProvider?.GetService<ILoggerFactory>() != null)
+	        var loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
+	        if (loggerFactory != null)
                 return;
 
-            var loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
+            loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
             loggerFactory = loggerFactory ?? DefaultLoggerFactory;
             loggerFactory.AddProvider(CreateLoggerProvider());
+
             Logger = loggerFactory.CreateLogger<ServiceUnderTest>();
         }
 

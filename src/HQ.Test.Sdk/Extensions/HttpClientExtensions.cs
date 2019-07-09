@@ -26,21 +26,30 @@ using Newtonsoft.Json;
 
 namespace HQ.Test.Sdk.Extensions
 {
-    public static class HttpClientExtensions
+	public static class HttpClientExtensions
     {
-        private static async Task<HttpResponseMessage> SendWithoutBodyAsync(HttpClient client, string method,
+	    internal static async Task<HttpResponseMessage> SendWithoutBodyAsync(HttpClient client, string method,
 	        string pathString, Action<HttpRequestMessage> configureAction)
         {
             return await SendWithoutBodyAsync(client, method, Normalize(pathString), configureAction);
         }
 
-        private static async Task<HttpResponseMessage> SendWithBodyAsync<T>(HttpClient client, string method,
+        internal static async Task<Response<TResponse>> SendWithoutBodyAsync<TResponse>(HttpClient client, string method,
+	        string pathString, Action<HttpRequestMessage> configureAction)
+        {
+	        var response = await SendWithoutBodyAsync(client, method, Normalize(pathString), configureAction);
+	        return !response.IsSuccessStatusCode
+		        ? default
+		        : new Response<TResponse>(response, JsonConvert.DeserializeObject<TResponse>(await response.Content.ReadAsStringAsync()));
+        }
+
+        internal static async Task<HttpResponseMessage> SendWithBodyAsync<T>(HttpClient client, string method,
             string pathString, T body, Action<HttpRequestMessage> configureAction) where T : class
         {
             return await SendWithBodyAsync(client, method, Normalize(pathString), body, configureAction);
         }
 
-        private static async Task<HttpResponseMessage> SendWithoutBodyAsync(HttpClient client, string method,
+        internal static async Task<HttpResponseMessage> SendWithoutBodyAsync(HttpClient client, string method,
             PathString pathString, Action<HttpRequestMessage> configureAction)
         {
             var requestUri = pathString.ToUriComponent();
@@ -49,7 +58,7 @@ namespace HQ.Test.Sdk.Extensions
             return await client.SendAsync(request);
         }
 
-        private static async Task<HttpResponseMessage> SendWithBodyAsync<T>(HttpClient client, string method,
+        internal static async Task<HttpResponseMessage> SendWithBodyAsync<T>(HttpClient client, string method,
             PathString pathString, T body, Action<HttpRequestMessage> configureAction) where T : class
         {
             var requestUri = pathString.ToUriComponent();

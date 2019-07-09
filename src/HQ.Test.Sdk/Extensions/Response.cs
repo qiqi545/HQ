@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,18 +11,38 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
+using System.Net.Http;
+using HQ.Test.Sdk.Assertions;
 using ImpromptuInterface;
 
-namespace HQ.Test.Sdk.Assertions
+namespace HQ.Test.Sdk.Extensions
 {
-    public static class ShouldExtensions
-    {
-        public static IShould<T> Should<T>(this T value)
-        {
-            return new {Value = value}.ActLike<IShould<T>>();
-        }
+	public class Response<T>
+	{
+		public T Data { get; }
+		public HttpResponseMessage Message { get; }
+
+		public Response(HttpResponseMessage message, T data)
+		{
+			Message = message;
+			Data = data;
+		}
+
+		public static implicit operator HttpResponseMessage(Response<T> response)
+		{
+			return response.Message;
+		}
+
+		public static implicit operator T(Response<T> response)
+		{
+			return response.Data;
+		}
+		
+		public IShould<HttpResponseMessage> Should()
+		{
+			return new { Value = Message }.ActLike<IShould<HttpResponseMessage>>();
+		}
 	}
 }
