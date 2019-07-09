@@ -26,8 +26,6 @@
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore.Mvc\HQ.Data.Contracts.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Batching\HQ.Data.Sql.Batching.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
   </ItemGroup>
 

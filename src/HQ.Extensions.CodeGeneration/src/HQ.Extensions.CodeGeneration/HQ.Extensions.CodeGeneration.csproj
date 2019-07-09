@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="$(ProjectDir)..\..\..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\..\..\build\build.props" />
@@ -11,8 +11,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.NodeServices" Version="2.2.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.1.0" PrivateAssets="all"  />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.1.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="2.1.0" />

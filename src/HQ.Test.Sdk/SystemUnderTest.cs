@@ -99,8 +99,6 @@ namespace HQ.Test.Sdk
         
         public override ILogger GetLogger()
         {
-	        // var logger = ServiceProvider.GetService<ILogger<SystemUnderTest<T>>>();
-
 	        return Logger;
         }
     }

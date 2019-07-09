@@ -17,7 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
+    <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
 

@@ -17,9 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />

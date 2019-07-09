@@ -16,7 +16,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\..\..\HQ.Common\HQ.Common.csproj" />
-    <ProjectReference Include="..\..\..\HQ.Data.Contracts.Runtime\HQ.Data.Contracts.Runtime.csproj" />
+    <ProjectReference Include="..\..\..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\HQ.Extensions.CodeGeneration.csproj" />
   </ItemGroup>
 
