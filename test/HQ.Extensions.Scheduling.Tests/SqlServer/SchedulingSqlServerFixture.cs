@@ -1,5 +1,5 @@
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling.SqlServer;
+using HQ.Integration.SqlServer.Scheduling;
 using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -17,7 +17,7 @@
 
 using System;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling.Sqlite;
+using HQ.Integration.Sqlite.Scheduling;
 using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 

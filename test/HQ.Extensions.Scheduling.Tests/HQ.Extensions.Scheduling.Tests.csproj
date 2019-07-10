@@ -28,6 +28,8 @@
     <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\..\src\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
   </ItemGroup>
 
