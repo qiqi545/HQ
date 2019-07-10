@@ -43,6 +43,8 @@ namespace HQ.Extensions.Scheduling.Configuration
             Priority = 0;
         }
 
+        public string RootPath { get; set; } = "/ops";
+
         /// <summary>
         ///     The function responsible for calculating the next attempt date after a tasks fails;
         ///     default is 5 seconds + N.Pow(4), where N is the number of retries (i.e. exponential back-off)

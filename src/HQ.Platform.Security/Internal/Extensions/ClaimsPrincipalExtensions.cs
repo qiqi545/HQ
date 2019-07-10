@@ -22,7 +22,7 @@ using System.Security.Claims;
 
 namespace HQ.Platform.Security.Internal.Extensions
 {
-    internal static class ClaimsPrincipalExtensions
+	public static class ClaimsPrincipalExtensions
     {
         public static IDictionary<string, object> Claims(this ClaimsPrincipal user)
         {

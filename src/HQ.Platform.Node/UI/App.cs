@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HQ.Data.Sql.Sqlite;
+using HQ.Integration.Sqlite.Sql;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Models;

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using System.Net;
+using System.Reflection;
+using HQ.Common.AspNetCore.Models;
 using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
@@ -17,7 +19,11 @@ namespace HQ.Platform.Api.Controllers
     [Route("meta")]
     public class MetaController : Controller
     {
-        private readonly IOptions<PlatformApiOptions> _options;
+	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
+	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+
+
+		private readonly IOptions<PlatformApiOptions> _options;
         private readonly IEnumerable<IMetaProvider> _providers;
 
         private readonly ISwaggerProvider _swaggerProvider;
@@ -51,7 +57,7 @@ namespace HQ.Platform.Api.Controllers
             Guid collectionId;
             using (var md5 = MD5.Create())
             {
-                var entropy = $"{_options.Value.ApiName}.{_options.Value.ApiVersion}";
+                var entropy = $"{ApiName}.{ApiVersion}";
                 var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(entropy));
                 collectionId = new Guid(hash);
             }
@@ -61,15 +67,15 @@ namespace HQ.Platform.Api.Controllers
             {
                 info = new
                 {
-                    name = _options.Value.ApiName,
+                    name = ApiName,
                     _postman_id = collectionId,
                     description = new
                     {
                         content = "",
                         type = "text/markdown",
-                        version = _options.Value.ApiVersion
+                        version = ApiVersion
                     },
-                    version = _options.Value.ApiVersion,
+                    version = ApiVersion,
                     schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
                 item = new List<MetaItem>(),

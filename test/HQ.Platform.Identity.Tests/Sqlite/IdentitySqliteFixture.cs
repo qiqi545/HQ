@@ -1,7 +1,7 @@
 using System;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Stores.Sql.Sqlite;
 using HQ.Data.SessionManagement;
+using HQ.Integration.Sqlite.Identity;
 using HQ.Platform.Security.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HQ.Test.Sdk.Data;

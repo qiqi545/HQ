@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using HQ.Common;
+using HQ.Common.AspNetCore.Models;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Authentication;

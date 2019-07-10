@@ -1,6 +1,6 @@
 using System;
 using System.Data.DocumentDb;
-using HQ.Extensions.Scheduling.DocumentDb;
+using HQ.Integration.DocumentDb.Scheduling;
 using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -6,6 +6,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,24 +23,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Common.AspNetCore.Mvc\HQ.Common.AspNetCore.Mvc.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.DocumentDb\HQ.Data.Sql.DocumentDb.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
-    <ProjectReference Include="..\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Correlation\HQ.Extensions.Correlation.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\src\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
+    <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
+    <ProjectReference Include="..\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Functions.AspNetCore.Mvc\HQ.Platform.Functions.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity.AspNetCore.Mvc\HQ.Platform.Identity.AspNetCore.Mvc.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.DocumentDb\HQ.Platform.Identity.Stores.Sql.DocumentDb.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.Sqlite\HQ.Platform.Identity.Stores.Sql.Sqlite.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity.Stores.Sql.SqlServer\HQ.Platform.Identity.Stores.Sql.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
     <ProjectReference Include="..\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Security.AspNetCore\HQ.Platform.Security.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.UI.Web.SemanticUi\HQ.UI.Web.SemanticUi.csproj" />
     <ProjectReference Include="..\HQ.UI\HQ.UI.csproj" />
   </ItemGroup>

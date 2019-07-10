@@ -17,9 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Data.SessionManagement.DocumentDb\HQ.Data.SessionManagement.DocumentDb.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.SessionManagement.Sqlite\HQ.Data.SessionManagement.Sqlite.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.SessionManagement.SqlServer\HQ.Data.SessionManagement.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
   </ItemGroup>
 

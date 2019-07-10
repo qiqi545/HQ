@@ -11,7 +11,7 @@ namespace PetaPoco.Utilities
     /// <summary>
     ///     Presents the SQL parts.
     /// </summary>
-    internal struct SqlParts
+    public struct SqlParts
     {
         /// <summary>
         ///     The SQL.

@@ -61,13 +61,13 @@ namespace PackagePrep
                 
 				foreach (var file in Directory.GetFiles(path, "*.pp", SearchOption.AllDirectories))
 				{
-					var info = new FileInfo(file);
-					if (info.LastWriteTimeUtc > lastWriteTimeUtc[file])
-					{
-						// Console.ForegroundColor = ConsoleColor.DarkGray;
-						// Console.WriteLine($"SKIP {file}");
-						continue;
-					}
+					//var info = new FileInfo(file);
+					//if (info.LastWriteTimeUtc > lastWriteTimeUtc[file])
+					//{
+					//	// Console.ForegroundColor = ConsoleColor.DarkGray;
+					//	// Console.WriteLine($"SKIP {file}");
+					//	continue;
+					//}
 
 					Console.ForegroundColor = ConsoleColor.DarkRed;
                     File.Delete(file);

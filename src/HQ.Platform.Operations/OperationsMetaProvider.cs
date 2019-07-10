@@ -19,7 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using HQ.Common;
-using HQ.Platform.Api.Models;
+using HQ.Common.AspNetCore;
+using HQ.Common.AspNetCore.Models;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations

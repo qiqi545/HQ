@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Platform.Api.Functions.Azure;
 using HQ.Test.Sdk;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;

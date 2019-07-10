@@ -13,7 +13,7 @@ using PetaPoco.Utilities;
 // ReSharper disable once CheckNamespace
 namespace HQ.PetaPoco.Utilities
 {
-    internal static class PagingHelper
+	public static class PagingHelper
     {
         public static readonly Regex RegexColumns = new Regex(
             @"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b",
