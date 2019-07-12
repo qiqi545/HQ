@@ -28,6 +28,13 @@ namespace HQ.Extensions.Metrics
         public abstract bool IsBoolean { get; }
 
         [IgnoreDataMember] public abstract MetricName Name { get; }
+
+        public abstract IMetric Copy();
+
+        public int CompareTo(IMetric other)
+        {
+	        return other.Name.CompareTo(Name);
+        }
     }
 
     /// <summary>
@@ -50,6 +57,11 @@ namespace HQ.Extensions.Metrics
             _evaluator = evaluator;
             IsNumeric = typeof(T).IsNumeric();
             IsBoolean = typeof(T).IsTruthy();
+        }
+
+        public override IMetric Copy()
+        {
+			return new GaugeMetric<T>(Name, _evaluator);
         }
 
         [IgnoreDataMember] public override MetricName Name { get; }

@@ -28,12 +28,13 @@ namespace HQ.Extensions.Metrics
     ///     A metric which calculates the distribution of a value
     ///     <see href="http://www.johndcook.com/standard_deviation.html">Accurately computing running variance</see>
     /// </summary>
-    public class HistogramMetric : IMetric, IDistributed
+    public class HistogramMetric : IMetric, IDistributed, IComparable<HistogramMetric>, IComparable
     {
-        private readonly AtomicLong _count = new AtomicLong();
+		private readonly ISample _sample;
+
+		private readonly AtomicLong _count = new AtomicLong();
         private readonly AtomicLong _max = new AtomicLong();
         private readonly AtomicLong _min = new AtomicLong();
-        private readonly ISample _sample;
         private readonly AtomicLong _sum = new AtomicLong();
 
         // These are for the Welford algorithm for calculating 
@@ -63,6 +64,12 @@ namespace HQ.Extensions.Metrics
             {
                 Clear();
             }
+        }
+
+        public IMetric Copy()
+        {
+	        var copy = new HistogramMetric(Name, _sample);
+	        return copy;
         }
 
         /// <summary>
@@ -227,6 +234,45 @@ namespace HQ.Extensions.Metrics
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type));
             }
+        }
+
+        public int CompareTo(HistogramMetric other)
+        {
+	        if (ReferenceEquals(this, other)) return 0;
+	        if (ReferenceEquals(null, other)) return 1;
+	        return Name.CompareTo(other.Name);
+        }
+
+        public int CompareTo(object obj)
+        {
+	        if (ReferenceEquals(null, obj)) return 1;
+	        if (ReferenceEquals(this, obj)) return 0;
+	        return obj is HistogramMetric other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(HistogramMetric)}");
+        }
+
+        public static bool operator <(HistogramMetric left, HistogramMetric right)
+        {
+	        return Comparer<HistogramMetric>.Default.Compare(left, right) < 0;
+        }
+
+        public static bool operator >(HistogramMetric left, HistogramMetric right)
+        {
+	        return Comparer<HistogramMetric>.Default.Compare(left, right) > 0;
+        }
+
+        public static bool operator <=(HistogramMetric left, HistogramMetric right)
+        {
+	        return Comparer<HistogramMetric>.Default.Compare(left, right) <= 0;
+        }
+
+        public static bool operator >=(HistogramMetric left, HistogramMetric right)
+        {
+	        return Comparer<HistogramMetric>.Default.Compare(left, right) >= 0;
+        }
+
+        public int CompareTo(IMetric other)
+        {
+	        return other.Name.CompareTo(Name);
         }
     }
 }

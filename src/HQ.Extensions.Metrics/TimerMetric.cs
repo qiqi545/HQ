@@ -27,7 +27,7 @@ namespace HQ.Extensions.Metrics
     ///     A timer metric which aggregates timing durations and provides duration statistics, plus throughput statistics via
     ///     <see cref="MeterMetric" />.
     /// </summary>
-    public class TimerMetric : IMetric, IMetered, IDistributed
+    public class TimerMetric : IMetric, IMetered, IDistributed, IComparable<TimerMetric>, IComparable
     {
         private readonly HistogramMetric _histogram;
         private readonly MeterMetric _meter;
@@ -59,10 +59,16 @@ namespace HQ.Extensions.Metrics
             }
         }
 
-        /// <summary>
-        ///     Returns the timer's duration scale unit
-        /// </summary>
-        public TimeUnit DurationUnit { get; }
+        internal IMetric Copy()
+        {
+	        var copy = new TimerMetric(DurationUnit, RateUnit, _meter, _histogram, false);
+	        return copy;
+        }
+
+		/// <summary>
+		///     Returns the timer's duration scale unit
+		/// </summary>
+		public TimeUnit DurationUnit { get; }
 
         /// <summary>
         ///     Returns a list of all recorded durations in the timer's sample
@@ -210,6 +216,47 @@ namespace HQ.Extensions.Metrics
         private double ConvertFromNanoseconds(double value)
         {
             return value / DurationUnit.Convert(1, TimeUnit.Nanoseconds);
+        }
+
+        public int CompareTo(TimerMetric other)
+        {
+	        if (ReferenceEquals(this, other)) return 0;
+	        if (ReferenceEquals(null, other)) return 1;
+	        var durationUnitComparison = DurationUnit.CompareTo(other.DurationUnit);
+	        if (durationUnitComparison != 0) return durationUnitComparison;
+	        return RateUnit.CompareTo(other.RateUnit);
+        }
+
+        public int CompareTo(object obj)
+        {
+	        if (ReferenceEquals(null, obj)) return 1;
+	        if (ReferenceEquals(this, obj)) return 0;
+	        return obj is TimerMetric other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(TimerMetric)}");
+        }
+
+        public static bool operator <(TimerMetric left, TimerMetric right)
+        {
+	        return Comparer<TimerMetric>.Default.Compare(left, right) < 0;
+        }
+
+        public static bool operator >(TimerMetric left, TimerMetric right)
+        {
+	        return Comparer<TimerMetric>.Default.Compare(left, right) > 0;
+        }
+
+        public static bool operator <=(TimerMetric left, TimerMetric right)
+        {
+	        return Comparer<TimerMetric>.Default.Compare(left, right) <= 0;
+        }
+
+        public static bool operator >=(TimerMetric left, TimerMetric right)
+        {
+	        return Comparer<TimerMetric>.Default.Compare(left, right) >= 0;
+        }
+
+        public int CompareTo(IMetric other)
+        {
+	        return other.Name.CompareTo(Name);
         }
     }
 }

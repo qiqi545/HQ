@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using HQ.Data.Contracts.Runtime;
@@ -26,7 +27,7 @@ namespace HQ.Extensions.Metrics
         private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
             ImmutableDictionary.Create<MetricName, IMetric>();
 
-        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
+        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.All)
         {
             if (typeFilter.HasFlagFast(MetricType.All))
             {
@@ -50,7 +51,24 @@ namespace HQ.Extensions.Metrics
                 }
             }
 
-            return filtered.ToImmutableDictionary();
+            return filtered.ToImmutableSortedDictionary(k => k.Key, v =>
+            {
+	            switch (v.Value)
+	            {
+					case GaugeMetric gauge:
+			            return gauge.Copy();
+		            case CounterMetric counter:
+			            return counter.Copy();
+		            case MeterMetric meter:
+			            return meter.Copy();
+		            case HistogramMetric histogram:
+			            return histogram.Copy();
+		            case TimerMetric timer:
+			            return timer.Copy();
+					default:
+						throw new ArgumentException();
+	            }
+            });
         }
     }
 }

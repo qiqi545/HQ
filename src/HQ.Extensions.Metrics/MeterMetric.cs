@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,13 +30,12 @@ namespace HQ.Extensions.Metrics
     ///     average through-puts
     /// </summary>
     /// <see href="http://en.wikipedia.org/wiki/Moving_average#Exponential_moving_average">EMA</see>
-    public class MeterMetric : IMetric, IMetered
+    public class MeterMetric : IMetric, IMetered, IComparable<MeterMetric>, IComparable
     {
         private static readonly TimeSpan Interval = TimeSpan.FromSeconds(5);
 
         private readonly AtomicLong _count = new AtomicLong();
         private readonly EWMA _m15Rate = EWMA.FifteenMinuteEWMA();
-
         private readonly EWMA _m1Rate = EWMA.OneMinuteEWMA();
         private readonly EWMA _m5Rate = EWMA.FiveMinuteEWMA();
         private readonly long _startTime = DateTime.Now.Ticks;
@@ -50,11 +50,25 @@ namespace HQ.Extensions.Metrics
             RateUnit = rateUnit;
         }
 
-        /// <summary>
-        ///     Returns the meter's rate unit
-        /// </summary>
-        /// <returns></returns>
-        public TimeUnit RateUnit { get; }
+        private MeterMetric(MetricName metricName, string eventType, TimeUnit rateUnit, EWMA m15Rate, EWMA m1Rate,
+	        EWMA m5Rate, long startTime) : this(metricName, eventType, rateUnit)
+        {
+			_m15Rate = m15Rate;
+	        _m1Rate = m1Rate;
+	        _m5Rate = m5Rate;
+	        _startTime = startTime;
+		}
+		internal IMetric Copy()
+        {
+	        var copy = new MeterMetric(Name, EventType, RateUnit, _m15Rate, _m1Rate, _m5Rate, _startTime);
+	        return copy;
+        }
+
+		/// <summary>
+		///     Returns the meter's rate unit
+		/// </summary>
+		/// <returns></returns>
+		public TimeUnit RateUnit { get; }
 
         /// <summary>
         ///     Returns the type of events the meter is measuring
@@ -98,7 +112,7 @@ namespace HQ.Extensions.Metrics
                 if (Count != 0)
                 {
                     var elapsed = DateTime.Now.Ticks - _startTime;
-                    return ConvertNanosRate(Count / (double) elapsed);
+                    return ConvertNanosecondsRate(Count / (double) elapsed);
                 }
 
                 return 0.0;
@@ -140,9 +154,9 @@ namespace HQ.Extensions.Metrics
             }
             else
             {
-                _cancel.Cancel();
+                _cancel?.Cancel();
                 _task?.Dispose();
-                _cancel.Dispose();
+                _cancel?.Dispose();
             }
         }
 
@@ -190,9 +204,54 @@ namespace HQ.Extensions.Metrics
             _m15Rate.Update(n);
         }
 
-        private double ConvertNanosRate(double ratePerNs)
+        private double ConvertNanosecondsRate(double ratePerNs)
         {
             return ratePerNs * RateUnit.ToNanos(1);
+        }
+
+        public int CompareTo(MeterMetric other)
+        {
+	        if (ReferenceEquals(this, other)) return 0;
+	        if (ReferenceEquals(null, other)) return 1;
+	        var startTimeComparison = _startTime.CompareTo(other._startTime);
+	        if (startTimeComparison != 0) return startTimeComparison;
+	        var rateUnitComparison = RateUnit.CompareTo(other.RateUnit);
+	        if (rateUnitComparison != 0) return rateUnitComparison;
+	        var eventTypeComparison = string.Compare(EventType, other.EventType, StringComparison.Ordinal);
+	        if (eventTypeComparison != 0) return eventTypeComparison;
+	        return Name.CompareTo(other.Name);
+        }
+
+        public int CompareTo(object obj)
+        {
+	        if (ReferenceEquals(null, obj)) return 1;
+	        if (ReferenceEquals(this, obj)) return 0;
+	        return obj is MeterMetric other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(MeterMetric)}");
+        }
+
+        public static bool operator <(MeterMetric left, MeterMetric right)
+        {
+	        return Comparer<MeterMetric>.Default.Compare(left, right) < 0;
+        }
+
+        public static bool operator >(MeterMetric left, MeterMetric right)
+        {
+	        return Comparer<MeterMetric>.Default.Compare(left, right) > 0;
+        }
+
+        public static bool operator <=(MeterMetric left, MeterMetric right)
+        {
+	        return Comparer<MeterMetric>.Default.Compare(left, right) <= 0;
+        }
+
+        public static bool operator >=(MeterMetric left, MeterMetric right)
+        {
+	        return Comparer<MeterMetric>.Default.Compare(left, right) >= 0;
+        }
+
+        public int CompareTo(IMetric other)
+        {
+	        return other.Name.CompareTo(Name);
         }
     }
 }
