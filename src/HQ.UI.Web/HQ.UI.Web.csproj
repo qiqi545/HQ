@@ -2,6 +2,7 @@
 
   <Import Project="$(ProjectDir)..\..\build\package.props" />
   <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
