@@ -37,6 +37,7 @@
     <Content Include="..\..\src\HQ.Test.Sdk\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
 
     <!-- Extensions -->
+    <Content Include="..\HQ.Extensions.Numerics.Tests\**\*.cs" Exclude="..\HQ.Extensions.Numerics.Tests\obj\**\*" Link="Extensions.Numerics.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Dates.Tests\**\*.cs" Exclude="..\HQ.Extensions.Dates.Tests\obj\**\*" Link="Extensions.Dates.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Caching.Tests\**\*.cs" Exclude="..\HQ.Extensions.Caching.Tests\obj\**\*" Link="Extensions.Caching.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Logging.Tests\**\*.cs" Exclude="..\HQ.Extensions.Logging.Tests\obj\**\*" Link="Extensions.Logging.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -57,7 +58,6 @@
     <Content Include="..\HQ.Platform.Identity.Tests\**\*.cs" Exclude="..\HQ.Platform.Identity.Tests\obj\**\*" Link="Platform.Identity.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Api.Tests\**\*.cs" Exclude="..\HQ.Platform.Api.Tests\obj\**\*" Link="Platform.Api.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.InteractionTests\**\*.cs" Exclude="..\HQ.Platform.InteractionTests\obj\**\*" Link="Platform.InteractionTests\%(RecursiveDir)%(Filename)%(Extension)" />
-
 
   </ItemGroup>
   

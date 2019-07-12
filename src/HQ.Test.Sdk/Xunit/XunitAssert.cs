@@ -169,6 +169,19 @@ namespace HQ.Test.Sdk.Xunit
             }
         }
 
+        public void Throws<T>(Action action, string userMessage = null, params object[] userMessageArgs) where T : Exception
+        {
+			try
+			{
+				Assert.Throws<T>(action);
+			}
+			catch (ThrowsException)
+			{
+				TryLogUserMessage(userMessage, userMessageArgs);
+				throw;
+			}
+		}
+
         public void IsNotType<T>(object instance, string userMessage = null, params object[] userMessageArgs)
         {
             try
