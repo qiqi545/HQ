@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Test.Sdk
+namespace HQ.Test.Sdk.Logging
 {
     public interface IOutputProvider
     {

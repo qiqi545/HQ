@@ -24,6 +24,7 @@ using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
 using HQ.Extensions.Logging;
+using HQ.Test.Sdk.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Internal;

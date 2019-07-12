@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 
 namespace HQ.Platform.Node.UI.Models
 {

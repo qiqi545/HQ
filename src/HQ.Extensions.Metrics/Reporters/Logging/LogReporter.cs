@@ -21,7 +21,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Reporters.Console;
-using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

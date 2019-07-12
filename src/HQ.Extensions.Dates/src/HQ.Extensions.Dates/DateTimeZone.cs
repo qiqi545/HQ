@@ -20,7 +20,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using TimeZoneConverter;
 
-namespace HQ.Common
+namespace HQ.Extensions.Dates
 {
     /// <summary>
     /// A <see cref="DateTimeOffset"/> replacement that doesn't lose time zone information, and normalizes to IANA time zone names.

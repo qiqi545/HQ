@@ -19,7 +19,7 @@ using System;
 using System.Threading.Tasks;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 using TypeKitchen;
 

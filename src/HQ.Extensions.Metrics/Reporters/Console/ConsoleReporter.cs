@@ -20,7 +20,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
-using HQ.Extensions.Metrics.Reporting;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.Reporters.Console

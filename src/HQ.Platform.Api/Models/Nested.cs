@@ -31,22 +31,4 @@ namespace HQ.Platform.Api.Models
         [DataMember] public IList<Error> Errors;
         [DataMember] public bool HasErrors;
     }
-
-    [DataContract]
-    [KnownType(nameof(GetKnownTypes))]
-    public class NestedCollectionBody<T> : Nested
-    {
-        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
-
-        [DataMember] public IEnumerable<T> Data;
-    }
-
-    [DataContract]
-    [KnownType(nameof(GetKnownTypes))]
-    public class NestedBody<T> : Nested
-    {
-        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
-
-        [DataMember] public T Data;
-    }
 }

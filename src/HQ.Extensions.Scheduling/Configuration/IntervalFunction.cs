@@ -15,8 +15,6 @@
 
 #endregion
 
-using System;
-
 namespace HQ.Extensions.Scheduling.Configuration
 {
     public enum IntervalFunction
@@ -25,21 +23,5 @@ namespace HQ.Extensions.Scheduling.Configuration
         /// 5 seconds + N to the fourth power, where N is the number of retries (i.e. exponential back-off)
         /// </summary>
         ExponentialBackoff
-    }
-
-    public static class IntervalFunctionExtensions
-    {
-        public static readonly Func<int, TimeSpan> ExponentialBackoff = i => TimeSpan.FromSeconds(5 + Math.Pow(i, 4));
-
-        public static TimeSpan NextInterval(this IntervalFunction function, int attempts)
-        {
-            switch (function)
-            {
-                case IntervalFunction.ExponentialBackoff:
-                    return ExponentialBackoff(attempts);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(function), function, null);
-            }
-        }
     }
 }

@@ -16,8 +16,8 @@
 #endregion
 
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Configuration;
+using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;

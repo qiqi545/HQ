@@ -28,7 +28,7 @@ using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
-using HQ.Platform.Functions.AspNetCore.Mvc;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc;
 using HQ.Platform.Identity;
 using HQ.Platform.Identity.AspNetCore.Mvc;
 using HQ.Platform.Identity.Models;

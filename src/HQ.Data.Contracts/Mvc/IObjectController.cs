@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
     public interface IObjectController
     {

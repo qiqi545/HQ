@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using HQ.Test.Sdk.Assertions;
+using HQ.Test.Sdk.Logging;
 using Xunit;
 using Xunit.Sdk;
 

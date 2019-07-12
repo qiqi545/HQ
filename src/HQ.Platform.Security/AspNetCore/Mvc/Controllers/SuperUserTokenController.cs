@@ -24,10 +24,9 @@ using System.Text;
 using System.Threading.Tasks;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Security.AspNetCore.Models;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
@@ -36,7 +35,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Security.AspnetCore.Mvc.Controllers
+namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
     /// <summary>
     /// A light-weight token issuer that only works against a super user.

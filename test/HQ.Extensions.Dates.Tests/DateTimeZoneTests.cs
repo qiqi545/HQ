@@ -2,7 +2,7 @@ using System;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Common.Tests
+namespace HQ.Extensions.Dates.Tests
 {
     public class DateTimeZoneTests
     {

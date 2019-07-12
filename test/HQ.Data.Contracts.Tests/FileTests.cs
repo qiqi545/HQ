@@ -13,10 +13,11 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Data.Contracts.Versioning;
 using HQ.Test.Sdk.Fixtures;
 using Xunit;
 
-namespace HQ.Data.Contracts.Versioning.Tests
+namespace HQ.Data.Contracts.Tests
 {
     public class FileTests
     {

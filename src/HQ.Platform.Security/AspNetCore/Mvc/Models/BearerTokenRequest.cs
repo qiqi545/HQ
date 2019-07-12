@@ -16,7 +16,6 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Models
 {

@@ -18,8 +18,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Security.AspnetCore.Mvc.Controllers;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
+using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;

@@ -23,7 +23,7 @@ using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Models;
 using HQ.Platform.Node.UI.Pages;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.UI;
 using HQ.UI.Web;

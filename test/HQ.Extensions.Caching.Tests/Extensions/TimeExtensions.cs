@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Tests.Extensions
+namespace HQ.Extensions.Caching.Tests.Extensions
 {
     internal static class TimeExtensions
     {

@@ -17,7 +17,7 @@
 
 using System.Text;
 
-namespace HQ.Data.Contracts.Versioning.Tests
+namespace HQ.Data.Contracts.Tests
 {
     namespace V1
     {

@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Morcatko.AspNetCore.JsonMergePatch;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
     public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
     {

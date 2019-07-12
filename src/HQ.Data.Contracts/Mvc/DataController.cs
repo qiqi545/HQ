@@ -19,7 +19,7 @@ using System.Net;
 using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
     public class DataController : ControllerExtended
     {

@@ -34,14 +34,29 @@
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
 
     <!-- Test Framework -->
-    <Content Include="..\..\src\HQ.Test.Sdk.Data\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk.Data\obj\**\*" Link="Test.Sdk.Data\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\..\src\HQ.Test.Sdk\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
 
+    <!-- Extensions -->
+    <Content Include="..\HQ.Extensions.Dates.Tests\**\*.cs" Exclude="..\HQ.Extensions.Dates.Tests\obj\**\*" Link="Extensions.Dates.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Caching.Tests\**\*.cs" Exclude="..\HQ.Extensions.Caching.Tests\obj\**\*" Link="Extensions.Caching.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Logging.Tests\**\*.cs" Exclude="..\HQ.Extensions.Logging.Tests\obj\**\*" Link="Extensions.Logging.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.DependencyInjection.Tests\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection.Tests\obj\**\*" Link="Extensions.DependencyInjection.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Metrics.Tests\**\*.cs" Exclude="..\HQ.Extensions.Metrics.Tests\obj\**\*" Link="Extensions.Metrics.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Scheduling.Tests\**\*.cs" Exclude="..\HQ.Extensions.Scheduling.Tests\obj\**\*" Link="Extensions.Scheduling.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+
     <!-- Common -->
-    <Content Include="..\HQ.Common.Tests\**\*.cs" Exclude="..\HQ.Common.Tests\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
-    
+    <Content Include="..\HQ.Common.Tests\**\*.cs" Exclude="..\HQ.Common.Tests\obj\**\*" Link="Common.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Data -->
+    <Content Include="..\HQ.Data.SessionManagement.Tests\**\*.cs" Exclude="..\HQ.Data.SessionManagement.Tests\obj\**\*" Link="Data.SessionManagement.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts.Tests\**\*.cs" Exclude="..\HQ.Data.Contracts.Tests\obj\**\*" Link="Data.Contracts.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Sql.Tests\**\*.cs" Exclude="..\HQ.Data.Sql.Tests\obj\**\*" Link="Data.Sql.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Streaming.Tests\**\*.cs" Exclude="..\HQ.Data.Streaming.Tests\obj\**\*" Link="Data.Streaming.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+
     <!-- Platform -->
-    <Content Include="..\HQ.Platform.Security.Tests\**\*.cs" Exclude="..\HQ.Platform.Security.Tests\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Identity.Tests\**\*.cs" Exclude="..\HQ.Platform.Identity.Tests\obj\**\*" Link="Platform.Identity.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Api.Tests\**\*.cs" Exclude="..\HQ.Platform.Api.Tests\obj\**\*" Link="Platform.Api.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.InteractionTests\**\*.cs" Exclude="..\HQ.Platform.InteractionTests\obj\**\*" Link="Platform.InteractionTests\%(RecursiveDir)%(Filename)%(Extension)" />
 
 
   </ItemGroup>

@@ -6,7 +6,7 @@
 
 // ReSharper disable once CheckNamespace
 
-namespace PetaPoco.Utilities
+namespace HQ.Data.Sql.Helpers
 {
     /// <summary>
     ///     Presents the SQL parts.

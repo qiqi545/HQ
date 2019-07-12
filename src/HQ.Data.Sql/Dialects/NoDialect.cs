@@ -17,7 +17,7 @@
 
 using System.Text;
 using HQ.Data.Sql.Extensions;
-using HQ.PetaPoco.Utilities;
+using HQ.Data.Sql.Helpers;
 
 namespace HQ.Data.Sql.Dialects
 {

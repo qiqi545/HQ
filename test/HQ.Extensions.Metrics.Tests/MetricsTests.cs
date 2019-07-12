@@ -31,10 +31,10 @@ namespace HQ.Extensions.Metrics.Tests
         [Fact]
         public void Can_get_all_registered_metrics()
         {
-            var counter = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_all_registered_metrics");
+            var counter = _fixture.Metrics.Counter(typeof(CounterTests), nameof(Can_get_all_registered_metrics));
             Assert.NotNull(counter);
 
-            var same = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_all_registered_metrics");
+            var same = _fixture.Metrics.Counter(typeof(CounterTests), nameof(Can_get_all_registered_metrics));
             Assert.NotNull(same);
 
             Assert.Equal(1, _fixture.Metrics.GetSample().Count);
@@ -48,10 +48,10 @@ namespace HQ.Extensions.Metrics.Tests
                 Assert.Equal(0, metrics.Metrics.GetSample().Count);
 
                 var name = new MetricName(typeof(CounterTests),
-                    "Can_get_all_registered_metrics_as_readonly_and_immutable");
+                    nameof(Can_get_all_registered_metrics_as_readonly_and_immutable));
 
                 metrics.Metrics.Counter(typeof(CounterTests),
-                    "Can_get_all_registered_metrics_as_readonly_and_immutable");
+                    nameof(Can_get_all_registered_metrics_as_readonly_and_immutable));
 
                 Assert.Equal(1, metrics.Metrics.GetSample().Count);
 
@@ -68,10 +68,10 @@ namespace HQ.Extensions.Metrics.Tests
         [Fact]
         public void Can_get_same_metric_when_metric_exists()
         {
-            var counter = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_same_metric_when_metric_exists");
+            var counter = _fixture.Metrics.Counter(typeof(CounterTests), nameof(Can_get_same_metric_when_metric_exists));
             Assert.NotNull(counter);
 
-            var same = _fixture.Metrics.Counter(typeof(CounterTests), "Can_get_same_metric_when_metric_exists");
+            var same = _fixture.Metrics.Counter(typeof(CounterTests), nameof(Can_get_same_metric_when_metric_exists));
             Assert.Same(counter, same);
         }
     }

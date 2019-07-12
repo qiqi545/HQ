@@ -17,7 +17,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Hosting;
 
-namespace HQ.Platform.Functions.Azure
+namespace HQ.Platform.Api.Functions.Azure
 {
     public abstract class FunctionsStartup : IWebJobsStartup
     {

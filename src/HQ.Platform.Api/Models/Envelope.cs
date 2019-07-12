@@ -35,22 +35,4 @@ namespace HQ.Platform.Api.Models
         [DataMember] public IHeaderDictionary Headers;
         [DataMember] public PagingInfo Paging;
     }
-
-    [DataContract]
-    [KnownType(nameof(GetKnownTypes))]
-    public class EnvelopeCollectionBody<T> : Envelope
-    {
-        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
-
-        [DataMember] public IEnumerable<T> Data;
-    }
-
-    [DataContract]
-    [KnownType(nameof(GetKnownTypes))]
-    public class EnvelopeBody<T> : Envelope
-    {
-        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
-
-        [DataMember] public T Data;
-    }
 }

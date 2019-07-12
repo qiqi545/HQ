@@ -17,7 +17,6 @@
 
 using System.Collections.Generic;
 using HQ.Extensions.Metrics.Reporters.Console;
-using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace HQ.Extensions.Metrics.Tests.Reporting
@@ -43,7 +42,7 @@ namespace HQ.Extensions.Metrics.Tests.Reporting
             queue.Enqueue(2);
 
             var registry = new InMemoryMetricsRegistry();
-            var reporter = new ConsoleReporter(registry, Options.Create(new ConsoleReporterOptions()));
+            var reporter = new ConsoleReporter(registry,  Microsoft.Extensions.Options.Options.Create(new ConsoleReporterOptions()));
             reporter.Report();
         }
     }

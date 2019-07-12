@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
-using HQ.Platform.Functions.AspNetCore.Mvc;
-using HQ.Platform.Functions.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.AspNetCore;
 using HQ.Test.Sdk;
 using Microsoft.AspNetCore.Builder;

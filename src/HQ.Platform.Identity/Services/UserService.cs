@@ -27,7 +27,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Services

@@ -22,6 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
+using HQ.Data.Sql.Migration;
 using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -14,12 +14,12 @@
 #endregion
 
 using System.Diagnostics;
-using HQ.Platform.Functions.Azure;
+using HQ.Platform.Api.Functions.Azure;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
-namespace HQ.Platform.Functions.Azure
+namespace HQ.Platform.Api.Functions.Azure
 {
     public class Startup : FunctionsStartup
     {

@@ -6,8 +6,8 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
-using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
-using HQ.Platform.Functions.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Runtime.Rest;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore;
@@ -18,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {
     public static class Add
     {

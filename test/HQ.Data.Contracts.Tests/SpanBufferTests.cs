@@ -16,9 +16,10 @@
 #endregion
 
 using System;
+using HQ.Data.Contracts.Versioning;
 using Xunit;
 
-namespace HQ.Data.Contracts.Versioning.Tests
+namespace HQ.Data.Contracts.Tests
 {
     public class SpanBufferTests
     {

@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using HQ.Extensions.Scheduling.Configuration;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
 	public class BackgroundTaskOptionsView
 	{

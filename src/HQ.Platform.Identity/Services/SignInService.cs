@@ -26,7 +26,7 @@ using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

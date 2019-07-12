@@ -16,11 +16,10 @@
 #endregion
 
 using System.Threading;
-using HQ.Extensions.Caching;
-using HQ.Extensions.Tests.Extensions;
+using HQ.Extensions.Caching.Tests.Extensions;
 using Xunit;
 
-namespace HQ.Extensions.Tests.Caching
+namespace HQ.Extensions.Caching.Tests.Caching
 {
     public abstract class CacheTestsBase
     {

@@ -16,9 +16,9 @@
 using System;
 using System.Collections.Generic;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Functions.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
 	internal class BackgroundTasksComponent : IDynamicComponent
     {

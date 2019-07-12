@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Runtime.Rest.Models;
 using Microsoft.AspNetCore.Mvc.Filters;

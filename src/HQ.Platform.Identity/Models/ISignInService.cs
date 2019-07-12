@@ -18,7 +18,7 @@
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 
 namespace HQ.Platform.Identity.Models
 {

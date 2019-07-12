@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
     [Description("Invokes an HTTP request.")]
     public class HttpFunction : Before, Handler

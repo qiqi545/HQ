@@ -17,8 +17,6 @@
 
 using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
-using HQ.Extensions.Tests.Caching;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching.Tests.Caching
 {
@@ -26,7 +24,7 @@ namespace HQ.Extensions.Caching.Tests.Caching
     {
         public InProcessCacheTests()
         {
-            cache = new InProcessCache(Options.Create(new CacheOptions()), new LocalServerTimestampService());
+	        cache = new InProcessCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new LocalServerTimestampService());
         }
     }
 }

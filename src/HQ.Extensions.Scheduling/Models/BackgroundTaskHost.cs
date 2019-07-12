@@ -24,6 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts.Runtime;
+using HQ.Extensions.Dates;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;

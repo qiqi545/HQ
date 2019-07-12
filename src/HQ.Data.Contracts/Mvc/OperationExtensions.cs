@@ -19,7 +19,7 @@ using System;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
     public static class OperationExtensions
     {

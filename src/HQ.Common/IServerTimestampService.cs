@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Extensions.Dates;
 using Newtonsoft.Json;
 
 namespace HQ.Common

@@ -17,7 +17,7 @@ using System;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Functions.Azure
+namespace HQ.Platform.Api.Functions.Azure
 {
     internal class FunctionsHostBuilder : IFunctionsHostBuilder
     {

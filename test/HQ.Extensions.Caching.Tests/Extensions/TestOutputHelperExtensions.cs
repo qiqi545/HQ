@@ -1,6 +1,6 @@
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Tests.Extensions
+namespace HQ.Extensions.Caching.Tests.Extensions
 {
     internal static class TestOutputHelperExtensions
     {

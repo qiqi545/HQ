@@ -22,7 +22,7 @@ using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Models
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
     [Description("A test function for diagnostic purposes.")]
     public class TestFunction : Before, Handler, After, Success, Failure, Halt, Error

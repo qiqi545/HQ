@@ -19,20 +19,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
-using HQ.Platform.Functions.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-
 using Error = HQ.Data.Contracts.Error;
 
-namespace HQ.Platform.Functions.AspNetCore.Mvc.Controllers
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 {
     [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages background tasks.")]

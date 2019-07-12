@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using HQ.Extensions.Logging;
 using HQ.Test.Sdk.Assertions;
+using HQ.Test.Sdk.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.TraceSource;

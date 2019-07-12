@@ -16,8 +16,9 @@
 #endregion
 
 using System;
+using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Data.Contracts.Versioning.Tests
+namespace HQ.Data.Contracts.Tests
 {
     namespace V1
     {

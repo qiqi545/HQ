@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <!--#if(false)-->
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
   <PropertyGroup>
     <DefineConstants>Sqlite;AppInsights</DefineConstants>
     <AppInsights>true</AppInsights>
@@ -46,7 +47,6 @@
     <IsPackable>true</IsPackable>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.0.15</Version>
     <Company>HQ.IO Corporation</Company>
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>

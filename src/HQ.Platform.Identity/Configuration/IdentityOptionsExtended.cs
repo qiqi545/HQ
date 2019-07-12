@@ -16,7 +16,7 @@
 #endregion
 
 using HQ.Common;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration

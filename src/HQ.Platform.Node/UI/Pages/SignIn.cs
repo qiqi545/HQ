@@ -17,7 +17,7 @@
 
 using System;
 using HQ.Platform.Node.UI.Models;
-using HQ.Platform.Security.AspnetCore.Mvc.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.UI;
 using HQ.UI.Web;
 using HQ.UI.Web.SemanticUi;

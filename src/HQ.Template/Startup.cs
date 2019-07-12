@@ -16,8 +16,8 @@
 #endregion
 
 using HQ.Extensions.Deployment;
-using HQ.Extensions.Deployment.Azure;
 using HQ.Extensions.Logging;
+using HQ.Integration.Azure;
 using HQ.Platform.Node;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,13 +27,13 @@ namespace HQ.Template
 {
     public class Startup
     {
-        public static void Main(string[] args) => Server.Start<Startup>(args, GetCloudOptions);
+        public static void Main(string[] args) => Server.Start<Platform.Api.Functions.Azure.Startup>(args, GetCloudOptions);
 
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
-        private readonly ISafeLogger<Startup> _logger;
+        private readonly ISafeLogger<Platform.Api.Functions.Azure.Startup> _logger;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Platform.Api.Functions.Azure.Startup> logger)
         {
             _configuration = configuration;
             _environment = environment;

@@ -21,7 +21,7 @@ using System.Linq;
 using System.Text;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
-using HQ.PetaPoco.Utilities;
+using HQ.Data.Sql.Helpers;
 
 namespace HQ.Integration.DocumentDb.Sql
 {

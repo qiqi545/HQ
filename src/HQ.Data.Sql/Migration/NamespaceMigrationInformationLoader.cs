@@ -21,7 +21,7 @@ using FluentMigrator.Infrastructure;
 using FluentMigrator.Runner;
 using FluentMigrator.Runner.Initialization;
 
-namespace HQ.Platform.Identity.Stores.Sql
+namespace HQ.Data.Sql.Migration
 {
     public class NamespaceMigrationInformationLoader : IMigrationInformationLoader
     {

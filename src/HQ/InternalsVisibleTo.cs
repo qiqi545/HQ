@@ -17,7 +17,7 @@
 
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("HQ.Azure")]
+[assembly: InternalsVisibleTo("HQ.Tests")]
 
 // ReSharper disable once CheckNamespace
 namespace Internals

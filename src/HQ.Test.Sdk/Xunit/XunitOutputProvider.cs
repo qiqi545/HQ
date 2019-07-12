@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Test.Sdk.Logging;
 using Xunit.Sdk;
 
 namespace HQ.Test.Sdk.Xunit
