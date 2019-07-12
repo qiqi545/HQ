@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Extensions.Metrics;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Metrics.Reporters.AppInsights
+namespace HQ.Integrations.Azure.Metrics.Reporters
 {
     // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2
 

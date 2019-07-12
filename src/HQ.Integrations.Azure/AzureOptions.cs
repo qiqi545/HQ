@@ -15,17 +15,16 @@
 
 #endregion
 
-using HQ.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using HQ.Extensions.Deployment;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
-namespace HQ.Extensions.Deployment.Azure
+namespace HQ.Integrations.Azure
 {
-    public class AzureTelemetry : ICloudTelemetry<AzureOptions>
+    public class AzureOptions : ICloudOptions
     {
-        public void AddCloudTelemetry(IServiceCollection services, ISafeLogger logger, AzureOptions options)
-        {
-            logger.Info(()=> "Adding Application Insights Telemetry");
-            services.AddApplicationInsightsTelemetry(options.ApplicationInsights);
-        }
+        public string SubscriptionId { get; set; }
+
+        public ApplicationInsightsServiceOptions ApplicationInsights { get; set; } =
+            new ApplicationInsightsServiceOptions();
     }
 }

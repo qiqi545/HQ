@@ -15,15 +15,23 @@
 
 #endregion
 
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using System.Diagnostics;
+using HQ.Extensions.Deployment;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Extensions.Deployment.Azure
+namespace HQ.Integrations.Azure
 {
-    public class AzureOptions : ICloudOptions
+    public class AzureLogger : ICloudLogger<AzureOptions>
     {
-        public string SubscriptionId { get; set; }
+        public void AddCloudLogger(ILoggingBuilder builder, AzureOptions options)
+        {
+            Trace.TraceInformation("Adding Application Insights Logging");
 
-        public ApplicationInsightsServiceOptions ApplicationInsights { get; set; } =
-            new ApplicationInsightsServiceOptions();
+            builder.AddApplicationInsights(o =>
+            {
+                o.IncludeScopes = true;
+                o.TrackExceptionsAsExceptionTelemetry = true;
+            });
+        }
     }
 }

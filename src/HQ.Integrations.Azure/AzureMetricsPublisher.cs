@@ -15,21 +15,26 @@
 
 #endregion
 
-using System.Diagnostics;
-using Microsoft.Extensions.Logging;
+using HQ.Extensions.Deployment;
+using HQ.Extensions.Logging;
+using HQ.Extensions.Metrics;
+using HQ.Integrations.Azure.Metrics.Reporters;
 
-namespace HQ.Extensions.Deployment.Azure
+namespace HQ.Integrations.Azure
 {
-    public class AzureLogger : ICloudLogger<AzureOptions>
+    public class AzureMetricsPublisher : ICloudMetricsPublisher<AzureOptions>
     {
-        public void AddCloudLogger(ILoggingBuilder builder, AzureOptions options)
+        public void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, AzureOptions options)
         {
-            Trace.TraceInformation("Adding Application Insights Logging");
+            logger.Info(() => "Adding Application Insights Metrics & Health Checks Reporting");
 
-            builder.AddApplicationInsights(o =>
+            builder.PushToApplicationInsights(p =>
             {
-                o.IncludeScopes = true;
-                o.TrackExceptionsAsExceptionTelemetry = true;
+                p.MetricsSampleEventName = Constants.Events.MetricsSample;
+                p.HealthCheckEventName = Constants.Events.HealthCheck;
+                p.PublishHealthChecks = true;
+                p.PublishHealthy = false;
+                p.PublishMetrics = true;
             });
         }
     }

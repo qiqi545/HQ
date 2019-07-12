@@ -15,17 +15,18 @@
 
 #endregion
 
-using HQ.Common;
+using HQ.Extensions.Deployment;
+using HQ.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Extensions.Metrics.Reporters.AppInsights
+namespace HQ.Integrations.Azure
 {
-    public class AppInsightsMetricsReporterOptions : FeatureToggle
+    public class AzureTelemetry : ICloudTelemetry<AzureOptions>
     {
-        public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
-        public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
-
-        public bool PublishHealthy { get; set; } = false;
-        public bool PublishHealthChecks { get; set; } = true;
-        public bool PublishMetrics { get; set; } = true;
+        public void AddCloudTelemetry(IServiceCollection services, ISafeLogger logger, AzureOptions options)
+        {
+            logger.Info(()=> "Adding Application Insights Telemetry");
+            services.AddApplicationInsightsTelemetry(options.ApplicationInsights);
+        }
     }
 }

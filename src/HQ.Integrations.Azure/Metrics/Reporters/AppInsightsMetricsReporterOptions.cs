@@ -15,26 +15,18 @@
 
 #endregion
 
-using HQ.Extensions.Logging;
-using HQ.Extensions.Metrics;
-using HQ.Extensions.Metrics.Reporters.AppInsights;
+using HQ.Common;
+using Constants = HQ.Extensions.Metrics.Constants;
 
-namespace HQ.Extensions.Deployment.Azure
+namespace HQ.Integrations.Azure.Metrics.Reporters
 {
-    public class AzureMetricsPublisher : ICloudMetricsPublisher<AzureOptions>
+    public class AppInsightsMetricsReporterOptions : FeatureToggle
     {
-        public void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, AzureOptions options)
-        {
-            logger.Info(() => "Adding Application Insights Metrics & Health Checks Reporting");
+        public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
+        public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
 
-            builder.PushToApplicationInsights(p =>
-            {
-                p.MetricsSampleEventName = Constants.Events.MetricsSample;
-                p.HealthCheckEventName = Constants.Events.HealthCheck;
-                p.PublishHealthChecks = true;
-                p.PublishHealthy = false;
-                p.PublishMetrics = true;
-            });
-        }
+        public bool PublishHealthy { get; set; } = false;
+        public bool PublishHealthChecks { get; set; } = true;
+        public bool PublishMetrics { get; set; } = true;
     }
 }

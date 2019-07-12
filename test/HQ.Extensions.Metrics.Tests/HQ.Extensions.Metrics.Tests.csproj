@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.Reporters.SignalR\HQ.Extensions.Metrics.Reporters.SignalR.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>
 
