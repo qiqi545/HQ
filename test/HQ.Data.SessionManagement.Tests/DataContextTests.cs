@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Data.SessionManagement.Sqlite;
+using HQ.Integration.Sqlite.SessionManagement;
 using Xunit;
 
 namespace HQ.Data.SessionManagement.Tests

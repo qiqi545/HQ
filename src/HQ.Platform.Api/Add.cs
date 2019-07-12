@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
+using HQ.Common.Serialization;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Scheduling;
 using HQ.Platform.Api.Configuration;

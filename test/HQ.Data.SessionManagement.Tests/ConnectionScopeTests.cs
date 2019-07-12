@@ -17,7 +17,7 @@
 
 using System.Data;
 using System.Linq;
-using HQ.Data.SessionManagement.Sqlite;
+using HQ.Integration.Sqlite.SessionManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -81,7 +81,6 @@ namespace HQ.Data.SessionManagement.Tests
             var connection2 = provider.GetService<DataContext>();
             Assert.Equal(connection1, connection2);
         }
-
 
         [Fact]
         public void Keep_alive_data_connection()

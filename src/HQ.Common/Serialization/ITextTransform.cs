@@ -15,11 +15,11 @@
 
 #endregion
 
-namespace HQ.Platform.Api.Serialization
+namespace HQ.Common.Serialization
 {
-    public enum JsonProcessingDirection
+    public interface ITextTransform
     {
-        Input,
-        Output
+        string Name { get; }
+        string Transform(string input);
     }
 }

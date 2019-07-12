@@ -19,7 +19,7 @@ using System;
 using System.Globalization;
 using System.Numerics;
 
-namespace HQ.Common.Numerics
+namespace HQ.Common
 {
     public struct FixedNumber : IComparable<FixedNumber>, IEquatable<FixedNumber>
     {

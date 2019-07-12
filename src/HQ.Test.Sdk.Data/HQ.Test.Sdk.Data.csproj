@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
+    <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 

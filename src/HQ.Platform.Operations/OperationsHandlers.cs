@@ -27,10 +27,10 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Common.AspNetCore;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Internal;
-using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
@@ -215,7 +215,7 @@ namespace HQ.Platform.Operations
         {
             return app.WriteResultAsJson(context, OperationsMethods.HostedServicesReport(context.RequestServices));
         }
-
+		
         public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
         {
             return app.WriteResultAsJson(context, OperationsMethods.OptionsReport(app.ApplicationServices));

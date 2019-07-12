@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Common.Serialization
 {
     public interface IViewModel
     {

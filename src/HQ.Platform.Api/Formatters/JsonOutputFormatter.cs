@@ -18,9 +18,9 @@
 using System.Buffers;
 using System.Collections.Generic;
 using HQ.Common;
+using HQ.Common.Serialization;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
-using HQ.Platform.Api.Serialization;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json;
 

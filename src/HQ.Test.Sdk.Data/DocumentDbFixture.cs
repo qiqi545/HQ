@@ -1,5 +1,5 @@
 using System;
-using HQ.Data.SessionManagement.DocumentDb;
+using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

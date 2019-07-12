@@ -20,12 +20,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TypeKitchen;
 
-namespace HQ.Platform.Api.Serialization
+namespace HQ.Common.Serialization
 {
     public class JsonContractResolver : DefaultContractResolver
     {

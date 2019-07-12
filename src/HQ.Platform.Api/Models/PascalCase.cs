@@ -15,6 +15,8 @@
 
 #endregion
 
+using HQ.Common.Serialization;
+
 namespace HQ.Platform.Api.Models
 {
     internal class PascalCase : ITextTransform

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
   </ItemGroup>
 
 </Project>
