@@ -45,7 +45,7 @@ namespace HQ.Common
         }
 
         /// <summary> Creates a <see cref="DateTimeZone"/> instance based on the most prevalent time zone associated with the provided instant's time zone offset </summary>
-        internal DateTimeZone(DateTimeOffset instant, TimeZoneInfo timeZone)
+        public DateTimeZone(DateTimeOffset instant, TimeZoneInfo timeZone)
         {
             _instant = instant.ToUniversalTime();
             _timeZone = timeZone;

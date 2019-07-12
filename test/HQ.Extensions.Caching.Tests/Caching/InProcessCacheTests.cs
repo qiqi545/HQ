@@ -15,17 +15,18 @@
 
 #endregion
 
-using HQ.Extensions.Caching;
+using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
+using HQ.Extensions.Tests.Caching;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Tests.Caching
+namespace HQ.Extensions.Caching.Tests.Caching
 {
     public class InProcessCacheTests : CacheTestsBase
     {
         public InProcessCacheTests()
         {
-            cache = new InProcessCache(Options.Create(new CacheOptions()));
+            cache = new InProcessCache(Options.Create(new CacheOptions()), new LocalServerTimestampService());
         }
     }
 }

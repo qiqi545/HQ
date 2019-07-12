@@ -18,6 +18,7 @@
 using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.Configuration;
+using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Tests.Caching
@@ -26,7 +27,7 @@ namespace HQ.Extensions.Tests.Caching
     {
         public DistributedCacheTests()
         {
-            cache = new DistributedCache(Options.Create(new CacheOptions()), new LocalServerTimestampService());
+            cache = new DistributedCache(Options.Create(new CacheOptions()), new SystemClock(), new LocalServerTimestampService());
         }
     }
 }
