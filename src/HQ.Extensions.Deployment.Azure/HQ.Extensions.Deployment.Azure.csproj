@@ -12,8 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics.Reporters.AppInsights\HQ.Extensions.Metrics.Reporters.AppInsights.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Metrics.Reporters.AppInsights\HQ.Extensions.Metrics.Reporters.AppInsights.csproj" />
   </ItemGroup>
 
 </Project>

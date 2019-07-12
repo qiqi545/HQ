@@ -20,10 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.AspNetCore\HQ.Extensions.Metrics.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.Reporters.Console\HQ.Extensions.Metrics.Reporters.Console.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.Reporters.Logging\HQ.Extensions.Metrics.Reporters.Logging.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.Reporters.ServerTiming\HQ.Extensions.Metrics.Reporters.ServerTiming.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Metrics.Reporters.SignalR\HQ.Extensions.Metrics.Reporters.SignalR.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>

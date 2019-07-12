@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Dialects;
-using HQ.Data.Sql.SqlServer;
+using HQ.Integration.SqlServer.Sql;
 using Xunit;
 
 namespace HQ.Data.Sql.Tests.Builders

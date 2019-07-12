@@ -22,7 +22,6 @@ using HQ.Data.Streaming.Fields;
 using HQ.Data.Streaming.Internal;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
-using HQ.Test.Sdk.Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {

@@ -18,8 +18,8 @@
 using System;
 using System.Text.RegularExpressions;
 using HQ.Data.Sql.Dialects;
-using HQ.Data.Sql.Sqlite;
-using HQ.Data.Sql.SqlServer;
+using HQ.Integration.Sqlite.Sql;
+using HQ.Integration.SqlServer.Sql;
 using Xunit;
 using Xunit.Abstractions;
 

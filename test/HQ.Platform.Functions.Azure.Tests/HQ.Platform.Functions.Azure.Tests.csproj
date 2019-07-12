@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Test.Sdk.Data\HQ.Test.Sdk.Data.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 

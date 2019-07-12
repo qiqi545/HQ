@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\src\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
 

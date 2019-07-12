@@ -15,14 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.Builders\HQ.Data.Sql.Builders.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.Dapper\HQ.Data.Sql.Dapper.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.Descriptor\HQ.Data.Sql.Descriptor.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.Queries\HQ.Data.Sql.Queries.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.Sqlite\HQ.Data.Sql.Sqlite.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Data.Sql.SqlServer\HQ.Data.Sql.SqlServer.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Sql\HQ.Data.Sql.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>
