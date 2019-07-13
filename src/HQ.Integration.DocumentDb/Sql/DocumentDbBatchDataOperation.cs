@@ -28,8 +28,6 @@ using HQ.Data.Contracts;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
 using HQ.Integration.DocumentDb.SessionManagement;
-using Microsoft.Azure.CosmosDB.BulkExecutor;
-using Microsoft.Azure.CosmosDB.BulkExecutor.BulkUpdate;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Options;
 
@@ -162,8 +160,7 @@ namespace HQ.Integration.DocumentDb.Sql
                                 return null;
                             }
 
-                            var operation =
-                                (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
+                            var operation = (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
                             return operation;
                         });
 

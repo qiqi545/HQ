@@ -46,8 +46,8 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class SuperUserTokenController : DataController
     {
-	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
-	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
+	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
 		private readonly IOptions<SecurityOptions> _securityOptions;
 
@@ -73,23 +73,24 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
                 return Ok(User.Claims());
 
             return Unauthorized();
+#else
+			return NotImplementedResult();
 #endif
-            return NotImplemented();
-        }
+		}
 
-        [AllowAnonymous]
+		[AllowAnonymous]
         [HttpPost]
-        public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
+        public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
             if (!Debugger.IsAttached)
-                return NotImplemented();
+                return NotImplementedResult();
 #if DEBUG
             var superUser = _securityOptions.Value.SuperUser;
             if (!superUser.Enabled)
-                return NotFound();
+                return NotFoundResult();
 
             if (!ValidModelState(out var error))
-                return error;
+                return Task.FromResult((IActionResult) error);
 
             bool isSuperUser;
             switch (model.IdentityType)
@@ -97,17 +98,17 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
                 case IdentityType.Username:
                     isSuperUser = superUser.Username == model.Identity;
                     if (!isSuperUser)
-                        return NotFound();
+                        return NotFoundResult();
                     break;
                 case IdentityType.Email:
                     isSuperUser = superUser.Email == model.Identity;
                     if (!isSuperUser)
-                        return NotFound();
+                        return NotFoundResult();
                     break;
                 case IdentityType.PhoneNumber:
                     isSuperUser = superUser.PhoneNumber == model.Identity;
                     if (!isSuperUser)
-                        return NotFound();
+                        return NotFoundResult();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -123,12 +124,13 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
                 };
                 var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
                 var token = provider.CreateToken(claims, _securityOptions.Value, ApiVersion, ApiName);
-                return Ok(new { AccessToken = token });
+                return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
             }
 
-            return Unauthorized();
+            return UnauthorizedResult();
+#else
+			return NotImplementedResult();
 #endif
-            return NotImplemented();
-        }
-    }
+		}
+	}
 }

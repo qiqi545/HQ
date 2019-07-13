@@ -19,6 +19,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
@@ -35,9 +36,23 @@ namespace HQ.Common.AspNetCore.Mvc
 
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
+		public Task<IActionResult> NotModifiedResult()
+		{
+			return StatusCodeResult(HttpStatusCode.NotModified);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
 		public IActionResult Gone()
 		{
 			return StatusCode(HttpStatusCode.Gone);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> GoneResult()
+		{
+			return StatusCodeResult(HttpStatusCode.Gone);
 		}
 
 		[ApiExplorerSettings(IgnoreApi = true)]
@@ -49,10 +64,25 @@ namespace HQ.Common.AspNetCore.Mvc
 
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
+		public Task<IActionResult> UnsupportedMediaTypeResult(object value = null)
+		{
+			return StatusCodeResult(HttpStatusCode.UnsupportedMediaType, value);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
 		public IActionResult SeeOther(string location)
 		{
 			Response.Headers[Constants.HttpHeaders.Location] = location;
 			return StatusCode(HttpStatusCode.SeeOther);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> SeeOtherResult(string location)
+		{
+			Response.Headers[Constants.HttpHeaders.Location] = location;
+			return StatusCodeResult(HttpStatusCode.SeeOther);
 		}
 
 		[ApiExplorerSettings(IgnoreApi = true)]
@@ -72,9 +102,79 @@ namespace HQ.Common.AspNetCore.Mvc
 
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
+		public Task<IActionResult> NotAcceptableResult()
+		{
+			return StatusCodeResult(HttpStatusCode.NotAcceptable);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
 		public IActionResult NotImplemented()
 		{
 			return StatusCode(HttpStatusCode.NotImplemented);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> NotImplementedResult()
+		{
+			return StatusCodeResult(HttpStatusCode.NotImplemented);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> NotFoundResult()
+		{
+			return Task.FromResult((IActionResult) NotFound());
+		}
+		
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> NotFoundResult(object value)
+		{
+			return Task.FromResult((IActionResult) NotFound(value));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> BadRequestResult()
+		{
+			return Task.FromResult((IActionResult) BadRequest());
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> BadRequestResult(ModelStateDictionary modelState)
+		{
+			return Task.FromResult((IActionResult) BadRequest(modelState));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> BadRequestResult(object error)
+		{
+			return Task.FromResult((IActionResult) BadRequest(error));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> UnauthorizedResult()
+		{
+			return Task.FromResult((IActionResult) Unauthorized());
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> UnauthorizedResult(object value)
+		{
+			return Task.FromResult((IActionResult) Unauthorized(value));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> ForbiddenResult(params string[] authenticationSchemes)
+		{
+			return Task.FromResult((IActionResult) Forbid(authenticationSchemes));
 		}
 
 		[ApiExplorerSettings(IgnoreApi = true)]
@@ -89,6 +189,20 @@ namespace HQ.Common.AspNetCore.Mvc
 		public IActionResult StatusCode(HttpStatusCode code, object value)
 		{
 			return StatusCode((int) code, value);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> StatusCodeResult(HttpStatusCode code)
+		{
+			return Task.FromResult((IActionResult) StatusCode((int) code));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> StatusCodeResult(HttpStatusCode code, object value)
+		{
+			return Task.FromResult((IActionResult) StatusCode((int) code, value));
 		}
 
 		#endregion

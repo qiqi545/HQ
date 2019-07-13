@@ -26,7 +26,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HQ.Platform.Api\HQ.Platform.Api.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 

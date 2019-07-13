@@ -72,17 +72,10 @@
     
     <!-- Data -->
     <Content Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Contracts.Runtime\**\*.cs" Exclude="..\HQ.Data.Contracts.Runtime\obj\**\*" Link="Data.Contracts.Runtime\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Contracts.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Data.Contracts.AspNetCore.Mvc\obj\**\*" Link="Data.Contracts.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql.Builders\**\*.cs" Exclude="..\HQ.Data.Sql.Builders\obj\**\*" Link="Data.Sql.Builders\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql.Dapper\**\*.cs" Exclude="..\HQ.Data.Sql.Dapper\obj\**\*" Link="Data.Sql.Dapper\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql.Queries\**\*.cs" Exclude="..\HQ.Data.Sql.Queries\obj\**\*" Link="Data.Sql.Queries\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql.Descriptor\**\*.cs" Exclude="..\HQ.Data.Sql.Descriptor\obj\**\*" Link="Data.Sql.Descriptor\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.Data.Sql.Batching\**\*.cs" Exclude="..\HQ.Data.Sql.Batching\obj\**\*" Link="Data.Sql.Batching\%(RecursiveDir)%(Filename)%(Extension)" />
-
+    
     <!-- UI -->
     <Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -95,8 +88,6 @@
     <Content Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
   </ItemGroup>
 
@@ -115,9 +106,11 @@
   </ItemGroup>
 
   <!-- Azure -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Content Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
-    <Content Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integrations.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -169,6 +162,12 @@
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="WyHash" Version="1.0.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+
+    <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/1771 -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.3" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.1.0" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

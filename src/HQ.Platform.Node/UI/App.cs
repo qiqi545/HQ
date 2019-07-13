@@ -128,7 +128,7 @@ namespace HQ.Platform.Node.UI
         }
 
         [Handler("signout")]
-        public async Task SignOut(Ui ui)
+        public void SignOut(Ui ui)
         {
             ui.Literal("Sign Out");
         }

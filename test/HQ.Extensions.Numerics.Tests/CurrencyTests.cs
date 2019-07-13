@@ -20,7 +20,7 @@ using System.Threading;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Numerics.Tests.Financial
+namespace HQ.Extensions.Numerics.Tests
 {
     public class CurrencyTests : IClassFixture<CultureFixture>
     {

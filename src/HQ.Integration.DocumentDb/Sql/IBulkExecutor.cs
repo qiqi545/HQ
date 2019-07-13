@@ -13,21 +13,17 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using Xunit;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
-namespace HQ.Common.Tests
+namespace HQ.Integration.DocumentDb.Sql
 {
-    public class StringExtensionsTests
-    {
-        [Theory]
-        [InlineData("toTitleCase", "ToTitleCase")]
-        [InlineData("ToTitleCase", "ToTitleCase")]
-        [InlineData("   ", "   ")]
-        public void Title_case_data_tests(string input, string expected)
-        {
-            var actual = input.ToTitleCase();
+	public interface IBulkExecutor
+	{
+		Task<object> BulkImportAsync(IEnumerable<object> batch, bool upsert, bool b, int? optionsMaxConcurrencyPerPartitionKeyRange, int? optionsMaxInMemorySortingBatchSize, CancellationToken cancellationToken);
 
-            Assert.Equal(expected, actual);
-        }
-    }
+		Task<object> BulkUpdateAsync(IEnumerable<UpdateItem> patch, int? optionsMaxConcurrencyPerPartitionKeyRange, int? optionsMaxInMemorySortingBatchSize, CancellationToken cancellationToken);
+		Task InitializeAsync();
+	}
 }

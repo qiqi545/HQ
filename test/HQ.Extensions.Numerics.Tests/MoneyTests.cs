@@ -23,7 +23,7 @@ using HQ.Extensions.Numerics.Tests.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Extensions.Numerics.Tests.Financial
+namespace HQ.Extensions.Numerics.Tests
 {
 	public class MoneyTests
 	{

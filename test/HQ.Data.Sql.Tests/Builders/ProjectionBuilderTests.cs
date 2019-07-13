@@ -64,8 +64,7 @@ namespace HQ.Data.Sql.Tests.Builders
             var sql = d.Select("Customer", "dbo", new[] {"Id", "Email"}, projections, filters);
 
             var p = Constants.Sql.ParentAlias;
-            var c = Constants.Sql.ChildAlias;
-
+            
             _console.WriteLine(sql);
             Assert.Equal($"SELECT {p}.Id, {p}.Email, {p}0.* " +
                          $"FROM dbo.Customer {p} " +
