@@ -24,7 +24,7 @@
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
 
-<!-- Common -->
+    <!-- Common -->
     <Content Include="..\HQ.Common\**\*.cs" Exclude="..\HQ.Common\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Common.AspNetCore\**\*.cs" Exclude="..\HQ.Common.AspNetCore\obj\**\*" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Common.AspNetCore.Mvc\obj\**\*" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -164,7 +164,6 @@
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="WyHash" Version="1.0.2" />
-    <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
 

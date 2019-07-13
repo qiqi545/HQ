@@ -51,16 +51,57 @@ namespace HQ.UI.Web
 
 				var elements = EnsureElement(manifest, "FileSystem").Elements();
 
-				// Workaround:
+				// Workaround: Remove empty RESX substitution nodes
 				var containsResources = assembly.GetManifestResourceNames().Any(manifestResourceName => manifestResourceName.EndsWith(".resources"));
 				if (containsResources)
 					elements = elements.SkipWhile(x =>
 						string.Equals(x.Name.LocalName, "File", StringComparison.Ordinal) &&
 						EnsureName(x) != null && EnsureElement(x, "ResourcePath").Value == "");
 
+				// Workaround: Merge double-nested empty directories
+				if (containsResources)
+				{
+					elements = elements.SelectMany(MergeInnerUnnamedDirectories);
+				}
+
 				var entriesList = elements.Select(BuildEntry).ToList();
 				ValidateEntries(entriesList);
 				return new EmbeddedFilesManifest(ManifestDirectory.CreateRootDirectory(entriesList.ToArray()));
+			}
+
+			private static IEnumerable<XElement> MergeInnerUnnamedDirectories(XElement x)
+			{
+				if (x.Name.LocalName != "Directory")
+				{
+					yield return x; // can ignore files
+					yield break;
+				}
+
+				// well-formed directory, just check its inner contents
+				var attr = x.Attribute("Name");
+				if (attr?.Value != "")
+				{
+					var children = x.Elements().ToList();
+					foreach (var child in children)
+						child.Remove();
+
+					x.Add(children.Select(MergeInnerUnnamedDirectories));
+					yield return x;
+					yield break;
+				}
+
+				// consume the bad directory, forking it into its children
+				foreach (var fileOrDirectory in x.Elements())
+				{
+					if (fileOrDirectory.Name.LocalName != "Directory")
+					{
+						yield return fileOrDirectory; // can ignore files
+						continue;
+					}
+
+					foreach (var yield in MergeInnerUnnamedDirectories(fileOrDirectory))
+						yield return yield;
+				}
 			}
 
 			private static void ValidateEntries(IReadOnlyList<ManifestEntry> entriesList)
