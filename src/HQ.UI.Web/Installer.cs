@@ -1,7 +1,4 @@
-﻿// Copyright (c) Daniel Crenna & Contributor. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -50,7 +47,11 @@ namespace HQ.UI.Web
 
         internal static IServiceCollection AddUiResources(this IServiceCollection services, IHostingEnvironment env, params Assembly[] uiAssemblies)
         {
-            ManifestEmbeddedFileProvider RegisterUiAssembly(Assembly a)
+			// In full stack builds, we mix .RESX and web resources in the same UI assembly,
+			// Which causes an empty resource to get created, as per this issue: https://github.com/aspnet/Extensions/issues/1333
+			//
+			// If we run into this at runtime, we will swap out for a hybrid version that can handle the problem.
+			IFileProvider RegisterUiAssembly(Assembly a)
             {
                 var prefix = a.GetName().Name;
                 Trace.TraceInformation($"HQ.UI: Scanning {a.GetName().Name} for UI resources.");

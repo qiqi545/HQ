@@ -9,7 +9,6 @@ using HQ.Platform.Api.Configuration;
 using System.Net;
 using System.Reflection;
 using HQ.Common.AspNetCore.Models;
-using HQ.Platform.Api.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using TypeKitchen;
@@ -19,8 +18,8 @@ namespace HQ.Platform.Api.Controllers
     [Route("meta")]
     public class MetaController : Controller
     {
-	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
-	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
+	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
 
 		private readonly IOptions<PlatformApiOptions> _options;

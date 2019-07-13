@@ -19,21 +19,12 @@
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <TieredCompilation>true</TieredCompilation>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
 
-    <!-- Strings (RESX compilation must sit exactly relative to the namespace it is consumed by -->
-    <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <Compile Update="**\ErrorStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ErrorStrings.resx</DependentUpon>
-    </Compile>
-
-    <!-- Common -->
+<!-- Common -->
     <Content Include="..\HQ.Common\**\*.cs" Exclude="..\HQ.Common\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Common.AspNetCore\**\*.cs" Exclude="..\HQ.Common.AspNetCore\obj\**\*" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Common.AspNetCore.Mvc\obj\**\*" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -80,7 +71,20 @@
     <Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.UI.Web\lib\**\*;..\HQ.UI.Web.SemanticUi\lib\**\*" Link="lib\%(RecursiveDir)\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <!-- Strings (RESX compilation must sit exactly relative to the namespace it is consumed by -->
+    <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <Compile Update="**\ErrorStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ErrorStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <!-- SQLite -->

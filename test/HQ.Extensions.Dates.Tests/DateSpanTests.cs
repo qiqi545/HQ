@@ -16,22 +16,13 @@
 #endregion
 
 using System;
-using HQ.Extensions.Dates.Tests.Extensions;
-using Xunit;
-using Xunit.Abstractions;
+using HQ.Test.Sdk;
 
 namespace HQ.Extensions.Dates.Tests
 {
-    public class DateSpanTests
+    public class DateSpanTests : UnitUnderTest
     {
-        private readonly ITestOutputHelper _console;
-
-        public DateSpanTests(ITestOutputHelper console)
-        {
-            _console = console;
-        }
-
-        [Fact]
+        [Test]
         public void Can_get_date_difference_in_days()
         {
             var now = DateTimeOffset.Now;
@@ -42,7 +33,7 @@ namespace HQ.Extensions.Dates.Tests
             Assert.Equal(5, diff);
         }
 
-        [Fact]
+        [Test]
         public void Can_get_date_difference_in_days_spanning_one_month()
         {
             var start = new DateTime(2009, 09, 30);
@@ -52,7 +43,7 @@ namespace HQ.Extensions.Dates.Tests
             Assert.Equal(1, days);
         }
 
-        [Fact]
+        [Test]
         public void Can_get_date_difference_in_days_spanning_one_week()
         {
             var start = new DateTime(2009, 09, 30);
@@ -65,7 +56,7 @@ namespace HQ.Extensions.Dates.Tests
             Assert.Equal(1, weeks);
         }
 
-        [Fact]
+        [Test]
         public void Can_get_date_difference_in_days_spanning_two_months()
         {
             var start = new DateTime(2009, 09, 30);
@@ -75,7 +66,7 @@ namespace HQ.Extensions.Dates.Tests
             Assert.Equal(35, days);
         }
 
-        [Fact]
+        [Test]
         public void Can_handle_composite_spans()
         {
             var start = new DateTime(2009, 9, 30);
@@ -85,14 +76,14 @@ namespace HQ.Extensions.Dates.Tests
             Assert.Equal(1, span.Months);
             Assert.Equal(1, span.Days);
 
-            _console.WriteLine(span.Months);
-            _console.WriteLine(span.Days);
+            LogTrace(span.Months.ToString());
+            LogTrace(span.Days.ToString());
 
             var difference = DateSpan.GetDifference(DateInterval.Days, start, end);
-            _console.WriteLine(difference);
+            LogTrace(difference.ToString());
         }
 
-        [Fact]
+        [Test]
         public void Can_get_date_difference_in_seconds()
         {
             var start = DateTime.Now;

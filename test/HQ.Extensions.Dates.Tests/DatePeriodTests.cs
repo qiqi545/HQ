@@ -17,21 +17,13 @@
 
 using System;
 using System.Linq;
-using Xunit;
-using Xunit.Abstractions;
+using HQ.Test.Sdk;
 
 namespace HQ.Extensions.Dates.Tests
 {
-    public class DatePeriodTests
+    public class DatePeriodTests : UnitUnderTest
     {
-        private readonly ITestOutputHelper _console;
-
-        public DatePeriodTests(ITestOutputHelper console)
-        {
-            _console = console;
-        }
-
-        [Fact]
+        [Test]
         public void Can_get_occurrences()
         {
             var start = new DateTime(2009, 09, 01);
@@ -44,13 +36,13 @@ namespace HQ.Extensions.Dates.Tests
 
             foreach (var occurrence in occurrences)
             {
-                _console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
+	            LogTrace("{0}({1})", occurrence, occurrence.DayOfWeek);
             }
 
             Assert.Equal(52, occurrences.Count());
         }
 
-        [Fact]
+        [Test]
         public void Can_get_occurrences_when_start_date_falls_on_a_weekend()
         {
             var start = new DateTime(2009, 09, 05);
@@ -63,7 +55,7 @@ namespace HQ.Extensions.Dates.Tests
 
             foreach (var occurrence in occurrences)
             {
-                _console.WriteLine("{0}({1})", occurrence, occurrence.DayOfWeek);
+                LogTrace("{0}({1})", occurrence, occurrence.DayOfWeek);
             }
 
             Assert.Equal(52, occurrences.Count());

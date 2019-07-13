@@ -51,8 +51,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
 	{
-		public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Name;
-		public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName()?.Version?.ToString();
+		public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
+		public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
 		private readonly IHttpContextAccessor _http;
 

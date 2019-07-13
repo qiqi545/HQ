@@ -17,14 +17,15 @@
 
 using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
+using Microsoft.Extensions.Internal;
 
-namespace HQ.Extensions.Caching.Tests.Caching
+namespace HQ.Extensions.Caching.Tests
 {
-    public class InProcessCacheTests : CacheTestsBase
+    public class DistributedCacheTests : CacheTestsBase
     {
-        public InProcessCacheTests()
+        public DistributedCacheTests()
         {
-	        cache = new InProcessCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new LocalServerTimestampService());
+	        Cache = new DistributedCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new SystemClock(), new LocalServerTimestampService());
         }
     }
 }

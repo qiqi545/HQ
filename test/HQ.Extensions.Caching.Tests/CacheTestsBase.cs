@@ -17,44 +17,44 @@
 
 using System.Threading;
 using HQ.Extensions.Caching.Tests.Extensions;
-using Xunit;
+using HQ.Test.Sdk;
 
-namespace HQ.Extensions.Caching.Tests.Caching
+namespace HQ.Extensions.Caching.Tests
 {
-    public abstract class CacheTestsBase
+    public abstract class CacheTestsBase : UnitUnderTest
     {
-        protected ICache cache;
+        protected ICache Cache;
 
-        [Fact]
+        [Test]
         public virtual void Can_add_and_skip()
         {
-            cache.Add("key", "value");
-            cache.Add("key", "value2");
-            Assert.Equal("value", cache.Get<string>("key")); // Cache did not skip value when adding
+            Cache.Add("key", "value");
+            Cache.Add("key", "value2");
+            Assert.Equal("value", Cache.Get<string>("key")); // Cache did not skip value when adding
         }
 
-        [Fact]
+        [Test]
         public virtual void Can_cache_with_absolute_expiry()
         {
-            cache.Set("key", "value", 1.Seconds().FromNow());
+            Cache.Set("key", "value", 1.Seconds().FromNow());
             Thread.Sleep(1.Seconds());
-            Assert.Null(cache.Get<string>("key")); // Cache didn't expire in time
+            Assert.Null(Cache.Get<string>("key")); // Cache didn't expire in time
         }
 
-        [Fact]
+        [Test]
         public virtual void Can_cache_with_sliding_expiry()
         {
-            cache.Set("key", "value", 1.Seconds());
+            Cache.Set("key", "value", 1.Seconds());
             Thread.Sleep(1.Seconds());
-            Assert.Null(cache.Get<string>("key")); // Cache didn't expire in time
+            Assert.Null(Cache.Get<string>("key")); // Cache didn't expire in time
         }
 
-        [Fact]
+        [Test]
         public virtual void Can_set_and_override()
         {
-            cache.Set("key", "value");
-            cache.Set("key", "value2");
-            Assert.Equal("value2", cache.Get<string>("key")); // Cache did not override value when setting
+            Cache.Set("key", "value");
+            Cache.Set("key", "value2");
+            Assert.Equal("value2", Cache.Get<string>("key")); // Cache did not override value when setting
         }
     }
 }
