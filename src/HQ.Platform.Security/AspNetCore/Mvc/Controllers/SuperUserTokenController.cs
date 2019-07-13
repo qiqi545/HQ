@@ -74,7 +74,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 
             return Unauthorized();
 #else
-			return NotImplementedResult();
+			return NotImplemented();
 #endif
 		}
 
