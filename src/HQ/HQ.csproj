@@ -102,7 +102,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
-    <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
   </ItemGroup>
 
   <!-- Azure -->
