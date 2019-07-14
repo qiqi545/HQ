@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
@@ -102,7 +103,7 @@ namespace HQ.Platform.Security.AspNetCore
             {
 				services.AddAuthorization(x =>
 				{
-					AddDefaultPolicy(services, logger, x, options, JwtBearerDefaults.AuthenticationScheme);
+					TryAddDefaultPolicy(services, logger, x, options, JwtBearerDefaults.AuthenticationScheme);
 				});
 			}
 
@@ -110,11 +111,25 @@ namespace HQ.Platform.Security.AspNetCore
 			{
 				services.AddAuthorization(x =>
 				{
-					AddDefaultPolicy(services, logger, x, options, CookieAuthenticationDefaults.AuthenticationScheme);
+					TryAddDefaultPolicy(services, logger, x, options, CookieAuthenticationDefaults.AuthenticationScheme);
+				});
+			}
+			
+			if (options.SuperUser.Enabled)
+			{
+				logger?.Trace(() => $"SuperUser enabled.");
+
+				services.AddAuthorization(x =>
+				{
+					if (x.GetPolicy(Constants.Security.Policies.SuperUserOnly) == null)
+						x.AddPolicy(Constants.Security.Policies.SuperUserOnly, builder =>
+						{
+							builder.RequireRoleExtended(services, options, ClaimValues.SuperUser);
+						});
 				});
 			}
 
-            if (options.Https.Enabled)
+			if (options.Https.Enabled)
             {
                 logger?.Trace(() => "HTTPS enabled.");
 
@@ -140,20 +155,18 @@ namespace HQ.Platform.Security.AspNetCore
             return services;
         }
 
-        private static void AddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x,
+        private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x,
 	        SecurityOptions options, string scheme)
         {
+	        if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
+	        {
+				Trace.WriteLine($"Skipping default policy build; '{x.DefaultPolicy?.AuthenticationSchemes}' already registered");
+		        return;
+	        }
+
 	        x.DefaultPolicy = new AuthorizationPolicyBuilder(scheme)
 		        .RequireAuthenticatedUserExtended(services, options)
 		        .Build();
-
-	        if (options.SuperUser.Enabled)
-	        {
-		        logger?.Trace(() => $"SuperUser enabled for {scheme}");
-
-		        x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
-			        builder => { builder.RequireRoleExtended(services, options, ClaimValues.SuperUser); });
-	        }
         }
     }
 }

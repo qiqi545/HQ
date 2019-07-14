@@ -40,6 +40,12 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         public static void AddAuthentication(this IServiceCollection services, SecurityOptions options)
         {
+	        if (_signing != null)
+	        {
+				Trace.WriteLine("Token authentication already registered, skipping.");
+		        return;
+	        }
+
             _signing = _signing ?? BuildSigningCredentials(options);
             _encrypting = _encrypting ?? BuildEncryptingCredentials(options);
 
@@ -169,20 +175,18 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
             var handler = new JwtSecurityTokenHandler();
 
-            if (security.Tokens.Encrypt)
+            if (!security.Tokens.Encrypt)
+	            return handler.WriteToken(new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _signing));
+
+            var descriptor = new SecurityTokenDescriptor
             {
-                var descriptor = new SecurityTokenDescriptor
-                {
-                    Audience = aud,
-                    Issuer = iss,
-                    Subject = new ClaimsIdentity(claims),
-                    EncryptingCredentials = _encrypting
-                };
+	            Audience = aud,
+	            Issuer = iss,
+	            Subject = new ClaimsIdentity(claims),
+	            EncryptingCredentials = _encrypting
+            };
 
-                return handler.CreateEncodedJwt(descriptor);
-            }
-
-            return handler.WriteToken(new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _signing));
+            return handler.CreateEncodedJwt(descriptor);
         }
 
         private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
@@ -201,7 +205,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         public static bool MaybeSelfCreateMissingKeys(SecurityOptions options)
         {
-            bool changed = false;
+            var changed = false;
 
             if (options.Tokens.SigningKey == null || options.Tokens.SigningKey == Constants.Tokens.NoSigningKeySet)
             {
