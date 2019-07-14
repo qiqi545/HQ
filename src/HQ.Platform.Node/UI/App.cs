@@ -37,7 +37,7 @@ namespace HQ.Platform.Node.UI
 {
     [SemanticUi]
     [Title("HQ.io")]
-    public class App : Controller
+    public class App
     {
         private readonly IApplicationService<IdentityApplication> _applicationService;
         private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
