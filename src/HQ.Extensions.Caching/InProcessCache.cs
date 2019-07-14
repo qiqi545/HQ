@@ -26,9 +26,7 @@ namespace HQ.Extensions.Caching
 {
     public class InProcessCache : InProcessCacheManager, ICache
     {
-        public InProcessCache(IMemoryCache cache, IOptions<CacheOptions> cacheOptions, IOptions<MemoryCacheOptions> memoryCacheOptions) : base(cache, cacheOptions, memoryCacheOptions) { }
-
-        public InProcessCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
+	    public InProcessCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
 
         #region Set
 

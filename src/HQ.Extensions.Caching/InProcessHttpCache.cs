@@ -26,9 +26,7 @@ namespace HQ.Extensions.Caching
 {
     public class InProcessHttpCache : InProcessCacheManager, IHttpCache
     {
-        public InProcessHttpCache(IMemoryCache cache, IOptions<CacheOptions> cacheOptions, IOptions<MemoryCacheOptions> memoryCacheOptions) : base(cache, cacheOptions, memoryCacheOptions) { }
-
-        public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
+	    public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
         
         public bool TryGetETag(string key, out string etag)
         {

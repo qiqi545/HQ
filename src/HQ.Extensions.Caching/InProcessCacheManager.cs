@@ -31,13 +31,6 @@ namespace HQ.Extensions.Caching
         protected readonly IOptions<CacheOptions> CacheOptions;
         private readonly MemoryCacheOptions _memoryCacheOptions;
 
-        protected InProcessCacheManager(IMemoryCache cache, IOptions<CacheOptions> cacheOptions, IOptions<MemoryCacheOptions> memoryCacheOptions)
-        {
-            Cache = cache;
-            CacheOptions = cacheOptions;
-            _memoryCacheOptions = memoryCacheOptions.Value;
-        }
-
         protected InProcessCacheManager(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps)
         {
             _memoryCacheOptions = new MemoryCacheOptions
