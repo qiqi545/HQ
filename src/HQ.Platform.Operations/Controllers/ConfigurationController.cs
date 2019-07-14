@@ -4,20 +4,20 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace HQ.Platform.Operations.Controllers
 {
-    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+	[Route("configuration")]
+	[DynamicAuthorize(typeof(OperationsApiOptions))]
+	[DynamicController]
+	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages configuration items.")]
     [DisplayName("Configuration")]
-    [Route("configuration")]
-    [DynamicController]
     [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageConfiguration)]
     public class ConfigurationController : DataController
     {
         private readonly IConfigurationRoot _root;

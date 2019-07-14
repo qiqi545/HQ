@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Linq;
 using HQ.Data.Contracts;
 using Microsoft.AspNetCore.Identity;
@@ -57,35 +58,37 @@ namespace HQ.Platform.Identity.Extensions
 
         public static Operation<TUser> NotFound<TUser>()
         {
-            var operation = new Operation<TUser>();
-            operation.Data = default;
-            operation.Result = OperationResult.Error;
-            operation.Errors.Add(new Error(ErrorEvents.ResourceMissing, "User is not found."));
-            return operation;
+            return new Operation<TUser>(new Error(ErrorEvents.ResourceMissing, "User is not found."));
         }
 
         public static Operation<TUser> ToOperation<TUser>(this SignInResult result, TUser user)
         {
-            var operation = new Operation<TUser>(user);
-
+	        Operation<TUser> operation;
             if (!result.Succeeded)
             {
-                operation.Result = OperationResult.Refused;
+	            var errors = new List<Error>();
 
-                if (result.IsLockedOut)
-                {
-                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"001 - User is locked out."));
-                }
+	            if (result.IsLockedOut)
+	            {
+		            errors.Add(new Error(ErrorEvents.IdentityError, $"001 - User is locked out."));
+	            }
 
-                if (result.IsNotAllowed)
-                {
-                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"002 - User is not allowed to sign in."));
-                }
+	            if (result.IsNotAllowed)
+	            {
+		            errors.Add(new Error(ErrorEvents.IdentityError, $"002 - User is not allowed to sign in."));
+	            }
 
-                if (result.RequiresTwoFactor)
-                {
-                    operation.Errors.Add(new Error(ErrorEvents.IdentityError, $"003 - User requires multi-factor authentication."));
-                }
+	            if (result.RequiresTwoFactor)
+	            {
+		            errors.Add(
+			            new Error(ErrorEvents.IdentityError, $"003 - User requires multi-factor authentication."));
+	            }
+
+	            operation = new Operation<TUser>(user, errors) {Result = OperationResult.Refused};
+            }
+            else
+            {
+	            operation = new Operation<TUser>();
             }
 
             if (result.Succeeded)

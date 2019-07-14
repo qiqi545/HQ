@@ -93,6 +93,7 @@ namespace HQ.Platform.Node
                 .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
                 .AddBackgroundTasksApi(security, tasks)
                 .AddConfigurationApi(security)
+                .AddMetaApi(security)
                 ;
 
             //

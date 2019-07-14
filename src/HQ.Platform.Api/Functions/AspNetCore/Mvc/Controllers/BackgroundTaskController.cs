@@ -33,14 +33,14 @@ using Error = HQ.Data.Contracts.Error;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 {
-    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+	[Route("tasks")]
+	[DynamicAuthorize(typeof(BackgroundTaskOptions))]
+	[DynamicController]
+	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages background tasks.")]
     [DisplayName("Background Tasks")]
-    [Route("tasks")]
-    [ApiExplorerSettings(IgnoreApi = false)]
-	[DynamicController]
-    [DynamicAuthorize(typeof(BackgroundTaskOptions))]
-    public class BackgroundTaskController : DataController
+	[ApiExplorerSettings(IgnoreApi = false)]
+	public class BackgroundTaskController : DataController
     {
         private readonly BackgroundTaskHost _host;
 

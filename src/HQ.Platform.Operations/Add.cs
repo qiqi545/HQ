@@ -138,5 +138,59 @@ namespace HQ.Platform.Operations
 
             return mvcBuilder;
         }
-    }
+
+		public static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+		{
+			return AddMetaApi(mvcBuilder, securityConfig.Bind, rootPath);
+		}
+
+		public static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+		{
+			var services = mvcBuilder.Services;
+
+			if (configureSecurity != null)
+				services.Configure(configureSecurity);
+
+			services.AddValidOptions();
+			services.AddSaveOptions();
+
+			services.AddSecurityPolicies(configureSecurity);
+			mvcBuilder.AddFeature<MetaController>();
+
+			services.AddAuthorization(x =>
+			{
+				var securityOptions = new SecurityOptions();
+				configureSecurity?.Invoke(securityOptions);
+
+				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
+				{
+					b.RequireAuthenticatedUserExtended(services, securityOptions);
+					b.RequireClaimExtended(services, securityOptions, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+				});
+			});
+
+			mvcBuilder.ConfigureApplicationPartManager(x =>
+			{
+				var typeInfo = new List<TypeInfo> { typeof(MetaController).GetTypeInfo() };
+
+				x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
+			});
+
+			services.AddSingleton<IDynamicComponent>(r =>
+			{
+				return new MetaComponent
+				{
+					Namespace = () =>
+					{
+						if (!string.IsNullOrWhiteSpace(rootPath))
+							return rootPath;
+						var o = r.GetRequiredService<IOptions<OperationsApiOptions>>();
+						return o.Value.RootPath ?? string.Empty;
+					}
+				};
+			});
+
+			return mvcBuilder;
+		}
+	}
 }

@@ -1,45 +1,57 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using HQ.Platform.Api.Configuration;
 using System.Net;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using HQ.Common.AspNetCore.Models;
+using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Security.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using TypeKitchen;
 
-namespace HQ.Platform.Api.Controllers
+namespace HQ.Platform.Operations.Controllers
 {
     [Route("meta")]
-    public class MetaController : Controller
+    [DynamicAuthorize(typeof(OperationsApiOptions))]
+    [DynamicController]
+    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+    [MetaDescription("Provides specifications and discovery for external tooling.")]
+    [DisplayName("Meta")]
+    [ApiExplorerSettings(IgnoreApi = false)]
+	public class MetaController : Controller
     {
 	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
 	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
-
-		private readonly IOptions<PlatformApiOptions> _options;
-        private readonly IEnumerable<IMetaProvider> _providers;
-
+		private readonly IEnumerable<IMetaProvider> _providers;
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
         private readonly IOptions<SwaggerOptions> _swaggerOptions;
 
-        public MetaController(IOptions<PlatformApiOptions> options, IEnumerable<IMetaProvider> providers,
+        public MetaController(
+	        IEnumerable<IMetaProvider> providers,
             ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcOptions,
             IOptions<SwaggerOptions> swaggerOptions)
         {
-            _options = options;
             _providers = providers;
 
             _swaggerProvider = swaggerProvider;
-            _swaggerSerializer = SwaggerSerializerFactory.Create(mvcOptions);
             _swaggerOptions = swaggerOptions;
+            _swaggerSerializer = SwaggerSerializerFactory.Create(mvcOptions);
+		}
+
+		[HttpOptions("")]
+        public IActionResult Options()
+        {
+	        return Ok(new {data = new[] {"postman", "swagger"}});
         }
 
         [HttpGet("postman")]

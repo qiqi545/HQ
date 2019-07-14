@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
@@ -28,10 +29,16 @@ namespace HQ.Data.Contracts
             Result = OperationResult.Succeeded;
         }
 
-        public Operation(IList<Error> errors) : this()
+        public Operation(Error error)
+        {
+	        Result = OperationResult.Error;
+	        Errors = new List<Error>(error == null ? Enumerable.Empty<Error>() : new[] {error});
+        }
+
+        public Operation(ICollection<Error> errors) : this()
         {
             Result = errors?.Count > 0 ? OperationResult.Error : OperationResult.Succeeded;
-            Errors = errors;
+            Errors = new List<Error>(errors ?? Enumerable.Empty<Error>());
         }
 
         public static Operation CompletedWithoutErrors => new Operation();
@@ -46,7 +53,7 @@ namespace HQ.Data.Contracts
         public bool HasErrors => Errors?.Count > 0;
 
         [DataMember]
-        public IList<Error> Errors { get; set; }
+        public IList<Error> Errors { get; private set; }
 
         public static Operation<T> FromResult<T>(T data)
         {
