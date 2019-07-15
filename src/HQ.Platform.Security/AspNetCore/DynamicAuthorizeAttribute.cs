@@ -41,6 +41,9 @@ namespace HQ.Platform.Security.AspNetCore
 
 		private string ResolvePolicyName()
 		{
+			if (ServiceProvider == null)
+				return null; // don't attempt to resolve if opted-out/disabled
+
 			var optionsType = typeof(IOptionsMonitor<>).MakeGenericType(_policyProviderType);
 			var options = ServiceProvider.GetRequiredService(optionsType);
 
