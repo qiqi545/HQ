@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+
+  <PropertyGroup>
+    <Company>HQ.IO Corporation</Company>
+    <Authors>HQ.IO Corporation</Authors>
+    <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>
+    <PackageLicenseUrl>https://opensource.org/licenses/Apache-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/hq-io/Squire</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/hq-io/Squire</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>SquireExampleLibrary</PackageId>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;PackageSources</Configurations>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
