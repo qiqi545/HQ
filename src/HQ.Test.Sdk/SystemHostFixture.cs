@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using HQ.Common;
 using HQ.Extensions.DependencyInjection;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Test.Sdk.Configuration;
@@ -215,7 +214,7 @@ namespace HQ.Test.Sdk
 
             var testSettings = new TestSettings();
             testConfig.Bind(testSettings);
-            testSettings.EnvironmentName = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name) ??
+            testSettings.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
                                            testSettings.EnvironmentName;
             return testSettings;
         }

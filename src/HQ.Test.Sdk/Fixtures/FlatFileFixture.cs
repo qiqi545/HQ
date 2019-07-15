@@ -20,7 +20,6 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using Bogus.DataSets;
-using HQ.Common;
 using TypeKitchen;
 
 namespace HQ.Test.Sdk.Fixtures
