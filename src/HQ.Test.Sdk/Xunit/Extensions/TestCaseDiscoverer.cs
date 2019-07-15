@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HQ.Common;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -39,7 +38,7 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 	        var scopes = ResolveScopes(testMethod, factAttribute);
 	        if (scopes?.Count > 0)
             {
-                var env = Environment.GetEnvironmentVariable(Constants.EnvironmentVariables.Name);
+                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
                 if (env != null && !scopes.Contains(env, StringComparer.OrdinalIgnoreCase))
                 {
                     yield return new SkipTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),

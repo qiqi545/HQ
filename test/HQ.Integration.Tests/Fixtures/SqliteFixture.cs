@@ -18,10 +18,11 @@
 using System;
 using System.IO;
 using HQ.Data.SessionManagement;
+using HQ.Test.Sdk;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Test.Sdk.Data
+namespace HQ.Integration.Tests.Fixtures
 {
     public abstract class SqliteFixture : IServiceFixture
     {

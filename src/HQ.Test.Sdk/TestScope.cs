@@ -23,7 +23,7 @@ using System.Linq;
 using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
-using HQ.Extensions.Logging;
+using HQ.Test.Sdk.Internal;
 using HQ.Test.Sdk.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
@@ -37,9 +37,9 @@ namespace HQ.Test.Sdk
         protected readonly ILoggerFactory DefaultLoggerFactory = new LoggerFactory();
         public IServiceProvider ServiceProvider;
 
-        protected static ActionLoggerProvider CreateLoggerProvider()
+        protected static DelegateLoggerProvider CreateLoggerProvider()
         {
-            var actionLoggerProvider = new ActionLoggerProvider(message =>
+            var actionLoggerProvider = new DelegateLoggerProvider(message =>
             {
                 var outputProvider = AmbientContext.OutputProvider;
                 if (outputProvider?.IsAvailable != true)

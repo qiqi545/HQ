@@ -28,9 +28,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.DependencyInjection
 {
-
-
-    public sealed class DependencyContainer : IContainer, IMethodResolver, IMethodInvoker
+	public sealed class DependencyContainer : IContainer, IMethodResolver, IMethodInvoker
     {
         private readonly List<IResolverExtension> _extensions;
         private readonly IEnumerable<Assembly> _fallbackAssemblies;

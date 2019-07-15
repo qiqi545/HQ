@@ -20,7 +20,6 @@ using System.Diagnostics.Contracts;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using HQ.Common;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -64,8 +63,7 @@ namespace HQ.Test.Sdk.Extensions
             var requestUri = pathString.ToUriComponent();
             var request = new HttpRequestMessage(new HttpMethod(method), requestUri)
             {
-	            Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8,
-		            Constants.MediaTypes.Json)
+	            Content = new StringContent(JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json")
             };
             configureAction?.Invoke(request);
 			return await client.SendAsync(request);

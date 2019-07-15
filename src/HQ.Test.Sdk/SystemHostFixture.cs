@@ -136,7 +136,7 @@ namespace HQ.Test.Sdk
 
                     var serviceProvider = serviceCollection.BuildServiceProvider();
                     Debug.Assert(serviceProvider != null);
-
+					
                     using (var container = new DependencyContainer(serviceProvider))
                     {
                         container.AddAspNetCore();

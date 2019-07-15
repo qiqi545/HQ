@@ -2,6 +2,7 @@ using System;
 using HQ.Platform.Identity.Models;
 using HQ.Data.SessionManagement;
 using HQ.Integration.Sqlite.Identity;
+using HQ.Integration.Tests.Fixtures;
 using HQ.Platform.Security.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using HQ.Test.Sdk.Data;

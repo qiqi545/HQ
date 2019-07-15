@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,12 +12,31 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
-namespace HQ.Test.Sdk.Data
+
+using System;
+using System.Diagnostics;
+
+namespace HQ.Test.Sdk.Internal
 {
-	public class SqlServerInstance
+	internal sealed class DelegateTraceListener : TraceListener
 	{
-		public string ConnectionString { get; set; }
-		public string Database { get; set; }
-		public string FileName { get; set; }
+		private readonly Action<string> _write;
+		private readonly Action<string> _writeLine;
+
+		public DelegateTraceListener(Action<string> write, Action<string> writeLine = null)
+		{
+			_write = write;
+			_writeLine = writeLine ?? write;
+		}
+
+		public override void WriteLine(string value)
+		{
+			_writeLine?.Invoke(value);
+		}
+
+		public override void Write(string value)
+		{
+			_write?.Invoke(value);
+		}
 	}
 }

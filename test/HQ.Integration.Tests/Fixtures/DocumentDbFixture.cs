@@ -1,13 +1,14 @@
 using System;
 using HQ.Integration.DocumentDb.SessionManagement;
+using HQ.Test.Sdk;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace HQ.Test.Sdk.Data
+namespace HQ.Integration.Tests.Fixtures
 {
-    public abstract class DocumentDbFixture : IServiceFixture
+	public abstract class DocumentDbFixture : IServiceFixture
     {
         public IServiceProvider ServiceProvider { get; set; }
 

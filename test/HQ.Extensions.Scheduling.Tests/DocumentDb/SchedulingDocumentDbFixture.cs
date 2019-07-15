@@ -1,7 +1,7 @@
 using System;
 using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.Scheduling;
-using HQ.Test.Sdk.Data;
+using HQ.Integration.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Tests.DocumentDb

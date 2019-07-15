@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\src\HQ.Extensions.Dates\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
+    <ProjectReference Include="..\HQ.Integration.Tests\HQ.Integration.Tests.csproj" />
   </ItemGroup>
 
 </Project>

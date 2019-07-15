@@ -6,9 +6,11 @@ using System.IO;
 using System.Reflection;
 using Dapper;
 using HQ.Data.SessionManagement;
+using HQ.Test.Sdk;
+using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Test.Sdk.Data
+namespace HQ.Integration.Tests.Fixtures
 {
 	public abstract class SqlServerFixture : IServiceFixture, ISupportIsolation
     {

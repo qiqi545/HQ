@@ -20,6 +20,7 @@
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.TraceSource" Version="2.2.0" />
@@ -32,15 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.Data.Sqlite">
-      <HintPath>C:\Users\Daniel\.nuget\packages\microsoft.data.sqlite.core\2.2.6\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

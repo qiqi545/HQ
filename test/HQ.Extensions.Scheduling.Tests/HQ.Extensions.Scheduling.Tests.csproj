@@ -28,6 +28,7 @@
     <ProjectReference Include="..\..\src\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
+    <ProjectReference Include="..\HQ.Integration.Tests\HQ.Integration.Tests.csproj" />
   </ItemGroup>
 
 </Project>

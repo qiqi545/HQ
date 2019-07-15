@@ -1,4 +1,4 @@
-﻿using HQ.Test.Sdk.Data;
+﻿using HQ.Integration.Tests.Fixtures;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
