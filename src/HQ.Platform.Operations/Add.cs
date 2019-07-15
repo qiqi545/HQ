@@ -21,6 +21,7 @@ using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Extensions.Options;
@@ -33,9 +34,10 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
-
+using Swashbuckle.AspNetCore.Swagger;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations
@@ -150,7 +152,7 @@ namespace HQ.Platform.Operations
 
 			if (configureSecurity != null)
 				services.Configure(configureSecurity);
-
+			
 			services.AddValidOptions();
 			services.AddSaveOptions();
 
@@ -190,6 +192,16 @@ namespace HQ.Platform.Operations
 				};
 			});
 
+			services.AddSwaggerGen(c =>
+			{
+				c.EnableAnnotations();
+				c.SwaggerDoc("swagger", new Info { Title = "Sample API", Version = "v1" });
+				c.DescribeAllEnumsAsStrings();
+			});
+
+			services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
+			services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
+			
 			return mvcBuilder;
 		}
 	}

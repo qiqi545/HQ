@@ -6,29 +6,30 @@ using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Data.Contracts.Mvc
 {
-    internal class ApiExplorerMetaProvider : IMetaProvider
+	public class ApiExplorerMetaProvider : IMetaProvider
     {
-        private readonly IOptionsMonitor<PlatformApiOptions> _options;
-        private readonly IApiDescriptionGroupCollectionProvider _explorer;
-        private readonly IServiceProvider _serviceProvider;
+	    private readonly IMetaVersionProvider _versionProvider;
+	    private readonly IApiDescriptionGroupCollectionProvider _explorer;
+        private readonly IOptions<AuthenticationOptions> _authenticationOptions;
 
-        public ApiExplorerMetaProvider(IApiDescriptionGroupCollectionProvider apiExplorer, IServiceProvider serviceProvider, IOptionsMonitor<PlatformApiOptions> options)
+        public ApiExplorerMetaProvider(
+			IMetaVersionProvider versionProvider,
+	        IApiDescriptionGroupCollectionProvider apiExplorer,
+	        IOptions<AuthenticationOptions> authenticationOptions)
         {
-            _options = options;
-            _explorer = apiExplorer;
-            _serviceProvider = serviceProvider;
+	        _versionProvider = versionProvider;
+	        _explorer = apiExplorer;
+	        _authenticationOptions = authenticationOptions;
         }
 
         public void Populate(string baseUri, MetaCollection collection)
@@ -36,7 +37,7 @@ namespace HQ.Platform.Api.Models
             var foldersByType = new Dictionary<TypeInfo, MetaFolder>();
             var foldersByGroupName = new Dictionary<string, List<MetaFolder>>();
 
-            var rootVersion = _explorer.ApiDescriptionGroups.Version;
+            // var rootVersion = _explorer.ApiDescriptionGroups.Version;
 
             var groupNames = _explorer.ApiDescriptionGroups.Items.Where(x => !string.IsNullOrWhiteSpace(x.GroupName))
                 .SelectMany(x => x.GroupName.Contains(",") ? x.GroupName.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
@@ -53,6 +54,7 @@ namespace HQ.Platform.Api.Models
                 protocolProfileBehavior = new { }
             }).ToDictionary(k => k.name, v => v);
 
+			//
             // Map all folders:
             foreach (var descriptionGroup in _explorer.ApiDescriptionGroups.Items)
             {
@@ -180,37 +182,35 @@ namespace HQ.Platform.Api.Models
                 collection.item.Add(folder);
             }
 
-            //
-            // Change group name folder meta:
-            foreach (var groupFolder in groupFolders)
-            {
-                var revisionName = groupFolder.Value.name;
-                groupFolder.Value.name = $"Revision {revisionName}";
+			//
+			// Change group name folder meta:
+			foreach (var groupFolder in groupFolders)
+			{
+				var revisionName = groupFolder.Value.name;
+				groupFolder.Value.name = $"Revision {revisionName}";
 
-                if (_options.CurrentValue.Versioning.EnableVersionParameter)
-                {
-                    foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
-                    {
-                        foreach (var item in objectGroup.item)
-                        {
-                            item.request.url.query = new[]
-                            {
-                                new MetaParameter
-                                {
-                                    key = _options.CurrentValue.Versioning.VersionParameter,
-                                    value = revisionName,
-                                    description = "Sets the version revision number for this API request."
-                                    // MetaDescription.PlainText("Sets the version revision number for this API request.")
-                                }
-                            };
-                        }
-                    }
-                }
+				if (_versionProvider.Enabled)
+				{
+					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
+					{
+						foreach (var item in objectGroup.item)
+						{
+							item.request.url.query = new[]
+							{
+								new MetaParameter
+								{
+									key = _versionProvider.VersionParameter,
+									value = revisionName,
+									description = "Sets the version revision number for this API request."
+									// MetaDescription.PlainText("Sets the version revision number for this API request.")
+								}
+							};
+						}
+					}
+				}
+			}
+		}
 
-                
-            }
-        }
-        
         private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description)
         {
             var url = $"{baseUri}/{description.RelativePath}";
@@ -321,8 +321,7 @@ namespace HQ.Platform.Api.Models
             if (!string.IsNullOrWhiteSpace(authAttribute.AuthenticationSchemes))
                 return authAttribute.AuthenticationSchemes.ToLowerInvariant();
 
-            var options = _serviceProvider.GetRequiredService<IOptions<AuthenticationOptions>>();
-            return (options.Value.DefaultChallengeScheme ?? options.Value.DefaultScheme).ToLowerInvariant();
+            return (_authenticationOptions.Value.DefaultChallengeScheme ?? _authenticationOptions.Value.DefaultScheme).ToLowerInvariant();
         }
 
         private static MetaCategoryAttribute ResolveControllerCategory(MemberInfo controllerType)

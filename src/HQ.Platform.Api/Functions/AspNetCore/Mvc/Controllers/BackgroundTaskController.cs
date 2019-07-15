@@ -66,7 +66,11 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
                 .Where(x => !x.IsInterface && !x.IsAbstract)
                 .Select(x => x.Name);
 
-            return Ok(new BackgroundTaskOptionsView { Options = _options.CurrentValue, TaskTypes = taskTypeNames });
+            return Ok(new BackgroundTaskOptionsView
+            {
+	            Options = _options.CurrentValue,
+	            TaskTypes = taskTypeNames
+            });
         }
 
         [HttpGet]
@@ -78,7 +82,9 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
         [HttpGet, MustHaveQueryParameters("tags")]
         public async Task<IActionResult> GetBackgroundTasksByTag([FromQuery] string tags)
         {
-            return Ok(await _store.GetByAnyTagsAsync(tags.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries)));
+	        var tasks = await _store.GetByAnyTagsAsync(tags.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries));
+			
+			return Ok(tasks);
         }
 
         [HttpGet("{id}")]
@@ -173,7 +179,8 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBackgroundTask(string id)
+        [MetaDescription("Deletes a background task.")]
+		public async Task<IActionResult> DeleteBackgroundTask(string id)
         {
             if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
                 return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));

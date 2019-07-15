@@ -40,7 +40,7 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Api
 {
-    public static class Add
+	public static class Add
     {
         public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
         {
@@ -51,7 +51,6 @@ namespace HQ.Platform.Api
         {
             Bootstrap.EnsureInitialized();
 
-            services.AddScoped<IMetaProvider, ApiExplorerMetaProvider>();
             services.Configure(configureAction);
 
             services.AddForwardedHeaders();
@@ -68,7 +67,9 @@ namespace HQ.Platform.Api
             services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 
-            return services;
+            services.Replace(ServiceDescriptor.Singleton<IMetaVersionProvider, PlatformMetaVersionProvider>());
+
+			return services;
         }
 
         internal static IServiceCollection AddForwardedHeaders(this IServiceCollection services)

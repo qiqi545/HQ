@@ -160,13 +160,6 @@ namespace HQ.Platform.Node
 
             services.AddUi(env, typeof(SemanticUi).Assembly);
 
-            services.AddSwaggerGen(c =>
-            {
-                c.EnableAnnotations();
-                c.SwaggerDoc("swagger", new Info {Title = "Sample API", Version = "v1"});
-                c.DescribeAllEnumsAsStrings();
-            });
-
             ScanForGeneratedObjects<TBatchOptions>(services, appConfig, logger, rootPath, subjectAssembly);
 
             return services;
