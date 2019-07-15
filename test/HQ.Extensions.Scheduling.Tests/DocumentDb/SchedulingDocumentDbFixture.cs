@@ -1,5 +1,5 @@
 using System;
-using System.Data.DocumentDb;
+using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.Scheduling;
 using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
