@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="28.0.2" />
+    <PackageReference Include="HQ" Version="1.0.93" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
@@ -32,7 +33,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
 </Project>

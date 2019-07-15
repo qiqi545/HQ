@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\HQ.Community\System.Data.DocumentDb\src\System.Data.DocumentDb\System.Data.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />

@@ -16,8 +16,8 @@
 #endregion
 
 using System.Data;
-using System.Data.DocumentDb;
 using HQ.Data.SessionManagement;
+using HQ.Integration.DocumentDb.DbProvider;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.Sql

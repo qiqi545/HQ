@@ -17,11 +17,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.DocumentDb;
 using System.Linq;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Integration.DocumentDb.DbProvider;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Options;
 

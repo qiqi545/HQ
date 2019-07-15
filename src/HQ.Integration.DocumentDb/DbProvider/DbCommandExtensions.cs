@@ -15,17 +15,23 @@
 
 #endregion
 
-using System.Data;
-using HQ.Data.SessionManagement;
-using HQ.Integration.DocumentDb.DbProvider;
+using System.Collections.Generic;
+using System.Data.Common;
+using Microsoft.Azure.Documents;
 
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.DbProvider
 {
-    public class DocumentDbConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new DocumentDbConnection(ConnectionString);
-        }
-    }
+	public static class DbCommandExtensions
+	{
+		public static SqlQuerySpec ToQuerySpec(this DbCommand command)
+		{
+			return new SqlQuerySpec(command.CommandText, new SqlParameterCollection(YieldParameters(command)));
+		}
+
+		private static IEnumerable<SqlParameter> YieldParameters(DbCommand command)
+		{
+			foreach (DbParameter parameter in command.Parameters)
+				yield return new SqlParameter("@" + parameter.ParameterName, parameter.Value);
+		}
+	}
 }

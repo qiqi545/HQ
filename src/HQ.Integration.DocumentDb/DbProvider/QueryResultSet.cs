@@ -15,17 +15,13 @@
 
 #endregion
 
-using System.Data;
-using HQ.Data.SessionManagement;
-using HQ.Integration.DocumentDb.DbProvider;
+using System.Collections.Generic;
+using System.Dynamic;
 
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.DbProvider
 {
-    public class DocumentDbConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new DocumentDbConnection(ConnectionString);
-        }
-    }
+	public sealed class QueryResultSet : List<ExpandoObject>, IResultSet<ExpandoObject>
+	{
+		public bool SupportsBinary => false;
+	}
 }

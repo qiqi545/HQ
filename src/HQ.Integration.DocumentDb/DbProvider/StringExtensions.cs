@@ -15,17 +15,13 @@
 
 #endregion
 
-using System.Data;
-using HQ.Data.SessionManagement;
-using HQ.Integration.DocumentDb.DbProvider;
-
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.DbProvider
 {
-    public class DocumentDbConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new DocumentDbConnection(ConnectionString);
-        }
-    }
+	internal static class StringExtensions
+	{
+		public static string Truncate(this string value, int length)
+		{
+			return string.IsNullOrEmpty(value) ? value : value.Length <= length ? value : value.Substring(0, length);
+		}
+	}
 }

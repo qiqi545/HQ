@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using System.Data.DocumentDb;
 using System.Threading;
 using HQ.Common;
 using HQ.Data.Contracts.Queryable;
@@ -28,6 +27,7 @@ using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Platform.Identity.Configuration;
