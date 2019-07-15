@@ -32,6 +32,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeKitchen", "..\..\TypeKi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Tests", "..\test\HQ\HQ.Tests.csproj", "{3191182C-60B3-495A-B11D-A414656D0B86}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk", "HQ.Test.Sdk\HQ.Test.Sdk.csproj", "{86D915BA-7AE8-4982-95BF-F296C5553D45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,8 +76,8 @@ Global
 		{FF6ED7C6-4470-40AA-86BD-358B56D60F53}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Package|Any CPU.ActiveCfg = Release|Any CPU
-		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Package|Any CPU.Build.0 = Release|Any CPU
+		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Package|Any CPU.Build.0 = Package|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.PackageSources|Any CPU.ActiveCfg = Release|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.PackageSources|Any CPU.Build.0 = Release|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -92,10 +94,18 @@ Global
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Package|Any CPU.ActiveCfg = Release|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Package|Any CPU.Build.0 = Release|Any CPU
-		{3191182C-60B3-495A-B11D-A414656D0B86}.PackageSources|Any CPU.ActiveCfg = PackageSources|Any CPU
-		{3191182C-60B3-495A-B11D-A414656D0B86}.PackageSources|Any CPU.Build.0 = PackageSources|Any CPU
+		{3191182C-60B3-495A-B11D-A414656D0B86}.PackageSources|Any CPU.ActiveCfg = Release|Any CPU
+		{3191182C-60B3-495A-B11D-A414656D0B86}.PackageSources|Any CPU.Build.0 = Release|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Package|Any CPU.Build.0 = Package|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.PackageSources|Any CPU.ActiveCfg = Release|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.PackageSources|Any CPU.Build.0 = Release|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86D915BA-7AE8-4982-95BF-F296C5553D45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,12 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
-    <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
-    <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
-    <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
-    <ProjectReference Include="..\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
+    <ProjectReference Include="..\HQ\HQ.csproj" />
   </ItemGroup>
 
 </Project>

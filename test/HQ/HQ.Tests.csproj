@@ -4,13 +4,9 @@
   <Import Project="$(ProjectDir)..\..\build\build.props" />
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
-  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Description>This package contains unit test sources for HQ.io.</Description>
-  </PropertyGroup>
-
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Configurations>Debug;Release;PackageSources</Configurations>
+    <Configurations>Debug;Release</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -28,13 +24,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
     <ProjectReference Include="..\..\src\HQ\HQ.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-
-    <!-- Test Framework -->
-    <Content Include="..\..\src\HQ.Test.Sdk\**\*.cs" Exclude="..\..\src\HQ.Test.Sdk\obj\**\*" Link="Test.Sdk\%(RecursiveDir)%(Filename)%(Extension)" />
 
     <!-- Extensions -->
     <Content Include="..\HQ.Extensions.Numerics.Tests\**\*.cs" Exclude="..\HQ.Extensions.Numerics.Tests\obj\**\*" Link="Extensions.Numerics.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
