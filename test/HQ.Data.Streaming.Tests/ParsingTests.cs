@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.Text;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
-using HQ.Test.Sdk.Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {

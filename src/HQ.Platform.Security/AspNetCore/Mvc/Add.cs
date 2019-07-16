@@ -15,13 +15,10 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Reflection;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -29,31 +26,22 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 {
     public static class Add
     {
-        public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvc)
+        public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
         {
-            var services = mvc.Services;
-
-            var typeInfo = new List<TypeInfo>
-            {
-                typeof(SuperUserTokenController).GetTypeInfo(),
-            };
-
-            mvc.ConfigureApplicationPartManager(x =>
-            {
-                x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
-            });
-            
+            var services = mvcBuilder.Services;
+			
+            mvcBuilder.AddControllerFeature<SuperUserTokenController>();
+			
             services.AddSingleton(r =>
             {
                 var o = r.GetRequiredService<IOptions<SecurityOptions>>();
                 return new SuperUserComponent
                 {
-                    Namespace = () => o.Value.Tokens?.Path ?? string.Empty
+                    RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
                 };
             });
-
-            services.AddSingleton<IConfigureOptions<MvcOptions>, ConfigureSuperUserController>();
-            return mvc;
+			
+            return mvcBuilder;
         }
     }
 }

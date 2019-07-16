@@ -14,13 +14,14 @@
 #endregion
 
 using System.Collections.Generic;
+using HQ.Test.Sdk;
 using Xunit;
 
 namespace HQ.Common.Tests
 {
-    public class FuncEnumerationTests
+    public class FuncEnumerationTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_enumerate()
         {
             var expected = new List<Outer> {new Outer {Value = "A"}, new Outer {Value = "B"}, new Outer {Value = "C"}};

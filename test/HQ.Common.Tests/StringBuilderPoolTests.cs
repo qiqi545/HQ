@@ -13,14 +13,14 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Test.Sdk;
 using TypeKitchen;
-using Xunit;
 
 namespace HQ.Common.Tests
 {
-    public class StringBuilderPoolTests
+    public class StringBuilderPoolTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_use_scoped_builder()
         {
             var result = Pooling.StringBuilderPool.Scoped(sb =>

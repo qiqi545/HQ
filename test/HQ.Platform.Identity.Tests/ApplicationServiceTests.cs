@@ -17,7 +17,6 @@ using System;
 using System.Threading.Tasks;
 using HQ.Platform.Identity.Models;
 using HQ.Test.Sdk;
-using HQ.Test.Sdk.Xunit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Identity.Tests

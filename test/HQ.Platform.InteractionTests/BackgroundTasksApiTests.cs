@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc;
@@ -48,10 +49,17 @@ namespace HQ.Platform.InteractionTests
 		[Test]
 		public async Task Get_no_background_tasks_when_none_added()
 		{
+			Arrange(Test_ConfigureServices);
+
 			await Act<IEnumerable<BackgroundTask>>("/ops/tasks", x =>
 			{
 				Assert.Empty(x);
 			});
+		}
+
+		public void Test_ConfigureServices(IServiceCollection services)
+		{
+			Console.WriteLine("Foo");
 		}
 	}
 }

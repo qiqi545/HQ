@@ -41,7 +41,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 			services.AddBackgroundTasks(configureTasks);
             services.AddRestRuntime();
 
-            mvcBuilder.AddFeature<BackgroundTaskController>();
+            mvcBuilder.AddControllerFeature<BackgroundTaskController>();
 
 			services.AddAuthorization(x =>{
                 var securityOptions = new SecurityOptions();
@@ -63,7 +63,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 
             services.AddSingleton<IDynamicComponent>(r =>
             {
-                return new BackgroundTasksComponent { Namespace = () =>
+                return new BackgroundTasksComponent { RouteTemplate = () =>
                 {
                     if (!string.IsNullOrWhiteSpace(rootPath))
                         return rootPath;

@@ -12,6 +12,6 @@ namespace HQ.Platform.Operations.Models
             typeof(ConfigurationController)
         };
 
-        public Func<string> Namespace { get; set; }
+        public Func<string> RouteTemplate { get; set; }
     }
 }

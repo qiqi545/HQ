@@ -32,6 +32,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             typeof(ApplicationController<,>)
         };
 
-        public Func<string> Namespace { get; set; }
+        public Func<string> RouteTemplate { get; set; }
     }
 }

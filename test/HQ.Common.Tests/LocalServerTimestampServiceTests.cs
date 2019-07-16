@@ -1,12 +1,13 @@
 using System;
 using System.IO;
+using HQ.Test.Sdk;
 using Xunit;
 
 namespace HQ.Common.Tests
 {
-    public class LocalServerTimestampServiceTests
+    public class LocalServerTimestampServiceTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_get_zoned_time()
         {
             var service = new LocalServerTimestampService();
@@ -14,7 +15,7 @@ namespace HQ.Common.Tests
             Assert.NotEqual(default(DateTimeOffset), currentTime);
         }
 
-        [Fact]
+        [Test]
         public void Timestamps_do_not_round_trip()
         {
             var service = new LocalServerTimestampService();
@@ -44,7 +45,6 @@ namespace HQ.Common.Tests
                 // This would require 64 bits (d.Ticks) + 16 bits (d.Offset), which does not fit in long.
                 Assert.NotEqual(currentTime, recreatedTime);
             }
-            
         }
     }
 }

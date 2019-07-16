@@ -7,7 +7,6 @@ using System.Reflection;
 using Dapper;
 using HQ.Data.SessionManagement;
 using HQ.Test.Sdk;
-using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Integration.Tests.Fixtures

@@ -32,14 +32,18 @@ namespace HQ.Common.AspNetCore.Mvc
 		{
 			foreach (var component in _components)
 			{
-				var typeNames = component.ControllerTypes.Select(x =>
+				var controllerNames = component.ControllerTypes.Select(x =>
 					x.Name.Contains('`') ? x.Name : x.Name.Replace(nameof(Controller), string.Empty)).ToList();
 
 				foreach (var controller in application.Controllers)
 				{
-					if (!typeNames.Contains(controller.ControllerName)) continue;
+					if (!controllerNames.Contains(controller.ControllerName))
+						continue; // necessary for normalizing generically-typed controllers
 
-					var template = component.Namespace();
+					if (!component.ControllerTypes.Contains(controller.ControllerType))
+						continue; // necessary for disambiguating guest controllers with the same name
+
+					var template = component.RouteTemplate();
 					var prefix = new AttributeRouteModel(new RouteAttribute(template));
 
 					foreach (var selector in controller.Selectors)

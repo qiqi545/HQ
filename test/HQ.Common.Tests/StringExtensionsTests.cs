@@ -13,13 +13,14 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Test.Sdk;
 using Xunit;
 
 namespace HQ.Common.Tests
 {
-    public class StringExtensionsTests
+    public class StringExtensionsTests : UnitUnderTest
     {
-        [Theory]
+        [DataDrivenTest]
         [InlineData("toTitleCase", "ToTitleCase")]
         [InlineData("ToTitleCase", "ToTitleCase")]
         [InlineData("   ", "   ")]

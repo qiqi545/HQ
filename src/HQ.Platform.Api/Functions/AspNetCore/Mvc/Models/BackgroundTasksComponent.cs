@@ -27,6 +27,6 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
             typeof(BackgroundTaskController)
         };
 
-        public Func<string> Namespace { get; set; }
+        public Func<string> RouteTemplate { get; set; }
     }
 }

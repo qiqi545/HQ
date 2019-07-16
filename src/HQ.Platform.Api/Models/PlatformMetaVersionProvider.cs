@@ -17,7 +17,7 @@ using HQ.Common.AspNetCore.Models;
 using HQ.Platform.Api.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Api
+namespace HQ.Platform.Api.Models
 {
 	public class PlatformMetaVersionProvider : IMetaVersionProvider
 	{

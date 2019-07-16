@@ -94,41 +94,31 @@ namespace HQ.Platform.Operations
 
         public static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
         {
-            var services = mvcBuilder.Services;
-
             if (configureSecurity != null)
-                services.Configure(configureSecurity);
+	            mvcBuilder.Services.Configure(configureSecurity);
 
-            services.AddValidOptions();
-            services.AddSaveOptions();
-
-			services.AddSecurityPolicies(configureSecurity);
-			mvcBuilder.AddFeature<ConfigurationController>();
-
-			services.AddAuthorization(x =>
+            mvcBuilder.Services.AddValidOptions();
+            mvcBuilder.Services.AddSaveOptions();
+			mvcBuilder.Services.AddSecurityPolicies(configureSecurity);
+			mvcBuilder.Services.AddAuthorization(x =>
             {
                 var securityOptions = new SecurityOptions();
                 configureSecurity?.Invoke(securityOptions);
 
                 x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
                 {
-                    b.RequireAuthenticatedUserExtended(services, securityOptions);
-                    b.RequireClaimExtended(services, securityOptions, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+                    b.RequireAuthenticatedUserExtended(mvcBuilder.Services, securityOptions);
+                    b.RequireClaimExtended(mvcBuilder.Services, securityOptions, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
                 });
             });
+			
+			mvcBuilder.AddControllerFeature<ConfigurationController>();
 
-            mvcBuilder.ConfigureApplicationPartManager(x =>
-            {
-                var typeInfo = new List<TypeInfo> { typeof(ConfigurationController).GetTypeInfo() };
-
-                x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
-            });
-
-            services.AddSingleton<IDynamicComponent>(r =>
+			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
             {
                 return new ConfigurationComponent
                 {
-                    Namespace = () =>
+                    RouteTemplate = () =>
                     {
                         if (!string.IsNullOrWhiteSpace(rootPath))
                             return rootPath;
@@ -157,7 +147,7 @@ namespace HQ.Platform.Operations
 			services.AddSaveOptions();
 
 			services.AddSecurityPolicies(configureSecurity);
-			mvcBuilder.AddFeature<MetaController>();
+			mvcBuilder.AddControllerFeature<MetaController>();
 
 			services.AddAuthorization(x =>
 			{
@@ -182,7 +172,7 @@ namespace HQ.Platform.Operations
 			{
 				return new MetaComponent
 				{
-					Namespace = () =>
+					RouteTemplate = () =>
 					{
 						if (!string.IsNullOrWhiteSpace(rootPath))
 							return rootPath;

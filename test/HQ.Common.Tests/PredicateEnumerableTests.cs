@@ -15,13 +15,13 @@
 
 using System;
 using System.Collections.Generic;
-using Xunit;
+using HQ.Test.Sdk;
 
 namespace HQ.Common.Tests
 {
-    public class PredicateEnumerableTests
+    public class PredicateEnumerableTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_enumerate()
         {
             var expected = new List<Outer> { new Outer { Value = "A" }, new Outer { Value = "B" }, new Outer { Value = "A" } };

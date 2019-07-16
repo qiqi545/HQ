@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using HQ.Test.Sdk;
 using Xunit;
 
 namespace HQ.Common.Tests
 {
-    public class SelfEnumerationTests
+    public class SelfEnumerationTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_enumerate()
         {
             var expected = new List<string> {"A", "B", "C"};

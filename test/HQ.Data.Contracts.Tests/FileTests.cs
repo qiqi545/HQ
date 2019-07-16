@@ -14,14 +14,15 @@
 #endregion
 
 using HQ.Data.Contracts.Versioning;
+using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
 using Xunit;
 
 namespace HQ.Data.Contracts.Tests
 {
-    public class FileTests
+    public class FileTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void WriteTests_Simple()
         {
             using (var fixture = new TemporaryFileFixture())

@@ -83,6 +83,32 @@ namespace HQ.Test.Sdk
 			_configureServices.Add(configureServices);
 		}
 
+		protected async Task Act(string pathString, Action<HttpResponseMessage> assert = null,
+			Action<HttpRequestMessage> arrange = null, [CallerMemberName] string callerMemberNameOrMethod = null)
+		{
+			if (_configureServices.Count > 0)
+			{
+				using (var client = _systemUnderTest.CreateClient(_configureServices))
+				{
+					await Act(client);
+				}
+			}
+			else
+			{
+				using (var client = CreateClient())
+				{
+					await Act(client);
+				}
+			}
+
+			async Task Act(HttpClient client)
+			{
+				var method = ResolveHttpMethod(callerMemberNameOrMethod);
+				var response = await Extensions.HttpClientExtensions.SendWithoutBodyAsync(client, method, pathString, arrange);
+				assert?.Invoke(response);
+			}
+		}
+
 		protected async Task Act<TResponse>(string pathString, Action<TResponse> assert = null,
 			Action<HttpRequestMessage> arrange = null, [CallerMemberName] string callerMemberNameOrMethod = null)
 		{
@@ -106,8 +132,6 @@ namespace HQ.Test.Sdk
 				var method = ResolveHttpMethod(callerMemberNameOrMethod);
 
 				var response = await Extensions.HttpClientExtensions.SendWithoutBodyAsync<TResponse>(client, method, pathString, arrange);
-				response.Should().BeOk();
-
 				if (response.Data != null)
 					LogTrace(JsonConvert.SerializeObject(response.Data));
 				response.Data.Should().NotBeNull();
@@ -124,7 +148,21 @@ namespace HQ.Test.Sdk
 					? "GET"
 					: callerMemberNameOrMethod.Substring(0, callerMemberNameOrMethod.IndexOf('_'))
 						.ToUpperInvariant();
-			return method;
+
+			switch (method)
+			{
+				case "TRACE":
+				case "HEAD":
+				case "OPTIONS":
+				case "GET":
+				case "DELETE":
+				case "PUT":
+				case "PATCH":
+				case "POST":
+					return method;
+				default:
+					return "GET";
+			}
 		}
 
 		#endregion

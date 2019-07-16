@@ -18,13 +18,13 @@
 using System;
 using System.IO;
 using HQ.Data.Contracts.Versioning;
-using Xunit;
+using HQ.Test.Sdk;
 
 namespace HQ.Data.Contracts.Tests
 {
-    public class MirrorTests
+    public class MirrorTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void ReadTests_SameVersion()
         {
             var person = new V2.Person { FirstName = "Kawhi", LastName = "Leonard" };
@@ -38,7 +38,7 @@ namespace HQ.Data.Contracts.Tests
             Assert.Equal(person.LastName, mirror.LastName);
         }
 
-        [Fact]
+        [Test]
         public void ReadTests_NextVersion()
         {
             var person = new V1.Person {Name = "Kawhi"};
@@ -53,7 +53,7 @@ namespace HQ.Data.Contracts.Tests
             Assert.Equal(person.Name, mirror.FirstName);
         }
 
-        [Fact]
+        [Test]
         public void ReadTests_PreviousVersion()
         {
             var person = new V2.Person {FirstName = "Kawhi", LastName = "Leonard"};
@@ -68,7 +68,7 @@ namespace HQ.Data.Contracts.Tests
             Assert.Equal(person.FirstName, mirror.Name);
         }
 
-        [Fact]
+        [Test]
         public void WriteTests_SameVersion_MultipleRows()
         {
             var person1 = new V1.Person { Name = "Kawhi" };
@@ -89,7 +89,7 @@ namespace HQ.Data.Contracts.Tests
             Assert.Equal(person2.Name, row2.Name);
         }
 
-        [Fact]
+        [Test]
         public void WriteTests_DifferentVersions_MultipleRows()
         {
             var person1 = new V1.Person { Name = "Kawhi" };

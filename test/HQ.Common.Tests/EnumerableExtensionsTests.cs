@@ -15,13 +15,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
+using HQ.Test.Sdk;
 
 namespace HQ.Common.Tests
 {
-    public class EnumerableExtensionsTests
+    public class EnumerableExtensionsTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Enumerable_is_already_a_list()
         {
             IEnumerable<string> enumerable = new List<string>();
@@ -30,7 +30,7 @@ namespace HQ.Common.Tests
             Assert.StrictEqual(enumerable, list);
         }
 
-        [Fact]
+        [Test]
         public void Enumerable_is_not_a_list()
         {
             var enumerable = Enumerable.Repeat(1, 10);

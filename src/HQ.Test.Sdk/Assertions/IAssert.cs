@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace HQ.Test.Sdk.Assertions
 {
@@ -37,6 +38,7 @@ namespace HQ.Test.Sdk.Assertions
 		void NotStrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 
 		void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
+		void All<T>(IEnumerable<T> collection, Action<T> action, string userMessage = null, params object[] userMessageArgs);
 
 		void IsType<T>(object instance, string userMessage = null, params object[] userMessageArgs);
 		void IsType(Type expectedType, object instance, string userMessage = null, params object[] userMessageArgs);

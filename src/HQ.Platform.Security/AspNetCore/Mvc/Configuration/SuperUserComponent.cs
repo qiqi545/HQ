@@ -25,6 +25,6 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Configuration
     public class SuperUserComponent : IDynamicComponent
     {
         public IEnumerable<Type> ControllerTypes => new[] { typeof(SuperUserTokenController) };
-        public Func<string> Namespace { get; set; }
+        public Func<string> RouteTemplate { get; set; }
     }
 }

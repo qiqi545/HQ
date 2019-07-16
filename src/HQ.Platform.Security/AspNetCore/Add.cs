@@ -17,6 +17,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
@@ -51,9 +52,9 @@ namespace HQ.Platform.Security.AspNetCore
 
             var options = new SecurityOptions(true);
             configureSecurityAction?.Invoke(options);
-
-            services.Configure(configureSecurityAction);
-            services.ConfigureOptions<ConfigureWebServer>();
+			if(configureSecurityAction != null)
+				services.Configure(configureSecurityAction);
+			services.ConfigureOptions<ConfigureWebServer>();
 
             services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
 			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
@@ -160,7 +161,7 @@ namespace HQ.Platform.Security.AspNetCore
         {
 	        if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
 	        {
-				Trace.WriteLine($"Skipping default policy build; '{x.DefaultPolicy?.AuthenticationSchemes}' already registered");
+				Trace.WriteLine($"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered");
 		        return;
 	        }
 

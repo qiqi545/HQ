@@ -1,13 +1,10 @@
 using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Extensions;
-using HQ.Test.Sdk.Xunit;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

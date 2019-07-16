@@ -18,7 +18,6 @@
 using System;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
-using HQ.Test.Sdk.Data;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Tests

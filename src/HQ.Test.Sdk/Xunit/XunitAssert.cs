@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using HQ.Test.Sdk.Assertions;
 using HQ.Test.Sdk.Logging;
 using Xunit;
@@ -157,7 +158,20 @@ namespace HQ.Test.Sdk.Xunit
             }
         }
 
-        public void IsType<T>(object instance, string userMessage = null, params object[] userMessageArgs)
+		public void All<T>(IEnumerable<T> collection, Action<T> action, string userMessage = null, params object[] userMessageArgs)
+		{
+			try
+			{
+				Assert.All(collection, action);
+			}
+			catch (AllException)
+			{
+				TryLogUserMessage(userMessage, userMessageArgs);
+				throw;
+			}
+		}
+
+		public void IsType<T>(object instance, string userMessage = null, params object[] userMessageArgs)
         {
             try
             {

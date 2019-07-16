@@ -62,7 +62,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             services.Configure(configureApi);
 
 			services.AddSecurityPolicies(configureSecurity);
-			mvcBuilder.AddFeature<IdentityApplication>();
+			mvcBuilder.AddControllerFeature<IdentityApplication>();
 
 			services.AddAuthorization(x =>
             {
@@ -101,13 +101,13 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
-                return new IdentityApiComponent {Namespace = () => o.Value.RootPath ?? string.Empty};
+                return new IdentityApiComponent {RouteTemplate = () => o.Value.RootPath ?? string.Empty};
             });
 
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-                return new TokensComponent {Namespace = () => o.Value.Tokens?.Path ?? string.Empty};
+                return new TokensComponent {RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty};
             });
 
             return mvcBuilder;

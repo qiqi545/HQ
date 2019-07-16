@@ -26,6 +26,6 @@ namespace HQ.Platform.Operations.Models
 			typeof(MetaComponent)
 		};
 
-		public Func<string> Namespace { get; set; }
+		public Func<string> RouteTemplate { get; set; }
 	}
 }

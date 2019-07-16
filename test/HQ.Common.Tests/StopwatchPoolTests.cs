@@ -13,15 +13,14 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
 using System.Threading.Tasks;
-using Xunit;
+using HQ.Test.Sdk;
 
 namespace HQ.Common.Tests
 {
-    public class StopwatchPoolTests
+    public class StopwatchPoolTests : UnitUnderTest
     {
-        [Fact]
+        [Test]
         public void Can_use_scoped_builder()
         {
             var elapsed = StopwatchPool.Scoped(x =>
@@ -29,7 +28,7 @@ namespace HQ.Common.Tests
                 Task.Delay(100).Wait();
             });
 
-            Assert.NotEqual(default(TimeSpan), elapsed);
+            Assert.NotEqual(default, elapsed);
             Assert.True(elapsed.TotalMilliseconds >= 100, elapsed.ToString());
         }
     }
