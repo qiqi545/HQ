@@ -16,14 +16,16 @@
 #endregion
 
 using System;
+using HQ.Test.Sdk.Internal;
+using HQ.Test.Sdk.Xunit.Extensions;
 using Xunit;
 using Xunit.Sdk;
 
 namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.BugDiscoverer", "HQ.Test.Sdk")]
-    public class BugAttribute : FactAttribute
+    [XunitTestCaseDiscoverer(Constants.Namespace + "." + nameof(BugDiscoverer), Constants.AssemblyName)]
+	public class BugAttribute : FactAttribute
     {
         public string Case { get; }
 

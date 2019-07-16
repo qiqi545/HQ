@@ -5,7 +5,7 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
@@ -27,6 +27,9 @@
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="xunit.assert" Version="2.4.1" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
@@ -35,6 +38,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Xunit\Extensions\BugDiscoverer.cs.pp" />
+    <None Include="Xunit\Extensions\SkippedDataRowTestCase.cs.pp" />
+    <None Include="Xunit\Extensions\SkipTestCase.cs.pp" />
+    <None Include="Xunit\Extensions\TestCase.cs.pp" />
+    <None Include="Xunit\Extensions\TestCaseDiscoverer.cs.pp" />
+    <None Include="Xunit\Extensions\TestCaseRunner.cs.pp" />
+    <None Include="Xunit\Extensions\TestFramework.cs.pp" />
+    <None Include="Xunit\Extensions\TestFrameworkDiscoverer.cs.pp" />
+    <None Include="Xunit\Extensions\TestRunner.cs.pp" />
+    <None Include="Xunit\Extensions\TheoryDiscoverer.cs.pp" />
+    <None Include="Xunit\Extensions\TheoryTestCase.cs.pp" />
+    <None Include="Xunit\Extensions\TheoryTestCaseRunner.cs.pp" />
+    <None Include="Xunit\Extensions\XunitSerializationInfo.cs.pp" />
   </ItemGroup>
 
 </Project>

@@ -16,13 +16,15 @@
 #endregion
 
 using System;
+using HQ.Test.Sdk.Internal;
+using HQ.Test.Sdk.Xunit.Extensions;
 using Xunit;
 using Xunit.Sdk;
 
 namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TestCaseDiscoverer", "HQ.Test.Sdk")]
+    [XunitTestCaseDiscoverer(Constants.Namespace + "." + nameof(TestCaseDiscoverer), Constants.AssemblyName)]
     public class TestAttribute : FactAttribute
     {
         public string[] Environments { get; set; }

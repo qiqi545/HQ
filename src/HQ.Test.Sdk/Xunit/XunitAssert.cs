@@ -104,7 +104,20 @@ namespace HQ.Test.Sdk.Xunit
             }
         }
 
-        public void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+        public void StrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+        {
+	        try
+	        {
+		        Assert.StrictEqual(expected, actual);
+	        }
+	        catch (EqualException)
+	        {
+		        TryLogUserMessage(userMessage, userMessageArgs);
+		        throw;
+	        }
+        }
+
+		public void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
         {
             try
             {
@@ -117,7 +130,21 @@ namespace HQ.Test.Sdk.Xunit
             }
         }
 
-        public void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs)
+		public void NotStrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+		{
+			try
+			{
+				Assert.NotStrictEqual(expected, actual);
+			}
+			catch (NotEqualException)
+			{
+				TryLogUserMessage(userMessage, userMessageArgs);
+				throw;
+			}
+		}
+
+
+		public void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs)
         {
             try
             {

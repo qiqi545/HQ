@@ -16,12 +16,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using HQ.Test.Sdk.Assertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -29,37 +31,7 @@ namespace HQ.Test.Sdk
 {
 	public class NoStartup { }
 
-	public abstract class SystemUnderTest : SystemUnderTest<NoStartup>
-	{
-		protected async Task Act<TResponse>(string pathString, Action<TResponse> assert = null,
-			Action<HttpRequestMessage> arrange = null, [CallerMemberName] string callerMemberNameOrMethod = null)
-		{
-			using (var client = CreateClient())
-			{
-				var method = ResolveHttpMethod(callerMemberNameOrMethod);
-
-				var response = await Extensions.HttpClientExtensions.SendWithoutBodyAsync<TResponse>(client, method, pathString, arrange);
-				response.Should().BeOk();
-
-				if(response.Data != null)
-					LogTrace(JsonConvert.SerializeObject(response.Data));
-				response.Data.Should().NotBeNull();
-
-				assert?.Invoke(response.Data);
-			}
-		}
-
-		private static string ResolveHttpMethod(string callerMemberNameOrMethod)
-		{
-			var method = string.IsNullOrWhiteSpace(callerMemberNameOrMethod)
-				? "GET"
-				: callerMemberNameOrMethod.IndexOf('_') == -1
-					? "GET"
-					: callerMemberNameOrMethod.Substring(0, callerMemberNameOrMethod.IndexOf('_'))
-						.ToUpperInvariant();
-			return method;
-		}
-	}
+	public abstract class SystemUnderTest : SystemUnderTest<NoStartup> { }
 
     public abstract class SystemUnderTest<T> : ServiceUnderTest, ILogger<T> where T : class
     {
@@ -88,7 +60,7 @@ namespace HQ.Test.Sdk
 
         public HttpClient CreateClient()
         {
-            return _systemUnderTest.CreateClient();
+			return _systemUnderTest.CreateClient();
         }
 
         protected override void Dispose(bool disposing)
@@ -101,5 +73,60 @@ namespace HQ.Test.Sdk
         {
 	        return Logger;
         }
-    }
+
+		#region Helper Methods
+
+		private readonly List<Action<IServiceCollection>> _configureServices = new List<Action<IServiceCollection>>();
+
+		protected void Arrange(Action<IServiceCollection> configureServices)
+		{
+			_configureServices.Add(configureServices);
+		}
+
+		protected async Task Act<TResponse>(string pathString, Action<TResponse> assert = null,
+			Action<HttpRequestMessage> arrange = null, [CallerMemberName] string callerMemberNameOrMethod = null)
+		{
+			if (_configureServices.Count > 0)
+			{
+				using (var client = _systemUnderTest.CreateClient(_configureServices))
+				{
+					await Act(client);
+				}
+			}
+			else
+			{
+				using (var client = CreateClient())
+				{
+					await Act(client);
+				}
+			}
+
+			async Task Act(HttpClient client)
+			{
+				var method = ResolveHttpMethod(callerMemberNameOrMethod);
+
+				var response = await Extensions.HttpClientExtensions.SendWithoutBodyAsync<TResponse>(client, method, pathString, arrange);
+				response.Should().BeOk();
+
+				if (response.Data != null)
+					LogTrace(JsonConvert.SerializeObject(response.Data));
+				response.Data.Should().NotBeNull();
+
+				assert?.Invoke(response.Data);
+			}
+		}
+
+		private static string ResolveHttpMethod(string callerMemberNameOrMethod)
+		{
+			var method = string.IsNullOrWhiteSpace(callerMemberNameOrMethod)
+				? "GET"
+				: callerMemberNameOrMethod.IndexOf('_') == -1
+					? "GET"
+					: callerMemberNameOrMethod.Substring(0, callerMemberNameOrMethod.IndexOf('_'))
+						.ToUpperInvariant();
+			return method;
+		}
+
+		#endregion
+	}
 }

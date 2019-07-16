@@ -23,6 +23,7 @@ using System.Net.Http;
 using HQ.Extensions.DependencyInjection;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Test.Sdk.Configuration;
+using HQ.Test.Sdk.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -36,34 +37,58 @@ namespace HQ.Test.Sdk
 {
     public sealed class SystemHostFixture<T> : IFunctionsHostBuilder, IDisposable where T : class
     {
-        internal const string DefaultAppSettingsFileName = "appsettings";
+	    private readonly SystemUnderTest<T> _systemUnderTest;
+	    private readonly SystemTopology _topology;
+
+	    internal const string DefaultAppSettingsFileName = "appsettings";
         internal const string DefaultAppSettingsFileExtension = ".json";
         internal const string DefaultAppSettingsFilePath = DefaultAppSettingsFileName + DefaultAppSettingsFileExtension;
 
-        internal readonly TestServer Server;
+        private readonly Lazy<TestServer> _server;
 
-        public IServiceCollection Services { get; private set; }
+		public IServiceCollection Services { get; private set; }
 
         public SystemHostFixture(SystemUnderTest<T> systemUnderTest, SystemTopology topology)
         {
-            var config = new[] {new Action<IConfiguration>(systemUnderTest.Configuration)};
-            var configureServices = new[] {new Action<IServiceCollection>(systemUnderTest.ConfigureServices)};
-            var configure = new[] {new Action<IApplicationBuilder>(systemUnderTest.Configure)};
+	        _systemUnderTest = systemUnderTest;
+	        _topology = topology;
+	        _server = new Lazy<TestServer>(() => CreateServer(systemUnderTest, topology));
+		}
 
-            Server = new TestServer(CreateWebHostBuilder(config, configureServices, configure, topology));
+        private TestServer CreateServer(SystemUnderTest<T> systemUnderTest, SystemTopology topology)
+        {
+	        var config = new[] {new Action<IConfiguration>(systemUnderTest.Configuration)};
+	        var configureServices = new[] {new Action<IServiceCollection>(systemUnderTest.ConfigureServices)};
+	        var configure = new[] {new Action<IApplicationBuilder>(systemUnderTest.Configure)};
+
+	        var builder = CreateWebHostBuilder(config, configureServices, configure, topology);
+	        return new TestServer(builder);
         }
 
         public void Dispose()
         {
-            Server?.Dispose();
+			if(_server.IsValueCreated)
+				_server?.Value.Dispose();
         }
 
         public HttpClient CreateClient()
         {
-            return Server.CreateClient();
+	        return _server.Value.CreateClient();
         }
 
-        private static void ConfigureAppConfiguration(IHostingEnvironment env, TestSettings testSettings,
+        public HttpClient CreateClient(IEnumerable<Action<IServiceCollection>> configureServices)
+        {
+	        var configureServicesList = new List<Action<IServiceCollection>> { _systemUnderTest.ConfigureServices };
+			configureServicesList.AddRange(configureServices);
+
+			var config = new[] {new Action<IConfiguration>(_systemUnderTest.Configuration)};
+			var configure = new[] {new Action<IApplicationBuilder>(_systemUnderTest.Configure)};
+
+			var builder = CreateWebHostBuilder(config, configureServicesList, configure, _topology);
+			return new TestServer(builder).CreateClient();
+		}
+
+		private static void ConfigureAppConfiguration(IHostingEnvironment env, TestSettings testSettings,
             IConfigurationBuilder c)
         {
             if (!string.IsNullOrWhiteSpace(testSettings.AppSettingsPath))
@@ -109,7 +134,8 @@ namespace HQ.Test.Sdk
         }
 
         private IWebHostBuilder CreateWebHostBuilder
-        (ICollection<Action<IConfiguration>> configuration,
+        (
+	        ICollection<Action<IConfiguration>> configuration,
             ICollection<Action<IServiceCollection>> configureServices,
             ICollection<Action<IApplicationBuilder>> configure,
             SystemTopology topology)
@@ -208,13 +234,13 @@ namespace HQ.Test.Sdk
         {
             var testConfig = new ConfigurationBuilder()
                 .SetBasePath(contentRootPath)
-                .AddJsonFile("testsettings.json", true, true)
+                .AddJsonFile($"testsettings.json", true, true)
                 .AddJsonFile($"testsettings.{environmentName}.json", true)
                 .Build();
 
             var testSettings = new TestSettings();
             testConfig.Bind(testSettings);
-            testSettings.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ??
+            testSettings.EnvironmentName = Environment.GetEnvironmentVariable(Constants.AspNetCoreEnvironment) ??
                                            testSettings.EnvironmentName;
             return testSettings;
         }

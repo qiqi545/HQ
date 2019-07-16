@@ -32,7 +32,9 @@ namespace HQ.Test.Sdk.Assertions
 		void False(bool condition, string userMessage = null, params object[] userMessageArgs);
 
 		void Equal<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+		void StrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 		void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+		void NotStrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 
 		void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
 

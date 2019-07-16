@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Test.Sdk.Internal;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -38,7 +39,7 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 	        var scopes = ResolveScopes(testMethod, factAttribute);
 	        if (scopes?.Count > 0)
             {
-                var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                var env = Environment.GetEnvironmentVariable(Constants.AspNetCoreEnvironment);
                 if (env != null && !scopes.Contains(env, StringComparer.OrdinalIgnoreCase))
                 {
                     yield return new SkipTestCase(_diagnosticMessageSink, discoveryOptions.MethodDisplayOrDefault(),
@@ -61,7 +62,10 @@ namespace HQ.Test.Sdk.Xunit.Extensions
 		        scopes.AddRange(attribute.GetNamedArgument<string[]>(nameof(TestAttribute.Environments)));
 	        }
 
-	        scopes.AddRange(factAttribute.GetNamedArgument<string[]>(nameof(TestAttribute.Environments)));
+	        var environments = factAttribute.GetNamedArgument<string[]>(nameof(TestAttribute.Environments));
+
+			if(environments != null)
+				scopes.AddRange(environments);
 
 	        return scopes;
         }

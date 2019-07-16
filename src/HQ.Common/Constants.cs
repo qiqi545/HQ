@@ -52,11 +52,6 @@ namespace HQ.Common
             public const string RouteDebug = "route_debug";
         }
 
-        public static class EnvironmentVariables
-        {
-            public const string Name = "ASPNETCORE_ENVIRONMENT";
-        }
-
         public static class Identity
         {
             public const string DefaultCollection = "AspNetIdentity";
