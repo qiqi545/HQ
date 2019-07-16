@@ -20,13 +20,7 @@ using Xunit.Sdk;
 namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TheoryDiscoverer",
-#if PLATFORM
-        "HQ.Platform"
-#else
-        "HQ.Test.Sdk"
-#endif
-    )]
+    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.TheoryDiscoverer", "HQ.Test.Sdk")]
     public class DataDrivenTestAttribute : FactAttribute
     {
         public string[] Environments { get; set; }

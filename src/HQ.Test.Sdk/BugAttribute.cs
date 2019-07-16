@@ -22,13 +22,7 @@ using Xunit.Sdk;
 namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.BugDiscoverer",
-#if PLATFORM
-        "HQ.Platform"
-#else
-        "HQ.Test.Sdk"
-#endif
-    )]
+    [XunitTestCaseDiscoverer("HQ.Test.Sdk.Xunit.Extensions.BugDiscoverer", "HQ.Test.Sdk")]
     public class BugAttribute : FactAttribute
     {
         public string Case { get; }
@@ -38,8 +32,6 @@ namespace HQ.Test.Sdk
             Case = @case;
         }
 
-        public BugAttribute(int @case) : this($"{@case}")
-        {
-        }
+        public BugAttribute(int @case) : this($"{@case}") { }
     }
 }
