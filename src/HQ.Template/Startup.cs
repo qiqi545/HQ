@@ -45,7 +45,7 @@ namespace HQ.Template
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHq(_environment, _configuration, _logger, mvc => { /* custom MVC configuration */ }, GetCloudOptions(_configuration));
+            services.AddHq(_environment, _configuration, _logger, GetCloudOptions(_configuration));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
