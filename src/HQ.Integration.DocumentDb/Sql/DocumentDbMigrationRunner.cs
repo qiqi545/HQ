@@ -17,7 +17,7 @@ namespace HQ.Integration.DocumentDb.Sql
         public DocumentDbMigrationRunner(DocumentDbOptions options)
         {
             _options = options;
-            Client = new DocumentClient(new Uri(options.Endpoint), options.AuthKey, Defaults.JsonSettings);
+            Client = new DocumentClient(options.AccountEndpoint, options.AccountKey, Defaults.JsonSettings);
         }
 
         public async Task CreateDatabaseIfNotExistsAsync()

@@ -49,7 +49,7 @@ namespace HQ.Integration.DocumentDb.Sql
             _options = options;
 
             var defaultSettings = new JsonSerializerSettings();
-            _client = new DocumentClient(EndpointUri, options.Value.AuthKey, defaultSettings);
+            _client = new DocumentClient(EndpointUri, options.Value.AccountKey, defaultSettings);
 
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();
@@ -57,7 +57,7 @@ namespace HQ.Integration.DocumentDb.Sql
 
         private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Value.DatabaseId, _options.Value.CollectionId);
         private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Value.DatabaseId);
-        private Uri EndpointUri => new Uri(_options.Value.Endpoint);
+        private Uri EndpointUri => _options.Value.AccountEndpoint;
 
         public async Task<Document> CreateAsync(T item)
         {

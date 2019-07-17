@@ -93,7 +93,11 @@ namespace HQ.Integration.DocumentDb.DbProvider
 
 		public override object this[string keyword]
 		{
-			get => _settings[keyword];
+			get
+			{
+				_settings.TryGetValue(keyword, out var value);
+				return value;
+			}
 			set => _settings[keyword] = value?.ToString();
 		}
 

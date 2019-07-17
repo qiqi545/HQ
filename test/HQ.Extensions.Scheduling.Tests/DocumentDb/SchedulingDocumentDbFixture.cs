@@ -23,8 +23,8 @@ namespace HQ.Extensions.Scheduling.Tests.DocumentDb
             services.AddBackgroundTasks(o => { })
                 .AddDocumentDbBackgroundTasksStore(o =>
                 {
-                    o.AuthKey = builder.AccountKey;
-                    o.Endpoint = builder.AccountEndpoint.ToString();
+                    o.AccountKey = builder.AccountKey;
+                    o.AccountEndpoint = builder.AccountEndpoint;
                     o.DatabaseId = builder.Database;
                     o.CollectionId = builder.DefaultCollection;
                     o.SharedCollection = true;

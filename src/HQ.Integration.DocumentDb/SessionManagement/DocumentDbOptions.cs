@@ -13,12 +13,14 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System;
+
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
     public class DocumentDbOptions
     {
-        public string Endpoint { get; set; }
-        public string AuthKey { get; set; }
+        public Uri AccountEndpoint { get; set; }
+        public string AccountKey { get; set; }
         public string DatabaseId { get; set; }
         public string CollectionId { get; set; }
         public int? OfferThroughput { get; set; } = 400;

@@ -17,7 +17,7 @@ namespace HQ.Integration.Tests.Fixtures
         public void Dispose()
         {
             var options = ServiceProvider.GetRequiredService<IOptions<DocumentDbOptions>>();
-            var client = new DocumentClient(new Uri(options.Value.Endpoint), options.Value.AuthKey, JsonConvert.DefaultSettings());
+            var client = new DocumentClient(options.Value.AccountEndpoint, options.Value.AccountKey, JsonConvert.DefaultSettings());
             client.DeleteDocumentCollectionAsync(UriFactory.CreateDocumentCollectionUri(options.Value.DatabaseId, options.Value.CollectionId))
                 .GetAwaiter().GetResult();
         }
