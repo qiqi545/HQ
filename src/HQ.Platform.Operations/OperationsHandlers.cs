@@ -31,6 +31,7 @@ using HQ.Common.AspNetCore;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Internal;
+using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;

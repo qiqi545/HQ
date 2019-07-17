@@ -4,6 +4,7 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
+using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace HQ.Platform.Operations.Controllers
 {
 	[Route("configuration")]
-	[DynamicAuthorize(typeof(OperationsApiOptions))]
+	[DynamicAuthorize(typeof(ConfigurationApiOptions))]
 	[DynamicController]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages configuration items.")]

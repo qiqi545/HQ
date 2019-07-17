@@ -13,17 +13,13 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Platform.Security.AspNetCore;
-using Microsoft.AspNetCore.Builder;
+using HQ.Common;
 
-namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
+namespace HQ.Platform.Operations.Configuration
 {
-	public static class Use
+	public class ConfigurationApiOptions : IProtectedFeature
 	{
-		public static IApplicationBuilder UseBackgroundTasksApi(this IApplicationBuilder app)
-		{
-			app.UseMvc();
-			return app;
-		}
+		public string RootPath { get; set; } = "/ops";
+		public string Policy { get; set; } = Constants.Security.Policies.ManageConfiguration;
 	}
 }

@@ -9,6 +9,7 @@ using System.Text;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -19,7 +20,7 @@ using TypeKitchen;
 namespace HQ.Platform.Operations.Controllers
 {
     [Route("meta")]
-    [DynamicAuthorize(typeof(OperationsApiOptions))]
+    [DynamicAuthorize(typeof(MetaApiOptions))]
     [DynamicController]
     [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Provides specifications and discovery for external tooling.")]

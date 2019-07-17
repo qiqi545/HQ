@@ -19,9 +19,9 @@ using HQ.Common;
 using HQ.Extensions.Metrics;
 using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Operations.Configuration
 {
-    public class OperationsApiOptions : IProtectedFeature
+	public class OperationsApiOptions : IProtectedFeature
     {
         public string RootPath { get; set; } = "/ops";
 
@@ -57,6 +57,6 @@ namespace HQ.Platform.Operations
         public string MetricsEndpointPath { get; set; } = "/metrics";
 
         public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
-        public string Policy { get; set; } = Constants.Security.Policies.ManageConfiguration;
+        public string Policy { get; set; } = Constants.Security.Policies.AccessOperations;
     }
 }

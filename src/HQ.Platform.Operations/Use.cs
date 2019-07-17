@@ -18,6 +18,7 @@
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
+using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -174,7 +175,12 @@ namespace HQ.Platform.Operations
 
         public static IApplicationBuilder UseConfigurationApi(this IApplicationBuilder app)
         {
-	        app.UseSecurityPolicies();
+	        app.UseMvc();
+	        return app;
+        }
+
+        public static IApplicationBuilder UseMetaApi(this IApplicationBuilder app)
+        {
 	        app.UseMvc();
 	        return app;
         }

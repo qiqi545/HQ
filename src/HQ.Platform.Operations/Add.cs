@@ -16,8 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
@@ -25,6 +23,7 @@ using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Extensions.Options;
+using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
@@ -56,7 +55,10 @@ namespace HQ.Platform.Operations
         {
 	        Bootstrap.EnsureInitialized();
 
-	        if (!environment.IsDevelopment())
+	        if (configureAction != null)
+		        services.Configure(configureAction);
+
+			if (!environment.IsDevelopment())
 	        {
 		        services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
 	        }
@@ -64,10 +66,7 @@ namespace HQ.Platform.Operations
 	        services.AddValidOptions();
 	        services.AddSaveOptions();
 	        services.AddScoped<IMetaProvider, OperationsMetaProvider>();
-
-			if(configureAction != null)
-				services.Configure(configureAction);
-
+			
 	        services.AddMetrics(c =>
 	        {
 		        c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
@@ -85,20 +84,44 @@ namespace HQ.Platform.Operations
 		        });
 	        });
 
-	        return services;
+	        services.AddDynamicAuthorization();
+	        services.AddAuthorization(x =>
+	        {
+		        var serviceProvider = services.BuildServiceProvider();
+		        var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+
+		        x.AddPolicy(Constants.Security.Policies.AccessOperations, b =>
+		        {
+			        b.RequireAuthenticatedUserExtended(services);
+			        b.RequireClaimExtended(
+				        services,
+				        options.Value.Claims.PermissionClaim,
+				        ClaimValues.AccessOperations);
+		        });
+	        });
+
+			return services;
         }
 
-        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, string rootPath = "/ops")
+        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfiguration config)
+        {
+	        return AddConfigurationApi(services, config.Bind);
+        }
+
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, Action<ConfigurationApiOptions> configureAction = null)
         {
 	        services.AddMvc()
 		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-		        .AddConfigurationApi(rootPath);
+		        .AddConfigurationApi(configureAction);
 
 	        return services;
         }
 		
-        private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, string rootPath = "/ops")
+        private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
         {
+	        if (configureAction != null)
+		        mvcBuilder.Services.Configure(configureAction);
+
             mvcBuilder.Services.AddValidOptions();
             mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
@@ -126,9 +149,7 @@ namespace HQ.Platform.Operations
                 {
                     RouteTemplate = () =>
                     {
-                        if (!string.IsNullOrWhiteSpace(rootPath))
-                            return rootPath;
-                        var o = r.GetRequiredService<IOptions<OperationsApiOptions>>();
+                        var o = r.GetRequiredService<IOptions<ConfigurationApiOptions>>();
                         return o.Value.RootPath ?? string.Empty;
                     }
                 };
@@ -137,17 +158,25 @@ namespace HQ.Platform.Operations
             return mvcBuilder;
         }
 
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, string rootPath = "/ops")
+        public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
+        {
+	        return AddMetaApi(services, config.Bind);
+        }
+
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
 		{
 			services.AddMvc()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-				.AddMetaApi(rootPath);
+				.AddMetaApi(configureAction);
 
 			return services;
 		}
 
-		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, string rootPath = "/ops")
+		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
 		{
+			if (configureAction != null)
+				mvcBuilder.Services.Configure(configureAction);
+
 			mvcBuilder.Services.AddValidOptions();
 			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
@@ -159,18 +188,11 @@ namespace HQ.Platform.Operations
 				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
 				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
 
-				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
+				x.AddPolicy(Constants.Security.Policies.AccessMeta, b =>
 				{
 					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.AccessMeta);
 				});
-			});
-
-			mvcBuilder.ConfigureApplicationPartManager(x =>
-			{
-				var typeInfo = new List<TypeInfo> { typeof(MetaController).GetTypeInfo() };
-
-				x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
 			});
 
 			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
@@ -179,9 +201,7 @@ namespace HQ.Platform.Operations
 				{
 					RouteTemplate = () =>
 					{
-						if (!string.IsNullOrWhiteSpace(rootPath))
-							return rootPath;
-						var o = r.GetRequiredService<IOptions<OperationsApiOptions>>();
+						var o = r.GetRequiredService<IOptions<MetaApiOptions>>();
 						return o.Value.RootPath ?? string.Empty;
 					}
 				};

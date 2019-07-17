@@ -21,6 +21,7 @@ using System.Net.Http;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Models;
+using HQ.Platform.Operations.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations

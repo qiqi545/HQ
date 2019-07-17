@@ -67,7 +67,6 @@ namespace HQ.Common
             public static class Policies
             {
 	            public const string CorsPolicy = nameof(CorsPolicy);
-
 				public const string NoPolicy = nameof(NoPolicy);
 				public const string SuperUserOnly = nameof(SuperUserOnly);
                 public const string ManageTenants = nameof(ManageTenants);
@@ -76,7 +75,10 @@ namespace HQ.Common
                 public const string ManageRoles = nameof(ManageRoles);
                 public const string ManageBackgroundTasks = nameof(ManageBackgroundTasks);
                 public const string ManageConfiguration = nameof(ManageConfiguration);
-            }
+
+                public const string AccessMeta = nameof(AccessMeta);
+                public const string AccessOperations = nameof(AccessOperations);
+			}
         }
 
         public static class Versioning
