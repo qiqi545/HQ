@@ -42,7 +42,14 @@ namespace HQ.Test.Sdk.Assertions
             Assert.True(response.Value.IsSuccessStatusCode, userMessage ?? $"Response status code was {response.Value.StatusCode}", userMessageArgs);
         }
 
-        public static void HaveStatus(this IShould<HttpResponseMessage> response, HttpStatusCode statusCode, string userMessage = null, params object[] userMessageArgs)
+        public static void BeUnauthorized(this IShould<HttpResponseMessage> response, string userMessage = null, params object[] userMessageArgs)
+        {
+	        Assert.NotNull(response, userMessage, userMessageArgs);
+	        Assert.NotNull(response.Value, userMessage, userMessageArgs);
+	        Assert.True(response.Value.StatusCode == HttpStatusCode.Unauthorized, userMessage ?? $"Response status code was {response.Value.StatusCode}", userMessageArgs);
+        }
+
+		public static void HaveStatus(this IShould<HttpResponseMessage> response, HttpStatusCode statusCode, string userMessage = null, params object[] userMessageArgs)
 		{
             Assert.NotNull(response, userMessage, userMessageArgs);
 			Assert.NotNull(response.Value, userMessage, userMessageArgs);

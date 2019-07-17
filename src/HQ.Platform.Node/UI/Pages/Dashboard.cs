@@ -214,7 +214,7 @@ namespace HQ.Platform.Node.UI.Pages
                 configRoot.Reload();
 
                 var options = ui.Context.UiServices.GetRequiredService<ISaveOptions<SecurityOptions>>();
-                if (AuthenticationExtensions.MaybeSelfCreateMissingKeys(options.Value))
+                if (AuthenticationExtensions.MaybeSelfCreateMissingKeys(options.Value.Tokens))
                 {
                     options.TrySave("HQ:Security");
                 }

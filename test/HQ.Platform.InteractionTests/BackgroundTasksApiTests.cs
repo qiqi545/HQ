@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Test.Sdk;
+using HQ.Test.Sdk.Assertions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.InteractionTests
@@ -16,30 +15,35 @@ namespace HQ.Platform.InteractionTests
 	{
 		public override void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-				.AddBackgroundTasksApi(o =>
-				{
-					o.Cors.Enabled = false;
-					o.Https.Enabled = false;
-					o.Tokens.Enabled = false;
-					o.Cookies.Enabled = false;
-				}, o =>
-				{
-					o.Policy = null;
-				});
+			services.AddBackgroundTasksApi(o =>
+			{
+				o.Tokens.Enabled = true;
+				o.Cors.Enabled = false;
+				o.Https.Enabled = false;
+				o.Cookies.Enabled = false;
+			});
 		}
 
 		public override void Configure(IApplicationBuilder app)
 		{
-			app.UseSecurityPolicies();
-			app.UseMvc();
-			base.Configure(app);
+			app.UseAuthentication();
+			app.UseBackgroundTasksApi();
+		}
+
+		[Test]
+		public async Task Unauthorized_when_policy_set_and_no_token_provided()
+		{
+			await Act("/ops/tasks", response =>
+			{
+				response.Should().BeUnauthorized();
+			});
 		}
 
 		[Test]
 		public async Task Options_discovers_available_tasks()
 		{
+			Arrange(RemoveAuthorizationPolicy);
+
 			await Act<BackgroundTaskOptionsView>("/ops/tasks", x =>
 			{
 				Assert.NotEmpty(x.TaskTypes);
@@ -49,7 +53,7 @@ namespace HQ.Platform.InteractionTests
 		[Test]
 		public async Task Get_no_background_tasks_when_none_added()
 		{
-			Arrange(Test_ConfigureServices);
+			Arrange(RemoveAuthorizationPolicy);
 
 			await Act<IEnumerable<BackgroundTask>>("/ops/tasks", x =>
 			{
@@ -57,9 +61,9 @@ namespace HQ.Platform.InteractionTests
 			});
 		}
 
-		public void Test_ConfigureServices(IServiceCollection services)
+		private static void RemoveAuthorizationPolicy(IServiceCollection services)
 		{
-			Console.WriteLine("Foo");
+			services.Configure<BackgroundTaskOptions>(o => { o.Policy = null; });
 		}
 	}
 }

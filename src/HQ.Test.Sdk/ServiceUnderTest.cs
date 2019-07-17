@@ -60,7 +60,7 @@ namespace HQ.Test.Sdk
             ServiceProvider = services.BuildServiceProvider();
         }
 
-        protected void TryInstallLogging()
+        protected internal void TryInstallLogging()
         {
 	        var loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
 	        if (loggerFactory != null)
@@ -73,7 +73,7 @@ namespace HQ.Test.Sdk
             Logger = loggerFactory.CreateLogger<ServiceUnderTest>();
         }
 
-        protected void TryInstallTracing()
+        protected internal void TryInstallTracing()
         {
             if (ServiceProvider?.GetService<TraceSourceLoggerProvider>() != null)
                 return;

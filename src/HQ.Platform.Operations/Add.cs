@@ -32,6 +32,7 @@ using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -87,19 +88,33 @@ namespace HQ.Platform.Operations
 	        return services;
         }
 
-		public static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfiguration securityConfig, string rootPath = "/ops")
+        {
+	        return AddConfigurationApi(services, securityConfig.Bind, rootPath);
+        }
+
+        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+        {
+	        services.AddMvc()
+		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+		        .AddConfigurationApi(configureSecurity, rootPath);
+
+	        return services;
+        }
+
+        internal static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
         {
             return AddConfigurationApi(mvcBuilder, securityConfig.Bind, rootPath);
         }
 
-        public static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+		internal static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
         {
             if (configureSecurity != null)
 	            mvcBuilder.Services.Configure(configureSecurity);
 
             mvcBuilder.Services.AddValidOptions();
             mvcBuilder.Services.AddSaveOptions();
-			mvcBuilder.Services.AddSecurityPolicies(configureSecurity);
+			mvcBuilder.Services.AddDynamicAuthorization();
 			mvcBuilder.Services.AddAuthorization(x =>
             {
                 var securityOptions = new SecurityOptions();
@@ -107,8 +122,11 @@ namespace HQ.Platform.Operations
 
                 x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
                 {
-                    b.RequireAuthenticatedUserExtended(mvcBuilder.Services, securityOptions);
-                    b.RequireClaimExtended(mvcBuilder.Services, securityOptions, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+                    b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
+                    b.RequireClaimExtended(
+	                    mvcBuilder.Services, 
+	                    securityOptions.Claims.PermissionClaim, 
+	                    ClaimValues.ManageConfiguration);
                 });
             });
 			
@@ -131,33 +149,45 @@ namespace HQ.Platform.Operations
             return mvcBuilder;
         }
 
-		public static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration securityConfig, string rootPath = "/ops")
+		{
+			return AddMetaApi(services, securityConfig.Bind, rootPath);
+		}
+
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+		{
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+				.AddMetaApi(configureSecurity, rootPath);
+
+			return services;
+		}
+
+		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
 		{
 			return AddMetaApi(mvcBuilder, securityConfig.Bind, rootPath);
 		}
 
-		public static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
 		{
-			var services = mvcBuilder.Services;
-
 			if (configureSecurity != null)
-				services.Configure(configureSecurity);
-			
-			services.AddValidOptions();
-			services.AddSaveOptions();
+				mvcBuilder.Services.Configure(configureSecurity);
 
-			services.AddSecurityPolicies(configureSecurity);
+			mvcBuilder.Services.AddValidOptions();
+			mvcBuilder.Services.AddSaveOptions();
+			mvcBuilder.Services.AddDynamicAuthorization();
+
 			mvcBuilder.AddControllerFeature<MetaController>();
 
-			services.AddAuthorization(x =>
+			mvcBuilder.Services.AddAuthorization(x =>
 			{
 				var securityOptions = new SecurityOptions();
 				configureSecurity?.Invoke(securityOptions);
 
 				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
 				{
-					b.RequireAuthenticatedUserExtended(services, securityOptions);
-					b.RequireClaimExtended(services, securityOptions, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
+					b.RequireClaimExtended(mvcBuilder.Services, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
 				});
 			});
 
@@ -168,7 +198,7 @@ namespace HQ.Platform.Operations
 				x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
 			});
 
-			services.AddSingleton<IDynamicComponent>(r =>
+			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
 			{
 				return new MetaComponent
 				{
@@ -182,15 +212,15 @@ namespace HQ.Platform.Operations
 				};
 			});
 
-			services.AddSwaggerGen(c =>
+			mvcBuilder.Services.AddSwaggerGen(c =>
 			{
 				c.EnableAnnotations();
 				c.SwaggerDoc("swagger", new Info { Title = "Sample API", Version = "v1" });
 				c.DescribeAllEnumsAsStrings();
 			});
 
-			services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
-			services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
+			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
+			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
 			
 			return mvcBuilder;
 		}

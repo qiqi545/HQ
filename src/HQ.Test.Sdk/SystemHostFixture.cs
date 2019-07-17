@@ -59,10 +59,21 @@ namespace HQ.Test.Sdk
         {
 	        var config = new[] {new Action<IConfiguration>(systemUnderTest.Configuration)};
 	        var configureServices = new[] {new Action<IServiceCollection>(systemUnderTest.ConfigureServices)};
-	        var configure = new[] {new Action<IApplicationBuilder>(systemUnderTest.Configure)};
+			var configure = new[]
+	        {
+				BeforeConfigure, 
+		        new Action<IApplicationBuilder>(systemUnderTest.Configure)
+	        };
 
 	        var builder = CreateWebHostBuilder(config, configureServices, configure, topology);
 	        return new TestServer(builder);
+        }
+
+        private void BeforeConfigure(IApplicationBuilder app)
+        {
+	        _systemUnderTest.ServiceProvider = app.ApplicationServices;
+	        _systemUnderTest.TryInstallLogging();
+	        _systemUnderTest.TryInstallTracing();
         }
 
         public void Dispose()
@@ -82,7 +93,11 @@ namespace HQ.Test.Sdk
 			configureServicesList.AddRange(configureServices);
 
 			var config = new[] {new Action<IConfiguration>(_systemUnderTest.Configuration)};
-			var configure = new[] {new Action<IApplicationBuilder>(_systemUnderTest.Configure)};
+			var configure = new[]
+			{
+				BeforeConfigure,
+				new Action<IApplicationBuilder>(_systemUnderTest.Configure)
+			};
 
 			var builder = CreateWebHostBuilder(config, configureServicesList, configure, _topology);
 			return new TestServer(builder).CreateClient();

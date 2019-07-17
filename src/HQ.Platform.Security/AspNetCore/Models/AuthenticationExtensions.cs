@@ -30,6 +30,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using CookieOptions = HQ.Platform.Security.Configuration.CookieOptions;
 
 namespace HQ.Platform.Security.AspNetCore.Models
 {
@@ -38,7 +39,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
         private static SigningCredentials _signing;
         private static EncryptingCredentials _encrypting;
 
-        public static void AddAuthentication(this IServiceCollection services, SecurityOptions options)
+        public static void AddAuthentication(this IServiceCollection services, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
         {
 	        if (_signing != null)
 	        {
@@ -46,8 +47,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 		        return;
 	        }
 
-            _signing = _signing ?? BuildSigningCredentials(options);
-            _encrypting = _encrypting ?? BuildEncryptingCredentials(options);
+            _signing = _signing ?? BuildSigningCredentials(tokens);
+            _encrypting = _encrypting ?? BuildEncryptingCredentials(tokens);
 
             var authBuilder = services.AddAuthentication(x =>
             {
@@ -56,7 +57,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             });
 
-            if (options.Tokens.Enabled)
+            if (tokens.Enabled)
             {
                 authBuilder.AddJwtBearer(x =>
                 {
@@ -68,7 +69,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
                     x.SaveToken = true;
 
-                    x.TokenValidationParameters = BuildTokenValidationParameters(options);
+                    x.TokenValidationParameters = BuildTokenValidationParameters(tokens, claims);
 #if DEBUG
                     x.IncludeErrorDetails = true;
                     x.RequireHttpsMetadata = false;
@@ -79,28 +80,28 @@ namespace HQ.Platform.Security.AspNetCore.Models
                 });
             }
 
-            if (options.Cookies.Enabled)
+            if (cookies.Enabled)
             {
                 authBuilder.AddCookie(cfg =>
                 {
-                    cfg.LoginPath = options.Cookies.SignInPath;
-                    cfg.LogoutPath = options.Cookies.SignOutPath;
-                    cfg.AccessDeniedPath = options.Cookies.ForbidPath;
-                    cfg.ReturnUrlParameter = options.Cookies.ReturnOperator;
+                    cfg.LoginPath = cookies.SignInPath;
+                    cfg.LogoutPath = cookies.SignOutPath;
+                    cfg.AccessDeniedPath = cookies.ForbidPath;
+                    cfg.ReturnUrlParameter = cookies.ReturnOperator;
                     cfg.Events = new CookieAuthenticationEvents
                     {
                         OnSigningIn = context =>
                         {
-                            if (string.IsNullOrWhiteSpace(options.Cookies.Domain))
+                            if (string.IsNullOrWhiteSpace(cookies.Domain))
                                 context.Options.Cookie.Domain = context.HttpContext.Request.Host.Value;
                             return Task.CompletedTask;
                         }
                     };
-                    cfg.SlidingExpiration = options.Tokens.AllowRefresh;
-                    cfg.ClaimsIssuer = options.Tokens.Issuer;
+                    cfg.SlidingExpiration = tokens.AllowRefresh;
+                    cfg.ClaimsIssuer = tokens.Issuer;
 
-                    cfg.Cookie.Name = options.Cookies.IdentityName;
-                    cfg.Cookie.Expiration = TimeSpan.FromSeconds(options.Tokens.TimeToLiveSeconds);
+                    cfg.Cookie.Name = cookies.IdentityName;
+                    cfg.Cookie.Expiration = TimeSpan.FromSeconds(tokens.TimeToLiveSeconds);
                     cfg.Cookie.Path = "/";
                     cfg.Cookie.HttpOnly = true;
                     cfg.Cookie.IsEssential = true;
@@ -170,8 +171,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
             claims.TryAddClaim(security.Claims.ApplicationIdClaim, apiVersion);
             claims.TryAddClaim(security.Claims.ApplicationNameClaim, apiName);
 
-            _signing = _signing ?? BuildSigningCredentials(security);
-            _encrypting = _encrypting ?? BuildEncryptingCredentials(security);
+            _signing = _signing ?? BuildSigningCredentials(security.Tokens);
+            _encrypting = _encrypting ?? BuildEncryptingCredentials(security.Tokens);
 
             var handler = new JwtSecurityTokenHandler();
 
@@ -189,60 +190,60 @@ namespace HQ.Platform.Security.AspNetCore.Models
             return handler.CreateEncodedJwt(descriptor);
         }
 
-        private static SigningCredentials BuildSigningCredentials(SecurityOptions options)
+        private static SigningCredentials BuildSigningCredentials(TokenOptions options)
         {
             MaybeSelfCreateMissingKeys(options);
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.SigningKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey));
             return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         }
 
-        private static EncryptingCredentials BuildEncryptingCredentials(SecurityOptions options)
+        private static EncryptingCredentials BuildEncryptingCredentials(TokenOptions options)
         {
             MaybeSelfCreateMissingKeys(options);
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Tokens.EncryptionKey));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.EncryptionKey));
             return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
         }
 
-        public static bool MaybeSelfCreateMissingKeys(SecurityOptions options)
+        public static bool MaybeSelfCreateMissingKeys(TokenOptions options)
         {
             var changed = false;
 
-            if (options.Tokens.SigningKey == null || options.Tokens.SigningKey == Constants.Tokens.NoSigningKeySet)
+            if (options.SigningKey == null || options.SigningKey == Constants.Tokens.NoSigningKeySet)
             {
                 Trace.TraceWarning("No JWT signing key found, creating temporary key.");
-                options.Tokens.SigningKey = Crypto.GetRandomString(64);
+                options.SigningKey = Crypto.GetRandomString(64);
                 changed = true;
             }
 
-            if (options.Tokens.EncryptionKey == null || options.Tokens.EncryptionKey == Constants.Tokens.NoEncryptionKeySet)
+            if (options.EncryptionKey == null || options.EncryptionKey == Constants.Tokens.NoEncryptionKeySet)
             {
                 Trace.TraceWarning("No JWT encryption key found, using signing key.");
-                options.Tokens.EncryptionKey = options.Tokens.SigningKey;
+                options.EncryptionKey = options.SigningKey;
                 changed = true;
             }
 
             return changed;
         }
 
-        private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions options)
+        private static TokenValidationParameters BuildTokenValidationParameters(TokenOptions tokens, ClaimOptions claims)
         {
-            var name = options.Claims.UserNameClaim;
-            var role = options.Claims.RoleClaim;
+            var name = claims.UserNameClaim;
+            var role = claims.RoleClaim;
 
-            if (options.Tokens.Encrypt)
+            if (tokens.Encrypt)
             {
                 return new TokenValidationParameters
                 {
                     TokenDecryptionKeyResolver = TokenDecryptionKeyResolver,
                     ValidateIssuerSigningKey = false,
-                    ValidIssuer = options.Tokens.Issuer,
+                    ValidIssuer = tokens.Issuer,
                     ValidateLifetime = true,
                     ValidateAudience = true,
-                    ValidAudience = options.Tokens.Audience,
+                    ValidAudience = tokens.Audience,
                     RequireSignedTokens = false,
                     IssuerSigningKey = _signing.Key,
                     TokenDecryptionKey = _encrypting.Key,
-                    ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
+                    ClockSkew = TimeSpan.FromSeconds(tokens.ClockSkewSeconds),
                     RoleClaimType = role,
                     NameClaimType = name
                 };
@@ -251,13 +252,13 @@ namespace HQ.Platform.Security.AspNetCore.Models
             return new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
-                ValidIssuer = options.Tokens.Issuer,
+                ValidIssuer = tokens.Issuer,
                 ValidateLifetime = true,
                 ValidateAudience = true,
-                ValidAudience = options.Tokens.Audience,
+                ValidAudience = tokens.Audience,
                 RequireSignedTokens = true,
                 IssuerSigningKey = _signing.Key,
-                ClockSkew = TimeSpan.FromSeconds(options.Tokens.ClockSkewSeconds),
+                ClockSkew = TimeSpan.FromSeconds(tokens.ClockSkewSeconds),
                 RoleClaimType = role,
                 NameClaimType = name
             };

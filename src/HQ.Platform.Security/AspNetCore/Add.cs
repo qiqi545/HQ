@@ -56,117 +56,135 @@ namespace HQ.Platform.Security.AspNetCore
 				services.Configure(configureSecurityAction);
 			services.ConfigureOptions<ConfigureWebServer>();
 
-            services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
-			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-			
-			var cors = options.Cors;
-            if (cors.Enabled)
-            {
-                logger?.Trace(()=> "CORS enabled.");
-
-                services.AddCors(o =>
-                {
-                    o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
-                    {
-                        builder
-                            .WithOrigins(cors.Origins ?? new[] { "*" })
-                            .WithMethods(cors.Methods ?? new[] { "*" })
-                            .WithHeaders(cors.Headers ?? new []{ "*" })
-                            .WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
-                        
-                        if (cors.AllowCredentials)
-                            builder.AllowCredentials();
-                        else
-                            builder.DisallowCredentials();
-
-                        if (cors.AllowOriginWildcards)
-                            builder.SetIsOriginAllowedToAllowWildcardSubdomains();
-
-                        if (cors.PreflightMaxAgeSeconds.HasValue)
-                            builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
-                    });
-                });
-
-                services.AddMvc(o =>
-                {
-	                o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
-                });
-            }
-            
-            if (options.Tokens.Enabled || options.Cookies.Enabled)
-            {
-                logger?.Trace(() => "Authentication enabled.");
-
-                services.AddAuthentication(options);
-            }
-			
-			if (options.Tokens.Enabled)
-            {
-				services.AddAuthorization(x =>
-				{
-					TryAddDefaultPolicy(services, logger, x, options, JwtBearerDefaults.AuthenticationScheme);
-				});
-			}
-
-			if (options.Cookies.Enabled)
-			{
-				services.AddAuthorization(x =>
-				{
-					TryAddDefaultPolicy(services, logger, x, options, CookieAuthenticationDefaults.AuthenticationScheme);
-				});
-			}
-			
-			if (options.SuperUser.Enabled)
-			{
-				logger?.Trace(() => $"SuperUser enabled.");
-
-				services.AddAuthorization(x =>
-				{
-					if (x.GetPolicy(Constants.Security.Policies.SuperUserOnly) == null)
-						x.AddPolicy(Constants.Security.Policies.SuperUserOnly, builder =>
-						{
-							builder.RequireRoleExtended(services, options, ClaimValues.SuperUser);
-						});
-				});
-			}
-
-			if (options.Https.Enabled)
-            {
-                logger?.Trace(() => "HTTPS enabled.");
-
-                services.AddHttpsRedirection(o =>
-                {
-                    o.HttpsPort = null;
-                    o.RedirectStatusCode = options.Https.Hsts.Enabled ? 307 : 301;
-                });
-
-                if (options.Https.Hsts.Enabled)
-                {
-                    logger?.Trace(() => "HSTS enabled.");
-
-                    services.AddHsts(o =>
-                    {
-                        o.MaxAge = options.Https.Hsts.HstsMaxAge;
-                        o.IncludeSubDomains = options.Https.Hsts.IncludeSubdomains;
-                        o.Preload = options.Https.Hsts.Preload;
-                    });
-                }
-            }
+            AddDynamicAuthorization(services);
+            AddCors(services, logger, options.Cors);
+            AddAuthentication(services, logger, options.Tokens, options.Cookies, options.Claims);
+            AddSuperUser(services, logger, options.SuperUser);
+			AddHttps(services, logger, options);
 
             return services;
         }
 
-        private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x,
-	        SecurityOptions options, string scheme)
+        public static void AddDynamicAuthorization(this IServiceCollection services)
+        {
+	        services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
+	        services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
+        }
+
+        private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
+        {
+	        if (!cors.Enabled)
+		        return;
+
+	        logger?.Trace(() => "CORS enabled.");
+
+	        services.AddCors(o =>
+	        {
+		        o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
+		        {
+			        builder
+				        .WithOrigins(cors.Origins ?? new[] {"*"})
+				        .WithMethods(cors.Methods ?? new[] {"*"})
+				        .WithHeaders(cors.Headers ?? new[] {"*"})
+				        .WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
+
+			        if (cors.AllowCredentials)
+				        builder.AllowCredentials();
+			        else
+				        builder.DisallowCredentials();
+
+			        if (cors.AllowOriginWildcards)
+				        builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+
+			        if (cors.PreflightMaxAgeSeconds.HasValue)
+				        builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
+		        });
+	        });
+
+	        services.AddMvc(o =>
+	        {
+		        o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
+	        });
+        }
+
+        private static void AddHttps(IServiceCollection services, ISafeLogger logger, SecurityOptions options)
+        {
+	        if (options.Https.Enabled)
+	        {
+		        logger?.Trace(() => "HTTPS enabled.");
+
+		        services.AddHttpsRedirection(o =>
+		        {
+			        o.HttpsPort = null;
+			        o.RedirectStatusCode = options.Https.Hsts.Enabled ? 307 : 301;
+		        });
+
+		        if (options.Https.Hsts.Enabled)
+		        {
+			        logger?.Trace(() => "HSTS enabled.");
+
+			        services.AddHsts(o =>
+			        {
+				        o.MaxAge = options.Https.Hsts.HstsMaxAge;
+				        o.IncludeSubDomains = options.Https.Hsts.IncludeSubdomains;
+				        o.Preload = options.Https.Hsts.Preload;
+			        });
+		        }
+	        }
+        }
+
+        private static void AddAuthentication(IServiceCollection services, ISafeLogger logger, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
+        {
+	        if (tokens.Enabled || cookies.Enabled)
+	        {
+		        logger?.Trace(() => "Authentication enabled.");
+
+		        services.AddAuthentication(tokens, cookies, claims);
+	        }
+
+	        if (tokens.Enabled)
+	        {
+		        services.AddAuthorization(x =>
+		        {
+			        TryAddDefaultPolicy(services, logger, x, JwtBearerDefaults.AuthenticationScheme);
+		        });
+	        }
+
+	        if (cookies.Enabled)
+	        {
+		        services.AddAuthorization(x =>
+		        {
+			        TryAddDefaultPolicy(services, logger, x, CookieAuthenticationDefaults.AuthenticationScheme);
+		        });
+	        }
+        }
+
+        private static void AddSuperUser(IServiceCollection services, ISafeLogger logger, SuperUserOptions options)
+        {
+	        if (options.Enabled)
+	        {
+		        logger?.Trace(() => $"SuperUser enabled.");
+
+		        services.AddAuthorization(x =>
+		        {
+					if (x.GetPolicy(Constants.Security.Policies.SuperUserOnly) == null)
+				        x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
+					        builder => { builder.RequireRoleExtended(services, ClaimValues.SuperUser); });
+		        });
+	        }
+        }
+
+        private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
         {
 	        if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
 	        {
-				Trace.WriteLine($"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered");
+				Trace.WriteLine($"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered.");
 		        return;
 	        }
 
+			Trace.WriteLine($"Registering default policy with scheme '{scheme}'.");
 	        x.DefaultPolicy = new AuthorizationPolicyBuilder(scheme)
-		        .RequireAuthenticatedUserExtended(services, options)
+		        .RequireAuthenticatedUserExtended(services)
 		        .Build();
         }
     }

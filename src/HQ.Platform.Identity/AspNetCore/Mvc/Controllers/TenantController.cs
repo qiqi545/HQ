@@ -18,13 +18,12 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -32,9 +31,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("tenants")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageTenants)]
-    [MetaCategory("Identity", "Manages application access controls.")]
+    [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Tenants))]
+	[ApiExplorerSettings(IgnoreApi = false)]
+	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Tenants")]
     [MetaDescription("Manages system tenants.")]
     public class TenantController<TTenant, TKey> : DataController

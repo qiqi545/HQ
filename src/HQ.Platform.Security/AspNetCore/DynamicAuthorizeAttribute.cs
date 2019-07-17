@@ -25,10 +25,12 @@ namespace HQ.Platform.Security.AspNetCore
 	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData
 	{
 		private readonly Type _policyProviderType;
+		private readonly string[] _segments;
 
-		public DynamicAuthorizeAttribute(Type policyProviderType)
+		public DynamicAuthorizeAttribute(Type policyProviderType, params string[] segments)
 		{
 			_policyProviderType = policyProviderType;
+			_segments = segments;
 		}
 
 		public IServiceProvider ServiceProvider { get; set; }

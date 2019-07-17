@@ -20,10 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -31,21 +29,19 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<RolesAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly SecurityOptions _options;
+        private readonly IOptionsMonitor<SecurityOptions> _options;
 
-        public RolesAuthorizationRequirementExtended(IServiceProvider serviceProvider, SecurityOptions options, IEnumerable<string> allowedRoles)
+        public RolesAuthorizationRequirementExtended(IOptionsMonitor<SecurityOptions> options, IEnumerable<string> allowedRoles)
         {
-            _serviceProvider = serviceProvider;
-            _options = options;
-            AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
+	        _options = options;
+			AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
 
-        private bool SupportsSuperUser => _options.SuperUser?.Enabled ?? false;
+        private bool SupportsSuperUser => _options.CurrentValue.SuperUser?.Enabled ?? false;
 
         public IEnumerable<string> AllowedRoles { get; }
 
-        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context,
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             RolesAuthorizationRequirementExtended requirement)
         {
             var user = context.User;
@@ -53,6 +49,7 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             //
             // ASP.NET Core Identity is calling the requirement *before* validating and injecting the claim!
             //
+			/*
             if (!user.Identity.IsAuthenticated)
             {
                 if (_serviceProvider.GetService(typeof(IAuthenticationService)) is IAuthenticationService service && context.Resource is AuthorizationFilterContext filter)
@@ -64,10 +61,11 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
                     }
                 }
             }
+			*/
 
             if (user != null)
             {
-                if (SupportsSuperUser && user.HasClaim(_options.Claims.RoleClaim, ClaimValues.SuperUser))
+                if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
                 {
                     context.Succeed(requirement);
                 }
@@ -83,6 +81,8 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
                     context.Succeed(requirement);
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

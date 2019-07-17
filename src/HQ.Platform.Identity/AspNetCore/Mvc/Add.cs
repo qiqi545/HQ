@@ -16,8 +16,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
@@ -27,6 +25,7 @@ using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -35,7 +34,31 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-	    public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder,
+	    public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, IConfiguration apiConfig, IConfiguration securityConfig)
+		    where TUser : IdentityUserExtended<TKey>
+		    where TRole : IdentityRoleExtended<TKey>
+		    where TTenant : IdentityTenant<TKey>
+		    where TApplication : IdentityApplication<TKey>
+		    where TKey : IEquatable<TKey>
+		{
+		    return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.Bind, securityConfig.Bind);
+	    }
+
+	    public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null, Action<SecurityOptions> configureSecurity = null)
+		    where TUser : IdentityUserExtended<TKey>
+		    where TRole : IdentityRoleExtended<TKey>
+		    where TTenant : IdentityTenant<TKey>
+		    where TApplication : IdentityApplication<TKey>
+		    where TKey : IEquatable<TKey>
+	    {
+		    services.AddMvc()
+			    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+			    .AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi, configureSecurity);
+
+		    return services;
+	    }
+		
+	    private static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder,
 		    IConfiguration apiConfig, IConfiguration securityConfig)
 		    where TUser : IdentityUserExtended<TKey>
 		    where TRole : IdentityRoleExtended<TKey>
@@ -47,7 +70,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 			    securityConfig.Bind);
 	    }
 
-	    public static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder, Action<IdentityApiOptions> configureApi = null, Action<SecurityOptions> configureSecurity = null)
+		private static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder, Action<IdentityApiOptions> configureApi = null, Action<SecurityOptions> configureSecurity = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
@@ -62,42 +85,45 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             services.Configure(configureApi);
 
 			services.AddSecurityPolicies(configureSecurity);
-			mvcBuilder.AddControllerFeature<IdentityApplication>();
+
+			mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
+			mvcBuilder.AddControllerFeature<TenantController<TTenant, TKey>>();
+			mvcBuilder.AddControllerFeature<ApplicationController<TApplication, TKey>>();
+			mvcBuilder.AddControllerFeature<UserController<TUser, TTenant, TKey>>();
+			mvcBuilder.AddControllerFeature<RoleController<TRole, TKey>>();
 
 			services.AddAuthorization(x =>
             {
                 x.AddPolicy(Constants.Security.Policies.ManageUsers,
                     b =>
                     {
-                        b.RequireAuthenticatedUserExtended(services, options);
-                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                        b.RequireAuthenticatedUserExtended(services);
+                        b.RequireClaimExtended(services, options.Claims.PermissionClaim,
                             ClaimValues.ManageUsers);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageRoles,
                     b =>
                     {
-                        b.RequireAuthenticatedUserExtended(services, options);
-                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                        b.RequireAuthenticatedUserExtended(services);
+                        b.RequireClaimExtended(services, options.Claims.PermissionClaim,
                             ClaimValues.ManageRoles);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageTenants,
                     b =>
                     {
-                        b.RequireAuthenticatedUserExtended(services, options);
-                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                        b.RequireAuthenticatedUserExtended(services);
+                        b.RequireClaimExtended(services, options.Claims.PermissionClaim,
                             ClaimValues.ManageTenants);
                     });
                 x.AddPolicy(Constants.Security.Policies.ManageApplications,
                     b =>
                     {
-                        b.RequireAuthenticatedUserExtended(services, options);
-                        b.RequireClaimExtended(services, options, options.Claims.PermissionClaim,
+                        b.RequireAuthenticatedUserExtended(services);
+                        b.RequireClaimExtended(services, options.Claims.PermissionClaim,
                             ClaimValues.ManageApplications);
                     });
             });
 			
-            mvcBuilder.AddControllers<TUser, TRole, TTenant, TApplication, TKey>();
-
             services.AddSingleton<IDynamicComponent>(r =>
             {
                 var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
@@ -111,27 +137,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             });
 
             return mvcBuilder;
-        }
-
-        private static IMvcBuilder AddControllers<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvc)
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-            where TKey : IEquatable<TKey>
-        {
-            var typeInfo = new List<TypeInfo>
-            {
-                typeof(TokenController<TUser, TTenant, TApplication, TKey>).GetTypeInfo(),
-                typeof(TenantController<TTenant, TKey>).GetTypeInfo(),
-                typeof(ApplicationController<TApplication, TKey>).GetTypeInfo(),
-                typeof(UserController<TUser, TTenant, TKey>).GetTypeInfo(),
-                typeof(RoleController<TRole, TKey>).GetTypeInfo()
-            };
-            return mvc.ConfigureApplicationPartManager(x =>
-            {
-                x.ApplicationParts.Add(new DynamicControllerApplicationPart(typeInfo));
-            });
         }
     }
 }

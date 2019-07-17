@@ -72,11 +72,11 @@ namespace HQ.Test.Sdk.Extensions
         private static PathString Normalize(string pathString)
         {
             Contract.Assert(pathString != null);
-            if (!pathString.StartsWith("/"))
+            if (pathString != null && !pathString.StartsWith("/"))
                 pathString = $"/{pathString}";
-            if (!pathString.EndsWith("/"))
+            if (pathString != null && !pathString.EndsWith("/"))
                 pathString = $"{pathString}/";
-            return pathString;
+            return pathString ?? "/";
         }
 
         #region Safe Methods

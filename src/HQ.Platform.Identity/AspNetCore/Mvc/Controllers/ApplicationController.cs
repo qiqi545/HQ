@@ -23,7 +23,7 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -31,8 +31,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("applications")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageApplications)]
+    [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Applications))]
+	[ApiExplorerSettings(IgnoreApi = false)]
     [MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Applications")]
     [MetaDescription("Manages system applications.")]

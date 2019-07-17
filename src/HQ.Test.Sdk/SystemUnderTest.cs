@@ -49,14 +49,7 @@ namespace HQ.Test.Sdk
 
 		public virtual void Configuration(IConfiguration config) { }
 
-        public virtual void Configure(IApplicationBuilder app)
-        {
-            ServiceProvider = app.ApplicationServices;
-
-            TryInstallLogging();
-
-            TryInstallTracing();
-        }
+        public virtual void Configure(IApplicationBuilder app) { }
 
         public HttpClient CreateClient()
         {
@@ -77,10 +70,18 @@ namespace HQ.Test.Sdk
 		#region Helper Methods
 
 		private readonly List<Action<IServiceCollection>> _configureServices = new List<Action<IServiceCollection>>();
+		private readonly List<Action<IApplicationBuilder>> _configure = new List<Action<IApplicationBuilder>>();
 
 		protected void Arrange(Action<IServiceCollection> configureServices)
 		{
-			_configureServices.Add(configureServices);
+			lock(_systemUnderTest)
+				_configureServices.Add(configureServices);
+		}
+
+		protected void Arrange(Action<IApplicationBuilder> configure)
+		{
+			lock (_systemUnderTest)
+				_configure.Add(configure);
 		}
 
 		protected async Task Act(string pathString, Action<HttpResponseMessage> assert = null,
@@ -88,9 +89,20 @@ namespace HQ.Test.Sdk
 		{
 			if (_configureServices.Count > 0)
 			{
-				using (var client = _systemUnderTest.CreateClient(_configureServices))
+				lock (_systemUnderTest)
 				{
-					await Act(client);
+					try
+					{
+						using (var client = _systemUnderTest.CreateClient(_configureServices))
+						{
+							Act(client).GetAwaiter().GetResult();
+						}
+					}
+					finally
+					{
+						_configureServices.Clear();
+						_configure.Clear();
+					}
 				}
 			}
 			else

@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,14 +11,20 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-namespace HQ.Platform.Identity.Configuration
+using HQ.Platform.Security.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+
+namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {
-    public class IdentityApiOptions
-    {
-        public string RootPath { get; set; } = "auth";
-		public IdentityApiPolicies Policies { get; set; } = new IdentityApiPolicies();
-    }
+	public static class Use
+	{
+		public static IApplicationBuilder UseBackgroundTasksApi(this IApplicationBuilder app)
+		{
+			app.UseSecurityPolicies();
+			app.UseMvc();
+			return app;
+		}
+	}
 }

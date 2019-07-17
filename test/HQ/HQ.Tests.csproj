@@ -53,6 +53,9 @@
     <Content Include="..\HQ.Platform.Api.Tests\**\*.cs" Exclude="..\HQ.Platform.Api.Tests\obj\**\*" Link="Platform.Api.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.InteractionTests\**\*.cs" Exclude="..\HQ.Platform.InteractionTests\obj\**\*" Link="Platform.InteractionTests\%(RecursiveDir)%(Filename)%(Extension)" />
 
+    <!-- Integrations -->
+    <Content Include="..\HQ.Integration.Tests\**\*.cs" Exclude="..\HQ.Integration.Tests\obj\**\*" Link="Integration.Tests\%(RecursiveDir)%(Filename)%(Extension)" />
+
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

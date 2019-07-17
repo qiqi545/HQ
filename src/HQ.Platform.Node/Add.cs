@@ -43,7 +43,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace HQ.Platform.Node
 {
@@ -54,7 +53,6 @@ namespace HQ.Platform.Node
             IHostingEnvironment env,
             IConfiguration config,
             ISafeLogger logger,
-            Action<MvcOptions> setupAction = null,
             params ICloudOptions[] clouds)
         {
             var subject = Assembly.GetCallingAssembly();
@@ -89,10 +87,10 @@ namespace HQ.Platform.Node
                 .AddIdentityTenantContextStore<IdentityTenant>()
                 .AddIdentityApplicationContextStore<IdentityApplication>();
             services.AddVersioning(versioning);
-            services.AddMvc(setupAction)
-                .AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
-                .AddBackgroundTasksApi(security, tasks)
-                .AddConfigurationApi(security)
+            services
+	            .AddBackgroundTasksApi(security, tasks)
+	            .AddConfigurationApi(security)
+				.AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
                 .AddMetaApi(security)
                 ;
 

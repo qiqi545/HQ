@@ -35,7 +35,6 @@ namespace HQ.Platform.InteractionTests
 
 		public override void Configure(IApplicationBuilder app)
 		{
-			base.Configure(app);
 			app.UseMvc();
 		}
 
@@ -53,10 +52,9 @@ namespace HQ.Platform.InteractionTests
 		{
 			Arrange(services =>
 			{
-				services.AddMvc()
-					.AddConfigurationApi();
+				services.AddConfigurationApi();
 			});
-
+			
 			await Act("/gravy", response =>
 			{
 				response.Should().BeOk();

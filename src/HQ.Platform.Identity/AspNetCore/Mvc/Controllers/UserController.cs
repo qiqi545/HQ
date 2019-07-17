@@ -21,13 +21,12 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -35,9 +34,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("users")]
     [DynamicController]
-    [ApiExplorerSettings(IgnoreApi = false)]
-    [Authorize(Constants.Security.Policies.ManageUsers)]
-    [MetaCategory("Identity", "Manages application access controls.")]
+    [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Users))]
+	[ApiExplorerSettings(IgnoreApi = false)]
+	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Users")]
     [MetaDescription("Manages user accounts.")]
     public class UserController<TUser, TTenant, TKey> : DataController

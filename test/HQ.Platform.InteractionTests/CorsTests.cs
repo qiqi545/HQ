@@ -22,14 +22,11 @@ namespace HQ.Platform.InteractionTests
 				o.Tokens.Enabled = false;
 				o.Cookies.Enabled = false;
 			});
-
-            base.ConfigureServices(services);
 		}
 
 		public override void Configure(IApplicationBuilder app)
 		{
 			app.UseSecurityPolicies();
-			base.Configure(app);
 		}
 
 		[Test]

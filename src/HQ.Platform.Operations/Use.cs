@@ -18,6 +18,7 @@
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
+using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -170,5 +171,12 @@ namespace HQ.Platform.Operations
                 await next();
             });
         }
-    }
+
+        public static IApplicationBuilder UseConfigurationApi(this IApplicationBuilder app)
+        {
+	        app.UseSecurityPolicies();
+	        app.UseMvc();
+	        return app;
+        }
+	}
 }
