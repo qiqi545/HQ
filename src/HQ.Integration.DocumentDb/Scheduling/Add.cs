@@ -10,6 +10,7 @@ using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb.Scheduling
@@ -43,9 +44,9 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
             services.AddMetrics();
             services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-            services.AddScoped<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
-            services.Replace(ServiceDescriptor.Scoped<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
-            services.Configure(configureDatabase);
+            services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
+            services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
+			services.Configure(configureDatabase);
             
             var serviceProvider = services.BuildServiceProvider();
             var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
