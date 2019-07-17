@@ -15,12 +15,6 @@ namespace HQ.Platform.Api.Tests.Functions
 		{
 			services.AddBackgroundTasksApi(o =>
 			{
-				o.Cors.Enabled = false;
-				o.Https.Enabled = false;
-				o.Tokens.Enabled = false;
-				o.Cookies.Enabled = false;
-			}, o =>
-			{
 				o.Policy = null;
 			});
 		}

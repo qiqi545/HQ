@@ -39,7 +39,6 @@ using HQ.UI;
 using HQ.UI.Web;
 using HQ.UI.Web.SemanticUi;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -88,10 +87,10 @@ namespace HQ.Platform.Node
                 .AddIdentityApplicationContextStore<IdentityApplication>();
             services.AddVersioning(versioning);
             services
-	            .AddBackgroundTasksApi(security, tasks)
-	            .AddConfigurationApi(security)
-				.AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi, security)
-                .AddMetaApi(security)
+	            .AddBackgroundTasksApi(tasks)
+	            .AddConfigurationApi()
+				.AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi)
+                .AddMetaApi()
                 ;
 
             //
@@ -148,10 +147,10 @@ namespace HQ.Platform.Node
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
                 {
-                    typeof(UiComponent).Assembly,   // Lime
-                    typeof(HtmlSystem).Assembly,    // Lime.Web
-                    typeof(SemanticUi).Assembly,    // Lime.Web.SemanticUi
-                    typeof(Dashboard).Assembly,     // HQ.UI
+                    typeof(UiComponent).Assembly,   // HQ.UI
+                    typeof(HtmlSystem).Assembly,    // HQ.UI.Web
+                    typeof(SemanticUi).Assembly,    // HQ.Web.Semantic.Ui
+                    typeof(Dashboard).Assembly,     // HQ.Platform.Node
                     Assembly.GetEntryAssembly()     // App
                 };
             };

@@ -88,44 +88,32 @@ namespace HQ.Platform.Operations
 	        return services;
         }
 
-        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfiguration securityConfig, string rootPath = "/ops")
-        {
-	        return AddConfigurationApi(services, securityConfig.Bind, rootPath);
-        }
-
-        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, string rootPath = "/ops")
         {
 	        services.AddMvc()
 		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-		        .AddConfigurationApi(configureSecurity, rootPath);
+		        .AddConfigurationApi(rootPath);
 
 	        return services;
         }
-
-        internal static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+		
+        private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, string rootPath = "/ops")
         {
-            return AddConfigurationApi(mvcBuilder, securityConfig.Bind, rootPath);
-        }
-
-		internal static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
-        {
-            if (configureSecurity != null)
-	            mvcBuilder.Services.Configure(configureSecurity);
-
             mvcBuilder.Services.AddValidOptions();
             mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
+
 			mvcBuilder.Services.AddAuthorization(x =>
             {
-                var securityOptions = new SecurityOptions();
-                configureSecurity?.Invoke(securityOptions);
+				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
 
-                x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
+				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
                 {
                     b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
                     b.RequireClaimExtended(
-	                    mvcBuilder.Services, 
-	                    securityOptions.Claims.PermissionClaim, 
+	                    mvcBuilder.Services,
+	                    options.Value.Claims.PermissionClaim, 
 	                    ClaimValues.ManageConfiguration);
                 });
             });
@@ -149,30 +137,17 @@ namespace HQ.Platform.Operations
             return mvcBuilder;
         }
 
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration securityConfig, string rootPath = "/ops")
-		{
-			return AddMetaApi(services, securityConfig.Bind, rootPath);
-		}
-
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, string rootPath = "/ops")
 		{
 			services.AddMvc()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-				.AddMetaApi(configureSecurity, rootPath);
+				.AddMetaApi(rootPath);
 
 			return services;
 		}
 
-		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, string rootPath = "/ops")
+		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, string rootPath = "/ops")
 		{
-			return AddMetaApi(mvcBuilder, securityConfig.Bind, rootPath);
-		}
-
-		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, string rootPath = "/ops")
-		{
-			if (configureSecurity != null)
-				mvcBuilder.Services.Configure(configureSecurity);
-
 			mvcBuilder.Services.AddValidOptions();
 			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
@@ -181,13 +156,13 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.Services.AddAuthorization(x =>
 			{
-				var securityOptions = new SecurityOptions();
-				configureSecurity?.Invoke(securityOptions);
+				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
 
 				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
 				{
 					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(mvcBuilder.Services, securityOptions.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
+					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageConfiguration);
 				});
 			});
 

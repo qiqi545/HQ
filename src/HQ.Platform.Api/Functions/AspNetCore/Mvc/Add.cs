@@ -23,49 +23,46 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {
 	public static class Add
     {
-	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, IConfiguration securityConfig, IConfiguration backgroundTasksConfig, string rootPath = "/ops")
+	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, IConfiguration config, string rootPath = "/ops")
 	    {
-		    return AddBackgroundTasksApi(services, securityConfig.Bind, backgroundTasksConfig.Bind, rootPath);
+		    return AddBackgroundTasksApi(services, config.Bind, rootPath);
 	    }
 
-	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services,
-		    Action<SecurityOptions> configureSecurity = null, Action<BackgroundTaskOptions> configureTasks = null,
+	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, Action<BackgroundTaskOptions> configureTasks = null,
 		    string rootPath = "/ops")
 	    {
 		    services.AddMvc()
 			    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-			    .AddBackgroundTasksApi(configureSecurity, configureTasks, rootPath);
+			    .AddBackgroundTasksApi(configureTasks, rootPath);
 
 		    return services;
 	    }
 
-	    private static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, IConfiguration securityConfig, IConfiguration backgroundTasksConfig, string rootPath = "/ops")
+	    private static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, IConfiguration config, string rootPath = "/ops")
         {
-            return AddBackgroundTasksApi(mvcBuilder, securityConfig.Bind, backgroundTasksConfig.Bind, rootPath);
+            return AddBackgroundTasksApi(mvcBuilder, config.Bind, rootPath);
         }
 
-	    private static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, Action<SecurityOptions> configureSecurity = null, Action<BackgroundTaskOptions> configureTasks = null, string rootPath = "/ops")
+	    private static IMvcBuilder AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, Action<BackgroundTaskOptions> configureTasks = null, string rootPath = "/ops")
         {
-            if (configureSecurity != null)
-	            mvcBuilder.Services.Configure(configureSecurity);
-
             mvcBuilder.Services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
             mvcBuilder.Services.AddSafeLogging();
-
 			mvcBuilder.Services.AddDynamicAuthorization();
+
 			mvcBuilder.Services.AddBackgroundTasks(configureTasks);
 			mvcBuilder.Services.AddRestRuntime();
 
             mvcBuilder.AddControllerFeature<BackgroundTaskController>();
 
-            mvcBuilder.Services.AddAuthorization(x =>{
-                var securityOptions = new SecurityOptions();
-                configureSecurity?.Invoke(securityOptions);
+            mvcBuilder.Services.AddAuthorization(x =>
+            {
+	            var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+	            var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
 
-                x.AddPolicy(Constants.Security.Policies.ManageBackgroundTasks, b =>
+				x.AddPolicy(Constants.Security.Policies.ManageBackgroundTasks, b =>
                 {
                     b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                    b.RequireClaimExtended(mvcBuilder.Services, securityOptions.Claims.PermissionClaim, ClaimValues.ManageBackgroundTasks);
+                    b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageBackgroundTasks);
                 });
             });
 

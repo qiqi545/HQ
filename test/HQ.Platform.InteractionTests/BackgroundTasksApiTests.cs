@@ -15,13 +15,7 @@ namespace HQ.Platform.InteractionTests
 	{
 		public override void ConfigureServices(IServiceCollection services)
 		{
-			services.AddBackgroundTasksApi(o =>
-			{
-				o.Tokens.Enabled = true;
-				o.Cors.Enabled = false;
-				o.Https.Enabled = false;
-				o.Cookies.Enabled = false;
-			});
+			services.AddBackgroundTasksApi();
 		}
 
 		public override void Configure(IApplicationBuilder app)
