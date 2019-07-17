@@ -81,6 +81,16 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			}
 		}
 
+		public bool SharedCollection
+		{
+			get => bool.TryParse(this[Constants.SharedCollectionKey] as string ?? "False", out var b) && b;
+			set
+			{
+				this[Constants.SharedCollectionKey] = value;
+				ConnectionString = ToString();
+			}
+		}
+
 		public DocumentClient Build()
 		{
 			return new DocumentClient(AccountEndpoint, AccountKey, Defaults.JsonSettings);
@@ -142,7 +152,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 				return ConnectionString.Equals(connectionStringBuilder.ConnectionString,
 					StringComparison.OrdinalIgnoreCase);
 
-			throw new InvalidCastException("The builder passed was not a " + nameof(DbConnectionStringBuilder) + ".");
+			throw new InvalidCastException($"The builder passed was not a {nameof(DbConnectionStringBuilder)}.");
 		}
 
 		protected override void GetProperties(Hashtable propertyDescriptors)

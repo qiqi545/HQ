@@ -53,5 +53,16 @@ namespace HQ.Integration.Tests
 			builder.AccountKey = "MyOtherAccountKey";
 			Assert.NotEqual(expected, builder.ConnectionString, StringComparer.OrdinalIgnoreCase);
 		}
+
+		[Fact]
+		public void Can_include_non_standard_elements()
+		{
+			const string expected = "AccountEndpoint=https://example.documents.azure.com:443/;AccountKey=MyAccountKey;Database=MyDatabase;DefaultCollection=Foo;SharedCollection=True";
+			var builder = new DocumentDbConnectionStringBuilder(expected);
+			Assert.Equal(expected, builder.ConnectionString, StringComparer.OrdinalIgnoreCase);
+
+			builder.AccountKey = "MyOtherAccountKey";
+			Assert.NotEqual(expected, builder.ConnectionString, StringComparer.OrdinalIgnoreCase);
+		}
 	}
 }

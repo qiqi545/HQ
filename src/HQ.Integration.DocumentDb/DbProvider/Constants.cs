@@ -30,6 +30,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 		public const string AccountKeyKey = "AccountKey";
 		public const string DatabaseKey = "Database";
 		public const string DefaultCollectionKey = "DefaultCollection";
+		public const string SharedCollectionKey = "SharedCollection";
 
 		public const string SequenceDocumentType = "Sequence";
 		public const string SequenceTypeField = "SequenceType";

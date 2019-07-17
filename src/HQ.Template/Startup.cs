@@ -28,13 +28,13 @@ namespace HQ.Template
 {
     public class Startup
     {
-        public static void Main(string[] args) => Server.Start<Platform.Api.Functions.Azure.Startup>(args, GetCloudOptions);
+        public static void Main(string[] args) => Server.Start<Startup>(args, GetCloudOptions);
 
         private readonly IConfiguration _configuration;
         private readonly IHostingEnvironment _environment;
-        private readonly ISafeLogger<Platform.Api.Functions.Azure.Startup> _logger;
+        private readonly ISafeLogger<Startup> _logger;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Platform.Api.Functions.Azure.Startup> logger)
+        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
         {
             _configuration = configuration;
             _environment = environment;
