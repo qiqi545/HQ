@@ -48,7 +48,9 @@ namespace HQ.Platform.Operations
 
                         return new OperationsReports.OptionBindingReport
                         {
-                            Type = t.GetInnerGenericTypeName(), Value = options, IsValid = valid
+                            Type = t.GetInnerGenericTypeName(),
+                            Value = options,
+                            IsValid = valid
                         };
                     })
                     .OrderByDescending(v => !v.IsValid)
