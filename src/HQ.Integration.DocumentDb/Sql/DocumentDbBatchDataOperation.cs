@@ -112,7 +112,7 @@ namespace HQ.Integration.DocumentDb.Sql
 
                     if (descriptor.Id != null && descriptor.Id.IsIdentity)
                     {
-                        var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData),
+                        var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData).Name,
                             connection.GetDatabaseId(), _options.Value.CollectionId, batchSize);
 
                         // ReSharper disable once PossibleMultipleEnumeration

@@ -71,17 +71,20 @@ namespace HQ.Common
         {
             public static HashSet<Type> IgnoreTypes = new HashSet<Type>();
 
+            static ContractResolver()
+            {
+	            IgnoreTypes.Add(typeof(Assembly));
+	            IgnoreTypes.Add(typeof(Module));
+	            IgnoreTypes.Add(typeof(Type));
+	            IgnoreTypes.Add(typeof(MethodBase));
+	            IgnoreTypes.Add(typeof(MemberInfo));
+	            IgnoreTypes.Add(typeof(RuntimeMethodHandle));
+	            IgnoreTypes.Add(typeof(Delegate));
+	            IgnoreTypes.Add(typeof(IServiceProvider));
+			}
+
             public ContractResolver()
             {
-                IgnoreTypes.Add(typeof(Assembly));
-                IgnoreTypes.Add(typeof(Module));
-                IgnoreTypes.Add(typeof(Type));
-                IgnoreTypes.Add(typeof(MethodBase));
-                IgnoreTypes.Add(typeof(MemberInfo));
-                IgnoreTypes.Add(typeof(RuntimeMethodHandle));
-                IgnoreTypes.Add(typeof(Delegate));
-                IgnoreTypes.Add(typeof(IServiceProvider));
-
                 NamingStrategy = new CamelCaseNamingStrategy
                 {
                     ProcessDictionaryKeys = true,

@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -236,7 +237,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 							var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) || parameterType == typeof(short);
 							if (parameterName == Id && isSequenceIdType)
 							{
-								_connection.Client.SetNextValueForSequenceAsync(document, Id, Type, _connection.Database, Collection)
+								_connection.Client.GetNextValueForSequenceAsync(Type.Name, _connection.Database, Collection)
 									.GetAwaiter().GetResult();
 							}
 						}
