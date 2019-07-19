@@ -15,12 +15,25 @@
 
 #endregion
 
-namespace HQ.Platform.Schema.Models
+using HQ.Common;
+using TypeKitchen;
+
+namespace HQ.Data.Contracts.Schema.Extensions
 {
-    public enum PropertyRelationship
+    public static class SchemaExtensions
     {
-        Scalar,
-        OneToOne,
-        OneToMany
+        public static string FullTypeString(this Models.Schema schema, string ns = null)
+        {
+            return Pooling.StringBuilderPool.Scoped(sb =>
+            {
+                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
+                sb.Append('.').Append(schema.TypeString());
+            });
+        }
+
+        public static string TypeString(this Models.Schema schema)
+        {
+            return $"{schema.Name.Identifier()}";
+        }
     }
 }

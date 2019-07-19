@@ -15,13 +15,49 @@
 
 #endregion
 
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
-    public static class PropertyScopeExtensions
+    public enum PropertyType : short
     {
-        public static bool HasFlagFast(this PropertyScope value, PropertyScope flag)
-        {
-            return (value & flag) != 0;
-        }
+        // Primitives:
+        String,
+        Boolean,
+        Byte,
+        Int32,
+        Int16,
+        Int64,
+        Single,
+        Double,
+        Decimal,
+        Date,
+        DateTime,
+        TimeSpan,
+
+        // Special Types:
+        Money,
+        Email,
+        Password,
+        CreditCard,
+        Phone,
+
+        // Object Types:
+        Object,
+        View,
+        Enum,
+
+        // Object Type Aliases:
+        O = Object,
+        V = View,
+        E = Enum,
+
+        // Type Aliases:
+        Bool = Boolean,
+        Short = Int16,
+        Integer = Int32,
+        Int = Int32,
+        Long = Int64,
+        Float = Single,
+        Currency = Money,
+        PhoneNumber = Phone
     }
 }

@@ -15,25 +15,13 @@
 
 #endregion
 
-using HQ.Common;
-using TypeKitchen;
-
-namespace HQ.Platform.Schema.Extensions
+namespace HQ.Data.Contracts.Schema.Models
 {
-    public static class SchemaExtensions
+    public static class PropertyScopeExtensions
     {
-        public static string FullTypeString(this Models.Schema schema, string ns = null)
+        public static bool HasFlagFast(this PropertyScope value, PropertyScope flag)
         {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
-                sb.Append('.').Append(schema.TypeString());
-            });
-        }
-
-        public static string TypeString(this Models.Schema schema)
-        {
-            return $"{schema.Name.Identifier()}";
+            return (value & flag) != 0;
         }
     }
 }

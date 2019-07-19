@@ -15,12 +15,12 @@
 
 #endregion
 
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
-    public enum MergeInstructionType
+    public enum SchemaType
     {
-        Add,
-        Remove,
-        Replace
+        Object,
+        Enum,
+        View
     }
 }

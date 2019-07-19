@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
     public static class PropertyTypeExtensions
     {

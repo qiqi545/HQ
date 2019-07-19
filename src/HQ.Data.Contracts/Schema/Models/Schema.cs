@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Runtime.Serialization;
-using HQ.Platform.Schema.Extensions;
+using HQ.Data.Contracts.Schema.Extensions;
 
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
     [DebuggerDisplay("{" + nameof(DebuggerDisplayName) + "}")]
     public class Schema : IEquatable<Schema>

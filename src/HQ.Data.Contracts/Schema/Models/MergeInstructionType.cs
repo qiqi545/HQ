@@ -15,18 +15,12 @@
 
 #endregion
 
-using System;
-
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
-    [Flags]
-    public enum PropertyScope : byte
+    public enum MergeInstructionType
     {
-        Read = 1 << 0,
-        Write = 1 << 1,
-
-        ReadWrite = Read | Write,
-        None = 0x0,
-        All = 0xFF
+        Add,
+        Remove,
+        Replace
     }
 }

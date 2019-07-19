@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 
-namespace HQ.Platform.Schema.Models
+namespace HQ.Data.Contracts.Schema.Models
 {
     [DebuggerDisplay("{" + nameof(DebuggerDisplayName) + "}")]
     public sealed class Property : IEquatable<Property>

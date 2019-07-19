@@ -15,49 +15,23 @@
 
 #endregion
 
-namespace HQ.Platform.Schema.Models
+using HQ.Data.Contracts.Schema.Models;
+
+namespace HQ.Data.Contracts.Schema.Extensions
 {
-    public enum PropertyType : short
+    public static class PropertyExtensions
     {
-        // Primitives:
-        String,
-        Boolean,
-        Byte,
-        Int32,
-        Int16,
-        Int64,
-        Single,
-        Double,
-        Decimal,
-        Date,
-        DateTime,
-        TimeSpan,
+        public static bool IsModel(this Property property)
+        {
+            return property.Type == PropertyType.Object ||
+                   property.Type == PropertyType.View ||
+                   property.Rel == PropertyRelationship.OneToMany ||
+                   property.Rel == PropertyRelationship.OneToOne;
+        }
 
-        // Special Types:
-        Money,
-        Email,
-        Password,
-        CreditCard,
-        Phone,
-
-        // Object Types:
-        Object,
-        View,
-        Enum,
-
-        // Object Type Aliases:
-        O = Object,
-        V = View,
-        E = Enum,
-
-        // Type Aliases:
-        Bool = Boolean,
-        Short = Int16,
-        Integer = Int32,
-        Int = Int32,
-        Long = Int64,
-        Float = Single,
-        Currency = Money,
-        PhoneNumber = Phone
+        public static string Label(this Property property)
+        {
+            return property?.Name?.Label();
+        }
     }
 }

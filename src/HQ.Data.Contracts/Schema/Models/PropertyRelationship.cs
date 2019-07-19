@@ -15,23 +15,12 @@
 
 #endregion
 
-using HQ.Platform.Schema.Models;
-
-namespace HQ.Platform.Schema.Extensions
+namespace HQ.Data.Contracts.Schema.Models
 {
-    public static class PropertyExtensions
+    public enum PropertyRelationship
     {
-        public static bool IsModel(this Property property)
-        {
-            return property.Type == PropertyType.Object ||
-                   property.Type == PropertyType.View ||
-                   property.Rel == PropertyRelationship.OneToMany ||
-                   property.Rel == PropertyRelationship.OneToOne;
-        }
-
-        public static string Label(this Property property)
-        {
-            return property?.Name?.Label();
-        }
+        Scalar,
+        OneToOne,
+        OneToMany
     }
 }

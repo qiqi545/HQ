@@ -19,7 +19,7 @@ using HQ.Common;
 using Microsoft.CodeAnalysis.CSharp;
 using TypeKitchen;
 
-namespace HQ.Platform.Schema.Extensions
+namespace HQ.Data.Contracts.Schema.Extensions
 {
     public static class StringExtensions
     {
