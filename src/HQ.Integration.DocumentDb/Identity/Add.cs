@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using System.Threading;
 using HQ.Common;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
@@ -34,7 +33,6 @@ using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -44,114 +42,114 @@ namespace HQ.Integration.DocumentDb.Identity
 {
     public static class Add
     {
-        public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
+		public static IdentityBuilder AddDocumentDbIdentityStore(this IdentityBuilder identityBuilder, Action<DocumentDbOptions> configureAction, ConnectionScope scope = ConnectionScope.ByRequest)
+		{
+			return identityBuilder.AddDocumentDbIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(configureAction, scope);
+		}
+
+		public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant, TApplication>(
+            this IdentityBuilder identityBuilder, 
+            string connectionString, 
+            ConnectionScope scope = ConnectionScope.ByRequest)
             where TUser : IdentityUserExtended<string>
             where TRole : IdentityRoleExtended<string>
             where TTenant : IdentityTenant<string>
             where TApplication : IdentityApplication<string>
         {
-            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString, scope,
-                databaseConfig);
+            return identityBuilder.AddDocumentDbIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString, scope);
         }
-
-        public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<DocumentDbOptions>) null;
-
-            return AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder, connectionString, scope,
-                configureDatabase);
-        }
-
+		
         public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString,
-            ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<DocumentDbOptions> configureDocumentDb = null)
+            ConnectionScope scope = ConnectionScope.ByRequest)
             where TKey : IEquatable<TKey>
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
             where TApplication : IdentityApplication<TKey>
         {
-            var services = identityBuilder.Services;
-
-            services.AddSingleton<ITypeRegistry, TypeRegistry>();
-
-            var builder = new DocumentDbConnectionStringBuilder(connectionString);
-
-            void ConfigureAction(DocumentDbOptions o)
-            {
-                configureDocumentDb?.Invoke(o);
-                o.DatabaseId = o.DatabaseId ?? builder.Database;
-                o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
-            }
-
-            services.Configure<DocumentDbOptions>(ConfigureAction);
-
-            identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
-
-            var dialect = new DocumentDbDialect();
-            SqlBuilder.Dialect = dialect;
-
-            SimpleDataDescriptor.TableNameConvention = s =>
-            {
-                switch (s)
-                {
-                    case nameof(IdentityRoleExtended):
-                        return nameof(IdentityRole);
-                    case nameof(IdentityUserExtended):
-                        return nameof(IdentityUser);
-                    default:
-                        return s;
-                }
-            };
-
-            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
-
-            services.AddMetrics();
-            services.TryAddSingleton<ISqlDialect>(dialect);
-            services.TryAddSingleton(dialect);
-
-            services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
-            services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
-            services.AddSingleton<IQueryableProvider<TTenant>, DocumentDbQueryableProvider<TTenant>>();
-            services.AddSingleton<IQueryableProvider<TApplication>, DocumentDbQueryableProvider<TApplication>>();
-
-            services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>>(r => new DocumentDbBatchDataOperation(
-                r.GetRequiredService<IServerTimestampService>(),
-                r.GetRequiredService<IOptions<DocumentDbOptions>>(),
-                r.GetRequiredService<IOptions<DocumentDbBatchOptions>>()));
-
-            var options = new DocumentDbOptions();
-            ConfigureAction(options);
-
-            var serviceProvider = services.BuildServiceProvider();
-            var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
-
-            MigrateToLatest<TKey>(connectionString, identityOptions, options);
-
-            return identityBuilder;
+	        return identityBuilder.AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(o =>
+	        {
+		        var builder = new DocumentDbConnectionStringBuilder(connectionString);
+		        o.DatabaseId = o.DatabaseId ?? builder.Database;
+		        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
+	        }, scope);
         }
 
-        private static void OnConnection(IDbConnection c, IServiceProvider r)
+		public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+		   this IdentityBuilder identityBuilder,
+		   Action<DocumentDbOptions> configureAction = null,
+		   ConnectionScope scope = ConnectionScope.ByRequest)
+		   where TKey : IEquatable<TKey>
+		   where TUser : IdentityUserExtended<TKey>
+		   where TRole : IdentityRoleExtended<TKey>
+		   where TTenant : IdentityTenant<TKey>
+		   where TApplication : IdentityApplication<TKey>
+		{
+			var services = identityBuilder.Services;
+			
+			if(configureAction != null)
+				services.Configure(configureAction);
+
+			identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
+
+			var options = new DocumentDbOptions();
+			configureAction?.Invoke(options);
+
+			var builder = new DocumentDbConnectionStringBuilder(options);
+
+			identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
+				builder.ConnectionString, scope, OnCommand<TKey>(), OnConnection);
+
+			var dialect = new DocumentDbDialect();
+			SqlBuilder.Dialect = dialect;
+
+			SimpleDataDescriptor.TableNameConvention = s =>
+			{
+				switch (s)
+				{
+					case nameof(IdentityRoleExtended):
+						return nameof(IdentityRole);
+					case nameof(IdentityUserExtended):
+						return nameof(IdentityUser);
+					default:
+						return s;
+				}
+			};
+
+			DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
+
+			identityBuilder.Services.AddMetrics();
+			identityBuilder.Services.TryAddSingleton<ISqlDialect>(dialect);
+			identityBuilder.Services.TryAddSingleton(dialect);
+
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, DocumentDbQueryableProvider<TTenant>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TApplication>, DocumentDbQueryableProvider<TApplication>>();
+
+			identityBuilder.Services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>>(r => new DocumentDbBatchDataOperation(
+				r.GetRequiredService<IServerTimestampService>(),
+				r.GetRequiredService<IOptions<DocumentDbOptions>>(),
+				r.GetRequiredService<IOptions<DocumentDbBatchOptions>>()));
+
+			var serviceProvider = services.BuildServiceProvider();
+			var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
+
+			MigrateToLatest<TKey>(identityOptions, options);
+
+			return identityBuilder;
+		}
+
+		private static void OnConnection(IDbConnection c, IServiceProvider r)
         {
-            if (c is DocumentDbConnection connection)
+            if (c is DocumentDbConnection)
             {
+
             }
         }
 
@@ -176,20 +174,20 @@ namespace HQ.Integration.DocumentDb.Identity
             };
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
-            DocumentDbOptions options) where TKey : IEquatable<TKey>
-        {
-            var runner = new MigrationRunner(connectionString, options);
+		private static void MigrateToLatest<TKey>(IdentityOptionsExtended identityOptions, DocumentDbOptions dbOptions) where TKey : IEquatable<TKey>
+		{
+			var runner = new DocumentDbMigrationRunner(dbOptions);
 
-            if (identityOptions.Stores.CreateIfNotExists)
-            {
-                runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
-            }
+			if (identityOptions.Stores.CreateIfNotExists)
+			{
+				runner.CreateDatabaseIfNotExistsAsync().Wait();
+			}
 
-            if (identityOptions.Stores.MigrateOnStartup)
-            {
-                runner.MigrateUp(CancellationToken.None);
-            }
-        }
-    }
+			if (identityOptions.Stores.MigrateOnStartup)
+			{
+				var schema = new CreateIdentitySchema(runner.Client, dbOptions);
+				schema.Up().GetAwaiter().GetResult();
+			}
+		}
+	}
 }

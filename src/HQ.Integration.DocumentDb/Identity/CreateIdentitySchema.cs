@@ -26,13 +26,11 @@ namespace HQ.Integration.DocumentDb.Identity
     public class CreateIdentitySchema
     {
         private readonly DocumentClient _client;
-        private readonly string _databaseId;
         private readonly DocumentDbOptions _options;
 
-        public CreateIdentitySchema(DocumentClient client, string databaseId, DocumentDbOptions options)
+        public CreateIdentitySchema(DocumentClient client, DocumentDbOptions options)
         {
             _client = client;
-            _databaseId = databaseId;
             _options = options;
         }
 
@@ -46,13 +44,13 @@ namespace HQ.Integration.DocumentDb.Identity
             try
             {
                 await _client.ReadDocumentCollectionAsync(
-                    UriFactory.CreateDocumentCollectionUri(_databaseId, _options.CollectionId));
+                    UriFactory.CreateDocumentCollectionUri(_options.DatabaseId, _options.CollectionId));
             }
             catch (DocumentClientException e)
             {
                 if (e.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDocumentCollectionAsync(UriFactory.CreateDatabaseUri(_databaseId),
+                    await _client.CreateDocumentCollectionAsync(UriFactory.CreateDatabaseUri(_options.DatabaseId),
                         new DocumentCollection {Id = _options.CollectionId},
                         new RequestOptions {OfferThroughput = _options.OfferThroughput});
                 }

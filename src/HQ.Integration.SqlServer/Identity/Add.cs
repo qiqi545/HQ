@@ -42,7 +42,16 @@ namespace HQ.Integration.SqlServer.Identity
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant, TApplication>(
+	    public static IdentityBuilder AddSqlServerIdentityStore(
+		    this IdentityBuilder identityBuilder,
+		    string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+		    IConfiguration databaseConfig = null)
+	    {
+		    return identityBuilder.AddSqlServerIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, scope,
+			    databaseConfig);
+	    }
+
+		public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)

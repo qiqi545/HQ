@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.DbProvider
@@ -29,8 +30,19 @@ namespace HQ.Integration.DocumentDb.DbProvider
 	{
 		private readonly IDictionary<string, string> _settings;
 
-		public DocumentDbConnectionStringBuilder() =>
+		public DocumentDbConnectionStringBuilder()
+		{
 			_settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		}
+
+		public DocumentDbConnectionStringBuilder(DocumentDbOptions options) : this()
+		{
+			Database = options.DatabaseId;
+			DefaultCollection = options.CollectionId;
+			SharedCollection = options.SharedCollection;
+			AccountEndpoint = options.AccountEndpoint;
+			AccountKey = options.AccountKey;
+		}
 
 		public DocumentDbConnectionStringBuilder(string connectionString) : this()
 		{

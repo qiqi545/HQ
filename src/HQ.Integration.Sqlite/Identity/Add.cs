@@ -43,7 +43,16 @@ namespace HQ.Integration.Sqlite.Identity
 {
     public static class Add
     {
-        public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole, TTenant, TApplication>(
+	    public static IdentityBuilder AddSqliteIdentityStore(
+		    this IdentityBuilder identityBuilder,
+		    string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+		    IConfiguration databaseConfig = null)
+	    {
+		    return identityBuilder.AddSqliteIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, scope,
+			    databaseConfig);
+	    }
+
+		public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder,
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)

@@ -118,9 +118,7 @@ namespace HQ.Platform.Node
                 case nameof(DocumentDbBatchOptions):
                     identity
                         .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-                            IdentityApplication>(
-                            connectionString, ConnectionScope.ByRequest,
-                            dbConfig);
+                            IdentityApplication>(connectionString);
                     break;
                 case nameof(SqlServerBatchOptions):
                     identity

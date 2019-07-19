@@ -39,6 +39,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
+	[Route("tokens")]
 	[DynamicController]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
@@ -75,6 +76,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 		[HttpPut]
 		public IActionResult VerifyToken()
 		{
+			if (!_securityOptions.CurrentValue.Tokens.Enabled)
+				return NotAcceptable();
+
 			if (User.Identity == null)
 			{
 				_logger.Trace(() => "User is unauthorized");
@@ -96,6 +100,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 		[HttpPost]
 		public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
 		{
+			if (!_securityOptions.CurrentValue.Tokens.Enabled)
+				return NotAcceptable();
+
 			if (!ValidModelState(out var error))
 			{
 				return error;
