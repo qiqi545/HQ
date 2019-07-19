@@ -89,7 +89,7 @@ namespace HQ.Platform.Node
             services
 	            .AddBackgroundTasksApi(tasks)
 	            .AddConfigurationApi()
-				.AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(identityApi)
+				.AddIdentityApi(identityApi)
                 .AddMetaApi()
                 ;
 
@@ -111,9 +111,7 @@ namespace HQ.Platform.Node
             ISafeLogger logger, Assembly subjectAssembly, string rootPath = "/api")
         {
             var identity = services
-                .AddIdentityExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication,
-                    string>(
-                    appConfig.GetSection("Identity"));
+                .AddIdentityExtended(appConfig.GetSection("Identity"));
 
             switch (typeof(TBatchOptions).Name)
             {

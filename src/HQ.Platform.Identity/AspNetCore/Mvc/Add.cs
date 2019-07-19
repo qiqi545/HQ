@@ -34,7 +34,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
     public static class Add
     {
-	    public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, IConfiguration apiConfig)
+	    public static IServiceCollection AddIdentityApi(this IServiceCollection services, IConfiguration apiConfig)
+	    {
+		    return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, apiConfig.Bind);
+	    }
+
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, IConfiguration apiConfig)
 		    where TUser : IdentityUserExtended<TKey>
 		    where TRole : IdentityRoleExtended<TKey>
 		    where TTenant : IdentityTenant<TKey>
@@ -44,7 +49,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 		    return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.Bind);
 	    }
 
-	    public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
+		public static IServiceCollection AddIdentityApi(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
+		{
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, configureApi);
+		}
+
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
 		    where TUser : IdentityUserExtended<TKey>
 		    where TRole : IdentityRoleExtended<TKey>
 		    where TTenant : IdentityTenant<TKey>
@@ -57,18 +67,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 
 		    return services;
 	    }
-		
-	    private static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder, IConfiguration apiConfig)
-		    where TUser : IdentityUserExtended<TKey>
-		    where TRole : IdentityRoleExtended<TKey>
-		    where TTenant : IdentityTenant<TKey>
-		    where TApplication : IdentityApplication<TKey>
-		    where TKey : IEquatable<TKey>
-	    {
-		    return mvcBuilder.AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(apiConfig.Bind);
-	    }
 
-		private static IMvcBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder, Action<IdentityApiOptions> configureApi = null)
+		private static void AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder,
+			Action<IdentityApiOptions> configureApi = null)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>
             where TTenant : IdentityTenant<TKey>
@@ -130,8 +131,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 var o = r.GetRequiredService<IOptions<SecurityOptions>>();
                 return new TokensComponent {RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty};
             });
-
-            return mvcBuilder;
         }
     }
 }

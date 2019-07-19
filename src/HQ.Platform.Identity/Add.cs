@@ -48,7 +48,17 @@ namespace HQ.Platform.Identity
             };
         }
 
-        public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services,
+        public static IdentityBuilder AddIdentityExtended(this IServiceCollection services, IConfiguration configuration)
+		{
+			return services.AddIdentityCoreExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(configuration);
+		}
+
+        public static IdentityBuilder AddIdentityExtended(this IServiceCollection services, Action<IdentityOptions> configureIdentity = null, Action<IdentityOptionsExtended> configureIdentityExtended = null)
+		{ 
+	        return services.AddIdentityCoreExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(configureIdentity, configureIdentityExtended);
+        }
+
+		public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services,
             IConfiguration configuration)
             where TUser : IdentityUserExtended<TKey>
             where TRole : IdentityRoleExtended<TKey>

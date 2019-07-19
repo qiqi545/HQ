@@ -15,9 +15,11 @@
 
 #endregion
 
+using HQ.Common;
+
 namespace HQ.Platform.Identity.Configuration
 {
-    public class IdentityApiOptions
+    public class IdentityApiOptions : FeatureToggle
     {
         public string RootPath { get; set; } = "auth";
 		public IdentityApiPolicies Policies { get; set; } = new IdentityApiPolicies();

@@ -24,7 +24,6 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Logging;
-using HQ.Platform.Api.Configuration;
 using HQ.Platform.Identity.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
@@ -56,7 +55,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
 		private readonly IHttpContextAccessor _http;
 
-		private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
 		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
 		private readonly ISignInService<TUser, TTenant, TApplication, TKey> _signInService;
 		private readonly ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
@@ -65,13 +63,11 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			IHttpContextAccessor http,
 			ISignInService<TUser, TTenant, TApplication, TKey> signInService,
 			IOptionsMonitor<SecurityOptions> securityOptions,
-			IOptionsMonitor<PlatformApiOptions> apiOptions,
 			ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
 		{
 			_http = http;
 			_signInService = signInService;
 			_securityOptions = securityOptions;
-			_apiOptions = apiOptions;
 			_logger = logger;
 		}
 
