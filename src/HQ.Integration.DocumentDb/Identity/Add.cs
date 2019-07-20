@@ -104,7 +104,7 @@ namespace HQ.Integration.DocumentDb.Identity
 			var builder = new DocumentDbConnectionStringBuilder(options);
 
 			identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
-				builder.ConnectionString, scope, OnCommand<TKey>(), OnConnection);
+				builder.ConnectionString, scope, OnCommand<TKey>(slot), OnConnection);
 
 			var dialect = new DocumentDbDialect();
 			SqlBuilder.Dialect = dialect;
@@ -149,10 +149,9 @@ namespace HQ.Integration.DocumentDb.Identity
 			return identityBuilder;
 		}
 
-		private static IServiceCollection AddQueryableProvider<T>(this IServiceCollection services, string slot)
+		private static void AddQueryableProvider<T>(this IServiceCollection services, string slot)
 		{
 			services.AddSingleton<IQueryableProvider<T>>(r => new DocumentDbQueryableProvider<T>(slot, r.GetRequiredService<DocumentDbConnectionFactory>(), r.GetService<IMetricsHost<DocumentClient>>(), r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
-			return services;
 		}
 
 		private static void OnConnection(IDbConnection c, IServiceProvider r)
@@ -163,14 +162,14 @@ namespace HQ.Integration.DocumentDb.Identity
             }
         }
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>(string slot)
             where TKey : IEquatable<TKey>
         {
             return (c, t, r) =>
             {
                 if (c is DocumentDbCommand command)
                 {
-                    var options = r.GetRequiredService<IOptions<DocumentDbOptions>>();
+                    var options = r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>();
                     var registry = r.GetRequiredService<ITypeRegistry>();
 
                     var descriptor = SimpleDataDescriptor.Create(t);
@@ -179,7 +178,7 @@ namespace HQ.Integration.DocumentDb.Identity
                     command.Id = descriptor.Id?.Property?.Name;
                     command.Type = t;
                     command.DocumentType = descriptor.Table;
-                    command.Collection = options.Value.CollectionId;
+                    command.Collection = options.Get(slot).CollectionId;
                 }
             };
         }

@@ -29,15 +29,15 @@ namespace HQ.Integration.DocumentDb.SessionManagement
 {
     public class DocumentDbQueryableProvider<T> : IQueryableProvider<T>
     {
-	    private readonly string _name;
+	    private readonly string _slot;
 		private readonly DocumentDbConnectionFactory _factory;
         private readonly IMetricsHost<DocumentClient> _metrics;
         private readonly IOptionsMonitor<DocumentDbOptions> _options;
 
-        public DocumentDbQueryableProvider(string name, DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
+        public DocumentDbQueryableProvider(string slot, DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
             IOptionsMonitor<DocumentDbOptions> options)
         {
-	        _name = name;
+	        _slot = slot;
 	        _options = options;
             _factory = factory;
             _metrics = metrics;
@@ -61,7 +61,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri);
             }
         }
@@ -72,7 +72,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
                 return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
             }
         }
@@ -94,14 +94,16 @@ namespace HQ.Integration.DocumentDb.SessionManagement
                 {
                     docDbCommand.Id = descriptor.Id?.Property?.Name;
                     docDbCommand.Type = typeof(T);
-                    docDbCommand.MaybeTypeDiscriminate(query);
+                    docDbCommand.Collection = _options.Get(_slot).CollectionId;
+                    docDbCommand.DocumentType = descriptor.Table;
+					docDbCommand.MaybeTypeDiscriminate(query);
                 }
 
                 // IMPORTANT: This is a direct call, there is no ADO.NET pass-through here. This means that
                 // the JSON.NET serializer configuration is the only step in converting the typed document into
                 // an object (to be serialized again back to JSON in the output).
 
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
+                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
             }
         }
