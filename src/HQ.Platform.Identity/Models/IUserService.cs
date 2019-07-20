@@ -23,6 +23,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
@@ -37,7 +38,8 @@ namespace HQ.Platform.Identity.Models
 
         Task<Operation<IEnumerable<TUser>>> GetAsync();
         Task<Operation<TUser>> CreateAsync(CreateUserModel model);
-        Task<Operation> DeleteAsync(string id);
+        Task<Operation<TUser>> CreateAsync(UserLoginInfo login);
+		Task<Operation> DeleteAsync(string id);
 
         Task<Operation<TUser>> FindByIdAsync(string id);
         Task<Operation<TUser>> FindByEmailAsync(string email);
@@ -70,5 +72,7 @@ namespace HQ.Platform.Identity.Models
         Task<Operation> ResetPasswordAsync(TUser user, string token, string newPassword);
 
         Task<Operation> UpdateAsync(TUser user);
-    }
+
+        Task<Operation> AddLoginAsync(TUser user, UserLoginInfo login);
+	}
 }

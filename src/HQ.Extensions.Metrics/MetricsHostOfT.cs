@@ -28,9 +28,7 @@ namespace HQ.Extensions.Metrics
         {
             _host = host;
         }
-
-        public MetricsHost(IMetricsStore store) : this(new MetricsHost(store)) { }
-
+		
         public MetricsHost() : this(new MetricsHost(new InMemoryMetricsStore())) { }
 
         /// <summary>

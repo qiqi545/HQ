@@ -27,83 +27,76 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserLoginStore<TUser>
-    {
-        public async Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+	partial class UserStore<TUser, TKey, TRole> : IUserLoginStore<TUser>
+	{
+		public async Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string sql =
-                "INSERT INTO AspNetUserLogins (LoginProvider, ProviderKey, ProviderDisplayName, UserId, TenantId) " +
-                "VALUES (@LoginProvider, @ProviderKey, @ProviderDisplayName, @UserId, @TenantId)";
+			var query = SqlBuilder.Insert(new AspNetUserLogins<TKey>
+			{
+				LoginProvider = login.LoginProvider,
+				ProviderKey = login.ProviderKey,
+				ProviderDisplayName = login.ProviderDisplayName,
+				UserId = user.Id,
+				TenantId = _tenantId
+			});
 
-            var inserted = await _connection.Current.ExecuteAsync(sql,
-                new
-                {
-                    login.LoginProvider,
-                    login.ProviderKey,
-                    login.ProviderDisplayName,
-                    UserId = user.Id,
-                    TenantId = _tenantId
-                });
+			var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(inserted == 1);
-        }
+			Debug.Assert(inserted == 1);
+		}
 
-        public async Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task RemoveLoginAsync(TUser user, string loginProvider, string providerKey,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string sql = "DELETE FROM AspNetUserLogins " +
-                               "WHERE UserId = @UserId " +
-                               "AND LoginProvider = @LoginProvider " +
-                               "AND ProviderKey = @ProviderKey " +
-                               "AND TenantId = @TenantId";
+			var query = SqlBuilder.Delete<AspNetUserLogins<TKey>>(new
+			{
+				UserId = user.Id,
+				LoginProvider = loginProvider,
+				ProviderKey = providerKey,
+				TenantId = _tenantId
+			});
 
-            var deleted = await _connection.Current.ExecuteAsync(sql,
-                new {TenantId = _tenantId, UserId = user.Id, LoginProvider = loginProvider, ProviderKey = providerKey});
+			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(deleted == 1);
+		}
 
-            Debug.Assert(deleted == 1);
-        }
+		public async Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
 
-            var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
-            _connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+			var logins = await _connection.Current.QueryAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
 
-            var logins = await _connection.Current.QueryAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
+			return logins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey, x.ProviderDisplayName))
+				.AsList();
+		}
 
-            return logins.Select(x => new UserLoginInfo(x.LoginProvider, x.ProviderKey, x.ProviderDisplayName))
-                .AsList();
-        }
+		public async Task<TUser> FindByLoginAsync(string loginProvider, string providerKey,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<TUser> FindByLoginAsync(string loginProvider, string providerKey,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
+			{
+				LoginProvider = loginProvider,
+				ProviderKey = providerKey,
+				TenantId = _tenantId
+			});
 
-            const string getUserId = "SELECT UserId " +
-                                     "FROM AspNetUserLogins " +
-                                     "WHERE LoginProvider = @LoginProvider " +
-                                     "AND ProviderKey = @ProviderKey " +
-                                     "AND TenantId = @TenantId";
+			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
-            var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(getUserId,
-                new {LoginProvider = loginProvider, ProviderKey = providerKey, TenantId = _tenantId});
+			var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(query.Sql, query.Parameters);
+			if (userId == null)
+				return null;
 
-            if (userId == null)
-            {
-                return null;
-            }
-
-            const string getUserById = "SELECT * FROM AspNetUsers WHERE Id = @Id AND TenantId = @TenantId";
-
-            return await _connection.Current.QuerySingleAsync<TUser>(getUserById,
-                new {Id = userId, TenantId = _tenantId});
-        }
-    }
+			return await FindByIdAsync(userId, CancellationToken);
+		}
+	}
 }

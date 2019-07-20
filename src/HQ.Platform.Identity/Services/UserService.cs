@@ -74,7 +74,16 @@ namespace HQ.Platform.Identity.Services
             return result.ToOperation(user);
         }
 
-        public async Task<Operation> UpdateAsync(TUser user)
+        public async Task<Operation<TUser>> CreateAsync(UserLoginInfo login)
+        {
+	        var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
+	        user.UserName = $"{login.LoginProvider}-{login.ProviderKey}";
+	        user.ConcurrencyStamp = $"{Guid.NewGuid()}";
+	        var result = await _userManager.CreateAsync(user);
+	        return result.ToOperation(user);
+        }
+
+		public async Task<Operation> UpdateAsync(TUser user)
         {
             var result = await _userManager.UpdateAsync(user);
             return result.ToOperation();
@@ -251,6 +260,17 @@ namespace HQ.Platform.Identity.Services
             return result.ToOperation();
         }
 
-        #endregion
-    }
+		#endregion
+
+		#region External Logins
+
+		public async Task<Operation> AddLoginAsync(TUser user, UserLoginInfo login)
+		{
+			var result = await _userManager.AddLoginAsync(user, login);
+
+			return result.ToOperation();
+		}
+
+		#endregion
+	}
 }
