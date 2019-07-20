@@ -92,11 +92,11 @@ namespace HQ.Platform.Identity.Stores.Sql
 
 			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
-			var userId = await _connection.Current.QuerySingleOrDefaultAsync<string>(query.Sql, query.Parameters);
-			if (userId == null)
+			var user = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
+			if (user == null)
 				return null;
 
-			return await FindByIdAsync(userId, CancellationToken);
+			return await FindByIdAsync(user.UserId.ToString(), CancellationToken);
 		}
 	}
 }
