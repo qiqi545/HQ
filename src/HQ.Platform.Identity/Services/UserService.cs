@@ -29,6 +29,7 @@ using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 
 namespace HQ.Platform.Identity.Services
 {
@@ -37,12 +38,14 @@ namespace HQ.Platform.Identity.Services
         where TKey : IEquatable<TKey>
     {
         private readonly IQueryableProvider<TUser> _queryableProvider;
+        private readonly ILogger<UserService<TUser, TKey>> _logger;
         private readonly UserManager<TUser> _userManager;
 
-        public UserService(UserManager<TUser> userManager, IQueryableProvider<TUser> queryableProvider)
+        public UserService(UserManager<TUser> userManager, IQueryableProvider<TUser> queryableProvider, ILogger<UserService<TUser, TKey>> logger)
         {
             _userManager = userManager;
             _queryableProvider = queryableProvider;
+            _logger = logger;
         }
 
         public IQueryable<TUser> Users => _userManager.Users;
@@ -74,16 +77,7 @@ namespace HQ.Platform.Identity.Services
             return result.ToOperation(user);
         }
 
-        public async Task<Operation<TUser>> CreateAsync(UserLoginInfo login)
-        {
-	        var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
-	        user.UserName = $"{login.LoginProvider}-{login.ProviderKey}";
-	        user.ConcurrencyStamp = $"{Guid.NewGuid()}";
-	        var result = await _userManager.CreateAsync(user);
-	        return result.ToOperation(user);
-        }
-
-		public async Task<Operation> UpdateAsync(TUser user)
+        public async Task<Operation> UpdateAsync(TUser user)
         {
             var result = await _userManager.UpdateAsync(user);
             return result.ToOperation();
@@ -264,11 +258,50 @@ namespace HQ.Platform.Identity.Services
 
 		#region External Logins
 
-		public async Task<Operation> AddLoginAsync(TUser user, UserLoginInfo login)
+		public async Task<Operation<TUser>> LinkExternalIdentityAsync(ClaimsPrincipal principal, string loginProvider, string providerKeyClaimType = null, string displayName = null)
+		{
+			var providerKey = providerKeyClaimType == null ? principal.Identity.Name :
+				  principal.Claims.FirstOrDefault(x => x.Type == providerKeyClaimType)?.Value ??
+				  principal.Identity.Name;
+
+			var login = new ExternalLoginInfo(principal, loginProvider, providerKey, displayName ?? $"{loginProvider}:{providerKey}");
+			
+			var findByLogin = await FindByLoginAsync(login.LoginProvider, login.ProviderKey);
+			if (!findByLogin.Succeeded || findByLogin.Data != null)
+				return findByLogin;
+
+			if (login.ProviderKey != null)
+			{
+				var createUser = await CreateAsync(login);
+				if (!createUser.Succeeded)
+					return createUser; // unexpected outcome
+			}
+
+			var addLogin = await AddLoginAsync(findByLogin.Data, login);
+			if (!addLogin.Succeeded)
+			{
+				_logger?.LogWarning(
+					"External login '{LoginProvider}:{ProviderKey}' was not linked to identity {Identity}",
+					login.LoginProvider, login.ProviderKey, login.Principal.Identity);
+			}
+
+			return addLogin;
+		}
+
+		public async Task<Operation<TUser>> AddLoginAsync(TUser user, UserLoginInfo login)
 		{
 			var result = await _userManager.AddLoginAsync(user, login);
 
-			return result.ToOperation();
+			return result.ToOperation(user);
+		}
+
+		public async Task<Operation<TUser>> CreateAsync(ExternalLoginInfo login)
+		{
+			var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
+			user.UserName = $"{login.LoginProvider}-{login.ProviderKey}";
+			user.ConcurrencyStamp = $"{Guid.NewGuid()}";
+			var result = await _userManager.CreateAsync(user);
+			return result.ToOperation(user);
 		}
 
 		#endregion

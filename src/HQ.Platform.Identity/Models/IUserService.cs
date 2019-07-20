@@ -38,7 +38,6 @@ namespace HQ.Platform.Identity.Models
 
         Task<Operation<IEnumerable<TUser>>> GetAsync();
         Task<Operation<TUser>> CreateAsync(CreateUserModel model);
-        Task<Operation<TUser>> CreateAsync(UserLoginInfo login);
 		Task<Operation> DeleteAsync(string id);
 
         Task<Operation<TUser>> FindByIdAsync(string id);
@@ -73,6 +72,6 @@ namespace HQ.Platform.Identity.Models
 
         Task<Operation> UpdateAsync(TUser user);
 
-        Task<Operation> AddLoginAsync(TUser user, UserLoginInfo login);
-	}
+        Task<Operation<TUser>> LinkExternalIdentityAsync(ClaimsPrincipal principal, string loginProvider, string providerKeyClaimType = null, string displayName = null);
+    }
 }

@@ -51,11 +51,11 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var id = user.Id == null ? string.Empty : $"{user.Id}";
 
-            if (!_tenantId.Equals(default))
-            {
+			if (_tenantId != null && !_tenantId.Equals(default))
+			{
                 claims.TryAddClaim(_security.CurrentValue.Claims.TenantIdClaim, $"{_tenantId}");
             }
-            if (!_applicationId.Equals(default))
+            if (_applicationId != null && !_applicationId.Equals(default))
             {
                 claims.TryAddClaim(_security.CurrentValue.Claims.ApplicationIdClaim, $"{_applicationId}");
             }
