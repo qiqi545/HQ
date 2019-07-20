@@ -29,14 +29,16 @@ namespace HQ.Integration.DocumentDb.SessionManagement
 {
     public class DocumentDbQueryableProvider<T> : IQueryableProvider<T>
     {
-        private readonly DocumentDbConnectionFactory _factory;
+	    private readonly string _name;
+		private readonly DocumentDbConnectionFactory _factory;
         private readonly IMetricsHost<DocumentClient> _metrics;
-        private readonly IOptions<DocumentDbOptions> _options;
+        private readonly IOptionsMonitor<DocumentDbOptions> _options;
 
-        public DocumentDbQueryableProvider(DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
-            IOptions<DocumentDbOptions> options)
+        public DocumentDbQueryableProvider(string name, DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
+            IOptionsMonitor<DocumentDbOptions> options)
         {
-            _options = options;
+	        _name = name;
+	        _options = options;
             _factory = factory;
             _metrics = metrics;
         }
@@ -59,7 +61,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri);
             }
         }
@@ -70,7 +72,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
             {
                 var connection = (DocumentDbConnection) _factory.CreateConnection();
                 var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
                 return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
             }
         }
@@ -99,7 +101,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
                 // the JSON.NET serializer configuration is the only step in converting the typed document into
                 // an object (to be serialized again back to JSON in the output).
 
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Value.CollectionId);
+                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_name).CollectionId);
                 return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
             }
         }

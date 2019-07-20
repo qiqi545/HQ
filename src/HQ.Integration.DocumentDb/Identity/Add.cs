@@ -1,3 +1,4 @@
+
 #region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
@@ -33,6 +34,7 @@ using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -88,9 +90,11 @@ namespace HQ.Integration.DocumentDb.Identity
 		   where TApplication : IdentityApplication<TKey>
 		{
 			var services = identityBuilder.Services;
-			
-			if(configureAction != null)
-				services.Configure(configureAction);
+
+			const string slot = "Identity";
+
+			if (configureAction != null)
+				services.Configure(slot, configureAction);
 
 			identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
@@ -127,11 +131,11 @@ namespace HQ.Integration.DocumentDb.Identity
 			identityBuilder.Services.TryAddSingleton<ISqlDialect>(dialect);
 			identityBuilder.Services.TryAddSingleton(dialect);
 
-			identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, DocumentDbQueryableProvider<TUser>>();
-			identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, DocumentDbQueryableProvider<TRole>>();
-			identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, DocumentDbQueryableProvider<TTenant>>();
-			identityBuilder.Services.AddSingleton<IQueryableProvider<TApplication>, DocumentDbQueryableProvider<TApplication>>();
-
+			identityBuilder.Services.AddQueryableProvider<TUser>(slot);
+			identityBuilder.Services.AddQueryableProvider<TRole>(slot);
+			identityBuilder.Services.AddQueryableProvider<TTenant>(slot);
+			identityBuilder.Services.AddQueryableProvider<TApplication>(slot);
+			
 			identityBuilder.Services.AddSingleton<IDataBatchOperation<DocumentDbBatchOptions>>(r => new DocumentDbBatchDataOperation(
 				r.GetRequiredService<IServerTimestampService>(),
 				r.GetRequiredService<IOptions<DocumentDbOptions>>(),
@@ -143,6 +147,12 @@ namespace HQ.Integration.DocumentDb.Identity
 			MigrateToLatest<TKey>(identityOptions, options);
 
 			return identityBuilder;
+		}
+
+		private static IServiceCollection AddQueryableProvider<T>(this IServiceCollection services, string slot)
+		{
+			services.AddSingleton<IQueryableProvider<T>>(r => new DocumentDbQueryableProvider<T>(slot, r.GetRequiredService<DocumentDbConnectionFactory>(), r.GetService<IMetricsHost<DocumentClient>>(), r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
+			return services;
 		}
 
 		private static void OnConnection(IDbConnection c, IServiceProvider r)

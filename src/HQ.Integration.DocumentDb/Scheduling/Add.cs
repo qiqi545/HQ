@@ -36,23 +36,23 @@ namespace HQ.Integration.DocumentDb.Scheduling
 	        });
         }
 
-		public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureDatabase = null)
+		public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureAction = null)
         {
             Bootstrap.SetDefaultJsonSettings();
 
-            var services = builder.Services;
+            if (configureAction != null)
+	            builder.Services.Configure("BackgroundTasks", configureAction);
 
-            services.AddMetrics();
-            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-            services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
-            services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
-			services.Configure(configureDatabase);
-            
-            var serviceProvider = services.BuildServiceProvider();
+			builder.Services.AddMetrics();
+			builder.Services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
+			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
+			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
+			
+            var serviceProvider = builder.Services.BuildServiceProvider();
             var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
 
             var dbOptions = new DocumentDbOptions();
-            configureDatabase?.Invoke(dbOptions);
+            configureAction?.Invoke(dbOptions);
 
             MigrateToLatest(options.Value, dbOptions);
 
