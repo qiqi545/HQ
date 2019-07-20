@@ -7,6 +7,7 @@ using HQ.Extensions.Scheduling.Models;
 using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
+using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -40,12 +41,15 @@ namespace HQ.Integration.DocumentDb.Scheduling
         {
             Bootstrap.SetDefaultJsonSettings();
 
+            const string slot = "BackgroundTasks";
+
             if (configureAction != null)
-	            builder.Services.Configure("BackgroundTasks", configureAction);
+	            builder.Services.Configure(slot, configureAction);
 
 			builder.Services.AddMetrics();
 			builder.Services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>, DocumentDbRepository<BackgroundTaskDocument>>();
+			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r =>
+				new DocumentDbRepository<BackgroundTaskDocument>(slot, r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
 			
             var serviceProvider = builder.Services.BuildServiceProvider();

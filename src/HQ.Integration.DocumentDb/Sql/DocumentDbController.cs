@@ -12,9 +12,9 @@ namespace HQ.Integration.DocumentDb.Sql
     {
         protected DocumentDbRepository<T> Repository;
 
-        protected DocumentDbController(IOptions<DocumentDbOptions> options)
+        protected DocumentDbController(string slot, IOptionsMonitor<DocumentDbOptions> options)
         {
-            Repository = new DocumentDbRepository<T>(options);
+            Repository = new DocumentDbRepository<T>(slot, options);
         }
 
         [HttpPost("")]

@@ -39,25 +39,27 @@ namespace HQ.Integration.DocumentDb.Sql
         private readonly ITypeReadAccessor _reads;
         private readonly ITypeWriteAccessor _writes;
 
-        private readonly DocumentClient _client;
-        private readonly IOptions<DocumentDbOptions> _options;
+        private readonly string _slot;
+		private readonly DocumentClient _client;
+        private readonly IOptionsMonitor<DocumentDbOptions> _options;
         
-        public DocumentDbRepository(IOptions<DocumentDbOptions> options)
+        public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options)
         {
             _reads = ReadAccessor.Create(typeof(T));
             _writes = WriteAccessor.Create(typeof(T));
+            _slot = slot;
             _options = options;
 
             var defaultSettings = new JsonSerializerSettings();
-            _client = new DocumentClient(EndpointUri, options.Value.AccountKey, defaultSettings);
+            _client = new DocumentClient(EndpointUri, options.Get(_slot).AccountKey, defaultSettings);
 
             CreateDatabaseIfNotExistsAsync().Wait();
             CreateCollectionIfNotExistsAsync().Wait();
         }
 
-        private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Value.DatabaseId, _options.Value.CollectionId);
-        private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Value.DatabaseId);
-        private Uri EndpointUri => _options.Value.AccountEndpoint;
+        private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
+        private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
+        private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
 
         public async Task<Document> CreateAsync(T item)
         {
@@ -188,7 +190,7 @@ namespace HQ.Integration.DocumentDb.Sql
                     continue;
 
                 var value = await _client.GetNextValueForSequenceAsync($"AutoIncrement_{typeof(T).Name}_{member.Name}",
-                    _options.Value.DatabaseId, _options.Value.CollectionId);
+	                _options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
 
                 var typed = Convert.ChangeType(value, member.Type);
                 _writes[item, member.Name] = typed;
@@ -205,7 +207,7 @@ namespace HQ.Integration.DocumentDb.Sql
             {
                 if (e.StatusCode == HttpStatusCode.NotFound)
                 {
-                    await _client.CreateDatabaseAsync(new Database {Id = _options.Value.DatabaseId});
+                    await _client.CreateDatabaseAsync(new Database {Id = _options.Get(_slot).DatabaseId});
                 }
                 else
                 {
@@ -225,8 +227,8 @@ namespace HQ.Integration.DocumentDb.Sql
                 if (e.StatusCode == HttpStatusCode.NotFound)
                 {
                     await _client.CreateDocumentCollectionAsync(DatabaseUri,
-                        new DocumentCollection {Id = _options.Value.CollectionId},
-                        new RequestOptions {OfferThroughput = _options.Value.OfferThroughput});
+                        new DocumentCollection {Id = _options.Get(_slot).CollectionId},
+                        new RequestOptions {OfferThroughput = _options.Get(_slot).OfferThroughput});
                 }
                 else
                 {
@@ -237,7 +239,7 @@ namespace HQ.Integration.DocumentDb.Sql
 
         private Uri DocumentUri(string id)
         {
-            return UriFactory.CreateDocumentUri(_options.Value.DatabaseId, _options.Value.CollectionId, id);
+            return UriFactory.CreateDocumentUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId, id);
         }
 
         private IQueryable<T> CreateDocumentQuery()
@@ -245,7 +247,7 @@ namespace HQ.Integration.DocumentDb.Sql
             IQueryable<T> queryable = _client.CreateDocumentQuery<T>(CollectionUri,
                 new FeedOptions {MaxItemCount = -1});
 
-            if (_options.Value.SharedCollection)
+            if (_options.Get(_slot).SharedCollection)
             {
                 queryable = queryable.Where(x => x.DocumentType == DocumentTypeFactory<T>.Type);
             }
