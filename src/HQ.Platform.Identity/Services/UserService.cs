@@ -266,26 +266,26 @@ namespace HQ.Platform.Identity.Services
 
 			var login = new ExternalLoginInfo(principal, loginProvider, providerKey, displayName ?? $"{loginProvider}:{providerKey}");
 			
-			var findByLogin = await FindByLoginAsync(login.LoginProvider, login.ProviderKey);
-			if (!findByLogin.Succeeded || findByLogin.Data != null)
-				return findByLogin;
+			var user = await FindByLoginAsync(login.LoginProvider, login.ProviderKey);
+			if (!user.Succeeded || user.Data != null)
+				return user;
 
 			if (login.ProviderKey != null)
 			{
-				var createUser = await CreateAsync(login);
-				if (!createUser.Succeeded)
-					return createUser; // unexpected outcome
+				user = await CreateIfNotExistsAsync(login);
+				if (!user.Succeeded)
+					return user; // unexpected outcome
 			}
 
-			var addLogin = await AddLoginAsync(findByLogin.Data, login);
-			if (!addLogin.Succeeded)
+			user = await AddLoginAsync(user.Data, login);
+			if (!user.Succeeded)
 			{
 				_logger?.LogWarning(
 					"External login '{LoginProvider}:{ProviderKey}' was not linked to identity {Identity}",
 					login.LoginProvider, login.ProviderKey, login.Principal.Identity);
 			}
 
-			return addLogin;
+			return user;
 		}
 
 		public async Task<Operation<TUser>> AddLoginAsync(TUser user, UserLoginInfo login)
@@ -295,10 +295,15 @@ namespace HQ.Platform.Identity.Services
 			return result.ToOperation(user);
 		}
 
-		public async Task<Operation<TUser>> CreateAsync(ExternalLoginInfo login)
+		public async Task<Operation<TUser>> CreateIfNotExistsAsync(ExternalLoginInfo login)
 		{
+			var userName = $"{login.LoginProvider}-{login.ProviderKey}";
+			var findByUsername = await FindByNameAsync(userName);
+			if (findByUsername.Succeeded && findByUsername.Data != null)
+				return findByUsername;
+
 			var user = (TUser) FormatterServices.GetUninitializedObject(typeof(TUser));
-			user.UserName = $"{login.LoginProvider}-{login.ProviderKey}";
+			user.UserName = userName;
 			user.ConcurrencyStamp = $"{Guid.NewGuid()}";
 			var result = await _userManager.CreateAsync(user);
 			return result.ToOperation(user);

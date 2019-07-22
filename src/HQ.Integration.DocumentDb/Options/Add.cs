@@ -33,6 +33,7 @@ namespace HQ.Integration.DocumentDb.Options
 		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureAction, bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
 			var options = new DocumentDbOptions();
+			configureAction?.Invoke(options);
 			var source = new DocumentConfigurationSource(options, configSeed, SeedStrategy.InsertIfNotExists)
 			{
 				ReloadOnChange = reloadOnChange
