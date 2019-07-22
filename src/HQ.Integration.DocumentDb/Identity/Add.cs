@@ -194,8 +194,7 @@ namespace HQ.Integration.DocumentDb.Identity
 
 			if (identityOptions.Stores.MigrateOnStartup)
 			{
-				var schema = new CreateIdentitySchema(runner.Client, dbOptions);
-				schema.Up().GetAwaiter().GetResult();
+				runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
 			}
 		}
 	}

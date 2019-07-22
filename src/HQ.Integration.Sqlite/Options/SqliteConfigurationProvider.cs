@@ -20,7 +20,7 @@ using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
-namespace HQ.Integration.Sqlite.Sql
+namespace HQ.Integration.Sqlite.Options
 {
     public class SqliteConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
     {

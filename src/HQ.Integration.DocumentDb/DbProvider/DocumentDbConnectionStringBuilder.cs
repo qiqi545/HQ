@@ -44,6 +44,15 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			AccountKey = options.AccountKey;
 		}
 
+		public void Bind(DocumentDbOptions options)
+		{
+			options.AccountEndpoint = AccountEndpoint;
+			options.AccountKey = AccountKey;
+			options.CollectionId = DefaultCollection;
+			options.DatabaseId = Database;
+			options.SharedCollection = SharedCollection;
+		}
+
 		public DocumentDbConnectionStringBuilder(string connectionString) : this()
 		{
 			var entries = connectionString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);

@@ -7,11 +7,9 @@ using HQ.Extensions.Scheduling.Models;
 using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
-using Microsoft.CodeAnalysis.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb.Scheduling
@@ -48,8 +46,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
 			builder.Services.AddMetrics();
 			builder.Services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r =>
-				new DocumentDbRepository<BackgroundTaskDocument>(slot, r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
+			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
 			
             var serviceProvider = builder.Services.BuildServiceProvider();
@@ -74,8 +71,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
             if (taskOptions.Store.MigrateOnStartup)
             {
-                var schema = new CreateBackgroundTasksSchema(runner.Client, dbOptions);
-                schema.Up().GetAwaiter().GetResult();
+	            runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
             }
         }
     }

@@ -14,18 +14,31 @@
 #endregion
 
 using System;
+using System.Reactive.Disposables;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.Sql
 {
-    public class DocumentDbOptions
-    {
-        public Uri AccountEndpoint { get; set; }
-        public string AccountKey { get; set; }
-        public string DatabaseId { get; set; }
-        public string CollectionId { get; set; }
-        public int? OfferThroughput { get; set; } = 400;
-        public bool SharedCollection { get; set; }
+	internal class OptionsMonitorShim<T> : IOptionsMonitor<T>
+	{
+		public OptionsMonitorShim(T options)
+		{
+			CurrentValue = options;
+		}
 
+		public T Get(string name)
+		{
+			return CurrentValue;
+		}
 
-    }
+		public IDisposable OnChange(Action<T, string> listener)
+		{
+			return Disposable.Empty;
+		}
+
+		public T CurrentValue
+		{
+			get;
+		}
+	}
 }

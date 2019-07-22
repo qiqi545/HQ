@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Integration.DocumentDb.DbProvider;
@@ -38,5 +37,27 @@ namespace HQ.Integration.DocumentDb.Sql
                 }
             }
         }
-    }
+
+        public async Task CreateCollectionIfNotExistsAsync()
+        {
+	        try
+	        {
+		        await Client.ReadDocumentCollectionAsync(
+			        UriFactory.CreateDocumentCollectionUri(_options.DatabaseId, _options.CollectionId));
+	        }
+	        catch (DocumentClientException e)
+	        {
+		        if (e.StatusCode == HttpStatusCode.NotFound)
+		        {
+			        await Client.CreateDocumentCollectionAsync(UriFactory.CreateDatabaseUri(_options.DatabaseId),
+				        new DocumentCollection { Id = _options.CollectionId },
+				        new RequestOptions { OfferThroughput = _options.OfferThroughput });
+		        }
+		        else
+		        {
+			        throw;
+		        }
+	        }
+        }
+	}
 }

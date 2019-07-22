@@ -16,10 +16,12 @@
 #endregion
 
 using System.IO;
+using HQ.Extensions.Options;
+using HQ.Integration.Sqlite.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 
-namespace HQ.Integration.Sqlite.Sql
+namespace HQ.Integration.Sqlite.Options
 {
     public static class SqliteConfigurationExtensions
     {

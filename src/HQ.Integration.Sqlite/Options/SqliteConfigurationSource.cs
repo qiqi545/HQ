@@ -14,9 +14,11 @@
 #endregion
 
 using System.IO;
+using HQ.Extensions.Options;
+using HQ.Integration.Sqlite.Sql;
 using Microsoft.Extensions.Configuration;
 
-namespace HQ.Integration.Sqlite.Sql
+namespace HQ.Integration.Sqlite.Options
 {
     public class SqliteConfigurationSource : IConfigurationSource
     {

@@ -28,13 +28,15 @@ namespace HQ.Integration.DocumentDb.Sql
     {
         Task<Document> CreateAsync(T item);
         Task<T> RetrieveAsync(string id);
-        Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null);
+		Task<long> CountAsync(Expression<Func<T, bool>> predicate = null);
+		Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null);
         Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null);
         Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
         Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null);
         Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
         Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection);
         Task<Document> UpdateAsync(string id, T item);
-        Task DeleteAsync(string id);
+        Task<Document> UpsertAsync(T item);
+		Task DeleteAsync(string id);
     }
 }

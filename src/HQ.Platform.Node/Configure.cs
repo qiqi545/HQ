@@ -22,7 +22,7 @@ using System.Reflection;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
-using HQ.Integration.Sqlite.Sql;
+using HQ.Integration.Sqlite.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -40,22 +40,16 @@ namespace HQ.Platform.Node
             hostBuilder.ConfigureAppConfiguration((context, config) =>
             {
                 config.Sources.Clear();
-
-                config.AddSqlite("settings.db", false, true,
-                    seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null);
+				config.AddSqlite("settings.db", false, true, seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null);
                 config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
-                config.AddJsonFile(
-                    $"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}",
-                    true, true);
+                config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
 
                 if (context.HostingEnvironment.IsDevelopment())
                 {
                     var assembly = GetApplicationAssembly(context);
                     if (assembly != null)
-                    {
-                        config.AddUserSecrets(assembly, true);
-                    }
-                }
+						config.AddUserSecrets(assembly, true);
+				}
 
                 config.AddEnvironmentVariables();
 

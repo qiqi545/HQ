@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Integration.Sqlite.Options;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;

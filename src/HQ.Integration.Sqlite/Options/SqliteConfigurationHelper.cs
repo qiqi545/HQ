@@ -18,10 +18,12 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using Dapper;
+using HQ.Extensions.Options;
+using HQ.Integration.Sqlite.Sql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 
-namespace HQ.Integration.Sqlite.Sql
+namespace HQ.Integration.Sqlite.Options
 {
     public static class SqliteConfigurationHelper
     {

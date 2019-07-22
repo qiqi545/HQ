@@ -34,7 +34,7 @@ using TypeKitchen;
 
 namespace HQ.Integration.DocumentDb.Sql
 {
-    public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
+	public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
     {
         private readonly ITypeReadAccessor _reads;
         private readonly ITypeWriteAccessor _writes;
@@ -88,6 +88,13 @@ namespace HQ.Integration.DocumentDb.Sql
             }
         }
 
+        public async Task<long> CountAsync(Expression<Func<T, bool>> predicate = null)
+        {
+	        var queryable = CreateDocumentQuery();
+			var query = predicate != null ? queryable.Where(predicate).LongCount() : queryable.LongCount();
+			return query;
+        }
+
         public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection)
         {
             var queryable = projection(CreateDocumentQuery());
@@ -136,7 +143,14 @@ namespace HQ.Integration.DocumentDb.Sql
 
         public async Task<Document> UpdateAsync(string id, T item)
         {
-            return await _client.ReplaceDocumentAsync(DocumentUri(id), item);
+			return await _client.ReplaceDocumentAsync(DocumentUri(id), item);
+        }
+
+        public async Task<Document> UpsertAsync(T item)
+        {
+			var response = await _client.UpsertDocumentAsync(CollectionUri, item);
+
+			return response;
         }
 
         public async Task DeleteAsync(string id)

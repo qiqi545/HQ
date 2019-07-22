@@ -13,19 +13,13 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
+using HQ.Integration.DocumentDb.Sql;
 
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.Options
 {
-    public class DocumentDbOptions
-    {
-        public Uri AccountEndpoint { get; set; }
-        public string AccountKey { get; set; }
-        public string DatabaseId { get; set; }
-        public string CollectionId { get; set; }
-        public int? OfferThroughput { get; set; } = 400;
-        public bool SharedCollection { get; set; }
-
-
-    }
+	internal class ConfigurationDocument : DocumentBase<ConfigurationDocument>
+	{
+		public string Key { get; set; }
+		public string Value { get; set; }
+	}
 }

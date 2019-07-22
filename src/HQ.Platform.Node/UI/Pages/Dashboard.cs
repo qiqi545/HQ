@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using HQ.Extensions.Options;
+using HQ.Integration.Sqlite.Options;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Models;

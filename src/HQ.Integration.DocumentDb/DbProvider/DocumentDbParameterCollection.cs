@@ -53,15 +53,14 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			if (value is DocumentDbParameter parameter)
 			{
 				if (_parameters.Any(p => p.ParameterName == parameter.ParameterName))
-					throw new ArgumentException("The " + nameof(DocumentDbParameter) + " specified in the + " +
-					                            nameof(value) + " parameter is already added to this or another " +
-					                            nameof(DocumentDbParameterCollection) + ".");
+					throw new ArgumentException(
+						$"The {nameof(DocumentDbParameter)} specified in the + {nameof(value)} parameter is already added to this or another {nameof(DocumentDbParameterCollection)}.");
 
 				_parameters.Add(parameter);
 				return _parameters.Count - 1;
 			}
 
-			throw new InvalidCastException("The parameter passed was not a " + nameof(DocumentDbParameter) + ".");
+			throw new InvalidCastException($"The parameter passed was not a {nameof(DocumentDbParameter)}.");
 		}
 
 		public override void AddRange(Array values)
@@ -74,7 +73,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 					_parameters.Add(parameter);
 				else
 					throw new InvalidCastException(
-						"The parameter passed was not a " + nameof(DocumentDbParameter) + ".");
+						$"The parameter passed was not a {nameof(DocumentDbParameter)}.");
 		}
 
 		public void AddRange(DocumentDbParameter[] values)
@@ -159,7 +158,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			if (value is DocumentDbParameter parameter)
 				_parameters[index] = parameter;
 			else
-				throw new InvalidCastException("The parameter passed was not a " + nameof(DocumentDbParameter) + ".");
+				throw new InvalidCastException($"The parameter passed was not a {nameof(DocumentDbParameter)}.");
 		}
 
 		protected override void SetParameter(string parameterName, DbParameter value)
@@ -171,7 +170,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 					_parameters[index] = parameter;
 				else
 					throw new InvalidCastException(
-						"The parameter passed was not a " + nameof(DocumentDbParameter) + ".");
+						$"The parameter passed was not a {nameof(DocumentDbParameter)}.");
 			}
 		}
 	}

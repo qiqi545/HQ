@@ -13,7 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Integration.Sqlite.Sql
+namespace HQ.Extensions.Options
 {
     public enum SeedStrategy
     {
