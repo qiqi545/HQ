@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Data.Contracts.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
 	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData

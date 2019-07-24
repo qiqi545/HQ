@@ -20,33 +20,35 @@ using System.Linq;
 
 namespace HQ.Common.AspNetCore.Models
 {
-    public class MetaUrl
-    {
-        public string raw { get; set; }
-        public string protocol { get; set; }
-        public string[] host { get; set; }
-        public string port { get; set; }
-        public string[] path { get; set; }
-        public MetaParameter[] query { get; set; } = null;
+	public class MetaUrl
+	{
+		public string raw { get; set; }
+		public string protocol { get; set; }
+		public string[] host { get; set; }
+		public string port { get; set; }
+		public string[] path { get; set; }
+		public MetaParameter[] query { get; set; } = null;
 
-        public static MetaUrl Raw(string url)
-        {
-            var result = new MetaUrl();
+		public static MetaUrl Raw(string url)
+		{
+			var result = new MetaUrl();
 
-            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
-            {
-                return new MetaUrl
-                {
-                    raw = uri.AbsoluteUri,
-                    protocol = uri.Scheme.ToLowerInvariant(),
-                    host = new[] { uri.Host },
-                    port = uri.Port.ToString(),
-                    path = uri.Segments.Select(x => x.Replace("/", "")).Where(x => !string.IsNullOrWhiteSpace(x)).ToArray()
-                };
-            }
+			if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+			{
+				return new MetaUrl
+				{
+					raw = Uri.UnescapeDataString(uri.AbsoluteUri),
+					protocol = uri.Scheme.ToLowerInvariant(),
+					host = new[] { uri.Host },
+					port = uri.Port.ToString(),
+					path = uri.Segments.Where(x => !string.IsNullOrWhiteSpace(x))
+						.Select(x => Uri.UnescapeDataString(x.Replace("/", "")))
+						.ToArray()
+				};
+			}
 
-            result.raw = url;
-            return result;
-        }
-    }
+			result.raw = Uri.UnescapeDataString(url);
+			return result;
+		}
+	}
 }

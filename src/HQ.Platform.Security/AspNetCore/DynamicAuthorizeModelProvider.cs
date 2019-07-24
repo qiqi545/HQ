@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace HQ.Platform.Security.AspNetCore
