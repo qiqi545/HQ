@@ -103,13 +103,14 @@ namespace HQ.Platform.Operations
 			return services;
         }
 
-        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfiguration config)
+        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
         {
-	        return AddConfigurationApi(services, config.Bind);
+	        return AddConfigurationApi(services, configurationRoot, config.Bind);
         }
 
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, Action<ConfigurationApiOptions> configureAction = null)
-        {
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
+		{
+			services.AddSingleton(configurationRoot);
 	        services.AddMvc()
 		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
 		        .AddConfigurationApi(configureAction);
