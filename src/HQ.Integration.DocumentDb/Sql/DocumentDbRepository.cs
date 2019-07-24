@@ -259,7 +259,7 @@ namespace HQ.Integration.DocumentDb.Sql
         private IQueryable<T> CreateDocumentQuery()
         {
             IQueryable<T> queryable = _client.CreateDocumentQuery<T>(CollectionUri,
-                new FeedOptions {MaxItemCount = -1});
+                new FeedOptions {MaxItemCount = -1, EnableCrossPartitionQuery = true});
 
             if (_options.Get(_slot).SharedCollection)
             {
