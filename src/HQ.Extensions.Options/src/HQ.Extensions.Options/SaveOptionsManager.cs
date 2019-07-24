@@ -21,49 +21,75 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
-    public sealed class SaveOptionsManager<TOptions> : ISaveOptions<TOptions>
-        where TOptions : class, new()
-    {
-        private readonly IConfigurationRoot _configuration;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly IOptionsMonitor<TOptions> _monitor;
+	public sealed class SaveOptionsManager<TOptions> : ISaveOptions<TOptions>
+		where TOptions : class, new()
+	{
+		private readonly IConfigurationRoot _configuration;
+		private readonly IServiceProvider _serviceProvider;
+		private readonly IOptionsMonitor<TOptions> _monitor;
 
-        public SaveOptionsManager(
-            IConfigurationRoot configuration,
-            IServiceProvider serviceProvider,
-            IOptionsMonitor<TOptions> monitor)
-        {
-            _configuration = configuration;
-            _serviceProvider = serviceProvider;
-            _monitor = monitor;
-        }
+		public SaveOptionsManager(
+			IConfigurationRoot configuration,
+			IServiceProvider serviceProvider,
+			IOptionsMonitor<TOptions> monitor)
+		{
+			_configuration = configuration;
+			_serviceProvider = serviceProvider;
+			_monitor = monitor;
+		}
 
-        public TOptions Value => _monitor.CurrentValue;
-        public TOptions Get(string name) => _monitor.Get(name);
+		public TOptions Value => _monitor.CurrentValue;
+		public TOptions Get(string name) => _monitor.Get(name);
 
-        public bool TrySave(string key, Action<TOptions> mutator = null)
-        {
-            var saved = false;
-            foreach (var provider in _configuration.Providers.Reverse())
-            {
-                if (!(provider is ISaveConfigurationProvider saveProvider))
-                    continue; // this provider does not support saving
+		public bool TrySave(string key, Action<TOptions> mutator = null)
+		{
+			var saved = false;
+			foreach (var provider in _configuration.Providers.Reverse())
+			{
+				if (!(provider is ISaveConfigurationProvider saveProvider))
+					continue; // this provider does not support saving
 
-                if (!saveProvider.HasChildren(key))
-                    continue; // key not found in this provider
+				if (!saveProvider.HasChildren(key))
+					continue; // key not found in this provider
 
-                var current = _monitor.CurrentValue;
-                mutator?.Invoke(current);
+				var current = _monitor.CurrentValue;
+				mutator?.Invoke(current);
 
-                if (!current.IsValid(_serviceProvider))
-                    continue; // don't allow saving invalid options
-                
-                if (saveProvider.Save(key, current))
-                    saved = true;
-            }
-            if(saved)
-                _configuration.Reload();
-            return saved;
-        }
-    }
+				if (!current.IsValid(_serviceProvider))
+					continue; // don't allow saving invalid options
+
+				if (saveProvider.Save(key, current))
+					saved = true;
+			}
+			if (saved)
+				_configuration.Reload();
+			return saved;
+		}
+
+		public bool TrySave(string key, Action mutator = null)
+		{
+			var saved = false;
+			foreach (var provider in _configuration.Providers.Reverse())
+			{
+				if (!(provider is ISaveConfigurationProvider saveProvider))
+					continue; // this provider does not support saving
+
+				if (!saveProvider.HasChildren(key))
+					continue; // key not found in this provider
+
+				mutator?.Invoke();
+
+				var current = _monitor.CurrentValue;
+
+				if (!current.IsValid(_serviceProvider))
+					continue; // don't allow saving invalid options
+
+				if (saveProvider.Save(key, current))
+					saved = true;
+			}
+			if (saved)
+				_configuration.Reload();
+			return saved;
+		}
+	}
 }
