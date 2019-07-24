@@ -49,6 +49,14 @@ namespace HQ.Data.Contracts.Mvc
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
+        public IActionResult InternalServerError(long eventId, string errorMessage, params object[] args)
+        {
+	        var error = new Error(eventId, errorMessage, HttpStatusCode.InternalServerError);
+	        return new ErrorResult(error, args);
+        }
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public IActionResult Error(Error error, params object[] args)
         {
             return new ErrorResult(error, args);
