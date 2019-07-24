@@ -44,7 +44,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	/// </summary>
 	[Route("tokens")]
 	[DynamicController]
-    [ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = false)]
     public class SuperUserTokenController : DataController
     {
 	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
@@ -57,29 +57,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
             _securityOptions = securityOptions;
         }
 
-        [Authorize]
-        [HttpPut]
-        public IActionResult VerifyToken()
-        {
-            if (!Debugger.IsAttached)
-                return NotImplemented();
-#if DEBUG
-            if (!_securityOptions.Value.SuperUser.Enabled)
-                return NotFound();
-
-            if (User.Identity == null)
-                return Unauthorized();
-
-            if (User.Identity.IsAuthenticated)
-                return Ok(User.Claims());
-
-            return Unauthorized();
-#else
-			return NotImplemented();
-#endif
-		}
-
-		[AllowAnonymous]
+        [AllowAnonymous]
         [HttpPost]
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
@@ -133,5 +111,27 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			return NotImplementedResult();
 #endif
 		}
+
+        [Authorize]
+        [HttpPut]
+        public IActionResult VerifyToken()
+        {
+	        if (!Debugger.IsAttached)
+		        return NotImplemented();
+#if DEBUG
+	        if (!_securityOptions.Value.SuperUser.Enabled)
+		        return NotFound();
+
+	        if (User.Identity == null)
+		        return Unauthorized();
+
+	        if (User.Identity.IsAuthenticated)
+		        return Ok(User.Claims());
+
+	        return Unauthorized();
+#else
+			return NotImplemented();
+#endif
+        }
 	}
 }
