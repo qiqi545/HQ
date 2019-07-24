@@ -76,7 +76,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-	        mvcBuilder.Services.Configure(configureApi);
+			if(configureApi != null)
+				mvcBuilder.Services.Configure(configureApi);
+
 			mvcBuilder.Services.AddDynamicAuthorization();
 
 			mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
