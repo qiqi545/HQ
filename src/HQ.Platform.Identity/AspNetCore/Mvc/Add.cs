@@ -81,7 +81,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 
 			mvcBuilder.Services.AddDynamicAuthorization();
 
-			mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
 			mvcBuilder.AddControllerFeature<TenantController<TTenant, TKey>>();
 			mvcBuilder.AddControllerFeature<ApplicationController<TApplication, TKey>>();
 			mvcBuilder.AddControllerFeature<UserController<TUser, TTenant, TKey>>();
@@ -128,11 +127,16 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                 return new IdentityApiComponent {RouteTemplate = () => o.Value.RootPath ?? string.Empty};
             });
 
-			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-            {
-                var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-                return new TokensComponent {RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty};
-            });
+			if (mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens
+				.Enabled)
+			{
+				mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
+				mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
+				{
+					var o = r.GetRequiredService<IOptions<SecurityOptions>>();
+					return new TokensComponent { RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty };
+				});
+			}
         }
     }
 }
