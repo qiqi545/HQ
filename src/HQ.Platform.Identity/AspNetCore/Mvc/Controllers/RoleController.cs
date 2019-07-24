@@ -26,7 +26,6 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;

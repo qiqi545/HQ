@@ -18,6 +18,7 @@ using HQ.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts.Attributes
 {
@@ -52,9 +53,45 @@ namespace HQ.Data.Contracts.Attributes
 			var currentValueProperty = optionsType.GetProperty(nameof(IOptionsMonitor<object>.CurrentValue));
 			var currentValue = currentValueProperty?.GetValue(options);
 
+			object policy = null;
+			var segmentIndex = 0;
 			var policyProperty = _policyProviderType.GetProperty(nameof(IProtectedFeature.Policy));
-			var policy = policyProperty?.GetValue(currentValue);
+			if (policyProperty == null)
+			{
+				policyProperty = _policyProviderType.GetProperty("Policies");
+				if (policyProperty != null)
+				{
+					var reads = ReadAccessor.Create(_policyProviderType, out var members);
+					currentValue = WalkPoliciesRecursive(segmentIndex, currentValue, reads, members, ref policy);
+				}
+			}
+
+			policy = policy ?? policyProperty?.GetValue(currentValue);
 			return policy as string ?? Constants.Security.Policies.NoPolicy;
+		}
+
+		private object WalkPoliciesRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads, AccessorMembers members, ref object policy)
+		{
+			foreach (var member in members)
+			{
+				var key = member.Name;
+
+				if (_segments.Length >= segmentIndex + 1 &&
+				    _segments[segmentIndex] == key &&
+				    member.CanRead &&
+				    reads.TryGetValue(currentValue, key, out var segment))
+				{
+					if (segment is IProtectedFeature feature)
+						policy = feature.Policy;
+
+					currentValue = segment;
+					segmentIndex++;
+					var segmentReads = ReadAccessor.Create(segment, out var segmentMembers);
+					WalkPoliciesRecursive(segmentIndex, segment, segmentReads, segmentMembers, ref policy);
+				}
+			}
+
+			return currentValue;
 		}
 
 		public string Roles { get; set; }
