@@ -52,12 +52,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
         public async Task<IActionResult> Get()
         {
             var applications = await _applicationService.GetAsync();
-            if (applications?.Data == null || applications.Data?.Count() == 0)
-            {
-                return NotFound();
-            }
+			if (applications.Data == null)
+				return NotFound();
 
-            return Ok(applications.Data);
+			return Ok(applications.Data);
         }
 
         [HttpPost("")]
