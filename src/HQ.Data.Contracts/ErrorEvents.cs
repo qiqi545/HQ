@@ -43,5 +43,10 @@ namespace HQ.Data.Contracts
         public const long InvalidParameter = 1008;
         public const long RequestEntityTooLarge = 1009;
         public const long CouldNotAcceptWork = 1011;
+
+		/// <summary>
+		/// The request failed because the platform has an issue.
+		/// </summary>
+        public const long PlatformError = 2001;
     }
 }
