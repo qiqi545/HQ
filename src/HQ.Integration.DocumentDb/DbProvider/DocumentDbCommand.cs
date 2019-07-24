@@ -284,7 +284,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 
 		private QueryResultSet GetQueryResultSet()
 		{
-			var options = new FeedOptions();
+			var options = new FeedOptions { EnableCrossPartitionQuery = true };
 
 			var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 
