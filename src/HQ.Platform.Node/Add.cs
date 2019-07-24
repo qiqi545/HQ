@@ -88,7 +88,7 @@ namespace HQ.Platform.Node
             services.AddVersioning(versioning);
             services
 	            .AddBackgroundTasksApi(tasks)
-	            .AddConfigurationApi()
+	            .AddConfigurationApi(configRoot)
 				.AddIdentityApi(identityApi)
                 .AddMetaApi()
                 ;

@@ -13,6 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HQ.Platform.InteractionTests.Fakes;
 using HQ.Platform.Operations;
@@ -20,6 +21,8 @@ using HQ.Test.Sdk;
 using HQ.Test.Sdk.Assertions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.InteractionTests
@@ -52,7 +55,9 @@ namespace HQ.Platform.InteractionTests
 		{
 			Arrange(services =>
 			{
-				services.AddConfigurationApi();
+				services.AddConfigurationApi(
+					new ConfigurationRoot(new List<IConfigurationProvider>(new []{ new MemoryConfigurationProvider(
+						new MemoryConfigurationSource()) })));
 			});
 			
 			await Act("/gravy", response =>
