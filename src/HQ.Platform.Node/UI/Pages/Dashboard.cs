@@ -19,7 +19,6 @@ using System;
 using System.Linq;
 using HQ.Extensions.Options;
 using HQ.Integration.Sqlite.Options;
-using HQ.Integration.Sqlite.Sql;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Models;
 using HQ.Platform.Node.UI.Shared;
@@ -210,7 +209,7 @@ namespace HQ.Platform.Node.UI.Pages
                     return;
                 }
 
-                SqliteConfigurationHelper.MigrateToLatest("settings.db", configSeed);
+                SqliteConfigurationHelper.MigrateToLatest("settings.db", SaveConfigurationOptions.Default, configSeed);
                 var configRoot = ui.Context.UiServices.GetRequiredService<IConfigurationRoot>();
                 configRoot.Reload();
 

@@ -88,7 +88,7 @@ namespace HQ.Platform.Operations.Controllers
 			return GetSerialized(section);
 		}
 
-		private void SetSerialized(string section, IConfiguration config, Type prototype, MethodBase trySaveMethod,
+		private static void SetSerialized(string section, IConfiguration config, Type prototype, MethodBase trySaveMethod,
 			object saveOptions, object model, PropertyInfo valueMethod)
 		{
 			var json = model.ToString();
@@ -105,7 +105,8 @@ namespace HQ.Platform.Operations.Controllers
 					foreach (var member in members)
 					{
 						if (member.MemberType == AccessorMemberType.Property &&
-							member.CanWrite && member.CanRead &&
+							member.CanWrite && 
+							member.CanRead &&
 							reader.TryGetValue(result, member.Name, out var value))
 						{
 							writer.TrySetValue(target, member.Name, value);

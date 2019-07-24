@@ -15,9 +15,9 @@
 
 #endregion
 
+using System;
 using System.IO;
 using HQ.Extensions.Options;
-using HQ.Integration.Sqlite.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 
@@ -40,20 +40,22 @@ namespace HQ.Integration.Sqlite.Options
             return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: reloadOnChange, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool optional, bool reloadOnChange, IConfiguration configSeed)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool optional, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
         {
+			var saveConfig = new SaveConfigurationOptions();
+			configureAction?.Invoke(saveConfig);
+
             if (provider == null && Path.IsPathRooted(path))
             {
                 provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
                 path = Path.GetFileName(path);
             }
-            var source = new SqliteConfigurationSource(path)
+            var source = new SqliteConfigurationSource(path, saveConfig)
             {
-                ReloadOnChange = reloadOnChange,
+				ReloadOnChange = reloadOnChange,
                 ConfigSeed = configSeed,
-                SeedStrategy = SeedStrategy.InsertIfEmpty
-                // FileProvider = provider,
-                // Optional = optional
+                SeedStrategy = SeedStrategy.InsertIfEmpty,
+                FileProvider = provider
             };
             builder.Add(source);
             return builder;

@@ -15,15 +15,16 @@
 
 using System.IO;
 using HQ.Extensions.Options;
-using HQ.Integration.Sqlite.Sql;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 
 namespace HQ.Integration.Sqlite.Options
 {
     public class SqliteConfigurationSource : IConfigurationSource
     {
-        public SqliteConfigurationSource(string dataFilePath, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
+        public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
         {
+	        SaveConfig = saveConfig;
             ConfigSeed = configSeed;
             DataFilePath = dataFilePath;
             DataDirectoryPath = new FileInfo(DataFilePath).Directory?.FullName;
@@ -31,6 +32,7 @@ namespace HQ.Integration.Sqlite.Options
             SeedStrategy = strategy;
         }
 
+		public SaveConfigurationOptions SaveConfig { get; }
         public string DataFilePath { get; }
         public string DataDirectoryPath { get; }
         public string DataFileName { get; }
@@ -38,12 +40,13 @@ namespace HQ.Integration.Sqlite.Options
 
         public IConfiguration ConfigSeed { get; set; }
         public SeedStrategy SeedStrategy { get; set; }
+        public IFileProvider FileProvider { get; set; }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
             if (DataDirectoryPath != null)
                 Directory.CreateDirectory(DataDirectoryPath);
-            SqliteConfigurationHelper.MigrateToLatest(DataFilePath, ConfigSeed, SeedStrategy);
+            SqliteConfigurationHelper.MigrateToLatest(DataFilePath, SaveConfig, ConfigSeed, SeedStrategy);
             return new SqliteConfigurationProvider(this);
         }
     }

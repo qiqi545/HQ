@@ -25,16 +25,25 @@ namespace HQ.Integration.DocumentDb.Options
 {
     public static class Add
     {
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed =  null)
+	    public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
+	    {
+		    return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, configureOptions.Bind, reloadOnChange, configSeed);
+	    }
+
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed =  null)
 		{
-			return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, reloadOnChange, configSeed);
+			return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, configureOptions, reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureAction, bool reloadOnChange = false, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureAction, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
-			var options = new DocumentDbOptions();
-			configureAction?.Invoke(options);
-			var source = new DocumentConfigurationSource(options, configSeed, SeedStrategy.InsertIfNotExists)
+			var dbConfig = new DocumentDbOptions();
+			configureAction?.Invoke(dbConfig);
+
+			var saveConfig = new SaveConfigurationOptions();
+			configureOptions?.Invoke(saveConfig);
+			
+			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed, SeedStrategy.InsertIfNotExists)
 			{
 				ReloadOnChange = reloadOnChange
 			};

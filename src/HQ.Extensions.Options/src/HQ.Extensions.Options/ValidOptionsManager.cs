@@ -21,7 +21,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
-    public sealed class ValidOptionsManager<TOptions> : IValidOptions<TOptions>, IValidOptionsSnapshot<TOptions>
+	public sealed class ValidOptionsManager<TOptions> : IValidOptions<TOptions>, IValidOptionsSnapshot<TOptions>
         where TOptions : class, new()
     {
         private readonly IOptions<TOptions> _default;

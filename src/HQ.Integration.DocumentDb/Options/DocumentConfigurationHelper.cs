@@ -18,18 +18,26 @@ using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb.Options
 {
 	public static class DocumentConfigurationHelper
     {
-        public static void MigrateToLatest(DocumentDbOptions options, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
+        public static void MigrateToLatest(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
+	        IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
         {
 	        var runner = new DocumentDbMigrationRunner(options);
-	        runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
-	        runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
 
+	        if (saveConfig.CreateIfNotExists)
+	        {
+		        runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
+			}
+
+	        if (saveConfig.MigrateOnStartup)
+	        {
+		        runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
+			}
+	        
 	        if (configSeed != null)
 	        {
 		        var repository = new DocumentDbRepository<ConfigurationDocument>("Options", new OptionsMonitorShim<DocumentDbOptions>(options));

@@ -23,21 +23,25 @@ namespace HQ.Integration.DocumentDb.Options
     {
 	    public DocumentDbOptions Options { get; }
 
-	    public DocumentConfigurationSource(DocumentDbOptions options, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
+	    public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
+		    IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
         {
+	        SaveConfig = saveConfig;
 	        Options = options;
 	        ConfigSeed = configSeed;
             SeedStrategy = strategy;
         }
 
-        public bool ReloadOnChange { get; set; }
+	    public SaveConfigurationOptions SaveConfig { get; set; }
+
+	    public bool ReloadOnChange { get; set; }
 
         public IConfiguration ConfigSeed { get; set; }
         public SeedStrategy SeedStrategy { get; set; }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-	        DocumentConfigurationHelper.MigrateToLatest(Options, ConfigSeed, SeedStrategy);
+	        DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed, SeedStrategy);
             return new DocumentConfigurationProvider(this);
         }
     }

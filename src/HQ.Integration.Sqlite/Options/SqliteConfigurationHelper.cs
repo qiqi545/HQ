@@ -27,27 +27,43 @@ namespace HQ.Integration.Sqlite.Options
 {
     public static class SqliteConfigurationHelper
     {
-        public static void MigrateToLatest(string dataFilePath, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
+        public static void MigrateToLatest(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
         {
-            try
-            {
-                using (var db = new SqliteConnection($"Data Source={dataFilePath}"))
-                {
-                    db.Open();
+	        try
+	        {
+		        var connectionString = $"Data Source={dataFilePath}";
 
-                    MigrateUp(db);
+		        if (saveConfig.CreateIfNotExists)
+			        CreateIfNotExists(connectionString);
 
-                    if (configSeed != null)
-                    {
-                        db.SeedInTransaction(configSeed, strategy);
-                    }
-                }
-            }
-            catch (SqliteException e)
-            {
-                Trace.TraceError("Error migrating configuration database: {0}", e);
-                throw;
-            }
+		        var builder = new SqliteConnectionStringBuilder(connectionString) {Mode = SqliteOpenMode.ReadWrite};
+		        using (var db = new SqliteConnection(builder.ConnectionString))
+		        {
+			        db.Open();
+
+			        if (saveConfig.MigrateOnStartup)
+						MigrateUp(db);
+
+					if (configSeed != null)
+			        {
+				        db.SeedInTransaction(configSeed, strategy);
+			        }
+		        }
+	        }
+	        catch (SqliteException e)
+	        {
+		        Trace.TraceError("Error migrating configuration database: {0}", e);
+		        throw;
+	        }
+        }
+
+        private static void CreateIfNotExists(string connectionString)
+        {
+	        var builder = new SqliteConnectionStringBuilder(connectionString) {Mode = SqliteOpenMode.ReadWriteCreate};
+	        if (File.Exists(builder.DataSource)) return;
+	        var connection = new SqliteConnection(builder.ConnectionString);
+	        connection.Open();
+	        connection.Close();
         }
 
         public static bool IsEmptyConfiguration(string dataFilePath)
