@@ -51,8 +51,9 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			options.CollectionId = DefaultCollection;
 			options.DatabaseId = Database;
 			options.SharedCollection = SharedCollection;
+			options.PartitionKeyPaths = PartitionKeyPaths;
 		}
-
+		
 		public DocumentDbConnectionStringBuilder(string connectionString) : this()
 		{
 			var entries = connectionString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
@@ -88,6 +89,16 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			set
 			{
 				this[Constants.DefaultCollectionKey] = value;
+				ConnectionString = ToString();
+			}
+		}
+
+		public string[] PartitionKeyPaths
+		{
+			get => this[Constants.PartitionKeyPathsKey] as string[];
+			set
+			{
+				this[Constants.PartitionKeyPathsKey] = value;
 				ConnectionString = ToString();
 			}
 		}

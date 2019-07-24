@@ -89,7 +89,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
                 command.CommandText = select.Sql;
 
                 var query = command.ToQuerySpec();
-
+				
                 if (command is DocumentDbCommand docDbCommand)
                 {
                     docDbCommand.Id = descriptor.Id?.Property?.Name;
@@ -104,7 +104,8 @@ namespace HQ.Integration.DocumentDb.SessionManagement
                 // an object (to be serialized again back to JSON in the output).
 
                 var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
-                return connection.Client.CreateDocumentQuery<T>(collectionUri, query);
+                var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
+                return connection.Client.CreateDocumentQuery<T>(collectionUri, query, feedOptions);
             }
         }
     }

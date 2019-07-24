@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Integration.DocumentDb.DbProvider;
@@ -50,7 +51,15 @@ namespace HQ.Integration.DocumentDb.Sql
 		        if (e.StatusCode == HttpStatusCode.NotFound)
 		        {
 			        await Client.CreateDocumentCollectionAsync(UriFactory.CreateDatabaseUri(_options.DatabaseId),
-				        new DocumentCollection { Id = _options.CollectionId },
+				        new DocumentCollection
+				        {
+					        Id = _options.CollectionId, PartitionKey = 
+								new PartitionKeyDefinition
+								{
+									Paths = new Collection<string>(_options.PartitionKeyPaths),
+									Version = PartitionKeyDefinitionVersion.V2
+								}
+				        },
 				        new RequestOptions { OfferThroughput = _options.OfferThroughput });
 		        }
 		        else
