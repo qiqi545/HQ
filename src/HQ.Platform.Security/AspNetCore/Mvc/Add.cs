@@ -43,5 +43,21 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 			
             return mvcBuilder;
         }
-    }
+
+        public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
+        {
+			services.AddMvc().AddControllerFeature<SuperUserTokenController>();
+
+	        services.AddSingleton(r =>
+	        {
+		        var o = r.GetRequiredService<IOptions<SecurityOptions>>();
+		        return new SuperUserComponent
+		        {
+			        RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
+		        };
+	        });
+
+	        return services;
+        }
+	}
 }

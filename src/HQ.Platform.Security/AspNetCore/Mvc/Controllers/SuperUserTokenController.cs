@@ -37,12 +37,13 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
-    /// <summary>
-    /// A light-weight token issuer that only works against a super user.
-    /// While this controller is useful for setting up environments that don't use platform identity services,
-    /// it should not be used, and does not work, in a non-debugging context. 
-    /// </summary>
-    [DynamicController]
+	/// <summary>
+	/// A light-weight token issuer that only works against a super user.
+	/// While this controller is useful for setting up environments that don't use platform identity services,
+	/// it should not be used, and does not work, in a non-debugging context. 
+	/// </summary>
+	[Route("tokens")]
+	[DynamicController]
     [ApiExplorerSettings(IgnoreApi = true)]
     public class SuperUserTokenController : DataController
     {
