@@ -23,7 +23,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
         public string AccountKey { get; set; }
         public string DatabaseId { get; set; }
         public string CollectionId { get; set; }
-        public string[] PartitionKeyPaths { get; set; } = {"id"};
+        public string[] PartitionKeyPaths { get; set; } = {"/id"};
         public int? OfferThroughput { get; set; } = 400;
         public bool SharedCollection { get; set; }
     }
