@@ -42,7 +42,7 @@ namespace HQ.Integration.DocumentDb.Sql
             query.Parameters.Add(new SqlParameter($"@{DocumentTypeField}", sequence[DocumentTypeField]));
             query.Parameters.Add(new SqlParameter($"@{SequenceTypeField}", sequence[SequenceTypeField]));
 
-            var feedOptions = new FeedOptions { MaxItemCount = 1 };
+            var feedOptions = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
             var result = client.CreateDocumentQuery<Sequence>(uri, query, feedOptions).AsDocumentQuery();
 
             try

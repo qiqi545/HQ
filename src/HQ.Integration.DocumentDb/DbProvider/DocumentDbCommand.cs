@@ -85,7 +85,7 @@ namespace HQ.Integration.DocumentDb.DbProvider
 		{
 			if (CommandText.Contains("COUNT"))
 			{
-				var options = new FeedOptions { MaxItemCount = 1 };
+				var options = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
 				var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 				var query = this.ToQuerySpec();
 				MaybeTypeDiscriminate(query);
@@ -137,7 +137,8 @@ namespace HQ.Integration.DocumentDb.DbProvider
 			query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
 
 			var ids = new List<string>();
-			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query).AsDocumentQuery();
+			var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
+			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, feedOptions).AsDocumentQuery();
 			while (projection.HasMoreResults)
 			{
 				var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
@@ -195,7 +196,8 @@ namespace HQ.Integration.DocumentDb.DbProvider
 				if (MaybeTypeDiscriminate(query))
 					query.QueryText += " AND c.DocumentType = @DocumentType";
 
-				var getId = _connection.Client.CreateDocumentQuery(collectionUri, query).ToList().SingleOrDefault();
+				var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
+				var getId = _connection.Client.CreateDocumentQuery(collectionUri, query, feedOptions).ToList().SingleOrDefault();
 
 				if (getId == null)
 					return 0;
