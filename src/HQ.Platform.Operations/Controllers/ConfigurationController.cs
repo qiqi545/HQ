@@ -8,9 +8,9 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeKitchen;
@@ -56,10 +56,13 @@ namespace HQ.Platform.Operations.Controllers
 
 		[HttpPut("")]
 		[HttpPut("{section?}"), MustHaveQueryParameters("type")]
-		public IActionResult Set([FromQuery] string type, [FromRoute] string section = null)
+		public IActionResult Set([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
 		{
 			if (SubKeyIsMissing(section, out var notAcceptable))
 				return notAcceptable;
+
+			if (model == null)
+				return NotAcceptableError(ErrorEvents.InvalidRequest, "Missing configuration body.");
 
 			var config = _root.GetSection(section?.Replace("/", ":"));
 			if (config == null)
@@ -69,41 +72,41 @@ namespace HQ.Platform.Operations.Controllers
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter, $"No configuration type found with name '{type}'.");
 
-			var optionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
-			var saveOptions = _serviceProvider.GetService(optionsType);
+			var optionsType = typeof(IOptions<>).MakeGenericType(prototype);
+			var saveOptionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
+			var saveOptions = _serviceProvider.GetService(saveOptionsType);
 			if (saveOptions == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter, $"Could not resolve IOptions<{type}>");
 
-			var valueMethod = optionsType.GetProperty(nameof(ISaveOptions<object>.Value));
-			var trySaveMethod = optionsType.GetMethod(nameof(ISaveOptions<object>.TrySave));
-			if (trySaveMethod == null || valueMethod == null)
+			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
+			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave), new [] { typeof(string), typeof(Action)});
+			if (trySaveMethod == null || valueProperty == null)
 				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: ISaveOptions<{type}> methods failed to resolve.");
 
-			SetSerialized(section, config, prototype, trySaveMethod, saveOptions, valueMethod);
+			SetSerialized(section, config, prototype, trySaveMethod, saveOptions, model, valueProperty);
 
 			return GetSerialized(section);
 		}
 
-		private void SetSerialized(string section, IConfigurationSection config, Type prototype, MethodInfo trySaveMethod,
-			object saveOptions, PropertyInfo valueMethod)
+		private void SetSerialized(string section, IConfiguration config, Type prototype, MethodBase trySaveMethod,
+			object saveOptions, object model, PropertyInfo valueMethod)
 		{
-			var content = Serialize(config).ToString();
-
-			var result = JsonConvert.DeserializeObject(content, prototype);
+			var json = model.ToString();
+			var result = JsonConvert.DeserializeObject(json, prototype);
 
 			trySaveMethod.Invoke(saveOptions, new object[]
 			{
 				section, new Action(() =>
 				{
 					var target = valueMethod.GetValue(saveOptions);
-
 					var writer = WriteAccessor.Create(prototype, out var members);
 					var reader = ReadAccessor.Create(prototype);
 
 					foreach (var member in members)
 					{
-						if (member.CanWrite && member.CanRead &&
-						    reader.TryGetValue(result, member.Name, out var value))
+						if (member.MemberType == AccessorMemberType.Property &&
+							member.CanWrite && member.CanRead &&
+							reader.TryGetValue(result, member.Name, out var value))
 						{
 							writer.TrySetValue(target, member.Name, value);
 						}
