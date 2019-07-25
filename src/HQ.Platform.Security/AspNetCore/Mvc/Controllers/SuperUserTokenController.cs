@@ -99,7 +99,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
                 Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
                 var claims = new List<Claim>
                 {
-                    new Claim(ClaimTypes.Role, nameof(SecurityOptions.SuperUser))
+                    new Claim(_securityOptions?.Value?.Claims?.RoleClaim ?? ClaimTypes.Role, nameof(SecurityOptions.SuperUser))
                 };
                 var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
                 var token = provider.CreateToken(claims, _securityOptions.Value, ApiVersion, ApiName);

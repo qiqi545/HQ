@@ -26,5 +26,6 @@ namespace HQ.Platform.Security.Configuration
         public string AnonymousIdentityName { get; set; } = Constants.Cookies.AnonymousIdentityName;
         public string IdentityName { get; set; } = Constants.Cookies.IdentityName;
         public string Domain { get; set; } = null;
+        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformCookies;
     }
 }

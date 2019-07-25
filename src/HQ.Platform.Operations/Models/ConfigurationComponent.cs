@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Operations.Controllers;
 
 namespace HQ.Platform.Operations.Models
 {
-    internal class ConfigurationComponent : IDynamicComponent
+    internal class ConfigurationComponent : DynamicComponent
     {
-        public IEnumerable<Type> ControllerTypes => new[]
+        public override IEnumerable<Type> ControllerTypes => new[]
         {
             typeof(ConfigurationController)
         };
-
-        public Func<string> RouteTemplate { get; set; }
     }
 }

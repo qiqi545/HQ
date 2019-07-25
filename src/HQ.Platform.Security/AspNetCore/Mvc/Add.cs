@@ -15,49 +15,66 @@
 
 #endregion
 
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc
 {
-    public static class Add
-    {
-        public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
-        {
-            var services = mvcBuilder.Services;
-			
-            mvcBuilder.AddControllerFeature<SuperUserTokenController>();
-			
-            services.AddSingleton(r =>
-            {
-                var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-                return new SuperUserComponent
-                {
-                    RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
-                };
-            });
-			
-            return mvcBuilder;
-        }
+	public static class Add
+	{
+		public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
+		{
+			var services = mvcBuilder.Services;
 
-        public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
-        {
-			services.AddMvc().AddControllerFeature<SuperUserTokenController>();
+			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
 
-	        services.AddSingleton(r =>
-	        {
-		        var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-		        return new SuperUserComponent
-		        {
-			        RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
-		        };
-	        });
+			services.AddSingleton(r =>
+			{
+				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
+				return new SuperUserComponent
+				{
+					RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
+				};
+			});
 
-	        return services;
-        }
+			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
+			{
+				var components = r.GetServices<IDynamicComponent>();
+				return new DynamicFilterProvider(components);
+			});
+
+			return mvcBuilder;
+		}
+
+		public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
+		{
+			var mvcBuilder = services.AddMvc();
+
+			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
+
+			services.AddSingleton(r =>
+			{
+				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
+
+				return new SuperUserComponent
+				{
+					RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
+				};
+			});
+
+			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
+			{
+				var components = r.GetServices<IDynamicComponent>();
+				return new DynamicFilterProvider(components);
+			});
+
+			return services;
+		}
 	}
 }

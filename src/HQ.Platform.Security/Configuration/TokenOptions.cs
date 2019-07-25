@@ -36,5 +36,7 @@ namespace HQ.Platform.Security.Configuration
         public bool Encrypt { get; set; } = true;
         public int ClockSkewSeconds { get; set; } = 10;
         public bool AllowRefresh { get; set; } = true;
+
+        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
     }
 }

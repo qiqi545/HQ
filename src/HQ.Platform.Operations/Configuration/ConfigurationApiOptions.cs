@@ -20,6 +20,7 @@ namespace HQ.Platform.Operations.Configuration
 	public class ConfigurationApiOptions : IProtectedFeature
 	{
 		public string RootPath { get; set; } = "/ops";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; set; } = Constants.Security.Policies.ManageConfiguration;
 	}
 }

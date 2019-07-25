@@ -17,6 +17,7 @@ namespace HQ.Common
 {
 	public interface IProtectedFeature
 	{
+		string Scheme { get; }
 		string Policy { get; }
 	}
 }

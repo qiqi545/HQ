@@ -26,6 +26,7 @@ using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -122,21 +123,30 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
             });
 
 			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-            {
-                var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
-                return new IdentityApiComponent {RouteTemplate = () => o.Value.RootPath ?? string.Empty};
-            });
+			{
+				var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
+				return new IdentityApiComponent {RouteTemplate = () => o.Value.RootPath ?? string.Empty};
+			});
 
-			if (mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens
-				.Enabled)
+			if (TokensEnabled(mvcBuilder))
 			{
 				mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
 				mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
 				{
 					var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-					return new TokensComponent { RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty };
+					return new TokensComponent {RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty};
+				});
+				mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
+				{
+					var components = r.GetServices<IDynamicComponent>();
+					return new DynamicFilterProvider(components);
 				});
 			}
         }
+
+		private static bool TokensEnabled(this IMvcBuilder mvcBuilder)
+		{
+			return mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens.Enabled;
+		}
     }
 }

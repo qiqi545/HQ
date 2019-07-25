@@ -17,14 +17,13 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Configuration
 {
-    public class SuperUserComponent : IDynamicComponent
+    public class SuperUserComponent : DynamicComponent
     {
-        public IEnumerable<Type> ControllerTypes => new[] { typeof(SuperUserTokenController) };
-        public Func<string> RouteTemplate { get; set; }
+        public override IEnumerable<Type> ControllerTypes => new[] { typeof(SuperUserTokenController) };
     }
 }

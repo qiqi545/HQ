@@ -24,8 +24,6 @@ using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -58,7 +56,7 @@ namespace HQ.Platform.Security.AspNetCore
 
             AddDynamicAuthorization(services);
             AddCors(services, logger, options.Cors);
-            AddAuthentication(services, logger, options.Tokens, options.Cookies, options.Claims);
+            AddAuthentication(services, logger, options.SuperUser, options.Tokens, options.Cookies, options.Claims);
             AddSuperUser(services, logger, options.SuperUser);
 			AddHttps(services, logger, options);
 
@@ -69,7 +67,7 @@ namespace HQ.Platform.Security.AspNetCore
         {
 	        services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
 	        services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-        }
+		}
 
         private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
         {
@@ -133,20 +131,28 @@ namespace HQ.Platform.Security.AspNetCore
 	        }
         }
 
-        private static void AddAuthentication(IServiceCollection services, ISafeLogger logger, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
+        private static void AddAuthentication(IServiceCollection services, ISafeLogger logger,
+	        SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
         {
-	        if (tokens.Enabled || cookies.Enabled)
+	        if (tokens.Enabled || cookies.Enabled || superUser.Enabled)
 	        {
-		        logger?.Trace(() => "Authentication enabled.");
+		        if (!tokens.Enabled && !cookies.Enabled && superUser.Enabled)
+		        {
+			        logger?.Trace(() => "Authentication enabled for super user only.");
+		        }
+		        else
+		        {
+			        logger?.Trace(() => "Authentication enabled.");
+		        }
 
-		        services.AddAuthentication(tokens, cookies, claims);
+		        services.AddAuthentication(superUser, tokens, cookies, claims);
 	        }
 
-	        if (tokens.Enabled)
+	        if (tokens.Enabled || superUser.Enabled)
 	        {
 		        services.AddAuthorization(x =>
 		        {
-			        TryAddDefaultPolicy(services, logger, x, JwtBearerDefaults.AuthenticationScheme);
+			        TryAddDefaultPolicy(services, logger, x, tokens.Scheme);
 		        });
 	        }
 
@@ -154,7 +160,7 @@ namespace HQ.Platform.Security.AspNetCore
 	        {
 		        services.AddAuthorization(x =>
 		        {
-			        TryAddDefaultPolicy(services, logger, x, CookieAuthenticationDefaults.AuthenticationScheme);
+			        TryAddDefaultPolicy(services, logger, x, cookies.Scheme);
 		        });
 	        }
         }

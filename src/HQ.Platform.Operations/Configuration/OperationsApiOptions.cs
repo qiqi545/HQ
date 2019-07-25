@@ -57,6 +57,8 @@ namespace HQ.Platform.Operations.Configuration
         public string MetricsEndpointPath { get; set; } = "/metrics";
 
         public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
-        public string Policy { get; set; } = Constants.Security.Policies.AccessOperations;
+
+        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; set; } = Constants.Security.Policies.AccessOperations;
     }
 }

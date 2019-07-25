@@ -64,6 +64,12 @@ namespace HQ.Common
 
         public static class Security
         {
+	        public static class Schemes
+	        {
+		        public const string PlatformBearer = nameof(PlatformBearer);
+		        public const string PlatformCookies = nameof(PlatformCookies);
+	        }
+
             public static class Policies
             {
 	            public const string CorsPolicy = nameof(CorsPolicy);

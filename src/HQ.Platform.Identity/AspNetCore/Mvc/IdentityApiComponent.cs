@@ -17,21 +17,19 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
 {
-    public class IdentityApiComponent : IDynamicComponent
-    {
-        public IEnumerable<Type> ControllerTypes => new[]
+    public class IdentityApiComponent : DynamicComponent
+	{
+        public override IEnumerable<Type> ControllerTypes => new[]
         {
             typeof(UserController<,,>),
             typeof(RoleController<,>),
             typeof(TenantController<,>),
             typeof(ApplicationController<,>)
         };
-
-        public Func<string> RouteTemplate { get; set; }
     }
 }

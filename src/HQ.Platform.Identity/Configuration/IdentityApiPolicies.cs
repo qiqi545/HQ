@@ -26,21 +26,25 @@ namespace HQ.Platform.Identity.Configuration
 
 		public class ManageUsersPolicy : IProtectedFeature
 		{
+			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageUsers;
 		}
 
 		public class ManageRolesPolicy : IProtectedFeature
 		{
+			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageRoles;
 		}
 		
 		public class ManageApplicationsPolicy : IProtectedFeature
 		{
+			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageApplications;
 		}
 
 		public class ManageTenantsPolicy : IProtectedFeature
 		{
+			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageTenants;
 		}
 	}

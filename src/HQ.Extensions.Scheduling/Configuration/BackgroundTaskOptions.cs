@@ -108,7 +108,8 @@ namespace HQ.Extensions.Scheduling.Configuration
         /// </summary>
         public int Priority { get; set; }
 
-        public string Policy { get; set; } = Constants.Security.Policies.ManageBackgroundTasks;
+        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; set; } = Constants.Security.Policies.ManageBackgroundTasks;
 
 		public StoreOptions Store { get; set; }
 

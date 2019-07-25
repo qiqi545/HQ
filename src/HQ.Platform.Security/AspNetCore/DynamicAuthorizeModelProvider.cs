@@ -28,9 +28,14 @@ namespace HQ.Platform.Security.AspNetCore
 			_serviceProvider = serviceProvider;
 		}
 
-		public void OnProvidersExecuting(ApplicationModelProviderContext context) { }
+		public void OnProvidersExecuting(ApplicationModelProviderContext context)
+		{
+			SetServiceProviders(context);
+		}
 
-		public void OnProvidersExecuted(ApplicationModelProviderContext context)
+		public void OnProvidersExecuted(ApplicationModelProviderContext context) { }
+
+		private void SetServiceProviders(ApplicationModelProviderContext context)
 		{
 			foreach (var controllerModel in context.Result.Controllers)
 			{

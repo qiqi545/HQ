@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,7 +40,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
         private static SigningCredentials _signing;
         private static EncryptingCredentials _encrypting;
 
-        public static void AddAuthentication(this IServiceCollection services, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
+        public static void AddAuthentication(this IServiceCollection services, SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
         {
 	        if (_signing != null)
 	        {
@@ -52,16 +53,18 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
             var authBuilder = services.AddAuthentication(x =>
             {
-                x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            });
+				x.DefaultScheme = tokens.Scheme;
+				x.DefaultAuthenticateScheme = tokens.Scheme;
+				x.DefaultSignInScheme = tokens.Scheme;
+				x.DefaultSignOutScheme = tokens.Scheme;
+				x.DefaultChallengeScheme = tokens.Scheme;
+			});
 
-            if (tokens.Enabled)
+            if (tokens.Enabled || superUser.Enabled)
             {
-                authBuilder.AddJwtBearer(x =>
+                authBuilder.AddJwtBearer(tokens.Scheme, x =>
                 {
-                    x.Events = new JwtBearerEvents();
+					x.Events = new JwtBearerEvents();
                     x.Events.OnTokenValidated += OnTokenValidated;
                     x.Events.OnMessageReceived += OnMessageReceived;
                     x.Events.OnAuthenticationFailed += OnAuthenticationFailed;
@@ -82,7 +85,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
             if (cookies.Enabled)
             {
-                authBuilder.AddCookie(cfg =>
+                authBuilder.AddCookie(cookies.Scheme ?? tokens.Scheme, cfg =>
                 {
                     cfg.LoginPath = cookies.SignInPath;
                     cfg.LogoutPath = cookies.SignOutPath;
@@ -132,7 +135,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
         private static Task OnAuthenticationFailed(AuthenticationFailedContext arg)
         {
-            Trace.TraceInformation(arg.ToString());
+	        Trace.TraceInformation(arg.ToString());
+            arg.Fail(arg.Exception);
             return Task.CompletedTask;
         }
 
@@ -177,7 +181,11 @@ namespace HQ.Platform.Security.AspNetCore.Models
             var handler = new JwtSecurityTokenHandler();
 
             if (!security.Tokens.Encrypt)
-	            return handler.WriteToken(new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _signing));
+            {
+	            var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, _signing);
+
+	            return handler.WriteToken(jwt);
+            }
 
             var descriptor = new SecurityTokenDescriptor
             {

@@ -15,17 +15,15 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Platform.Operations.Models
 {
-	internal class MetaComponent : IDynamicComponent
+	internal class MetaComponent : DynamicComponent
 	{
-		public IEnumerable<Type> ControllerTypes => new[]
+		public override IEnumerable<Type> ControllerTypes => new[]
 		{
 			typeof(MetaComponent)
 		};
-
-		public Func<string> RouteTemplate { get; set; }
 	}
 }

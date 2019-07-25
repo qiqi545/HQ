@@ -22,7 +22,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.Attributes
 {
-	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData
 	{
 		private readonly Type _policyProviderType;
@@ -36,38 +36,43 @@ namespace HQ.Data.Contracts.Attributes
 
 		public IServiceProvider ServiceProvider { get; set; }
 
+		private string _policy;
 		public string Policy
 		{
-			get => ResolvePolicyName();
+			get
+			{
+				if(_policy == null)
+					Resolve(ServiceProvider);
+				return _policy;
+			}
 			set => throw new NotSupportedException("Dynamic authorization does not support directly setting policy.");
 		}
 
-		private string ResolvePolicyName()
+		public void Resolve(IServiceProvider serviceProvider)
 		{
-			if (ServiceProvider == null)
-				return null; // don't attempt to resolve if opted-out/disabled
+			if (serviceProvider == null)
+				return; // don't attempt to resolve if opted-out/disabled
 
 			var optionsType = typeof(IOptionsMonitor<>).MakeGenericType(_policyProviderType);
-			var options = ServiceProvider.GetRequiredService(optionsType);
+			var options = serviceProvider.GetRequiredService(optionsType);
 
 			var currentValueProperty = optionsType.GetProperty(nameof(IOptionsMonitor<object>.CurrentValue));
 			var currentValue = currentValueProperty?.GetValue(options);
 
 			object policy = null;
-			var segmentIndex = 0;
-			var policyProperty = _policyProviderType.GetProperty(nameof(IProtectedFeature.Policy));
+			var policyProperty = _policyProviderType.GetProperty("Policy");
 			if (policyProperty == null)
 			{
 				policyProperty = _policyProviderType.GetProperty("Policies");
 				if (policyProperty != null)
 				{
 					var reads = ReadAccessor.Create(_policyProviderType, out var members);
-					currentValue = WalkPoliciesRecursive(segmentIndex, currentValue, reads, members, ref policy);
+					currentValue = WalkPoliciesRecursive(0, currentValue, reads, members, ref policy);
 				}
 			}
 
 			policy = policy ?? policyProperty?.GetValue(currentValue);
-			return policy as string ?? Constants.Security.Policies.NoPolicy;
+			_policy = policy as string ?? Constants.Security.Policies.NoPolicy;
 		}
 
 		private object WalkPoliciesRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads, AccessorMembers members, ref object policy)
@@ -76,19 +81,22 @@ namespace HQ.Data.Contracts.Attributes
 			{
 				var key = member.Name;
 
-				if (_segments.Length >= segmentIndex + 1 &&
-				    _segments[segmentIndex] == key &&
-				    member.CanRead &&
-				    reads.TryGetValue(currentValue, key, out var segment))
-				{
-					if (segment is IProtectedFeature feature)
-						policy = feature.Policy;
+				if (_segments.Length < segmentIndex + 1 || 
+				    _segments[segmentIndex] != key || 
+				    !member.CanRead ||
+				    !reads.TryGetValue(currentValue, key, out var segment))
+					continue;
 
-					currentValue = segment;
-					segmentIndex++;
-					var segmentReads = ReadAccessor.Create(segment, out var segmentMembers);
-					WalkPoliciesRecursive(segmentIndex, segment, segmentReads, segmentMembers, ref policy);
+				if (segment is IProtectedFeature feature)
+				{
+					AuthenticationSchemes = feature.Scheme;
+					policy = feature.Policy;
 				}
+
+				currentValue = segment;
+				segmentIndex++;
+				var segmentReads = ReadAccessor.Create(segment, out var segmentMembers);
+				WalkPoliciesRecursive(segmentIndex, segment, segmentReads, segmentMembers, ref policy);
 			}
 
 			return currentValue;

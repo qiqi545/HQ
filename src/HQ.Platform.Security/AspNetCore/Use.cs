@@ -30,7 +30,7 @@ namespace HQ.Platform.Security.AspNetCore
             if (options.Value.Cors.Enabled)
 	            app.UseCors(Constants.Security.Policies.CorsPolicy);
 
-            if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled)
+            if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || options.Value.SuperUser.Enabled)
                 app.UseAuthentication();
 
             if (options.Value.Https.Enabled)
