@@ -20,7 +20,7 @@ using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class TokenOptions : FeatureToggle
+    public class TokenOptions : FeatureToggle, IProtectedFeatureScheme
     {
         public string Path { get; set; } = Constants.Tokens.DefaultPath;
 

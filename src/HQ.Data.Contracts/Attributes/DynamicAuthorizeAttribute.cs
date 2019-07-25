@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -41,7 +43,7 @@ namespace HQ.Data.Contracts.Attributes
 		{
 			get
 			{
-				if(_policy == null)
+				if (_policy == null)
 					Resolve(ServiceProvider);
 				return _policy;
 			}
@@ -63,12 +65,8 @@ namespace HQ.Data.Contracts.Attributes
 			var policyProperty = _policyProviderType.GetProperty("Policy");
 			if (policyProperty == null)
 			{
-				policyProperty = _policyProviderType.GetProperty("Policies");
-				if (policyProperty != null)
-				{
-					var reads = ReadAccessor.Create(_policyProviderType, out var members);
-					currentValue = WalkPoliciesRecursive(0, currentValue, reads, members, ref policy);
-				}
+				var reads = ReadAccessor.Create(_policyProviderType, out var members);
+				currentValue = WalkPoliciesRecursive(0, currentValue, reads, members, ref policy);
 			}
 
 			policy = policy ?? policyProperty?.GetValue(currentValue);
@@ -81,16 +79,20 @@ namespace HQ.Data.Contracts.Attributes
 			{
 				var key = member.Name;
 
-				if (_segments.Length < segmentIndex + 1 || 
-				    _segments[segmentIndex] != key || 
-				    !member.CanRead ||
-				    !reads.TryGetValue(currentValue, key, out var segment))
+				if (_segments.Length < segmentIndex + 1 ||
+					_segments[segmentIndex] != key ||
+					!member.CanRead ||
+					!reads.TryGetValue(currentValue, key, out var segment))
 					continue;
 
-				if (segment is IProtectedFeature feature)
+				if (segment is IProtectedFeatureScheme featureScheme)
 				{
-					AuthenticationSchemes = feature.Scheme;
-					policy = feature.Policy;
+					AuthenticationSchemes = featureScheme.Scheme;
+				}
+
+				if (segment is IProtectedFeaturePolicy featurePolicy)
+				{
+					policy = featurePolicy.Policy;
 				}
 
 				currentValue = segment;

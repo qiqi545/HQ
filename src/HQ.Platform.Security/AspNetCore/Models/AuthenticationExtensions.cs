@@ -55,6 +55,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
             {
 				x.DefaultScheme = tokens.Scheme;
 				x.DefaultAuthenticateScheme = tokens.Scheme;
+				x.DefaultForbidScheme = tokens.Scheme;
 				x.DefaultSignInScheme = tokens.Scheme;
 				x.DefaultSignOutScheme = tokens.Scheme;
 				x.DefaultChallengeScheme = tokens.Scheme;

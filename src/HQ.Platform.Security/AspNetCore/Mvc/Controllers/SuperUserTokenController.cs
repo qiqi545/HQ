@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Security.AspNetCore.Models;
@@ -61,8 +62,6 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
         [HttpPost]
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
-            if (!Debugger.IsAttached)
-                return NotImplementedResult();
 #if DEBUG
             var superUser = _securityOptions.Value.SuperUser;
             if (!superUser.Enabled)
@@ -113,12 +112,10 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 #endif
 		}
 
-        [Authorize]
-        [HttpPut]
+		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
+		[HttpPut]
         public IActionResult VerifyToken()
         {
-	        if (!Debugger.IsAttached)
-		        return NotImplemented();
 #if DEBUG
 	        if (!_securityOptions.Value.SuperUser.Enabled)
 		        return NotFound();

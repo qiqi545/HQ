@@ -72,7 +72,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			_logger = logger;
 		}
 
-		[Authorize]
+		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
 		[HttpPut]
 		public IActionResult VerifyToken()
 		{

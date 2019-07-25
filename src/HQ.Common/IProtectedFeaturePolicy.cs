@@ -12,8 +12,10 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
-
 namespace HQ.Common
 {
-	public interface IProtectedFeature : IProtectedFeatureScheme, IProtectedFeaturePolicy { }
+	public interface IProtectedFeaturePolicy
+	{
+		string Policy { get; }
+	}
 }
