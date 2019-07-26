@@ -34,7 +34,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 
 			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
 
-			services.AddSingleton(r =>
+			services.AddSingleton<IDynamicComponent>(r =>
 			{
 				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
 				return new SuperUserComponent
@@ -46,7 +46,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
 			{
 				var components = r.GetServices<IDynamicComponent>();
-				return new DynamicFilterProvider(components);
+				return new DynamicAuthorizeFilterProvider(components);
 			});
 
 			return mvcBuilder;
@@ -58,7 +58,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 
 			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
 
-			services.AddSingleton(r =>
+			services.AddSingleton<IDynamicComponent>(r =>
 			{
 				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
 
@@ -71,7 +71,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
 			{
 				var components = r.GetServices<IDynamicComponent>();
-				return new DynamicFilterProvider(components);
+				return new DynamicAuthorizeFilterProvider(components);
 			});
 
 			return services;

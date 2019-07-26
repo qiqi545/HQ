@@ -24,6 +24,7 @@ using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -65,9 +66,10 @@ namespace HQ.Platform.Security.AspNetCore
 
         public static void AddDynamicAuthorization(this IServiceCollection services)
         {
+            // Authorization:
 	        services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
 	        services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-		}
+        }
 
         private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
         {

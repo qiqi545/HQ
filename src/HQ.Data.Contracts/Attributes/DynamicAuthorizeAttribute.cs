@@ -30,13 +30,10 @@ namespace HQ.Data.Contracts.Attributes
 		private readonly Type _policyProviderType;
 		private readonly string[] _segments;
 
-		public DynamicAuthorizeAttribute(Type policyProviderType, params string[] segments)
-		{
-			_policyProviderType = policyProviderType;
-			_segments = segments;
-		}
-
 		public IServiceProvider ServiceProvider { get; set; }
+
+		public string Roles { get; set; }
+		public string AuthenticationSchemes { get; set; }
 
 		private string _policy;
 		public string Policy
@@ -48,6 +45,12 @@ namespace HQ.Data.Contracts.Attributes
 				return _policy;
 			}
 			set => throw new NotSupportedException("Dynamic authorization does not support directly setting policy.");
+		}
+
+		public DynamicAuthorizeAttribute(Type policyProviderType, params string[] segments)
+		{
+			_policyProviderType = policyProviderType;
+			_segments = segments;
 		}
 
 		public void Resolve(IServiceProvider serviceProvider)
@@ -103,8 +106,5 @@ namespace HQ.Data.Contracts.Attributes
 
 			return currentValue;
 		}
-
-		public string Roles { get; set; }
-		public string AuthenticationSchemes { get; set; }
 	}
 }

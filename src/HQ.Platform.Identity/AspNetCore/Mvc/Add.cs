@@ -139,7 +139,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 				mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
 				{
 					var components = r.GetServices<IDynamicComponent>();
-					return new DynamicFilterProvider(components);
+					return new DynamicAuthorizeFilterProvider(components);
 				});
 			}
         }

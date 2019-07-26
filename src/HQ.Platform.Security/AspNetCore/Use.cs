@@ -16,6 +16,7 @@
 using HQ.Common;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore
@@ -31,7 +32,10 @@ namespace HQ.Platform.Security.AspNetCore
 	            app.UseCors(Constants.Security.Policies.CorsPolicy);
 
             if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || options.Value.SuperUser.Enabled)
-                app.UseAuthentication();
+            {
+				// app.UseEndpointRouting(); // UseRouting in ASP.NET Core 3.0
+				app.UseAuthentication();
+            }
 
             if (options.Value.Https.Enabled)
             {
