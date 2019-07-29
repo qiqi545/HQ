@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -294,8 +295,10 @@ namespace HQ.Data.Contracts.Mvc
 				}
 
 				//
-				// Body Definition:
-				if (bodyParameter != null)
+				// Body Definition (roots only):
+				if (bodyParameter != null &&
+					bodyParameter.Type != null &&
+					!typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
 				{
 					item.request.body = new
 					{
