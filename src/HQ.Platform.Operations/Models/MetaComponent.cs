@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Operations.Controllers;
 
 namespace HQ.Platform.Operations.Models
 {
@@ -23,7 +24,7 @@ namespace HQ.Platform.Operations.Models
 	{
 		public override IEnumerable<Type> ControllerTypes => new[]
 		{
-			typeof(MetaComponent)
+			typeof(MetaController)
 		};
 	}
 }

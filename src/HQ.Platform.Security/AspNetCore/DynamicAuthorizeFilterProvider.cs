@@ -78,9 +78,9 @@ namespace HQ.Platform.Security.AspNetCore
 
 		private Type ResolveComponentControllerType(ControllerContext context)
 		{
+			var type = context.ActionDescriptor.ControllerTypeInfo.AsType();
 			foreach (var entry in _components)
 			{
-				var type = context.ActionDescriptor.ControllerTypeInfo.AsType();
 				if (type.IsGenericType)
 					type = type.GetGenericTypeDefinition();
 
