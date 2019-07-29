@@ -270,7 +270,7 @@ namespace HQ.Data.Contracts.Mvc
 
 				//
 				// Token Capture:
-				if (item.request.method == "POST" && bodyParameter?.Type == typeof(BearerTokenRequest))
+				if (item.request.method == "POST" && bodyParameter?.Type?.Name == "BearerTokenRequest")
 				{
 					item.@event.Add(new
 					{
