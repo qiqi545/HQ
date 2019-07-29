@@ -56,13 +56,14 @@ namespace HQ.Platform.Security.AspNetCore
 
 			RemoveUnrelatedFilters(context);
 
-			if (!controllerType.HasAttribute<DynamicAuthorizeAttribute>())
+			var attributes = context.ActionContext.ActionDescriptor.EndpointMetadata.OfType<DynamicAuthorizeAttribute>();
+			// ReSharper disable once PossibleMultipleEnumeration
+			if (!attributes.Any())
 			{
 				base.ProvideFilter(context, filterItem);
 				return;
 			}
 
-			var attributes = context.ActionContext.ActionDescriptor.EndpointMetadata.OfType<DynamicAuthorizeAttribute>();
 			var serviceProvider = context.ActionContext.HttpContext.RequestServices;
 
 			// ReSharper disable once PossibleMultipleEnumeration
@@ -82,12 +83,12 @@ namespace HQ.Platform.Security.AspNetCore
 				break;
 			}
 
-			if(index > -1)
+			if (index > -1)
 			{
 				base.ProvideFilter(context, filterItem);
 				return;
 			}
-			
+
 			var policyProvider = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
 			// ReSharper disable once PossibleMultipleEnumeration
 			var authorize = new DynamicAuthorizeFilter(policyProvider, attributes);

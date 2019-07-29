@@ -263,13 +263,38 @@ namespace HQ.Data.Contracts.Mvc
 				protocolProfileBehavior = new { }
 			};
 
-			//
-			// Body Definition:
 			if (description.SupportedRequestFormats.Count > 0)
 			{
 				var bodyParameter = description.ParameterDescriptions.SingleOrDefault(
 					x => x.Source.IsFromRequest && x.Source.Id == "Body");
 
+				//
+				// Token Capture:
+				if (item.request.method == "POST" && bodyParameter?.Type == typeof(BearerTokenRequest))
+				{
+					item.@event.Add(new
+					{
+						listen = "test",
+						script = new
+						{
+							id = "66a87d23-bc0e-432c-acee-cb48d3704947",
+							exec = new List<string>
+							{
+								"var data = JSON.parse(responseBody);\r",
+								"postman.setGlobalVariable(\"accessToken\", data.accessToken);"
+							},
+							type = "text/javascript"
+						}
+					});
+					item.request.body = new
+					{
+						mode = "raw",
+						raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
+					};
+				}
+
+				//
+				// Body Definition:
 				if (bodyParameter != null)
 				{
 					item.request.body = new
@@ -280,31 +305,6 @@ namespace HQ.Data.Contracts.Mvc
 						)
 					};
 				}
-			}
-
-			//
-			// Token Capture:
-			if (item.name == "tokens" && item.request.method == "POST")
-			{
-				item.@event.Add(new
-				{
-					listen = "test",
-					script = new
-					{
-						id = "66a87d23-bc0e-432c-acee-cb48d3704947",
-						exec = new List<string>
-						{
-							"var data = JSON.parse(responseBody);\r",
-							"postman.setGlobalVariable(\"accessToken\", data.accessToken);"
-						},
-						type = "text/javascript"
-					}
-				});
-				item.request.body = new
-				{
-					mode = "raw",
-					raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
-				};
 			}
 
 			//
