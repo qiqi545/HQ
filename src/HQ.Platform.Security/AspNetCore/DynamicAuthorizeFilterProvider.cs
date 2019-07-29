@@ -22,8 +22,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Internal;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using TypeKitchen;
 
 namespace HQ.Platform.Security.AspNetCore
@@ -52,28 +54,59 @@ namespace HQ.Platform.Security.AspNetCore
 				return;
 			}
 
-			var attributes = controllerType.GetAttributes<DynamicAuthorizeAttribute>().ToList();
-			if (attributes.Count == 0)
+			RemoveUnrelatedFilters(context);
+
+			if (!controllerType.HasAttribute<DynamicAuthorizeAttribute>())
 			{
 				base.ProvideFilter(context, filterItem);
 				return;
 			}
 
-			foreach (var attribute in attributes)
-				attribute.Resolve(context.ActionContext.HttpContext.RequestServices);
+			var attributes = context.ActionContext.ActionDescriptor.EndpointMetadata.OfType<DynamicAuthorizeAttribute>();
+			var serviceProvider = context.ActionContext.HttpContext.RequestServices;
 
-			var authorizeFilter = new AuthorizeFilter(attributes);
-			foreach (var result in context.Results)
+			// ReSharper disable once PossibleMultipleEnumeration
+			foreach (var attribute in attributes)
 			{
-				if (!(result.Descriptor.Filter is AuthorizeFilter existing))
+				attribute.Resolve(serviceProvider);
+			}
+
+			var index = -1;
+			for (var i = 0; i < context.Results.Count; i++)
+			{
+				var result = context.Results[i];
+				if (!(result.Descriptor.Filter is DynamicAuthorizeFilter existing))
 					continue;
 				result.Filter = existing;
+				index = i;
+				break;
+			}
+
+			if(index > -1)
+			{
 				base.ProvideFilter(context, filterItem);
 				return;
 			}
+			
+			var policyProvider = serviceProvider.GetRequiredService<IAuthorizationPolicyProvider>();
+			// ReSharper disable once PossibleMultipleEnumeration
+			var authorize = new DynamicAuthorizeFilter(policyProvider, attributes);
+			var descriptor = new FilterDescriptor(authorize, FilterScope.Controller);
+			var filter = new FilterItem(descriptor) { Filter = authorize };
+			context.Results.Add(filter);
 
-			context.Results.Add(new FilterItem(new FilterDescriptor(authorizeFilter, FilterScope.Controller)));
 			base.ProvideFilter(context, filterItem);
+		}
+
+		private static void RemoveUnrelatedFilters(FilterProviderContext context)
+		{
+			for (var i = context.Results.Count - 1; i >= 0; i--)
+			{
+				var result = context.Results[i];
+				if (!(result.Descriptor.Filter is AuthorizeFilter) || result.Descriptor.Filter is DynamicAuthorizeFilter)
+					continue;
+				context.Results.Remove(result);
+			}
 		}
 
 		private Type ResolveComponentControllerType(ControllerContext context)
