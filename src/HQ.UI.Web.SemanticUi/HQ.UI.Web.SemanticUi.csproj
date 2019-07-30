@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.UI.Web\HQ.UI.Web.csproj" />
   </ItemGroup>
 

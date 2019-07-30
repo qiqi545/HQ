@@ -33,7 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
   </ItemGroup>
 
