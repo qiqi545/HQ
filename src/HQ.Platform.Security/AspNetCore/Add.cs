@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using HQ.Common;
 using HQ.Extensions.Logging;
@@ -24,7 +23,6 @@ using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
@@ -37,163 +35,177 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 namespace HQ.Platform.Security.AspNetCore
 {
 	public static class Add
-    {
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
-        {
-            return AddSecurityPolicies(services, config.Bind, logger);
-        }
+	{
+		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
+		{
+			return AddSecurityPolicies(services, config.Bind, logger);
+		}
 
-        public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
-	        Action<SecurityOptions> configureSecurityAction = null, ISafeLogger logger = null)
-        {
-            Bootstrap.EnsureInitialized();
-            Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));
+		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
+			Action<SecurityOptions> configureSecurityAction = null, ISafeLogger logger = null)
+		{
+			Bootstrap.EnsureInitialized();
+			Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));
 
-            var options = new SecurityOptions(true);
-            configureSecurityAction?.Invoke(options);
-			if(configureSecurityAction != null)
-				services.Configure(configureSecurityAction);
+			var options = new SecurityOptions(true);
+			configureSecurityAction?.Invoke(options);
+			AuthenticationExtensions.MaybeSetSecurityKeys(options);
+
+			if (configureSecurityAction != null)
+			{
+				services.Configure<SecurityOptions>(o =>
+				{
+					configureSecurityAction.Invoke(o);
+					o.Signing = options.Signing;
+					o.Encrypting = options.Encrypting;
+				});
+			}
+
 			services.ConfigureOptions<ConfigureWebServer>();
 
-            AddDynamicAuthorization(services);
-            AddCors(services, logger, options.Cors);
-            AddAuthentication(services, logger, options.SuperUser, options.Tokens, options.Cookies, options.Claims);
-            AddSuperUser(services, logger, options.SuperUser);
+			AddDynamicAuthorization(services);
+			AddCors(services, logger, options.Cors);
+			AddAuthentication(services, logger, options);
+			AddSuperUser(services, logger, options.SuperUser);
 			AddHttps(services, logger, options);
 
-            return services;
-        }
+			return services;
+		}
 
-        public static void AddDynamicAuthorization(this IServiceCollection services)
-        {
-            // Authorization:
-	        services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
-	        services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-        }
+		public static void AddDynamicAuthorization(this IServiceCollection services)
+		{
+			// Authorization:
+			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
+			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
+		}
 
-        private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
-        {
-	        if (!cors.Enabled)
-		        return;
+		private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
+		{
+			if (!cors.Enabled)
+				return;
 
-	        logger?.Trace(() => "CORS enabled.");
+			logger?.Trace(() => "CORS enabled.");
 
-	        services.AddCors(o =>
-	        {
-		        o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
-		        {
-			        builder
-				        .WithOrigins(cors.Origins ?? new[] {"*"})
-				        .WithMethods(cors.Methods ?? new[] {"*"})
-				        .WithHeaders(cors.Headers ?? new[] {"*"})
-				        .WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
+			services.AddCors(o =>
+			{
+				o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
+				{
+					builder
+						.WithOrigins(cors.Origins ?? new[] { "*" })
+						.WithMethods(cors.Methods ?? new[] { "*" })
+						.WithHeaders(cors.Headers ?? new[] { "*" })
+						.WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
 
-			        if (cors.AllowCredentials)
-				        builder.AllowCredentials();
-			        else
-				        builder.DisallowCredentials();
+					if (cors.AllowCredentials)
+						builder.AllowCredentials();
+					else
+						builder.DisallowCredentials();
 
-			        if (cors.AllowOriginWildcards)
-				        builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+					if (cors.AllowOriginWildcards)
+						builder.SetIsOriginAllowedToAllowWildcardSubdomains();
 
-			        if (cors.PreflightMaxAgeSeconds.HasValue)
-				        builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
-		        });
-	        });
+					if (cors.PreflightMaxAgeSeconds.HasValue)
+						builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
+				});
+			});
 
-	        services.AddMvc(o =>
-	        {
-		        o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
-	        });
-        }
+			services.AddMvc(o =>
+			{
+				o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
+			});
+		}
 
-        private static void AddHttps(IServiceCollection services, ISafeLogger logger, SecurityOptions options)
-        {
-	        if (options.Https.Enabled)
-	        {
-		        logger?.Trace(() => "HTTPS enabled.");
+		private static void AddHttps(IServiceCollection services, ISafeLogger logger, SecurityOptions options)
+		{
+			if (options.Https.Enabled)
+			{
+				logger?.Trace(() => "HTTPS enabled.");
 
-		        services.AddHttpsRedirection(o =>
-		        {
-			        o.HttpsPort = null;
-			        o.RedirectStatusCode = options.Https.Hsts.Enabled ? 307 : 301;
-		        });
+				services.AddHttpsRedirection(o =>
+				{
+					o.HttpsPort = null;
+					o.RedirectStatusCode = options.Https.Hsts.Enabled ? 307 : 301;
+				});
 
-		        if (options.Https.Hsts.Enabled)
-		        {
-			        logger?.Trace(() => "HSTS enabled.");
+				if (options.Https.Hsts.Enabled)
+				{
+					logger?.Trace(() => "HSTS enabled.");
 
-			        services.AddHsts(o =>
-			        {
-				        o.MaxAge = options.Https.Hsts.HstsMaxAge;
-				        o.IncludeSubDomains = options.Https.Hsts.IncludeSubdomains;
-				        o.Preload = options.Https.Hsts.Preload;
-			        });
-		        }
-	        }
-        }
+					services.AddHsts(o =>
+					{
+						o.MaxAge = options.Https.Hsts.HstsMaxAge;
+						o.IncludeSubDomains = options.Https.Hsts.IncludeSubdomains;
+						o.Preload = options.Https.Hsts.Preload;
+					});
+				}
+			}
+		}
 
-        private static void AddAuthentication(IServiceCollection services, ISafeLogger logger,
-	        SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
-        {
-	        if (tokens.Enabled || cookies.Enabled || superUser.Enabled)
-	        {
-		        if (!tokens.Enabled && !cookies.Enabled && superUser.Enabled)
-		        {
-			        logger?.Trace(() => "Authentication enabled for super user only.");
-		        }
-		        else
-		        {
-			        logger?.Trace(() => "Authentication enabled.");
-		        }
+		private static void AddAuthentication(IServiceCollection services, ISafeLogger logger, SecurityOptions security)
+		{
+			var tokens = security.Tokens;
+			var cookies = security.Cookies;
+			var superUser = security.SuperUser;
+			var claims = security.Claims;
 
-		        services.AddAuthentication(superUser, tokens, cookies, claims);
-	        }
+			if (tokens.Enabled || cookies.Enabled || superUser.Enabled)
+			{
+				if (!tokens.Enabled && !cookies.Enabled && superUser.Enabled)
+				{
+					logger?.Trace(() => "Authentication enabled for super user only.");
+				}
+				else
+				{
+					logger?.Trace(() => "Authentication enabled.");
+				}
 
-	        if (tokens.Enabled || superUser.Enabled)
-	        {
-		        services.AddAuthorization(x =>
-		        {
-			        TryAddDefaultPolicy(services, logger, x, tokens.Scheme);
-		        });
-	        }
+				services.AddAuthentication(security, superUser, tokens, cookies, claims);
+			}
 
-	        if (cookies.Enabled)
-	        {
-		        services.AddAuthorization(x =>
-		        {
-			        TryAddDefaultPolicy(services, logger, x, cookies.Scheme);
-		        });
-	        }
-        }
+			if (tokens.Enabled || superUser.Enabled)
+			{
+				services.AddAuthorization(x =>
+				{
+					TryAddDefaultPolicy(services, logger, x, tokens.Scheme);
+				});
+			}
 
-        private static void AddSuperUser(IServiceCollection services, ISafeLogger logger, SuperUserOptions options)
-        {
-	        if (options.Enabled)
-	        {
-		        logger?.Trace(() => $"SuperUser enabled.");
+			if (cookies.Enabled)
+			{
+				services.AddAuthorization(x =>
+				{
+					TryAddDefaultPolicy(services, logger, x, cookies.Scheme);
+				});
+			}
+		}
 
-		        services.AddAuthorization(x =>
-		        {
+		private static void AddSuperUser(IServiceCollection services, ISafeLogger logger, SuperUserOptions options)
+		{
+			if (options.Enabled)
+			{
+				logger?.Trace(() => $"SuperUser enabled.");
+
+				services.AddAuthorization(x =>
+				{
 					if (x.GetPolicy(Constants.Security.Policies.SuperUserOnly) == null)
-				        x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
-					        builder => { builder.RequireRoleExtended(services, ClaimValues.SuperUser); });
-		        });
-	        }
-        }
+						x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
+							builder => { builder.RequireRoleExtended(services, ClaimValues.SuperUser); });
+				});
+			}
+		}
 
-        private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
-        {
-	        if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
-	        {
-				Trace.WriteLine($"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered.");
-		        return;
-	        }
+		private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
+		{
+			if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
+			{
+				logger?.Info(() => $"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered.");
+				return;
+			}
 
-			Trace.WriteLine($"Registering default policy with scheme '{scheme}'.");
-	        x.DefaultPolicy = new AuthorizationPolicyBuilder(scheme)
-		        .RequireAuthenticatedUserExtended(services)
-		        .Build();
-        }
-    }
+			logger?.Info(() => $"Registering default policy with scheme '{scheme}'.");
+			x.DefaultPolicy = new AuthorizationPolicyBuilder(scheme)
+				.RequireAuthenticatedUserExtended(services)
+				.Build();
+		}
+	}
 }

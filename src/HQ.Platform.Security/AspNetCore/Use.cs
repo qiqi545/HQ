@@ -16,35 +16,33 @@
 using HQ.Common;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore
 {
-    public static class Use
-    {
-        public static IApplicationBuilder UseSecurityPolicies(this IApplicationBuilder app)
-        {
-            if (!(app.ApplicationServices.GetService(typeof(IOptions<SecurityOptions>)) is IOptions<SecurityOptions> options))
-                return app;
+	public static class Use
+	{
+		public static IApplicationBuilder UseSecurityPolicies(this IApplicationBuilder app)
+		{
+			var options = app.ApplicationServices.GetRequiredService<IOptions<SecurityOptions>>();
 
-            if (options.Value.Cors.Enabled)
-	            app.UseCors(Constants.Security.Policies.CorsPolicy);
+			if (options.Value.Cors.Enabled)
+				app.UseCors(Constants.Security.Policies.CorsPolicy);
 
-            if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || options.Value.SuperUser.Enabled)
-            {
-				// app.UseEndpointRouting(); // UseRouting in ASP.NET Core 3.0
+			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || options.Value.SuperUser.Enabled)
+			{
 				app.UseAuthentication();
-            }
+			}
 
-            if (options.Value.Https.Enabled)
-            {
-	            app.UseHttpsRedirection();
+			if (options.Value.Https.Enabled)
+			{
+				app.UseHttpsRedirection();
 
-	            return !options.Value.Https.Hsts.Enabled ? app : app.UseHsts();
-            }
+				return !options.Value.Https.Hsts.Enabled ? app : app.UseHsts();
+			}
 
-            return app;
-        }
-    }
+			return app;
+		}
+	}
 }

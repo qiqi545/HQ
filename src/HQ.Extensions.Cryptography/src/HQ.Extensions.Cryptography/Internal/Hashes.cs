@@ -35,7 +35,7 @@ namespace HQ.Extensions.Cryptography.Internal
             CryptoConfig.AddAlgorithm(typeof(GenericHash.GenericHashAlgorithm), Blake2BDefaultHashName, "Blake-2b");
         }
 
-#if NETCOREAPP
+#if false
         public static void ComputeHash(byte[] buffer, byte[] hash, HashType type, HashSource source)
         {
             if (CryptoConfig.AllowOnlyFipsAlgorithms && source != HashSource.SystemNetFips)
@@ -183,7 +183,7 @@ namespace HQ.Extensions.Cryptography.Internal
             }
         }
 
-#if NETCOREAPP
+#if false
         private static void ManagedHash(HashType type, ReadOnlySpan<byte> buffer, Span<byte> destination)
         {
             TryComputeHash(type, buffer, destination, Md5Managed, Sha1Managed, Sha256Managed, Sha384Managed, Sha512Managed);

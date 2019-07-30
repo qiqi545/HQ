@@ -51,9 +51,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
 	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
-		private readonly IOptions<SecurityOptions> _securityOptions;
+		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
 
-        public SuperUserTokenController(IOptions<SecurityOptions> securityOptions)
+        public SuperUserTokenController(IOptionsMonitor<SecurityOptions> securityOptions)
         {
             _securityOptions = securityOptions;
         }
@@ -63,14 +63,14 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
 #if DEBUG
-            var superUser = _securityOptions.Value.SuperUser;
-            if (!superUser.Enabled)
+            if (!Enabled)
                 return NotFoundResult();
 
             if (!ValidModelState(out var error))
                 return Task.FromResult((IActionResult) error);
 
             bool isSuperUser;
+			var superUser = _securityOptions.CurrentValue.SuperUser;
             switch (model.IdentityType)
             {
                 case IdentityType.Username:
@@ -93,16 +93,16 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
             }
 
             var encoding = Encoding.UTF8;
-            if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.Value.SuperUser.Password)))
+            if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.CurrentValue.SuperUser.Password)))
             {
                 Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
                 var claims = new List<Claim>
                 {
-                    new Claim(_securityOptions?.Value?.Claims?.RoleClaim ?? ClaimTypes.Role,
+                    new Claim(_securityOptions?.CurrentValue?.Claims?.RoleClaim ?? ClaimTypes.Role,
 						 ClaimValues.SuperUser)
                 };
                 var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
-                var token = provider.CreateToken(claims, _securityOptions.Value, ApiVersion, ApiName);
+                var token = provider.CreateToken(claims, _securityOptions.CurrentValue, ApiVersion, ApiName);
                 return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
             }
 
@@ -117,7 +117,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
         public IActionResult VerifyToken()
         {
 #if DEBUG
-	        if (!_securityOptions.Value.SuperUser.Enabled)
+	        if (!Enabled)
 		        return NotFound();
 
 	        if (User.Identity == null)
@@ -131,5 +131,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			return NotImplemented();
 #endif
         }
-	}
+
+        private bool Enabled => _securityOptions.CurrentValue.SuperUser.Enabled;
+    }
 }

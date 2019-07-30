@@ -15,6 +15,11 @@
 
 #endregion
 
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.Serialization;
+using Microsoft.IdentityModel.Tokens;
+
 namespace HQ.Platform.Security.Configuration
 {
     public class SecurityOptions
@@ -28,6 +33,12 @@ namespace HQ.Platform.Security.Configuration
         public WebServerOptions WebServer { get; set; } = new WebServerOptions();
         public CorsOptions Cors { get; set; }
         public CookieOptions Cookies { get; set; } = new CookieOptions();
+
+		[NotMapped, IgnoreDataMember]
+		internal SigningCredentials Signing { get; set; }
+
+		[NotMapped, IgnoreDataMember]
+		internal EncryptingCredentials Encrypting { get; set; }
 
         public SecurityOptions() : this(false) { }
 
