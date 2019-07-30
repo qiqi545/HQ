@@ -27,6 +27,7 @@ namespace HQ.Extensions.Dates
 	/// </summary>
 	public struct DateTimeZone : IEquatable<DateTimeZone>, IEquatable<DateTimeOffset>, IComparable<DateTimeZone>, IComparable<DateTimeOffset>, IFormattable, IComparable, ISerializable, IDeserializationCallback
 	{
+		private const string CoordinatedUniversalTime = "Coordinated Universal Time";
 		private readonly DateTimeOffset _instant;
 		private readonly TimeZoneInfo _timeZone;
 
@@ -78,7 +79,7 @@ namespace HQ.Extensions.Dates
 			if (!TZConvert.TryGetTimeZoneInfo(ianaOrWindowsTimeZoneId, out timeZoneInfo))
 			{
 				if (!string.IsNullOrWhiteSpace(ianaOrWindowsTimeZoneId) &&
-					ianaOrWindowsTimeZoneId == "Coordinated Universal Time" ||
+					ianaOrWindowsTimeZoneId == CoordinatedUniversalTime ||
 					ianaOrWindowsTimeZoneId == TimeZoneInfo.Utc.StandardName)
 				{
 					timeZoneInfo = TimeZoneInfo.Utc;
@@ -182,7 +183,15 @@ namespace HQ.Extensions.Dates
 			((ISerializable) DateTimeOffset).GetObjectData(info, context);
 		}
 
-		public string TimeZone => TZConvert.WindowsToIana(_timeZone.StandardName);
+		public string TimeZone => GetTimeZoneName();
+
+		private string GetTimeZoneName()
+		{
+			if (_timeZone.StandardName == "Etc/UTC")
+				return CoordinatedUniversalTime;
+			TZConvert.TryWindowsToIana(_timeZone.StandardName, out var value);
+			return value;
+		}
 
 		public string ToString(string format, IFormatProvider formatProvider)
 		{
