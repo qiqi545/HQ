@@ -35,256 +35,256 @@ using TypeKitchen;
 namespace HQ.Integration.DocumentDb.Sql
 {
 	public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
-    {
-        private readonly ITypeReadAccessor _reads;
-        private readonly ITypeWriteAccessor _writes;
+	{
+		private readonly ITypeReadAccessor _reads;
+		private readonly ITypeWriteAccessor _writes;
 
-        private readonly string _slot;
+		private readonly string _slot;
 		private readonly DocumentClient _client;
-        private readonly IOptionsMonitor<DocumentDbOptions> _options;
-        
-        public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options)
-        {
-            _reads = ReadAccessor.Create(typeof(T));
-            _writes = WriteAccessor.Create(typeof(T));
-            _slot = slot;
-            _options = options;
+		private readonly IOptionsMonitor<DocumentDbOptions> _options;
 
-            var defaultSettings = new JsonSerializerSettings();
-            _client = new DocumentClient(EndpointUri, options.Get(_slot).AccountKey, defaultSettings);
+		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options)
+		{
+			_reads = ReadAccessor.Create(typeof(T));
+			_writes = WriteAccessor.Create(typeof(T));
+			_slot = slot;
+			_options = options;
 
-            CreateDatabaseIfNotExistsAsync().Wait();
-            CreateCollectionIfNotExistsAsync().Wait();
-        }
+			var defaultSettings = new JsonSerializerSettings();
+			_client = new DocumentClient(EndpointUri, options.Get(_slot).AccountKey, defaultSettings);
 
-        private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
-        private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
-        private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
+			CreateDatabaseIfNotExistsAsync().Wait();
+			CreateCollectionIfNotExistsAsync().Wait();
+		}
 
-        public async Task<Document> CreateAsync(T item)
-        {
-            await BeforeSaveAsync(item);
+		private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
+		private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
+		private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
 
-            var document = await _client.CreateDocumentAsync(CollectionUri, item);
-            
-            return document;
-        }
+		public async Task<Document> CreateAsync(T item)
+		{
+			await BeforeSaveAsync(item);
 
-        public async Task<T> RetrieveAsync(string id)
-        {
-            try
-            {
-                Document document = await _client.ReadDocumentAsync(DocumentUri(id));
-                return (T) (dynamic) document;
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == HttpStatusCode.NotFound)
-                {
-                    return default;
-                }
+			var document = await _client.CreateDocumentAsync(CollectionUri, item);
 
-                throw;
-            }
-        }
+			return document;
+		}
 
-        public async Task<long> CountAsync(Expression<Func<T, bool>> predicate = null)
-        {
-	        var queryable = CreateDocumentQuery();
+		public async Task<T> RetrieveAsync(string id)
+		{
+			try
+			{
+				Document document = await _client.ReadDocumentAsync(DocumentUri(id));
+				return (T) (dynamic) document;
+			}
+			catch (DocumentClientException e)
+			{
+				if (e.StatusCode == HttpStatusCode.NotFound)
+				{
+					return default;
+				}
+
+				throw;
+			}
+		}
+
+		public Task<long> CountAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var queryable = CreateDocumentQuery();
 			var query = predicate != null ? queryable.Where(predicate).LongCount() : queryable.LongCount();
-			return query;
-        }
+			return Task.FromResult(query);
+		}
 
-        public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection)
-        {
-            var queryable = projection(CreateDocumentQuery());
+		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection)
+		{
+			var queryable = projection(CreateDocumentQuery());
 
-            var result = await GetResultsAsync(queryable.AsDocumentQuery());
+			var result = await GetResultsAsync(queryable.AsDocumentQuery());
 
-            return result;
-        }
+			return result;
+		}
 
-        public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            var queryable = CreateDocumentQuery();
+		public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var queryable = CreateDocumentQuery();
 
-            var query = predicate != null ? queryable.Where(predicate).AsDocumentQuery() : queryable.AsDocumentQuery();
+			var query = predicate != null ? queryable.Where(predicate).AsDocumentQuery() : queryable.AsDocumentQuery();
 
-            return await GetResultsAsync(query);
-        }
+			return await GetResultsAsync(query);
+		}
 
-        public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            var results = await RetrieveAsync(predicate);
+		public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var results = await RetrieveAsync(predicate);
 
-            return results.Single();
-        }
+			return results.Single();
+		}
 
-        public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            var results = await RetrieveAsync(predicate);
+		public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var results = await RetrieveAsync(predicate);
 
-            return results.SingleOrDefault();
-        }
+			return results.SingleOrDefault();
+		}
 
-        public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            var results = await RetrieveAsync(predicate);
+		public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var results = await RetrieveAsync(predicate);
 
-            return results.First();
-        }
+			return results.First();
+		}
 
-        public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
-        {
-            var results = await RetrieveAsync(predicate);
+		public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+		{
+			var results = await RetrieveAsync(predicate);
 
-            return results.FirstOrDefault();
-        }
+			return results.FirstOrDefault();
+		}
 
-        public async Task<Document> UpdateAsync(string id, T item)
-        {
+		public async Task<Document> UpdateAsync(string id, T item)
+		{
 			return await _client.ReplaceDocumentAsync(DocumentUri(id), item);
-        }
+		}
 
-        public async Task<Document> UpsertAsync(T item)
-        {
+		public async Task<Document> UpsertAsync(T item)
+		{
 			var response = await _client.UpsertDocumentAsync(CollectionUri, item);
 
 			return response;
-        }
+		}
 
-        public async Task DeleteAsync(string id)
-        {
-            await _client.DeleteDocumentAsync(DocumentUri(id));
-        }
+		public async Task DeleteAsync(string id)
+		{
+			await _client.DeleteDocumentAsync(DocumentUri(id));
+		}
 
-        private async Task BeforeSaveAsync(T item)
-        {
-            await ValidateUniqueFields(item);
+		private async Task BeforeSaveAsync(T item)
+		{
+			await ValidateUniqueFields(item);
 
-            await TryUpdateAutoIncrementingValues(item);
-        }
+			await TryUpdateAutoIncrementingValues(item);
+		}
 
-        private async Task ValidateUniqueFields(T item)
-        {
-            IQueryable<T> queryable = null;
-            foreach (var member in AccessorMembers.Create(typeof(T)))
-            {
-                if (!member.HasAttribute<UniqueAttribute>())
-                {
-                    continue;
-                }
+		private async Task ValidateUniqueFields(T item)
+		{
+			IQueryable<T> queryable = null;
+			foreach (var member in AccessorMembers.Create(typeof(T)))
+			{
+				if (!member.HasAttribute<UniqueAttribute>())
+				{
+					continue;
+				}
 
-                queryable = queryable ?? CreateDocumentQuery();
-                queryable = queryable.Where(ComputedPredicate<T>.AsExpression(member.Name, ExpressionOperator.Equal,
-                    _reads[item, member.Name]));
-            }
+				queryable = queryable ?? CreateDocumentQuery();
+				queryable = queryable.Where(ComputedPredicate<T>.AsExpression(member.Name, ExpressionOperator.Equal,
+					_reads[item, member.Name]));
+			}
 
-            if (queryable == null)
-            {
-                return;
-            }
+			if (queryable == null)
+			{
+				return;
+			}
 
-            var query = queryable.AsDocumentQuery();
-            var results = await GetResultsAsync(query);
-            if (results.Count > 0)
-            {
-                throw new DataException("Creating document would violate unique constraints for the document type.");
-            }
-        }
-        
-        private async Task TryUpdateAutoIncrementingValues(T item)
-        {
-            foreach (var member in AccessorMembers.Create(typeof(T)))
-            {
-                if (!member.HasAttribute<AutoIncrementAttribute>())
-                    continue;
+			var query = queryable.AsDocumentQuery();
+			var results = await GetResultsAsync(query);
+			if (results.Count > 0)
+			{
+				throw new DataException("Creating document would violate unique constraints for the document type.");
+			}
+		}
 
-                if (_reads[item, member.Name] == default)
-                    continue;
+		private async Task TryUpdateAutoIncrementingValues(T item)
+		{
+			foreach (var member in AccessorMembers.Create(typeof(T)))
+			{
+				if (!member.HasAttribute<AutoIncrementAttribute>())
+					continue;
 
-                var value = await _client.GetNextValueForSequenceAsync($"AutoIncrement_{typeof(T).Name}_{member.Name}",
-	                _options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
+				if (_reads[item, member.Name] == default)
+					continue;
 
-                var typed = Convert.ChangeType(value, member.Type);
-                _writes[item, member.Name] = typed;
-            }
-        }
+				var value = await _client.GetNextValueForSequenceAsync($"AutoIncrement_{typeof(T).Name}_{member.Name}",
+					_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
 
-        private async Task CreateDatabaseIfNotExistsAsync()
-        {
-            try
-            {
-                await _client.ReadDatabaseAsync(DatabaseUri);
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == HttpStatusCode.NotFound)
-                {
-                    await _client.CreateDatabaseAsync(new Database {Id = _options.Get(_slot).DatabaseId});
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
+				var typed = Convert.ChangeType(value, member.Type);
+				_writes[item, member.Name] = typed;
+			}
+		}
 
-        private async Task CreateCollectionIfNotExistsAsync()
-        {
-            try
-            {
-                await _client.ReadDocumentCollectionAsync(CollectionUri);
-            }
-            catch (DocumentClientException e)
-            {
-                if (e.StatusCode == HttpStatusCode.NotFound)
-                {
-                    await _client.CreateDocumentCollectionAsync(DatabaseUri,
-                        new DocumentCollection {Id = _options.Get(_slot).CollectionId},
-                        new RequestOptions {OfferThroughput = _options.Get(_slot).OfferThroughput});
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
+		private async Task CreateDatabaseIfNotExistsAsync()
+		{
+			try
+			{
+				await _client.ReadDatabaseAsync(DatabaseUri);
+			}
+			catch (DocumentClientException e)
+			{
+				if (e.StatusCode == HttpStatusCode.NotFound)
+				{
+					await _client.CreateDatabaseAsync(new Database { Id = _options.Get(_slot).DatabaseId });
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
 
-        private Uri DocumentUri(string id)
-        {
-            return UriFactory.CreateDocumentUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId, id);
-        }
+		private async Task CreateCollectionIfNotExistsAsync()
+		{
+			try
+			{
+				await _client.ReadDocumentCollectionAsync(CollectionUri);
+			}
+			catch (DocumentClientException e)
+			{
+				if (e.StatusCode == HttpStatusCode.NotFound)
+				{
+					await _client.CreateDocumentCollectionAsync(DatabaseUri,
+						new DocumentCollection { Id = _options.Get(_slot).CollectionId },
+						new RequestOptions { OfferThroughput = _options.Get(_slot).OfferThroughput });
+				}
+				else
+				{
+					throw;
+				}
+			}
+		}
 
-        private IQueryable<T> CreateDocumentQuery()
-        {
-            IQueryable<T> queryable = _client.CreateDocumentQuery<T>(CollectionUri,
-                new FeedOptions {MaxItemCount = -1, EnableCrossPartitionQuery = true});
+		private Uri DocumentUri(string id)
+		{
+			return UriFactory.CreateDocumentUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId, id);
+		}
 
-            if (_options.Get(_slot).SharedCollection)
-            {
-                queryable = queryable.Where(x => x.DocumentType == DocumentTypeFactory<T>.Type);
-            }
+		private IQueryable<T> CreateDocumentQuery()
+		{
+			IQueryable<T> queryable = _client.CreateDocumentQuery<T>(CollectionUri,
+				new FeedOptions {MaxItemCount = -1, EnableCrossPartitionQuery = true});
 
-            return queryable;
-        }
+			if (_options.Get(_slot).SharedCollection)
+			{
+				queryable = queryable.Where(x => x.DocumentType == DocumentTypeFactory<T>.Type);
+			}
 
-        private static async Task<List<T>> GetResultsAsync(IDocumentQuery<T> query)
-        {
-            try
-            {
-                var results = new List<T>();
-                while (query.HasMoreResults)
-                {
-                    results.AddRange(await query.ExecuteNextAsync<T>());
-                }
-                return results;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-    }
+			return queryable;
+		}
+
+		private static async Task<List<T>> GetResultsAsync(IDocumentQuery<T> query)
+		{
+			try
+			{
+				var results = new List<T>();
+				while (query.HasMoreResults)
+				{
+					results.AddRange(await query.ExecuteNextAsync<T>());
+				}
+				return results;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+		}
+	}
 }
