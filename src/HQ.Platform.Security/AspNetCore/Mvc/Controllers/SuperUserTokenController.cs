@@ -40,8 +40,6 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
 	/// <summary>
 	/// A light-weight token issuer that only works against a super user.
-	/// While this controller is useful for setting up environments that don't use platform identity services,
-	/// it should not be used, and does not work, in a non-debugging context. 
 	/// </summary>
 	[Route("tokens")]
 	[DynamicController]
@@ -62,61 +60,56 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
         [HttpPost]
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
         {
-#if DEBUG
-            if (!Enabled)
-                return NotFoundResult();
+			if (!Enabled)
+				return NotFoundResult();
 
-            if (!ValidModelState(out var error))
-                return Task.FromResult((IActionResult) error);
+			if (!ValidModelState(out var error))
+				return Task.FromResult((IActionResult) error);
 
-            bool isSuperUser;
+			bool isSuperUser;
 			var superUser = _securityOptions.CurrentValue.SuperUser;
-            switch (model.IdentityType)
-            {
-                case IdentityType.Username:
-                    isSuperUser = superUser.Username == model.Identity;
-                    if (!isSuperUser)
-                        return NotFoundResult();
-                    break;
-                case IdentityType.Email:
-                    isSuperUser = superUser.Email == model.Identity;
-                    if (!isSuperUser)
-                        return NotFoundResult();
-                    break;
-                case IdentityType.PhoneNumber:
-                    isSuperUser = superUser.PhoneNumber == model.Identity;
-                    if (!isSuperUser)
-                        return NotFoundResult();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+			switch (model.IdentityType)
+			{
+				case IdentityType.Username:
+					isSuperUser = superUser.Username == model.Identity;
+					if (!isSuperUser)
+						return NotFoundResult();
+					break;
+				case IdentityType.Email:
+					isSuperUser = superUser.Email == model.Identity;
+					if (!isSuperUser)
+						return NotFoundResult();
+					break;
+				case IdentityType.PhoneNumber:
+					isSuperUser = superUser.PhoneNumber == model.Identity;
+					if (!isSuperUser)
+						return NotFoundResult();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
 
-            var encoding = Encoding.UTF8;
-            if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.CurrentValue.SuperUser.Password)))
-            {
-                Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
-                var claims = new List<Claim>
-                {
-                    new Claim(_securityOptions?.CurrentValue?.Claims?.RoleClaim ?? ClaimTypes.Role,
+			var encoding = Encoding.UTF8;
+			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.CurrentValue.SuperUser.Password)))
+			{
+				Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
+				var claims = new List<Claim>
+				{
+					new Claim(_securityOptions?.CurrentValue?.Claims?.RoleClaim ?? ClaimTypes.Role,
 						 ClaimValues.SuperUser)
-                };
-                var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
-                var token = provider.CreateToken(claims, _securityOptions.CurrentValue, ApiVersion, ApiName);
-                return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
-            }
+				};
+				var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
+				var token = provider.CreateToken(claims, _securityOptions.CurrentValue, ApiVersion, ApiName);
+				return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
+			}
 
-            return UnauthorizedResult();
-#else
-			return NotImplementedResult();
-#endif
+			return UnauthorizedResult();
 		}
 
 		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
 		[HttpPut]
         public IActionResult VerifyToken()
         {
-#if DEBUG
 	        if (!Enabled)
 		        return NotFound();
 
@@ -127,10 +120,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 		        return Ok(User.Claims());
 
 	        return Unauthorized();
-#else
-			return NotImplemented();
-#endif
-        }
+		}
 
         private bool Enabled => _securityOptions.CurrentValue.SuperUser.Enabled;
     }
