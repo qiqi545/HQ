@@ -80,9 +80,10 @@ namespace HQ.Data.Streaming.Tests
             var expected = 10000L;
             using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
             {
+				var range = new RangeStream(fixture.FileStream, 0, 5000);
                 var sw = Stopwatch.StartNew();
-                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
-                Assert.Equal(expected, lines);
+                var lines = LineReader.CountLines(range, Encoding.UTF8);
+                Assert.True(lines < 150);
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
