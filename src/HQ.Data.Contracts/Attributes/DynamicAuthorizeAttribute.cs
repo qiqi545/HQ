@@ -71,6 +71,15 @@ namespace HQ.Data.Contracts.Attributes
 				var reads = ReadAccessor.Create(_policyProviderType, out var members);
 				currentValue = WalkPoliciesRecursive(0, currentValue, reads, members, ref policy);
 			}
+			else
+			{
+				var schemeProperty = _policyProviderType.GetProperty("Scheme");
+				if (schemeProperty != null)
+				{
+					var scheme = schemeProperty.GetValue(currentValue);
+					AuthenticationSchemes = scheme as string ?? Constants.Security.Schemes.PlatformBearer;
+				}
+			}
 
 			policy = policy ?? policyProperty?.GetValue(currentValue);
 			_policy = policy as string ?? Constants.Security.Policies.NoPolicy;
