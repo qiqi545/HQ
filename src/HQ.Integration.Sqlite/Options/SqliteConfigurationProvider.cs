@@ -34,7 +34,7 @@ namespace HQ.Integration.Sqlite.Options
         public bool HasChildren(string key)
         {
             foreach (var entry in Data)
-                if (entry.Key.StartsWith(key, StringComparison.Ordinal))
+                if (entry.Key.StartsWith(key, StringComparison.OrdinalIgnoreCase))
                     return true;
             return false;
         }
