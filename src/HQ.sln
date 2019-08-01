@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Template", "HQ.Template\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodium.Core", "..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj", "{1821DB7C-6B15-404C-B848-9911457C8EE4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypeKitchen", "..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj", "{D9363CEC-D359-40F6-82C2-A70F23683139}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Tests", "..\test\HQ\HQ.Tests.csproj", "{3191182C-60B3-495A-B11D-A414656D0B86}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Test.Sdk", "HQ.Test.Sdk\HQ.Test.Sdk.csproj", "{86D915BA-7AE8-4982-95BF-F296C5553D45}"
@@ -72,14 +70,6 @@ Global
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.PackageSources|Any CPU.Build.0 = Release|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1821DB7C-6B15-404C-B848-9911457C8EE4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Package|Any CPU.ActiveCfg = Package|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Package|Any CPU.Build.0 = Package|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.PackageSources|Any CPU.ActiveCfg = Release|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.PackageSources|Any CPU.Build.0 = Release|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9363CEC-D359-40F6-82C2-A70F23683139}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3191182C-60B3-495A-B11D-A414656D0B86}.Package|Any CPU.ActiveCfg = Release|Any CPU
