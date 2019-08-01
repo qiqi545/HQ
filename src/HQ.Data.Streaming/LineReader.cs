@@ -18,11 +18,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics;
+using TypeKitchen;
 
 using Constants = HQ.Data.Streaming.Internal.Constants;
 
@@ -30,156 +32,27 @@ namespace HQ.Data.Streaming
 {
     public static class LineReader
     {
-        // Derived from MimeKit's MimeParser
-        private static long ReadOrCountLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
-            CancellationToken cancellationToken, IMetricsHost metrics)
-        {
-            var count = 0L;
-            var offset = stream.CanSeek ? stream.Position : 0L;
-            var from = Constants.ReadAheadSize;
-            var to = Constants.ReadAheadSize;
-            var endOfStream = false;
+	    public static string GetHeaderText<TMetadata>(string separator)
+	    {
+		    return Pooling.StringBuilderPool.Scoped(sb =>
+		    {
+			    var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberScope.Public, AccessorMemberTypes.Fields);
+			    var count = 0;
+			    foreach (var member in members)
+			    {
+				    member.TryGetAttribute(out DisplayAttribute display);
+				    var name = display?.Name ?? member.Name;
+				    sb.Append(name);
+				    count++;
+				    if (count < members.Count)
+					    sb.Append(separator);
+			    }
+		    });
+	    }
 
-            var preamble = encoding.GetPreambleBuffer();
+		#region API
 
-            unsafe
-            {
-                fixed (byte* buffer = workingBuffer)
-                {
-                    if (stream.CanSeek && stream.Position != offset)
-                    {
-                        stream.Seek(offset, SeekOrigin.Begin);
-                    }
-
-                    if (!ReadPreamble(stream, preamble, buffer, workingBuffer, ref from, ref to, ref endOfStream,
-                        cancellationToken))
-                    {
-                        throw new FormatException(ErrorStrings.UnexpectedEndOfStream);
-                    }
-
-                    do
-                    {
-                        if (ReadAhead(stream, workingBuffer, Constants.ReadAheadSize, 2, ref from, ref to,
-                                ref endOfStream,
-                                cancellationToken) <= 0)
-                        {
-                            break;
-                        }
-
-                        var position = buffer + from;
-                        var end = buffer + to;
-                        var startIndex = from;
-
-                        *end = (byte) '\n';
-
-                        while (position < end)
-                        {
-                            var alignment = (startIndex + 3) & ~3;
-                            var aligned = buffer + alignment;
-                            var start = position;
-                            var c = *aligned;
-
-                            *aligned = Constants.LineFeed;
-                            while (*position != Constants.LineFeed)
-                            {
-                                position++;
-                            }
-
-                            *aligned = c;
-
-                            if (position == aligned && c != Constants.LineFeed)
-                            {
-                                var dword = (uint*) position;
-                                uint mask;
-                                do
-                                {
-                                    mask = *dword++ ^ 0x0A0A0A0A;
-                                    mask = (mask - 0x01010101) & ~mask & 0x80808080;
-                                } while (mask == 0);
-
-                                position = (byte*) (dword - 1);
-                                while (*position != Constants.LineFeed)
-                                {
-                                    position++;
-                                }
-                            }
-
-                            var length = (int) (position - start);
-
-                            if (position < end)
-                            {
-                                length++;
-                                position++;
-                                count++;
-
-                                BytesPerSecond(metrics, length);
-                                onNewLine?.Invoke(count, false, start, length, encoding, metrics);
-                            }
-                            else if (count == 0 && position == end)
-                            {
-                                BytesPerSecond(metrics, length);
-                                onNewLine?.Invoke(count, false, start, length, encoding, metrics);
-                                return 1;
-                            }
-                            else
-                            {
-                                // line spans across the read-ahead buffer
-                                BytesPerSecond(metrics, length);
-                                onNewLine?.Invoke(count, true, start, length, encoding, metrics);
-                            }
-
-                            startIndex += length;
-                        }
-
-                        from = startIndex;
-                    } while (true);
-                }
-            }
-
-            return count;
-        }
-
-        private static void BytesPerSecond(IMetricsHost metrics, int length)
-        {
-            metrics?.Meter(typeof(LineReader), "bytes_read_per_second", "bytes", TimeUnit.Seconds).Mark(length);
-        }
-
-        #region BOM
-
-        // Derived from MimeKit's MimeParser
-        private static unsafe bool ReadPreamble(Stream stream, ReadOnlySpan<byte> preamble, byte* buffer,
-            byte[] workingBytes, ref int from, ref int to, ref bool eos, CancellationToken cancellationToken)
-        {
-            var i = 0;
-            do
-            {
-                var available = ReadAhead(stream, workingBytes, Constants.ReadAheadSize, 0, ref from, ref to, ref eos,
-                    cancellationToken);
-                if (available <= 0)
-                {
-                    from = to;
-                    return false;
-                }
-
-                var position = buffer + from;
-                var end = buffer + to;
-                while (position < end && i < preamble.Length && *position == preamble[i])
-                {
-                    i++;
-                    position++;
-                }
-
-                from = (int) (position - buffer);
-            } while (from == to);
-
-            return i == 0 || i == preamble.Length;
-        }
-
-        #endregion
-
-        #region API
-
-        public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null,
+		public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null,
             CancellationToken cancellationToken = default)
         {
             return CountLines(stream, encoding, Constants.Buffer, metrics, cancellationToken);
@@ -457,6 +330,153 @@ namespace HQ.Data.Streaming
             return true;
         }
 
-        #endregion
-    }
+		#endregion
+
+		// Derived from MimeKit's MimeParser
+		private static long ReadOrCountLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
+			CancellationToken cancellationToken, IMetricsHost metrics)
+		{
+			var count = 0L;
+			var offset = stream.CanSeek ? stream.Position : 0L;
+			var from = Constants.ReadAheadSize;
+			var to = Constants.ReadAheadSize;
+			var endOfStream = false;
+
+			var preamble = encoding.GetPreambleBuffer();
+
+			unsafe
+			{
+				fixed (byte* buffer = workingBuffer)
+				{
+					if (stream.CanSeek && stream.Position != offset)
+					{
+						stream.Seek(offset, SeekOrigin.Begin);
+					}
+
+					if (!ReadPreamble(stream, preamble, buffer, workingBuffer, ref from, ref to, ref endOfStream,
+						cancellationToken))
+					{
+						throw new FormatException(ErrorStrings.UnexpectedEndOfStream);
+					}
+
+					do
+					{
+						if (ReadAhead(stream, workingBuffer, Constants.ReadAheadSize, 2, ref from, ref to,
+								ref endOfStream,
+								cancellationToken) <= 0)
+						{
+							break;
+						}
+
+						var position = buffer + from;
+						var end = buffer + to;
+						var startIndex = from;
+
+						*end = (byte) '\n';
+
+						while (position < end)
+						{
+							var alignment = (startIndex + 3) & ~3;
+							var aligned = buffer + alignment;
+							var start = position;
+							var c = *aligned;
+
+							*aligned = Constants.LineFeed;
+							while (*position != Constants.LineFeed)
+							{
+								position++;
+							}
+
+							*aligned = c;
+
+							if (position == aligned && c != Constants.LineFeed)
+							{
+								var dword = (uint*) position;
+								uint mask;
+								do
+								{
+									mask = *dword++ ^ 0x0A0A0A0A;
+									mask = (mask - 0x01010101) & ~mask & 0x80808080;
+								} while (mask == 0);
+
+								position = (byte*) (dword - 1);
+								while (*position != Constants.LineFeed)
+								{
+									position++;
+								}
+							}
+
+							var length = (int) (position - start);
+
+							if (position < end)
+							{
+								length++;
+								position++;
+								count++;
+
+								BytesPerSecond(metrics, length);
+								onNewLine?.Invoke(count, false, start, length, encoding, metrics);
+							}
+							else if (count == 0 && position == end)
+							{
+								BytesPerSecond(metrics, length);
+								onNewLine?.Invoke(count, false, start, length, encoding, metrics);
+								return 1;
+							}
+							else
+							{
+								// line spans across the read-ahead buffer
+								BytesPerSecond(metrics, length);
+								onNewLine?.Invoke(count, true, start, length, encoding, metrics);
+							}
+
+							startIndex += length;
+						}
+
+						from = startIndex;
+					} while (true);
+				}
+			}
+
+			return count;
+		}
+
+		private static void BytesPerSecond(IMetricsHost metrics, int length)
+		{
+			metrics?.Meter(typeof(LineReader), "bytes_read_per_second", "bytes", TimeUnit.Seconds).Mark(length);
+		}
+
+		#region BOM
+
+		// Derived from MimeKit's MimeParser
+		private static unsafe bool ReadPreamble(Stream stream, ReadOnlySpan<byte> preamble, byte* buffer,
+			byte[] workingBytes, ref int from, ref int to, ref bool eos, CancellationToken cancellationToken)
+		{
+			var i = 0;
+			do
+			{
+				var available = ReadAhead(stream, workingBytes, Constants.ReadAheadSize, 0, ref from, ref to, ref eos,
+					cancellationToken);
+				if (available <= 0)
+				{
+					from = to;
+					return false;
+				}
+
+				var position = buffer + from;
+				var end = buffer + to;
+				while (position < end && i < preamble.Length && *position == preamble[i])
+				{
+					i++;
+					position++;
+				}
+
+				from = (int) (position - buffer);
+			} while (from == to);
+
+			return i == 0 || i == preamble.Length;
+		}
+
+		#endregion
+	}
 }

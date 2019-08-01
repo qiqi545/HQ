@@ -16,8 +16,13 @@
 #endregion
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Text;
+using HQ.Data.Contracts.Attributes;
 using HQ.Data.Streaming.Fields;
 using HQ.Data.Streaming.Internal;
 using HQ.Test.Sdk;
@@ -52,20 +57,20 @@ namespace HQ.Data.Streaming.Tests
                 var sw = Stopwatch.StartNew();
                 foreach (var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8, "|"))
                 {
-                    var row = new DummyData(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
-                    Assert.NotNull(row.someField.Value);
+                    var row = new DummyDataLayout(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
+                    Assert.NotNull(row.SomeField.Value);
                     lines++;
                 }
 
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
-
-        [Test]
+		
+		[Test]
         public void Can_count_lines()
         {
-            var expected = 10000L;
-            using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
+	        const long expected = 10000L;
+	        using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
             {
                 var sw = Stopwatch.StartNew();
                 var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
@@ -77,8 +82,8 @@ namespace HQ.Data.Streaming.Tests
         [Test]
         public void Can_count_lines_ranged()
         {
-            var expected = 10000L;
-            using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
+	        const long expected = 10000L;
+	        using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
             {
 				var range = new RangeStream(fixture.FileStream, 0, 5000);
                 var sw = Stopwatch.StartNew();
@@ -87,16 +92,48 @@ namespace HQ.Data.Streaming.Tests
                 Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
             }
         }
-
-        public ref struct DummyData
+		
+        [Test]
+        public void Can_get_header_text()
         {
-            public StringField someField;
-            public StringField extraFields;
+	        var header = LineReader.GetHeaderText<DummyDataMetadata>("|");
+	        Assert.NotEmpty(header, "header was not generated");
+			Trace.WriteLine(header);
+			Assert.Equal("Name", header, "header doesn't use display attribute name, if available");
+        }
 
-            public DummyData(LineConstructor constructor, Encoding encoding, byte[] separator)
+		#region Fakes
+
+		public class DummyDataMetadata
+		{
+			#region Attributes
+			[Display(Name = "Name", Description = "Name", Order = 1, ShortName = null)]
+			[Column(nameof(SomeField), TypeName = "string", Order = 1)]
+			[SensitiveData(SensitiveDataCategory.PersonallyIdentifiableInformation)]
+			[Required]
+			[ReadOnly(false)]
+			[DataMember]
+			[Description("")]
+			#endregion
+			public string SomeField;
+		}
+
+		public ref struct DummyDataLayout
+        {
+	        private readonly Encoding _encoding;
+	        private readonly byte[] _separator;
+
+	        public StringField SomeField;
+            public StringField ExtraFields;
+
+            public string HeaderText => _encoding.GetHeaderText<DummyDataMetadata>(_separator);
+
+            public DummyDataLayout(LineConstructor constructor, Encoding encoding, byte[] separator)
             {
-                someField = default;
-                extraFields = default;
+	            _encoding = encoding;
+	            _separator = separator;
+	            SomeField = default;
+                ExtraFields = default;
 
                 SetFromLineConstructor(constructor, encoding, separator);
             }
@@ -116,15 +153,15 @@ namespace HQ.Data.Streaming.Tests
                         {
                             if (line.IndexOf(Constants.CarriageReturn) > -1)
                             {
-                                someField = new StringField(start, length - 2, encoding);
+                                SomeField = new StringField(start, length - 2, encoding);
                             }
                             else if (line.IndexOf(Constants.LineFeed) > -1)
                             {
-                                someField = new StringField(start, length - 1, encoding);
+                                SomeField = new StringField(start, length - 1, encoding);
                             }
                             else
                             {
-                                someField = new StringField(start, length, encoding);
+                                SomeField = new StringField(start, length, encoding);
                             }
 
                             break;
@@ -136,11 +173,11 @@ namespace HQ.Data.Streaming.Tests
                         switch (column)
                         {
                             case 0:
-                                someField = new StringField(start, next, encoding);
+                                SomeField = new StringField(start, next, encoding);
                                 break;
                             default:
-                                extraFields = extraFields.Initialized
-                                    ? extraFields.AddLength(next)
+                                ExtraFields = ExtraFields.Initialized
+                                    ? ExtraFields.AddLength(next)
                                     : new StringField(start, next, encoding);
                                 break;
                         }
@@ -151,5 +188,7 @@ namespace HQ.Data.Streaming.Tests
                 }
             }
         }
-    }
+
+		#endregion
+	}
 }

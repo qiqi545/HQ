@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Text;
 using HQ.Data.Streaming.Internal;
@@ -23,9 +24,18 @@ namespace HQ.Data.Streaming
 {
     public static class EncodingExtensions
     {
-        #region Separator
+		#region Header
 
-        public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
+		public static string GetHeaderText<TMetadata>(this Encoding encoding, ReadOnlySpan<byte> separator)
+		{
+			return LineReader.GetHeaderText<TMetadata>(encoding.GetString(separator));
+		}
+
+		#endregion
+
+		#region Separator
+
+		public static byte[] GetSeparatorBuffer(this Encoding encoding, string separator)
         {
             if (!WorkingSeparators.TryGetValue(encoding, out var buffers))
             {
