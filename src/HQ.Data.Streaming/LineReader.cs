@@ -36,24 +36,30 @@ namespace HQ.Data.Streaming
     {
 	    public static string GetHeaderText<TMetadata>(string separator)
 	    {
-		    return Pooling.StringBuilderPool.Scoped(sb =>
-		    {
-			    var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberScope.Public, AccessorMemberTypes.Fields);
-			    var count = 0;
-			    var columns = members.Where(x => x.HasAttribute<ColumnAttribute>()).OrderBy(x => x.TryGetAttribute(out ColumnAttribute column) ? -1 : column.Order);
-			    foreach (var member in columns)
-			    {
-				    member.TryGetAttribute(out ColumnAttribute column);
-				    member.TryGetAttribute(out DisplayAttribute display);
-					var name = display?.Name ?? column.Name ?? member.Name;
-				    sb.Append(name);
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberScope.Public, AccessorMemberTypes.Fields);
 
-				    count++;
-				    if (count < members.Count)
-					    sb.Append(separator);
-			    }
-		    });
-	    }
+				// FIXME: convert to zero-alloc
+				var columns = members
+					.Where(x => x.HasAttribute<ColumnAttribute>())
+					.OrderBy(x => x.TryGetAttribute(out ColumnAttribute column) ? -1 : column.Order)
+					.ToArray();
+
+				var i = 0;
+				foreach (var member in columns)
+				{
+					member.TryGetAttribute(out ColumnAttribute column);
+					member.TryGetAttribute(out DisplayAttribute display);
+					var name = display?.Name ?? column.Name ?? member.Name;
+					sb.Append(name);
+
+					i++;
+					if (i < columns.Length)
+						sb.Append(separator);
+				}
+			});
+		}
 
 		#region API
 
