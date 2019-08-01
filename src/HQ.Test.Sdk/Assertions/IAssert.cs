@@ -36,6 +36,8 @@ namespace HQ.Test.Sdk.Assertions
 		void StrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 		void NotEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 		void NotStrictEqual<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+		void Same<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
+		void NotSame<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs);
 
 		void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs);
 		void All<T>(IEnumerable<T> collection, Action<T> action, string userMessage = null, params object[] userMessageArgs);

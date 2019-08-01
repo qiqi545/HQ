@@ -144,6 +144,32 @@ namespace HQ.Test.Sdk.Xunit
 			}
 		}
 
+		public void Same<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+		{
+			try
+			{
+				Assert.Same(expected, actual);
+			}
+			catch (SameException)
+			{
+				TryLogUserMessage(userMessage, userMessageArgs);
+				throw;
+			}
+		}
+
+		public void NotSame<T>(T expected, T actual, string userMessage = null, params object[] userMessageArgs)
+		{
+			try
+			{
+				Assert.NotSame(expected, actual);
+			}
+			catch (NotSameException)
+			{
+				TryLogUserMessage(userMessage, userMessageArgs);
+				throw;
+			}
+		}
+
 
 		public void Single(IEnumerable collection, string userMessage = null, params object[] userMessageArgs)
         {
