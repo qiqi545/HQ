@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageReference Include="TypeKitchen" Version="1.0.0" />
   </ItemGroup>
 
 </Project>

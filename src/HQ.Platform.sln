@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\LICENSE.txt = ..\LICENSE.txt
 		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
+		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{6D40E97F-D9D8-4434-9FD3-EDA361C01081}"
@@ -115,6 +116,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Numerics.Tests", "..\test\HQ.Extensions.Numerics.Tests\HQ.Extensions.Numerics.Tests.csproj", "{476A4C23-13D5-4A44-BDEA-A807CE137756}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Integration.Tests", "..\test\HQ.Integration.Tests\HQ.Integration.Tests.csproj", "{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging", "HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\HQ.Extensions.Messaging.csproj", "{34839922-6BDD-4CA3-8CD6-E7E8A830748E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Tests", "..\test\HQ.Extensions.Messaging.Tests\HQ.Extensions.Messaging.Tests.csproj", "{85CF9678-EA77-43FD-ACF8-62EA488A913B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -405,6 +410,18 @@ Global
 		{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Package|Any CPU.Build.0 = Package|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -457,6 +474,8 @@ Global
 		{8C6CFAD5-F686-4261-AF50-E127ED3AA3B2} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 		{476A4C23-13D5-4A44-BDEA-A807CE137756} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 		{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
+		{34839922-6BDD-4CA3-8CD6-E7E8A830748E} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
+		{85CF9678-EA77-43FD-ACF8-62EA488A913B} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
