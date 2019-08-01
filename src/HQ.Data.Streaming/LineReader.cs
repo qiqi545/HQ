@@ -19,7 +19,9 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,11 +40,14 @@ namespace HQ.Data.Streaming
 		    {
 			    var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberScope.Public, AccessorMemberTypes.Fields);
 			    var count = 0;
-			    foreach (var member in members)
+			    var columns = members.Where(x => x.HasAttribute<ColumnAttribute>()).OrderBy(x => x.TryGetAttribute(out ColumnAttribute column) ? -1 : column.Order);
+			    foreach (var member in columns)
 			    {
+				    member.TryGetAttribute(out ColumnAttribute column);
 				    member.TryGetAttribute(out DisplayAttribute display);
-				    var name = display?.Name ?? member.Name;
+					var name = display?.Name ?? column.Name ?? member.Name;
 				    sb.Append(name);
+
 				    count++;
 				    if (count < members.Count)
 					    sb.Append(separator);

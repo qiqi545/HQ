@@ -108,7 +108,7 @@ namespace HQ.Data.Streaming.Tests
 		{
 			#region Attributes
 			[Display(Name = "Name", Description = "Name", Order = 1, ShortName = null)]
-			[Column(nameof(SomeField), TypeName = "string", Order = 1)]
+			[Column("Name", TypeName = "string", Order = 1)]
 			[SensitiveData(SensitiveDataCategory.PersonallyIdentifiableInformation)]
 			[Required]
 			[ReadOnly(false)]
