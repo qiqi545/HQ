@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -76,12 +77,27 @@ namespace HQ.Platform.Operations.Controllers
 			var saveOptionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
 			var saveOptions = _serviceProvider.GetService(saveOptionsType);
 			if (saveOptions == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter, $"Could not resolve IOptions<{type}>");
+				return NotAcceptableError(ErrorEvents.InvalidParameter, $"Could not resolve IOptions<{type}> for saving");
+
+			var validOptionsType = typeof(IValidOptionsMonitor<>).MakeGenericType(prototype);
+			var validOptions = _serviceProvider.GetService(validOptionsType);
+			if (validOptions == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter, $"Could not resolve IOptions<{type}> for validation");
 
 			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
 			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave), new [] { typeof(string), typeof(Action)});
-			if (trySaveMethod == null || valueProperty == null)
-				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: ISaveOptions<{type}> methods failed to resolve.");
+			var getMethod = typeof(IOptionsMonitor<object>).GetMethod(nameof(IOptionsMonitor<object>.Get));
+			if (trySaveMethod == null || valueProperty == null || getMethod == null)
+				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+
+			try
+			{
+				getMethod.Invoke(validOptions, new object[] { Options.DefaultName });
+			}
+			catch (ValidationException e)
+			{
+				return UnprocessableEntityError(ErrorEvents.ValidationFailed, e.ValidationResult.ErrorMessage);
+			}
 
 			SetSerialized(section, config, prototype, trySaveMethod, saveOptions, model, valueProperty);
 
@@ -105,7 +121,7 @@ namespace HQ.Platform.Operations.Controllers
 					foreach (var member in members)
 					{
 						if (member.MemberType == AccessorMemberType.Property &&
-							member.CanWrite && 
+							member.CanWrite &&
 							member.CanRead &&
 							reader.TryGetValue(result, member.Name, out var value))
 						{
