@@ -55,6 +55,14 @@ namespace HQ.Data.Contracts.Mvc
 	        return new ErrorResult(error, args);
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public IActionResult UnprocessableEntityError(long eventId, string errorMessage, params object[] args)
+        {
+	        var error = new Error(eventId, errorMessage, 422 /* HttpStatusCode.UnprocessableEntity */);
+	        return new ErrorResult(error, args);
+        }
+
 		[ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public IActionResult Error(Error error, params object[] args)

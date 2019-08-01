@@ -179,6 +179,20 @@ namespace HQ.Common.AspNetCore.Mvc
 
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
+		public Task<IActionResult> UnprocessableEntityResult()
+		{
+			return Task.FromResult((IActionResult) UnprocessableEntity());
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Task<IActionResult> UnprocessableEntityResult(object value)
+		{
+			return Task.FromResult((IActionResult) UnprocessableEntity(value));
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
 		public IActionResult StatusCode(HttpStatusCode code)
 		{
 			return StatusCode((int) code);
