@@ -41,7 +41,7 @@ namespace HQ.Extensions.Options
 
         public TOptions Get(string name)
         {
-            return _inner.Get(name).Valid(_serviceProvider);
+            return _inner.Get(name).Validate(_serviceProvider);
         }
     }
 }

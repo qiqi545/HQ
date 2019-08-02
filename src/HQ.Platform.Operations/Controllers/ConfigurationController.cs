@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using TypeKitchen;
+using ConfigurationExtensions = HQ.Extensions.Options.ConfigurationExtensions;
 
 namespace HQ.Platform.Operations.Controllers
 {
@@ -39,33 +39,30 @@ namespace HQ.Platform.Operations.Controllers
 		}
 
 		[HttpGet("")]
-		[HttpGet("{section?}")]
-		public IActionResult Get([FromRoute] string section = null)
+		[HttpGet("{section?}"), MustHaveQueryParameters("type")]
+		public IActionResult Get([FromQuery] string type, [FromRoute] string section = null)
 		{
-			return SubKeyIsMissing(section, out var notAcceptable) ? notAcceptable : GetSerialized(section);
-		}
+			if (string.IsNullOrWhiteSpace(section))
+				return NotAcceptableError(ErrorEvents.UnsafeRequest, "You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
 
-		private IActionResult GetSerialized(string section)
-		{
-			var config = _root.GetSection(section?.Replace("/", ":"));
-			if (config == null)
-				return NotFound();
+			var prototype = _typeResolver.FindFirstByName(type);
+			if (prototype == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter, $"No configuration type found with name '{type}'.");
 
-			var content = Serialize(config).ToString();
-			return Content(content, Constants.MediaTypes.Json);
+			return GetSerialized(prototype, section);
 		}
 
 		[HttpPut("")]
 		[HttpPut("{section?}"), MustHaveQueryParameters("type")]
 		public IActionResult Set([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
 		{
-			if (SubKeyIsMissing(section, out var notAcceptable))
-				return notAcceptable;
+			if (string.IsNullOrWhiteSpace(section))
+				return NotAcceptableError(ErrorEvents.UnsafeRequest, "You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
 
 			if (model == null)
 				return NotAcceptableError(ErrorEvents.InvalidRequest, "Missing configuration body.");
 
-			var config = _root.GetSection(section?.Replace("/", ":"));
+			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
 				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
 
@@ -86,72 +83,65 @@ namespace HQ.Platform.Operations.Controllers
 
 			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
 			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave), new [] { typeof(string), typeof(Action)});
-			var getMethod = typeof(IOptionsMonitor<object>).GetMethod(nameof(IOptionsMonitor<object>.Get));
-			if (trySaveMethod == null || valueProperty == null || getMethod == null)
+			if (trySaveMethod == null || valueProperty == null)
 				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+
+			var json = model.ToString();
+			var result = JsonConvert.DeserializeObject(json, prototype);
 
 			try
 			{
-				getMethod.Invoke(validOptions, new object[] { Options.DefaultName });
+				result.Validate(_serviceProvider);
 			}
 			catch (ValidationException e)
 			{
 				return UnprocessableEntityError(ErrorEvents.ValidationFailed, e.ValidationResult.ErrorMessage);
 			}
 
-			SetSerialized(section, config, prototype, trySaveMethod, saveOptions, model, valueProperty);
-
-			return GetSerialized(section);
-		}
-
-		private static void SetSerialized(string section, IConfiguration config, Type prototype, MethodBase trySaveMethod,
-			object saveOptions, object model, PropertyInfo valueMethod)
-		{
-			var json = model.ToString();
-			var result = JsonConvert.DeserializeObject(json, prototype);
-
-			trySaveMethod.Invoke(saveOptions, new object[]
+			var saved = trySaveMethod.Invoke(saveOptions, new object[]
 			{
 				section, new Action(() =>
 				{
-					var target = valueMethod.GetValue(saveOptions);
-					var writer = WriteAccessor.Create(prototype, out var members);
-					var reader = ReadAccessor.Create(prototype);
-
-					foreach (var member in members)
-					{
-						if (member.MemberType == AccessorMemberType.Property &&
-							member.CanWrite &&
-							member.CanRead &&
-							reader.TryGetValue(result, member.Name, out var value))
-						{
-							writer.TrySetValue(target, member.Name, value);
-						}
-					}
+					SaveOptions(prototype, saveOptions, valueProperty, result);
 				})
 			});
-		}
 
-		private bool SubKeyIsMissing(string section, out IActionResult result)
-		{
-			if (string.IsNullOrWhiteSpace(section))
+			if (saved is bool flag && !flag)
 			{
-				result = NotAcceptableError(ErrorEvents.UnsafeRequest, "You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
-				return true;
+				return NotModified();
 			}
-			result = null;
-			return false;
+
+			return GetSerialized(prototype, section);
 		}
 
-		public JToken Serialize(IConfiguration config)
+		private IActionResult GetSerialized(Type type, string section)
 		{
-			var instance = new JObject();
-			foreach (var child in config.GetChildren())
-				instance.Add(child.Key, Serialize(child));
+			var config = _root.GetSection(section?.Replace("/", ":"));
+			if (config == null)
+				return NotFound();
 
-			return !instance.HasValues && config is IConfigurationSection section
-				? (JToken) new JValue(section.Value)
-				: instance;
+			var template = Activator.CreateInstance(type);
+			config.Bind(template);
+
+			return Content(JsonConvert.SerializeObject(template), Constants.MediaTypes.Json);
+		}
+
+		private static void SaveOptions(Type type, object saveOptions, PropertyInfo valueProperty, object result)
+		{
+			var target = valueProperty.GetValue(saveOptions);
+			var writer = WriteAccessor.Create(type, out var members);
+			var reader = ReadAccessor.Create(type);
+
+			foreach (var member in members)
+			{
+				if (member.MemberType == AccessorMemberType.Property &&
+					member.CanWrite &&
+					member.CanRead &&
+					reader.TryGetValue(result, member.Name, out var value))
+				{
+					writer.TrySetValue(target, member.Name, value);
+				}
+			}
 		}
 	}
 }

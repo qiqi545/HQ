@@ -39,7 +39,7 @@ namespace HQ.Extensions.Options
 
         public TOptions Get(string name)
         {
-            return _snapshot.Get(name).Valid(_serviceProvider);
+            return _snapshot.Get(name).Validate(_serviceProvider);
         }
     }
 }
