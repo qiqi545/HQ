@@ -121,6 +121,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Tests", "..\test\HQ.Extensions.Messaging.Tests\HQ.Extensions.Messaging.Tests.csproj", "{85CF9678-EA77-43FD-ACF8-62EA488A913B}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodium.Tests", "..\ThirdParty\Sodium.Core\test\Sodium.Tests\Sodium.Tests.csproj", "{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -422,6 +424,12 @@ Global
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -476,6 +484,7 @@ Global
 		{7B7B0D94-30C1-4EF1-BA96-448D3AC7B123} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 		{34839922-6BDD-4CA3-8CD6-E7E8A830748E} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
+		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA} = {69CEA518-88E3-42D1-A341-7518EA873434}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
