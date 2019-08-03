@@ -122,7 +122,7 @@ namespace HQ.Platform.Operations.Controllers
 			var template = Activator.CreateInstance(type);
 			config.Bind(template);
 
-			return Content(JsonConvert.SerializeObject(template), Constants.MediaTypes.Json);
+			return Ok(template);
 		}
 
 		private static void SaveOptions(Type type, object saveOptions, PropertyInfo valueProperty, object result)
