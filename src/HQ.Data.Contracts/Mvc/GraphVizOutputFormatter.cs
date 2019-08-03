@@ -30,7 +30,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.Mvc
 {
-	public class GraphVizOutputFormatter :TextOutputFormatter
+	public class GraphVizOutputFormatter : TextOutputFormatter
 	{
 		public GraphVizOutputFormatter()
 		{
@@ -40,9 +40,7 @@ namespace HQ.Data.Contracts.Mvc
 
 		public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding encoding)
 		{
-			var rootTypeName = context.ObjectType.Name;
-			var response = context.HttpContext.Response;
-			await response.WriteAsync(GenerateDotGraph(GraphDirection.BottomToTop, context, rootTypeName));
+			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.BottomToTop, context.Object, context.ObjectType.Name));
 		}
 
 		public static string GenerateDotGraph(GraphDirection direction, object root, string rootTypeName)
@@ -132,26 +130,26 @@ namespace HQ.Data.Contracts.Mvc
 			switch (target)
 			{
 				case INode<string> node:
-				{
-					WalkNode(node, nodeColor, _openCluster, vb, nb, cb);
-					break;
-				}
+					{
+						WalkNode(node, nodeColor, _openCluster, vb, nb, cb);
+						break;
+					}
 				case IEnumerable<INode<string>> nodes:
-				{
-					WalkNodes(nodes, nodeColor, vb, nb, cb);
-					break;
-				}
+					{
+						WalkNodes(nodes, nodeColor, vb, nb, cb);
+						break;
+					}
 				case IEnumerable collection:
-				{
-					foreach (var item in collection)
-						WalkInterstitial(item, ref clusters, vb, nb, cb);
-					break;
-				}
+					{
+						foreach (var item in collection)
+							WalkInterstitial(item, ref clusters, vb, nb, cb);
+						break;
+					}
 				default:
-				{
-					WalkInterstitial(target, ref clusters, vb, nb, cb);
-					break;
-				}
+					{
+						WalkInterstitial(target, ref clusters, vb, nb, cb);
+						break;
+					}
 			}
 
 			AppendClusterEnd(cb);
@@ -159,6 +157,9 @@ namespace HQ.Data.Contracts.Mvc
 
 		private static void WalkInterstitial(object target, ref int clusters, StringBuilder vb, StringBuilder nb, StringBuilder cb)
 		{
+			if (target == null)
+				return; // empty node
+
 			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
 
 			// FIXME: add TryGetAttribute<T> to TypeKitchen for Type
@@ -168,7 +169,7 @@ namespace HQ.Data.Contracts.Mvc
 				clusters++;
 				AppendClusterStart(clusters, cb, accessor.Type.Name);
 			}
-			
+
 			foreach (var member in members)
 			{
 				if (member.TryGetAttribute(out TopologyRootAttribute _))
@@ -225,7 +226,7 @@ namespace HQ.Data.Contracts.Mvc
 		{
 			foreach (var dependent in node.Dependents)
 			{
-				if(inCluster)
+				if (inCluster)
 					cb.AppendLine($"\t\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				else
 					vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
