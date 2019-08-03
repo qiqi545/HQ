@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,30 +15,12 @@
 
 #endregion
 
-using System.Text;
+using System.Collections.Generic;
 
-namespace HQ.Data.Contracts.Tests
+namespace HQ.Data.Contracts.Tests.Fakes
 {
-    namespace V1
-    {
-        public class Person
-        {
-            public string Name { get; set; }
-
-            public int BufferSize => 1 + sizeof(int) + Encoding.UTF8.GetByteCount(Name);
-        }
-    }
-
-    namespace V2
-    {
-        public class Person
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-
-            public int BufferSize =>
-                1 + sizeof(int) + Encoding.UTF8.GetByteCount(FirstName) +
-                1 + sizeof(int) + Encoding.UTF8.GetByteCount(LastName);
-        }
-    }
+	public sealed class Graph
+	{
+		public List<Node> Nodes { get; } = new List<Node>();
+	}
 }

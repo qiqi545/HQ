@@ -18,7 +18,7 @@
 using System;
 using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Data.Contracts.Tests
+namespace HQ.Data.Contracts.Tests.Versioning
 {
     namespace V1
     {

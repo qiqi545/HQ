@@ -14,7 +14,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TypeKitchen;
-using ConfigurationExtensions = HQ.Extensions.Options.ConfigurationExtensions;
 
 namespace HQ.Platform.Operations.Controllers
 {

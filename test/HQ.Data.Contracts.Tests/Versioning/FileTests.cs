@@ -16,9 +16,8 @@
 using HQ.Data.Contracts.Versioning;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
-using Xunit;
 
-namespace HQ.Data.Contracts.Tests
+namespace HQ.Data.Contracts.Tests.Versioning
 {
     public class FileTests : UnitUnderTest
     {

@@ -15,7 +15,6 @@
 
 using System;
 using System.Linq;
-using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 

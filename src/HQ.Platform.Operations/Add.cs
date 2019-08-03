@@ -220,5 +220,15 @@ namespace HQ.Platform.Operations
 			
 			return mvcBuilder;
 		}
+
+		public static IServiceCollection AddGraphViz(this IServiceCollection services)
+		{
+			services.AddMvc(options =>
+			{
+				options.OutputFormatters.Add(new GraphVizOutputFormatter());
+			});
+
+			return services;
+		}
 	}
 }

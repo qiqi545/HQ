@@ -28,7 +28,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
-	[AttributeUsage(AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
 	public class TopologyRootAttribute : ValidationAttribute
 	{
 		public TopologyRootAttribute()

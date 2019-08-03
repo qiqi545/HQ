@@ -19,7 +19,7 @@ using System;
 using HQ.Data.Contracts.Versioning;
 using Xunit;
 
-namespace HQ.Data.Contracts.Tests
+namespace HQ.Data.Contracts.Tests.Versioning
 {
     public class SpanBufferTests
     {

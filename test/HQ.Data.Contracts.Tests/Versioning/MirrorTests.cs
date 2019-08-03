@@ -20,7 +20,7 @@ using System.IO;
 using HQ.Data.Contracts.Versioning;
 using HQ.Test.Sdk;
 
-namespace HQ.Data.Contracts.Tests
+namespace HQ.Data.Contracts.Tests.Versioning
 {
     public class MirrorTests : UnitUnderTest
     {
