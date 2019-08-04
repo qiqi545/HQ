@@ -25,12 +25,8 @@ namespace HQ.Data.Contracts
 	{
 		Task<Operation<ObjectDelete>> DeleteAsync(Type type, long id);
 		Task<Operation<ObjectDelete>> DeleteAsync(Type type, IObject @object);
-
-		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0,
-			int? count = null);
-
-		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects,
-			long startingAt = 0, int? count = null);
+		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null);
+		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
 	}
 
 	public interface IObjectDeleteRepository<in TObject> where TObject : IObject
