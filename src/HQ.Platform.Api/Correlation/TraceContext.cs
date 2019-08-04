@@ -18,7 +18,7 @@
 using HQ.Extensions.Cryptography;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Extensions.Correlation
+namespace HQ.Platform.Api.Correlation
 {
     public struct TraceContext
     {

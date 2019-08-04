@@ -15,15 +15,20 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System.Diagnostics;
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Data.Contracts.Versioning
 {
-    public class VersionContext
+    [DebuggerDisplay("{" + nameof(GroupName) + "}")]
+    public struct VersionGroup
     {
-        public static VersionContext None = new VersionContext();
-        public VersionGroup Group { get; set; }
-        public Dictionary<string, Version> Map { get; set; }
-        public string[] Identifiers { get; set; }
+        public string GroupName { get; }
+
+        public VersionGroup(short year, byte month, byte day) : this($"{year:D4}-{month:D2}-{day:D2}") { }
+
+        public VersionGroup(string groupName)
+        {
+            GroupName = groupName;
+        }
     }
 }

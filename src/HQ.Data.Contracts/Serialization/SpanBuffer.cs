@@ -21,7 +21,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.Versioning
+namespace HQ.Data.Contracts.Serialization
 {
 	public readonly ref struct SpanBuffer<T>
 	{

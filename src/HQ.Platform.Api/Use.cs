@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Serialization;
+using HQ.Data.Contracts.Versioning;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;

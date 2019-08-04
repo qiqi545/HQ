@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Common;
+using HQ.Data.Contracts.Versioning;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
 

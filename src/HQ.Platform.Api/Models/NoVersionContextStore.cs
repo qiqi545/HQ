@@ -14,6 +14,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using HQ.Data.Contracts.Versioning;
 
 namespace HQ.Platform.Api.Models
 {

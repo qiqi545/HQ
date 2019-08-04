@@ -20,7 +20,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Data.Contracts.Versioning
+namespace HQ.Data.Contracts.Serialization
 {
 	public static class BufferWriteExtensions
 	{

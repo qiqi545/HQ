@@ -19,10 +19,12 @@ using System;
 using System.Linq;
 using HQ.Common;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Versioning;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing;
+using Version = HQ.Data.Contracts.Versioning.Version;
 
 namespace HQ.Platform.Api.Models
 {

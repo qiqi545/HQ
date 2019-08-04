@@ -21,7 +21,7 @@ using System.IO;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.Versioning
+namespace HQ.Data.Contracts.Serialization
 {
 	public static class MirrorSerializer
 	{

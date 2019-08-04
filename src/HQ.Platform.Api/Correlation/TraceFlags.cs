@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Correlation
+namespace HQ.Platform.Api.Correlation
 {
     [Flags]
     public enum TraceFlags : byte

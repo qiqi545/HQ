@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.Correlation
+namespace HQ.Platform.Api.Correlation
 {
     public static class TraceFlagsExtensions
     {

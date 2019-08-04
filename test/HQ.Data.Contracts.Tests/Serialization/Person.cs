@@ -15,11 +15,30 @@
 
 #endregion
 
-namespace HQ.Platform.Api.Models
+using System.Text;
+
+namespace HQ.Data.Contracts.Tests.Serialization
 {
-    public struct Version
+    namespace V1
     {
-        public ulong Major { get; set; }
-        public ulong? Minor { get; set; }
+        public class Person
+        {
+            public string Name { get; set; }
+
+            public int BufferSize => 1 + sizeof(int) + Encoding.UTF8.GetByteCount(Name);
+        }
+    }
+
+    namespace V2
+    {
+        public class Person
+        {
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
+
+            public int BufferSize =>
+                1 + sizeof(int) + Encoding.UTF8.GetByteCount(FirstName) +
+                1 + sizeof(int) + Encoding.UTF8.GetByteCount(LastName);
+        }
     }
 }

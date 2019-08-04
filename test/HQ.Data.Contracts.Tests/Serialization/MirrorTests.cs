@@ -17,10 +17,11 @@
 
 using System;
 using System.IO;
+using HQ.Data.Contracts.Serialization;
 using HQ.Data.Contracts.Versioning;
 using HQ.Test.Sdk;
 
-namespace HQ.Data.Contracts.Tests.Versioning
+namespace HQ.Data.Contracts.Tests.Serialization
 {
     public class MirrorTests : UnitUnderTest
     {

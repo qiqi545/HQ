@@ -20,6 +20,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Data.Contracts.Versioning;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http;

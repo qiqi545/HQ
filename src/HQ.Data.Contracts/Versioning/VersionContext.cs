@@ -15,30 +15,15 @@
 
 #endregion
 
-using System.Text;
+using System.Collections.Generic;
 
-namespace HQ.Data.Contracts.Tests.Versioning
+namespace HQ.Data.Contracts.Versioning
 {
-    namespace V1
+    public class VersionContext
     {
-        public class Person
-        {
-            public string Name { get; set; }
-
-            public int BufferSize => 1 + sizeof(int) + Encoding.UTF8.GetByteCount(Name);
-        }
-    }
-
-    namespace V2
-    {
-        public class Person
-        {
-            public string FirstName { get; set; }
-            public string LastName { get; set; }
-
-            public int BufferSize =>
-                1 + sizeof(int) + Encoding.UTF8.GetByteCount(FirstName) +
-                1 + sizeof(int) + Encoding.UTF8.GetByteCount(LastName);
-        }
+        public static VersionContext None = new VersionContext();
+        public VersionGroup Group { get; set; }
+        public Dictionary<string, Version> Map { get; set; }
+        public string[] Identifiers { get; set; }
     }
 }

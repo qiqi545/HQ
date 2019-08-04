@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,25 +12,16 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
-using HQ.Data.Contracts.Versioning;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Fixtures;
+using System;
 
-namespace HQ.Data.Contracts.Tests.Versioning
+namespace HQ.Data.Contracts.Serialization
 {
-    public class FileTests : UnitUnderTest
-    {
-        [Test]
-        public void WriteTests_Simple()
-        {
-            using (var fixture = new TemporaryFileFixture())
-            {
-                var person = new V1.Person { Name = "Kawhi" };
-
-                person.Serialize(fixture.FileStream);
-            }
-        }
-    }
+	public struct SpanRef<T>
+	{
+		public IntPtr Handle;
+		public int Length;
+	}
 }

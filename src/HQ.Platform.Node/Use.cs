@@ -17,9 +17,9 @@
 
 using System;
 using HQ.Common;
-using HQ.Extensions.Correlation;
 using HQ.Extensions.Logging;
 using HQ.Platform.Api;
+using HQ.Platform.Api.Correlation;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;

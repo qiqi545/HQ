@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.Mvc;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Models

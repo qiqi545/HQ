@@ -19,7 +19,7 @@ using HQ.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Correlation
+namespace HQ.Platform.Api.Correlation
 {
     public static class Use
     {

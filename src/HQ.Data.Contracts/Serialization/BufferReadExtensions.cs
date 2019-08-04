@@ -19,7 +19,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace HQ.Data.Contracts.Versioning
+namespace HQ.Data.Contracts.Serialization
 {
 	public static class BufferReadExtensions
 	{

@@ -16,9 +16,10 @@
 #endregion
 
 using System;
+using HQ.Data.Contracts.Serialization;
 using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Data.Contracts.Tests.Versioning
+namespace HQ.Data.Contracts.Tests.Serialization
 {
     namespace V1
     {

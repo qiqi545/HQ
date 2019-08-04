@@ -20,6 +20,7 @@ using System.Net;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
+using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
