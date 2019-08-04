@@ -45,7 +45,9 @@ namespace HQ.Data.Contracts.Schema.Models
             return Scope;
         }
 
-        public bool Equals(Schema other)
+		#region Equality Members
+
+		public bool Equals(Schema other)
         {
             if (ReferenceEquals(null, other))
             {
@@ -103,5 +105,7 @@ namespace HQ.Data.Contracts.Schema.Models
         {
             return !Equals(left, right);
         }
-    }
+
+		#endregion
+	}
 }
