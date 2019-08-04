@@ -23,48 +23,48 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts
 {
-    internal static class FieldValidations
-    {
-        public static List<Error> MustExistOnType<T>(SelfEnumerable<string> fields)
-        {
-            return MustExistOnType(typeof(T), fields);
-        }
+	internal static class FieldValidations
+	{
+		public static List<Error> MustExistOnType<T>(SelfEnumerable<string> fields)
+		{
+			return MustExistOnType(typeof(T), fields);
+		}
 
-        public static List<Error> MustExistOnType(Type type, SelfEnumerable<string> fields)
-        {
-            var list = new List<Error>();
-            foreach (var field in fields)
-            {
-                var valid = false;
-                foreach (var member in AccessorMembers.Create(type))
-                    if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-                        valid = true;
-                if (!valid)
-                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
-                        string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
-                        HttpStatusCode.BadRequest));
-            }
+		public static List<Error> MustExistOnType(Type type, SelfEnumerable<string> fields)
+		{
+			var list = new List<Error>();
+			foreach (var field in fields)
+			{
+				var valid = false;
+				foreach (var member in AccessorMembers.Create(type))
+					if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+						valid = true;
+				if (!valid)
+					list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
+						string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
+						HttpStatusCode.BadRequest));
+			}
 
-            return list;
-        }
+			return list;
+		}
 
-        public static List<Error> MustExistOnType<T>(FuncEnumerable<T, string> fields)
-        {
-            var type = typeof(T);
-            var list = new List<Error>();
-            foreach (var field in fields)
-            {
-                var valid = false;
-                foreach (var member in AccessorMembers.Create(type))
-                    if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-                        valid = true;
-                if (!valid)
-                    list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
-                        string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
-                        HttpStatusCode.BadRequest));
-            }
+		public static List<Error> MustExistOnType<T>(FuncEnumerable<T, string> fields)
+		{
+			var type = typeof(T);
+			var list = new List<Error>();
+			foreach (var field in fields)
+			{
+				var valid = false;
+				foreach (var member in AccessorMembers.Create(type))
+					if (field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+						valid = true;
+				if (!valid)
+					list.Add(new Error(ErrorEvents.FieldDoesNotMatch,
+						string.Format(ErrorStrings.FieldToPropertyMismatch, field, type.Name),
+						HttpStatusCode.BadRequest));
+			}
 
-            return list;
-        }
-    }
+			return list;
+		}
+	}
 }

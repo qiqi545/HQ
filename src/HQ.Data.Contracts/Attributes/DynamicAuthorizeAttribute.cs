@@ -30,12 +30,19 @@ namespace HQ.Data.Contracts.Attributes
 		private readonly Type _policyProviderType;
 		private readonly string[] _segments;
 
+		private string _policy;
+
+		public DynamicAuthorizeAttribute(Type policyProviderType, params string[] segments)
+		{
+			_policyProviderType = policyProviderType;
+			_segments = segments;
+		}
+
 		public IServiceProvider ServiceProvider { get; set; }
 
 		public string Roles { get; set; }
 		public string AuthenticationSchemes { get; set; }
 
-		private string _policy;
 		public string Policy
 		{
 			get
@@ -45,12 +52,6 @@ namespace HQ.Data.Contracts.Attributes
 				return _policy;
 			}
 			set => throw new NotSupportedException("Dynamic authorization does not support directly setting policy.");
-		}
-
-		public DynamicAuthorizeAttribute(Type policyProviderType, params string[] segments)
-		{
-			_policyProviderType = policyProviderType;
-			_segments = segments;
 		}
 
 		public void Resolve(IServiceProvider serviceProvider)
@@ -85,27 +86,22 @@ namespace HQ.Data.Contracts.Attributes
 			_policy = policy as string ?? Constants.Security.Policies.NoPolicy;
 		}
 
-		private object WalkPoliciesRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads, AccessorMembers members, ref object policy)
+		private object WalkPoliciesRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads,
+			AccessorMembers members, ref object policy)
 		{
 			foreach (var member in members)
 			{
 				var key = member.Name;
 
 				if (_segments.Length < segmentIndex + 1 ||
-					_segments[segmentIndex] != key ||
-					!member.CanRead ||
-					!reads.TryGetValue(currentValue, key, out var segment))
+				    _segments[segmentIndex] != key ||
+				    !member.CanRead ||
+				    !reads.TryGetValue(currentValue, key, out var segment))
 					continue;
 
-				if (segment is IProtectedFeatureScheme featureScheme)
-				{
-					AuthenticationSchemes = featureScheme.Scheme;
-				}
+				if (segment is IProtectedFeatureScheme featureScheme) AuthenticationSchemes = featureScheme.Scheme;
 
-				if (segment is IProtectedFeaturePolicy featurePolicy)
-				{
-					policy = featurePolicy.Policy;
-				}
+				if (segment is IProtectedFeaturePolicy featurePolicy) policy = featurePolicy.Policy;
 
 				currentValue = segment;
 				segmentIndex++;

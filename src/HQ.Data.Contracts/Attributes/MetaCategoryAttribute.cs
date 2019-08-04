@@ -20,17 +20,18 @@ using HQ.Common;
 
 namespace HQ.Data.Contracts.Attributes
 {
-    public class MetaCategoryAttribute : Attribute
-    {
-        public string Name { get; }
-        public string Description { get; }
-        public string DescriptionMediaType { get; set; }
+	public class MetaCategoryAttribute : Attribute
+	{
+		public MetaCategoryAttribute(string name, string description,
+			string descriptionMediaType = Constants.MediaTypes.Markdown)
+		{
+			Name = name;
+			Description = description;
+			DescriptionMediaType = descriptionMediaType;
+		}
 
-        public MetaCategoryAttribute(string name, string description, string descriptionMediaType = Constants.MediaTypes.Markdown)
-        {
-            Name = name;
-            Description = description;
-            DescriptionMediaType = descriptionMediaType;
-        }
-    }
+		public string Name { get; }
+		public string Description { get; }
+		public string DescriptionMediaType { get; set; }
+	}
 }

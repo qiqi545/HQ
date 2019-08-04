@@ -22,17 +22,17 @@ using HQ.Data.Contracts.Configuration;
 
 namespace HQ.Data.Contracts
 {
-    public class FieldOptions : IQueryValidator
-    {
-        public static readonly FieldOptions Empty = new FieldOptions();
+	public class FieldOptions : IQueryValidator
+	{
+		public static readonly FieldOptions Empty = new FieldOptions();
 
-        public List<string> Fields { get; } = new List<string>();
+		public List<string> Fields { get; } = new List<string>();
 
-        public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
-        {
-            var list = FieldValidations.MustExistOnType(type, Fields.Enumerate());
-            errors = list;
-            return list.Count == 0;
-        }
-    }
+		public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
+		{
+			var list = FieldValidations.MustExistOnType(type, Fields.Enumerate());
+			errors = list;
+			return list.Count == 0;
+		}
+	}
 }

@@ -19,10 +19,10 @@ using System.Diagnostics;
 
 namespace HQ.Data.Contracts
 {
-    [DebuggerDisplay("{Field} ({Type})")]
-    public class Projection
-    {
-        public string Field { get; set; }
-        public ProjectionType Type { get; set; }
-    }
+	[DebuggerDisplay("{Field} ({Type})")]
+	public class Projection
+	{
+		public string Field { get; set; }
+		public ProjectionType Type { get; set; }
+	}
 }

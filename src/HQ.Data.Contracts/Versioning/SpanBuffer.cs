@@ -23,185 +23,158 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.Versioning
 {
-    public readonly ref struct SpanBuffer<T>
-    {
-        private readonly List<SpanRef<T>> _list;
+	public readonly ref struct SpanBuffer<T>
+	{
+		private readonly List<SpanRef<T>> _list;
 
-        public SpanBuffer(int capacity)
-        {
-            _list = new List<SpanRef<T>>(capacity);
-        }
+		public SpanBuffer(int capacity) => _list = new List<SpanRef<T>>(capacity);
 
-        public void Add(Span<byte> span)
-        {
-            var ptr = span.Length == 0 ? IntPtr.Zero : new IntPtr(span.GetPinnableReference());
+		public void Add(Span<byte> span)
+		{
+			var ptr = span.Length == 0 ? IntPtr.Zero : new IntPtr(span.GetPinnableReference());
 
-            _list.Add(new SpanRef<T>
-            {
-                Handle = ptr,
-                Length = span.Length
-            });
-        }
+			_list.Add(new SpanRef<T> {Handle = ptr, Length = span.Length});
+		}
 
-        public long Length
-        {
-            get
-            {
-                var length = 0;
-                foreach (var item in _list)
-                {
-                    length += item.Length;
-                }
+		public long Length
+		{
+			get
+			{
+				var length = 0;
+				foreach (var item in _list) length += item.Length;
 
-                return length;
-            }
-        }
+				return length;
+			}
+		}
 
-        public bool IsEmpty => Length == 0;
+		public bool IsEmpty => Length == 0;
 
-        public static SpanBuffer<T> Empty => new SpanBuffer<T>();
+		public static SpanBuffer<T> Empty => new SpanBuffer<T>();
 
-        public unsafe void Clear()
-        {
-            foreach (var item in _list)
-            {
-                var span = new Span<T>(item.Handle.ToPointer(), item.Length);
-                span.Clear();
-            }
-        }
+		public unsafe void Clear()
+		{
+			foreach (var item in _list)
+			{
+				var span = new Span<T>(item.Handle.ToPointer(), item.Length);
+				span.Clear();
+			}
+		}
 
-        // ReSharper disable once InconsistentNaming
-        public Enumerator GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
+		// ReSharper disable once InconsistentNaming
+		public Enumerator GetEnumerator()
+		{
+			return new Enumerator(this);
+		}
 
-        public static bool operator !=(SpanBuffer<T> left, SpanBuffer<T> right)
-        {
-            return !(left == right);
-        }
+		public static bool operator !=(SpanBuffer<T> left, SpanBuffer<T> right)
+		{
+			return !(left == right);
+		}
 
-        public static bool operator ==(SpanBuffer<T> left, SpanBuffer<T> right)
-        {
-            if (left.Length != right.Length)
-            {
-                return false;
-            }
+		public static bool operator ==(SpanBuffer<T> left, SpanBuffer<T> right)
+		{
+			if (left.Length != right.Length) return false;
 
-            for (var i = 0; i < left.Length; i++)
-            {
-                var l = left._list[i];
-                var r = right._list[i];
-                if (l.Length != r.Length)
-                {
-                    return false;
-                }
+			for (var i = 0; i < left.Length; i++)
+			{
+				var l = left._list[i];
+				var r = right._list[i];
+				if (l.Length != r.Length) return false;
 
-                if (l.Handle != r.Handle)
-                {
-                    return false;
-                }
-            }
+				if (l.Handle != r.Handle) return false;
+			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public override string ToString()
-        {
-            unsafe
-            {
-                var capture = _list;
+		public override string ToString()
+		{
+			unsafe
+			{
+				var capture = _list;
 
-                return Pooling.StringBuilderPool.Scoped(sb =>
-                {
-                    for (var i = 0; i < capture.Count; i++)
-                    {
-                        if (i != 0)
-                        {
-                            sb.Append(", ");
-                        }
+				return Pooling.StringBuilderPool.Scoped(sb =>
+				{
+					for (var i = 0; i < capture.Count; i++)
+					{
+						if (i != 0) sb.Append(", ");
 
-                        var item = capture[i];
-                        var span = new Span<T>(item.Handle.ToPointer(), item.Length);
+						var item = capture[i];
+						var span = new Span<T>(item.Handle.ToPointer(), item.Length);
 
-                        sb.Append(span.ToString());
-                    }
-                });
-            }
-        }
+						sb.Append(span.ToString());
+					}
+				});
+			}
+		}
 
-        public ref struct Enumerator
-        {
-            private readonly SpanBuffer<T> _buffer;
-            private int _index;
+		public ref struct Enumerator
+		{
+			private readonly SpanBuffer<T> _buffer;
+			private int _index;
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            internal Enumerator(SpanBuffer<T> buffer)
-            {
-                _buffer = buffer;
-                _index = -1;
-            }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			internal Enumerator(SpanBuffer<T> buffer)
+			{
+				_buffer = buffer;
+				_index = -1;
+			}
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public bool MoveNext()
-            {
-                var num = _index + 1;
-                if (num >= _buffer.Length)
-                {
-                    return false;
-                }
+			[MethodImpl(MethodImplOptions.AggressiveInlining)]
+			public bool MoveNext()
+			{
+				var num = _index + 1;
+				if (num >= _buffer.Length) return false;
 
-                _index = num;
-                return true;
-            }
+				_index = num;
+				return true;
+			}
 
-            public ref T Current
-            {
-                [MethodImpl(MethodImplOptions.AggressiveInlining)]
-                get
-                {
-                    unsafe
-                    {
-                        var innerIndex = 0;
-                        var outerIndex = _index;
-                        for (var i = 0; i < _buffer._list.Count; i++)
-                        {
-                            var list = _buffer._list[i];
-                            if (list.Length < outerIndex)
-                            {
-                                outerIndex -= i;
-                            }
-                            else
-                            {
-                                innerIndex = i;
-                                break;
-                            }
-                        }
+			public ref T Current
+			{
+				[MethodImpl(MethodImplOptions.AggressiveInlining)]
+				get
+				{
+					unsafe
+					{
+						var innerIndex = 0;
+						var outerIndex = _index;
+						for (var i = 0; i < _buffer._list.Count; i++)
+						{
+							var list = _buffer._list[i];
+							if (list.Length < outerIndex)
+								outerIndex -= i;
+							else
+							{
+								innerIndex = i;
+								break;
+							}
+						}
 
-                        var spanRef = _buffer._list[outerIndex];
-                        var span = new Span<T>(spanRef.Handle.ToPointer(), spanRef.Length);
-                        return ref span[innerIndex];
-                    }
-                }
-            }
-        }
+						var spanRef = _buffer._list[outerIndex];
+						var span = new Span<T>(spanRef.Handle.ToPointer(), spanRef.Length);
+						return ref span[innerIndex];
+					}
+				}
+			}
+		}
 
-        #region NotSupported
+		#region NotSupported
 
-        /// <inheritdoc />
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override bool Equals(object obj)
-        {
-            throw new NotSupportedException("NotSupported_CannotCallEqualsOnSpan");
-        }
+		/// <inheritdoc />
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override bool Equals(object obj)
+		{
+			throw new NotSupportedException("NotSupported_CannotCallEqualsOnSpan");
+		}
 
-        /// <returns></returns>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public override int GetHashCode()
-        {
-            throw new NotSupportedException("NotSupported_CannotCallGetHashCodeOnSpan");
-        }
+		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public override int GetHashCode()
+		{
+			throw new NotSupportedException("NotSupported_CannotCallGetHashCodeOnSpan");
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

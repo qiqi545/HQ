@@ -21,9 +21,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Data.Contracts.Runtime
 {
-    public interface IMutationContextProvider
-    {
-        IEnumerable<MutationContext> Parse(HttpContext source);
-        IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source);
-    }
+	public interface IMutationContextProvider
+	{
+		IEnumerable<MutationContext> Parse(HttpContext source);
+		IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source);
+	}
 }

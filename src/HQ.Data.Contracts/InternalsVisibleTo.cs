@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Data.Contracts
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

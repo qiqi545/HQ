@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Contracts.Attributes
 {
-    public enum SensitiveDataCategory
-    {
-        PersonallyIdentifiableInformation,
-        ProtectedHealthInformation,
-        OperationalSecurity
-    }
+	public enum SensitiveDataCategory
+	{
+		PersonallyIdentifiableInformation,
+		ProtectedHealthInformation,
+		OperationalSecurity
+	}
 }

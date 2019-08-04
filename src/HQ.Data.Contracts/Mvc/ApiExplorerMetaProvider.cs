@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -21,9 +38,9 @@ namespace HQ.Data.Contracts.Mvc
 {
 	public class ApiExplorerMetaProvider : IMetaProvider
 	{
-		private readonly IMetaVersionProvider _versionProvider;
-		private readonly IApiDescriptionGroupCollectionProvider _explorer;
 		private readonly IOptions<AuthenticationOptions> _authenticationOptions;
+		private readonly IApiDescriptionGroupCollectionProvider _explorer;
+		private readonly IMetaVersionProvider _versionProvider;
 
 		public ApiExplorerMetaProvider(
 			IMetaVersionProvider versionProvider,
@@ -43,8 +60,9 @@ namespace HQ.Data.Contracts.Mvc
 			// var rootVersion = _explorer.ApiDescriptionGroups.Version;
 
 			var groupNames = _explorer.ApiDescriptionGroups.Items.Where(x => !string.IsNullOrWhiteSpace(x.GroupName))
-				.SelectMany(x => x.GroupName.Contains(",") ? x.GroupName.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
-				: new[] {x.GroupName}).Distinct().ToList();
+				.SelectMany(x => x.GroupName.Contains(",")
+					? x.GroupName.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries)
+					: new[] {x.GroupName}).Distinct().ToList();
 
 			var groupFolders = groupNames.Select(x => new MetaFolder
 			{
@@ -63,7 +81,8 @@ namespace HQ.Data.Contracts.Mvc
 			{
 				var groupName = descriptionGroup.GroupName;
 
-				foreach (var description in descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod))
+				foreach (var description in descriptionGroup.Items.OrderBy(x => x.RelativePath)
+					.ThenBy(x => x.HttpMethod))
 				{
 					var controllerDescriptor = (ControllerActionDescriptor) description.ActionDescriptor;
 					var controllerType = controllerDescriptor.ControllerTypeInfo;
@@ -72,23 +91,22 @@ namespace HQ.Data.Contracts.Mvc
 					var item = CreateOperationMetaItem(baseUri, description);
 
 					if (!foldersByType.TryGetValue(controllerType, out var folder))
-					{
-						foldersByType.Add(controllerType, folder = new MetaFolder
-						{
-							name = controllerName,
-							description = new MetaDescription
+						foldersByType.Add(controllerType,
+							folder = new MetaFolder
 							{
-								content = ResolveControllerDescription(controllerType)?.Content,
-								type = ResolveControllerDescription(controllerType)?.MediaType,
-								version = null
-							},
-							variable = new List<dynamic>(),
-							item = new List<MetaItem>(),
-							@event = new List<dynamic>(),
-							auth = ResolveAuth(controllerDescriptor),
-							protocolProfileBehavior = new { }
-						});
-					}
+								name = controllerName,
+								description = new MetaDescription
+								{
+									content = ResolveControllerDescription(controllerType)?.Content,
+									type = ResolveControllerDescription(controllerType)?.MediaType,
+									version = null
+								},
+								variable = new List<dynamic>(),
+								item = new List<MetaItem>(),
+								@event = new List<dynamic>(),
+								auth = ResolveAuth(controllerDescriptor),
+								protocolProfileBehavior = new { }
+							});
 
 					folder.item.Add(item);
 
@@ -131,10 +149,7 @@ namespace HQ.Data.Contracts.Mvc
 						var groupFolder = groupFolders[groupName];
 						groupFolder.item.Add(folder.Value);
 
-						if (!list.Contains(groupFolder))
-						{
-							list.Add(groupFolder);
-						}
+						if (!list.Contains(groupFolder)) list.Add(groupFolder);
 
 						inGroup = true;
 						break;
@@ -144,9 +159,7 @@ namespace HQ.Data.Contracts.Mvc
 						list.Add(folder.Value);
 				}
 				else
-				{
 					roots.Add(folder.Value);
-				}
 			}
 
 			//
@@ -158,12 +171,11 @@ namespace HQ.Data.Contracts.Mvc
 				var categoryFolder = new MetaFolder
 				{
 					name = category.Name,
-					description = new MetaDescription
-					{
-						content = category.Description,
-						type = category.DescriptionMediaType,
-						version = null
-					},
+					description =
+						new MetaDescription
+						{
+							content = category.Description, type = category.DescriptionMediaType, version = null
+						},
 					variable = new List<dynamic>(),
 					item = new List<MetaItem>(),
 					@event = new List<dynamic>(),
@@ -180,10 +192,7 @@ namespace HQ.Data.Contracts.Mvc
 
 			//
 			// Add root level folders:
-			foreach (var folder in roots.OrderBy(x => x.name))
-			{
-				collection.item.Add(folder);
-			}
+			foreach (var folder in roots.OrderBy(x => x.name)) collection.item.Add(folder);
 
 			//
 			// Change group name folder meta:
@@ -193,24 +202,18 @@ namespace HQ.Data.Contracts.Mvc
 				groupFolder.Value.name = $"Revision {revisionName}";
 
 				if (_versionProvider.Enabled)
-				{
 					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
-					{
-						foreach (var item in objectGroup.item)
+					foreach (var item in objectGroup.item)
+						item.request.url.query = new[]
 						{
-							item.request.url.query = new[]
+							new MetaParameter
 							{
-								new MetaParameter
-								{
-									key = _versionProvider.VersionParameter,
-									value = revisionName,
-									description = "Sets the version revision number for this API request."
-									// MetaDescription.PlainText("Sets the version revision number for this API request.")
-								}
-							};
-						}
-					}
-				}
+								key = _versionProvider.VersionParameter,
+								value = revisionName,
+								description = "Sets the version revision number for this API request."
+								// MetaDescription.PlainText("Sets the version revision number for this API request.")
+							}
+						};
 			}
 		}
 
@@ -222,12 +225,7 @@ namespace HQ.Data.Contracts.Mvc
 			{
 				id = Guid.NewGuid(),
 				name = relativePath,
-				description = new MetaDescription
-				{
-					content = "",
-					type = Constants.MediaTypes.Markdown,
-					version = null
-				},
+				description = new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
 				variable = new List<dynamic>(),
 				@event = new List<dynamic>(),
 				request = new MetaOperation
@@ -237,12 +235,8 @@ namespace HQ.Data.Contracts.Mvc
 					proxy = new { },
 					certificate = new { },
 					method = description.HttpMethod,
-					description = new MetaDescription
-					{
-						content = "",
-						type = Constants.MediaTypes.Markdown,
-						version = null
-					},
+					description =
+						new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
 					header = new List<MetaParameter>
 					{
 						new MetaParameter
@@ -254,7 +248,7 @@ namespace HQ.Data.Contracts.Mvc
                                 type = Constants.MediaTypes.Markdown,
                                 version = null
                             },*/
-                            key = Constants.HttpHeaders.ContentType,
+							key = Constants.HttpHeaders.ContentType,
 							value = Constants.MediaTypes.Json
 						}
 					},
@@ -290,16 +284,16 @@ namespace HQ.Data.Contracts.Mvc
 					item.request.body = new
 					{
 						mode = "raw",
-						raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
+						raw =
+							"{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
 					};
 				}
 
 				//
 				// Body Definition (roots only):
 				if (bodyParameter != null &&
-					bodyParameter.Type != null &&
-					!typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
-				{
+				    bodyParameter.Type != null &&
+				    !typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
 					item.request.body = new
 					{
 						mode = "raw",
@@ -307,13 +301,11 @@ namespace HQ.Data.Contracts.Mvc
 							FormatterServices.GetUninitializedObject(bodyParameter.Type)
 						)
 					};
-				}
 			}
 
 			//
 			// Bearer:
 			if (item.request?.auth != null && item.request.auth.Equals("bearer", StringComparison.OrdinalIgnoreCase))
-			{
 				item.request.header.Add(new MetaParameter
 				{
 					key = "Authorization",
@@ -321,7 +313,6 @@ namespace HQ.Data.Contracts.Mvc
 					description = "Access Token",
 					type = "text"
 				});
-			}
 			return item;
 		}
 
@@ -355,7 +346,8 @@ namespace HQ.Data.Contracts.Mvc
 
 		private static MetaCategoryAttribute ResolveControllerCategory(MemberInfo controllerType)
 		{
-			return !Attribute.IsDefined(controllerType, typeof(MetaCategoryAttribute)) ? null
+			return !Attribute.IsDefined(controllerType, typeof(MetaCategoryAttribute))
+				? null
 				: (MetaCategoryAttribute) controllerType.GetCustomAttribute(typeof(MetaCategoryAttribute), true);
 		}
 
@@ -363,7 +355,8 @@ namespace HQ.Data.Contracts.Mvc
 		{
 			if (!Attribute.IsDefined(controllerType, typeof(MetaDescriptionAttribute)))
 				return null;
-			var description = (MetaDescriptionAttribute)controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
+			var description =
+				(MetaDescriptionAttribute) controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
 			return description;
 		}
 
@@ -374,7 +367,8 @@ namespace HQ.Data.Contracts.Mvc
 			if (!Attribute.IsDefined(controllerType, typeof(DisplayNameAttribute)))
 				return controllerTypeName.Replace(nameof(Controller), string.Empty);
 
-			var description = (DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
+			var description =
+				(DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
 			return description.DisplayName;
 		}
 	}

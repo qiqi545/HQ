@@ -23,9 +23,9 @@ using Morcatko.AspNetCore.JsonMergePatch;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
-    {
-        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
-        Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
-    }
+	public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
+	{
+		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
+		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
+	}
 }

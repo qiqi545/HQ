@@ -21,8 +21,8 @@ using HQ.Data.Contracts.Configuration;
 
 namespace HQ.Data.Contracts
 {
-    public interface IQueryValidator
-    {
-        bool Validate(Type type, QueryOptions options, out IList<Error> errors);
-    }
+	public interface IQueryValidator
+	{
+		bool Validate(Type type, QueryOptions options, out IList<Error> errors);
+	}
 }

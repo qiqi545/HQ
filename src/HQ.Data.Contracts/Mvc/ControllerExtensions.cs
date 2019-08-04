@@ -21,31 +21,29 @@ using HQ.Common.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public static class ControllerExtensions
-    {
-        #region Validation
+	public static class ControllerExtensions
+	{
+		#region Validation
 
-        public static Error ConvertModelStateToError(this ControllerExtended controller)
-        {
-            var errors = new List<Error>();
+		public static Error ConvertModelStateToError(this ControllerExtended controller)
+		{
+			var errors = new List<Error>();
 
-            foreach (var modelState in controller.ModelState.Values)
-            {
-                foreach (var error in modelState.Errors)
-                {
-                    var message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
-                        ? error.ErrorMessage
-                        : error.Exception.Message;
+			foreach (var modelState in controller.ModelState.Values)
+			foreach (var error in modelState.Errors)
+			{
+				var message = !string.IsNullOrWhiteSpace(error.ErrorMessage)
+					? error.ErrorMessage
+					: error.Exception.Message;
 
-                    errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
-                }
-            }
+				errors.Add(new Error(ErrorEvents.ValidationFailed, message, 422));
+			}
 
-            var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422,
-                errors.Distinct());
-            return validationError;
-        }
+			var validationError = new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, 422,
+				errors.Distinct());
+			return validationError;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -19,13 +19,13 @@ using System.Diagnostics;
 
 namespace HQ.Data.Contracts
 {
-    [DebuggerDisplay("{Type} {Field} {Operator} {Value}")]
-    public class Filter
-    {
-        public FilterType Type { get; set; }
-        public string Field { get; set; }
-        public FilterOperator Operator { get; set; }
-        public object Value { get; set; }
-        public object Tag { get; set; }
-    }
+	[DebuggerDisplay("{Type} {Field} {Operator} {Value}")]
+	public class Filter
+	{
+		public FilterType Type { get; set; }
+		public string Field { get; set; }
+		public FilterOperator Operator { get; set; }
+		public object Value { get; set; }
+		public object Tag { get; set; }
+	}
 }

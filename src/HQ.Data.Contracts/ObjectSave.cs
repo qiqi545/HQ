@@ -19,16 +19,12 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public enum ObjectSave
-    {
-        [EnumMember]
-        NotFound,
-        [EnumMember]
-        NoChanges,
-        [EnumMember]
-        Created,
-        [EnumMember]
-        Updated
-    }
+	[DataContract]
+	public enum ObjectSave
+	{
+		[EnumMember] NotFound,
+		[EnumMember] NoChanges,
+		[EnumMember] Created,
+		[EnumMember] Updated
+	}
 }

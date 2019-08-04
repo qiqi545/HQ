@@ -20,7 +20,11 @@ using System.Collections.Generic;
 
 namespace HQ.Data.Contracts
 {
-    public interface IPage<out T> : IPage, IEnumerable<T> { }
+	public interface IPage<out T> : IPage, IEnumerable<T>
+	{
+	}
 
-    public interface IPage : IPageHeader, IEnumerable { }
+	public interface IPage : IPageHeader, IEnumerable
+	{
+	}
 }

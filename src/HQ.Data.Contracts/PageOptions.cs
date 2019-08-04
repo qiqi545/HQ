@@ -22,25 +22,25 @@ using HQ.Data.Contracts.Configuration;
 
 namespace HQ.Data.Contracts
 {
-    public class PageOptions : IQueryValidator
-    {
-        public static readonly PageOptions Empty = new PageOptions();
+	public class PageOptions : IQueryValidator
+	{
+		public static readonly PageOptions Empty = new PageOptions();
 
-        public int Page { get; set; }
-        public int PerPage { get; set; }
+		public int Page { get; set; }
+		public int PerPage { get; set; }
 
-        public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
-        {
-            var list = new List<Error>();
-            if (Page < 1)
-                list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PageRangeInvalid,
-                    HttpStatusCode.BadRequest));
-            if (PerPage > options.PerPageMax)
-                list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PerPageTooHigh,
-                    HttpStatusCode.RequestEntityTooLarge));
+		public bool Validate(Type type, QueryOptions options, out IList<Error> errors)
+		{
+			var list = new List<Error>();
+			if (Page < 1)
+				list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PageRangeInvalid,
+					HttpStatusCode.BadRequest));
+			if (PerPage > options.PerPageMax)
+				list.Add(new Error(ErrorEvents.InvalidParameter, ErrorStrings.PerPageTooHigh,
+					HttpStatusCode.RequestEntityTooLarge));
 
-            errors = list;
-            return list.Count == 0;
-        }
-    }
+			errors = list;
+			return list.Count == 0;
+		}
+	}
 }

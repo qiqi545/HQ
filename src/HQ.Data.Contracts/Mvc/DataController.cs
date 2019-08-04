@@ -21,87 +21,87 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public class DataController : ControllerExtended
-    {
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult BadRequestError(long eventId, string errorMessage, params object[] args)
-        {
-            var error = new Error(eventId, errorMessage, HttpStatusCode.BadRequest);
-            return new ErrorResult(error, args);
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult NotAcceptableError(long eventId, string errorMessage, params object[] args)
-        {
-            var error = new Error(eventId, errorMessage, HttpStatusCode.NotAcceptable);
-            return new ErrorResult(error, args);
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult NotFoundError(long eventId, string errorMessage, params object[] args)
-        {
-            var error = new Error(eventId, errorMessage, HttpStatusCode.NotFound);
-            return new ErrorResult(error, args);
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult InternalServerError(long eventId, string errorMessage, params object[] args)
-        {
-	        var error = new Error(eventId, errorMessage, HttpStatusCode.InternalServerError);
-	        return new ErrorResult(error, args);
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult UnprocessableEntityError(long eventId, string errorMessage, params object[] args)
-        {
-	        var error = new Error(eventId, errorMessage, 422 /* HttpStatusCode.UnprocessableEntity */);
-	        return new ErrorResult(error, args);
-        }
+	public class DataController : ControllerExtended
+	{
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult BadRequestError(long eventId, string errorMessage, params object[] args)
+		{
+			var error = new Error(eventId, errorMessage, HttpStatusCode.BadRequest);
+			return new ErrorResult(error, args);
+		}
 
 		[ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public IActionResult Error(Error error, params object[] args)
-        {
-            return new ErrorResult(error, args);
-        }
+		[NonAction]
+		public IActionResult NotAcceptableError(long eventId, string errorMessage, params object[] args)
+		{
+			var error = new Error(eventId, errorMessage, HttpStatusCode.NotAcceptable);
+			return new ErrorResult(error, args);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public bool Valid(object model, out ErrorResult error, params object[] args)
-        {
-            return ValidOrError(model, out error, args);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult NotFoundError(long eventId, string errorMessage, params object[] args)
+		{
+			var error = new Error(eventId, errorMessage, HttpStatusCode.NotFound);
+			return new ErrorResult(error, args);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public bool ValidModelState(out ErrorResult error, params object[] args)
-        {
-            return ValidOrError(ModelState, out error, args);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult InternalServerError(long eventId, string errorMessage, params object[] args)
+		{
+			var error = new Error(eventId, errorMessage, HttpStatusCode.InternalServerError);
+			return new ErrorResult(error, args);
+		}
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public Error ConvertModelStateToError()
-        {
-            return ControllerExtensions.ConvertModelStateToError(this);
-        }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult UnprocessableEntityError(long eventId, string errorMessage, params object[] args)
+		{
+			var error = new Error(eventId, errorMessage, 422 /* HttpStatusCode.UnprocessableEntity */);
+			return new ErrorResult(error, args);
+		}
 
-        private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
-        {
-            if (!TryValidateModel(instance))
-            {
-                var validationError = ConvertModelStateToError();
-                error = new ErrorResult(validationError, args);
-                return false;
-            }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public IActionResult Error(Error error, params object[] args)
+		{
+			return new ErrorResult(error, args);
+		}
 
-            error = null;
-            return true;
-        }
-    }
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public bool Valid(object model, out ErrorResult error, params object[] args)
+		{
+			return ValidOrError(model, out error, args);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public bool ValidModelState(out ErrorResult error, params object[] args)
+		{
+			return ValidOrError(ModelState, out error, args);
+		}
+
+		[ApiExplorerSettings(IgnoreApi = true)]
+		[NonAction]
+		public Error ConvertModelStateToError()
+		{
+			return ControllerExtensions.ConvertModelStateToError(this);
+		}
+
+		private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
+		{
+			if (!TryValidateModel(instance))
+			{
+				var validationError = ConvertModelStateToError();
+				error = new ErrorResult(validationError, args);
+				return false;
+			}
+
+			error = null;
+			return true;
+		}
+	}
 }

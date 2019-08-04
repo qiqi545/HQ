@@ -19,22 +19,22 @@ using HQ.Common;
 
 namespace HQ.Data.Contracts.Configuration
 {
-    public class QueryOptions
-    {
-        public int PerPageDefault { get; set; } = 10;
-        public int PerPageMax { get; set; } = 100;
-        public int ProjectionMaxFields { get; set; } = 6;
+	public class QueryOptions
+	{
+		public int PerPageDefault { get; set; } = 10;
+		public int PerPageMax { get; set; } = 100;
+		public int ProjectionMaxFields { get; set; } = 6;
 
-        public string SortOperator { get; set; } = "sort";
-        public string PageOperator { get; set; } = "page";
-        public string PerPageOperator { get; set; } = "perPage";
-        public string FieldsOperator { get; set; } = "fields";
-        public string FilterOperator { get; set; } = "filter";
-        public string ProjectionOperator { get; set; } = "project";
-        public string AfterOperator { get; set; } = "after";
-        public string BeforeOperator { get; set; } = "before";
+		public string SortOperator { get; set; } = "sort";
+		public string PageOperator { get; set; } = "page";
+		public string PerPageOperator { get; set; } = "perPage";
+		public string FieldsOperator { get; set; } = "fields";
+		public string FilterOperator { get; set; } = "filter";
+		public string ProjectionOperator { get; set; } = "project";
+		public string AfterOperator { get; set; } = "after";
+		public string BeforeOperator { get; set; } = "before";
 
-        public string TotalCountHeader { get; set; } = Constants.HttpHeaders.TotalCount;
-        public string TotalPagesHeader { get; set; } = Constants.HttpHeaders.TotalPages;
-    }
+		public string TotalCountHeader { get; set; } = Constants.HttpHeaders.TotalCount;
+		public string TotalPagesHeader { get; set; } = Constants.HttpHeaders.TotalPages;
+	}
 }

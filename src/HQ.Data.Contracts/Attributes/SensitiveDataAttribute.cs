@@ -19,14 +19,11 @@ using System;
 
 namespace HQ.Data.Contracts.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
-    public class SensitiveDataAttribute : Attribute
-    {
-        public SensitiveDataCategory Category { get; }
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
+	public class SensitiveDataAttribute : Attribute
+	{
+		public SensitiveDataAttribute(SensitiveDataCategory category) => Category = category;
 
-        public SensitiveDataAttribute(SensitiveDataCategory category)
-        {
-            Category = category;
-        }
-    }
+		public SensitiveDataCategory Category { get; }
+	}
 }

@@ -20,15 +20,15 @@ using HQ.Common;
 
 namespace HQ.Data.Contracts.Attributes
 {
-    public class MetaDescriptionAttribute : Attribute
-    {
-        public string Content { get; }
-        public string MediaType { get; }
+	public class MetaDescriptionAttribute : Attribute
+	{
+		public MetaDescriptionAttribute(string content, string mediaType = Constants.MediaTypes.Markdown)
+		{
+			Content = content;
+			MediaType = mediaType;
+		}
 
-        public MetaDescriptionAttribute(string content, string mediaType = Constants.MediaTypes.Markdown)
-        {
-            Content = content;
-            MediaType = mediaType;
-        }
-    }
+		public string Content { get; }
+		public string MediaType { get; }
+	}
 }

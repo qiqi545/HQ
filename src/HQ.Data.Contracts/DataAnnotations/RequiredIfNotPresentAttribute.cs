@@ -20,31 +20,32 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
-    public sealed class RequiredIfNotPresentAttribute : DelegatedValidationAttribute
-    {
-        public bool AllowEmptyStrings { get; }
+	public sealed class RequiredIfNotPresentAttribute : DelegatedValidationAttribute
+	{
+		public RequiredIfNotPresentAttribute(string propertyOrFieldName, bool allowEmptyStrings = false) : base(
+			ResolveDelegateType(propertyOrFieldName, allowEmptyStrings))
+		{
+			AllowEmptyStrings = allowEmptyStrings;
 
-        public RequiredIfNotPresentAttribute(string propertyOrFieldName, bool allowEmptyStrings = false) : base(ResolveDelegateType(propertyOrFieldName, allowEmptyStrings))
-        {
-            AllowEmptyStrings = allowEmptyStrings;
+			ErrorMessage = $"{FormatErrorMessage(propertyOrFieldName)} is not present, therefore, {{0}} is required.";
+		}
 
-            ErrorMessage = $"{FormatErrorMessage(propertyOrFieldName)} is not present, therefore, {{0}} is required.";
-        }
+		public bool AllowEmptyStrings { get; }
 
-        private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings)
-        {
-            var handler = Snippet.CreateMethod($"public static bool Validate(object value)" +
-                                               $"{{ " +
-                                               $"   var accessor = ReadAccessor.Create(value); " +
-                                               $"   if(accessor.TryGetValue(value, \"{propertyOrFieldName}\", out var propertyOrField))" +
-                                               $"   {{ " +
-                                               $"       var attribute = new RequiredAttribute {{ AllowEmptyStrings = {(allowEmptyStrings ? "true" : "false")} }};" +
-                                               $"       var present = attribute.IsValid(propertyOrField); " +
-                                               $"       return present ? attribute.IsValid(value) : true;" +
-                                               $"   }}" +
-                                               $"   return false;" +
-                                               $"}}");
-            return handler;
-        }
-    }
+		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings)
+		{
+			var handler = Snippet.CreateMethod("public static bool Validate(object value)" +
+			                                   "{ " +
+			                                   "   var accessor = ReadAccessor.Create(value); " +
+			                                   $"   if(accessor.TryGetValue(value, \"{propertyOrFieldName}\", out var propertyOrField))" +
+			                                   "   { " +
+			                                   $"       var attribute = new RequiredAttribute {{ AllowEmptyStrings = {(allowEmptyStrings ? "true" : "false")} }};" +
+			                                   "       var present = attribute.IsValid(propertyOrField); " +
+			                                   "       return present ? attribute.IsValid(value) : true;" +
+			                                   "   }" +
+			                                   "   return false;" +
+			                                   "}");
+			return handler;
+		}
+	}
 }

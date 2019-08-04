@@ -31,14 +31,12 @@ namespace HQ.Data.Contracts.DataAnnotations
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
 	public class TopologyRootAttribute : ValidationAttribute
 	{
-		public TopologyRootAttribute()
-		{
-			ErrorMessage = "{0} has at least one cycle.";
-		}
+		public TopologyRootAttribute() => ErrorMessage = "{0} has at least one cycle.";
 
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			var accessor = ReadAccessor.Create(value, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
+			var accessor = ReadAccessor.Create(value, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
+				out var members);
 
 			var nodes = new HashSet<INode<string>>();
 			var visited = new HashSet<object>();
@@ -47,11 +45,13 @@ namespace HQ.Data.Contracts.DataAnnotations
 			var cycles = nodes.HasCycles(node => node.Dependents);
 
 			return cycles
-				? new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString, accessor.Type.Name))
+				? new ValidationResult(
+					string.Format(CultureInfo.CurrentCulture, ErrorMessageString, accessor.Type.Name))
 				: ValidationResult.Success;
 		}
 
-		private static void WalkGraph(ISet<object> visited, object value, AccessorMembers members, ITypeReadAccessor accessor, ISet<INode<string>> nodes)
+		private static void WalkGraph(ISet<object> visited, object value, AccessorMembers members,
+			ITypeReadAccessor accessor, ISet<INode<string>> nodes)
 		{
 			if (value is INode<string> node)
 			{
@@ -63,9 +63,10 @@ namespace HQ.Data.Contracts.DataAnnotations
 			{
 				var memberTypeInfo = member.Type.GetTypeInfo();
 
-				if (memberTypeInfo.ImplementedInterfaces.Contains(typeof(INode<string>)) && accessor.TryGetValue(value, member.Name, out var element) && element is INode<string> memberNode)
+				if (memberTypeInfo.ImplementedInterfaces.Contains(typeof(INode<string>)) &&
+				    accessor.TryGetValue(value, member.Name, out var element) && element is INode<string> memberNode)
 					nodes.Add(memberNode);
-				
+
 				if (!memberTypeInfo.ImplementedInterfaces.Contains(typeof(IEnumerable)) ||
 				    !accessor.TryGetValue(value, member.Name, out var collection) ||
 				    !(collection is IEnumerable enumerable))
@@ -78,7 +79,8 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 				foreach (var item in enumerable)
 				{
-					var collectionAccessor = ReadAccessor.Create(item, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var collectionMembers);
+					var collectionAccessor = ReadAccessor.Create(item, AccessorMemberTypes.Properties,
+						AccessorMemberScope.Public, out var collectionMembers);
 					WalkGraph(visited, item, collectionMembers, collectionAccessor, nodes);
 				}
 			}

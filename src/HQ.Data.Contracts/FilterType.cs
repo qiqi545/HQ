@@ -17,9 +17,9 @@
 
 namespace HQ.Data.Contracts
 {
-    public enum FilterType
-    {
-        Scalar,
-        Join
-    }
+	public enum FilterType
+	{
+		Scalar,
+		Join
+	}
 }

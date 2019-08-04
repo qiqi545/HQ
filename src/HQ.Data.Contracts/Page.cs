@@ -22,78 +22,66 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public class Page : IPage
-    {
-        [DataMember]
-        public int Index { get; set; }
+	[DataContract]
+	public class Page : IPage
+	{
+		private readonly IEnumerable _source;
 
-        [DataMember]
-        public int Size { get; set; }
+		public Page(IEnumerable source, int count, int index, int size, long totalCount)
+		{
+			_source = source;
 
-        [DataMember]
-        public int Count { get; set; }
+			Index = index;
+			Size = size;
+			Count = count;
+			TotalCount = totalCount;
+			TotalPages = (int) Math.Ceiling(TotalCount / (double) Count);
+			HasPreviousPage = Index > 1;
+			HasNextPage = Index < TotalPages - 1;
+			Start = Count * Index - Count + 1;
+			End = Start + Count - 1;
+		}
 
-        [DataMember]
-        public long TotalCount { get; set; }
+		[DataMember] public int Index { get; set; }
 
-        [DataMember]
-        public long TotalPages { get; set; }
+		[DataMember] public int Size { get; set; }
 
-        [DataMember]
-        public bool HasPreviousPage { get; set; }
+		[DataMember] public int Count { get; set; }
 
-        [DataMember]
-        public bool HasNextPage { get; set; }
+		[DataMember] public long TotalCount { get; set; }
 
-        [DataMember]
-        public int Start { get; set; }
+		[DataMember] public long TotalPages { get; set; }
 
-        [DataMember]
-        public int End { get; set; }
+		[DataMember] public bool HasPreviousPage { get; set; }
 
-        private readonly IEnumerable _source;
+		[DataMember] public bool HasNextPage { get; set; }
 
-        public Page(IEnumerable source, int count, int index, int size, long totalCount)
-        {
-            _source = source;
+		[DataMember] public int Start { get; set; }
 
-            Index = index;
-            Size = size;
-            Count = count;
-            TotalCount = totalCount;
-            TotalPages = (int)Math.Ceiling(TotalCount / (double)Count);
-            HasPreviousPage = Index > 1;
-            HasNextPage = Index < TotalPages - 1;
-            Start = Count * Index - Count + 1;
-            End = Start + Count - 1;
-        }
+		[DataMember] public int End { get; set; }
 
-        public IEnumerator GetEnumerator()
-        {
-            return _source.GetEnumerator();
-        }
-    }
+		public IEnumerator GetEnumerator()
+		{
+			return _source.GetEnumerator();
+		}
+	}
 
-    [DataContract]
-    public class Page<T> : Page, IPage<T>
-    {
-        private readonly IEnumerable<T> _source;
+	[DataContract]
+	public class Page<T> : Page, IPage<T>
+	{
+		private readonly IEnumerable<T> _source;
 
-        public Page(IEnumerable<T> source, int count, int index, int size, long totalCount) : base(source, count, index, size, totalCount)
-        {
-            // ReSharper disable once PossibleMultipleEnumeration
-            _source = source;
-        }
+		public Page(IEnumerable<T> source, int count, int index, int size, long totalCount) : base(source, count, index,
+			size, totalCount) => _source = source;
 
-        public new IEnumerator<T> GetEnumerator()
-        {
-            return _source.GetEnumerator();
-        }
+		public new IEnumerator<T> GetEnumerator()
+		{
+			return _source.GetEnumerator();
+		}
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-    }
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+	}
 }

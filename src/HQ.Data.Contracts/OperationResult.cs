@@ -19,16 +19,12 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public enum OperationResult : byte
-    {
-        [EnumMember]
-        Refused,
-        [EnumMember]
-        Error,
-        [EnumMember]
-        Succeeded,
-        [EnumMember]
-        SucceededWithErrors
-    }
+	[DataContract]
+	public enum OperationResult : byte
+	{
+		[EnumMember] Refused,
+		[EnumMember] Error,
+		[EnumMember] Succeeded,
+		[EnumMember] SucceededWithErrors
+	}
 }

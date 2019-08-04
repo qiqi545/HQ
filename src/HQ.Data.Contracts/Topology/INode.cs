@@ -20,7 +20,7 @@ using System.Collections.Generic;
 
 namespace HQ.Data.Contracts.Topology
 {
-	public interface INode<TKey> : IEquatable<INode<TKey>> where TKey: IEquatable<TKey>
+	public interface INode<TKey> : IEquatable<INode<TKey>> where TKey : IEquatable<TKey>
 	{
 		TKey Id { get; }
 		IEnumerable<INode<TKey>> Dependents { get; }

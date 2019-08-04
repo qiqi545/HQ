@@ -21,19 +21,19 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-    public interface IObjectDeleteService
-    {
-        Task<ObjectDelete> DeleteAsync(Type type, long id);
-        Task<ObjectDelete> DeleteAsync(Type type, IObject @object);
-        Task DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null);
-        Task DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
-    }
+	public interface IObjectDeleteService
+	{
+		Task<ObjectDelete> DeleteAsync(Type type, long id);
+		Task<ObjectDelete> DeleteAsync(Type type, IObject @object);
+		Task DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null);
+		Task DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
+	}
 
-    public interface IObjectDeleteService<in TObject> where TObject : IObject
-    {
-        Task<ObjectDelete> DeleteAsync(long id);
-        Task<ObjectDelete> DeleteAsync(TObject @object);
-        Task DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null);
-        Task DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null);
-    }
+	public interface IObjectDeleteService<in TObject> where TObject : IObject
+	{
+		Task<ObjectDelete> DeleteAsync(long id);
+		Task<ObjectDelete> DeleteAsync(TObject @object);
+		Task DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null);
+		Task DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null);
+	}
 }

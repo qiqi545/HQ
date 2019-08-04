@@ -21,20 +21,20 @@ using System.Linq;
 
 namespace HQ.Data.Contracts.Queryable
 {
-    public interface IQueryableProvider<T>
-    {
-        /// <summary>
-        ///     Determines whether to throw a <see cref="NotSupportedException" /> if <see cref="Queryable" /> is accessed.
-        ///     If this is <code>false</code>, then developers may potentially access a <see cref="Queryable" /> that is
-        ///     unpredictable, or, if none is available, may materialize the entire underlying collection in order to
-        ///     perform a query.
-        /// </summary>
-        bool IsSafe { get; }
+	public interface IQueryableProvider<T>
+	{
+		/// <summary>
+		///     Determines whether to throw a <see cref="NotSupportedException" /> if <see cref="Queryable" /> is accessed.
+		///     If this is <code>false</code>, then developers may potentially access a <see cref="Queryable" /> that is
+		///     unpredictable, or, if none is available, may materialize the entire underlying collection in order to
+		///     perform a query.
+		/// </summary>
+		bool IsSafe { get; }
 
-        bool SupportsUnsafe { get; }
-        IQueryable<T> Queryable { get; }
-        IQueryable<T> UnsafeQueryable { get; }
-        ISafeQueryable<T> SafeQueryable { get; }
-        IEnumerable<T> SafeAll { get; }
-    }
+		bool SupportsUnsafe { get; }
+		IQueryable<T> Queryable { get; }
+		IQueryable<T> UnsafeQueryable { get; }
+		ISafeQueryable<T> SafeQueryable { get; }
+		IEnumerable<T> SafeAll { get; }
+	}
 }

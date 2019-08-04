@@ -21,27 +21,24 @@ using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
 {
-    public class QueryContext
-    {
-        public QueryContext(ClaimsPrincipal user)
-        {
-            User = user;
-        }
+	public class QueryContext
+	{
+		public QueryContext(ClaimsPrincipal user) => User = user;
 
-        public ClaimsPrincipal User { get; }
-        public Type Type { get; set; }
-        public List<Error> Errors { get; } = new List<Error>();
+		public ClaimsPrincipal User { get; }
+		public Type Type { get; set; }
+		public List<Error> Errors { get; } = new List<Error>();
 
-        public FieldOptions Fields { get; set; }
-        public SortOptions Sorting { get; set; }
-        public PageOptions Paging { get; set; }
-        public StreamOptions Streaming { get; set; }
-        public FilterOptions Filters { get; set; }
-        public ProjectionOptions Projections { get; set; }
+		public FieldOptions Fields { get; set; }
+		public SortOptions Sorting { get; set; }
+		public PageOptions Paging { get; set; }
+		public StreamOptions Streaming { get; set; }
+		public FilterOptions Filters { get; set; }
+		public ProjectionOptions Projections { get; set; }
 
-        public object Execute(IObjectGetRepository repository)
-        {
-            return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
-        }
-    }
+		public object Execute(IObjectGetRepository repository)
+		{
+			return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
+		}
+	}
 }

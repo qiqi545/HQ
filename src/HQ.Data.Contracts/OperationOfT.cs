@@ -20,33 +20,23 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public sealed class Operation<T> : Operation
-    {
-        public Operation(IList<Error> errors) : base(errors)
-        {
-            Result = OperationResult.Error;
-        }
+	[DataContract]
+	public sealed class Operation<T> : Operation
+	{
+		public Operation(IList<Error> errors) : base(errors) => Result = OperationResult.Error;
 
-        public Operation(params Error[] errors) : base(errors)
-        {
-        }
+		public Operation(params Error[] errors) : base(errors)
+		{
+		}
 
-        public Operation(T data) : this(data, null)
-        {
-        }
+		public Operation(T data) : this(data, null)
+		{
+		}
 
-        public Operation(T data, params Error[] errors) : base(errors)
-        {
-            Data = data;
-        }
+		public Operation(T data, params Error[] errors) : base(errors) => Data = data;
 
-        public Operation(T data, IList<Error> errors) : base(errors)
-        {
-            Data = data;
-        }
+		public Operation(T data, IList<Error> errors) : base(errors) => Data = data;
 
-        [DataMember]
-        public T Data { get; set; }
-    }
+		[DataMember] public T Data { get; set; }
+	}
 }

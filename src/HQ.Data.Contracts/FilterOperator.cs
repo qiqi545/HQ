@@ -17,9 +17,9 @@
 
 namespace HQ.Data.Contracts
 {
-    public enum FilterOperator
-    {
-        Equal,
-        NotEqual
-    }
+	public enum FilterOperator
+	{
+		Equal,
+		NotEqual
+	}
 }

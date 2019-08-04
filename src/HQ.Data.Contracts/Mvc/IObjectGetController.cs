@@ -22,12 +22,12 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
-    {
-        Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
-            FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null,
-            [FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
+	public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
+	{
+		Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
+			FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null,
+			[FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
 
-        Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
-    }
+		Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
+	}
 }

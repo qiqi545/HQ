@@ -17,19 +17,19 @@
 
 namespace HQ.Data.Contracts
 {
-    public interface IPageHeader
-    {
-        int Index { get; }
-        int Size { get; }
-        int Count { get; }
+	public interface IPageHeader
+	{
+		int Index { get; }
+		int Size { get; }
+		int Count { get; }
 
-        long TotalCount { get; }
-        long TotalPages { get; }
+		long TotalCount { get; }
+		long TotalPages { get; }
 
-        bool HasPreviousPage { get; }
-        bool HasNextPage { get; }
+		bool HasPreviousPage { get; }
+		bool HasNextPage { get; }
 
-        int Start { get; }
-        int End { get; }
-    }
+		int Start { get; }
+		int End { get; }
+	}
 }

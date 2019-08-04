@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Contracts
 {
-    public enum ProjectionType
-    {
-        Scalar,
-        OneToOne,
-        OneToMany
-    }
+	public enum ProjectionType
+	{
+		Scalar,
+		OneToOne,
+		OneToMany
+	}
 }

@@ -19,14 +19,11 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public enum BatchSaveStrategy
-    {
-        [EnumMember]
-        Insert,
-        [EnumMember]
-        Upsert,
-        [EnumMember]
-        Update
-    }
+	[DataContract]
+	public enum BatchSaveStrategy
+	{
+		[EnumMember] Insert,
+		[EnumMember] Upsert,
+		[EnumMember] Update
+	}
 }

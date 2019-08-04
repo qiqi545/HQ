@@ -19,8 +19,8 @@ using System;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectController
-    {
-        Type ObjectType { get; }
-    }
+	public interface IObjectController
+	{
+		Type ObjectType { get; }
+	}
 }

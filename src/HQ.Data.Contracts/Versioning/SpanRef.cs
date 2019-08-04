@@ -19,9 +19,9 @@ using System;
 
 namespace HQ.Data.Contracts.Versioning
 {
-    public struct SpanRef<T>
-    {
-        public IntPtr Handle;
-        public int Length;
-    }
+	public struct SpanRef<T>
+	{
+		public IntPtr Handle;
+		public int Length;
+	}
 }

@@ -19,14 +19,11 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public enum ObjectDelete
-    {
-        [EnumMember]
-        NotFound,
-        [EnumMember]
-        Deleted,
-        [EnumMember]
-        Gone
-    }
+	[DataContract]
+	public enum ObjectDelete
+	{
+		[EnumMember] NotFound,
+		[EnumMember] Deleted,
+		[EnumMember] Gone
+	}
 }

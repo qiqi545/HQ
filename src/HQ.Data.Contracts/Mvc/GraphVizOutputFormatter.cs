@@ -32,6 +32,8 @@ namespace HQ.Data.Contracts.Mvc
 {
 	public class GraphVizOutputFormatter : TextOutputFormatter
 	{
+		private static bool _openCluster;
+
 		public GraphVizOutputFormatter()
 		{
 			SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/vnd.graphviz"));
@@ -40,7 +42,8 @@ namespace HQ.Data.Contracts.Mvc
 
 		public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding encoding)
 		{
-			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.BottomToTop, context.Object, context.ObjectType.Name));
+			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.BottomToTop, context.Object,
+				context.ObjectType.Name));
 		}
 
 		public static string GenerateDotGraph(GraphDirection direction, object root, string rootTypeName)
@@ -54,7 +57,7 @@ namespace HQ.Data.Contracts.Mvc
 				var clusters = 0;
 
 				string dir;
-				switch(direction)
+				switch (direction)
 				{
 					case GraphDirection.LeftToRight:
 						dir = "LR";
@@ -77,19 +80,13 @@ namespace HQ.Data.Contracts.Mvc
 					sb.AppendLine($"digraph \"{rootTypeName}\" {{");
 					sb.AppendLine($"\trankdir=\"{dir}\"");
 					sb.AppendLine($"\tgraph[layout=dot,label=\"{rootTypeName}\"];");
-					sb.AppendLine($"\tnode[style=filled,shape=box];");
+					sb.AppendLine("\tnode[style=filled,shape=box];");
 
 					if (root is IEnumerable enumerable)
-					{
 						foreach (var item in enumerable)
-						{
 							WalkGraph(item, ref clusters, vb, nb, cb);
-						}
-					}
 					else
-					{
-						WalkGraph(root, ref clusters,vb, nb, cb);
-					}
+						WalkGraph(root, ref clusters, vb, nb, cb);
 
 					if (nb.Length > 0)
 					{
@@ -112,7 +109,7 @@ namespace HQ.Data.Contracts.Mvc
 						sb.Append(vb.ToString());
 					}
 
-					sb.AppendLine($"}}");
+					sb.AppendLine("}");
 				}
 				finally
 				{
@@ -123,44 +120,50 @@ namespace HQ.Data.Contracts.Mvc
 			return dotGraph;
 		}
 
-		private static void WalkGraph(object target, ref int clusters, StringBuilder vb, StringBuilder nb, StringBuilder cb)
+		private static void WalkGraph(object target, ref int clusters, StringBuilder vb, StringBuilder nb,
+			StringBuilder cb)
 		{
 			const string nodeColor = @"lightgrey";
 
 			switch (target)
 			{
 				case INode<string> node:
-					{
-						WalkNode(node, nodeColor, _openCluster, vb, nb, cb);
-						break;
-					}
+				{
+					WalkNode(node, nodeColor, _openCluster, vb, nb, cb);
+					break;
+				}
+
 				case IEnumerable<INode<string>> nodes:
-					{
-						WalkNodes(nodes, nodeColor, vb, nb, cb);
-						break;
-					}
+				{
+					WalkNodes(nodes, nodeColor, vb, nb, cb);
+					break;
+				}
+
 				case IEnumerable collection:
-					{
-						foreach (var item in collection)
-							WalkInterstitial(item, ref clusters, vb, nb, cb);
-						break;
-					}
+				{
+					foreach (var item in collection)
+						WalkInterstitial(item, ref clusters, vb, nb, cb);
+					break;
+				}
+
 				default:
-					{
-						WalkInterstitial(target, ref clusters, vb, nb, cb);
-						break;
-					}
+				{
+					WalkInterstitial(target, ref clusters, vb, nb, cb);
+					break;
+				}
 			}
 
 			AppendClusterEnd(cb);
 		}
 
-		private static void WalkInterstitial(object target, ref int clusters, StringBuilder vb, StringBuilder nb, StringBuilder cb)
+		private static void WalkInterstitial(object target, ref int clusters, StringBuilder vb, StringBuilder nb,
+			StringBuilder cb)
 		{
 			if (target == null)
 				return; // empty node
 
-			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
+			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
+				out var members);
 
 			// FIXME: add TryGetAttribute<T> to TypeKitchen for Type
 			if (accessor.Type.HasAttribute<TopologyRootAttribute>())
@@ -180,17 +183,14 @@ namespace HQ.Data.Contracts.Mvc
 				}
 
 				if (accessor.TryGetValue(target, member.Name, out var value))
-				{
 					WalkGraph(value, ref clusters, vb, nb, cb);
-				}
 			}
 		}
 
-		private static bool _openCluster;
 		private static void AppendClusterStart(int clusters, StringBuilder cb, string clusterName)
 		{
 			cb.AppendLine($"\tsubgraph cluster_{clusters} {{");
-			cb.AppendLine($"\t\tcolor=\"blue\";");
+			cb.AppendLine("\t\tcolor=\"blue\";");
 			cb.AppendLine($"\t\tlabel=\"{clusterName}\";");
 			_openCluster = true;
 		}
@@ -199,12 +199,13 @@ namespace HQ.Data.Contracts.Mvc
 		{
 			if (_openCluster)
 			{
-				cb.AppendLine($"\t}}"); // end previous cluster
+				cb.AppendLine("\t}"); // end previous cluster
 				_openCluster = false;
 			}
 		}
 
-		private static void WalkNodes(IEnumerable<INode<string>> nodes, string nodeColor, StringBuilder vb, StringBuilder nb, StringBuilder cb)
+		private static void WalkNodes(IEnumerable<INode<string>> nodes, string nodeColor, StringBuilder vb,
+			StringBuilder nb, StringBuilder cb)
 		{
 			var collection = nodes as IList<INode<string>> ?? nodes.ToList();
 
@@ -218,19 +219,19 @@ namespace HQ.Data.Contracts.Mvc
 					else
 						vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				}
+
 				nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\"];");
 			}
 		}
 
-		private static void WalkNode(INode<string> node, string nodeColor, bool inCluster, StringBuilder vb, StringBuilder nb, StringBuilder cb)
+		private static void WalkNode(INode<string> node, string nodeColor, bool inCluster, StringBuilder vb,
+			StringBuilder nb, StringBuilder cb)
 		{
 			foreach (var dependent in node.Dependents)
-			{
 				if (inCluster)
 					cb.AppendLine($"\t\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				else
 					vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
-			}
 			nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\"];");
 		}
 	}

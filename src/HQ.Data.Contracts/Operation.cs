@@ -21,48 +21,42 @@ using System.Runtime.Serialization;
 
 namespace HQ.Data.Contracts
 {
-    [DataContract]
-    public class Operation
-    {
-        public Operation()
-        {
-            Result = OperationResult.Succeeded;
-        }
+	[DataContract]
+	public class Operation
+	{
+		public Operation() => Result = OperationResult.Succeeded;
 
-        public Operation(Error error)
-        {
-	        Result = OperationResult.Error;
-	        Errors = new List<Error>(error == null ? Enumerable.Empty<Error>() : new[] {error});
-        }
+		public Operation(Error error)
+		{
+			Result = OperationResult.Error;
+			Errors = new List<Error>(error == null ? Enumerable.Empty<Error>() : new[] {error});
+		}
 
-        public Operation(ICollection<Error> errors) : this()
-        {
-            Result = errors?.Count > 0 ? OperationResult.Error : OperationResult.Succeeded;
-            Errors = new List<Error>(errors ?? Enumerable.Empty<Error>());
-        }
+		public Operation(ICollection<Error> errors) : this()
+		{
+			Result = errors?.Count > 0 ? OperationResult.Error : OperationResult.Succeeded;
+			Errors = new List<Error>(errors ?? Enumerable.Empty<Error>());
+		}
 
-        public static Operation CompletedWithoutErrors => new Operation();
+		public static Operation CompletedWithoutErrors => new Operation();
 
-        [DataMember]
-        public OperationResult Result { get; set; }
+		[DataMember] public OperationResult Result { get; set; }
 
-        [DataMember]
-        public bool Succeeded => Result == OperationResult.Succeeded || Result == OperationResult.SucceededWithErrors;
+		[DataMember]
+		public bool Succeeded => Result == OperationResult.Succeeded || Result == OperationResult.SucceededWithErrors;
 
-        [DataMember]
-        public bool HasErrors => Errors?.Count > 0;
+		[DataMember] public bool HasErrors => Errors?.Count > 0;
 
-        [DataMember]
-        public IList<Error> Errors { get; private set; }
+		[DataMember] public IList<Error> Errors { get; private set; }
 
-        public static Operation<T> FromResult<T>(T data)
-        {
-            return new Operation<T>(data);
-        }
+		public static Operation<T> FromResult<T>(T data)
+		{
+			return new Operation<T>(data);
+		}
 
-        public static Operation<T> FromResult<T>(T data, IList<Error> errors)
-        {
-            return new Operation<T>(data, errors);
-        }
-    }
+		public static Operation<T> FromResult<T>(T data, IList<Error> errors)
+		{
+			return new Operation<T>(data, errors);
+		}
+	}
 }

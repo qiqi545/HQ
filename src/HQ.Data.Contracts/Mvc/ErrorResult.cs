@@ -20,38 +20,35 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public class ErrorResult : ObjectResult
-    {
-        protected readonly object[] Arguments;
-        protected readonly Error Error;
+	public class ErrorResult : ObjectResult
+	{
+		protected readonly object[] Arguments;
+		protected readonly Error Error;
 
-        public ErrorResult(Error error, params object[] args) : base(error)
-        {
-            Error = error;
-            Arguments = args;
-        }
+		public ErrorResult(Error error, params object[] args) : base(error)
+		{
+			Error = error;
+			Arguments = args;
+		}
 
-        public override async Task ExecuteResultAsync(ActionContext context)
-        {
-            FormatError();
-            await base.ExecuteResultAsync(context);
-        }
+		public override async Task ExecuteResultAsync(ActionContext context)
+		{
+			FormatError();
+			await base.ExecuteResultAsync(context);
+		}
 
-        public override void ExecuteResult(ActionContext context)
-        {
-            FormatError();
-            base.ExecuteResult(context);
-        }
+		public override void ExecuteResult(ActionContext context)
+		{
+			FormatError();
+			base.ExecuteResult(context);
+		}
 
-        protected virtual void FormatError()
-        {
-            if (Arguments.Length > 0)
-            {
-                Error.Message = string.Format(Error.Message, Arguments);
-            }
+		protected virtual void FormatError()
+		{
+			if (Arguments.Length > 0) Error.Message = string.Format(Error.Message, Arguments);
 
-            Value = Error;
-            StatusCode = Error.StatusCode;
-        }
-    }
+			Value = Error;
+			StatusCode = Error.StatusCode;
+		}
+	}
 }

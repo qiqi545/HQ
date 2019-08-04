@@ -23,20 +23,20 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Queryable
 {
-    /// <summary>
-    ///     Provides implementation-safe expression predicates when <see cref="IQueryable" /> access is undesirable or
-    ///     unstable.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ISafeQueryable<T>
-    {
-        Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
-        T SingleOrDefault(Expression<Func<T, bool>> predicate);
+	/// <summary>
+	///     Provides implementation-safe expression predicates when <see cref="IQueryable" /> access is undesirable or
+	///     unstable.
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public interface ISafeQueryable<T>
+	{
+		Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> predicate);
+		T SingleOrDefault(Expression<Func<T, bool>> predicate);
 
-        Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
-        T FirstOrDefault(Expression<Func<T, bool>> predicate);
+		Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate);
+		T FirstOrDefault(Expression<Func<T, bool>> predicate);
 
-        IEnumerable<T> Where(Expression<Func<T, bool>> predicate);
-        Task<IEnumerable<T>> WhereAsync(Expression<Func<T, bool>> predicate);
-    }
+		IEnumerable<T> Where(Expression<Func<T, bool>> predicate);
+		Task<IEnumerable<T>> WhereAsync(Expression<Func<T, bool>> predicate);
+	}
 }

@@ -22,9 +22,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectPutController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
-    {
-        Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
-        Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
-    }
+	public interface IObjectPutController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
+	{
+		Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
+		Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
+	}
 }

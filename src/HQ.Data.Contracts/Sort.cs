@@ -19,15 +19,15 @@ using System.Diagnostics;
 
 namespace HQ.Data.Contracts
 {
-    [DebuggerDisplay("{" + nameof(ToString) + "}")]
-    public class Sort
-    {
-        public string Field { get; set; }
-        public bool Descending { get; set; }
+	[DebuggerDisplay("{" + nameof(ToString) + "}")]
+	public class Sort
+	{
+		public string Field { get; set; }
+		public bool Descending { get; set; }
 
-        public override string ToString()
-        {
-            return $"{(Descending ? "-" : "+")}{Field}";
-        }
-    }
+		public override string ToString()
+		{
+			return $"{(Descending ? "-" : "+")}{Field}";
+		}
+	}
 }

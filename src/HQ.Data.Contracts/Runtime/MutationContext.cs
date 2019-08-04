@@ -21,21 +21,18 @@ using System.Security.Claims;
 
 namespace HQ.Data.Contracts.Runtime
 {
-    public class MutationContext
-    {
-        public MutationContext(ClaimsPrincipal user)
-        {
-            User = user;
-        }
+	public class MutationContext
+	{
+		public MutationContext(ClaimsPrincipal user) => User = user;
 
-        public ClaimsPrincipal User { get; }
-        public Type Type { get; set; }
-        public ICollection<Error> Errors { get; } = new List<Error>();
-        public dynamic Body { get; set; }
+		public ClaimsPrincipal User { get; }
+		public Type Type { get; set; }
+		public ICollection<Error> Errors { get; } = new List<Error>();
+		public dynamic Body { get; set; }
 
-        public object Execute(IObjectSaveRepository repository)
-        {
-            return repository.SaveAsync(Type, Body);
-        }
-    }
+		public object Execute(IObjectSaveRepository repository)
+		{
+			return repository.SaveAsync(Type, Body);
+		}
+	}
 }

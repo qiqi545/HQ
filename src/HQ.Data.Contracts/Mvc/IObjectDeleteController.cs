@@ -23,10 +23,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectDeleteController : IObjectController, IActionFilter, IAsyncActionFilter, IDisposable
-    {
-        Task<IActionResult> DeleteAsync(FilterOptions filter);
-        Task<IActionResult> DeleteAsync([FromRoute] long id);
-        Task<IActionResult> DeleteAsync([FromBody] IEnumerable<long> ids, long startingAt = 0, int? count = null);
-    }
+	public interface IObjectDeleteController : IObjectController, IActionFilter, IAsyncActionFilter, IDisposable
+	{
+		Task<IActionResult> DeleteAsync(FilterOptions filter);
+		Task<IActionResult> DeleteAsync([FromRoute] long id);
+		Task<IActionResult> DeleteAsync([FromBody] IEnumerable<long> ids, long startingAt = 0, int? count = null);
+	}
 }

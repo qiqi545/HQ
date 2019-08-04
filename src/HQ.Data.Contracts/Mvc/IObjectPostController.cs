@@ -22,9 +22,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Data.Contracts.Mvc
 {
-    public interface IObjectPostController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
-    {
-        Task<IActionResult> PostAsync([FromBody] T @object);
-        Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
-    }
+	public interface IObjectPostController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
+	{
+		Task<IActionResult> PostAsync([FromBody] T @object);
+		Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
+	}
 }

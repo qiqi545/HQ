@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -20,34 +22,33 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
-    public abstract class DelegatedValidationAttribute : ValidationAttribute
-    {
-        public Func<object, bool> Condition { get; set; }
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
+	public abstract class DelegatedValidationAttribute : ValidationAttribute
+	{
+		static DelegatedValidationAttribute()
+		{
+			Snippet.Add<ReadAccessor>();
+			Snippet.Add<RequiredAttribute>();
+		}
 
-        static DelegatedValidationAttribute()
-        {
-            Snippet.Add<ReadAccessor>();
-            Snippet.Add<RequiredAttribute>();
-        }
+		protected DelegatedValidationAttribute(MethodInfo handler) => Condition =
+			Condition ?? (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
 
-        protected DelegatedValidationAttribute(MethodInfo handler)
-        {
-            Condition = Condition ?? (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
-        }
-        
-        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
-        {
-            var result = ValidationResult.Success;
+		public Func<object, bool> Condition { get; set; }
 
-            return Condition == null ? result : Condition(validationContext.ObjectInstance) ? result : Invalid(validationContext);
-        }
+		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+		{
+			var result = ValidationResult.Success;
 
-        private ValidationResult Invalid(ValidationContext validationContext)
-        {
-            var errorMessage = FormatErrorMessage(validationContext.DisplayName);
+			return Condition == null ? result :
+				Condition(validationContext.ObjectInstance) ? result : Invalid(validationContext);
+		}
 
-            return new ValidationResult(errorMessage, new[] { validationContext.MemberName });
-        }
-    }
+		private ValidationResult Invalid(ValidationContext validationContext)
+		{
+			var errorMessage = FormatErrorMessage(validationContext.DisplayName);
+
+			return new ValidationResult(errorMessage, new[] {validationContext.MemberName});
+		}
+	}
 }

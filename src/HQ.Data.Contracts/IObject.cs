@@ -20,10 +20,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Data.Contracts
 {
-    public interface IObject
-    {
-        [Key] long Id { get; }
-        DateTimeOffset CreatedAt { get; }
-        DateTimeOffset? DeletedAt { get; }
-    }
+	public interface IObject
+	{
+		[Key] long Id { get; }
+		DateTimeOffset CreatedAt { get; }
+		DateTimeOffset? DeletedAt { get; }
+	}
 }
