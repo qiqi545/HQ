@@ -55,6 +55,7 @@
     <Content Include="..\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Identity.AspNetCore.Mvc\obj\**\*" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Node\**\*.cs" Exclude="..\HQ.Platform.Node\obj\**\*" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Runtime.Rest\**\*.cs" Exclude="..\HQ.Platform.Runtime.Rest\obj\**\*" Link="Platform.Runtime.Rest\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Platform.Runtime.GraphQl\**\*.cs" Exclude="..\HQ.Platform.Runtime.GraphQl\obj\**\*" Link="Platform.Runtime.GraphQl\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Operations\**\*.cs" Exclude="..\HQ.Platform.Operations\obj\**\*" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security\**\*.cs" Exclude="..\HQ.Platform.Security\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -92,6 +93,7 @@
     <Content Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
   </ItemGroup>
 
@@ -130,7 +132,7 @@
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
-    <PackageReference Include="System.Reactive" Version="4.1.5" />
+    <PackageReference Include="System.Reactive" Version="4.1.6" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="TypeKitchen" Version="1.0.1" />
     <PackageReference Include="WyHash" Version="1.0.3" />
