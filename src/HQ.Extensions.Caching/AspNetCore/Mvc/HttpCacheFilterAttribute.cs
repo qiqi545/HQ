@@ -20,15 +20,13 @@ using System.Net;
 using System.Text;
 using HQ.Common;
 using HQ.Data.Contracts;
-using HQ.Extensions.Caching;
-using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 
-namespace HQ.Platform.Api.Filters
+namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
     public class HttpCacheFilterAttribute : ActionFilterAttribute
     {
@@ -96,12 +94,10 @@ namespace HQ.Platform.Api.Filters
             context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.ETag, new[] {etag});
             _cache.Save(cacheKey, etag);
 
-            // HQ.Data.Contracts: auto-enrich results with Last-Modified.
             if (result.Value is IObject resource)
             {
                 var lastModifiedDate = resource.CreatedAt;
-                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified,
-                    lastModifiedDate.ToString("R"));
+                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified, lastModifiedDate.ToString("R"));
                 _cache.Save(cacheKey, lastModifiedDate);
             }
         }

@@ -17,9 +17,9 @@ using System;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Data.Contracts.Mvc.Security
 {
-	internal sealed class DynamicAuthorizeModelProvider : IApplicationModelProvider
+	public sealed class DynamicAuthorizeModelProvider : IApplicationModelProvider
 	{
 		private readonly IServiceProvider _serviceProvider;
 

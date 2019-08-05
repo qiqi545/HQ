@@ -18,19 +18,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Internal;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using TypeKitchen;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Data.Contracts.Mvc.Security
 {
-	public class DynamicAuthorizeFilterProvider : DefaultFilterProvider
+	public sealed class DynamicAuthorizeFilterProvider : DefaultFilterProvider
 	{
 		private readonly IEnumerable<IDynamicComponent> _components;
 
