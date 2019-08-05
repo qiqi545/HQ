@@ -109,7 +109,7 @@ namespace HQ.Integration.Sqlite.Identity
             var dialect = new SqliteDialect();
             SqlBuilder.Dialect = dialect;
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand<TKey>(), OnConnection);
+            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand(), OnConnection);
             
             SimpleDataDescriptor.TableNameConvention = s =>
             {
@@ -146,7 +146,7 @@ namespace HQ.Integration.Sqlite.Identity
 
             var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
-            MigrateToLatest<TKey>(connectionString, identityOptions);
+            MigrateToLatest(connectionString, identityOptions);
 
             return identityBuilder;
         }
@@ -158,7 +158,7 @@ namespace HQ.Integration.Sqlite.Identity
             }
         }
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>() where TKey : IEquatable<TKey>
+        private static Action<IDbCommand, Type, IServiceProvider> OnCommand()
         {
             return (c, t, r) =>
             {
@@ -168,7 +168,7 @@ namespace HQ.Integration.Sqlite.Identity
             };
         }
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions) where TKey : IEquatable<TKey>
+        private static void MigrateToLatest(string connectionString, IdentityOptionsExtended identityOptions)
         {
             var runner = new SqliteMigrationRunner(connectionString);
 

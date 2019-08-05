@@ -17,19 +17,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts.Mvc.Security;
-using HQ.Data.Contracts.Runtime.Mvc;
+using HQ.Data.SessionManagement;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
+using HQ.Platform.Api.Runtime;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
@@ -212,15 +214,28 @@ namespace HQ.Platform.Api
 
 		#region Runtime
 
-		public static IServiceCollection AddRuntimeApi(this IServiceCollection services)
+		public static IServiceCollection AddRuntimeApi(this IServiceCollection services, IConfiguration config)
+		{
+			return services.AddRuntimeApi(config.Bind);
+		}
+
+		public static IServiceCollection AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
 		{
 			var mvcBuilder = services.AddMvc();
 			mvcBuilder.AddRuntimeApi();
 			return services;
 		}
 
-		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder)
+		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, IConfiguration config)
 		{
+			return mvcBuilder.AddRuntimeApi(config.Bind);
+		}
+
+		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, Action<RuntimeOptions> configureAction = null)
+		{
+			if (configureAction != null)
+				mvcBuilder.Services.Configure(configureAction);
+
 			mvcBuilder.AddControllerFeature<RuntimeController>();
 			mvcBuilder.AddComponentFeature<RuntimeComponent, RuntimeOptions>();
 
@@ -239,7 +254,26 @@ namespace HQ.Platform.Api
 
 			return mvcBuilder;
 		}
-		
+
+		public static IServiceCollection AddSqlRuntimeStores<TDatabase>
+		(
+			this IServiceCollection services,
+			string connectionString,
+			ConnectionScope scope,
+			Action<IDbCommand, Type, IServiceProvider> onCommand = null,
+			Action<IDbConnection, IServiceProvider> onConnection = null
+		)
+			where TDatabase : class, IConnectionFactory, new()
+		{
+			if (scope == ConnectionScope.ByRequest)
+				services.AddHttpContextAccessor();
+
+			services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Runtime,
+				onConnection, onCommand);
+
+			return services;
+		}
+
 		#endregion
 	}
 }

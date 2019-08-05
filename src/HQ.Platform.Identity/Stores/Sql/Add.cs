@@ -45,11 +45,9 @@ namespace HQ.Platform.Identity.Stores.Sql
             var services = identityBuilder.Services;
 
             if (scope == ConnectionScope.ByRequest)
-            {
-                services.AddHttpContextAccessor();
-            }
+				services.AddHttpContextAccessor();
 
-            services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
+			services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
                 onConnection, onCommand);
 
             services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();

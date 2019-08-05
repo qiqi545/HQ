@@ -17,12 +17,14 @@
 
 using HQ.Common;
 
-namespace HQ.Data.Contracts.Runtime.Mvc
+namespace HQ.Platform.Api.Runtime
 {
 	// FIXME: support feature toggle
 	public class RuntimeOptions : IProtectedFeaturePolicy, IComponentOptions
 	{
 		public string RootPath { get; set; } = "/api";
 		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
+		public bool CreateIfNotExists { get; set; } = true;
+		public bool MigrateOnStartup { get; set; } = true;
 	}
 }

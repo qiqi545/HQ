@@ -18,14 +18,16 @@
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
+using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.Runtime.Mvc
+namespace HQ.Platform.Api.Runtime
 {
 	[DynamicController]
 	[DynamicAuthorize(typeof(RuntimeOptions))]

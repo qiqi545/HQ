@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using HQ.Data.Contracts.Attributes;
 
-namespace HQ.Data.Contracts.Runtime.Mvc
+namespace HQ.Platform.Api.Runtime
 {
 	public class RuntimeComponent : DynamicComponent
 	{

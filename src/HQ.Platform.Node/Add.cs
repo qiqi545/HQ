@@ -17,7 +17,6 @@
 
 using System;
 using System.Reflection;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
@@ -73,6 +72,9 @@ namespace HQ.Platform.Node
             var multiTenants = api.GetSection("MultiTenancy");
             var ops = hq.GetSection("Ops");
             var tasks = hq.GetSection("BackgroundTasks");
+			var configApi = hq.GetSection("Configuration");
+			var meta = hq.GetSection("Meta");
+			var runtime = hq.GetSection("Runtime");
 
             services.TryAddSingleton(configRoot);
             services.TryAddSingleton(services);
@@ -90,9 +92,10 @@ namespace HQ.Platform.Node
             services.AddVersioning(versioning);
             services
 	            .AddBackgroundTasksApi(tasks)
-	            .AddConfigurationApi(configRoot)
+	            .AddConfigurationApi(configRoot, configApi)
 				.AddIdentityApi(identityApi)
-                .AddMetaApi()
+                .AddMetaApi(meta)
+	            .AddRuntimeApi(runtime)
                 ;
 
             //

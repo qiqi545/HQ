@@ -15,13 +15,14 @@
 
 #endregion
 
+using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Data.Contracts.Runtime.Mvc
+namespace HQ.Platform.Api.Runtime
 {
 	public class RuntimeGetActionMethodSelectorAttribute : ActionMethodSelectorAttribute
 	{
