@@ -38,16 +38,19 @@ namespace HQ.Platform.Runtime.Rest
             services.TryAddSingleton<RestProjectionFilter>();
             services.TryAddSingleton<RestSearchFilter>();
             services.TryAddSingleton<RestSortFilter>();
-            services.TryAddSingleton<ChildResourceFilterAttribute>();
+            services.TryAddSingleton<RestSegmentFilter>();
 
-            TryAddFilter<RestFieldsFilter>(services);
+			TryAddFilter<RestFieldsFilter>(services);
             TryAddFilter<RestFilterFilter>(services);
             TryAddFilter<RestPageFilter>(services);
             TryAddFilter<RestStreamFilter>(services);
             TryAddFilter<RestProjectionFilter>(services);
             TryAddFilter<RestSearchFilter>(services);
             TryAddFilter<RestSortFilter>(services);
-        }
+            TryAddFilter<RestSegmentFilter>(services);
+
+            services.TryAddSingleton<ChildResourceFilterAttribute>();
+		}
 
         private static void TryAddFilter<TFilter>(IServiceCollection services) where TFilter : class, IRestFilter
         {

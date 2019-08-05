@@ -39,8 +39,8 @@ namespace HQ.Integration.Sqlite.Runtime
 {
 	public static class Add
 	{
-		public static ServiceCollection AddSqliteRuntime(
-			this ServiceCollection services,
+		public static IServiceCollection AddSqliteRuntime(
+			this IServiceCollection services,
 			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
 			IConfiguration databaseConfig = null)
 		{
@@ -49,7 +49,7 @@ namespace HQ.Integration.Sqlite.Runtime
 			return AddSqliteRuntime(services, connectionString, scope, configureDatabase);
 		}
 
-		public static ServiceCollection AddSqliteRuntime(this ServiceCollection services,
+		public static IServiceCollection AddSqliteRuntime(this IServiceCollection services,
 			string connectionString, 
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqliteOptions> configureDatabase = null)

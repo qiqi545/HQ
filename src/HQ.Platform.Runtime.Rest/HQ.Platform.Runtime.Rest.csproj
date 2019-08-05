@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
   </ItemGroup>
 
   <ItemGroup>

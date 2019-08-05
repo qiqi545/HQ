@@ -36,10 +36,11 @@ namespace HQ.Data.Contracts.Runtime
 		public StreamOptions Streaming { get; set; }
 		public FilterOptions Filters { get; set; }
 		public ProjectionOptions Projections { get; set; }
+		public SegmentOptions Buffer { get; set; }
 
-		public Task<Operation<IPage<IObject>>> ExecuteAsync(IObjectGetRepository repository)
+		public async Task<object> GetAsync(IObjectGetRepository repository)
 		{
-			return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
+			return await repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
 		}
 	}
 }

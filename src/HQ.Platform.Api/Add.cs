@@ -23,8 +23,10 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Serialization;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.SessionManagement;
+using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
@@ -268,8 +270,8 @@ namespace HQ.Platform.Api
 			if (scope == ConnectionScope.ByRequest)
 				services.AddHttpContextAccessor();
 
-			services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Runtime,
-				onConnection, onCommand);
+			services.AddDatabaseConnection<IObjectGetRepository, TDatabase>(connectionString, scope, onConnection, onCommand);
+			services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
 
 			return services;
 		}

@@ -26,7 +26,7 @@ using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Runtime.Rest.Filters
 {
-    public class RestStreamFilter : IRestFilter
+	public class RestStreamFilter : IRestFilter
     {
         private readonly IOptions<QueryOptions> _options;
 

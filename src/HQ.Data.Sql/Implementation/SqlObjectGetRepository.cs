@@ -75,10 +75,10 @@ namespace HQ.Data.Sql.Implementation
             return new Operation<TObject>(data);
         }
 
-        public Task<Operation<IStream<TObject>>> GetAsync(IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
+        public Task<Operation<IStream<TObject>>> GetAsync(SegmentOptions segment, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
         {
             _db.SetTypeInfo(typeof(TObject));
-            throw new NotImplementedException("Streaming not available.");
+            throw new NotImplementedException("Segmentation not available.");
         }
     }
 
@@ -108,7 +108,8 @@ namespace HQ.Data.Sql.Implementation
                 page = GetDefaultPageOptions();
 
             var sql = _dialect.Build(type, sort, fields, filter, projection);
-            var data = (await _db.Current.QueryAsync<IObject>(PageBuilder.Page(_dialect, sql), new { page.Page, page.PerPage })).AsList();
+            var paged = PageBuilder.Page(_dialect, sql);
+            var data = (await _db.Current.QueryAsync<IObject>(paged, new { page.Page, page.PerPage })).AsList();
             var total = await _db.Current.ExecuteScalarAsync<long>(_dialect.Count(descriptor, filter?.Fields));
             var slice = new Page<IObject>(data, data.Count, page.Page - 1, page.PerPage, total);
 
@@ -128,12 +129,11 @@ namespace HQ.Data.Sql.Implementation
             return new Operation<IObject>(data);
         }
 
-        public Task<Operation<IStream<IObject>>> GetAsync(Type type, IEnumerable<long> ids = null, long startingAt = 0, int? count = null, FieldOptions fields = null,
-            FilterOptions filter = null, ProjectionOptions projection = null)
+        public Task<Operation<IStream<IObject>>> GetAsync(Type type, SegmentOptions buffer = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
         {
             var descriptor = SimpleDataDescriptor.Create(type);
             _db.SetTypeInfo(type);
-            throw new NotImplementedException("Streaming not available.");
+            throw new NotImplementedException("Segmentation not available.");
         }
 
         private static SortOptions GetDefaultSortOptions(IDataDescriptor descriptor)

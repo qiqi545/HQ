@@ -24,6 +24,7 @@ using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.Identity;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.Sqlite.Identity;
+using HQ.Integration.Sqlite.Runtime;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.Sql.Configuration;
@@ -34,6 +35,8 @@ using HQ.Platform.Identity.AspNetCore.Mvc;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Pages;
 using HQ.Platform.Operations;
+using HQ.Platform.Runtime.GraphQL;
+using HQ.Platform.Runtime.Rest;
 using HQ.Platform.Security.AspNetCore;
 using HQ.UI;
 using HQ.UI.Web;
@@ -104,6 +107,7 @@ namespace HQ.Platform.Node
 
             //
             // Database:
+			// FIXME: SqliteBatchOptions is hard-coded
             var connectionString = configRoot.GetConnectionString("DefaultConnection");
             var dbOptions = configRoot.GetSection("DbOptions");
             services.AddBackendServices<SqliteBatchOptions>(env, connectionString, dbOptions, hq, logger, subject);
@@ -143,7 +147,12 @@ namespace HQ.Platform.Node
                     throw new ArgumentOutOfRangeException(nameof(TBatchOptions), typeof(TBatchOptions), null);
             }
 
-            UiConfig.Settings = settings =>
+			// FIXME: IRuntimeBuilder?
+			services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+			services.AddRestRuntime();
+            services.AddGraphQlRuntime();
+
+			UiConfig.Settings = settings =>
             {
                 settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
                 settings.ComponentAssemblies = new[]
