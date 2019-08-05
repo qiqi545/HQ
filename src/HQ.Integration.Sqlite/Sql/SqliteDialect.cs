@@ -25,100 +25,66 @@ using HQ.Data.Sql.Helpers;
 
 namespace HQ.Integration.Sqlite.Sql
 {
-    public class SqliteDialect : SqlDialect
-    {
-        public override char? StartIdentifier => '\"';
-        public override char? EndIdentifier => '\"';
-        public override char? Separator => '.';
-        public override char? Parameter => ':';
-        public override char? Quote => '\'';
+	public class SqliteDialect : SqlDialect
+	{
+		public override char? StartIdentifier => '\"';
+		public override char? EndIdentifier => '\"';
+		public override char? Separator => '.';
+		public override char? Parameter => ':';
+		public override char? Quote => '\'';
 
-        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
-        {
-            switch (location)
-            {
-                case FetchInsertedKeyLocation.AfterStatement:
-                    sql = "SELECT LAST_INSERT_ROWID() AS \"Id\"";
-                    return true;
-                default:
-                    sql = null;
-                    return false;
-            }
-        }
+		public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
+		{
+			switch (location)
+			{
+				case FetchInsertedKeyLocation.AfterStatement:
+					sql = "SELECT LAST_INSERT_ROWID() AS \"Id\"";
+					return true;
+				default:
+					sql = null;
+					return false;
+			}
+		}
 
-        public override void Page(string sql, StringBuilder sb)
-        {
-            PagingHelper.SplitSql(sql, out var parts);
+		// FIXME: Implement "left off" from: http://mysql.rjweb.org/doc.php/pagination
+		public override void Page(string sql, StringBuilder sb)
+		{
+			PagingHelper.SplitSql(sql, out var parts);
 
-            var orderBy = parts.SqlOrderBy ?? " ";
+			var orderBy = parts.SqlOrderBy ?? " ";
 
-            var selectClause = parts.SqlOrderBy == null
-                ? parts.SqlSelectRemoved
-                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+			var selectClause = parts.SqlOrderBy == null
+				? parts.SqlSelectRemoved
+				: parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
 
-            sb.Append("SELECT ").Append(selectClause);
+			sb.Append("SELECT ").Append(selectClause);
 
-            if (parts.SqlOrderByFields.Length == 0)
-            {
-                // LIMIT OFFSET is grossly inefficient in SQLite:
-                // https://stackoverflow.com/questions/14468586/efficient-paging-in-sqlite-with-millions-of-records
-                // http://www.sqlite.org/cvstrac/wiki?p=ScrollingCursor
+			// LIMIT OFFSET is grossly inefficient in SQLite:
+			// https://stackoverflow.com/questions/14468586/efficient-paging-in-sqlite-with-millions-of-records
+			// http://www.sqlite.org/cvstrac/wiki?p=ScrollingCursor
+			sb.Append(orderBy)
+				.Append(" LIMIT :PerPage OFFSET :Page");
+		}
 
-                sb.Append(orderBy)
-                    .Append(" LIMIT :PerPage OFFSET :Page");
+		public new string ResolveTableName(IDataDescriptor descriptor)
+		{
+			return descriptor.Table;
+		}
 
-                return;
-            }
-
-            sb.Append(parts.SqlSelectRemoved.Contains("WHERE") ? "AND" : "WHERE");
-
-            if (parts.SqlOrderByFields.Length == 1)
-            {
-                sb.Append(' ').Append(parts.SqlOrderByFields[0]).Append(" > ")
-                    .Append(Parameter).Append("Last").Append(parts.SqlOrderByFields[0])
-                    .Append(' ').Append(orderBy).Append(" LIMIT :PerPage");
-
-                return;
-            }
-
-            sb.Append("(");
-            for (var i = 0; i < parts.SqlOrderByFields.Length; i++)
-            {
-                sb.Append(parts.SqlOrderByFields[i]);
-                if (i < parts.SqlOrderByFields.Length - 1)
-                    sb.Append(", ");
-            }
-
-            sb.Append(") > ");
-            for (var i = 0; i < parts.SqlOrderByFields.Length; i++)
-            {
-                sb.Append(Parameter).Append("Last").Append(parts.SqlOrderByFields[i]);
-                if (i < parts.SqlOrderByFields.Length - 1)
-                    sb.Append(", ");
-            }
-
-            sb.Append(' ').Append(orderBy).Append(" LIMIT :PerPage");
-        }
-
-        public new string ResolveTableName(IDataDescriptor descriptor)
-        {
-            return descriptor.Table;
-        }
-
-        public new IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor,
-            ColumnScope scope = ColumnScope.All)
-        {
-            switch (scope)
-            {
-                case ColumnScope.All:
-                    return descriptor.All.Select(c => c.ColumnName);
-                case ColumnScope.Inserted:
-                    return descriptor.Inserted.Select(c => c.ColumnName);
-                case ColumnScope.Updated:
-                    return descriptor.Updated.Select(c => c.ColumnName);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
-            }
-        }
-    }
+		public new IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor,
+			ColumnScope scope = ColumnScope.All)
+		{
+			switch (scope)
+			{
+				case ColumnScope.All:
+					return descriptor.All.Select(c => c.ColumnName);
+				case ColumnScope.Inserted:
+					return descriptor.Inserted.Select(c => c.ColumnName);
+				case ColumnScope.Updated:
+					return descriptor.Updated.Select(c => c.ColumnName);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
+			}
+		}
+	}
 }
