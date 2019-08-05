@@ -24,7 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api.Runtime
 {
-	public class RuntimeGetActionMethodSelectorAttribute : ActionMethodSelectorAttribute
+	public class QueryContextProviderSelectorAttribute : ActionMethodSelectorAttribute
 	{
 		public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
 		{
@@ -39,7 +39,7 @@ namespace HQ.Platform.Api.Runtime
 					{
 						if (!supportedMediaType.IsSubsetOf(mediaType))
 							continue;
-						http.Items.Add(nameof(RuntimeGetActionMethodSelectorAttribute), provider);
+						http.Items.Add(nameof(QueryContextProviderSelectorAttribute), provider);
 						return true;
 					}
 				}
