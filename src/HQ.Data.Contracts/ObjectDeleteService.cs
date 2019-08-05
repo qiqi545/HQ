@@ -43,9 +43,9 @@ namespace HQ.Data.Contracts
 			return operation.Data;
 		}
 
-		public virtual async Task DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null)
+		public virtual async Task DeleteAsync(SegmentOptions segment)
 		{
-			await _repository.DeleteAsync(ids, startingAt, count);
+			await _repository.DeleteAsync(segment);
 		}
 
 		public virtual async Task DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null)
@@ -76,9 +76,9 @@ namespace HQ.Data.Contracts
 			return operation.Data;
 		}
 
-		public virtual async Task DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null)
+		public virtual async Task DeleteAsync(Type type, SegmentOptions segment)
 		{
-			await _repository.DeleteAsync(type, ids, startingAt, count);
+			await _repository.DeleteAsync(type, segment);
 		}
 
 		public virtual async Task DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0,

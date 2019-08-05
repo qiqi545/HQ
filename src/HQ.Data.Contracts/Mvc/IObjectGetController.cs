@@ -15,7 +15,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -25,8 +24,7 @@ namespace HQ.Data.Contracts.Mvc
 	public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
 	{
 		Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
-			FilterOptions filter, ProjectionOptions projection, [FromQuery] IEnumerable<long> ids = null,
-			[FromQuery] string query = null, [FromQuery] long startingAt = 0, [FromQuery] int? count = null);
+			FilterOptions filter, ProjectionOptions projection, SegmentOptions segment, [FromQuery] string query = null);
 
 		Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
 	}

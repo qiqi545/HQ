@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts;
@@ -72,16 +73,21 @@ namespace HQ.Data.Sql.Implementation
 			}
 		}
 
-		public virtual Task<Operation> DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null)
+		public virtual Task<Operation> DeleteAsync(SegmentOptions segment)
 		{
 			_db.SetTypeInfo(typeof(TObject));
-			throw new NotImplementedException("Streaming not available.");
+			throw new NotImplementedException("Segmentation not available.");
 		}
 
 		public virtual Task<Operation> DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null)
 		{
-			_db.SetTypeInfo(typeof(TObject));
-			throw new NotImplementedException("Streaming not available.");
+			var ids = objects.Skip((int) startingAt).Take(count.GetValueOrDefault()).Select(x => x.Id);
+			return DeleteAsync(new SegmentOptions
+			{
+				Ids = ids,
+				StartingAt = 0,
+				Count = count.GetValueOrDefault()
+			});
 		}
 	}
 
@@ -133,16 +139,21 @@ namespace HQ.Data.Sql.Implementation
 			}
 		}
 
-		public virtual Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null)
+		public virtual Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, SegmentOptions segment)
 		{
 			_db.SetTypeInfo(type);
-			throw new NotImplementedException("Streaming not available.");
+			throw new NotImplementedException("Segmentation not available.");
 		}
 
 		public virtual Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null)
 		{
-			_db.SetTypeInfo(type);
-			throw new NotImplementedException("Streaming not available.");
+			var ids = objects.Skip((int) startingAt).Take(count.GetValueOrDefault()).Select(x => x.Id);
+			return DeleteAsync(type, new SegmentOptions
+			{
+				Ids = ids,
+				StartingAt = 0,
+				Count = count.GetValueOrDefault()
+			});
 		}
 	}
 }

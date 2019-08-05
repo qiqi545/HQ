@@ -25,7 +25,7 @@ namespace HQ.Data.Contracts
 	{
 		Task<Operation<ObjectDelete>> DeleteAsync(Type type, long id);
 		Task<Operation<ObjectDelete>> DeleteAsync(Type type, IObject @object);
-		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<long> ids, long startingAt = 0, int? count = null);
+		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, SegmentOptions segment);
 		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
 	}
 
@@ -33,7 +33,7 @@ namespace HQ.Data.Contracts
 	{
 		Task<Operation<ObjectDelete>> DeleteAsync(long id);
 		Task<Operation<ObjectDelete>> DeleteAsync(TObject @object);
-		Task<Operation> DeleteAsync(IEnumerable<long> ids, long startingAt = 0, int? count = null);
+		Task<Operation> DeleteAsync(SegmentOptions segment);
 		Task<Operation> DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null);
 	}
 }
