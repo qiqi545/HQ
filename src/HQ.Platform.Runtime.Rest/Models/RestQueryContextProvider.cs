@@ -15,11 +15,14 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using HQ.Common;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Runtime.Rest.Models
 {
@@ -30,18 +33,26 @@ namespace HQ.Platform.Runtime.Rest.Models
         public RestQueryContextProvider(IEnumerable<IRestFilter> filters)
         {
             _filters = filters;
+
+            SupportedMediaTypes =  new List<MediaTypeHeaderValue>
+            {
+	            MediaTypeHeaderValue.Parse(Constants.MediaTypes.Json),
+	            MediaTypeHeaderValue.Parse(Constants.MediaTypes.Xml)
+            };
         }
 
-        public IEnumerable<QueryContext> Parse<T>(HttpContext source)
+        public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
+
+        public IEnumerable<QueryContext> Parse(Type type, HttpContext source)
         {
-            return Parse<T>(source.User, source.Request.QueryString.Value);
+            return Parse(type, source.User, source.Request.QueryString.Value);
         }
 
-        public IEnumerable<QueryContext> Parse<T>(ClaimsPrincipal user, string source)
+        public IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source)
         {
             var context = new QueryContext(user)
             {
-                Type = typeof(T),
+                Type = type,
             };
 
             BuildHandleData(context, source);

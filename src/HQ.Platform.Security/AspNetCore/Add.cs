@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using HQ.Common;
+using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
@@ -63,23 +64,16 @@ namespace HQ.Platform.Security.AspNetCore
 
 			services.ConfigureOptions<ConfigureWebServer>();
 
-			AddDynamicAuthorization(services);
-			AddCors(services, logger, options.Cors);
-			AddAuthentication(services, logger, options);
-			AddSuperUser(services, logger, options.SuperUser);
-			AddHttps(services, logger, options);
+			services.AddDynamicAuthorization();
+			services.AddCors(logger, options.Cors);
+			services.AddAuthentication(logger, options);
+			services.AddSuperUser(logger, options.SuperUser);
+			services.AddHttps(logger, options);
 
 			return services;
 		}
 
-		public static void AddDynamicAuthorization(this IServiceCollection services)
-		{
-			// Authorization:
-			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicAuthorizeModelProvider>());
-			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-		}
-
-		private static void AddCors(IServiceCollection services, ISafeLogger logger, CorsOptions cors)
+		private static void AddCors(this IServiceCollection services, ISafeLogger logger, CorsOptions cors)
 		{
 			if (!cors.Enabled)
 				return;
@@ -115,7 +109,7 @@ namespace HQ.Platform.Security.AspNetCore
 			});
 		}
 
-		private static void AddHttps(IServiceCollection services, ISafeLogger logger, SecurityOptions options)
+		private static void AddHttps(this IServiceCollection services, ISafeLogger logger, SecurityOptions options)
 		{
 			if (options.Https.Enabled)
 			{
@@ -141,7 +135,7 @@ namespace HQ.Platform.Security.AspNetCore
 			}
 		}
 
-		private static void AddAuthentication(IServiceCollection services, ISafeLogger logger, SecurityOptions security)
+		private static void AddAuthentication(this IServiceCollection services, ISafeLogger logger, SecurityOptions security)
 		{
 			var tokens = security.Tokens;
 			var cookies = security.Cookies;
@@ -179,7 +173,7 @@ namespace HQ.Platform.Security.AspNetCore
 			}
 		}
 
-		private static void AddSuperUser(IServiceCollection services, ISafeLogger logger, SuperUserOptions options)
+		private static void AddSuperUser(this IServiceCollection services, ISafeLogger logger, SuperUserOptions options)
 		{
 			if (options.Enabled)
 			{
@@ -194,7 +188,7 @@ namespace HQ.Platform.Security.AspNetCore
 			}
 		}
 
-		private static void TryAddDefaultPolicy(IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
+		private static void TryAddDefaultPolicy(this IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
 		{
 			if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
 			{

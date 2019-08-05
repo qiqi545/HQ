@@ -1,6 +1,6 @@
 using System;
 using Dapper;
-using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
@@ -32,32 +32,25 @@ namespace HQ.Integration.Sqlite.Scheduling
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             Action<SqliteOptions> configureDatabase = null)
         {
-            var services = builder.Services;
-            
             if (scope == ConnectionScope.ByRequest)
-            {
-                services.AddHttpContextAccessor();
-            }
+				builder.Services.AddHttpContextAccessor();
 
-            services.AddDatabaseConnection<SqliteConnectionFactory>(connectionString, scope, Constants.ConnectionSlots.BackgroundTasks);
-
-            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-            services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
+			builder.Services.AddDatabaseConnection<SqliteConnectionFactory>(connectionString, scope, Constants.ConnectionSlots.BackgroundTasks);
+			builder.Services.AddLocalTimestamps();
+			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 
             var dialect = new SqliteDialect();
             SqlBuilder.Dialect = dialect;
 
-            services.Configure(configureDatabase);
-
-            services.AddMetrics();
-            services.TryAddSingleton<ISqlDialect>(dialect);
-            services.TryAddSingleton(dialect);
+            builder.Services.Configure(configureDatabase);
+            builder.Services.AddMetrics();
+            builder.Services.TryAddSingleton<ISqlDialect>(dialect);
+            builder.Services.TryAddSingleton(dialect);
 
             SqlMapper.AddTypeHandler(DateTimeOffsetHandler.Default);
             SqlMapper.AddTypeHandler(TimeSpanHandler.Default);
 
-            var serviceProvider = services.BuildServiceProvider();
-
+            var serviceProvider = builder.Services.BuildServiceProvider();
             var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
 
             MigrateToLatest(connectionString, options.Value);

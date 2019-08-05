@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Runtime
 {
@@ -36,7 +37,7 @@ namespace HQ.Data.Contracts.Runtime
 		public FilterOptions Filters { get; set; }
 		public ProjectionOptions Projections { get; set; }
 
-		public object Execute(IObjectGetRepository repository)
+		public Task<Operation<IPage<IObject>>> ExecuteAsync(IObjectGetRepository repository)
 		{
 			return repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
 		}

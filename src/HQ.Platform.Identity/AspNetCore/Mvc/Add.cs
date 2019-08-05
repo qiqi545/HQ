@@ -18,17 +18,18 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc.Security;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
@@ -122,24 +123,25 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                     });
             });
 
-			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-			{
-				var o = r.GetRequiredService<IOptions<IdentityApiOptions>>();
-				return new IdentityApiComponent {RouteTemplate = () => o.Value.RootPath ?? string.Empty};
-			});
+
+			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
 
 			if (TokensEnabled(mvcBuilder))
 			{
 				mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
+
+				// FIXME:
+				// mvcBuilder.AddComponentFeature<TokensComponent, TokenOptions>();
 				mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
 				{
-					var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-					return new TokensComponent {RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty};
-				});
-				mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
-				{
-					var components = r.GetServices<IDynamicComponent>();
-					return new DynamicAuthorizeFilterProvider(components);
+					return new TokensComponent
+					{
+						RouteTemplate = () =>
+						{
+							var o = r.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
+							return o.CurrentValue.Tokens?.Path ?? string.Empty;
+						}
+					};
 				});
 			}
         }

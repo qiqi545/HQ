@@ -1,5 +1,6 @@
 using System;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
@@ -44,8 +45,8 @@ namespace HQ.Integration.DocumentDb.Scheduling
             if (configureAction != null)
 	            builder.Services.Configure(slot, configureAction);
 
+            builder.Services.AddLocalTimestamps();
 			builder.Services.AddMetrics();
-			builder.Services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
 			

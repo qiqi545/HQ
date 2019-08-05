@@ -23,6 +23,6 @@ namespace HQ.Common.AspNetCore.Mvc
 	public interface IDynamicComponent
 	{
 		IEnumerable<Type> ControllerTypes { get; }
-		Func<string> RouteTemplate { get; }
+		Func<string> RouteTemplate { get; set; }
 	}
 }

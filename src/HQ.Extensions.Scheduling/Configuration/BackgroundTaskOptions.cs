@@ -21,7 +21,7 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Configuration
 {
-    public class BackgroundTaskOptions : FeatureToggle, IProtectedFeature
+    public class BackgroundTaskOptions : FeatureToggle, IProtectedFeature, IComponentOptions
     {
         public BackgroundTaskOptions()
         {
@@ -38,7 +38,7 @@ namespace HQ.Extensions.Scheduling.Configuration
 
             // Per-Task:
             DeleteOnFailure = false;
-            DeleteOnSuccess = false;
+            DeleteOnSuccess = true;
             DeleteOnError = false;
             Priority = 0;
         }

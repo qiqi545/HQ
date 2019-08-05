@@ -15,15 +15,14 @@
 
 #endregion
 
-using System.Collections.Immutable;
-using HQ.Data.Contracts.Runtime;
-using HQ.Extensions.Caching;
+using HQ.Common;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Data.Contracts.Runtime.Mvc
 {
-    public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
-        where TFilter : IMetric
-    {
-        IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
-    }
+	// FIXME: support feature toggle
+	public class RuntimeOptions : IProtectedFeaturePolicy, IComponentOptions
+	{
+		public string RootPath { get; set; } = "/api";
+		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
+	}
 }

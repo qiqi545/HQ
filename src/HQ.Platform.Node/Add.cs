@@ -18,6 +18,7 @@
 using System;
 using System.Reflection;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
@@ -78,8 +79,9 @@ namespace HQ.Platform.Node
 
 			//
 			// Core Services:
-			services.AddSingleton<IServerTimestampService, LocalServerTimestampService>();
-            services.AddSecurityPolicies(security, logger);
+			services.AddLocalTimestamps();
+			services.AddSafeLogging();
+			services.AddSecurityPolicies(security, logger);
             services.AddOperationsApi(env, ops);
             services.AddPlatformApi(api);
             services.AddMultiTenancy<IdentityTenant, IdentityApplication>(multiTenants)

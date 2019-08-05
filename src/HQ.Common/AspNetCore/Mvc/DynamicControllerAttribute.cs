@@ -21,7 +21,7 @@ using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-	public class DynamicControllerAttribute : Attribute, IControllerModelConvention
+	public sealed class DynamicControllerAttribute : Attribute, IControllerModelConvention
 	{
 		public void Apply(ControllerModel controller)
 		{

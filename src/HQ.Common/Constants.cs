@@ -81,10 +81,11 @@ namespace HQ.Common
                 public const string ManageRoles = nameof(ManageRoles);
                 public const string ManageBackgroundTasks = nameof(ManageBackgroundTasks);
                 public const string ManageConfiguration = nameof(ManageConfiguration);
+                public const string ManageObjects = nameof(ManageObjects);
 
-                public const string AccessMeta = nameof(AccessMeta);
+				public const string AccessMeta = nameof(AccessMeta);
                 public const string AccessOperations = nameof(AccessOperations);
-			}
+            }
         }
 
         public static class Versioning
@@ -191,8 +192,8 @@ namespace HQ.Common
             public const string JsonApi = "application/vnd.api+json";
             public const string HqSchema = "application/vnd.hq.schema+json";
             public const string Xml = "application/xml";
-
-            public const string Markdown = "text/markdown";
+            public const string GraphQl = "application/graphql";
+			public const string Markdown = "text/markdown";
             public const string PlainText = "text/plain";
             public const string Binary = "application/octet-stream";
             public const string Unspecified = Binary;

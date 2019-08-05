@@ -150,8 +150,8 @@ namespace HQ.UI.Web
 			}
 
 			action.MethodName = callee?.Name ?? (IsRootPath(requestUri, options)
-				                    ? settings.DefaultPageMethodName
-				                    : requestUri.Segments.LastOrDefault());
+									? settings.DefaultPageMethodName
+									: requestUri.Segments.LastOrDefault());
 
 			PopulateArguments(ui, action, target, callee, parameters);
 		}
@@ -160,8 +160,8 @@ namespace HQ.UI.Web
 		private static bool IsRootPath(Uri requestUri, IOptions<UiServerOptions> options)
 		{
 			return requestUri.Segments.Length == 1 &&
-			       requestUri.Segments[0] == "/" ||
-			       requestUri.AbsolutePath == options.Value.HubPath;
+				   requestUri.Segments[0] == "/" ||
+				   requestUri.AbsolutePath == options.Value.HubPath;
 		}
 
 		public void Document(string document)
@@ -194,7 +194,7 @@ namespace HQ.UI.Web
 							break;
 						}
 
-						foreach (var schemeName in authorize.AuthenticationSchemes.Split(new[] {","},
+						foreach (var schemeName in authorize.AuthenticationSchemes.Split(new[] { "," },
 							StringSplitOptions.RemoveEmptyEntries))
 							declaredSchemeNames.Add(schemeName);
 					}
@@ -223,9 +223,9 @@ namespace HQ.UI.Web
 				}
 
 				if (first == null)
-					throw new ArgumentNullException("Expected at least one authentication scheme");
-
-				await httpContext.ChallengeAsync(first.Name);
+					await httpContext.ForbidAsync();
+				else
+					await httpContext.ChallengeAsync(first.Name);
 			}
 			finally
 			{

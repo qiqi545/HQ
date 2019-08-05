@@ -17,6 +17,7 @@
 
 using System;
 using System.Security.Cryptography;
+using HQ.Extensions.Caching.AspNetCore.Mvc;
 
 namespace HQ.Platform.Api.Models
 {

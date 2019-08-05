@@ -28,7 +28,7 @@ namespace HQ.Platform.Runtime.Rest
     {
         public static void AddRestRuntime(this IServiceCollection services)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, RestQueryContextProvider>());
+	        services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, RestQueryContextProvider>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IMutationContextProvider, RestMutationContextProvider>());
             
             services.TryAddSingleton<RestFieldsFilter>();
@@ -53,5 +53,5 @@ namespace HQ.Platform.Runtime.Rest
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IRestFilter, TFilter>(r => r.GetRequiredService<TFilter>()));
         }
-    }
+	}
 }

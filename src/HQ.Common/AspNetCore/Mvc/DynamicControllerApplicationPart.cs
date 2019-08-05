@@ -21,10 +21,9 @@ using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-	public class DynamicControllerApplicationPart : ApplicationPart, IApplicationPartTypeProvider
+	public sealed class DynamicControllerApplicationPart : ApplicationPart, IApplicationPartTypeProvider
 	{
 		public DynamicControllerApplicationPart(IEnumerable<TypeInfo> types) => Types = types;
-
 		public override string Name => nameof(DynamicControllerApplicationPart);
 		public IEnumerable<TypeInfo> Types { get; }
 	}

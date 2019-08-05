@@ -19,6 +19,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
+using HQ.Extensions.Logging;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
@@ -124,7 +126,10 @@ namespace HQ.Platform.Identity
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            var identityBuilder = services.AddIdentityCore<TUser>(o =>
+	        services.AddLocalTimestamps();
+	        services.AddSafeLogging();
+
+			var identityBuilder = services.AddIdentityCore<TUser>(o =>
             {
                 var x = new IdentityOptionsExtended(o);
                 Defaults(x);
@@ -169,8 +174,6 @@ namespace HQ.Platform.Identity
 
             // untyped forwarding
             services.AddTransient<IApplicationService>(r => r.GetService<IApplicationService<TApplication>>());
-
-            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
 
             return identityBuilder;
         }

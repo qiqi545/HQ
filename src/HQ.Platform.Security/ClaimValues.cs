@@ -26,8 +26,9 @@ namespace HQ.Platform.Security
         public const string ManageApplications = "manage_applications";
         public const string ManageBackgroundTasks = "manage_background_tasks";
         public const string ManageConfiguration = "manage_configuration";
+        public const string ManageObjects = "manage_objects";
 
-        public const string AccessMeta = "access_meta";
+		public const string AccessMeta = "access_meta";
         public const string AccessOperations = "access_operations";
-	}
+    }
 }

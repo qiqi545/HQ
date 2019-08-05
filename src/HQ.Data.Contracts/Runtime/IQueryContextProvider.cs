@@ -15,15 +15,18 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Data.Contracts.Runtime
 {
 	public interface IQueryContextProvider
 	{
-		IEnumerable<QueryContext> Parse<T>(HttpContext source);
-		IEnumerable<QueryContext> Parse<T>(ClaimsPrincipal user, string source);
+		IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
+		IEnumerable<QueryContext> Parse(Type type, HttpContext source);
+		IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source);
 	}
 }

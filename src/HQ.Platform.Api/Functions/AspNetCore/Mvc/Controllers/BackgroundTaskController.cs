@@ -25,7 +25,6 @@ using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
@@ -46,7 +45,6 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 
         private readonly IBackgroundTaskStore _store;
         private readonly ITypeResolver _typeResolver;
-
         private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 
         public BackgroundTaskController(IBackgroundTaskStore store, ITypeResolver typeResolver, BackgroundTaskHost host, IOptionsMonitor<BackgroundTaskOptions> options)
@@ -60,7 +58,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
         [HttpOptions]
         public IActionResult GetOptions()
         {
-	        var typesWithPerformMethod = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync));
+			var typesWithPerformMethod = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync));
 			
 	        var taskTypeNames = typesWithPerformMethod
                 .Where(x => !x.IsInterface && !x.IsAbstract)

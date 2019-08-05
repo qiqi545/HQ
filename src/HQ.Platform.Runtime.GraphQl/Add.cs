@@ -15,15 +15,18 @@
 
 #endregion
 
-using System.Collections.Immutable;
 using HQ.Data.Contracts.Runtime;
-using HQ.Extensions.Caching;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Platform.Runtime.GraphQL
 {
-    public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
-        where TFilter : IMetric
+    public static class Add
     {
-        IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
+        public static void AddGraphQlRuntime(this IServiceCollection services)
+        {
+	        services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, GraphQlQueryContextProvider>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IMutationContextProvider, GraphMutationContextProvider>());
+        }
     }
 }

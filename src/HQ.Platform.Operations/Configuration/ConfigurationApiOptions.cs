@@ -17,7 +17,8 @@ using HQ.Common;
 
 namespace HQ.Platform.Operations.Configuration
 {
-	public class ConfigurationApiOptions : IProtectedFeature
+	// FIXME: support feature toggle
+	public class ConfigurationApiOptions : IProtectedFeature, IComponentOptions
 	{
 		public string RootPath { get; set; } = "/ops";
 		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;

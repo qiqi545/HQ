@@ -15,15 +15,10 @@
 
 #endregion
 
-using System.Collections.Immutable;
-using HQ.Data.Contracts.Runtime;
-using HQ.Extensions.Caching;
-
-namespace HQ.Extensions.Metrics
+namespace HQ.Common
 {
-    public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
-        where TFilter : IMetric
-    {
-        IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
-    }
+	public interface IComponentOptions
+	{
+		string RootPath { get; }
+	}
 }

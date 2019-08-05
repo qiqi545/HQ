@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.Configuration;
@@ -39,7 +40,7 @@ namespace HQ.Extensions.Scheduling
             if (configureAction != null)
                 services.Configure(configureAction);
 
-			services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
+            services.AddLocalTimestamps();
 
             services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
             services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();

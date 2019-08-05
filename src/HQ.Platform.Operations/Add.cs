@@ -20,6 +20,7 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Mvc;
+using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Extensions.Options;
@@ -27,7 +28,6 @@ using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
@@ -42,127 +42,117 @@ using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations
 {
-    public static class Add
-    {
-        public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-            IHostingEnvironment environment, IConfiguration config)
-        {
-	        return AddOperationsApi(services, environment, config.Bind);
-        }
+	public static class Add
+	{
+		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
+			IHostingEnvironment environment, IConfiguration config)
+		{
+			return AddOperationsApi(services, environment, config.Bind);
+		}
 
-        public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-	        IHostingEnvironment environment, Action<OperationsApiOptions> configureAction = null)
-        {
-	        Bootstrap.EnsureInitialized();
+		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
+			IHostingEnvironment environment, Action<OperationsApiOptions> configureAction = null)
+		{
+			Bootstrap.EnsureInitialized();
 
-	        if (configureAction != null)
-		        services.Configure(configureAction);
+			if (configureAction != null)
+				services.Configure(configureAction);
 
 			if (!environment.IsDevelopment())
-	        {
-		        services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
-	        }
+			{
+				services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
+			}
 
-	        services.AddValidOptions();
-	        services.AddSaveOptions();
-	        services.AddScoped<IMetaProvider, OperationsMetaProvider>();
-			
-	        services.AddMetrics(c =>
-	        {
-		        c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
-			        HealthStatus.Unhealthy, new[] { "ops", "startup" });
+			services.AddValidOptions();
+			services.AddSaveOptions();
+			services.AddDynamicAuthorization();
 
-		        c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
-			        HealthStatus.Unhealthy, new[] { "ops", "startup" });
+			services.AddScoped<IMetaProvider, OperationsMetaProvider>();
 
-		        c.AddServerTimingReporter(o =>
-		        {
-			        o.Enabled = true;
-			        o.Filter = "*";
-			        o.Rendering = ServerTimingRendering.Verbose;
-			        o.AllowedOrigins = "*";
-		        });
-	        });
+			services.AddMetrics(c =>
+			{
+				c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
+					HealthStatus.Unhealthy, new[] { "ops", "startup" });
 
-	        services.AddDynamicAuthorization();
-	        services.AddAuthorization(x =>
-	        {
-		        var serviceProvider = services.BuildServiceProvider();
-		        var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+				c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
+					HealthStatus.Unhealthy, new[] { "ops", "startup" });
 
-		        x.AddPolicy(Constants.Security.Policies.AccessOperations, b =>
-		        {
-			        b.RequireAuthenticatedUserExtended(services);
-			        b.RequireClaimExtended(
-				        services,
-				        options.Value.Claims.PermissionClaim,
-				        ClaimValues.AccessOperations);
-		        });
-	        });
+				c.AddServerTimingReporter(o =>
+				{
+					o.Enabled = true;
+					o.Filter = "*";
+					o.Rendering = ServerTimingRendering.Verbose;
+					o.AllowedOrigins = "*";
+				});
+			});
+
+			services.AddAuthorization(x =>
+			{
+				var serviceProvider = services.BuildServiceProvider();
+				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+
+				x.AddPolicy(Constants.Security.Policies.AccessOperations, b =>
+				{
+					b.RequireAuthenticatedUserExtended(services);
+					b.RequireClaimExtended(
+						services,
+						options.Value.Claims.PermissionClaim,
+						ClaimValues.AccessOperations);
+				});
+			});
 
 			return services;
-        }
+		}
 
-        public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
-        {
-	        return AddConfigurationApi(services, configurationRoot, config.Bind);
-        }
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
+		{
+			return AddConfigurationApi(services, configurationRoot, config.Bind);
+		}
 
 		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			services.AddSingleton(configurationRoot);
-	        services.AddMvc()
-		        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-		        .AddConfigurationApi(configureAction);
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+				.AddConfigurationApi(configureAction);
 
-	        return services;
-        }
-		
-        private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
-        {
-	        if (configureAction != null)
-		        mvcBuilder.Services.Configure(configureAction);
+			return services;
+		}
 
-            mvcBuilder.Services.AddValidOptions();
-            mvcBuilder.Services.AddSaveOptions();
+		private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
+		{
+			if (configureAction != null)
+				mvcBuilder.Services.Configure(configureAction);
+
+			mvcBuilder.Services.AddValidOptions();
+			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
 
 			mvcBuilder.Services.AddAuthorization(x =>
-            {
+			{
 				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
 				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
 
 				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
-                {
-                    b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                    b.RequireClaimExtended(
-	                    mvcBuilder.Services,
-	                    options.Value.Claims.PermissionClaim, 
-	                    ClaimValues.ManageConfiguration);
-                });
-            });
-			
+				{
+					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
+					b.RequireClaimExtended(
+						mvcBuilder.Services,
+						options.Value.Claims.PermissionClaim,
+						ClaimValues.ManageConfiguration);
+				});
+			});
+
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
+			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
 
-			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-            {
-                return new ConfigurationComponent
-                {
-                    RouteTemplate = () =>
-                    {
-                        var o = r.GetRequiredService<IOptions<ConfigurationApiOptions>>();
-                        return o.Value.RootPath ?? string.Empty;
-                    }
-                };
-            });
+			return mvcBuilder;
+		}
 
-            return mvcBuilder;
-        }
-
-        public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
-        {
-	        return AddMetaApi(services, config.Bind);
-        }
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
+		{
+			return AddMetaApi(services, config.Bind);
+		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
 		{
@@ -173,7 +163,7 @@ namespace HQ.Platform.Operations
 			return services;
 		}
 
-		private static IMvcBuilder AddMetaApi(this IMvcBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
+		private static void AddMetaApi(this IMvcBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -183,6 +173,7 @@ namespace HQ.Platform.Operations
 			mvcBuilder.Services.AddDynamicAuthorization();
 
 			mvcBuilder.AddControllerFeature<MetaController>();
+			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
 
 			mvcBuilder.Services.AddAuthorization(x =>
 			{
@@ -196,18 +187,6 @@ namespace HQ.Platform.Operations
 				});
 			});
 
-			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-			{
-				return new MetaComponent
-				{
-					RouteTemplate = () =>
-					{
-						var o = r.GetRequiredService<IOptions<MetaApiOptions>>();
-						return o.Value.RootPath ?? string.Empty;
-					}
-				};
-			});
-
 			mvcBuilder.Services.AddSwaggerGen(c =>
 			{
 				c.EnableAnnotations();
@@ -217,8 +196,6 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
 			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
-			
-			return mvcBuilder;
 		}
 
 		public static IServiceCollection AddGraphViz(this IServiceCollection services)

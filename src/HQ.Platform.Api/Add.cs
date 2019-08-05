@@ -20,12 +20,19 @@ using System.Collections.Generic;
 using System.IO.Compression;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Serialization;
+using HQ.Data.Contracts.Mvc.Security;
+using HQ.Data.Contracts.Runtime.Mvc;
 using HQ.Extensions.Caching;
+using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
+using HQ.Platform.Security;
+using HQ.Platform.Security.AspNetCore.Extensions;
+using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -109,7 +116,7 @@ namespace HQ.Platform.Api
             });
             return services;
         }
-
+		
         #region Versioning
 
         public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
@@ -201,6 +208,38 @@ namespace HQ.Platform.Api
             return services;
         }
 
-        #endregion
-    }
+		#endregion
+
+		#region Runtime
+
+		public static IServiceCollection AddRuntimeApi(this IServiceCollection services)
+		{
+			var mvcBuilder = services.AddMvc();
+			mvcBuilder.AddRuntimeApi();
+			return services;
+		}
+
+		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder)
+		{
+			mvcBuilder.AddControllerFeature<RuntimeController>();
+			mvcBuilder.AddComponentFeature<RuntimeComponent, RuntimeOptions>();
+
+			mvcBuilder.Services.AddDynamicAuthorization();
+			mvcBuilder.Services.AddAuthorization(x =>
+			{
+				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+
+				x.AddPolicy(Constants.Security.Policies.ManageObjects, b =>
+				{
+					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
+					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageObjects);
+				});
+			});
+
+			return mvcBuilder;
+		}
+		
+		#endregion
+	}
 }

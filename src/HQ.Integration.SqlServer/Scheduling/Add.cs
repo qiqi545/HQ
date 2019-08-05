@@ -1,5 +1,6 @@
 using System;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
@@ -36,11 +37,10 @@ namespace HQ.Integration.SqlServer.Scheduling
             if(scope == ConnectionScope.ByRequest)
                 services.AddHttpContextAccessor();
 
-            services.AddSafeLogging();
-
+            services.AddLocalTimestamps();
+			services.AddSafeLogging();
             services.AddDatabaseConnection<SqlServerConnectionFactory>(connectionString, scope, Common.Constants.ConnectionSlots.BackgroundTasks);
-
-            services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
+            
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
 
             var dialect = new SqlServerDialect();

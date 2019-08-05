@@ -15,12 +15,11 @@
 
 #endregion
 
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,12 +27,23 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 {
 	public static class Add
 	{
+		public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
+		{
+			var mvcBuilder = services.AddMvc();
+			mvcBuilder.AddSuperUserTokenController();
+			return services;
+		}
+
 		public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
 		{
 			var services = mvcBuilder.Services;
 
+			mvcBuilder.Services.AddDynamicAuthorization();
+			
 			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
 
+			// FIXME:
+			// mvcBuilder.AddComponentFeature<SuperUserComponent, SuperUserOptions>();
 			services.AddSingleton<IDynamicComponent>(r =>
 			{
 				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
@@ -41,40 +51,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 				{
 					RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
 				};
-			});
-
-			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
-			{
-				var components = r.GetServices<IDynamicComponent>();
-				return new DynamicAuthorizeFilterProvider(components);
 			});
 
 			return mvcBuilder;
-		}
-
-		public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
-		{
-			var mvcBuilder = services.AddMvc();
-
-			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
-
-			services.AddSingleton<IDynamicComponent>(r =>
-			{
-				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-
-				return new SuperUserComponent
-				{
-					RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
-				};
-			});
-
-			mvcBuilder.Services.AddTransient<IFilterProvider>(r =>
-			{
-				var components = r.GetServices<IDynamicComponent>();
-				return new DynamicAuthorizeFilterProvider(components);
-			});
-
-			return services;
 		}
 	}
 }

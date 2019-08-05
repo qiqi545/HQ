@@ -123,6 +123,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sodium.Tests", "..\ThirdParty\Sodium.Core\test\Sodium.Tests\Sodium.Tests.csproj", "{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Platform.Runtime.GraphQl", "HQ.Platform.Runtime.GraphQl\HQ.Platform.Runtime.GraphQl.csproj", "{2B990D12-2890-46D6-BE49-842F9EACED5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -430,6 +432,12 @@ Global
 		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B990D12-2890-46D6-BE49-842F9EACED5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -485,6 +493,7 @@ Global
 		{34839922-6BDD-4CA3-8CD6-E7E8A830748E} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 		{A7E604AC-2627-4FDF-AC5A-ADEF225D5BAA} = {69CEA518-88E3-42D1-A341-7518EA873434}
+		{2B990D12-2890-46D6-BE49-842F9EACED5D} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
