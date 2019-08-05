@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
 namespace HQ.Data.Contracts.Runtime
@@ -28,5 +29,6 @@ namespace HQ.Data.Contracts.Runtime
 		IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
 		IEnumerable<QueryContext> Parse(Type type, HttpContext source);
 		IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source);
+		IActionResult ToResult(params object[] results);
 	}
 }

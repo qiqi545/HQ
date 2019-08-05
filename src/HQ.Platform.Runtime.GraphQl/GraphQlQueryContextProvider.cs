@@ -15,6 +15,7 @@ using GraphQLParser.AST;
 using HQ.Common;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Runtime.GraphQL
@@ -179,5 +180,10 @@ namespace HQ.Platform.Runtime.GraphQL
         {
             throw new NotImplementedException();
         }
-    }
+
+        public IActionResult ToResult(params object[] results)
+        {
+	        throw new NotImplementedException();
+        }
+	}
 }

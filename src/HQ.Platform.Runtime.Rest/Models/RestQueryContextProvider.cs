@@ -21,6 +21,7 @@ using System.Security.Claims;
 using HQ.Common;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
@@ -55,17 +56,17 @@ namespace HQ.Platform.Runtime.Rest.Models
                 Type = type,
             };
 
-            BuildHandleData(context, source);
-            yield return context;
+			var qs = QueryHelpers.ParseQuery(source);
+			foreach (var filter in _filters)
+			{
+				filter?.Execute(qs, ref context);
+			}
+			yield return context;
         }
 
-        private void BuildHandleData(QueryContext context, string source)
+		public IActionResult ToResult(params object[] results)
         {
-            var qs = QueryHelpers.ParseQuery(source);
-            foreach (var filter in _filters)
-            {
-                filter?.Execute(qs, ref context);
-            }
+	        throw new NotImplementedException();
         }
     }
 }
