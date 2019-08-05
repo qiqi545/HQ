@@ -105,7 +105,7 @@
         "TimeToLiveSeconds": 180,
         "Encrypt": true,
         "ClockSkewSeconds": 10,
-        "AllowRefresh": true 
+        "AllowRefresh": true
       },
       "Cookies": {
         "Enabled": true,
@@ -115,8 +115,8 @@
         "SignOutPath": "/signout",
         "ForbidPath": "/denied",
         "ReturnOperator": "return",
-        "Domain": null 
-      }, 
+        "Domain": null
+      },
       "Claims": {
         "TenantIdClaim": "tenantId",
         "TenantNameClaim": "tenantName",
@@ -148,6 +148,7 @@
         "MaxRequestBodySize": 10240
       },
       "Cors": {
+        "Enabled": true, 
         "Origins": [ "*" ],
         "Methods": [ "*" ],
         "Headers": [ "*" ],
@@ -158,8 +159,9 @@
       }
     },
     "Identity": {
+      "Enabled": true, 
       "RootPath": "/auth",
-      "DefaultIdentityType": "Email", 
+      "DefaultIdentityType": "Email",
       "User": {
         "RequireUniqueEmail": true,
         "RequireUniqueUsername": true,
@@ -169,7 +171,7 @@
         "RequireUsername": false,
         "RequireEmailPhoneNumberOrUsername": true,
         "AllowedPhoneNumberCharacters": "0123456789",
-        "LockoutEnabled": true 
+        "LockoutEnabled": true
       },
       "Stores": {
         "CreateIfNotExists": true,
@@ -191,6 +193,42 @@
       "Tenant": {
         "AllowedTenantNameCharacters": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"
       }
-    }
+    },
+    "BackgroundTasks": {
+      "Enabled": true,
+      "RootPath": "/ops",
+      "DelayTasks": true,
+      "SleepIntervalSeconds": 60,
+      "CleanupIntervalSeconds": 300,
+      "Concurrency": 0,
+      "ReadAhead": 5,
+      "MaximumAttempts": 25,
+      "MaximumRuntimeSeconds": 180,
+      "IntervalFunction": "ExponentialBackoff",
+      "Store": {
+        "CreateIfNotExists": true,
+        "MigrateOnStartup": true
+      },
+      "DeleteOnSuccess": true,
+      "DeleteOnError": false,
+      "DeleteOnFailure": false,
+      "Priority": 0,
+      "Scheme": "PlatformBearer",
+      "Policy": "ManageBackgroundTasks"
+    },
+    "Meta": {
+      "RootPath": "/ops",
+      "Scheme": "PlatformBearer",
+      "Policy": "AccessMeta"
+    },
+    "Configuration": {
+      "RootPath": "/ops",
+      "Scheme": "PlatformBearer",
+      "Policy": "ManageConfiguration"
+    },
+    "Runtime": {
+      "RootPath": "/api",
+      "Policy": "ManageObjects" 
+    } 
   }
 }
