@@ -23,15 +23,16 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Runtime;
 using HQ.Platform.Identity.Stores.Sql;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Integration.DocumentDb.Runtime
 {
@@ -39,12 +40,16 @@ namespace HQ.Integration.DocumentDb.Runtime
 	{
 		public static IServiceCollection AddDocumentDbRuntime(
 			this IServiceCollection services,
-			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-			IConfiguration databaseConfig = null)
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
 		{
-			var configureDatabase = databaseConfig != null ? databaseConfig.Bind : (Action<DocumentDbOptions>) null;
-
-			return AddDocumentDbRuntime(services, connectionString, scope, configureDatabase);
+			return AddDocumentDbRuntime(services, connectionString, scope, o =>
+			{
+				var builder = new DocumentDbConnectionStringBuilder(connectionString);
+				o.AccountKey = o.AccountKey ?? builder.AccountKey;
+				o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
+				o.DatabaseId = o.DatabaseId ?? builder.Database;
+				o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
+			});
 		}
 
 		public static IServiceCollection AddDocumentDbRuntime(this IServiceCollection services,
