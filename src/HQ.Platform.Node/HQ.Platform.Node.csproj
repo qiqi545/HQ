@@ -28,7 +28,6 @@
     <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
     <ProjectReference Include="..\HQ.Platform.Operations\HQ.Platform.Operations.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Runtime.GraphQl\HQ.Platform.Runtime.GraphQl.csproj" />
     <ProjectReference Include="..\HQ.UI.Web.SemanticUi\HQ.UI.Web.SemanticUi.csproj" />
     <ProjectReference Include="..\HQ.UI\HQ.UI.csproj" />
   </ItemGroup>
