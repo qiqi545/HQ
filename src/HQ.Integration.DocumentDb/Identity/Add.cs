@@ -74,6 +74,8 @@ namespace HQ.Integration.DocumentDb.Identity
 	        return identityBuilder.AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(o =>
 	        {
 		        var builder = new DocumentDbConnectionStringBuilder(connectionString);
+		        o.AccountKey = o.AccountKey ?? builder.AccountKey;
+		        o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
 		        o.DatabaseId = o.DatabaseId ?? builder.Database;
 		        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
 	        }, scope);
