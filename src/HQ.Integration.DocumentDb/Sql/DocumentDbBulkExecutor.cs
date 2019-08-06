@@ -76,7 +76,7 @@ namespace HQ.Integration.DocumentDb.Sql
 			if (offer != null)
 				throughput = ((OfferV2) offer).Content.OfferThroughput;
 			else
-				throw new InvalidOperationException("Could not not obtain throughput for collection");
+				throughput = 1000;
 
 			// ReSharper disable once PossibleMultipleEnumeration
 			count = count ?? objects.Count();
