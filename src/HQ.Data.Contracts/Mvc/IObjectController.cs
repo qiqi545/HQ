@@ -23,4 +23,9 @@ namespace HQ.Data.Contracts.Mvc
 	{
 		Type ObjectType { get; }
 	}
+
+	public interface IObjectController<T> : IObjectGetController, IObjectPostController<T>, IObjectPutController<T>, IObjectPatchController<T>, IObjectDeleteController where T : class, IObject
+	{
+
+	}
 }

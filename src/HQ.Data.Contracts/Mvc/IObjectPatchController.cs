@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -27,5 +28,6 @@ namespace HQ.Data.Contracts.Mvc
 	{
 		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
 		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
+		Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
 	}
 }

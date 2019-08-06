@@ -15,15 +15,10 @@
 
 #endregion
 
-using System;
-using System.ComponentModel.DataAnnotations;
-
 namespace HQ.Data.Contracts
 {
-	public interface IObject
+	public interface IObjectRepository<T> : IObjectGetRepository<T>, IObjectSaveRepository<T>, IObjectDeleteRepository<T> where T : IObject
 	{
-		[Key] long Id { get; set; }
-		DateTimeOffset CreatedAt { get; set; }
-		DateTimeOffset? DeletedAt { get; set; }
+
 	}
 }
