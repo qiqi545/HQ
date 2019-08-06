@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;

@@ -21,13 +21,13 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Runtime.Rest.Models;
+using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Platform.Runtime.Rest.Attributes
+namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
     /// <inheritdoc />
     /// <summary>

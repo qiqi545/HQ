@@ -16,10 +16,11 @@
 #endregion
 
 using HQ.Data.Contracts.Runtime;
+using HQ.Platform.Api.Runtime.GraphQL;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Platform.Runtime.GraphQL
+namespace HQ.Platform.Api.Runtime.GraphQl
 {
     public static class Add
     {

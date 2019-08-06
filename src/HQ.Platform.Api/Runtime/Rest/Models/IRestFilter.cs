@@ -20,7 +20,7 @@ using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Platform.Runtime.Rest.Models
+namespace HQ.Platform.Api.Runtime.Rest.Models
 {
     public interface IRestFilter
     {

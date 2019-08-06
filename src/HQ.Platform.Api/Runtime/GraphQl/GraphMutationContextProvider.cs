@@ -18,7 +18,7 @@ using System.Security.Claims;
 using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Platform.Runtime.GraphQL
+namespace HQ.Platform.Api.Runtime.GraphQL
 {
     public class GraphMutationContextProvider : IMutationContextProvider
     {

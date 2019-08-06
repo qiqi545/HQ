@@ -16,13 +16,13 @@
 #endregion
 
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Runtime.Rest.Attributes;
-using HQ.Platform.Runtime.Rest.Filters;
-using HQ.Platform.Runtime.Rest.Models;
+using HQ.Platform.Api.Runtime.Rest.Attributes;
+using HQ.Platform.Api.Runtime.Rest.Filters;
+using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Platform.Runtime.Rest
+namespace HQ.Platform.Api.Runtime.Rest
 {
     public static class Add
     {

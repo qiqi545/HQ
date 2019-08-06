@@ -18,11 +18,11 @@
 using System.Collections.Generic;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Runtime.Rest.Models;
+using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Platform.Runtime.Rest.Filters
+namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
     public class RestSearchFilter : IRestFilter
     {

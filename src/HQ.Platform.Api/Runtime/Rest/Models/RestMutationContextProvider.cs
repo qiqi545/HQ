@@ -22,7 +22,7 @@ using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-namespace HQ.Platform.Runtime.Rest.Models
+namespace HQ.Platform.Api.Runtime.Rest.Models
 {
     public class RestMutationContextProvider : IMutationContextProvider
     {

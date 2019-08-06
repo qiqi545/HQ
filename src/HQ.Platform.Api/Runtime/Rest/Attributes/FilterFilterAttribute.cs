@@ -17,11 +17,11 @@
 
 using System.Collections.Generic;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Runtime.Rest.Filters;
+using HQ.Platform.Api.Runtime.Rest.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Platform.Runtime.Rest.Attributes
+namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
     public class FilterFilterAttribute : StaticFilterAttribute
     {

@@ -24,7 +24,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Runtime.Rest.Attributes
+namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
     public class ResourceFilterAttribute : ActionFilterAttribute
     {

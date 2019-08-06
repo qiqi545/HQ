@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace HQ.Platform.Runtime.GraphQL
+namespace HQ.Platform.Api.Runtime.GraphQL
 {
 	public class GraphQlQueryContextProvider : IQueryContextProvider
 	{

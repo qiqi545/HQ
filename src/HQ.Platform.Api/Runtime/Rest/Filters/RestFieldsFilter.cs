@@ -21,11 +21,11 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Runtime.Rest.Models;
+using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Platform.Runtime.Rest.Filters
+namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
     public class RestFieldsFilter : IRestFilter
     {
@@ -36,7 +36,7 @@ namespace HQ.Platform.Runtime.Rest.Filters
             _options = options;
         }
 
-        public QueryOptions Options => _options.Value;
+        public QueryOptions Options => this._options.Value;
 
         public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
         {

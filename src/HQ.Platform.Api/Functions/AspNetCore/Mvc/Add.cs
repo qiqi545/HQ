@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Mvc.Security;
@@ -9,15 +7,12 @@ using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
-using HQ.Platform.Runtime.Rest;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc

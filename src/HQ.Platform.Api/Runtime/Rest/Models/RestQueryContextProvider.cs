@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
-namespace HQ.Platform.Runtime.Rest.Models
+namespace HQ.Platform.Api.Runtime.Rest.Models
 {
     public class RestQueryContextProvider : IQueryContextProvider
     {
