@@ -22,11 +22,13 @@ using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.Identity;
+using HQ.Integration.DocumentDb.Runtime;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.Sqlite.Identity;
 using HQ.Integration.Sqlite.Runtime;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
+using HQ.Integration.SqlServer.Runtime;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc;
@@ -132,28 +134,29 @@ namespace HQ.Platform.Node
                     identity
                         .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(connectionString);
-                    break;
+                    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					break;
                 case nameof(SqlServer):
                     identity
                         .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(
                             connectionString, ConnectionScope.ByRequest,
                             dbConfig);
-                    break;
+                    services.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					break;
                 case nameof(Sqlite):
                     identity
                         .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(
                             connectionString, ConnectionScope.ByRequest,
                             dbConfig);
-                    break;
+                    services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(TBackend), typeof(TBackend), null);
             }
 
-			// FIXME: IRuntimeBuilder?
-			services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-			services.AddRestRuntime();
+            services.AddRestRuntime();
             services.AddGraphQlRuntime();
 
 			UiConfig.Settings = settings =>
