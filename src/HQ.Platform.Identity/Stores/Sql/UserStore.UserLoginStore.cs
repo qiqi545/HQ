@@ -33,6 +33,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
+			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+
 			var query = SqlBuilder.Insert(new AspNetUserLogins<TKey>
 			{
 				LoginProvider = login.LoginProvider,
@@ -52,6 +54,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
+			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+
 			var query = SqlBuilder.Delete<AspNetUserLogins<TKey>>(new
 			{
 				UserId = user.Id,
@@ -68,9 +72,9 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
-			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
-
 			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+
+			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
 
 			var logins = await _connection.Current.QueryAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
 
@@ -83,14 +87,14 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
+			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+
 			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
 			{
 				LoginProvider = loginProvider,
 				ProviderKey = providerKey,
 				TenantId = _tenantId
 			});
-
-			_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
 
 			var user = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
 			if (user == null)

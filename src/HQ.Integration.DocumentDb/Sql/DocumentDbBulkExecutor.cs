@@ -70,13 +70,9 @@ namespace HQ.Integration.DocumentDb.Sql
 		public static async Task ExecuteAsync<TData>(IDataDescriptor descriptor, IServerTimestampService timestamps, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects,
 			long startingAt, int? count, DocumentClient client, string databaseId, Resource collection)
 		{
-			int throughput;
 			var offer = client.CreateOfferQuery().Where(o => o.ResourceLink == collection.SelfLink)
 				.AsEnumerable().FirstOrDefault();
-			if (offer != null)
-				throughput = ((OfferV2) offer).Content.OfferThroughput;
-			else
-				throughput = 1000;
+			var throughput = ((OfferV2) offer)?.Content.OfferThroughput ?? 1000;
 
 			// ReSharper disable once PossibleMultipleEnumeration
 			count = count ?? objects.Count();
