@@ -25,8 +25,8 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
 	public class RestController<T> : DataController, IObjectController<T> where T : class, IObject
 	{
-		private readonly IOptions<QueryOptions> _queryOptions;
-		private readonly IOptions<PlatformApiOptions> _apiOptions;
+		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
+		private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
 		private readonly IObjectRepository<T> _repository;
 
 		// ReSharper disable once StaticMemberInGenericType
@@ -39,7 +39,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		public Type ObjectType => typeof(T);
 
-		public RestController(IObjectRepository<T> repository, IOptions<QueryOptions> queryOptions, IOptions<PlatformApiOptions> apiOptions)
+		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions, IOptionsMonitor<PlatformApiOptions> apiOptions)
 		{
 			_repository = repository;
 			_queryOptions = queryOptions;
@@ -65,7 +65,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				var slice = await _repository.GetAsync(segment, fields, filter, projection);
 				if (slice?.Data?.Count == 0)
 					return NotFound();
-				Response.MaybeEnvelope(Request, _apiOptions.Value, _queryOptions.Value, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 			else
@@ -73,7 +73,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
 				if (slice?.Data?.Count == 0)
 					return NotFound();
-				Response.MaybeEnvelope(Request, _apiOptions.Value, _queryOptions.Value, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 		}
@@ -89,7 +89,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			var @object = await _repository.GetAsync(id, fields);
 			if (@object?.Data == null)
 				return NotFound();
-			Response.MaybeEnvelope(Request, _apiOptions.Value, _queryOptions.Value, @object.Data, @object.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, @object.Data, @object.Errors, out var body);
 			return Ok(body);
 		}
 
@@ -343,7 +343,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				return Ok();
 			}
 
-			Response.MaybeEnvelope(Request, _apiOptions.Value, _queryOptions.Value, result.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, result.Errors, out var body);
 			return Ok(body);
 		}
 	}
