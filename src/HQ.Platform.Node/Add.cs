@@ -134,7 +134,7 @@ namespace HQ.Platform.Node
                     identity
                         .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(connectionString);
-                    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+                    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest);
 					break;
                 case nameof(SqlServer):
                     identity
