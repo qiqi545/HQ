@@ -24,18 +24,18 @@ using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Batching
 {
-    public interface IDataBatchOperation<TOptions>
+    public interface IDataBatchOperation<TBatchOptions>
     {
-        Task<(TOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
+        Task<(TBatchOptions, object)> BeforeAsync(IDbConnection connection, IDataDescriptor descriptor,
             IDbTransaction transaction = null,
             int? commandTimeout = null);
 
-        Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, TOptions options,
+        Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor, TBatchOptions options,
             object userState, BatchSaveStrategy saveStrategy,
             IEnumerable<TData> objects, long startingAt = 0, int? count = null, IDbTransaction transaction = null,
             int? commandTimeout = null, CancellationToken cancellationToken = default);
 
-        Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, TOptions options, object userState,
+        Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, TBatchOptions options, object userState,
             BatchSaveStrategy saveStrategy,
             IDbTransaction transaction = null, int? commandTimeout = null);
     }

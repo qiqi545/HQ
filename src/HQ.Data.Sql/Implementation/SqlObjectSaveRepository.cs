@@ -29,14 +29,14 @@ using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Implementation
 {
-	public class SqlObjectSaveRepository<TObject, TOptions> : IObjectSaveRepository<TObject> where TObject : IObject
+	public class SqlObjectSaveRepository<TObject, TBatchOptions> : IObjectSaveRepository<TObject> where TObject : IObject
 	{
 		private readonly IDataConnection _db;
-		private readonly IDataBatchOperation<TOptions> _copy;
+		private readonly IDataBatchOperation<TBatchOptions> _copy;
 		private readonly IServerTimestampService _timestamps;
 		private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
 
-		public SqlObjectSaveRepository(IDataConnection db, IDataBatchOperation<TOptions> batching, IServerTimestampService timestamps)
+		public SqlObjectSaveRepository(IDataConnection db, IDataBatchOperation<TBatchOptions> batching, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_copy = batching;

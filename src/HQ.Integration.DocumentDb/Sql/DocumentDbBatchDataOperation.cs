@@ -16,10 +16,13 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Dynamic;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
@@ -28,12 +31,18 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
 using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
+using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb.Sql
 {
-    public class DocumentDbBatchDataOperation : IDataBatchOperation<DocumentDbBatchOptions>
+	// See: https://docs.microsoft.com/en-us/azure/cosmos-db/performance-tips
+	// See: https://github.com/Azure/azure-cosmos-dotnet-v2/blob/master/samples/documentdb-benchmark/Program.cs
+	// See: https://docs.microsoft.com/en-us/azure/cosmos-db/bulk-executor-dot-net (deprecated)
+
+	public class DocumentDbBatchDataOperation : IDataBatchOperation<DocumentDbBatchOptions>
     {
         private readonly IOptions<DocumentDbBatchOptions> _batchOptions;
         private readonly IOptions<DocumentDbOptions> _options;
@@ -47,131 +56,144 @@ namespace HQ.Integration.DocumentDb.Sql
             _batchOptions = batchOptions;
         }
 
-        public async Task<(DocumentDbBatchOptions, object)> BeforeAsync(IDbConnection connection,
-            IDataDescriptor descriptor, IDbTransaction transaction = null, int? commandTimeout = null)
-        {
-            var client = connection.GetClient();
+		private readonly ConcurrentDictionary<Uri, DocumentClient> _bulkClients = new ConcurrentDictionary<Uri, DocumentClient>();
 
-            client = new DocumentClient(client.ServiceEndpoint, client.AuthKey, Defaults.JsonSettings,
-                client.ConnectionPolicy,
-                client.ConsistencyLevel);
+		public Task<(DocumentDbBatchOptions, object)> BeforeAsync(IDbConnection connection,
+			IDataDescriptor descriptor, IDbTransaction transaction = null, int? commandTimeout = null)
+		{
+			var client = RequisitionBulkCopyClient(connection);
 
-            client.ConnectionPolicy.ConnectionMode = ConnectionMode.Direct;
-            client.ConnectionPolicy.ConnectionProtocol = Protocol.Tcp;
-            client.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 30;
-            client.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 9;
+			var databaseId = connection.GetDatabaseId();
 
-            var databaseId = connection.GetDatabaseId();
+			var documentCollection = client.CreateDocumentCollectionQuery(UriFactory.CreateDatabaseUri(databaseId))
+				.Where(c => c.Id == _options.Value.CollectionId)
+				.AsEnumerable().FirstOrDefault();
 
-            var documentCollection = client.CreateDocumentCollectionQuery(UriFactory.CreateDatabaseUri(databaseId))
-                .Where(c => c.Id == _options.Value.CollectionId)
-                .AsEnumerable().FirstOrDefault();
+			(DocumentDbBatchOptions, object) result = (_batchOptions.Value, documentCollection);
 
-            IBulkExecutor bulkExecutor = new BulkExecutor(client, documentCollection);
-            await bulkExecutor.InitializeAsync();
+			return Task.FromResult(result);
+		}
 
-            client.ConnectionPolicy.RetryOptions.MaxRetryWaitTimeInSeconds = 0;
-            client.ConnectionPolicy.RetryOptions.MaxRetryAttemptsOnThrottledRequests = 0;
+		private DocumentClient RequisitionBulkCopyClient(IDbConnection connection)
+		{
+			var perConnection = connection.GetClient();
+			var client = _bulkClients.GetOrAdd(perConnection.ServiceEndpoint,
+				endpoint => CreateBulkCopyClient(endpoint, perConnection));
+			return client;
+		}
 
-            return (_batchOptions.Value, bulkExecutor);
-        }
+		private static DocumentClient CreateBulkCopyClient(Uri endpoint, IDocumentClient template)
+		{
+			var client = new DocumentClient(endpoint, template.AuthKey, Defaults.JsonSettings,
+				ConnectionPolicy, template.ConsistencyLevel);
 
-        public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
+			// See: https://docs.microsoft.com/en-us/azure/cosmos-db/performance-tips
+			client.OpenAsync().GetAwaiter().GetResult();
+
+			return client;
+		}
+
+		private static readonly ConnectionPolicy ConnectionPolicy = new ConnectionPolicy
+		{
+			ConnectionMode = ConnectionMode.Direct,
+			ConnectionProtocol = Protocol.Tcp,
+			RequestTimeout = new TimeSpan(1, 0, 0),
+			MaxConnectionLimit = 1000,
+			RetryOptions = new RetryOptions
+			{
+				MaxRetryAttemptsOnThrottledRequests = 10,
+				MaxRetryWaitTimeInSeconds = 60
+			}
+		};
+
+		public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
             DocumentDbBatchOptions options,
             object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
             int? count = null, IDbTransaction transaction = null,
             int? commandTimeout = null, CancellationToken cancellationToken = default)
         {
-            object ToDocument(TData x)
-            {
-                var @object = new ExpandoObject();
-                var document = (IDictionary<string, object>) @object;
-                document.Add("DocumentType", typeof(TData).Name);
-                foreach (var property in descriptor.Inserted)
-                {
-                    document.Add(property.ColumnName, property.Property.Get(x));
-                }
+	        var client = RequisitionBulkCopyClient(connection);
+	        var collection = (DocumentCollection) userState;
+	        var partitionKey = collection.PartitionKey.Paths[0].Replace("/", "");
+			
+	        var throughput = 400;
+	        var offer = client.CreateOfferQuery().Where(o => o.ResourceLink == collection.SelfLink)
+		        .AsEnumerable().FirstOrDefault();
+	        if (offer != null)
+		        throughput = ((OfferV2) offer).Content.OfferThroughput;
 
-                return @object;
-            }
+			// ReSharper disable once PossibleMultipleEnumeration
+			count = count ?? objects.Count();
 
-            // ReSharper disable once PossibleMultipleEnumeration
-            count = count ?? objects.Count();
-
-            var client = connection.GetClient();
-            var bulkExecutor = (IBulkExecutor) userState;
             var batchSize = count.GetValueOrDefault();
 
             switch (saveStrategy)
             {
-                case BatchSaveStrategy.Insert:
-                case BatchSaveStrategy.Upsert:
+	            case BatchSaveStrategy.Insert:
+	            {
+		            // ReSharper disable once PossibleMultipleEnumeration
+		            var data = objects.Skip((int) startingAt).Take(batchSize);
+
+		            if (descriptor.Id != null && descriptor.Id.IsIdentity)
+		            {
+			            var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData).Name,
+				            connection.GetDatabaseId(), _options.Value.CollectionId, batchSize);
+
+			            // ReSharper disable once PossibleMultipleEnumeration
+			            data = data.Select((x, i) =>
+			            {
+				            descriptor.Id.Property.Set(x, nextValues.Item1 + i);
+				            return x;
+			            });
+		            }
+
+		            if (descriptor.Timestamp != null)
+		            {
+			            var timestamp = _timestamps.GetCurrentTime();
+			            data = data.Select(x =>
+			            {
+				            descriptor.Timestamp?.Property?.Set(x, timestamp);
+				            return x;
+			            });
+		            }
+
+		            var batch = data.Select(x =>
+		            {
+						var @object = new ExpandoObject();
+			            var document = (IDictionary<string, object>) @object;
+			            document.Add("DocumentType", typeof(TData).Name);
+						foreach (var property in descriptor.Inserted)
+			            {
+				            document.Add(property.ColumnName, property.Property.Get(x));
+			            }
+						document["id"] = Guid.NewGuid().ToString();
+						document[partitionKey] = Guid.NewGuid().ToString();
+			            return @object;
+					});
+
+					// set TaskCount = 10 for each 10k RUs, minimum 1, maximum 250
+					var taskCount = Math.Min(Math.Max(throughput / 1000, 1), 250);
+		            var tasks = new List<Task>();
+		            var pageSize = batchSize / taskCount;
+		            var databaseId = connection.GetDatabaseId();
+		            for (var i = 0; i < taskCount; i++)
+		            {
+			            // ReSharper disable once PossibleMultipleEnumeration
+			            var page = batch.Skip(i * pageSize).Take(pageSize);
+			            tasks.Add(InsertDocumentAsync(client, databaseId, collection, page, pageSize));
+		            }
+		            await Task.WhenAll(tasks);
+		            break;
+	            }
+
+	            case BatchSaveStrategy.Upsert:
                 {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    var data = objects.Skip((int) startingAt).Take(batchSize);
-
-                    if (descriptor.Id != null && descriptor.Id.IsIdentity)
-                    {
-                        var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData).Name,
-                            connection.GetDatabaseId(), _options.Value.CollectionId, batchSize);
-
-                        // ReSharper disable once PossibleMultipleEnumeration
-                        data = data.Select((x, i) =>
-                        {
-                            descriptor.Id.Property.Set(x, nextValues.Item1 + i);
-                            return x;
-                        });
-                    }
-
-                    if (descriptor.Timestamp != null)
-                    {
-                        data = data.Select(x =>
-                        {
-                            descriptor.Timestamp?.Property?.Set(x, _timestamps.GetCurrentTime());
-                            return x;
-                        });
-                    }
-
-                    var upsert = saveStrategy == BatchSaveStrategy.Upsert;
-
-                    var batch = data.Select(ToDocument);
-
-                    var response = await bulkExecutor.BulkImportAsync(
-                        batch, upsert, false,
-                        options.MaxConcurrencyPerPartitionKeyRange,
-                        options.MaxInMemorySortingBatchSize, cancellationToken);
-
-                    break;
-                }
+					throw new NotImplementedException();
+				}
 
                 case BatchSaveStrategy.Update:
                 {
-                    // ReSharper disable once PossibleMultipleEnumeration
-                    var patch = objects.Select(x =>
-                    {
-                        var id = descriptor.Id.ColumnName;
-
-                        var operations = descriptor.Updated.Select(p =>
-                        {
-                            var type = typeof(SetUpdateOperation<>).MakeGenericType(p.Property.Type);
-                            var ctor = type.GetConstructor(new[] {typeof(string), p.Property.Type});
-                            if (ctor == null)
-                            {
-                                return null;
-                            }
-
-                            var operation = (UpdateOperation) ctor.Invoke(new object[] {p.Property.Name, p.Property.Type});
-                            return operation;
-                        });
-
-                        return new UpdateItem(id, id, operations.Where(o => o != null));
-                    });
-
-                    var response = await bulkExecutor.BulkUpdateAsync(patch,
-                        options.MaxConcurrencyPerPartitionKeyRange,
-                        options.MaxInMemorySortingBatchSize, cancellationToken);
-
-                    break;
+                    throw new NotImplementedException();
                 }
 
                 default:
@@ -179,7 +201,34 @@ namespace HQ.Integration.DocumentDb.Sql
             }
         }
 
-        public Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, DocumentDbBatchOptions options,
+		private static async Task InsertDocumentAsync(IDocumentClient client, string databaseId, Resource collection, IEnumerable<ExpandoObject> page, int pageSize)
+		{
+			var options = new RequestOptions() { };
+
+			// FIXME: collection.SelfLink?
+			var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collection.Id);
+
+			foreach (var document in page)
+			{
+				try
+				{
+					await client.CreateDocumentAsync(documentCollectionUri, document, options);
+				}
+				catch (Exception e)
+				{
+					if (e is DocumentClientException documentException)
+					{
+						if (documentException.StatusCode != HttpStatusCode.Forbidden)
+						{
+							var json = JsonConvert.SerializeObject(document);
+							Trace.TraceError("Failed to write {0}. Exception was {1}", json, e);
+						}
+					}
+				}
+			}
+		}
+
+		public Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, DocumentDbBatchOptions options,
             object userState, BatchSaveStrategy saveStrategy, IDbTransaction transaction = null,
             int? commandTimeout = null)
         {
