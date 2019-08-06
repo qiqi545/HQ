@@ -48,14 +48,19 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Node
 {
-    public static class Add
+	public interface IBackend { }
+	public sealed class DocumentDb : IBackend { }
+	public sealed class SqlServer : IBackend { }
+	public sealed class Sqlite : IBackend { }
+	
+	public static class Add
     {
-        public static IServiceCollection AddHq(
+        public static IServiceCollection AddHq<TBackend>(
             this IServiceCollection services,
             IHostingEnvironment env,
             IConfiguration config,
             ISafeLogger logger,
-            params ICloudOptions[] clouds)
+            params ICloudOptions[] clouds) where TBackend : IBackend
         {
             var subject = Assembly.GetCallingAssembly();
 
@@ -107,36 +112,35 @@ namespace HQ.Platform.Node
 
             //
             // Database:
-			// FIXME: SqliteBatchOptions is hard-coded
             var connectionString = configRoot.GetConnectionString("DefaultConnection");
             var dbOptions = configRoot.GetSection("DbOptions");
-            services.AddBackendServices<SqliteBatchOptions>(env, connectionString, dbOptions, hq, logger, subject);
+            services.AddBackendServices<TBackend>(env, connectionString, dbOptions, hq, logger, subject);
 
             return services;
         }
 
-        public static IServiceCollection AddBackendServices<TBatchOptions>(this IServiceCollection services,
+        public static IServiceCollection AddBackendServices<TBackend>(this IServiceCollection services,
             IHostingEnvironment env, string connectionString, IConfiguration dbConfig, IConfiguration appConfig,
-            ISafeLogger logger, Assembly subjectAssembly, string rootPath = "/api")
-        {
+            ISafeLogger logger, Assembly subjectAssembly, string rootPath = "/api") where TBackend : IBackend
+		{
             var identity = services
                 .AddIdentityExtended(appConfig.GetSection("Identity"));
 
-            switch (typeof(TBatchOptions).Name)
+            switch (typeof(TBackend).Name)
             {
-                case nameof(DocumentDbBatchOptions):
+                case nameof(DocumentDb):
                     identity
                         .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(connectionString);
                     break;
-                case nameof(SqlServerBatchOptions):
+                case nameof(SqlServer):
                     identity
                         .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(
                             connectionString, ConnectionScope.ByRequest,
                             dbConfig);
                     break;
-                case nameof(SqliteBatchOptions):
+                case nameof(Sqlite):
                     identity
                         .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
                             IdentityApplication>(
@@ -144,7 +148,7 @@ namespace HQ.Platform.Node
                             dbConfig);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(TBatchOptions), typeof(TBatchOptions), null);
+                    throw new ArgumentOutOfRangeException(nameof(TBackend), typeof(TBackend), null);
             }
 
 			// FIXME: IRuntimeBuilder?
@@ -167,14 +171,14 @@ namespace HQ.Platform.Node
 
             services.AddUi(env, typeof(SemanticUi).Assembly);
 
-            ScanForGeneratedObjects<TBatchOptions>(services, appConfig, logger, rootPath, subjectAssembly);
+            ScanForGeneratedObjects<TBackend>(services, appConfig, logger, rootPath, subjectAssembly);
 
             return services;
         }
 
-        private static void ScanForGeneratedObjects<TBatchOptions>(IServiceCollection services,
+        private static void ScanForGeneratedObjects<TBackend>(IServiceCollection services,
             IConfiguration appConfig,
-            ISafeLogger logger, string rootPath, Assembly assembly)
+            ISafeLogger logger, string rootPath, Assembly assembly) where TBackend : IBackend
         {
             foreach (var type in assembly.GetExportedTypes())
             {
@@ -195,8 +199,24 @@ namespace HQ.Platform.Node
                     continue;
                 }
 
+                Type batchOptionsType;
+				switch (typeof(TBackend).Name)
+				{
+					case nameof(DocumentDb):
+						batchOptionsType = typeof(DocumentDbBatchOptions);
+						break;
+					case nameof(SqlServer):
+						batchOptionsType = typeof(SqlServerBatchOptions);
+						break;
+					case nameof(Sqlite):
+						batchOptionsType = typeof(SqliteBatchOptions);
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+
                 logger.Info(() => "Found generated objects API in {AssemblyName}", assembly.GetName().Name);
-                method.MakeGenericMethod(typeof(TBatchOptions))
+                method.MakeGenericMethod(batchOptionsType)
                     .Invoke(null, new object[] {services, appConfig.GetSection("Security"), rootPath});
             }
         }
