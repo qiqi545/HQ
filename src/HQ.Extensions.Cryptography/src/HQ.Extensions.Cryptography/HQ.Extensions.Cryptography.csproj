@@ -12,13 +12,10 @@
   <ItemGroup>
     <PackageReference Include="libsodium" Version="1.0.17.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.0" />
+    <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
+    <PackageReference Include="TypeKitchen" Version="1.0.1" />
     <PackageReference Include="WyHash" Version="1.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\ThirdParty\Sodium.Core\src\Sodium.Core\Sodium.Core.csproj" />
   </ItemGroup>
 
 </Project>
