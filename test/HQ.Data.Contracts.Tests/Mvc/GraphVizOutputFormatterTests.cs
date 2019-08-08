@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using HQ.Data.Contracts.Attributes;
@@ -60,35 +61,41 @@ namespace HQ.Data.Contracts.Tests.Mvc
 			topology.SecondRoot.Nodes.Add(e);
 			topology.SecondRoot.Nodes.Add(f);
 
-			var dotGraph = GraphVizOutputFormatter.GenerateDotGraph(GraphDirection.TopToBottom, topology, "Topology");
+			var dotGraph = GraphVizOutputFormatter.GenerateDotGraph(GraphDirection.TopToBottom, topology);
 			Assert.NotNull(dotGraph);
 			Trace.WriteLine(dotGraph);
 		}
 
-		[Color(nameof(Color.Purple))]
+		[Order(2)]
+		[Shape(Shape.Star)]
+		[Color(nameof(Color.Purple)), DisplayName("Dope")]
 		public class D : Node
 		{
 			public D(string id) : base(id) { }
 		}
 
-		[Color(nameof(Color.MediumPurple))]
+		[Order(3)]
+		[Shape(Shape.TripleOctagon)]
+		[Color(nameof(Color.MediumPurple)), DisplayName("Exciting")]
 		public class E : Node
 		{
 			public E(string id) : base(id) { }
 		}
 
-		[Color(nameof(Color.Plum))]
+		[Order(1)]
+		[Shape(Shape.Diamond), Color(nameof(Color.Plum)), DisplayName("Funky")]
 		public class F : Node
 		{
 			public F(string id) : base(id) { }
 		}
 
+		[DisplayName("My Test Graph")]
 		public class Topology
 		{
-			[TopologyRoot]
+			[TopologyRoot, Order(1), DisplayName("Boring")]
 			public Graph FirstRoot { get; set; } = new Graph();
 
-			[TopologyRoot]
+			[TopologyRoot, Order(2), DisplayName("Cool"), Color(nameof(Color.DarkOrange))]
 			public Graph SecondRoot { get; set; } = new Graph();
 		}
 	}

@@ -22,9 +22,9 @@ namespace HQ.Common
 				: Color.Empty;
 		}
 		
-		public static string ToRgbHexString(this Color color)
+		public static string ToRgbaHexString(this Color color)
 		{
-			return $"#{color.R:X2}{color.G:X2}{color.B:X2}{color.A:X2}"; // NOTE: RGBA
+			return $"#{color.R:X2}{color.G:X2}{color.B:X2}{color.A:X2}";
 		}
 	}
 }

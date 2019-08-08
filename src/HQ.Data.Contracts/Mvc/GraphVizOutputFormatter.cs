@@ -18,7 +18,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
@@ -44,11 +46,10 @@ namespace HQ.Data.Contracts.Mvc
 
 		public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding encoding)
 		{
-			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.TopToBottom, context.Object,
-				context.ObjectType.Name));
+			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.TopToBottom, context.Object));
 		}
 
-		public static string GenerateDotGraph(GraphDirection direction, object root, string rootTypeName)
+		public static string GenerateDotGraph(GraphDirection direction, object root)
 		{
 			var dotGraph = Pooling.StringBuilderPool.Scoped(sb =>
 			{
@@ -79,10 +80,15 @@ namespace HQ.Data.Contracts.Mvc
 
 				try
 				{
-					sb.AppendLine($"digraph \"{rootTypeName}\" {{");
+					var rootType = root.GetType();
+					var graphName = rootType.TryGetAttribute(true, out DisplayNameAttribute display)
+						? display.DisplayName
+						: rootType.Name;
+
+					sb.AppendLine($"digraph \"{graphName}\" {{");
 					sb.AppendLine($"\trankdir=\"{dir}\"");
-					sb.AppendLine($"\tgraph[layout=dot,label=\"{rootTypeName}\"];");
-					sb.AppendLine("\tnode[style=filled,shape=box];");
+					sb.AppendLine($"\tgraph[layout=dot,label=\"{graphName}\"];");
+					sb.AppendLine($"\tnode[style=filled,shape=box];");
 
 					if (root is IEnumerable enumerable)
 						foreach (var item in enumerable)
@@ -166,21 +172,26 @@ namespace HQ.Data.Contracts.Mvc
 
 			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
 				out var members);
-
+			
 			if (accessor.Type.HasAttribute<TopologyRootAttribute>())
 			{
 				AppendClusterEnd(cb);
 				clusters++;
-				AppendClusterStart(clusters, cb, accessor.Type.Name);
+				AppendClusterStart(clusters, cb, GetClusterName(accessor.Type), GetClusterColor(accessor.Type));
 			}
 
-			foreach (var member in members)
+			var ordered = members.OrderBy(x => x.TryGetAttribute(out OrderAttribute order) ? order.Order : 0);
+
+			foreach (var member in ordered)
 			{
 				if (member.TryGetAttribute(out TopologyRootAttribute _))
 				{
 					AppendClusterEnd(cb);
 					clusters++;
-					AppendClusterStart(clusters, cb, member.Name);
+
+					var clusterColor = GetClusterColor(member);
+
+					AppendClusterStart(clusters, cb, GetClusterName(member), clusterColor);
 				}
 
 				if (accessor.TryGetValue(target, member.Name, out var value))
@@ -188,10 +199,39 @@ namespace HQ.Data.Contracts.Mvc
 			}
 		}
 
-		private static void AppendClusterStart(int clusters, StringBuilder cb, string clusterName)
+		private static string GetClusterName(MemberInfo member)
+		{
+			var name = member.TryGetAttribute(true, out DisplayNameAttribute display)
+				? display.DisplayName ?? string.Empty
+				: member.Name;
+			return name;
+		}
+
+		private static string GetClusterName(AccessorMember member)
+		{
+			var name = member.TryGetAttribute(out DisplayNameAttribute display)
+				? display.DisplayName ?? member.Name
+				: member.Name;
+			return name;
+		}
+
+		private static string GetClusterColor(ICustomAttributeProvider member)
+		{
+			var name = member.TryGetAttribute(true, out ColorAttribute color)
+				? color.Color.ToRgbaHexString()
+				: "blue";
+			return name;
+		}
+
+		private static string GetClusterColor(AccessorMember member)
+		{
+			return member.TryGetAttribute(out ColorAttribute color) ? color.Color.ToRgbaHexString() : "blue";
+		}
+
+		private static void AppendClusterStart(int clusters, StringBuilder cb, string clusterName, string clusterColor)
 		{
 			cb.AppendLine($"\tsubgraph cluster_{clusters} {{");
-			cb.AppendLine("\t\tcolor=\"blue\";");
+			cb.AppendLine($"\t\tcolor=\"{clusterColor}\";");
 			cb.AppendLine($"\t\tlabel=\"{clusterName}\";");
 			_openCluster = true;
 		}
@@ -210,7 +250,10 @@ namespace HQ.Data.Contracts.Mvc
 		{
 			var collection = nodes as IList<INode<string>> ?? nodes.ToList();
 
-			foreach (var node in collection)
+			var ordered = collection.OrderBy(x =>
+				x.GetType().TryGetAttribute(true, out OrderAttribute order) ? order.Order : 0);
+
+			foreach (var node in ordered)
 			{
 				foreach (var dependent in node.Dependents)
 				{
@@ -221,11 +264,20 @@ namespace HQ.Data.Contracts.Mvc
 						vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				}
 
-				var nodeColor = node.GetType().TryGetAttribute(true, out ColorAttribute color)
-					? color.Color.ToRgbHexString()
+				var nodeType = node.GetType();
+				var nodeColor = nodeType.TryGetAttribute(true, out ColorAttribute color)
+					? color.Color.ToRgbaHexString()
 					: defaultNodeColor;
 
-				nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\"];");
+				var nodeShape = nodeType.TryGetAttribute(true, out ShapeAttribute shape)
+					? shape?.Name?.ToLowerInvariant() ?? "box"
+					: "box";
+
+				var nodeLabel = nodeType.TryGetAttribute(true, out DisplayNameAttribute display)
+					? display.DisplayName ?? node.Id
+					: node.Id;
+
+				nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\",shape=\"{nodeShape}\",label=\"{nodeLabel}\"];");
 			}
 		}
 
