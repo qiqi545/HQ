@@ -144,11 +144,9 @@ namespace HQ.Platform.Api
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             if (configureAction != null)
-            {
-                services.Configure(configureAction);
-            }
+				services.Configure(configureAction);
 
-            services.AddInProcessCache();
+			services.AddInProcessCache();
             services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
             services.AddScoped<IVersionContextResolver, TVersionResolver>();
             services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
@@ -195,11 +193,9 @@ namespace HQ.Platform.Api
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             if (configureAction != null)
-            {
-                services.Configure(configureAction);
-            }
+				services.Configure(configureAction);
 
-            services.AddInProcessCache();
+			services.AddInProcessCache();
 
             services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
             services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());

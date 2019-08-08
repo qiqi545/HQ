@@ -21,12 +21,12 @@ namespace HQ.Platform.Api.Models
 {
 	public class PlatformMetaVersionProvider : IMetaVersionProvider
 	{
-		private readonly IOptionsMonitor<PlatformApiOptions> _options;
+		private readonly IOptionsMonitor<VersioningOptions> _options;
 
-		public bool Enabled => _options.CurrentValue.Versioning.EnableVersionParameter;
-		public string VersionParameter => _options.CurrentValue.Versioning.VersionParameter;
+		public bool Enabled => _options.CurrentValue.EnableVersionParameter;
+		public string VersionParameter => _options.CurrentValue.VersionParameter;
 
-		public PlatformMetaVersionProvider(IOptionsMonitor<PlatformApiOptions> options)
+		public PlatformMetaVersionProvider(IOptionsMonitor<VersioningOptions> options)
 		{
 			_options = options;
 		}

@@ -26,31 +26,6 @@
         "Enabled": true,
         "ActionHeader": "X-Action"
       },
-      "Versioning": {
-        "Enabled": true,
-        "RequireExplicitVersion": true,
-        "ExplicitVersionRequiredStatusCode": 404,
-        "EnableVersionHeader": false,
-        "VersionHeader": "X-Api-Version",
-        "EnableVersionParameter": true,
-        "VersionParameter": "api-version",
-        "EnableVersionPath": true,
-        "VersionPathPrefix": "v",
-        "VersionLifetimeSeconds": null,
-        "VersionAgnosticPaths": [ "/", "/ops", "/tokens", "/auth", "/meta" ]
-      },
-      "MultiTenancy": {
-        "Enabled": true,
-        "RequireTenant": false,
-        "TenantRequiredStatusCode": 404,
-        "DefaultTenantId": "0",
-        "DefaultTenantName": "defaultTenant",
-        "TenantHeader": "X-Api-Tenant",
-        "TenantLifetimeSeconds": null,
-        "ApplicationHeader": "X-Api-Application",
-        "ApplicationLifetimeSeconds": null,
-        "PartitionStrategy": "shared"
-      },
       "CanonicalRoutes": {
         "Enabled": true,
         "LowercaseUrls": true,
@@ -58,8 +33,12 @@
         "AppendTrailingSlash": false
       }
     },
+
     "Ops": {
+      "Enabled": true, 
       "RootPath": "/ops",
+      "Scheme": "PlatformBearer",
+      "Policy": "AccessOperations",
       "EnableRequestProfiling": true,
       "RequestProfilingHeader": "Server-Timing",
       "EnableRouteDebugging": true,
@@ -87,6 +66,7 @@
         "EnableServerTiming": true
       }
     },
+
     "Security": {
       "SuperUser": {
         "Enabled": false,
@@ -148,7 +128,7 @@
         "MaxRequestBodySize": 10240
       },
       "Cors": {
-        "Enabled": true, 
+        "Enabled": true,
         "Origins": [ "*" ],
         "Methods": [ "*" ],
         "Headers": [ "*" ],
@@ -158,8 +138,9 @@
         "PreflightMaxAge": null
       }
     },
+
     "Identity": {
-      "Enabled": true, 
+      "Enabled": true,
       "RootPath": "/auth",
       "DefaultIdentityType": "Email",
       "User": {
@@ -194,9 +175,35 @@
         "AllowedTenantNameCharacters": "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+"
       }
     },
+
+    "IdentityApi": {
+      "Enabled": true,
+      "RootPath": "/auth",
+      "Policies": {
+        "Users": {
+          "Scheme": "PlatformBearer",
+          "Policy": "ManageUsers"
+        },
+        "Roles": {
+          "Scheme": "PlatformBearer",
+          "Policy": "ManageRoles"
+        },
+        "Applications": {
+          "Scheme": "PlatformBearer",
+          "Policy": "ManageApplications"
+        },
+        "Tenants": {
+          "Scheme": "PlatformBearer",
+          "Policy": "ManageTenants"
+        } 
+      } 
+    },
+
     "BackgroundTasks": {
       "Enabled": true,
       "RootPath": "/ops",
+      "Scheme": "PlatformBearer",
+      "Policy": "ManageBackgroundTasks",
       "DelayTasks": true,
       "SleepIntervalSeconds": 60,
       "CleanupIntervalSeconds": 300,
@@ -212,23 +219,55 @@
       "DeleteOnSuccess": true,
       "DeleteOnError": false,
       "DeleteOnFailure": false,
-      "Priority": 0,
-      "Scheme": "PlatformBearer",
-      "Policy": "ManageBackgroundTasks"
+      "Priority": 0
     },
+
     "Meta": {
+      "Enabled": true,
       "RootPath": "/ops",
       "Scheme": "PlatformBearer",
       "Policy": "AccessMeta"
     },
+
     "Configuration": {
+      "Enabled": true,
       "RootPath": "/ops",
       "Scheme": "PlatformBearer",
       "Policy": "ManageConfiguration"
     },
+
     "Runtime": {
+      "Enabled": true,
       "RootPath": "/api",
-      "Policy": "ManageObjects" 
-    } 
+      "Scheme": "PlatformBearer",
+      "Policy": "ManageObjects"
+    },
+
+    "MultiTenancy": {
+      "Enabled": true,
+      "RequireTenant": false,
+      "TenantRequiredStatusCode": 404,
+      "DefaultTenantId": "0",
+      "DefaultTenantName": "defaultTenant",
+      "TenantHeader": "X-Api-Tenant",
+      "TenantLifetimeSeconds": null,
+      "ApplicationHeader": "X-Api-Application",
+      "ApplicationLifetimeSeconds": null,
+      "PartitionStrategy": "shared"
+    },
+
+    "Versioning": {
+      "Enabled": true,
+      "RequireExplicitVersion": true,
+      "ExplicitVersionRequiredStatusCode": 404,
+      "EnableVersionHeader": false,
+      "VersionHeader": "X-Api-Version",
+      "EnableVersionParameter": true,
+      "VersionParameter": "api-version",
+      "EnableVersionPath": true,
+      "VersionPathPrefix": "v",
+      "VersionLifetimeSeconds": null,
+      "VersionAgnosticPaths": [ "/", "/ops", "/tokens", "/auth", "/meta" ]
+    }
   }
 }

@@ -57,131 +57,108 @@ namespace HQ.Platform.Node
 	
 	public static class Add
     {
-        public static IServiceCollection AddHq<TBackend>(
-            this IServiceCollection services,
-            IHostingEnvironment env,
-            IConfiguration config,
-            ISafeLogger logger,
-            params ICloudOptions[] clouds) where TBackend : IBackend
-        {
-            var subject = Assembly.GetCallingAssembly();
+	    public static IServiceCollection AddHq(
+		    this IServiceCollection services,
+		    IHostingEnvironment env,
+		    IConfiguration config,
+		    ISafeLogger logger,
+		    params ICloudOptions[] clouds)
+	    {
+		    var subject = Assembly.GetCallingAssembly();
 
-            if (!(config is IConfigurationRoot configRoot))
-            {
-                throw new ArgumentException("HQ requires access to the root configuration.", nameof(config));
-            }
+		    if (!(config is IConfigurationRoot configRoot))
+		    {
+			    throw new ArgumentException("HQ requires access to the root configuration.", nameof(config));
+		    }
 
-            //
-            // Core Configuration:
-            var hq = configRoot.GetSection("HQ");
-            var security = hq.GetSection("Security");
-            var identity = hq.GetSection("Identity");
-            var identityApi = identity.GetSection("Api");
-            var api = hq.GetSection("Api");
-            var versioning = api.GetSection("Versioning");
-            var multiTenants = api.GetSection("MultiTenancy");
-            var ops = hq.GetSection("Ops");
-            var tasks = hq.GetSection("BackgroundTasks");
-			var configApi = hq.GetSection("Configuration");
-			var meta = hq.GetSection("Meta");
-			var runtime = hq.GetSection("Runtime");
+		    services.TryAddSingleton(configRoot);
+		    services.TryAddSingleton(services);
 
-            services.TryAddSingleton(configRoot);
-            services.TryAddSingleton(services);
+		    var hq = configRoot.GetSection("HQ");
+
+		    //
+		    // Core Services:
+		    services.AddLocalTimestamps();
+		    services.AddSafeLogging();
+		    services.AddSecurityPolicies(hq.GetSection("Security"), logger);
+		    services.AddOperationsApi(env, hq.GetSection("Ops"));
+		    services.AddPlatformApi(hq.GetSection("Api"));
+		    services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))
+			    .AddIdentityTenantContextStore<IdentityTenant>()
+			    .AddIdentityApplicationContextStore<IdentityApplication>();
+		    services.AddVersioning(hq.GetSection("Versioning"));
+		    services
+			    .AddBackgroundTasksApi(hq.GetSection("BackgroundTasks"))
+			    .AddConfigurationApi(configRoot, hq.GetSection("Configuration"))
+			    .AddIdentityApi(hq.GetSection("IdentityApi"))
+			    .AddMetaApi(hq.GetSection("Meta"))
+			    .AddRuntimeApi(hq.GetSection("Runtime"))
+			    ;
+		    var identity = services
+			    .AddIdentityExtended(hq.GetSection("Identity"));
+
+		    //
+		    // Cloud:
+		    services.AddCloudServices(logger, clouds);
 
 			//
-			// Core Services:
-			services.AddLocalTimestamps();
-			services.AddSafeLogging();
-			services.AddSecurityPolicies(security, logger);
-            services.AddOperationsApi(env, ops);
-            services.AddPlatformApi(api);
-            services.AddMultiTenancy<IdentityTenant, IdentityApplication>(multiTenants)
-                .AddIdentityTenantContextStore<IdentityTenant>()
-                .AddIdentityApplicationContextStore<IdentityApplication>();
-            services.AddVersioning(versioning);
-            services
-	            .AddBackgroundTasksApi(tasks)
-	            .AddConfigurationApi(configRoot, configApi)
-				.AddIdentityApi(identityApi)
-                .AddMetaApi(meta)
-	            .AddRuntimeApi(runtime)
-                ;
+			// Backend Services:
+			var backend = configRoot.GetSection("Backend");
+			var connectionString = backend.GetConnectionString("DefaultConnection");
+		    var dbConfig = backend.GetSection("DbOptions");
+		    var backendType = backend["Type"];
+		    switch (backendType)
+		    {
+			    case nameof(DocumentDb):
+				    identity
+					    .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+						    IdentityApplication>(connectionString);
+				    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest);
+				    break;
+			    case nameof(SqlServer):
+				    identity
+					    .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+						    IdentityApplication>(
+						    connectionString, ConnectionScope.ByRequest,
+						    dbConfig);
+				    services.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+				    break;
+			    case nameof(Sqlite):
+				    identity
+					    .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+						    IdentityApplication>(
+						    connectionString, ConnectionScope.ByRequest,
+						    dbConfig);
+				    services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+				    break;
+			    default:
+				    throw new ArgumentOutOfRangeException(backendType, typeof(string), null);
+		    }
 
-            //
-            // Cloud:
-            services.AddCloudServices(logger, clouds);
+		    services.AddRestRuntime();
+		    services.AddGraphQlRuntime();
 
-            //
-            // Database:
-            var connectionString = configRoot.GetConnectionString("DefaultConnection");
-            var dbOptions = configRoot.GetSection("DbOptions");
-            services.AddBackendServices<TBackend>(env, connectionString, dbOptions, hq, logger, subject);
+		    UiConfig.Settings = settings =>
+		    {
+			    settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
+			    settings.ComponentAssemblies = new[]
+			    {
+				    typeof(UiComponent).Assembly, // HQ.UI
+				    typeof(HtmlSystem).Assembly, // HQ.UI.Web
+				    typeof(SemanticUi).Assembly, // HQ.Web.Semantic.Ui
+				    typeof(Dashboard).Assembly, // HQ.Platform.Node
+				    Assembly.GetEntryAssembly() // App
+			    };
+		    };
 
-            return services;
-        }
+		    services.AddUi(env, typeof(SemanticUi).Assembly);
 
-        public static IServiceCollection AddBackendServices<TBackend>(this IServiceCollection services,
-            IHostingEnvironment env, string connectionString, IConfiguration dbConfig, IConfiguration appConfig,
-            ISafeLogger logger, Assembly subjectAssembly, string rootPath = "/api") where TBackend : IBackend
-		{
-            var identity = services
-                .AddIdentityExtended(appConfig.GetSection("Identity"));
+		    services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
-            switch (typeof(TBackend).Name)
-            {
-                case nameof(DocumentDb):
-                    identity
-                        .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-                            IdentityApplication>(connectionString);
-                    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest);
-					break;
-                case nameof(SqlServer):
-                    identity
-                        .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-                            IdentityApplication>(
-                            connectionString, ConnectionScope.ByRequest,
-                            dbConfig);
-                    services.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-					break;
-                case nameof(Sqlite):
-                    identity
-                        .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-                            IdentityApplication>(
-                            connectionString, ConnectionScope.ByRequest,
-                            dbConfig);
-                    services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-					break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(TBackend), typeof(TBackend), null);
-            }
+		    return services;
+	    }
 
-            services.AddRestRuntime();
-            services.AddGraphQlRuntime();
-
-			UiConfig.Settings = settings =>
-            {
-                settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
-                settings.ComponentAssemblies = new[]
-                {
-                    typeof(UiComponent).Assembly,   // HQ.UI
-                    typeof(HtmlSystem).Assembly,    // HQ.UI.Web
-                    typeof(SemanticUi).Assembly,    // HQ.Web.Semantic.Ui
-                    typeof(Dashboard).Assembly,     // HQ.Platform.Node
-                    Assembly.GetEntryAssembly()     // App
-                };
-            };
-
-            services.AddUi(env, typeof(SemanticUi).Assembly);
-
-            ScanForGeneratedObjects<TBackend>(services, appConfig, logger, rootPath, subjectAssembly);
-
-            return services;
-        }
-
-        private static void ScanForGeneratedObjects<TBackend>(IServiceCollection services,
-            IConfiguration appConfig,
-            ISafeLogger logger, string rootPath, Assembly assembly) where TBackend : IBackend
+	    private static void ScanForGeneratedObjects(this IServiceCollection services, string backendType, IConfiguration security, ISafeLogger logger, string rootPath, Assembly assembly)
         {
             foreach (var type in assembly.GetExportedTypes())
             {
@@ -203,7 +180,7 @@ namespace HQ.Platform.Node
                 }
 
                 Type batchOptionsType;
-				switch (typeof(TBackend).Name)
+				switch (backendType)
 				{
 					case nameof(DocumentDb):
 						batchOptionsType = typeof(DocumentDbBatchOptions);
@@ -220,7 +197,7 @@ namespace HQ.Platform.Node
 
                 logger.Info(() => "Found generated objects API in {AssemblyName}", assembly.GetName().Name);
                 method.MakeGenericMethod(batchOptionsType)
-                    .Invoke(null, new object[] {services, appConfig.GetSection("Security"), rootPath});
+                    .Invoke(null, new object[] {services, security, rootPath});
             }
         }
     }

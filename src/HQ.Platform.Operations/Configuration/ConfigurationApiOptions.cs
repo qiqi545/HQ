@@ -17,11 +17,10 @@ using HQ.Common;
 
 namespace HQ.Platform.Operations.Configuration
 {
-	// FIXME: support feature toggle
-	public class ConfigurationApiOptions : IProtectedFeature, IComponentOptions
+	public class ConfigurationApiOptions : FeatureToggle, IProtectedFeature, IComponentOptions
 	{
-		public string RootPath { get; set; } = "/ops";
 		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; set; } = Constants.Security.Policies.ManageConfiguration;
+		public string RootPath { get; set; } = "/ops";
 	}
 }

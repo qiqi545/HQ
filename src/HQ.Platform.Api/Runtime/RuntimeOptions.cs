@@ -19,11 +19,11 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Runtime
 {
-	// FIXME: support feature toggle
-	public class RuntimeOptions : IProtectedFeaturePolicy, IComponentOptions
+	public class RuntimeOptions : FeatureToggle, IProtectedFeature, IComponentOptions
 	{
-		public string RootPath { get; set; } = "/api";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
+		public string RootPath { get; set; } = "/api";
 		public bool CreateIfNotExists { get; set; } = true;
 		public bool MigrateOnStartup { get; set; } = true;
 	}

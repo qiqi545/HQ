@@ -23,8 +23,6 @@ namespace HQ.Platform.Api.Configuration
         public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
         public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
         public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
-        public VersioningOptions Versioning { get; set; } = new VersioningOptions();
-        public MultiTenancyOptions MultiTenancy { get; set; } = new MultiTenancyOptions();
         public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
     }
 }
