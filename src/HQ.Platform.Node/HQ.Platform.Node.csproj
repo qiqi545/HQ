@@ -22,6 +22,7 @@
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\HQ.Integration.Azure\HQ.Integration.Azure.csproj" />
     <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
     <ProjectReference Include="..\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />

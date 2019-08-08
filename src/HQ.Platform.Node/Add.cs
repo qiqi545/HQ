@@ -21,6 +21,7 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
+using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Identity;
 using HQ.Integration.DocumentDb.Runtime;
 using HQ.Integration.DocumentDb.Sql;
@@ -54,15 +55,13 @@ namespace HQ.Platform.Node
 	public sealed class DocumentDb : IBackend { }
 	public sealed class SqlServer : IBackend { }
 	public sealed class Sqlite : IBackend { }
+
+	public interface ICloud { }
+	public sealed class Azure : ICloud { }
 	
 	public static class Add
     {
-	    public static IServiceCollection AddHq(
-		    this IServiceCollection services,
-		    IHostingEnvironment env,
-		    IConfiguration config,
-		    ISafeLogger logger,
-		    params ICloudOptions[] clouds)
+	    public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, ISafeLogger logger)
 	    {
 		    var subject = Assembly.GetCallingAssembly();
 
@@ -94,12 +93,22 @@ namespace HQ.Platform.Node
 			    .AddMetaApi(hq.GetSection("Meta"))
 			    .AddRuntimeApi(hq.GetSection("Runtime"))
 			    ;
-		    var identity = services
+		    var identityBuilder = services
 			    .AddIdentityExtended(hq.GetSection("Identity"));
 
-		    //
-		    // Cloud:
-		    services.AddCloudServices(logger, clouds);
+			//
+			// Cloud:
+			var cloud = configRoot.GetSection("Cloud");
+			switch (cloud["Provider"])
+			{
+				case nameof(Azure):
+				{
+					var options = new AzureOptions();
+					cloud.Bind(options);
+					services.AddCloudServices(logger, options);
+					break;
+				}
+			}
 
 			//
 			// Backend Services:
@@ -110,13 +119,13 @@ namespace HQ.Platform.Node
 		    switch (backendType)
 		    {
 			    case nameof(DocumentDb):
-				    identity
+				    identityBuilder
 					    .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 						    IdentityApplication>(connectionString);
 				    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest);
 				    break;
 			    case nameof(SqlServer):
-				    identity
+				    identityBuilder
 					    .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 						    IdentityApplication>(
 						    connectionString, ConnectionScope.ByRequest,
@@ -124,7 +133,7 @@ namespace HQ.Platform.Node
 				    services.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
 				    break;
 			    case nameof(Sqlite):
-				    identity
+				    identityBuilder
 					    .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 						    IdentityApplication>(
 						    connectionString, ConnectionScope.ByRequest,
@@ -154,7 +163,7 @@ namespace HQ.Platform.Node
 		    services.AddUi(env, typeof(SemanticUi).Assembly);
 
 		    services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
-
+			
 		    return services;
 	    }
 
