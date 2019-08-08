@@ -21,7 +21,7 @@ using HQ.Data.Contracts.Topology;
 
 namespace HQ.Data.Contracts.Tests.Fakes
 {
-	public sealed class Node : INode<string>, IEquatable<Node>
+	public class Node : INode<string>, IEquatable<Node>
 	{
 		public Node(string id)
 		{

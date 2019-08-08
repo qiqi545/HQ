@@ -16,6 +16,8 @@
 #endregion
 
 using System.Diagnostics;
+using System.Drawing;
+using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Tests.Fakes;
@@ -42,9 +44,9 @@ namespace HQ.Data.Contracts.Tests.Mvc
 			topology.FirstRoot.Nodes.Add(b);
 			topology.FirstRoot.Nodes.Add(c);
 
-			var d = new Node("D");
-			var e = new Node("E");
-			var f = new Node("F");
+			var d = new D("D");
+			var e = new E("E");
+			var f = new F("F");
 
 			// F -> E -> D
 			d.DependsOn(e);
@@ -58,9 +60,27 @@ namespace HQ.Data.Contracts.Tests.Mvc
 			topology.SecondRoot.Nodes.Add(e);
 			topology.SecondRoot.Nodes.Add(f);
 
-			var dotGraph = GraphVizOutputFormatter.GenerateDotGraph(GraphDirection.BottomToTop, topology, "Topology");
+			var dotGraph = GraphVizOutputFormatter.GenerateDotGraph(GraphDirection.TopToBottom, topology, "Topology");
 			Assert.NotNull(dotGraph);
 			Trace.WriteLine(dotGraph);
+		}
+
+		[Color(nameof(Color.Purple))]
+		public class D : Node
+		{
+			public D(string id) : base(id) { }
+		}
+
+		[Color(nameof(Color.MediumPurple))]
+		public class E : Node
+		{
+			public E(string id) : base(id) { }
+		}
+
+		[Color(nameof(Color.Plum))]
+		public class F : Node
+		{
+			public F(string id) : base(id) { }
 		}
 
 		public class Topology

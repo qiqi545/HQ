@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Common;
+using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Data.Contracts.Topology;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +44,7 @@ namespace HQ.Data.Contracts.Mvc
 
 		public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding encoding)
 		{
-			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.BottomToTop, context.Object,
+			await context.HttpContext.Response.WriteAsync(GenerateDotGraph(GraphDirection.TopToBottom, context.Object,
 				context.ObjectType.Name));
 		}
 
@@ -123,19 +125,19 @@ namespace HQ.Data.Contracts.Mvc
 		private static void WalkGraph(object target, ref int clusters, StringBuilder vb, StringBuilder nb,
 			StringBuilder cb)
 		{
-			const string nodeColor = @"lightgrey";
+			const string defaultNodeColor = @"lightgrey";
 
 			switch (target)
 			{
 				case INode<string> node:
 				{
-					WalkNode(node, nodeColor, _openCluster, vb, nb, cb);
+					WalkNode(node, defaultNodeColor, _openCluster, vb, nb, cb);
 					break;
 				}
 
 				case IEnumerable<INode<string>> nodes:
 				{
-					WalkNodes(nodes, nodeColor, vb, nb, cb);
+					WalkNodes(nodes, defaultNodeColor, vb, nb, cb);
 					break;
 				}
 
@@ -165,7 +167,6 @@ namespace HQ.Data.Contracts.Mvc
 			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
 				out var members);
 
-			// FIXME: add TryGetAttribute<T> to TypeKitchen for Type
 			if (accessor.Type.HasAttribute<TopologyRootAttribute>())
 			{
 				AppendClusterEnd(cb);
@@ -204,7 +205,7 @@ namespace HQ.Data.Contracts.Mvc
 			}
 		}
 
-		private static void WalkNodes(IEnumerable<INode<string>> nodes, string nodeColor, StringBuilder vb,
+		private static void WalkNodes(IEnumerable<INode<string>> nodes, string defaultNodeColor, StringBuilder vb,
 			StringBuilder nb, StringBuilder cb)
 		{
 			var collection = nodes as IList<INode<string>> ?? nodes.ToList();
@@ -220,11 +221,15 @@ namespace HQ.Data.Contracts.Mvc
 						vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				}
 
+				var nodeColor = node.GetType().TryGetAttribute(true, out ColorAttribute color)
+					? color.Color.ToRgbHexString()
+					: defaultNodeColor;
+
 				nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\"];");
 			}
 		}
 
-		private static void WalkNode(INode<string> node, string nodeColor, bool inCluster, StringBuilder vb,
+		private static void WalkNode(INode<string> node, string defaultNodeColor, bool inCluster, StringBuilder vb,
 			StringBuilder nb, StringBuilder cb)
 		{
 			foreach (var dependent in node.Dependents)
@@ -232,7 +237,7 @@ namespace HQ.Data.Contracts.Mvc
 					cb.AppendLine($"\t\t\"{dependent.Id}\" -> \"{node.Id}\";");
 				else
 					vb.AppendLine($"\t\"{dependent.Id}\" -> \"{node.Id}\";");
-			nb.AppendLine($"\t\"{node.Id}\" [color=\"{nodeColor}\"];");
+			nb.AppendLine($"\t\"{node.Id}\" [color=\"{defaultNodeColor}\"];");
 		}
 	}
 }
