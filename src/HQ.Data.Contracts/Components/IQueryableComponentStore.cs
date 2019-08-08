@@ -20,8 +20,8 @@ using System.Linq;
 
 namespace HQ.Data.Contracts.Components
 {
-	public interface IQueryableComponentStore<TKey, TObject> where TKey : IEquatable<TKey>
+	public interface IQueryableComponentStore<TKey, out TObject> where TKey : IEquatable<TKey>
 	{
-		IQueryable<TObject> Roles { get; }
+		IQueryable<TObject> Objects { get; }
 	}
 }

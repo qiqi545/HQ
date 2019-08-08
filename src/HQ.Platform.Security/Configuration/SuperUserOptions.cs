@@ -18,6 +18,7 @@
 using System.ComponentModel.DataAnnotations;
 using HQ.Common;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {

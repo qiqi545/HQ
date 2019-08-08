@@ -119,7 +119,8 @@ namespace HQ.Platform.Operations
 			return services;
 		}
 
-		private static IMvcBuilder AddConfigurationApi(this IMvcBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
+		private static void AddConfigurationApi(this IMvcBuilder mvcBuilder,
+			Action<ConfigurationApiOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -145,8 +146,6 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
 			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
-
-			return mvcBuilder;
 		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)

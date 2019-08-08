@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Data.Contracts.Attributes
+namespace HQ.Data.Contracts.DataAnnotations
 {
 	public class UniqueAttribute : Attribute
 	{

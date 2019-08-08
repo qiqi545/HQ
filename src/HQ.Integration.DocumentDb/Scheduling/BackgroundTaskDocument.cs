@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Integration.DocumentDb.Sql;
 using Newtonsoft.Json;

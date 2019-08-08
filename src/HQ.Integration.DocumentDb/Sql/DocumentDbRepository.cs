@@ -23,6 +23,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.CodeGeneration.Scripting;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents;

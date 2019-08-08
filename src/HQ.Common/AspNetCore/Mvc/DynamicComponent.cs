@@ -16,14 +16,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
-namespace HQ.Data.Contracts.Attributes
+namespace HQ.Common.AspNetCore.Mvc
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
-	public class SensitiveDataAttribute : Attribute
+	public abstract class DynamicComponent : IDynamicComponent
 	{
-		public SensitiveDataAttribute(SensitiveDataCategory category) => Category = category;
-
-		public SensitiveDataCategory Category { get; }
+		public abstract IEnumerable<Type> ControllerTypes { get; }
+		public Func<string> RouteTemplate { get; set; }
 	}
 }

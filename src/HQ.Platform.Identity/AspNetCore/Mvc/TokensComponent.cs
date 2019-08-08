@@ -17,7 +17,9 @@
 
 using System;
 using System.Collections.Generic;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Components;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
