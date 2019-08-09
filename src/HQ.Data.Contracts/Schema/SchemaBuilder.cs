@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,16 +15,17 @@
 
 #endregion
 
-using HQ.Common;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Api.Runtime
+namespace HQ.Data.Contracts.Schema
 {
-	public class RuntimeOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class SchemaBuilder
 	{
-		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
-		public string RootPath { get; set; } = "/api";
-		public bool CreateIfNotExists { get; set; } = true;
-		public bool MigrateOnStartup { get; set; } = true;
+		public IServiceCollection Services { get; }
+
+		public SchemaBuilder(IServiceCollection services)
+		{
+			Services = services;
+		}
 	}
 }

@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using HQ.Common;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
@@ -27,6 +28,7 @@ using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
 using HQ.Platform.Api;
+using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Runtime;
 using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.Extensions.Configuration;
@@ -38,27 +40,27 @@ namespace HQ.Integration.SqlServer.Runtime
 {
 	public static class Add
 	{
-		public static IServiceCollection AddSqlServerRuntime(
-			this IServiceCollection services,
+		public static RuntimeBuilder AddSqlServerRuntime(
+			this RuntimeBuilder builder,
 			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
 			IConfiguration databaseConfig = null)
 		{
 			var configureDatabase = databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>) null;
 
-			return AddSqlServerRuntime(services, connectionString, scope, configureDatabase);
+			return AddSqlServerRuntime(builder, connectionString, scope, configureDatabase);
 		}
 
-		public static IServiceCollection AddSqlServerRuntime(this IServiceCollection services,
+		public static RuntimeBuilder AddSqlServerRuntime(this RuntimeBuilder builder,
 			string connectionString, 
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqlServerOptions> configureDatabase = null)
 		{
-			services.AddSingleton<ITypeRegistry, TypeRegistry>();
+			builder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
 			void ConfigureDatabase(SqlServerOptions o) { configureDatabase?.Invoke(o); }
-			services.Configure<SqlServerOptions>(ConfigureDatabase);
+			builder.Services.Configure<SqlServerOptions>(ConfigureDatabase);
 
-			var serviceProvider = services.BuildServiceProvider();
+			var serviceProvider = builder.Services.BuildServiceProvider();
 
 			var options = serviceProvider.GetService<IOptions<SqlServerOptions>>()?.Value ?? new SqlServerOptions();
 			configureDatabase?.Invoke(options);
@@ -66,18 +68,18 @@ namespace HQ.Integration.SqlServer.Runtime
 			var dialect = new SqlServerDialect();
 			SqlBuilder.Dialect = dialect;
 
-			services.AddSqlRuntimeStores<SqlServerConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
-			
-			services.AddMetrics();
-			services.TryAddSingleton<ISqlDialect>(dialect);
-			services.TryAddSingleton(dialect);
-			services.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
+			builder.AddSqlRuntimeStores<SqlServerConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
+
+			builder.Services.AddMetrics();
+			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
+			builder.Services.TryAddSingleton(dialect);
+			builder.Services.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 
 			MigrateToLatest(connectionString, runtimeOptions);
 
-			return services;
+			return builder;
 		}
 
 		private static void OnConnection(IDbConnection c, IServiceProvider r) { }

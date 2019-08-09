@@ -17,17 +17,15 @@
 
 using System;
 using System.Diagnostics;
-using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 
 namespace HQ.Platform.Node
 {
     public static class Server
     {
-        public static void Start<TStartup>(string[] args, Func<IConfiguration, ICloudOptions[]> clouds)
+        public static void Start<TStartup>(string[] args)
             where TStartup : class
         {
             Masthead();
@@ -35,7 +33,7 @@ namespace HQ.Platform.Node
             Execute(args, () =>
             {
                 var builder = WebHost.CreateDefaultBuilder(args);
-                builder.ConfigureHq(args, false, clouds);
+                builder.ConfigureHq(args, false);
                 builder.UseStartup<TStartup>();
 
                 var host = builder.Build();

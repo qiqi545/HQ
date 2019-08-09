@@ -36,9 +36,4 @@
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Management\" />
-    <Folder Include="Proxy\" />
-  </ItemGroup>
-
 </Project>

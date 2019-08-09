@@ -17,7 +17,8 @@
 
 using System;
 using System.Data;
-using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
@@ -28,8 +29,8 @@ using HQ.Integration.Sqlite.SessionManagement;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Platform.Api;
+using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Runtime;
-using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -39,27 +40,27 @@ namespace HQ.Integration.Sqlite.Runtime
 {
 	public static class Add
 	{
-		public static IServiceCollection AddSqliteRuntime(
-			this IServiceCollection services,
+		public static RuntimeBuilder AddSqliteRuntime(
+			this RuntimeBuilder builder,
 			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
 			IConfiguration databaseConfig = null)
 		{
 			var configureDatabase = databaseConfig != null ? databaseConfig.Bind : (Action<SqliteOptions>) null;
 
-			return AddSqliteRuntime(services, connectionString, scope, configureDatabase);
+			return AddSqliteRuntime(builder, connectionString, scope, configureDatabase);
 		}
 
-		public static IServiceCollection AddSqliteRuntime(this IServiceCollection services,
+		public static RuntimeBuilder AddSqliteRuntime(this RuntimeBuilder builder,
 			string connectionString, 
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqliteOptions> configureDatabase = null)
 		{
-			services.AddSingleton<ITypeRegistry, TypeRegistry>();
+			builder.Services.AddTypeDiscovery();
 
 			void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }
-			services.Configure<SqliteOptions>(ConfigureDatabase);
+			builder.Services.Configure<SqliteOptions>(ConfigureDatabase);
 
-			var serviceProvider = services.BuildServiceProvider();
+			var serviceProvider = builder.Services.BuildServiceProvider();
 
 			var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
 			configureDatabase?.Invoke(options);
@@ -67,18 +68,18 @@ namespace HQ.Integration.Sqlite.Runtime
 			var dialect = new SqliteDialect();
 			SqlBuilder.Dialect = dialect;
 
-			services.AddSqlRuntimeStores<SqliteConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
-			
-			services.AddMetrics();
-			services.TryAddSingleton<ISqlDialect>(dialect);
-			services.TryAddSingleton(dialect);
-			services.TryAddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
+			builder.AddSqlRuntimeStores<SqliteConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
+
+			builder.Services.AddMetrics();
+			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
+			builder.Services.TryAddSingleton(dialect);
+			builder.Services.TryAddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 
 			MigrateToLatest(connectionString, runtimeOptions);
 
-			return services;
+			return builder;
 		}
 
 		private static void OnConnection(IDbConnection c, IServiceProvider r) { }

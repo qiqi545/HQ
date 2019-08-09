@@ -17,13 +17,13 @@
 
 using System;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling
 {
@@ -41,7 +41,9 @@ namespace HQ.Extensions.Scheduling
 
             services.AddLocalTimestamps();
             services.AddTypeDiscovery();
-            services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
+            services.AddSafeLogging();
+
+			services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
             services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
             services.TryAddSingleton<BackgroundTaskHost>();
 

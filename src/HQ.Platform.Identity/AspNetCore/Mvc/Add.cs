@@ -26,10 +26,8 @@ using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.AspNetCore.Mvc
@@ -122,7 +120,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
                             ClaimValues.ManageApplications);
                     });
             });
-
 
 			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
 

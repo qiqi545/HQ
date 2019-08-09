@@ -13,14 +13,16 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Common;
 
-namespace HQ.Platform.Api.Runtime
+namespace HQ.Platform.Api.Configuration
 {
-	public class RuntimeComponent : DynamicComponent
+	public class SchemaOptions : FeatureToggle, IProtectedFeature, IComponentOptions
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(RuntimeController)};
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; set; } = Constants.Security.Policies.ManageSchemas;
+		public string RootPath { get; set; } = "/api";
+		public string SchemaFolder { get; set; } = "/schemas";
+		public StoreOptions Store { get; set; } = new StoreOptions();
 	}
 }

@@ -13,14 +13,25 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Collections.Generic;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Mvc;
+using HQ.Extensions.Caching.AspNetCore.Mvc;
+using HQ.Platform.Api.Configuration;
+using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Platform.Api.Runtime
+namespace HQ.Platform.Api.Schemas
 {
-	public class RuntimeComponent : DynamicComponent
+	[DynamicController]
+	[DynamicAuthorize(typeof(SchemaOptions))]
+	[Route("schemas")]
+	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
+	[ApiExplorerSettings(IgnoreApi = false)]
+	[MetaCategory("Objects", "Provides programmatic access to weak-typed object schemas.")]
+	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
+	public class SchemaController : DataController
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(RuntimeController)};
+
 	}
 }

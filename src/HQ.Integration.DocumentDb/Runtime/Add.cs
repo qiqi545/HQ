@@ -17,7 +17,7 @@
 
 using System;
 using System.Data;
-using HQ.Common;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
@@ -27,8 +27,8 @@ using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using HQ.Platform.Api;
-using HQ.Platform.Api.Runtime;
-using HQ.Platform.Identity.Stores.Sql;
+using HQ.Platform.Api.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -38,29 +38,33 @@ namespace HQ.Integration.DocumentDb.Runtime
 {
 	public static class Add
 	{
-		public static IServiceCollection AddDocumentDbRuntime(
-			this IServiceCollection services,
-			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+		public static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, IConfiguration dbConfig)
 		{
-			return AddDocumentDbRuntime(services, connectionString, scope, o =>
-			{
-				var builder = new DocumentDbConnectionStringBuilder(connectionString);
-				o.AccountKey = o.AccountKey ?? builder.AccountKey;
-				o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
-				o.DatabaseId = o.DatabaseId ?? builder.Database;
-				o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
-			});
+			return dbConfig == null
+				? AddDocumentDbRuntime(builder, connectionString, scope)
+				: AddDocumentDbRuntime(builder, connectionString, scope, dbConfig.Bind);
 		}
 
-		private static IServiceCollection AddDocumentDbRuntime(this IServiceCollection services,
-			string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
+		public static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
 		{
-			services.AddSingleton<ITypeRegistry, TypeRegistry>();
+			return AddDocumentDbRuntime(builder, connectionString, scope, o => { DefaultDbOptions(connectionString, o); });
+		}
 
+		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
+		{
+			var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
+			o.AccountKey = o.AccountKey ?? connectionStringBuilder.AccountKey;
+			o.AccountEndpoint = o.AccountEndpoint ?? connectionStringBuilder.AccountEndpoint;
+			o.DatabaseId = o.DatabaseId ?? connectionStringBuilder.Database;
+			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
+		}
+
+		private static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
+		{
 			void ConfigureDatabase(DocumentDbOptions o) { configureDatabase?.Invoke(o); }
-			services.Configure<DocumentDbOptions>(ConfigureDatabase);
+			builder.Services.Configure<DocumentDbOptions>(ConfigureDatabase);
 
-			var serviceProvider = services.BuildServiceProvider();
+			var serviceProvider = builder.Services.BuildServiceProvider();
 
 			var dbOptions = serviceProvider.GetService<IOptions<DocumentDbOptions>>()?.Value ?? new DocumentDbOptions();
 			configureDatabase?.Invoke(dbOptions);
@@ -68,18 +72,18 @@ namespace HQ.Integration.DocumentDb.Runtime
 			var dialect = new DocumentDbDialect();
 			SqlBuilder.Dialect = dialect;
 
-			services.AddSqlRuntimeStores<DocumentDbConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
-			
-			services.AddMetrics();
-			services.TryAddSingleton<ISqlDialect>(dialect);
-			services.TryAddSingleton(dialect);
-			services.TryAddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
+			builder.AddSqlRuntimeStores<DocumentDbConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
+
+			builder.Services.AddMetrics();
+			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
+			builder.Services.TryAddSingleton(dialect);
+			builder.Services.TryAddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 
 			MigrateToLatest(runtimeOptions, dbOptions);
 
-			return services;
+			return builder;
 		}
 
 		private static void OnConnection(IDbConnection c, IServiceProvider r) { }

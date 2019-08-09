@@ -17,11 +17,11 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
+using HQ.Integration.Azure;
 using HQ.Integration.Sqlite.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -34,8 +34,7 @@ namespace HQ.Platform.Node
         private const string AppSettingsFileName = "appsettings";
         private const string AppSettingsFileExtension = ".json";
 
-        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args,
-            bool seedOnLoad = false, Func<IConfiguration, ICloudOptions[]> clouds = null)
+        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, bool seedOnLoad = false)
         {
             hostBuilder.ConfigureAppConfiguration((context, config) =>
             {
@@ -75,9 +74,18 @@ namespace HQ.Platform.Node
                 builder.AddEventSourceLogger();
                 builder.AddSafeLogging();
 
-                foreach (var cloud in clouds?.Invoke(config) ?? Enumerable.Empty<ICloudOptions>())
+                //
+                // Cloud Logging:
+                var cloudConfig = config.GetSection("Cloud");
+                switch (cloudConfig["Provider"])
                 {
-                    builder.ConfigureCloudLogging(cloud);
+	                case nameof(Azure):
+	                {
+		                var cloudOptions = new AzureOptions();
+		                cloudConfig.Bind(cloudOptions);
+						builder.ConfigureCloudLogging(cloudOptions);
+						break;
+	                }
                 }
             });
 

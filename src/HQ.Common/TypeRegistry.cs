@@ -19,9 +19,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
-using HQ.Common;
 
-namespace HQ.Platform.Identity.Stores.Sql
+namespace HQ.Common
 {
     public class TypeRegistry : ITypeRegistry
     {

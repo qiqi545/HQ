@@ -25,6 +25,8 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Mvc.Security;
+using HQ.Data.Contracts.Runtime;
+using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
@@ -34,6 +36,7 @@ using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Api.Runtime;
+using HQ.Platform.Api.Schemas;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
@@ -210,34 +213,72 @@ namespace HQ.Platform.Api
 
 		#endregion
 
-		#region Runtime
+		#region Schema
 
-		public static IServiceCollection AddSchemaDiscovery(this IServiceCollection services)
+		public static SchemaBuilder AddSchemaApi(this IServiceCollection services, IConfiguration config)
 		{
-			services.AddTypeDiscovery();
-			
-			return services;
+			return services.AddSchemaApi(config.Bind);
 		}
 
+		public static SchemaBuilder AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
+		{
+			var mvcBuilder = services.AddMvc();
+			mvcBuilder.AddRuntimeApi();
+			return new SchemaBuilder(mvcBuilder.Services);
+		}
 
-		public static IServiceCollection AddRuntimeApi(this IServiceCollection services, IConfiguration config)
+		public static SchemaBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, IConfiguration config)
+		{
+			return mvcBuilder.AddSchemaApi(config.Bind);
+		}
+
+		public static SchemaBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, Action<SchemaOptions> configureAction = null)
+		{
+			if (configureAction != null)
+				mvcBuilder.Services.Configure(configureAction);
+
+			mvcBuilder.AddControllerFeature<SchemaController>();
+			mvcBuilder.AddComponentFeature<SchemaComponent, SchemaOptions>();
+
+			mvcBuilder.Services.AddTypeDiscovery();
+			mvcBuilder.Services.AddDynamicAuthorization();
+			mvcBuilder.Services.AddAuthorization(x =>
+			{
+				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+
+				x.AddPolicy(Constants.Security.Policies.ManageSchemas, b =>
+				{
+					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
+					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageSchemas);
+				});
+			});
+
+			return new SchemaBuilder(mvcBuilder.Services);
+		}
+
+		#endregion
+
+		#region Runtime
+
+		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, IConfiguration config)
 		{
 			return services.AddRuntimeApi(config.Bind);
 		}
 
-		public static IServiceCollection AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
+		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
 		{
 			var mvcBuilder = services.AddMvc();
-			mvcBuilder.AddRuntimeApi();
-			return services;
+			mvcBuilder.AddRuntimeApi(configureAction);
+			return new RuntimeBuilder(mvcBuilder.Services);
 		}
 
-		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, IConfiguration config)
+		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, IConfiguration config)
 		{
 			return mvcBuilder.AddRuntimeApi(config.Bind);
 		}
 
-		public static IMvcBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, Action<RuntimeOptions> configureAction = null)
+		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, Action<RuntimeOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -258,12 +299,12 @@ namespace HQ.Platform.Api
 				});
 			});
 
-			return mvcBuilder;
+			return new RuntimeBuilder(mvcBuilder.Services);
 		}
 
-		public static IServiceCollection AddSqlRuntimeStores<TDatabase>
+		public static RuntimeBuilder AddSqlRuntimeStores<TDatabase>
 		(
-			this IServiceCollection services,
+			this RuntimeBuilder builder,
 			string connectionString,
 			ConnectionScope scope,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null,
@@ -272,12 +313,12 @@ namespace HQ.Platform.Api
 			where TDatabase : class, IConnectionFactory, new()
 		{
 			if (scope == ConnectionScope.ByRequest)
-				services.AddHttpContextAccessor();
+				builder.Services.AddHttpContextAccessor();
 
-			services.AddDatabaseConnection<IObjectGetRepository, TDatabase>(connectionString, scope, onConnection, onCommand);
-			services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
+			builder.Services.AddDatabaseConnection<IObjectGetRepository, TDatabase>(connectionString, scope, onConnection, onCommand);
+			builder.Services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
 
-			return services;
+			return builder;
 		}
 
 		#endregion

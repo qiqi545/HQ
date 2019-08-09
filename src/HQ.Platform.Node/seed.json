@@ -1,5 +1,6 @@
 {
   "HQ": {
+
     "Api": {
       "ApiName": "HQ.Template",
       "ApiVersion": "1.0",
@@ -35,7 +36,7 @@
     },
 
     "Ops": {
-      "Enabled": true, 
+      "Enabled": true,
       "RootPath": "/ops",
       "Scheme": "PlatformBearer",
       "Policy": "AccessOperations",
@@ -195,8 +196,8 @@
         "Tenants": {
           "Scheme": "PlatformBearer",
           "Policy": "ManageTenants"
-        } 
-      } 
+        }
+      }
     },
 
     "BackgroundTasks": {
@@ -240,7 +241,20 @@
       "Enabled": true,
       "RootPath": "/api",
       "Scheme": "PlatformBearer",
-      "Policy": "ManageObjects"
+      "Policy": "ManageObjects",
+      "EnableRest": true,
+      "EnableGraphQl": true
+    },
+
+    "Schema": {
+      "Enabled": true,
+      "RootPath": "/api",
+      "Scheme": "PlatformBearer",
+      "Policy": "ManageSchema",
+      "Store": {
+        "CreateIfNotExists": true,
+        "MigrateOnStartup": true
+      }
     },
 
     "MultiTenancy": {

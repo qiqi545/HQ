@@ -3,7 +3,6 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
-using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
@@ -38,7 +37,6 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 		    mvcBuilder.Services.AddLocalTimestamps();
             mvcBuilder.Services.AddSafeLogging();
 			
-			mvcBuilder.Services.AddBackgroundTasks(configureTasks);
             mvcBuilder.AddControllerFeature<BackgroundTaskController>();
             mvcBuilder.AddComponentFeature<BackgroundTasksComponent, BackgroundTaskOptions>();
 

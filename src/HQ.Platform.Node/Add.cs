@@ -21,17 +21,25 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Scheduling;
 using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Identity;
 using HQ.Integration.DocumentDb.Runtime;
+using HQ.Integration.DocumentDb.Scheduling;
+using HQ.Integration.DocumentDb.Schema;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.Sqlite.Identity;
 using HQ.Integration.Sqlite.Runtime;
+using HQ.Integration.Sqlite.Scheduling;
+using HQ.Integration.Sqlite.Schema;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.Runtime;
+using HQ.Integration.SqlServer.Scheduling;
+using HQ.Integration.SqlServer.Schema;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
+using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc;
 using HQ.Platform.Api.Runtime.GraphQl;
 using HQ.Platform.Api.Runtime.Rest;
@@ -51,6 +59,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Node
 {
+	#region Sentinels
+
 	public interface IBackend { }
 	public sealed class DocumentDb : IBackend { }
 	public sealed class SqlServer : IBackend { }
@@ -58,43 +68,47 @@ namespace HQ.Platform.Node
 
 	public interface ICloud { }
 	public sealed class Azure : ICloud { }
-	
+
+	#endregion
+
 	public static class Add
-    {
-	    public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, ISafeLogger logger)
-	    {
-		    var subject = Assembly.GetCallingAssembly();
+	{
+		public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, ISafeLogger logger)
+		{
+			var subject = Assembly.GetCallingAssembly();
 
-		    if (!(config is IConfigurationRoot configRoot))
-		    {
-			    throw new ArgumentException("HQ requires access to the root configuration.", nameof(config));
-		    }
+			if (!(config is IConfigurationRoot configRoot))
+			{
+				throw new ArgumentException("HQ requires access to the root configuration.", nameof(config));
+			}
 
-		    services.TryAddSingleton(configRoot);
-		    services.TryAddSingleton(services);
+			services.TryAddSingleton(configRoot);
+			services.TryAddSingleton(services);
 
-		    var hq = configRoot.GetSection("HQ");
+			var hq = configRoot.GetSection("HQ");
 
-		    //
-		    // Core Services:
-		    services.AddLocalTimestamps();
-		    services.AddSafeLogging();
-		    services.AddSecurityPolicies(hq.GetSection("Security"), logger);
-		    services.AddOperationsApi(env, hq.GetSection("Ops"));
-		    services.AddPlatformApi(hq.GetSection("Api"));
-		    services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))
-			    .AddIdentityTenantContextStore<IdentityTenant>()
-			    .AddIdentityApplicationContextStore<IdentityApplication>();
-		    services.AddVersioning(hq.GetSection("Versioning"));
-		    services
-			    .AddBackgroundTasksApi(hq.GetSection("BackgroundTasks"))
-			    .AddConfigurationApi(configRoot, hq.GetSection("Configuration"))
-			    .AddIdentityApi(hq.GetSection("IdentityApi"))
-			    .AddMetaApi(hq.GetSection("Meta"))
-			    .AddRuntimeApi(hq.GetSection("Runtime"))
-			    ;
-		    var identityBuilder = services
-			    .AddIdentityExtended(hq.GetSection("Identity"));
+			//
+			// Core Services:
+			services.AddTypeDiscovery();
+			services.AddLocalTimestamps();
+			services.AddSafeLogging();
+			services.AddSecurityPolicies(hq.GetSection("Security"), logger);
+			services.AddOperationsApi(env, hq.GetSection("Ops"));
+			services.AddPlatformApi(hq.GetSection("Api"));
+			services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))
+				.AddIdentityTenantContextStore<IdentityTenant>()
+				.AddIdentityApplicationContextStore<IdentityApplication>();
+			services.AddVersioning(hq.GetSection("Versioning"));
+			services
+				.AddBackgroundTasksApi(hq.GetSection("BackgroundTasks"))
+				.AddConfigurationApi(configRoot, hq.GetSection("Configuration"))
+				.AddIdentityApi(hq.GetSection("IdentityApi"))
+				.AddMetaApi(hq.GetSection("Meta"));
+
+			var tasksBuilder = services.AddBackgroundTasks(hq.GetSection("BackgroundTasks"));
+			var identityBuilder = services.AddIdentityExtended(hq.GetSection("Identity"));
+			var runtimeBuilder = services.AddRuntimeApi(hq.GetSection("Runtime"));
+			var schemaBuilder = services.AddSchemaApi(hq.GetSection("Schema"));
 
 			//
 			// Cloud:
@@ -102,93 +116,113 @@ namespace HQ.Platform.Node
 			switch (cloud["Provider"])
 			{
 				case nameof(Azure):
-				{
-					var options = new AzureOptions();
-					cloud.Bind(options);
-					services.AddCloudServices(logger, options);
-					break;
-				}
+					{
+						var options = new AzureOptions();
+						cloud.Bind(options);
+						services.AddCloudServices(logger, options);
+						break;
+					}
 			}
 
 			//
 			// Backend Services:
 			var backend = configRoot.GetSection("Backend");
 			var connectionString = backend.GetConnectionString("DefaultConnection");
-		    var dbConfig = backend.GetSection("DbOptions");
-		    var backendType = backend["Type"];
-		    switch (backendType)
-		    {
-			    case nameof(DocumentDb):
-				    identityBuilder
-					    .AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-						    IdentityApplication>(connectionString);
-				    services.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest);
-				    break;
-			    case nameof(SqlServer):
-				    identityBuilder
-					    .AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-						    IdentityApplication>(
-						    connectionString, ConnectionScope.ByRequest,
-						    dbConfig);
-				    services.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-				    break;
-			    case nameof(Sqlite):
-				    identityBuilder
-					    .AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-						    IdentityApplication>(
-						    connectionString, ConnectionScope.ByRequest,
-						    dbConfig);
-				    services.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-				    break;
-			    default:
-				    throw new ArgumentOutOfRangeException(backendType, typeof(string), null);
-		    }
+			var dbConfig = backend.GetSection("DbOptions");
+			if (dbConfig?.Value == null)
+				dbConfig = null;
 
-		    services.AddRestRuntime();
-		    services.AddGraphQlRuntime();
+			var backendType = backend["Type"];
+			if (string.IsNullOrWhiteSpace(backendType))
+				logger.Warn(() => "No backend type found!");
+			else
+				logger.Info(() => "Installing {BackendType} back-end services.", backendType);
 
-		    UiConfig.Settings = settings =>
-		    {
-			    settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
-			    settings.ComponentAssemblies = new[]
-			    {
-				    typeof(UiComponent).Assembly, // HQ.UI
-				    typeof(HtmlSystem).Assembly, // HQ.UI.Web
-				    typeof(SemanticUi).Assembly, // HQ.Web.Semantic.Ui
-				    typeof(Dashboard).Assembly, // HQ.Platform.Node
-				    Assembly.GetEntryAssembly() // App
-			    };
-		    };
+			switch (backendType)
+			{
+				case nameof(DocumentDb):
+					tasksBuilder.AddDocumentDbBackgroundTasksStore(connectionString);
+					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString);
+					runtimeBuilder.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					schemaBuilder.AddDocumentDbSchemaStores(connectionString);
+					break;
+				case nameof(SqlServer):
+					tasksBuilder.AddSqlServerBackgroundTasksStore(connectionString, ConnectionScope.ByRequest, dbConfig);
+					identityBuilder.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					schemaBuilder.AddSqlServerSchemaStores();
+					break;
+				case nameof(Sqlite):
+					tasksBuilder.AddSqliteBackgroundTasksStore(connectionString, ConnectionScope.ByRequest, dbConfig);
+					identityBuilder.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					schemaBuilder.AddSqliteSchemaStores();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(backendType, typeof(string), null);
+			}
 
-		    services.AddUi(env, typeof(SemanticUi).Assembly);
+			//
+			// Runtime Services:
+			{
+				var runtimeOptions = new RuntimeOptions();
+				hq.GetSection("Runtime").Bind(runtimeOptions);
 
-		    services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
+				if (runtimeOptions.EnableRest)
+				{
+					services.AddRestRuntime();
+					logger.Info(() => "REST is enabled.");
+				}
+
+				if (runtimeOptions.EnableGraphQl)
+				{
+					services.AddGraphQlRuntime();
+					logger.Info(() => "GraphQL is enabled.");
+				}
+			}
 			
-		    return services;
-	    }
+			UiConfig.Settings = settings =>
+			{
+				settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
+				settings.ComponentAssemblies = new[]
+				{
+					typeof(UiComponent).Assembly, // HQ.UI
+				    typeof(HtmlSystem).Assembly,  // HQ.UI.Web
+				    typeof(SemanticUi).Assembly,  // HQ.Web.Semantic.Ui
+				    typeof(Dashboard).Assembly,   // HQ.Platform.Node
+				    Assembly.GetEntryAssembly()   // App
+			    };
+			};
 
-	    private static void ScanForGeneratedObjects(this IServiceCollection services, string backendType, IConfiguration security, ISafeLogger logger, string rootPath, Assembly assembly)
-        {
-            foreach (var type in assembly.GetExportedTypes())
-            {
-                if (!type.IsAbstract || !type.IsSealed)
-                {
-                    continue;
-                }
+			services.AddUi(env, typeof(SemanticUi).Assembly);
 
-                if (type.Name != "ServiceCollectionExtensions")
-                {
-                    continue;
-                }
+			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
-                var method = type.GetMethod("AddGenerated",
-                    new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
-                if (method == null)
-                {
-                    continue;
-                }
+			return services;
+		}
 
-                Type batchOptionsType;
+		private static void ScanForGeneratedObjects(this IServiceCollection services, string backendType, IConfiguration security, ISafeLogger logger, string rootPath, Assembly assembly)
+		{
+			foreach (var type in assembly.GetExportedTypes())
+			{
+				if (!type.IsAbstract || !type.IsSealed)
+				{
+					continue;
+				}
+
+				if (type.Name != "ServiceCollectionExtensions")
+				{
+					continue;
+				}
+
+				var method = type.GetMethod("AddGenerated",
+					new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
+				if (method == null)
+				{
+					continue;
+				}
+
+				Type batchOptionsType;
 				switch (backendType)
 				{
 					case nameof(DocumentDb):
@@ -204,10 +238,10 @@ namespace HQ.Platform.Node
 						throw new ArgumentOutOfRangeException();
 				}
 
-                logger.Info(() => "Found generated objects API in {AssemblyName}", assembly.GetName().Name);
-                method.MakeGenericMethod(batchOptionsType)
-                    .Invoke(null, new object[] {services, security, rootPath});
-            }
-        }
-    }
+				logger.Info(() => "Found generated objects API in {AssemblyName}", assembly.GetName().Name);
+				method.MakeGenericMethod(batchOptionsType)
+					.Invoke(null, new object[] { services, security, rootPath });
+			}
+		}
+	}
 }

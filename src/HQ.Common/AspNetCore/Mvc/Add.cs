@@ -51,6 +51,7 @@ namespace HQ.Common.AspNetCore.Mvc
 		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services)
 		{
 			services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
+			services.TryAddSingleton<ITypeRegistry, TypeRegistry>();
 			return services;
 		}
 	}

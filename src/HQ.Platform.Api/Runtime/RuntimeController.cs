@@ -24,6 +24,7 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Runtime;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
+using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;

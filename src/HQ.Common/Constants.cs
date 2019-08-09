@@ -48,15 +48,10 @@ namespace HQ.Common
             public const string Version = nameof(Version);
             public const string AnonymousUserId = nameof(AnonymousUserId);
         }
-
-        public static class PlatformRoutes
-        {
-            public const string RouteDebug = "route_debug";
-        }
-
+		
         public static class Identity
         {
-            public const string DefaultCollection = "AspNetIdentity";
+            public const string DefaultCollection = "Identity";
         }
 
         public static class Runtime
@@ -89,6 +84,7 @@ namespace HQ.Common
                 public const string ManageBackgroundTasks = nameof(ManageBackgroundTasks);
                 public const string ManageConfiguration = nameof(ManageConfiguration);
                 public const string ManageObjects = nameof(ManageObjects);
+                public const string ManageSchemas = nameof(ManageSchemas);
 
 				public const string AccessMeta = nameof(AccessMeta);
                 public const string AccessOperations = nameof(AccessOperations);
