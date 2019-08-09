@@ -18,6 +18,7 @@
 using System;
 using System.Reflection;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
@@ -103,12 +104,13 @@ namespace HQ.Platform.Node
 				.AddBackgroundTasksApi(hq.GetSection("BackgroundTasks"))
 				.AddConfigurationApi(configRoot, hq.GetSection("Configuration"))
 				.AddIdentityApi(hq.GetSection("IdentityApi"))
+				.AddSchemaApi(hq.GetSection("Schema"))
 				.AddMetaApi(hq.GetSection("Meta"));
 
 			var tasksBuilder = services.AddBackgroundTasks(hq.GetSection("BackgroundTasks"));
 			var identityBuilder = services.AddIdentityExtended(hq.GetSection("Identity"));
 			var runtimeBuilder = services.AddRuntimeApi(hq.GetSection("Runtime"));
-			var schemaBuilder = services.AddSchemaApi(hq.GetSection("Schema"));
+			var schemaBuilder = services.AddSchemaDiscovery(hq.GetSection("Schema"));
 
 			//
 			// Cloud:

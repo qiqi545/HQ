@@ -26,7 +26,7 @@ using HQ.Common.Serialization;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.Contracts.Runtime;
-using HQ.Data.Contracts.Schema;
+using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
@@ -215,24 +215,25 @@ namespace HQ.Platform.Api
 
 		#region Schema
 
-		public static SchemaBuilder AddSchemaApi(this IServiceCollection services, IConfiguration config)
+		public static IServiceCollection AddSchemaApi(this IServiceCollection services, IConfiguration config)
 		{
 			return services.AddSchemaApi(config.Bind);
 		}
 
-		public static SchemaBuilder AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
+		public static IServiceCollection AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
 		{
 			var mvcBuilder = services.AddMvc();
-			mvcBuilder.AddRuntimeApi();
-			return new SchemaBuilder(mvcBuilder.Services);
+			mvcBuilder.AddSchemaApi(configureAction);
+			return mvcBuilder.Services;
 		}
 
-		public static SchemaBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, IConfiguration config)
+		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, IConfiguration config)
 		{
-			return mvcBuilder.AddSchemaApi(config.Bind);
+			mvcBuilder.AddSchemaApi(config.Bind);
+			return mvcBuilder;
 		}
 
-		public static SchemaBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, Action<SchemaOptions> configureAction = null)
+		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, Action<SchemaOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -254,7 +255,7 @@ namespace HQ.Platform.Api
 				});
 			});
 
-			return new SchemaBuilder(mvcBuilder.Services);
+			return mvcBuilder;
 		}
 
 		#endregion

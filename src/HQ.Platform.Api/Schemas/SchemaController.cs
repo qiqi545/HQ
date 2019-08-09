@@ -16,7 +16,9 @@
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Mvc;
+using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Mvc;
