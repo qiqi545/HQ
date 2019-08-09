@@ -1,12 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Net;
 using System.Threading.Tasks;
-using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb
 {
     public class DocumentDbMigrationRunner
     {

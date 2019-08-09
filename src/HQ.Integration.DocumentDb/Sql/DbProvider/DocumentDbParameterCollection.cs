@@ -22,7 +22,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	/// <inheritdoc />
 	/// <summary>

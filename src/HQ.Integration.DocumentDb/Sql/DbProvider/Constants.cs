@@ -15,17 +15,26 @@
 
 #endregion
 
-using System.Data;
-using HQ.Data.SessionManagement;
-using HQ.Integration.DocumentDb.Sql.DbProvider;
-
-namespace HQ.Integration.DocumentDb.SessionManagement
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
-    public class DocumentDbConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new DocumentDbConnection(ConnectionString);
-        }
-    }
+	internal class Constants
+	{
+		public const string IdKey = "id";
+		public const string IdProperty = "Id";
+
+		public const string Insert = "INSERT INTO ";
+		public const string Update = "UPDATE ";
+		public const string Delete = "DELETE FROM ";
+
+		public const string AccountEndpointKey = "AccountEndpoint";
+		public const string AccountKeyKey = "AccountKey";
+		public const string DatabaseKey = "Database";
+		public const string DefaultCollectionKey = "DefaultCollection";
+		public const string SharedCollectionKey = "SharedCollection";
+		public const string PartitionKeyPathsKey = "PartitionKeyPaths";
+
+		public const string SequenceDocumentType = "Sequence";
+		public const string SequenceTypeField = "SequenceType";
+		public const string DocumentTypeField = "DocumentType";
+	}
 }

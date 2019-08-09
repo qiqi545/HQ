@@ -22,8 +22,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents.Client;
 
-namespace HQ.Integration.DocumentDb.DbProvider
-{
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
+{ 
 	public sealed class DocumentDbConnection : DbConnection
 	{
 		private readonly DocumentDbConnectionStringBuilder _builder = new DocumentDbConnectionStringBuilder();

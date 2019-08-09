@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class QueryResultSet : List<ExpandoObject>, IResultSet<ExpandoObject>
 	{

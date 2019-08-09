@@ -1,5 +1,5 @@
 using System;
-using HQ.Integration.DocumentDb.DbProvider;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Xunit;
 
 namespace HQ.Integration.Tests

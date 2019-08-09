@@ -40,8 +40,7 @@ namespace HQ.Extensions.Scheduling
                 services.Configure(configureAction);
 
             services.AddLocalTimestamps();
-
-            services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
+            services.AddTypeDiscovery();
             services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
             services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
             services.TryAddSingleton<BackgroundTaskHost>();

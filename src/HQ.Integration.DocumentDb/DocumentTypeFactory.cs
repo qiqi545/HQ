@@ -15,26 +15,21 @@
 
 #endregion
 
-namespace HQ.Integration.DocumentDb.DbProvider
+using System.Runtime.Serialization;
+
+namespace HQ.Integration.DocumentDb
 {
-	internal class Constants
-	{
-		public const string IdKey = "id";
-		public const string IdProperty = "Id";
+    public static class DocumentTypeFactory<T> where T : IDocument
+    {
+        // ReSharper disable once StaticMemberInGenericType
+        public static readonly string Type;
 
-		public const string Insert = "INSERT INTO ";
-		public const string Update = "UPDATE ";
-		public const string Delete = "DELETE FROM ";
-
-		public const string AccountEndpointKey = "AccountEndpoint";
-		public const string AccountKeyKey = "AccountKey";
-		public const string DatabaseKey = "Database";
-		public const string DefaultCollectionKey = "DefaultCollection";
-		public const string SharedCollectionKey = "SharedCollection";
-		public const string PartitionKeyPathsKey = "PartitionKeyPaths";
-
-		public const string SequenceDocumentType = "Sequence";
-		public const string SequenceTypeField = "SequenceType";
-		public const string DocumentTypeField = "DocumentType";
-	}
+        static DocumentTypeFactory()
+        {
+            if (FormatterServices.GetSafeUninitializedObject(typeof(T)) is T type)
+            {
+                Type = type.DocumentType;
+            }
+        }
+    }
 }

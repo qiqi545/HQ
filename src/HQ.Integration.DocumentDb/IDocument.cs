@@ -15,13 +15,14 @@
 
 #endregion
 
-namespace HQ.Integration.DocumentDb.DbProvider
+using Newtonsoft.Json;
+
+namespace HQ.Integration.DocumentDb
 {
-	internal static class StringExtensions
-	{
-		public static string Truncate(this string value, int length)
-		{
-			return string.IsNullOrEmpty(value) ? value : value.Length <= length ? value : value.Substring(0, length);
-		}
-	}
+    public interface IDocument
+    {
+        [JsonProperty("id")] string Id { get; }
+
+        [JsonProperty("documentType")] string DocumentType { get; }
+    }
 }

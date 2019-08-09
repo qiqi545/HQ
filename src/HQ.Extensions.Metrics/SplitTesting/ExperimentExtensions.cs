@@ -13,7 +13,7 @@ namespace HQ.Extensions.Metrics.SplitTesting
         }
 
         private const string Separator = "__";
-        internal const string Header = "__m__track__";
+        private const string Header = "__m__track__";
 
         public static void TrackExperiment(this IMetricsHost host, string metric, int increment = 1)
         {

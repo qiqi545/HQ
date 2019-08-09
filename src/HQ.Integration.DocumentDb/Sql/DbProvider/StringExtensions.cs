@@ -15,41 +15,13 @@
 
 #endregion
 
-using System.Data.Common;
-
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
-	public sealed class DocumentDbProviderFactory : DbProviderFactory
+	internal static class StringExtensions
 	{
-		private readonly string _authKey;
-		private readonly string _databaseName;
-		private readonly string _serviceUri;
-
-		public DocumentDbProviderFactory(string serviceUri, string authKey, string databaseName)
+		public static string Truncate(this string value, int length)
 		{
-			_serviceUri = serviceUri;
-			_authKey = authKey;
-			_databaseName = databaseName;
-		}
-
-		public override DbCommand CreateCommand()
-		{
-			return new DocumentDbCommand();
-		}
-
-		public override DbConnection CreateConnection()
-		{
-			return new DocumentDbConnection(_serviceUri, _authKey, _databaseName);
-		}
-
-		public override DbParameter CreateParameter()
-		{
-			return new DocumentDbParameter();
-		}
-
-		public override DbDataAdapter CreateDataAdapter()
-		{
-			return new DocumentDbDataAdapter();
+			return string.IsNullOrEmpty(value) ? value : value.Length <= length ? value : value.Substring(0, length);
 		}
 	}
 }

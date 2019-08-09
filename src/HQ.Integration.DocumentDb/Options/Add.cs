@@ -17,8 +17,8 @@
 
 using System;
 using HQ.Extensions.Options;
-using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.DocumentDb.Options

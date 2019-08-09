@@ -8,7 +8,7 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb
 {
     /// <summary>
     /// Provides virtual sequences through a software-only pseudo-atomic counter.

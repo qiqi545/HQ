@@ -15,14 +15,23 @@
 
 #endregion
 
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Data.Common;
+using Microsoft.Azure.Documents;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
-    public interface IDocument
-    {
-        [JsonProperty("id")] string Id { get; }
+	public static class DbCommandExtensions
+	{
+		public static SqlQuerySpec ToQuerySpec(this DbCommand command)
+		{
+			return new SqlQuerySpec(command.CommandText, new SqlParameterCollection(YieldParameters(command)));
+		}
 
-        [JsonProperty("documentType")] string DocumentType { get; }
-    }
+		private static IEnumerable<SqlParameter> YieldParameters(DbCommand command)
+		{
+			foreach (DbParameter parameter in command.Parameters)
+				yield return new SqlParameter("@" + parameter.ParameterName, parameter.Value);
+		}
+	}
 }

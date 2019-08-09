@@ -25,7 +25,8 @@ namespace HQ.Common
             public const string Default = nameof(Default);
             public const string BackgroundTasks = nameof(BackgroundTasks);
             public const string Runtime = nameof(Runtime);
-		}
+            public const string Schema = nameof(Schema);
+        }
 
         public static class Sql
         {

@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbDataAdapter : DbDataAdapter
 	{

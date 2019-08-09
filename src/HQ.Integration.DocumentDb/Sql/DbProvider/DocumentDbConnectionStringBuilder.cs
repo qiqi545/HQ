@@ -24,7 +24,7 @@ using System.Text;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents.Client;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbConnectionStringBuilder : DbConnectionStringBuilder
 	{

@@ -17,7 +17,7 @@
 
 using System.Data;
 using HQ.Data.SessionManagement;
-using HQ.Integration.DocumentDb.DbProvider;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.Sql

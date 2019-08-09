@@ -15,21 +15,12 @@
 
 #endregion
 
-using System.Runtime.Serialization;
+using System.Collections.Generic;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
-    public static class DocumentTypeFactory<T> where T : IDocument
-    {
-        // ReSharper disable once StaticMemberInGenericType
-        public static readonly string Type;
-
-        static DocumentTypeFactory()
-        {
-            if (FormatterServices.GetSafeUninitializedObject(typeof(T)) is T type)
-            {
-                Type = type.DocumentType;
-            }
-        }
-    }
+	public interface IResultSet<T> : IList<T>
+	{
+		bool SupportsBinary { get; }
+	}
 }

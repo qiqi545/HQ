@@ -26,7 +26,6 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Sql.Descriptor;
-using HQ.Integration.DocumentDb.DbProvider;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Newtonsoft.Json;

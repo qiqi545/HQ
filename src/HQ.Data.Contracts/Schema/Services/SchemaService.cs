@@ -46,13 +46,13 @@ namespace HQ.Data.Contracts.Schema.Services
 					Data = schema
 				};
 
-				await _schemas.SaveAsync(schemaVersion);
+				await _schemas.CreateAsync(schemaVersion);
 				revisions++;
 			}
 
 			var version = await DeriveApplicationVersion(applicationId);
 			if (revisions > 0)
-				await _applications.SaveAsync(version);
+				await _applications.CreateAsync(version);
 
 			return version.Fingerprint;
 		}

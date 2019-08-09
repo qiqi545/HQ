@@ -24,6 +24,8 @@ using System.Dynamic;
 using System.Linq;
 using System.Net;
 using HQ.Integration.DocumentDb.Sql;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
+using Humanizer;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -31,7 +33,7 @@ using Newtonsoft.Json.Linq;
 
 #pragma warning disable 649
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbCommand : DbCommand
 	{

@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using TypeKitchen;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbDataReader<TRow> : DbDataReader where TRow : IDictionary<string, object>
 	{

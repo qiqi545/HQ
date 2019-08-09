@@ -24,7 +24,7 @@ namespace HQ.Data.Contracts.Schema.Models
 	{
 		Task<IEnumerable<SchemaVersion>> GetByApplicationId(string applicationId);
 		Task<SchemaVersion> GetByFingerprintAsync(ulong hash);
-		Task SaveAsync(SchemaVersion version);
+		Task CreateAsync(SchemaVersion version);
 		Task<SchemaVersion> GetLastRevisionAsync(SchemaType type, string @namespace, string name);
 	}
 }

@@ -1,5 +1,4 @@
 #region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,15 +11,34 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-using System.Collections.Generic;
+using System;
+using System.Reactive.Disposables;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb
 {
-	public interface IResultSet<T> : IList<T>
+	internal class OptionsMonitorShim<T> : IOptionsMonitor<T>
 	{
-		bool SupportsBinary { get; }
+		public OptionsMonitorShim(T options)
+		{
+			CurrentValue = options;
+		}
+
+		public T Get(string name)
+		{
+			return CurrentValue;
+		}
+
+		public IDisposable OnChange(Action<T, string> listener)
+		{
+			return Disposable.Empty;
+		}
+
+		public T CurrentValue
+		{
+			get;
+		}
 	}
 }

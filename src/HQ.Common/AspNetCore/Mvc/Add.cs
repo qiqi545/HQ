@@ -19,6 +19,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
@@ -44,6 +45,12 @@ namespace HQ.Common.AspNetCore.Mvc
 		public static IServiceCollection AddLocalTimestamps(this IServiceCollection services)
 		{
 			services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
+			return services;
+		}
+
+		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services)
+		{
+			services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
 			return services;
 		}
 	}

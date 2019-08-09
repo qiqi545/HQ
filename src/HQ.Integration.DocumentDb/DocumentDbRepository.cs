@@ -22,10 +22,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
-using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.CodeGeneration.Scripting;
 using HQ.Integration.DocumentDb.SessionManagement;
+using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -33,7 +33,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TypeKitchen;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb
 {
 	public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
 	{

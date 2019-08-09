@@ -15,8 +15,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -42,7 +40,6 @@ namespace HQ.Integration.DocumentDb.Sql
         private readonly IOptions<DocumentDbBatchOptions> _batchOptions;
         private readonly IOptions<DocumentDbOptions> _options;
         private readonly IServerTimestampService _timestamps;
-        private readonly ConcurrentDictionary<Uri, DocumentClient> _bulkClients = new ConcurrentDictionary<Uri, DocumentClient>();
 
         public DocumentDbBatchDataOperation(IServerTimestampService timestamps, IOptions<DocumentDbOptions> options,
             IOptions<DocumentDbBatchOptions> batchOptions)

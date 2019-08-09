@@ -18,7 +18,7 @@
 using System.Data;
 using System.Data.Common;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	/// <inheritdoc />
 	/// <summary>

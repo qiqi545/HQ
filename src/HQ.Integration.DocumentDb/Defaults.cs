@@ -22,7 +22,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using TypeKitchen;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb
 {
 	public static class Defaults
 	{

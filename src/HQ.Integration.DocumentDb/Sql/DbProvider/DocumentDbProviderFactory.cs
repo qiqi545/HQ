@@ -15,23 +15,42 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Data.Common;
-using Microsoft.Azure.Documents;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 
-namespace HQ.Integration.DocumentDb.DbProvider
+namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
-	public static class DbCommandExtensions
+	public sealed class DocumentDbProviderFactory : DbProviderFactory
 	{
-		public static SqlQuerySpec ToQuerySpec(this DbCommand command)
+		private readonly string _authKey;
+		private readonly string _databaseName;
+		private readonly string _serviceUri;
+
+		public DocumentDbProviderFactory(string serviceUri, string authKey, string databaseName)
 		{
-			return new SqlQuerySpec(command.CommandText, new SqlParameterCollection(YieldParameters(command)));
+			_serviceUri = serviceUri;
+			_authKey = authKey;
+			_databaseName = databaseName;
 		}
 
-		private static IEnumerable<SqlParameter> YieldParameters(DbCommand command)
+		public override DbCommand CreateCommand()
 		{
-			foreach (DbParameter parameter in command.Parameters)
-				yield return new SqlParameter("@" + parameter.ParameterName, parameter.Value);
+			return new DocumentDbCommand();
+		}
+
+		public override DbConnection CreateConnection()
+		{
+			return new DocumentDbConnection(_serviceUri, _authKey, _databaseName);
+		}
+
+		public override DbParameter CreateParameter()
+		{
+			return new DocumentDbParameter();
+		}
+
+		public override DbDataAdapter CreateDataAdapter()
+		{
+			return new DocumentDbDataAdapter();
 		}
 	}
 }

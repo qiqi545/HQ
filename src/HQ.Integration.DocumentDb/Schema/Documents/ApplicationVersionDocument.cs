@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -13,32 +13,30 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using System;
-using System.Reactive.Disposables;
-using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using HQ.Data.Contracts.Schema.Models;
+using HQ.Integration.DocumentDb.Sql;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb.Schema.Documents
 {
-	internal class OptionsMonitorShim<T> : IOptionsMonitor<T>
+	public class ApplicationVersionDocument : DocumentBase<ApplicationVersionDocument>
 	{
-		public OptionsMonitorShim(T options)
+		public ulong Fingerprint { get; set; }
+		public string ApplicationId { get; set; }
+		public Dictionary<string, ulong> Manifest { get; set; }
+
+		public ApplicationVersionDocument(ApplicationVersion model)
 		{
-			CurrentValue = options;
+			Fingerprint = model.Fingerprint;
+			ApplicationId = model.ApplicationId;
+			Manifest = model.Manifest;
 		}
 
-		public T Get(string name)
+		public ApplicationVersion Model => new ApplicationVersion
 		{
-			return CurrentValue;
-		}
-
-		public IDisposable OnChange(Action<T, string> listener)
-		{
-			return Disposable.Empty;
-		}
-
-		public T CurrentValue
-		{
-			get;
-		}
+			Fingerprint = Fingerprint,
+			ApplicationId = ApplicationId,
+			Manifest = Manifest
+		};
 	}
 }

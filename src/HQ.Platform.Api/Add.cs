@@ -212,6 +212,14 @@ namespace HQ.Platform.Api
 
 		#region Runtime
 
+		public static IServiceCollection AddSchemaDiscovery(this IServiceCollection services)
+		{
+			services.AddTypeDiscovery();
+			
+			return services;
+		}
+
+
 		public static IServiceCollection AddRuntimeApi(this IServiceCollection services, IConfiguration config)
 		{
 			return services.AddRuntimeApi(config.Bind);

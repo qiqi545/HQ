@@ -21,6 +21,6 @@ namespace HQ.Data.Contracts.Schema.Models
 {
 	public interface IApplicationVersionStore
 	{
-		Task SaveAsync(ApplicationVersion version);
+		Task CreateAsync(ApplicationVersion version);
 	}
 }

@@ -21,7 +21,7 @@ using System.Linq;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
-using HQ.Integration.DocumentDb.DbProvider;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Extensions.Options;
 

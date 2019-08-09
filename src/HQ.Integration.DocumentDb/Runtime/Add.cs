@@ -23,9 +23,9 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
-using HQ.Integration.DocumentDb.DbProvider;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
+using HQ.Integration.DocumentDb.Sql.DbProvider;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Runtime;
 using HQ.Platform.Identity.Stores.Sql;
@@ -52,10 +52,8 @@ namespace HQ.Integration.DocumentDb.Runtime
 			});
 		}
 
-		public static IServiceCollection AddDocumentDbRuntime(this IServiceCollection services,
-			string connectionString, 
-			ConnectionScope scope = ConnectionScope.ByRequest,
-			Action<DocumentDbOptions> configureDatabase = null)
+		private static IServiceCollection AddDocumentDbRuntime(this IServiceCollection services,
+			string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
 		{
 			services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
