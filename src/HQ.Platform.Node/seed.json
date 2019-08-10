@@ -248,6 +248,7 @@
 
     "Schema": {
       "Enabled": true,
+      "ApplicationId": "default",
       "RootPath": "/api",
       "Scheme": "PlatformBearer",
       "Policy": "ManageSchema",

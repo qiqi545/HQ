@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -13,17 +13,32 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Common;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace HQ.Data.Contracts.Schema.Configuration
+namespace HQ.Data.Contracts.Schema.Models
 {
-	public class SchemaOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class NoSchemaVersionStore : ISchemaVersionStore
 	{
-		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-		public string Policy { get; set; } = Constants.Security.Policies.ManageSchemas;
-		public string RootPath { get; set; } = "/api";
-		public string SchemaFolder { get; set; } = "schemas";
-		public string ApplicationId { get; set; } = Constants.Schemas.DefaultApplicationId;
-		public StoreOptions Store { get; set; } = new StoreOptions();
+		public Task<IEnumerable<SchemaVersion>> GetByApplicationId(string applicationId)
+		{
+			return Task.FromResult(Enumerable.Empty<SchemaVersion>());
+		}
+
+		public Task<SchemaVersion> GetByFingerprintAsync(ulong hash)
+		{
+			return Task.FromResult(default(SchemaVersion));
+		}
+
+		public Task CreateAsync(SchemaVersion version)
+		{
+			return Task.CompletedTask;
+		}
+
+		public Task<SchemaVersion> GetLastRevisionAsync(SchemaType type, string @namespace, string name)
+		{
+			return Task.FromResult(default(SchemaVersion));
+		}
 	}
 }

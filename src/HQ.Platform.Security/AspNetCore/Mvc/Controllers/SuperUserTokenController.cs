@@ -18,10 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
@@ -46,10 +46,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
     [ApiExplorerSettings(IgnoreApi = false)]
     public class SuperUserTokenController : DataController
     {
-	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
-	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-
-		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+	    private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
 
         public SuperUserTokenController(IOptionsMonitor<SecurityOptions> securityOptions)
         {
@@ -58,8 +55,11 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
-        {
+        public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
+        [FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
+        [FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
+        [FromHeader(Name = Constants.Versioning.VersionHeader)] string version)
+		{
 			if (!Enabled)
 				return NotFoundResult();
 
@@ -88,7 +88,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-
+			
 			var encoding = Encoding.UTF8;
 			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.CurrentValue.SuperUser.Password)))
 			{
@@ -99,7 +99,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 						 ClaimValues.SuperUser)
 				};
 				var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
-				var token = provider.CreateToken(claims, _securityOptions.CurrentValue, ApiVersion, ApiName);
+
+				// FIXME: pin claims transformation to user-provided scope
+				var token = provider.CreateToken(claims, _securityOptions.CurrentValue);
 				return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
 			}
 

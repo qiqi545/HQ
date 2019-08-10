@@ -21,6 +21,7 @@ using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Mvc.Security;
+using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Extensions.Options;
@@ -166,6 +167,9 @@ namespace HQ.Platform.Operations
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
+
+			mvcBuilder.Services.TryAddSingleton<IApplicationVersionStore, NoApplicationVersionStore>();
+			mvcBuilder.Services.TryAddSingleton<ISchemaVersionStore, NoSchemaVersionStore>();
 
 			mvcBuilder.Services.AddValidOptions();
 			mvcBuilder.Services.AddSaveOptions();

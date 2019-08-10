@@ -62,6 +62,7 @@ namespace HQ.Common
 		public static class Schemas
         {
             public const string DefaultNamespace = "MyNamespace";
+            public const string DefaultApplicationId = "default";
         }
 
         public static class Security

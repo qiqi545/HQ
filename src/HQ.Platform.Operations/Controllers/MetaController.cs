@@ -2,15 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Schema.Configuration;
+using HQ.Data.Contracts.Schema.Models;
 using HQ.Platform.Operations.Configuration;
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -28,35 +31,44 @@ namespace HQ.Platform.Operations.Controllers
     [ApiExplorerSettings(IgnoreApi = false)]
 	public class MetaController : Controller
     {
-	    public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
-	    public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-
-		private readonly IEnumerable<IMetaProvider> _providers;
+	    private readonly IEnumerable<IMetaProvider> _providers;
         private readonly ISwaggerProvider _swaggerProvider;
+        private readonly ISchemaVersionStore _schemaStore;
         private readonly JsonSerializer _swaggerSerializer;
-        private readonly IOptions<SwaggerOptions> _swaggerOptions;
+        private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
+        private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
         public MetaController(
 	        IEnumerable<IMetaProvider> providers,
             ISwaggerProvider swaggerProvider,
-            IOptions<MvcJsonOptions> mvcOptions,
-            IOptions<SwaggerOptions> swaggerOptions)
+			ISchemaVersionStore schemaStore,
+	        IOptionsMonitor<MvcJsonOptions> mvcOptions,
+	        IOptionsMonitor<SwaggerOptions> swaggerOptions,
+	        IOptionsMonitor<SchemaOptions> schemaOptions)
         {
             _providers = providers;
 
             _swaggerProvider = swaggerProvider;
+            _schemaStore = schemaStore;
             _swaggerOptions = swaggerOptions;
-            _swaggerSerializer = SwaggerSerializerFactory.Create(mvcOptions);
-		}
+            _schemaOptions = schemaOptions;
+            _swaggerSerializer = SetSwaggerSerializer(mvcOptions.CurrentValue);
+            mvcOptions.OnChange((o, l) => SetSwaggerSerializer(o));
+        }
 
-		[HttpOptions("")]
+        private static JsonSerializer SetSwaggerSerializer(MvcJsonOptions options)
+        {
+	        return SwaggerSerializerFactory.Create(Microsoft.Extensions.Options.Options.Create(options));
+        }
+
+        [HttpOptions("")]
         public IActionResult Options()
         {
 	        return Ok(new {data = new[] {"postman", "swagger"}});
         }
 
         [HttpGet("postman")]
-        public IActionResult Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
+        public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
         {
             if (string.IsNullOrWhiteSpace(version))
                 return BadRequest();
@@ -65,11 +77,15 @@ namespace HQ.Platform.Operations.Controllers
             
             var baseUri = $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
 
-            // we want a stable ID so the collection doesn't clone in the user's client
-            Guid collectionId;
+            var apiName = _schemaOptions.CurrentValue.ApplicationId ?? Assembly.GetExecutingAssembly().GetName().Name;;
+            var apiVersion = (await _schemaStore.GetByApplicationId(apiName)).FirstOrDefault()?.Revision ?? 0;
+            var apiVersionString = apiVersion == 0 ? Assembly.GetExecutingAssembly().GetName().Version?.ToString() : apiVersion.ToString();
+
+			// we want a stable ID so the collection doesn't clone in the user's client
+			Guid collectionId;
             using (var md5 = MD5.Create())
             {
-                var entropy = $"{ApiName}.{ApiVersion}";
+                var entropy = $"{apiName}.{apiVersion}";
                 var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(entropy));
                 collectionId = new Guid(hash);
             }
@@ -79,15 +95,15 @@ namespace HQ.Platform.Operations.Controllers
             {
                 info = new
                 {
-                    name = ApiName,
+                    name = apiName,
                     _postman_id = collectionId,
                     description = new
                     {
                         content = "",
                         type = "text/markdown",
-                        version = ApiVersion
-                    },
-                    version = ApiVersion,
+                        version = apiVersionString
+					},
+                    version = apiVersionString,
                     schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
                 },
                 item = new List<MetaItem>(),
@@ -112,7 +128,7 @@ namespace HQ.Platform.Operations.Controllers
             try
             {
                 var swagger = _swaggerProvider.GetSwagger("swagger", null, basePath);
-                foreach (var preSerializeFilter in _swaggerOptions.Value.PreSerializeFilters)
+                foreach (var preSerializeFilter in _swaggerOptions.CurrentValue.PreSerializeFilters)
                     preSerializeFilter(swagger, Request);
 
                 Response.Headers.Add("X-Swagger-Version", "2.0");

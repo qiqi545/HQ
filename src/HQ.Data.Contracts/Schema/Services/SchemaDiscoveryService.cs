@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
@@ -50,8 +51,6 @@ namespace HQ.Data.Contracts.Schema.Services
 
 			_logger.Info(() => "Starting schema discovery...");
 
-			const string applicationId = "default";
-
 			var schemaRelativeDir = _options.CurrentValue.SchemaFolder;
 			
 			if (!string.IsNullOrWhiteSpace(schemaRelativeDir))
@@ -64,7 +63,7 @@ namespace HQ.Data.Contracts.Schema.Services
 				{
 					_logger.Info(()=> "Found schemas in {SchemaDir}", schemaDir);
 
-					var revision = await UpdateSchemaAsync(schemaRelativeDir, applicationId);
+					var revision = await UpdateSchemaAsync(schemaRelativeDir, _options.CurrentValue.ApplicationId ?? Constants.Schemas.DefaultApplicationId);
 					if(revision != 0)
 						_logger.Info(() => "Schema updated to revision {Revision}", revision);
 					else

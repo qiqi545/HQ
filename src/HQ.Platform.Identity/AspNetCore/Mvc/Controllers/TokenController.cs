@@ -20,6 +20,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
@@ -51,9 +52,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
 	{
-		public string ApiName { get; set; } = Assembly.GetExecutingAssembly().GetName().Name;
-		public string ApiVersion { get; set; } = Assembly.GetExecutingAssembly().GetName().Version?.ToString();
-
 		private readonly IHttpContextAccessor _http;
 
 		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
@@ -98,7 +96,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 
 		[AllowAnonymous]
 		[HttpPost]
-		public async Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model)
+		public async Task<IActionResult> IssueToken(
+			[FromBody] BearerTokenRequest model,
+			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
+			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
+			[FromHeader(Name = Constants.Versioning.VersionHeader)] string version
+			)
 		{
 			if (!_securityOptions.CurrentValue.Tokens.Enabled)
 				return NotAcceptable();
@@ -108,11 +111,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 				return error;
 			}
 
+			// FIXME: pin claims transformation to user-provided scope
 			var operation = await _signInService.SignInAsync(model.IdentityType, model.Identity, model.Password, true);
 			if (!operation.Succeeded)
-			{
 				return operation.ToResult();
-			}
 
 			Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
 
@@ -120,7 +122,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			var claims = _http.HttpContext.User.Claims;
 
 			var identity = user.ActLike<IUserIdProvider>();
-			var token = identity.CreateToken(claims, _securityOptions.CurrentValue, ApiVersion, ApiName);
+			var token = identity.CreateToken(claims, _securityOptions.CurrentValue);
 
 			return Ok(new {AccessToken = token});
 		}

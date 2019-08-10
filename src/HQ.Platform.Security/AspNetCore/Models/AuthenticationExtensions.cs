@@ -142,8 +142,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			return Task.CompletedTask;
 		}
 
-		public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims, SecurityOptions security,
-			string apiVersion, string apiName) where TUser : IUserIdProvider
+		public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims, SecurityOptions security) where TUser : IUserIdProvider
 		{
 			var now = DateTimeOffset.Now;
 			var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
@@ -173,9 +172,6 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			};
 
 			claims.AddRange(userClaims);
-
-			claims.TryAddClaim(security.Claims.ApplicationIdClaim, apiVersion);
-			claims.TryAddClaim(security.Claims.ApplicationNameClaim, apiName);
 
 			MaybeSetSecurityKeys(security);
 
