@@ -6,7 +6,7 @@ using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb
 {
     public abstract class DocumentDbController<T> : DataController where T : IDocument
     {

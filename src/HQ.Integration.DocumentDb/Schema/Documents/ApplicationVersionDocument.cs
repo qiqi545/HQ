@@ -17,7 +17,7 @@
 
 using System.Collections.Generic;
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Integration.DocumentDb.Sql;
+using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb.Schema.Documents
 {
@@ -27,6 +27,8 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 		public string ApplicationId { get; set; }
 		public Dictionary<string, ulong> Manifest { get; set; }
 
+		public ApplicationVersionDocument() { /* required for serialization */}
+
 		public ApplicationVersionDocument(ApplicationVersion model)
 		{
 			Fingerprint = model.Fingerprint;
@@ -34,6 +36,7 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 			Manifest = model.Manifest;
 		}
 
+		[JsonIgnore]
 		public ApplicationVersion Model => new ApplicationVersion
 		{
 			Fingerprint = Fingerprint,

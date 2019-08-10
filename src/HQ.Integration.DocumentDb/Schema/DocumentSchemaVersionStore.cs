@@ -39,9 +39,11 @@ namespace HQ.Integration.DocumentDb.Schema
 		public async Task<IEnumerable<SchemaVersion>> GetByApplicationId(string applicationId)
 		{
 			var current = (await _repository.RetrieveAsync(q =>
-					q.Where(x => x.ApplicationId == applicationId)
-						.OrderByDescending(x => x.Timestamp)
-				)).GroupBy(k => k.Name).Select(g => g.First()).ToList(); // have to group outside DocumentDB :(
+				q.Where(x => x.ApplicationId == applicationId)
+				 .OrderByDescending(x => x.Timestamp)
+			))
+				.GroupBy(k => k.Name).Select(g => g.First())	// have to group outside DocumentDB :(
+				.ToList();										// projection required to avoid leaking expression
 
 			return current.Select(x => x.Model);
 		}

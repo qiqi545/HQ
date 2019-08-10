@@ -18,14 +18,12 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Metrics;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
-using HQ.Platform.Api.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -53,7 +51,7 @@ namespace HQ.Integration.DocumentDb.Schema
 			o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
 			o.CollectionId = connectionStringBuilder.DefaultCollection ?? "Schema";
 			o.DatabaseId = connectionStringBuilder.Database ?? "Default";
-			o.SharedCollection = false;
+			o.SharedCollection = true;
 		}
 
 		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder, Action<DocumentDbOptions> configureAction = null)
@@ -67,8 +65,8 @@ namespace HQ.Integration.DocumentDb.Schema
 
 			builder.Services.AddLocalTimestamps();
 			builder.Services.AddMetrics();
-			builder.Services.AddScoped<IApplicationVersionStore, DocumentApplicationVersionStore>();
-			builder.Services.AddScoped<ISchemaVersionStore, DocumentSchemaVersionStore>();
+			builder.Services.AddSingleton<IApplicationVersionStore, DocumentApplicationVersionStore>();
+			builder.Services.AddSingleton<ISchemaVersionStore, DocumentSchemaVersionStore>();
 
 			var serviceProvider = builder.Services.BuildServiceProvider();
 			var options = serviceProvider.GetRequiredService<IOptions<SchemaOptions>>();

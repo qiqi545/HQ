@@ -17,9 +17,11 @@
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Data.Contracts.Schema.Configuration;
+using HQ.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -29,37 +31,61 @@ namespace HQ.Data.Contracts.Schema.Services
 	public class SchemaDiscoveryService : IHostedService
 	{
 		private readonly SchemaService _service;
+		private readonly IHostingEnvironment _environment;
 		private readonly IOptionsMonitor<SchemaOptions> _options;
+		private readonly ISafeLogger<SchemaDiscoveryService> _logger;
 
-		public SchemaDiscoveryService(SchemaService service, IOptionsMonitor<SchemaOptions> options)
+		public SchemaDiscoveryService(SchemaService service, IHostingEnvironment environment, IOptionsMonitor<SchemaOptions> options, ISafeLogger<SchemaDiscoveryService> logger)
 		{
 			_service = service;
+			_environment = environment;
 			_options = options;
+			_logger = logger;
 		}
 
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
+			if (!_options.CurrentValue.Enabled)
+				return;
+
+			_logger.Info(() => "Starting schema discovery...");
+
 			const string applicationId = "default";
 
-			if (_options.CurrentValue.Enabled &&
-			    !string.IsNullOrWhiteSpace(_options.CurrentValue.SchemaFolder) &&
-			    Directory.Exists(_options.CurrentValue.SchemaFolder))
+			var schemaRelativeDir = _options.CurrentValue.SchemaFolder;
+			
+			if (!string.IsNullOrWhiteSpace(schemaRelativeDir))
 			{
-				await UpdateSchemaAsync(_options.CurrentValue.SchemaFolder, applicationId);
+				if (schemaRelativeDir.StartsWith("/") || schemaRelativeDir.StartsWith("\\"))
+					schemaRelativeDir = schemaRelativeDir.Substring(1);
+
+				var schemaDir = Path.Combine(_environment.ContentRootPath, schemaRelativeDir);
+				if(Directory.Exists(schemaDir))
+				{
+					_logger.Info(()=> "Found schemas in {SchemaDir}", schemaDir);
+
+					var revision = await UpdateSchemaAsync(schemaRelativeDir, applicationId);
+					if(revision != 0)
+						_logger.Info(() => "Schema updated to revision {Revision}", revision);
+					else
+						_logger.Info(() => "Schema is unchanged");
+				}
 			}
 		}
 
-		private async Task UpdateSchemaAsync(string folder, string applicationId)
+		private async Task<ulong> UpdateSchemaAsync(string folder, string applicationId)
 		{
 			var revisionSet = new List<Models.Schema>();
-			var files = Directory.GetFiles(folder, "*.json", SearchOption.TopDirectoryOnly);
-			foreach (var file in files)
+			var files = Directory.GetFiles(folder, "*.json", SearchOption.TopDirectoryOnly).Select(x => new FileInfo(x));
+			foreach (var file in files.OrderBy(x => x.LastWriteTimeUtc).ThenBy(x => x.Name))
 			{
-				var json = File.ReadAllText(file);
+				var json = File.ReadAllText(file.FullName);
 				var schemas = JsonConvert.DeserializeObject<Models.Schema[]>(json);
+				foreach(var schema in schemas)
+					_logger.Info(()=>"{FileName} => {SchemaName}", file.FullName, schema.Name);
 				revisionSet.AddRange(schemas);
 			}
-			await _service.TrySaveRevisionAsync(applicationId, revisionSet);
+			return await _service.TrySaveRevisionAsync(applicationId, revisionSet);
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken)

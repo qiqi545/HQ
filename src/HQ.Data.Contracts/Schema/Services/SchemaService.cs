@@ -71,7 +71,7 @@ namespace HQ.Data.Contracts.Schema.Services
 			if (revisions > 0)
 				await _applications.CreateAsync(version);
 
-			return version.Fingerprint;
+			return revisions == 0 ? 0 : version.Fingerprint;
 		}
 
 		public async Task<ApplicationVersion> DeriveApplicationVersion(string applicationId)

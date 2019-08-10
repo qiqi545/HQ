@@ -44,7 +44,7 @@ namespace HQ.Data.Contracts.Schema
 			services.AddLocalTimestamps();
 			services.AddTypeDiscovery();
 
-			services.AddScoped<SchemaService>();
+			services.AddSingleton<SchemaService>();
 			services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, SchemaDiscoveryService>());
 
 			return new SchemaBuilder(services);

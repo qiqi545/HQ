@@ -15,20 +15,24 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace HQ.Integration.DocumentDb
 {
     public static class DocumentTypeFactory<T> where T : IDocument
     {
-        // ReSharper disable once StaticMemberInGenericType
-        public static readonly string Type;
+	    // ReSharper disable once StaticMemberInGenericType
+	    private static readonly Dictionary<Type, string> Types = new Dictionary<Type, string>();
+
+		public static string Type => Types[typeof(T)];
 
         static DocumentTypeFactory()
         {
             if (FormatterServices.GetSafeUninitializedObject(typeof(T)) is T type)
             {
-                Type = type.DocumentType;
+	            Types[typeof(T)] = type.DocumentType;
             }
         }
     }

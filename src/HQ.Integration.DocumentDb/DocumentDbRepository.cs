@@ -25,7 +25,6 @@ using System.Threading.Tasks;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.CodeGeneration.Scripting;
 using HQ.Integration.DocumentDb.SessionManagement;
-using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;

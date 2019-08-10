@@ -22,7 +22,7 @@ namespace HQ.Data.Contracts.Schema.Configuration
 		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; set; } = Constants.Security.Policies.ManageSchemas;
 		public string RootPath { get; set; } = "/api";
-		public string SchemaFolder { get; set; } = "/schemas";
+		public string SchemaFolder { get; set; } = "schemas";
 		public StoreOptions Store { get; set; } = new StoreOptions();
 	}
 }

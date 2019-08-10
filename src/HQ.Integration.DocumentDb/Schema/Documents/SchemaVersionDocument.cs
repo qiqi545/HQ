@@ -16,7 +16,7 @@
 #endregion
 
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Integration.DocumentDb.Sql;
+using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb.Schema.Documents
 {
@@ -30,6 +30,8 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 		public object Data { get; set; }
 		public int Revision { get; set; }
 
+		public SchemaVersionDocument() { /* required for serialization */}
+
 		public SchemaVersionDocument(SchemaVersion model)
 		{
 			Fingerprint = model.Fingerprint;
@@ -41,6 +43,7 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 			Revision = model.Revision;
 		}
 
+		[JsonIgnore]
 		public SchemaVersion Model => new SchemaVersion
 		{
 			Fingerprint = Fingerprint,

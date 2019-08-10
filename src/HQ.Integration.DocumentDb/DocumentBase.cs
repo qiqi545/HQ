@@ -17,7 +17,7 @@ using System;
 using Microsoft.Azure.Documents;
 using Newtonsoft.Json;
 
-namespace HQ.Integration.DocumentDb.Sql
+namespace HQ.Integration.DocumentDb
 {
     public abstract class DocumentBase<T> : IDocument
     {
