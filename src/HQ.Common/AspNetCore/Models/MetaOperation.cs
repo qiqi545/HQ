@@ -14,9 +14,11 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace HQ.Common.AspNetCore.Models
 {
+	[DebuggerDisplay("Operation: {url.raw}")]
     public class MetaOperation
     {
         public MetaUrl url { get; set; }

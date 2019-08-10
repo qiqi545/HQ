@@ -13,8 +13,11 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System.Diagnostics;
+
 namespace HQ.Common.AspNetCore.Models
 {
+	[DebuggerDisplay("Parameter: {key} = {value} ({description})")]
     public class MetaParameter
     {
         public bool disabled { get; set; }

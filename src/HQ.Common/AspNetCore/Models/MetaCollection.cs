@@ -14,9 +14,11 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace HQ.Common.AspNetCore.Models
 {
+	[DebuggerDisplay("Collection: ({item.Count} items)")]
     public class MetaCollection
     {
         public dynamic info;

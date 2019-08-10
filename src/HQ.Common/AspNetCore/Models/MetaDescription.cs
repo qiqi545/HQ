@@ -13,8 +13,11 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System.Diagnostics;
+
 namespace HQ.Common.AspNetCore.Models
 {
+	[DebuggerDisplay("Description: {content} ({type}, {version})")]
     public class MetaDescription
     {
         public string content;

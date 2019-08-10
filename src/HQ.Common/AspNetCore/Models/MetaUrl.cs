@@ -16,10 +16,12 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace HQ.Common.AspNetCore.Models
 {
+	[DebuggerDisplay("Url: {raw}")]
 	public class MetaUrl
 	{
 		public string raw { get; set; }
