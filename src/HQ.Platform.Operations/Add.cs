@@ -87,21 +87,7 @@ namespace HQ.Platform.Operations
 				});
 			});
 
-			services.AddAuthorization(x =>
-			{
-				var serviceProvider = services.BuildServiceProvider();
-				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.AccessOperations, b =>
-				{
-					b.RequireAuthenticatedUserExtended(services);
-					b.RequireClaimExtended(
-						services,
-						options.Value.Claims.PermissionClaim,
-						ClaimValues.AccessOperations);
-				});
-			});
-
+			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations, ClaimValues.AccessOperations);
 			return services;
 		}
 
@@ -163,18 +149,7 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.AddControllerFeature<MetaController>();
 			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
-
-			mvcBuilder.Services.AddAuthorization(x =>
-			{
-				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.AccessMeta, b =>
-				{
-					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.AccessMeta);
-				});
-			});
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
 
 			mvcBuilder.Services.AddSwaggerGen(c =>
 			{

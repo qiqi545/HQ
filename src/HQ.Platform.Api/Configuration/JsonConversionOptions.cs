@@ -15,18 +15,71 @@
 
 #endregion
 
+using System;
+using System.Linq;
 using HQ.Common;
+using HQ.Common.AspNetCore.Models;
+using HQ.Common.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class JsonConversionOptions : FeatureToggle
+    public class JsonConversionOptions : FeatureToggle, IMetaParameterProvider
     {
-        public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
-
+	    public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
         public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
-        public bool EnvelopeEnabled { get; set; } = false;
-
         public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;
         public string PrettyPrintOperator { get; set; } = Constants.QueryStrings.PrettyPrint;
+
+        public void Enrich(string url, MetaOperation operation, IServiceProvider serviceProvider)
+        {
+			operation.url = MetaUrl.FromRaw(url);
+
+	        if (Enabled)
+	        {
+		        var transforms = serviceProvider.GetServices<ITextTransform>();
+		        var cases = transforms.Select(x => x.Name.ToLowerInvariant()).ToList();
+
+		        var multiCaseParameter = new MetaParameter
+		        {
+			        key = MultiCaseOperator,
+			        value = cases.FirstOrDefault() ?? string.Empty,
+			        description = $"Transforms responses to alternative cases. Valid values are: {string.Join(", ", cases)}.",
+			        disabled = true
+		        };
+
+				var envelopeParameter = new MetaParameter
+		        {
+			        key = EnvelopeOperator,
+			        value = "1",
+			        description = "Transforms responses to include more information in the payload for constrained clients.",
+			        disabled = true
+		        };
+
+				var prettyPrintParameter = new MetaParameter
+		        {
+			        key = PrettyPrintOperator,
+			        value = "1",
+			        description = "Enhances readability of responses by adding whitespace and nesting.",
+			        disabled = true
+		        };
+
+				var trimParameter = new MetaParameter
+				{
+					key = TrimOperator,
+					value = "1",
+					description = "Reduces response weight by omitting null and default values.",
+					disabled = true
+				};
+
+				operation.url.query = new []
+				{
+					multiCaseParameter,
+					envelopeParameter,
+					trimParameter,
+					prettyPrintParameter
+				};
+	        }
+        }
     }
 }

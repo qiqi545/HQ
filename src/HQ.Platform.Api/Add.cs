@@ -39,7 +39,6 @@ using HQ.Platform.Api.Runtime;
 using HQ.Platform.Api.Schemas;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
-using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -82,7 +81,7 @@ namespace HQ.Platform.Api
             services.AddSingleton(r => JsonConvert.DefaultSettings());
 
             services.Replace(ServiceDescriptor.Singleton<IMetaVersionProvider, PlatformMetaVersionProvider>());
-
+            services.AddScoped<IMetaParameterProvider>(r => r.GetRequiredService<IOptionsMonitor<ApiOptions>>().CurrentValue.JsonConversion);
 			return services;
         }
 

@@ -239,7 +239,7 @@ namespace HQ.Platform.Operations
                 @event = new List<dynamic>(),
                 request = new MetaOperation
                 {
-                    url = MetaUrl.Raw(descriptor.Url),
+                    url = MetaUrl.FromRaw(descriptor.Url),
                     auth = descriptor.Auth,
                     proxy = new { },
                     certificate = new { },

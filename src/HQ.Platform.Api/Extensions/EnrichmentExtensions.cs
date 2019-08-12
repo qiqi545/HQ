@@ -33,7 +33,7 @@ namespace HQ.Platform.Api.Extensions
             QueryOptions queryOptions,
             IPage<T> data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator))
             {
                 body = new EnvelopeCollectionBody<T>
                 {
@@ -115,7 +115,7 @@ namespace HQ.Platform.Api.Extensions
 
         public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, IStream<T> data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator))
             {
                 body = new EnvelopeCollectionBody<T>
                 {
@@ -141,8 +141,7 @@ namespace HQ.Platform.Api.Extensions
 
         public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, T data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
-                apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator))
             {
                 body = new EnvelopeBody<T>
                 {
@@ -168,8 +167,7 @@ namespace HQ.Platform.Api.Extensions
 
         public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, QueryOptions queryOptions, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
-                apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator))
             {
                 body = new Envelope
                 {
@@ -219,11 +217,11 @@ namespace HQ.Platform.Api.Extensions
                 : $"{request.Scheme}://{request.Host}{request.Path}?{options.PageOperator}={header.TotalPages}&{options.PerPageOperator}={header.Size}";
         }
 
-        public static bool FeatureRequested(this HttpRequest request, string @operator, bool @default)
+        public static bool FeatureRequested(this HttpRequest request, string @operator)
         {
             if (string.IsNullOrWhiteSpace(@operator))
             {
-                return @default;
+	            return false;
             }
 
             bool useFeature;
@@ -233,7 +231,7 @@ namespace HQ.Platform.Api.Extensions
             }
             else
             {
-                useFeature = @default;
+                useFeature = false;
             }
 
             return useFeature;

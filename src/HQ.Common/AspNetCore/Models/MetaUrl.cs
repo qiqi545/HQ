@@ -31,7 +31,7 @@ namespace HQ.Common.AspNetCore.Models
 		public string[] path { get; set; }
 		public MetaParameter[] query { get; set; } = null;
 
-		public static MetaUrl Raw(string url)
+		public static MetaUrl FromRaw(string url)
 		{
 			var result = new MetaUrl();
 

@@ -39,17 +39,20 @@ namespace HQ.Data.Contracts.Mvc
 {
 	public class ApiExplorerMetaProvider : IMetaProvider
 	{
-		private readonly IOptions<AuthenticationOptions> _authenticationOptions;
+		private readonly IOptionsMonitor<AuthenticationOptions> _authenticationOptions;
 		private readonly IApiDescriptionGroupCollectionProvider _explorer;
+		private readonly IEnumerable<IMetaParameterProvider> _parameterProviders;
 		private readonly IMetaVersionProvider _versionProvider;
 
 		public ApiExplorerMetaProvider(
 			IMetaVersionProvider versionProvider,
 			IApiDescriptionGroupCollectionProvider apiExplorer,
-			IOptions<AuthenticationOptions> authenticationOptions)
+			IEnumerable<IMetaParameterProvider> parameterProviders,
+			IOptionsMonitor<AuthenticationOptions> authenticationOptions)
 		{
 			_versionProvider = versionProvider;
 			_explorer = apiExplorer;
+			_parameterProviders = parameterProviders;
 			_authenticationOptions = authenticationOptions;
 		}
 
@@ -89,7 +92,7 @@ namespace HQ.Data.Contracts.Mvc
 					var controllerType = controllerDescriptor.ControllerTypeInfo;
 					var controllerName = ResolveControllerName(controllerType);
 
-					var item = CreateOperationMetaItem(baseUri, description);
+					var item = CreateOperationMetaItem(baseUri, description, serviceProvider);
 
 					if (!foldersByType.TryGetValue(controllerType, out var folder))
 						foldersByType.Add(controllerType,
@@ -228,10 +231,38 @@ namespace HQ.Data.Contracts.Mvc
 			}
 		}
 
-		private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description)
+		private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description, IServiceProvider serviceProvider)
 		{
 			var relativePath = Uri.UnescapeDataString(description.RelativePath ?? string.Empty);
 			var url = $"{baseUri}/{relativePath}";
+			var operation = new MetaOperation
+			{
+				auth = ResolveOperationAuth(description),
+				proxy = new { },
+				certificate = new { },
+				method = description.HttpMethod,
+				description = new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
+				header = new List<MetaParameter>
+				{
+					new MetaParameter
+					{
+						disabled = false,
+						description = "", /* new MetaDescription
+                            {
+                                content = "",
+                                type = Constants.MediaTypes.Markdown,
+                                version = null
+                            },*/
+						key = Constants.HttpHeaders.ContentType,
+						value = Constants.MediaTypes.Json
+					}
+				},
+				body = default
+			};
+
+			foreach(var provider in _parameterProviders)
+				provider.Enrich(url, operation, serviceProvider);
+
 			var item = new MetaItem
 			{
 				id = Guid.NewGuid(),
@@ -239,32 +270,7 @@ namespace HQ.Data.Contracts.Mvc
 				description = new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
 				variable = new List<dynamic>(),
 				@event = new List<dynamic>(),
-				request = new MetaOperation
-				{
-					url = MetaUrl.Raw(url),
-					auth = ResolveOperationAuth(description),
-					proxy = new { },
-					certificate = new { },
-					method = description.HttpMethod,
-					description =
-						new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
-					header = new List<MetaParameter>
-					{
-						new MetaParameter
-						{
-							disabled = false,
-							description = "", /* new MetaDescription
-                            {
-                                content = "",
-                                type = Constants.MediaTypes.Markdown,
-                                version = null
-                            },*/
-							key = Constants.HttpHeaders.ContentType,
-							value = Constants.MediaTypes.Json
-						}
-					},
-					body = default
-				},
+				request = operation,
 				response = new List<dynamic>(),
 				protocolProfileBehavior = new { }
 			};
@@ -295,22 +301,17 @@ namespace HQ.Data.Contracts.Mvc
 					item.request.body = new
 					{
 						mode = "raw",
-						raw =
-							"{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
+						raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
 					};
 				}
 
 				//
 				// Body Definition (roots only):
-				if (bodyParameter != null &&
-					bodyParameter.Type != null &&
-					!typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
+				if (bodyParameter != null && bodyParameter.Type != null && !typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
 					item.request.body = new
 					{
 						mode = "raw",
-						raw = JsonConvert.SerializeObject(
-							FormatterServices.GetUninitializedObject(bodyParameter.Type)
-						)
+						raw = JsonConvert.SerializeObject(FormatterServices.GetUninitializedObject(bodyParameter.Type))
 					};
 			}
 
@@ -324,6 +325,7 @@ namespace HQ.Data.Contracts.Mvc
 					description = "Access Token",
 					type = "text"
 				});
+
 			return item;
 		}
 
@@ -351,7 +353,7 @@ namespace HQ.Data.Contracts.Mvc
 
 			return !string.IsNullOrWhiteSpace(authorize.AuthenticationSchemes)
 				? authorize.AuthenticationSchemes.ToLowerInvariant()
-				: (_authenticationOptions.Value.DefaultChallengeScheme ?? _authenticationOptions.Value.DefaultScheme)
+				: (_authenticationOptions.CurrentValue.DefaultChallengeScheme ?? _authenticationOptions.CurrentValue.DefaultScheme)
 				.ToLowerInvariant();
 		}
 
