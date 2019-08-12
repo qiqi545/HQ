@@ -217,17 +217,14 @@ namespace HQ.Data.Contracts.Mvc
 
 				if (_versionProvider.Enabled)
 					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
-						foreach (var item in objectGroup.item)
-							item.request.url.query = new[]
-							{
-							new MetaParameter
-							{
-								key = _versionProvider.VersionParameter,
-								value = revisionName,
-								description = "Sets the version revision number for this API request."
-								// MetaDescription.PlainText("Sets the version revision number for this API request.")
-							}
-						};
+					foreach (var item in objectGroup.item)
+						item.request.url.query.Add(new MetaParameter
+						{
+							key = _versionProvider.VersionParameter,
+							value = revisionName,
+							description = "Sets the version revision number for this API request."
+							// MetaDescription.PlainText("Sets the version revision number for this API request.")
+						});
 			}
 		}
 
