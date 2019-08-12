@@ -14,21 +14,25 @@
 #endregion
 
 using HQ.Common.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Routing;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Common
 {
-	public static class Add
+	public class FeatureSelectorAttribute : ActionMethodSelectorAttribute
 	{
-		public static void AddDynamicAuthorization(this IServiceCollection services)
+		public override bool IsValidForRequest(RouteContext routeContext, ActionDescriptor action)
 		{
-			services.TryAddTransient<IFilterProvider>(r => new DynamicAuthorizeFilterProvider(r.GetServices<IDynamicComponent>()));
-			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicApplicationModelProvider>());
-			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
+			foreach (var item in action.EndpointMetadata)
+			{
+				if (item is DynamicControllerAttribute controller)
+				{
+					return controller.Enabled;
+				}
+			}
+
+			return true;
 		}
 	}
 }

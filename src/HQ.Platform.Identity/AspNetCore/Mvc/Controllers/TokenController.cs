@@ -18,7 +18,6 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -41,7 +40,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
 	[Route("tokens")]
-	[DynamicController]
+	[DynamicController(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]

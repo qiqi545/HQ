@@ -369,7 +369,7 @@ namespace HQ.Platform.Api
                 }
 
                 if (options.CurrentValue.Tokens.Enabled &&
-                    context.Request.Path.StartsWithSegments(options.CurrentValue.Tokens.Path))
+                    context.Request.Path.StartsWithSegments(options.CurrentValue.Tokens.RootPath))
                 {
                     await next();
                     return;

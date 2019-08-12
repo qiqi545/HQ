@@ -14,16 +14,15 @@
 #endregion
 
 using System;
-using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Common.AspNetCore.Mvc
 {
-	public sealed class DynamicAuthorizeModelProvider : IApplicationModelProvider
+	public sealed class DynamicApplicationModelProvider : IApplicationModelProvider
 	{
 		private readonly IServiceProvider _serviceProvider;
 
-		public DynamicAuthorizeModelProvider(IServiceProvider serviceProvider)
+		public DynamicApplicationModelProvider(IServiceProvider serviceProvider)
 		{
 			_serviceProvider = serviceProvider;
 		}
@@ -41,7 +40,7 @@ namespace HQ.Data.Contracts.Mvc.Security
 			{
 				foreach (var o in controllerModel.Attributes)
 				{
-					if (o is DynamicAuthorizeAttribute attribute)
+					if (o is IDynamicAttribute attribute)
 					{
 						attribute.ServiceProvider = _serviceProvider;
 					}
@@ -51,7 +50,7 @@ namespace HQ.Data.Contracts.Mvc.Security
 				{
 					foreach (var o in a.Attributes)
 					{
-						if (o is DynamicAuthorizeAttribute attribute)
+						if (o is IDynamicAttribute attribute)
 						{
 							attribute.ServiceProvider = _serviceProvider;
 						}

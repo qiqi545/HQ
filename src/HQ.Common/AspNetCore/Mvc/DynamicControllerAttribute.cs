@@ -17,12 +17,27 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
-	public sealed class DynamicControllerAttribute : Attribute, IControllerModelConvention
+	public sealed class DynamicControllerAttribute : Attribute, IControllerModelConvention, IDynamicAttribute
 	{
+		private readonly Type _featureProviderType;
+		private readonly string[] _segments;
+
+		public DynamicControllerAttribute(Type featureProviderType, params string[] segments)
+		{
+			_featureProviderType = featureProviderType;
+			_segments = segments;
+		}
+
+		public bool Enabled => Resolve(ServiceProvider);
+
+		public IServiceProvider ServiceProvider { get; set; }
+
 		public void Apply(ControllerModel controller)
 		{
 			if (!controller.ControllerType.IsGenericType)
@@ -39,6 +54,55 @@ namespace HQ.Common.AspNetCore.Mvc
 				foreach (var type in types)
 					sb.Append($"_{type.Name}");
 			});
+		}
+
+		public bool Resolve(IServiceProvider serviceProvider)
+		{
+			if (serviceProvider == null)
+				return false; // don't attempt to resolve if opted-out/disabled
+
+			var optionsType = typeof(IOptionsMonitor<>).MakeGenericType(_featureProviderType);
+			var options = serviceProvider.GetRequiredService(optionsType);
+
+			var currentValueProperty = optionsType.GetProperty(nameof(IOptionsMonitor<object>.CurrentValue));
+			var currentValue = currentValueProperty?.GetValue(options);
+
+			var featureProperty = _featureProviderType.GetProperty(nameof(IFeatureToggle.Enabled));
+			if (featureProperty == null)
+			{
+				var reads = ReadAccessor.Create(_featureProviderType, out var members);
+				currentValue = WalkFeatureRecursive(0, currentValue, reads, members);
+				featureProperty = currentValue.GetType().GetProperty(nameof(IFeatureToggle.Enabled));
+			}
+			var enabled = featureProperty?.GetValue(currentValue);
+			return enabled is bool toggle && toggle;
+		}
+
+		private object WalkFeatureRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads, AccessorMembers members)
+		{
+			foreach (var member in members)
+			{
+				var key = member.Name;
+
+				if (_segments.Length < segmentIndex + 1 ||
+					_segments[segmentIndex] != key ||
+					!member.CanRead ||
+					!reads.TryGetValue(currentValue, key, out var segment))
+					continue;
+
+				if (segment is IFeatureToggle featureToggle)
+				{
+					currentValue = featureToggle;
+					return currentValue;
+				}
+
+				currentValue = segment;
+				segmentIndex++;
+				var segmentReads = ReadAccessor.Create(segment, out var segmentMembers);
+				WalkFeatureRecursive(segmentIndex, segment, segmentReads, segmentMembers);
+			}
+
+			return currentValue;
 		}
 	}
 }

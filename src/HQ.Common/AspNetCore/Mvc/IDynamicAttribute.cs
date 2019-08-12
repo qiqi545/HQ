@@ -13,22 +13,12 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Common.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Common.AspNetCore.Mvc
 {
-	public static class Add
+	public interface IDynamicAttribute
 	{
-		public static void AddDynamicAuthorization(this IServiceCollection services)
-		{
-			services.TryAddTransient<IFilterProvider>(r => new DynamicAuthorizeFilterProvider(r.GetServices<IDynamicComponent>()));
-			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicApplicationModelProvider>());
-			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-		}
+		IServiceProvider ServiceProvider { get; set; }
 	}
 }

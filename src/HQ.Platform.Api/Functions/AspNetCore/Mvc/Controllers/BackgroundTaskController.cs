@@ -34,7 +34,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 {
 	[Route("tasks")]
 	[DynamicAuthorize(typeof(BackgroundTaskOptions))]
-	[DynamicController]
+	[DynamicController(typeof(BackgroundTaskOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Manages background tasks.")]
     [DisplayName("Background Tasks")]

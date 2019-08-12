@@ -25,7 +25,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Platform.Api.Schemas
 {
-	[DynamicController]
+	[DynamicController(typeof(SchemaOptions))]
 	[DynamicAuthorize(typeof(SchemaOptions))]
 	[Route("schemas")]
 	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]

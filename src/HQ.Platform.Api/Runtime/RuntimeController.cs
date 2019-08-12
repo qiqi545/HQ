@@ -33,7 +33,7 @@ using TypeKitchen;
 
 namespace HQ.Platform.Api.Runtime
 {
-	[DynamicController]
+	[DynamicController(typeof(RuntimeOptions))]
 	[DynamicAuthorize(typeof(RuntimeOptions))]
 	[Route("objects")]
 	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]

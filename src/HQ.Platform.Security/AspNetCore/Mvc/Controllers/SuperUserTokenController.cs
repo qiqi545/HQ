@@ -42,7 +42,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	/// A light-weight token issuer that only works against a super user.
 	/// </summary>
 	[Route("tokens")]
-	[DynamicController]
+	[DynamicController(typeof(SecurityOptions), nameof(SecurityOptions.SuperUser))]
     [ApiExplorerSettings(IgnoreApi = false)]
     public class SuperUserTokenController : DataController
     {
@@ -55,14 +55,12 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 
         [AllowAnonymous]
         [HttpPost]
+		[FeatureSelector]
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
         [FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
         [FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
         [FromHeader(Name = Constants.Versioning.VersionHeader)] string version)
 		{
-			if (!Enabled)
-				return NotFoundResult();
-
 			if (!ValidModelState(out var error))
 				return Task.FromResult((IActionResult) error);
 

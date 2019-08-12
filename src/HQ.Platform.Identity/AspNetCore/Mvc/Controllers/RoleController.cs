@@ -21,7 +21,6 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
@@ -34,8 +33,8 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("roles")]
-    [DynamicController]
-    [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Roles))]
+	[DynamicController(typeof(IdentityApiOptions))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Roles))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Roles")]

@@ -19,7 +19,7 @@ namespace HQ.Platform.Operations.Controllers
 {
 	[Route("configuration")]
 	[DynamicAuthorize(typeof(ConfigurationApiOptions))]
-	[DynamicController]
+	[DynamicController(typeof(ConfigurationApiOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
 	[MetaDescription("Manages configuration items.")]
 	[DisplayName("Configuration")]

@@ -136,7 +136,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 						RouteTemplate = () =>
 						{
 							var o = r.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
-							return o.CurrentValue.Tokens?.Path ?? string.Empty;
+							return o.CurrentValue.Tokens?.RootPath ?? string.Empty;
 						}
 					};
 				});

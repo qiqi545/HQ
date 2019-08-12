@@ -24,8 +24,8 @@ namespace HQ.Platform.Operations.Controllers
 {
     [Route("meta")]
     [DynamicAuthorize(typeof(MetaApiOptions))]
-    [DynamicController]
-    [MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
+    [DynamicController(typeof(MetaApiOptions))]
+	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
     [MetaDescription("Provides specifications and discovery for external tooling.")]
     [DisplayName("Meta")]
     [ApiExplorerSettings(IgnoreApi = false)]

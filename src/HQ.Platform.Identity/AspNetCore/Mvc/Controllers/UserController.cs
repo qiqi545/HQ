@@ -32,7 +32,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 {
     [Route("users")]
-    [DynamicController]
+    [DynamicController(typeof(IdentityApiOptions))]
     [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Users))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]

@@ -49,7 +49,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
 				return new SuperUserComponent
 				{
-					RouteTemplate = () => o.Value.Tokens?.Path ?? string.Empty
+					RouteTemplate = () => o.Value.Tokens?.RootPath ?? string.Empty
 				};
 			});
 

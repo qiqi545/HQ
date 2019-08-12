@@ -18,11 +18,13 @@ using System;
 namespace HQ.Common.AspNetCore.Mvc
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-	public sealed class DynamicRouteAttribute : Attribute
+	public sealed class DynamicRouteAttribute : Attribute, IDynamicAttribute
 	{
 		private readonly Type _routeProviderType;
 		private readonly string[] _segments;
 		private string _route;
+
+		public IServiceProvider ServiceProvider { get; set; }
 
 		public DynamicRouteAttribute(Type routeProviderType, params string[] segments)
 		{

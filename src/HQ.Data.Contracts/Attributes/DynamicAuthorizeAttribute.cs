@@ -17,6 +17,7 @@
 
 using System;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ using TypeKitchen;
 namespace HQ.Data.Contracts.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData
+	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData, IDynamicAttribute
 	{
 		private readonly Type _policyProviderType;
 		private readonly string[] _segments;

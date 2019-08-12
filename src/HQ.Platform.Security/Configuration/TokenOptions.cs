@@ -21,9 +21,9 @@ using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class TokenOptions : FeatureToggle, IProtectedFeatureScheme
+    public class TokenOptions : FeatureToggle, IProtectedFeatureScheme, IComponentOptions
     {
-        public string Path { get; set; } = Constants.Tokens.DefaultPath;
+	    public string RootPath { get; set; } = "";
 
         [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;

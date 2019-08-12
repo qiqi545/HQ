@@ -207,7 +207,6 @@ namespace HQ.Common
         {
             public const string NoSigningKeySet = "PRIVATE-KEY-REPLACE-ME";
             public const string NoEncryptionKeySet = "ENCRYPTION-KEY-REPLACE-ME";
-            public const string DefaultPath = "/tokens";
         }
 
         public static class Cookies

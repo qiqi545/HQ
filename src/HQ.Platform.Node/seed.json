@@ -78,7 +78,7 @@
       },
       "Tokens": {
         "Enabled": true,
-        "Path": "/tokens",
+        "RootPath": "",
         "SigningKey": "PRIVATE-KEY-REPLACE-ME",
         "EncryptionKey": "PRIVATE-KEY-REPLACE-ME",
         "Issuer": "https://mysite.com",
