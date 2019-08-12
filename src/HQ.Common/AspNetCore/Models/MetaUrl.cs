@@ -30,7 +30,7 @@ namespace HQ.Common.AspNetCore.Models
 		public string[] host { get; set; }
 		public string port { get; set; }
 		public string[] path { get; set; }
-		public List<MetaParameter> query { get; set; } = new List<MetaParameter>();
+		public List<MetaParameter> query { get; set; } = null;
 
 		public static MetaUrl FromRaw(string url)
 		{

@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
@@ -72,7 +73,8 @@ namespace HQ.Platform.Api.Configuration
 					description = "Reduces response weight by omitting null and default values.",
 					disabled = true
 				};
-				
+
+				operation.url.query = operation.url.query ?? (operation.url.query = new List<MetaParameter>());
 				operation.url.query.AddRange(new []
 				{
 					multiCaseParameter,
