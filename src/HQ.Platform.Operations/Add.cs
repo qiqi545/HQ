@@ -130,23 +130,9 @@ namespace HQ.Platform.Operations
 			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
 
-			mvcBuilder.Services.AddAuthorization(x =>
-			{
-				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.ManageConfiguration, b =>
-				{
-					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(
-						mvcBuilder.Services,
-						options.Value.Claims.PermissionClaim,
-						ClaimValues.ManageConfiguration);
-				});
-			});
-
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
 			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration, ClaimValues.ManageConfiguration);
 		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)

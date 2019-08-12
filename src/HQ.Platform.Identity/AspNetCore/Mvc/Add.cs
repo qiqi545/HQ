@@ -86,40 +86,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 			mvcBuilder.AddControllerFeature<UserController<TUser, TTenant, TKey>>();
 			mvcBuilder.AddControllerFeature<RoleController<TRole, TKey>>();
 
-			mvcBuilder.Services.AddAuthorization(x =>
-            {
-	            var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-	            var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.ManageUsers,
-                    b =>
-                    {
-                        b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                        b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim,
-                            ClaimValues.ManageUsers);
-                    });
-                x.AddPolicy(Constants.Security.Policies.ManageRoles,
-                    b =>
-                    {
-                        b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                        b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim,
-                            ClaimValues.ManageRoles);
-                    });
-                x.AddPolicy(Constants.Security.Policies.ManageTenants,
-                    b =>
-                    {
-                        b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                        b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim,
-                            ClaimValues.ManageTenants);
-                    });
-                x.AddPolicy(Constants.Security.Policies.ManageApplications,
-                    b =>
-                    {
-                        b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                        b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim,
-                            ClaimValues.ManageApplications);
-                    });
-            });
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
 
 			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
 

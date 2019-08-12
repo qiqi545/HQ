@@ -54,5 +54,30 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
             builder.AddRequirements(requireRole);
             return builder;
         }
-    }
+
+        public static IMvcBuilder AddDefaultAuthorization(this IMvcBuilder mvcBuilder, string policyName, string permission)
+        {
+	        mvcBuilder.Services.AddDefaultAuthorization(policyName, permission);
+	        return mvcBuilder;
+        }
+
+        public static IServiceCollection AddDefaultAuthorization(this IServiceCollection services, string policyName, string permission)
+        {
+	        services.AddAuthorization(x =>
+	        {
+		        if (x.GetPolicy(policyName) == null)
+		        {
+			        x.AddPolicy(policyName, b =>
+			        {
+				        var serviceProvider = services.BuildServiceProvider();
+				        var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
+
+				        b.RequireAuthenticatedUserExtended(services);
+				        b.RequireClaimExtended(services, options.Value.Claims.PermissionClaim, permission);
+			        });
+		        }
+	        });
+	        return services;
+        }
+	}
 }

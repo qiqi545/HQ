@@ -243,17 +243,7 @@ namespace HQ.Platform.Api
 
 			mvcBuilder.Services.AddTypeDiscovery();
 			mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.Services.AddAuthorization(x =>
-			{
-				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.ManageSchemas, b =>
-				{
-					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageSchemas);
-				});
-			});
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);
 
 			return mvcBuilder;
 		}
@@ -288,18 +278,7 @@ namespace HQ.Platform.Api
 			mvcBuilder.AddComponentFeature<RuntimeComponent, RuntimeOptions>();
 
 			mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.Services.AddAuthorization(x =>
-			{
-				var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-				var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.ManageObjects, b =>
-				{
-					b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-					b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageObjects);
-				});
-			});
-
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageObjects, ClaimValues.ManageObjects);
 			return new RuntimeBuilder(mvcBuilder.Services);
 		}
 

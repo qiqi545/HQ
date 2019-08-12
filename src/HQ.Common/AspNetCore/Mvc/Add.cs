@@ -41,7 +41,7 @@ namespace HQ.Common.AspNetCore.Mvc
 			});
 			return mvcBuilder;
 		}
-
+		
 		public static IServiceCollection AddLocalTimestamps(this IServiceCollection services)
 		{
 			services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();

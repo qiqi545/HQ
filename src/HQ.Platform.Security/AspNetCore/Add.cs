@@ -26,12 +26,10 @@ using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Security.AspNetCore
 {
@@ -178,13 +176,7 @@ namespace HQ.Platform.Security.AspNetCore
 			if (options.Enabled)
 			{
 				logger?.Trace(() => $"SuperUser enabled.");
-
-				services.AddAuthorization(x =>
-				{
-					if (x.GetPolicy(Constants.Security.Policies.SuperUserOnly) == null)
-						x.AddPolicy(Constants.Security.Policies.SuperUserOnly,
-							builder => { builder.RequireRoleExtended(services, ClaimValues.SuperUser); });
-				});
+				services.AddDefaultAuthorization(Constants.Security.Policies.SuperUserOnly, ClaimValues.SuperUser);
 			}
 		}
 

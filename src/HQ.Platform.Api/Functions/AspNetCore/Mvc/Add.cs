@@ -41,17 +41,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
             mvcBuilder.AddComponentFeature<BackgroundTasksComponent, BackgroundTaskOptions>();
 
             mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.Services.AddAuthorization(x =>
-            {
-	            var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
-	            var options = serviceProvider.GetRequiredService<IOptions<SecurityOptions>>();
-
-				x.AddPolicy(Constants.Security.Policies.ManageBackgroundTasks, b =>
-                {
-                    b.RequireAuthenticatedUserExtended(mvcBuilder.Services);
-                    b.RequireClaimExtended(mvcBuilder.Services, options.Value.Claims.PermissionClaim, ClaimValues.ManageBackgroundTasks);
-                });
-            });
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks, ClaimValues.ManageBackgroundTasks);
         }
     }
 }
