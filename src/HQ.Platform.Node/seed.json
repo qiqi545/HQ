@@ -12,11 +12,8 @@
         "Enabled": true,
         "MultiCaseOperator": "case",
         "EnvelopeOperator": "envelope",
-        "EnvelopeEnabled": false,
         "TrimOperator": "trim",
-        "TrimEnabled": true,
-        "PrettyPrintOperator": "prettyPrint",
-        "PrettyPrintEnabled": true
+        "PrettyPrintOperator": "prettyPrint"
       },
       "MethodOverrides": {
         "Enabled": true,
