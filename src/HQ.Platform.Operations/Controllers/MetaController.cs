@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
@@ -61,13 +62,15 @@ namespace HQ.Platform.Operations.Controllers
 	        return SwaggerSerializerFactory.Create(Microsoft.Extensions.Options.Options.Create(options));
         }
 
-        [HttpOptions("")]
+        [FeatureSelector]
+		[HttpOptions("")]
         public IActionResult Options()
         {
 	        return Ok(new {data = new[] {"postman", "swagger"}});
         }
 
-        [HttpGet("postman")]
+        [FeatureSelector]
+		[HttpGet("postman")]
         public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
         {
             if (string.IsNullOrWhiteSpace(version))
@@ -121,7 +124,8 @@ namespace HQ.Platform.Operations.Controllers
             return Ok(collection);
         }
 
-        [HttpGet("swagger")]
+        [FeatureSelector]
+		[HttpGet("swagger")]
         public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")] string version = "2.0")
         {
             var basePath = string.IsNullOrEmpty(Request.PathBase) ? null : Request.PathBase.ToString();

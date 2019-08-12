@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
@@ -55,7 +56,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             _options = options;
         }
 
-        [HttpGet("")]
+        [FeatureSelector]
+		[HttpGet("")]
         public async Task<IActionResult> Get()
         {
             var roles = await _roleService.GetAsync();
@@ -67,7 +69,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return Ok(roles.Data);
         }
 
-        [HttpPost("")]
+        [FeatureSelector]
+		[HttpPost("")]
         public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
         {
             if (!ValidModelState(out var error))
@@ -82,7 +85,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpPut("{id}")]
+        [FeatureSelector]
+		[HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TRole role)
         {
             if (!ValidModelState(out var error))
@@ -99,7 +103,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}")]
+        [FeatureSelector]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
@@ -116,7 +121,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpGet("{id}/claims")]
+        [FeatureSelector]
+		[HttpGet("{id}/claims")]
         public async Task<IActionResult> GetClaims([FromRoute] string id)
         {
             var role = await _roleService.FindByIdAsync(id);
@@ -135,7 +141,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return Ok(claims);
         }
 
-        [HttpPost("{id}/claims")]
+        [FeatureSelector]
+		[HttpPost("{id}/claims")]
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
         {
             if (!Valid(model, out var error))
@@ -158,9 +165,9 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}/claims/{type}/{value}")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
-            [FromRoute] string value)
+        [FeatureSelector]
+		[HttpDelete("{id}/claims/{type}/{value}")]
+        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
         {
             var user = await _roleService.FindByIdAsync(id);
             if (user?.Data == null)
@@ -185,8 +192,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-
-        [HttpGet("{id}")]
+        [FeatureSelector]
+		[HttpGet("{id}")]
         public async Task<TRole> FindById([FromRoute] string id)
         {
             var role = await _roleService.FindByIdAsync(id);

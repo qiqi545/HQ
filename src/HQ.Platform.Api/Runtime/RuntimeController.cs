@@ -53,6 +53,7 @@ namespace HQ.Platform.Api.Runtime
 
 		#region GET
 
+		[FeatureSelector]
 		[VersionSelector, QueryContextProviderSelector]
 		[FormatFilter]
 		[HttpGet("{objectType}")]

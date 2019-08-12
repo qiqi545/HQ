@@ -53,9 +53,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
             _securityOptions = securityOptions;
         }
 
-        [AllowAnonymous]
+        [FeatureSelector]
+		[AllowAnonymous]
         [HttpPost]
-		[FeatureSelector]
         public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
         [FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
         [FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
@@ -106,6 +106,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			return UnauthorizedResult();
 		}
 
+        [FeatureSelector]
 		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
 		[HttpPut]
         public IActionResult VerifyToken()

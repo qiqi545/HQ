@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
@@ -54,7 +55,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             _options = options;
         }
 
-        [HttpGet("")]
+        [FeatureSelector]
+		[HttpGet("")]
         public async Task<IActionResult> Get()
         {
             var users = await _userService.GetAsync();
@@ -66,7 +68,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return Ok(users.Data);
         }
 
-        [HttpPost("")]
+        [FeatureSelector]
+		[HttpPost("")]
         public async Task<IActionResult> Create([FromBody] CreateUserModel model)
         {
             if (!ValidModelState(out var error))
@@ -81,7 +84,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpPut("{id}")]
+        [FeatureSelector]
+		[HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TUser user)
         {
             if (!ValidModelState(out var error))
@@ -98,7 +102,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}")]
+        [FeatureSelector]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
@@ -115,7 +120,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpGet("{id}")]
+        [FeatureSelector]
+		[HttpGet("{id}")]
         [HttpGet("id/{id}")]
         public async Task<IActionResult> FindById([FromRoute] string id)
         {
@@ -130,7 +136,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(user.Errors);
         }
 
-        [HttpGet("email/{email}")]
+        [FeatureSelector]
+		[HttpGet("email/{email}")]
         public async Task<IActionResult> FindByEmail([FromRoute] string email)
         {
             var user = await _userService.FindByEmailAsync(email);
@@ -144,7 +151,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(user.Errors);
         }
 
-        [HttpGet("username/{username}")]
+        [FeatureSelector]
+		[HttpGet("username/{username}")]
         public async Task<IActionResult> FindByUsername([FromRoute] string username)
         {
             var user = await _userService.FindByNameAsync(username);
@@ -158,7 +166,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(user.Errors);
         }
 
-        [HttpGet("phone/{phone}")]
+        [FeatureSelector]
+		[HttpGet("phone/{phone}")]
         public async Task<IActionResult> FindByPhoneNumber([FromRoute] string phone)
         {
             var user = await _userService.FindByPhoneNumberAsync(phone);
@@ -172,9 +181,10 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(user.Errors);
         }
 
-        #region Role Assignment
+		#region Role Assignment
 
-        [HttpGet("{id}/roles")]
+		[FeatureSelector]
+		[HttpGet("{id}/roles")]
         public async Task<IActionResult> GetRoles([FromRoute] string id)
         {
             var user = await _userService.FindByIdAsync(id);
@@ -192,7 +202,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return Ok(result.Data);
         }
 
-        [HttpPost("{id}/roles/{role}")]
+        [FeatureSelector]
+		[HttpPost("{id}/roles/{role}")]
         public async Task<IActionResult> AddToRole([FromRoute] string id, [FromRoute] string role)
         {
             var user = await _userService.FindByIdAsync(id);
@@ -208,8 +219,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-
-        [HttpDelete("{id}/roles/{role}")]
+        [FeatureSelector]
+		[HttpDelete("{id}/roles/{role}")]
         public async Task<IActionResult> RemoveFromRole([FromRoute] string id, [FromRoute] string role)
         {
             var user = await _userService.FindByIdAsync(id);
@@ -225,11 +236,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        #endregion
+		#endregion
 
-        #region Claim Assignment
+		#region Claim Assignment
 
-        [HttpGet("{id}/claims")]
+		[FeatureSelector]
+		[HttpGet("{id}/claims")]
         public async Task<IActionResult> GetClaims([FromRoute] string id)
         {
             var user = await _userService.FindByIdAsync(id);
@@ -245,7 +257,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpPost("{id}/claims")]
+        [FeatureSelector]
+		[HttpPost("{id}/claims")]
         public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] AddClaimModel model)
         {
             if (!ValidModelState(out var error))
@@ -268,7 +281,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}/claims/{type}/{value}")]
+        [FeatureSelector]
+		[HttpDelete("{id}/claims/{type}/{value}")]
         public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
             [FromRoute] string value)
         {
@@ -295,11 +309,12 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(result.Errors);
         }
 
-        #endregion
+		#endregion
 
-        #region Tenant Assignment
+		#region Tenant Assignment
 
-        [HttpGet("email/{email}/tenants")]
+		[FeatureSelector]
+		[HttpGet("email/{email}/tenants")]
         public async Task<IActionResult> FindTenantsByEmail([FromRoute] string email)
         {
             var tenants = await _tenantService.FindByEmailAsync(email);
@@ -313,7 +328,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(tenants.Errors);
         }
 
-        [HttpGet("username/{username}/tenants")]
+        [FeatureSelector]
+		[HttpGet("username/{username}/tenants")]
         public async Task<IActionResult> FindTenantsByUsername([FromRoute] string username)
         {
             var tenants = await _tenantService.FindByUserNameAsync(username);
@@ -327,7 +343,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult) BadRequest(tenants.Errors);
         }
 
-        [HttpGet("phone/{phone}/tenants")]
+        [FeatureSelector]
+		[HttpGet("phone/{phone}/tenants")]
         public async Task<IActionResult> FindTenantsByPhoneNumber([FromRoute] string phone)
         {
             var tenants = await _tenantService.FindByPhoneNumberAsync(phone);

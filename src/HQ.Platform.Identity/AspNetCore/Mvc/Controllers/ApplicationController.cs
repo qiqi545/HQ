@@ -16,6 +16,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
@@ -46,7 +47,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             _options = options;
         }
 
-        [HttpGet("")]
+        [FeatureSelector]
+		[HttpGet("")]
         public async Task<IActionResult> Get()
         {
             var applications = await _applicationService.GetAsync();
@@ -56,7 +58,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			return Ok(applications.Data);
         }
 
-        [HttpPost("")]
+        [FeatureSelector]
+		[HttpPost("")]
         public async Task<IActionResult> Create([FromBody] CreateApplicationModel model)
         {
             if (!ValidModelState(out var error))
@@ -71,7 +74,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult)BadRequest(result.Errors);
         }
 
-        [HttpDelete("{id}")]
+        [FeatureSelector]
+		[HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             if (!ValidModelState(out var error))
@@ -88,7 +92,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? NoContent() : (IActionResult)BadRequest(result.Errors);
         }
 
-        [HttpPut("{id}")]
+        [FeatureSelector]
+		[HttpPut("{id}")]
         public async Task<IActionResult> Update([FromBody] TApplication tenant)
         {
             if (!ValidModelState(out var error))
@@ -105,7 +110,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
             return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
         }
 
-        [HttpGet("{id}")]
+        [FeatureSelector]
+		[HttpGet("{id}")]
         [HttpGet("id/{id}")]
         public async Task<IActionResult> FindById([FromRoute] string id)
         {
@@ -120,7 +126,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
                 : (IActionResult)BadRequest(application.Errors);
         }
 
-        [HttpGet("name/{name}")]
+        [FeatureSelector]
+		[HttpGet("name/{name}")]
         public async Task<IActionResult> FindByUsername([FromRoute] string name)
         {
             var application = await _applicationService.FindByNameAsync(name);

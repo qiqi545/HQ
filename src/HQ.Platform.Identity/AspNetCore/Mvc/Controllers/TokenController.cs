@@ -69,6 +69,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			_logger = logger;
 		}
 
+		[FeatureSelector]
 		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
 		[HttpPut]
 		public IActionResult VerifyToken()
@@ -93,6 +94,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			return Unauthorized();
 		}
 
+		[FeatureSelector]
 		[AllowAnonymous]
 		[HttpPost]
 		public async Task<IActionResult> IssueToken(

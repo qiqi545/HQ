@@ -37,6 +37,7 @@ namespace HQ.Platform.Operations.Controllers
 			_serviceProvider = serviceProvider;
 		}
 
+		[FeatureSelector]
 		[HttpGet("")]
 		[HttpGet("{section?}"), MustHaveQueryParameters("type")]
 		public IActionResult Get([FromQuery] string type, [FromRoute] string section = null)
@@ -51,6 +52,7 @@ namespace HQ.Platform.Operations.Controllers
 			return GetSerialized(prototype, section);
 		}
 
+		[FeatureSelector]
 		[HttpPut("")]
 		[HttpPut("{section?}"), MustHaveQueryParameters("type")]
 		public IActionResult Set([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
