@@ -28,11 +28,13 @@ namespace HQ.Platform.Operations
 {
     internal class OperationsMetaProvider : IMetaProvider
     {
-        private readonly IOptions<OperationsApiOptions> _options;
+	    private readonly IEnumerable<IMetaParameterProvider> _parameterProviders;
+	    private readonly IOptions<OperationsApiOptions> _options;
 
-        public OperationsMetaProvider(IOptions<OperationsApiOptions> options)
+        public OperationsMetaProvider(IEnumerable<IMetaParameterProvider> parameterProviders, IOptions<OperationsApiOptions> options)
         {
-            _options = options;
+	        _parameterProviders = parameterProviders;
+	        _options = options;
         }
 
         public void Populate(string baseUri, MetaCollection collection, IServiceProvider serviceProvider)
@@ -84,7 +86,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.RouteDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableOptionsDebugging)
@@ -98,7 +100,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.OptionsDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableEnvironmentEndpoint)
@@ -112,7 +114,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.EnvironmentEndpointPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableServicesDebugging)
@@ -126,7 +128,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.ServicesDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableHostedServicesDebugging)
@@ -140,7 +142,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.HostedServicesDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableMetricsEndpoint)
@@ -154,7 +156,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.MetricsEndpointPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableHealthChecksEndpoints)
@@ -171,7 +173,7 @@ namespace HQ.Platform.Operations
                         Version = versionString
                     };
 
-                    folder.item.Add(MapFrom(descriptor));
+                    folder.item.Add(MapFrom(descriptor, serviceProvider));
                 }
 
                 if (!string.IsNullOrWhiteSpace(options.HealthCheckLivePath))
@@ -186,7 +188,7 @@ namespace HQ.Platform.Operations
                         Version = versionString
                     };
 
-                    folder.item.Add(MapFrom(descriptor));
+                    folder.item.Add(MapFrom(descriptor, serviceProvider));
                 }
             }
 
@@ -201,7 +203,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.FeatureDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
 
             if (options.EnableCacheDebugging)
@@ -215,7 +217,7 @@ namespace HQ.Platform.Operations
                     Url = $"{baseUri}/{rootPath + options.CacheDebuggingPath}",
                     Version = versionString
                 };
-                folder.item.Add(MapFrom(descriptor));
+                folder.item.Add(MapFrom(descriptor, serviceProvider));
             }
             
             collection.item.Add(folder);
@@ -223,9 +225,43 @@ namespace HQ.Platform.Operations
             collection.item.Sort();
         }
 
-        private static MetaItem MapFrom(EndpointDescriptor descriptor)
+        private MetaItem MapFrom(EndpointDescriptor descriptor, IServiceProvider serviceProvider)
         {
-            var item = new MetaItem
+	        var operation = new MetaOperation
+	        {
+		        url = MetaUrl.FromRaw(descriptor.Url),
+		        auth = descriptor.Auth,
+		        proxy = new { },
+		        certificate = new { },
+		        method = descriptor.Method.ToString(),
+		        description = new MetaDescription
+		        {
+			        content = descriptor.Description,
+			        type = "text/markdown",
+			        version = descriptor.Version
+		        },
+		        header = new List<MetaParameter>
+		        {
+			        new MetaParameter
+			        {
+				        key = "Content-Type",
+				        value = "application/json",
+				        disabled = false,
+				        description = "", /*new MetaDescription
+                            {
+                                content = "",
+                                type = "text/markdown",
+                                version = descriptor.Version
+                            }*/
+			        }
+		        },
+		        body = default
+	        };
+
+	        foreach (var provider in _parameterProviders)
+				provider.Enrich(descriptor.Url, operation, serviceProvider);
+
+	        var item = new MetaItem
             {
                 id = Guid.NewGuid(),
                 name = descriptor.Name,
@@ -237,36 +273,7 @@ namespace HQ.Platform.Operations
                 },
                 variable = new List<dynamic>(),
                 @event = new List<dynamic>(),
-                request = new MetaOperation
-                {
-                    url = MetaUrl.FromRaw(descriptor.Url),
-                    auth = descriptor.Auth,
-                    proxy = new { },
-                    certificate = new { },
-                    method = descriptor.Method.ToString(),
-                    description = new MetaDescription
-                    {
-                        content = descriptor.Description,
-                        type = "text/markdown",
-                        version = descriptor.Version
-                    },
-                    header = new List<MetaParameter>
-                    {
-                        new MetaParameter
-                        {
-                            key = "Content-Type",
-                            value = "application/json",
-                            disabled = false,
-                            description = "", /*new MetaDescription
-                            {
-                                content = "",
-                                type = "text/markdown",
-                                version = descriptor.Version
-                            }*/
-                        }
-                    },
-                    body = default(object)
-                },
+                request = operation,
                 response = new List<dynamic>(),
                 protocolProfileBehavior = new { }
             };
