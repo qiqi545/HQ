@@ -74,9 +74,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 		[HttpPut]
 		public IActionResult VerifyToken()
 		{
-			if (!_securityOptions.CurrentValue.Tokens.Enabled)
-				return NotAcceptable();
-
 			if (User.Identity == null)
 			{
 				_logger.Trace(() => "User is unauthorized");
@@ -104,9 +101,6 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 			[FromHeader(Name = Constants.Versioning.VersionHeader)] string version
 			)
 		{
-			if (!_securityOptions.CurrentValue.Tokens.Enabled)
-				return NotAcceptable();
-
 			if (!ValidModelState(out var error))
 			{
 				return error;
