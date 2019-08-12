@@ -2,8 +2,6 @@
   "HQ": {
 
     "Api": {
-      "ApiName": "HQ.Template",
-      "ApiVersion": "1.0",
       "RequestLimits": {
         "Enabled": true,
         "MaxRequestSizeBytes": 30000000
