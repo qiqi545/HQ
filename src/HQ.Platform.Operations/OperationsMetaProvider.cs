@@ -35,13 +35,26 @@ namespace HQ.Platform.Operations
             _options = options;
         }
 
-        public void Populate(string baseUri, MetaCollection collection)
+        public void Populate(string baseUri, MetaCollection collection, IServiceProvider serviceProvider)
         {
+	        var versionString = typeof(OperationsMetaProvider).Assembly.GetName().Version.ToString();
+	        var options = _options.Value;
+			
+			if (!options.EnableRouteDebugging &&
+			    !options.EnableOptionsDebugging && 
+			    !options.EnableEnvironmentEndpoint &&
+			    !options.EnableServicesDebugging &&
+			    !options.EnableHostedServicesDebugging &&
+			    !options.EnableMetricsEndpoint && 
+			    !options.EnableHealthChecksEndpoints &&
+			    !options.EnableFeatureDebugging && 
+			    !options.EnableCacheDebugging)
+			{
+				return;
+			}
+
             const string auth = "bearer";
-
-            var versionString = typeof(OperationsMetaProvider).Assembly.GetName().Version.ToString();
-            var options = _options.Value;
-
+            
             var folder = new MetaFolder
             {
                 name = "Operations",

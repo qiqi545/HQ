@@ -21,23 +21,23 @@ using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class TokenOptions : FeatureToggle, IProtectedFeatureScheme, IComponentOptions
-    {
-	    public string RootPath { get; set; } = "";
+	public class TokenOptions : FeatureToggle, IProtectedFeatureScheme, IComponentOptions
+	{
+		public string RootPath { get; set; } = "/auth";
 
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
 
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string EncryptionKey { get; set; } = Constants.Tokens.NoEncryptionKeySet;
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string EncryptionKey { get; set; } = Constants.Tokens.NoEncryptionKeySet;
 
-        public string Issuer { get; set; } = "https://mysite.com";
-        public string Audience { get; set; } = "https://mysite.com";
-        public int TimeToLiveSeconds { get; set; } = 180;
-        public bool Encrypt { get; set; } = true;
-        public int ClockSkewSeconds { get; set; } = 10;
-        public bool AllowRefresh { get; set; } = true;
+		public string Issuer { get; set; } = "https://mysite.com";
+		public string Audience { get; set; } = "https://mysite.com";
+		public int TimeToLiveSeconds { get; set; } = 180;
+		public bool Encrypt { get; set; } = true;
+		public int ClockSkewSeconds { get; set; } = 10;
+		public bool AllowRefresh { get; set; } = true;
 
-        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-    }
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+	}
 }

@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -52,7 +53,7 @@ namespace HQ.Data.Contracts.Mvc
 			_authenticationOptions = authenticationOptions;
 		}
 
-		public void Populate(string baseUri, MetaCollection collection)
+		public void Populate(string baseUri, MetaCollection collection, IServiceProvider serviceProvider)
 		{
 			var foldersByType = new Dictionary<TypeInfo, MetaFolder>();
 			var foldersByGroupName = new Dictionary<string, List<MetaFolder>>();
@@ -132,8 +133,11 @@ namespace HQ.Data.Contracts.Mvc
 			foreach (var folder in foldersByType)
 			{
 				var controllerType = folder.Key;
-				var category = ResolveControllerCategory(controllerType);
 
+				if (!ResolveControllerFeatureEnabled(controllerType, serviceProvider))
+					continue;
+
+				var category = ResolveControllerCategory(controllerType);
 				if (category != null)
 				{
 					if (!categories.TryGetValue(category, out var list))
@@ -356,6 +360,18 @@ namespace HQ.Data.Contracts.Mvc
 			return !Attribute.IsDefined(controllerType, typeof(MetaCategoryAttribute))
 				? null
 				: (MetaCategoryAttribute) controllerType.GetCustomAttribute(typeof(MetaCategoryAttribute), true);
+		}
+
+		private static bool ResolveControllerFeatureEnabled(MemberInfo controllerType, IServiceProvider serviceProvider)
+		{
+			var attribute = !Attribute.IsDefined(controllerType, typeof(DynamicControllerAttribute)) ? null
+				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute), true);
+
+			if (attribute == null)
+				return true;
+
+			attribute.ServiceProvider = serviceProvider;
+			return attribute.Enabled;
 		}
 
 		private static MetaDescriptionAttribute ResolveControllerDescription(MemberInfo controllerType)

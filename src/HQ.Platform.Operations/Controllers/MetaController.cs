@@ -117,7 +117,7 @@ namespace HQ.Platform.Operations.Controllers
             };
 
             foreach(var provider in _providers)
-                provider.Populate(baseUri, collection);
+                provider.Populate(baseUri, collection, Request.HttpContext.RequestServices);
 
             Response.Headers.Add("X-Postman-Version", "2.1.0");
 
