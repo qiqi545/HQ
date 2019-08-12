@@ -40,19 +40,18 @@ namespace HQ.Common
             return appBuilder.ApplicationServices.FeatureEnabled<TFeature, TOptions>(out feature);
         }
 
-        public static bool FeatureEnabled<TFeature, TOptions>(this IServiceProvider serviceProvider,
-            out TFeature feature)
+        public static bool FeatureEnabled<TFeature, TOptions>(this IServiceProvider serviceProvider, out TFeature feature)
             where TFeature : class, IFeatureToggle
             where TOptions : class, new()
         {
-            var options = serviceProvider.GetService(typeof(IOptions<TOptions>));
-            if (!(options is IOptions<TOptions> o))
+            var options = serviceProvider.GetService(typeof(IOptionsMonitor<TOptions>));
+            if (!(options is IOptionsMonitor<TOptions> o))
             {
                 feature = default;
                 return false;
             }
 
-            var type = o.Value.GetType();
+            var type = o.CurrentValue.GetType();
             var members = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
             var featureType = members.SingleOrDefault(x => x.Type == typeof(TFeature));
             if (featureType == null)
@@ -62,7 +61,7 @@ namespace HQ.Common
             }
 
             var accessor = ReadAccessor.Create(type);
-            feature = accessor[o.Value, featureType.Name] as TFeature;
+            feature = accessor[o.CurrentValue, featureType.Name] as TFeature;
             return feature != null && feature.Enabled;
         }
     }

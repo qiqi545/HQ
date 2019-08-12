@@ -20,7 +20,6 @@ using System.Net;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
@@ -30,29 +29,11 @@ namespace HQ.Platform.Api.Extensions
 {
     public static class EnrichmentExtensions
     {
-        public static void MaybeTrim(this HttpResponse response, HttpRequest request, PlatformApiOptions options)
-        {
-            if (FeatureRequested(request, options.JsonConversion.TrimOperator, options.JsonConversion.TrimEnabled))
-            {
-                request.HttpContext.Items[Constants.ContextKeys.JsonTrim] = true;
-            }
-        }
-
-        public static void MaybePrettyPrint(this HttpResponse response, HttpRequest request, PlatformApiOptions options)
-        {
-            if (FeatureRequested(request, options.JsonConversion.PrettyPrintOperator,
-                options.JsonConversion.PrettyPrintEnabled))
-            {
-                request.HttpContext.Items[Constants.ContextKeys.JsonPrettyPrint] = true;
-            }
-        }
-
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, ApiOptions apiOptions,
             QueryOptions queryOptions,
             IPage<T> data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
-                apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
             {
                 body = new EnvelopeCollectionBody<T>
                 {
@@ -132,11 +113,9 @@ namespace HQ.Platform.Api.Extensions
             };
         }
 
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
-            QueryOptions queryOptions, IStream<T> data, IList<Error> errors, out object body)
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, IStream<T> data, IList<Error> errors, out object body)
         {
-            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
-                apiOptions.JsonConversion.EnvelopeEnabled))
+            if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator, apiOptions.JsonConversion.EnvelopeEnabled))
             {
                 body = new EnvelopeCollectionBody<T>
                 {
@@ -160,8 +139,7 @@ namespace HQ.Platform.Api.Extensions
             response.StatusCode = (int) HttpStatusCode.OK;
         }
 
-        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
-            QueryOptions queryOptions, T data, IList<Error> errors, out object body)
+        public static void MaybeEnvelope<T>(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, T data, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
                 apiOptions.JsonConversion.EnvelopeEnabled))
@@ -188,8 +166,7 @@ namespace HQ.Platform.Api.Extensions
             response.StatusCode = (int)HttpStatusCode.OK;
         }
 
-        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, PlatformApiOptions apiOptions,
-            QueryOptions queryOptions, IList<Error> errors, out object body)
+        public static void MaybeEnvelope(this HttpResponse response, HttpRequest request, ApiOptions apiOptions, QueryOptions queryOptions, IList<Error> errors, out object body)
         {
             if (FeatureRequested(request, apiOptions.JsonConversion.EnvelopeOperator,
                 apiOptions.JsonConversion.EnvelopeEnabled))

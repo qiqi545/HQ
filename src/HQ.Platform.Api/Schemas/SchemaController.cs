@@ -13,13 +13,22 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using System.Linq;
+using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Schema.Configuration;
+using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
+using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Schemas
 {
@@ -32,6 +41,28 @@ namespace HQ.Platform.Api.Schemas
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	public class SchemaController : DataController
 	{
+		private readonly ISchemaVersionStore _store;
+		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
+		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
 
+		public SchemaController(ISchemaVersionStore store, IOptionsMonitor<ApiOptions> apiOptions, IOptionsMonitor<QueryOptions> queryOptions)
+		{
+			_store = store;
+			_apiOptions = apiOptions;
+			_queryOptions = queryOptions;
+		}
+
+		[FeatureSelector]
+		[HttpGet("{applicationId}")]
+		public async Task<IActionResult> GetSchemas([FromRoute, BindRequired] string applicationId)
+		{
+			//var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
+			var data = await _store.GetByApplicationId(applicationId);
+			var count = data.Count();
+			var page = new Page<SchemaVersion>(data, count, 0, count, count);
+			var slice = new Operation<IPage<SchemaVersion>>(page);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice.Data, slice.Errors, out var body);
+			return Ok(body);
+		}
 	}
 }

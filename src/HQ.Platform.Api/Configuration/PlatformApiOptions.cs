@@ -17,7 +17,7 @@
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class PlatformApiOptions
+    public class ApiOptions
     {
         public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
         public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();

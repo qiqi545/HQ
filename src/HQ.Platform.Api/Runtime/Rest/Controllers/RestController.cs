@@ -26,7 +26,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 	public class RestController<T> : DataController, IObjectController<T> where T : class, IObject
 	{
 		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
-		private readonly IOptionsMonitor<PlatformApiOptions> _apiOptions;
+		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
 		private readonly IObjectRepository<T> _repository;
 
 		// ReSharper disable once StaticMemberInGenericType
@@ -39,7 +39,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		public Type ObjectType => typeof(T);
 
-		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions, IOptionsMonitor<PlatformApiOptions> apiOptions)
+		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions, IOptionsMonitor<ApiOptions> apiOptions)
 		{
 			_repository = repository;
 			_queryOptions = queryOptions;
@@ -63,17 +63,13 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			{
 				// ReSharper disable once PossibleMultipleEnumeration
 				var slice = await _repository.GetAsync(segment, fields, filter, projection);
-				if (slice?.Data?.Count == 0)
-					return NotFound();
-				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 			else
 			{
 				var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
-				if (slice?.Data?.Count == 0)
-					return NotFound();
-				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 		}
@@ -89,7 +85,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			var @object = await _repository.GetAsync(id, fields);
 			if (@object?.Data == null)
 				return NotFound();
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, @object.Data, @object.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, @object.Data, @object.Errors, out var body);
 			return Ok(body);
 		}
 

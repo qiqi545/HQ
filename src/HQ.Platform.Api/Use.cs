@@ -39,36 +39,35 @@ namespace HQ.Platform.Api
 {
     public static class Use
     {
-        public static IApplicationBuilder UsePlatformApi(this IApplicationBuilder app, bool snapshot = true)
+        public static IApplicationBuilder UsePlatformApi(this IApplicationBuilder app)
         {
             app.UseForwardedHeaders();
             app.UseResponseCompression();
-            app.UseCanonicalRoutes(snapshot);
-            app.UseMethodOverrides(snapshot);
-            app.UseResourceRewriting(snapshot);
-            app.UseRequestLimiting(snapshot);
-            app.UseJsonMultiCase(snapshot);
-            app.UseAnonymousIdentification();
+            app.UseCanonicalRoutes();
+            app.UseMethodOverrides();
+            app.UseResourceRewriting();
+            app.UseRequestLimiting();
+            app.UseJsonMultiCase();
+            app.UseJsonTrim();
+            app.UseJsonPrettyPrint();
+			app.UseAnonymousIdentification();
 
             return app;
         }
 
-        private static IApplicationBuilder UseCanonicalRoutes(this IApplicationBuilder app, bool snapshot)
+        private static void UseCanonicalRoutes(this IApplicationBuilder app)
         {
-            if (snapshot)
+            app.Use(async (context, next) =>
             {
-                return app.FeatureEnabled<CanonicalRoutesOptions, PlatformApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<CanonicalRoutesOptions, PlatformApiOptions>(out var options))
-                {
-                    await ExecuteFeature(context, options, next);
-                }
-            });
+	            if (context.FeatureEnabled<CanonicalRoutesOptions, ApiOptions>(out var options))
+	            {
+		            await ExecuteFeature(context, options, next);
+	            }
+	            else
+	            {
+		            await next();
+	            }
+			});
 
             async Task ExecuteFeature(HttpContext c, CanonicalRoutesOptions o, Func<Task> next)
             {
@@ -85,22 +84,19 @@ namespace HQ.Platform.Api
             }
         }
 
-        private static IApplicationBuilder UseMethodOverrides(this IApplicationBuilder app, bool snapshot)
+        private static void UseMethodOverrides(this IApplicationBuilder app)
         {
-            if (snapshot)
+            app.Use(async (context, next) =>
             {
-                return app.FeatureEnabled<MethodOverrideOptions, PlatformApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<MethodOverrideOptions, PlatformApiOptions>(out var options))
-                {
-                    await ExecuteFeature(context, options, next);
-                }
-            });
+	            if (context.FeatureEnabled<MethodOverrideOptions, ApiOptions>(out var options))
+	            {
+		            await ExecuteFeature(context, options, next);
+	            }
+	            else
+	            {
+		            await next();
+	            }
+			});
 
             async Task ExecuteFeature(HttpContext c, MethodOverrideOptions o, Func<Task> next)
             {
@@ -118,24 +114,21 @@ namespace HQ.Platform.Api
             }
         }
 
-        private static IApplicationBuilder UseResourceRewriting(this IApplicationBuilder app, bool snapshot)
+        private static void UseResourceRewriting(this IApplicationBuilder app)
         {
-            if (snapshot)
-            {
-                return app.FeatureEnabled<ResourceRewritingOptions, PlatformApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
+	        app.Use(async (context, next) =>
+	        {
+		        if (context.FeatureEnabled<ResourceRewritingOptions, ApiOptions>(out var options))
+		        {
+			        await ExecuteFeature(context, options, next);
+		        }
+		        else
+		        {
+			        await next();
+		        }
+			});
 
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<ResourceRewritingOptions, PlatformApiOptions>(out var options))
-                {
-                    await ExecuteFeature(context, options, next);
-                }
-            });
-
-            async Task ExecuteFeature(HttpContext c, ResourceRewritingOptions o, Func<Task> next)
+	        async Task ExecuteFeature(HttpContext c, ResourceRewritingOptions o, Func<Task> next)
             {
                 // Use X-Action to disambiguate one vs. many resources in a write call
                 // See: http://restlet.com/blog/2015/05/18/implementing-bulk-updates-within-restful-services/
@@ -161,22 +154,19 @@ namespace HQ.Platform.Api
             }
         }
 
-        private static IApplicationBuilder UseRequestLimiting(this IApplicationBuilder app, bool snapshot)
+        private static void UseRequestLimiting(this IApplicationBuilder app)
         {
-            if (snapshot)
+            app.Use(async (context, next) =>
             {
-                return app.FeatureEnabled<RequestLimitOptions, PlatformApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<RequestLimitOptions, PlatformApiOptions>(out var options))
-                {
-                    await ExecuteFeature(context, options, next);
-                }
-            });
+	            if (context.FeatureEnabled<RequestLimitOptions, ApiOptions>(out var options))
+	            {
+		            await ExecuteFeature(context, options, next);
+	            }
+	            else
+	            {
+		            await next();
+	            }
+			});
 
             async Task ExecuteFeature(HttpContext c, RequestLimitOptions o, Func<Task> next)
             {
@@ -190,22 +180,19 @@ namespace HQ.Platform.Api
             }
         }
 
-        private static IApplicationBuilder UseJsonMultiCase(this IApplicationBuilder app, bool snapshot)
+        private static void UseJsonMultiCase(this IApplicationBuilder app)
         {
-            if (snapshot)
+            app.Use(async (context, next) =>
             {
-                return app.FeatureEnabled<JsonConversionOptions, PlatformApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
-            return app.Use(async (context, next) =>
-            {
-                if (context.FeatureEnabled<JsonConversionOptions, PlatformApiOptions>(out var options))
-                {
-                    await ExecuteFeature(context, options, next);
-                }
-            });
+	            if (context.FeatureEnabled<JsonConversionOptions, ApiOptions>(out var options))
+	            {
+		            await ExecuteFeature(context, options, next);
+	            }
+	            else
+	            {
+		            await next();
+	            }
+			});
 
             async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
             {
@@ -230,22 +217,82 @@ namespace HQ.Platform.Api
             }
         }
 
-        #region Versioning
+		private static void UseJsonTrim(this IApplicationBuilder app)
+		{
+			app.Use(async (context, next) =>
+			{
+				if (context.FeatureEnabled<JsonConversionOptions, ApiOptions>(out var options))
+				{
+					await ExecuteFeature(context, options, next);
+				}
+				else
+				{
+					await next();
+				}
+			});
 
-        // See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
+			async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
+			{
+				var qs = c.Request.Query;
+				qs.TryGetValue(o.TrimOperator, out var values);
+				foreach (var value in values)
+				{
+					if ((!bool.TryParse(value, out var boolean) || !boolean) && (!int.TryParse(value, out var number) || number != 1))
+						continue;
+					c.Items[Constants.ContextKeys.JsonTrim] = true;
+					goto next;
+				}
+				next:
+				await next();
+			}
+		}
 
-        public static IApplicationBuilder UseVersioning(this IApplicationBuilder app, bool snapshot = true)
+		private static void UseJsonPrettyPrint(this IApplicationBuilder app)
+		{
+			app.Use(async (context, next) =>
+			{
+				if (context.FeatureEnabled<JsonConversionOptions, ApiOptions>(out var options))
+				{
+					await ExecuteFeature(context, options, next);
+				}
+				else
+				{
+					await next();
+				}
+			});
+
+			async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
+			{
+				var qs = c.Request.Query;
+				qs.TryGetValue(o.PrettyPrintOperator, out var values);
+				foreach (var value in values)
+				{
+					if ((!bool.TryParse(value, out var boolean) || !boolean) && (!int.TryParse(value, out var number) || number != 1))
+						continue;
+					c.Items[Constants.ContextKeys.JsonPrettyPrint] = true;
+					goto next;
+				}
+				next:
+				await next();
+			}
+		}
+
+		#region Versioning
+
+		// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
+
+		public static IApplicationBuilder UseVersioning(this IApplicationBuilder app, bool snapshot = true)
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<VersioningOptions, PlatformApiOptions>(out var options)
+                return app.FeatureEnabled<VersioningOptions, ApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<VersioningOptions, PlatformApiOptions>(out var options))
+                if (context.FeatureEnabled<VersioningOptions, ApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -278,8 +325,7 @@ namespace HQ.Platform.Api
 
         #endregion
 
-
-        #region MultiTenancy
+		#region MultiTenancy
 
         public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<string>, new()
         {
@@ -291,14 +337,14 @@ namespace HQ.Platform.Api
         {
             if (snapshot)
             {
-                return app.FeatureEnabled<MultiTenancyOptions, PlatformApiOptions>(out var options)
+                return app.FeatureEnabled<MultiTenancyOptions, ApiOptions>(out var options)
                     ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
                     : app;
             }
 
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<MultiTenancyOptions, PlatformApiOptions>(out var options))
+                if (context.FeatureEnabled<MultiTenancyOptions, ApiOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }
@@ -341,7 +387,6 @@ namespace HQ.Platform.Api
         }
 
         #endregion
-
 
         #region Anonymous Users
 

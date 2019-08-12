@@ -27,9 +27,6 @@ namespace HQ.Platform.Api.Configuration
         public bool EnvelopeEnabled { get; set; } = false;
 
         public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;
-        public bool TrimEnabled { get; set; } = true;
-
         public string PrettyPrintOperator { get; set; } = Constants.QueryStrings.PrettyPrint;
-        public bool PrettyPrintEnabled { get; set; } = true;
     }
 }

@@ -61,7 +61,7 @@ namespace HQ.Platform.Api
             return services.AddPlatformApi(config.Bind);
         }
 
-        public static IServiceCollection AddPlatformApi(this IServiceCollection services, Action<PlatformApiOptions> configureAction = null)
+        public static IServiceCollection AddPlatformApi(this IServiceCollection services, Action<ApiOptions> configureAction = null)
         {
             Bootstrap.EnsureInitialized();
 
@@ -72,7 +72,7 @@ namespace HQ.Platform.Api
             services.AddCanonicalRoutes();
             services.AddGzipCompression();
             services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
-            services.AddOptions<RouteOptions>().Configure<IOptions<PlatformApiOptions>>((o, x) =>
+            services.AddOptions<RouteOptions>().Configure<IOptions<ApiOptions>>((o, x) =>
             {
                 o.AppendTrailingSlash = x.Value.CanonicalRoutes.AppendTrailingSlash;
                 o.LowercaseUrls = x.Value.CanonicalRoutes.LowercaseUrls;
@@ -109,7 +109,7 @@ namespace HQ.Platform.Api
 
         internal static IServiceCollection AddCanonicalRoutes(this IServiceCollection services)
         {
-            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<PlatformApiOptions>>()));
+            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<ApiOptions>>()));
             return services;
         }
 

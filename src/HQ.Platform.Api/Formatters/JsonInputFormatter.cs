@@ -17,11 +17,8 @@
 
 using System.Buffers;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Serialization;
-using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -71,22 +68,6 @@ namespace HQ.Platform.Api.Formatters
         protected override JsonSerializer CreateJsonSerializer()
         {
             return _serializer ?? (_serializer = JsonSerializer.Create(SerializerSettings));
-        }
-
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
-        {
-            return base.ReadRequestBodyAsync(context);
-        }
-
-        public override Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
-        {
-            return base.ReadAsync(context);
-        }
-
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context,
-            Encoding encoding)
-        {
-            return base.ReadRequestBodyAsync(context, encoding);
         }
 
         protected override void ReleaseJsonSerializer(JsonSerializer serializer)
