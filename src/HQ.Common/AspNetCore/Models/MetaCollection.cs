@@ -19,13 +19,27 @@ using System.Diagnostics;
 namespace HQ.Common.AspNetCore.Models
 {
 	[DebuggerDisplay("Collection: ({item.Count} items)")]
-    public class MetaCollection
-    {
-        public dynamic info;
-        public string auth;
-        public dynamic protocolProfileBehavior;
-        public List<MetaItem> item = new List<MetaItem>();
-        public List<dynamic> @event = new List<dynamic>();
-        public List<dynamic> variable = new List<dynamic>();
-    }
+	public class MetaCollection
+	{
+		public dynamic info;
+		public string auth;
+		public dynamic protocolProfileBehavior;
+		public List<MetaItem> item = new List<MetaItem>();
+		public List<dynamic> @event = new List<dynamic>();
+		public List<dynamic> variable = new List<dynamic>();
+
+		public bool TryGetFolder(string name, out MetaFolder folder)
+		{
+			foreach (var entry in item)
+			{
+				if (!(entry is MetaFolder folderItem) || entry.name != name)
+					continue;
+				folder = folderItem;
+				return true;
+			}
+
+			folder = default;
+			return false;
+		}
+	}
 }

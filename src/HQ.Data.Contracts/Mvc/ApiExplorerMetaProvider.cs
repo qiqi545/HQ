@@ -149,7 +149,8 @@ namespace HQ.Data.Contracts.Mvc
 						var groupFolder = groupFolders[groupName];
 						groupFolder.item.Add(folder.Value);
 
-						if (!list.Contains(groupFolder)) list.Add(groupFolder);
+						if (!list.Contains(groupFolder))
+							list.Add(groupFolder);
 
 						inGroup = true;
 						break;
@@ -168,31 +169,37 @@ namespace HQ.Data.Contracts.Mvc
 			{
 				var category = entry.Key;
 
-				var categoryFolder = new MetaFolder
-				{
-					name = category.Name,
-					description =
-						new MetaDescription
-						{
-							content = category.Description, type = category.DescriptionMediaType, version = null
-						},
-					variable = new List<dynamic>(),
-					item = new List<MetaItem>(),
-					@event = new List<dynamic>(),
-					protocolProfileBehavior = new { }
-				};
+				var folderExists = collection.TryGetFolder(category.Name, out var categoryFolder);
+				if (!folderExists)
+				{ 
+					categoryFolder = new MetaFolder
+					{
+						name = category.Name,
+						description =
+							new MetaDescription
+							{
+								content = category.Description,
+								type = category.DescriptionMediaType,
+								version = null
+							},
+						variable = new List<dynamic>(),
+						item = new List<MetaItem>(),
+						@event = new List<dynamic>(),
+						protocolProfileBehavior = new { }
+					};
+					collection.item.Add(categoryFolder);
+				}
 
 				foreach (var subFolder in entry.Value.OrderBy(x => x.name))
 					categoryFolder.item.Add(subFolder);
 
 				categoryFolder.auth = ResolveCategoryAuth(categoryFolder);
-
-				collection.item.Add(categoryFolder);
 			}
 
 			//
 			// Add root level folders:
-			foreach (var folder in roots.OrderBy(x => x.name)) collection.item.Add(folder);
+			foreach (var folder in roots.OrderBy(x => x.name))
+				collection.item.Add(folder);
 
 			//
 			// Change group name folder meta:
@@ -203,9 +210,9 @@ namespace HQ.Data.Contracts.Mvc
 
 				if (_versionProvider.Enabled)
 					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
-					foreach (var item in objectGroup.item)
-						item.request.url.query = new[]
-						{
+						foreach (var item in objectGroup.item)
+							item.request.url.query = new[]
+							{
 							new MetaParameter
 							{
 								key = _versionProvider.VersionParameter,
@@ -292,8 +299,8 @@ namespace HQ.Data.Contracts.Mvc
 				//
 				// Body Definition (roots only):
 				if (bodyParameter != null &&
-				    bodyParameter.Type != null &&
-				    !typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
+					bodyParameter.Type != null &&
+					!typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
 					item.request.body = new
 					{
 						mode = "raw",
