@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -29,11 +30,13 @@ namespace HQ.Common.AspNetCore.Models
 		public string[] host { get; set; }
 		public string port { get; set; }
 		public string[] path { get; set; }
-		public MetaParameter[] query { get; set; } = null;
+		public List<MetaParameter> query { get; set; } = new List<MetaParameter>();
 
 		public static MetaUrl FromRaw(string url)
 		{
 			var result = new MetaUrl();
+
+			// FIXME: add query parameters from parsed URL 
 
 			if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
 			{

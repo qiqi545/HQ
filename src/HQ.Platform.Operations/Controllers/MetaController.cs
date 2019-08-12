@@ -71,14 +71,14 @@ namespace HQ.Platform.Operations.Controllers
 
         [FeatureSelector]
 		[HttpGet("postman")]
-        public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
+        public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0", [FromQuery(Name = "host")] string host = null)
         {
             if (string.IsNullOrWhiteSpace(version))
                 return BadRequest();
             if(version != "2.1.0")
                 return StatusCode((int)HttpStatusCode.NotImplemented);
-            
-            var baseUri = $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
+
+            var baseUri = !string.IsNullOrWhiteSpace(host) ? host : $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
 
             var apiName = _schemaOptions.CurrentValue.ApplicationId ?? Assembly.GetExecutingAssembly().GetName().Name;;
             var apiVersion = (await _schemaStore.GetByApplicationId(apiName)).FirstOrDefault()?.Revision ?? 0;

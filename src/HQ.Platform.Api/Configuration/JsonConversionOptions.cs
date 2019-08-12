@@ -33,9 +33,10 @@ namespace HQ.Platform.Api.Configuration
 
         public void Enrich(string url, MetaOperation operation, IServiceProvider serviceProvider)
         {
-			operation.url = MetaUrl.FromRaw(url);
+	        if (operation.url == null)
+		        operation.url = MetaUrl.FromRaw(url);
 
-	        if (Enabled)
+			if (Enabled)
 	        {
 		        var transforms = serviceProvider.GetServices<ITextTransform>();
 		        var cases = transforms.Select(x => x.Name.ToLowerInvariant()).ToList();
@@ -71,14 +72,14 @@ namespace HQ.Platform.Api.Configuration
 					description = "Reduces response weight by omitting null and default values.",
 					disabled = true
 				};
-
-				operation.url.query = new []
+				
+				operation.url.query.AddRange(new []
 				{
 					multiCaseParameter,
 					envelopeParameter,
 					trimParameter,
 					prettyPrintParameter
-				};
+				});
 	        }
         }
     }
