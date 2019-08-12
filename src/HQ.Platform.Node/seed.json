@@ -222,7 +222,8 @@
       "Enabled": true,
       "RootPath": "/ops",
       "Scheme": "PlatformBearer",
-      "Policy": "AccessMeta"
+      "Policy": "AccessMeta",
+      "Host": "{{web-host}}"
     },
 
     "Configuration": {

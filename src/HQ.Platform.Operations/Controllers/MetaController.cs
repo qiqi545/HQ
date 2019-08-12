@@ -35,6 +35,7 @@ namespace HQ.Platform.Operations.Controllers
 	    private readonly IEnumerable<IMetaProvider> _providers;
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly ISchemaVersionStore _schemaStore;
+        private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
         private readonly JsonSerializer _swaggerSerializer;
         private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
         private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
@@ -43,6 +44,7 @@ namespace HQ.Platform.Operations.Controllers
 	        IEnumerable<IMetaProvider> providers,
             ISwaggerProvider swaggerProvider,
 			ISchemaVersionStore schemaStore,
+			IOptionsMonitor<MetaApiOptions> metaOptions,
 	        IOptionsMonitor<MvcJsonOptions> mvcOptions,
 	        IOptionsMonitor<SwaggerOptions> swaggerOptions,
 	        IOptionsMonitor<SchemaOptions> schemaOptions)
@@ -51,6 +53,7 @@ namespace HQ.Platform.Operations.Controllers
 
             _swaggerProvider = swaggerProvider;
             _schemaStore = schemaStore;
+            _metaOptions = metaOptions;
             _swaggerOptions = swaggerOptions;
             _schemaOptions = schemaOptions;
             _swaggerSerializer = SetSwaggerSerializer(mvcOptions.CurrentValue);
@@ -71,14 +74,16 @@ namespace HQ.Platform.Operations.Controllers
 
         [FeatureSelector]
 		[HttpGet("postman")]
-        public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0", [FromQuery(Name = "host")] string host = null)
+        public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
         {
             if (string.IsNullOrWhiteSpace(version))
                 return BadRequest();
             if(version != "2.1.0")
                 return StatusCode((int)HttpStatusCode.NotImplemented);
 
-            var baseUri = !string.IsNullOrWhiteSpace(host) ? host : $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
+            var baseUri = string.IsNullOrWhiteSpace(_metaOptions.CurrentValue.Host)
+	            ? $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}"
+	            : _metaOptions.CurrentValue.Host;
 
             var apiName = _schemaOptions.CurrentValue.ApplicationId ?? Assembly.GetExecutingAssembly().GetName().Name;;
             var apiVersion = (await _schemaStore.GetByApplicationId(apiName)).FirstOrDefault()?.Revision ?? 0;
