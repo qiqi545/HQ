@@ -22,7 +22,7 @@ using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class SuperUserOptions : FeatureToggle
+    public class SuperUserOptions : FeatureToggle, IComponentOptions
     {
         private string _email;
         private string _password;
@@ -67,5 +67,7 @@ namespace HQ.Platform.Security.Configuration
             get => Enabled ? _email : null;
             set => _email = value;
         }
+
+        public string RootPath { get; set; } = "/superuser";
     }
 }

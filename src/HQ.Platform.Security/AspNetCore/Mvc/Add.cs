@@ -21,7 +21,6 @@ using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc
 {
@@ -36,23 +35,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 
 		public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
 		{
-			var services = mvcBuilder.Services;
-
 			mvcBuilder.Services.AddDynamicAuthorization();
-			
 			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
-
-			// FIXME:
-			// mvcBuilder.AddComponentFeature<SuperUserComponent, SuperUserOptions>();
-			services.AddSingleton<IDynamicComponent>(r =>
-			{
-				var o = r.GetRequiredService<IOptions<SecurityOptions>>();
-				return new SuperUserComponent
-				{
-					RouteTemplate = () => o.Value.Tokens?.RootPath ?? string.Empty
-				};
-			});
-
+			mvcBuilder.AddComponentFeature<SuperUserComponent, SuperUserOptions>();
 			return mvcBuilder;
 		}
 	}

@@ -118,9 +118,9 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 		        return Unauthorized();
 
 	        if (User.Identity.IsAuthenticated)
-		        return Ok(User.Claims());
+				return Ok(new { Data = User.Claims() });
 
-	        return Unauthorized();
+			return Unauthorized();
 		}
 
         private bool Enabled => _securityOptions.CurrentValue.SuperUser.Enabled;
