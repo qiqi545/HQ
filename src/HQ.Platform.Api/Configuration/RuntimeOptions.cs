@@ -28,5 +28,6 @@ namespace HQ.Platform.Api.Configuration
 		public bool MigrateOnStartup { get; set; } = true;
 		public bool EnableRest { get; set; } = true;
 		public bool EnableGraphQl { get; set; } = true;
+		public string[] Exclusions { get; set; } = new string[0];
 	}
 }

@@ -26,7 +26,6 @@ using HQ.Common.AspNetCore;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
-using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
@@ -51,7 +50,6 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IPasswordHasher<TUser> _passwordHasher;
         private readonly IQueryableProvider<TUser> _queryable;
         private readonly RoleManager<TRole> _roles;
-        private readonly IOptionsMonitor<IdentityOptionsExtended> _identity;
         private readonly IOptionsMonitor<SecurityOptions> _security;
         private readonly ILookupNormalizer _lookupNormalizer;
 
@@ -65,7 +63,6 @@ namespace HQ.Platform.Identity.Stores.Sql
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
             IQueryableProvider<TUser> queryable,
-            IOptionsMonitor<IdentityOptionsExtended> identity,
             IOptionsMonitor<SecurityOptions> security,
             ILookupNormalizer lookupNormalizer, 
             IServiceProvider serviceProvider)
@@ -83,7 +80,6 @@ namespace HQ.Platform.Identity.Stores.Sql
             _roles = roles;
             _queryable = queryable;
 
-            _identity = identity;
             _security = security;
             _lookupNormalizer = lookupNormalizer;
         }

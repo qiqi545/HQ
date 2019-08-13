@@ -239,7 +239,8 @@
       "Scheme": "PlatformBearer",
       "Policy": "ManageObjects",
       "EnableRest": true,
-      "EnableGraphQl": true
+      "EnableGraphQl": true,
+      "Exclusions": []
     },
 
     "Schema": {

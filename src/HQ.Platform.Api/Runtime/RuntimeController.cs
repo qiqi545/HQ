@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -29,6 +30,7 @@ using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 using TypeKitchen;
 
 namespace HQ.Platform.Api.Runtime
@@ -44,11 +46,22 @@ namespace HQ.Platform.Api.Runtime
 	{
 		private readonly ITypeResolver _typeResolver;
 		private readonly IObjectGetRepository _repository;
+		private readonly IOptionsMonitor<RuntimeOptions> _options;
 
-		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository)
+		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository, IOptionsMonitor<RuntimeOptions> options)
 		{
 			_typeResolver = typeResolver;
 			_repository = repository;
+			_options = options;
+		}
+
+		[FeatureSelector]
+		[HttpOptions("")]
+		public IActionResult Options()
+		{
+			// FIXME: filter out exclusions
+			var concrete = _typeResolver.FindByInterface<IObject>();
+			return Ok(new {Data = concrete.Select(x => x.Name)});
 		}
 
 		#region GET
