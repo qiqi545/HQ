@@ -281,20 +281,17 @@ namespace HQ.Platform.Api
 
 		// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
 
-		public static IApplicationBuilder UseVersioning(this IApplicationBuilder app, bool snapshot = true)
+		public static IApplicationBuilder UseVersioning(this IApplicationBuilder app)
         {
-            if (snapshot)
-            {
-                return app.FeatureEnabled<VersioningOptions, ApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<VersioningOptions, ApiOptions>(out var options))
+                if (context.FeatureEnabled<VersioningOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
+                }
+                else
+                {
+	                await next();
                 }
             });
 
@@ -327,24 +324,16 @@ namespace HQ.Platform.Api
 
 		#region MultiTenancy
 
-        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app, bool snapshot = true) where TTenant : class, ITenant<string>, new()
+        public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app) where TTenant : class, ITenant<string>, new()
         {
-            return app.UseMultiTenancy<TTenant, string>(snapshot);
+            return app.UseMultiTenancy<TTenant, string>();
         }
 
-        public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app,
-            bool snapshot = true) where TTenant : class, ITenant<TKey>, new()
+        public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app) where TTenant : class, ITenant<TKey>, new()
         {
-            if (snapshot)
-            {
-                return app.FeatureEnabled<MultiTenancyOptions, ApiOptions>(out var options)
-                    ? app.Use(async (context, next) => { await ExecuteFeature(context, options, next); })
-                    : app;
-            }
-
             return app.Use(async (context, next) =>
             {
-                if (context.FeatureEnabled<MultiTenancyOptions, ApiOptions>(out var options))
+                if (context.FeatureEnabled<MultiTenancyOptions>(out var options))
                 {
                     await ExecuteFeature(context, options, next);
                 }

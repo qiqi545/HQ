@@ -27,7 +27,7 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 		public SchemaType Type { get; set; }
 		public string Namespace { get; set; }
 		public string Name { get; set; }
-		public object Data { get; set; }
+		public Data.Contracts.Schema.Models.Schema Data { get; set; }
 		public int Revision { get; set; }
 
 		public SchemaVersionDocument() { /* required for serialization */}

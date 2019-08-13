@@ -270,7 +270,7 @@
 
     "Versioning": {
       "Enabled": true,
-      "RequireExplicitVersion": true,
+      "RequireExplicitVersion": false,
       "ExplicitVersionRequiredStatusCode": 404,
       "EnableVersionHeader": false,
       "VersionHeader": "X-Api-Version",
@@ -279,7 +279,7 @@
       "EnableVersionPath": true,
       "VersionPathPrefix": "v",
       "VersionLifetimeSeconds": null,
-      "VersionAgnosticPaths": [ "/", "/ops", "/tokens", "/auth", "/meta" ]
+      "VersionAgnosticPaths": [ "/", "/ops", "/auth", "/meta", "/superuser" ]
     }
   }
 }

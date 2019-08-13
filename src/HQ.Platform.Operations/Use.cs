@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Operations.Configuration;
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -33,7 +32,7 @@ namespace HQ.Platform.Operations
             app.UseServerTimingReporter();
             app.UseRequestProfiling();
             app.UseOperationsEndpoints();
-            return app;
+			return app;
         }
 
         internal static IApplicationBuilder UseRequestProfiling(this IApplicationBuilder app)

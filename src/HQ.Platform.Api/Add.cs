@@ -27,6 +27,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Schema.Configuration;
+using HQ.Data.Contracts.Versioning;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;

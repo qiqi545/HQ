@@ -24,9 +24,10 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Runtime;
+using HQ.Data.Contracts.Versioning;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Models;
+using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -46,28 +47,39 @@ namespace HQ.Platform.Api.Runtime
 	{
 		private readonly ITypeResolver _typeResolver;
 		private readonly IObjectGetRepository _repository;
-		private readonly IOptionsMonitor<RuntimeOptions> _options;
 
-		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository, IOptionsMonitor<RuntimeOptions> options)
+		private readonly IOptionsMonitor<RuntimeOptions> _runtimeOptions;
+
+		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository, IOptionsMonitor<RuntimeOptions> runtimeOptions)
 		{
 			_typeResolver = typeResolver;
 			_repository = repository;
-			_options = options;
+			_runtimeOptions = runtimeOptions;
 		}
 
 		[FeatureSelector]
 		[HttpOptions("")]
 		public IActionResult Options()
 		{
+			IEnumerable<string> availableTypes = new List<string>();
+
+			// add any discovered schema types
+			var version = HttpContext.GetVersionContext();
+			if (version != null && version != VersionContext.None)
+				availableTypes = availableTypes.Concat(version.Map.Keys);
+
+			// add any custom prefabs 
+			availableTypes = availableTypes.Concat(_typeResolver.FindByInterface<IObject>().Select(x => x.Name));
+
 			// FIXME: filter out exclusions
-			var concrete = _typeResolver.FindByInterface<IObject>();
-			return Ok(new {Data = concrete.Select(x => x.Name)});
+			return Ok(new { Data = availableTypes });
 		}
 
 		#region GET
 
+		// [VersionSelector] // FIXME: controller name dependent
 		[FeatureSelector]
-		[VersionSelector, QueryContextProviderSelector]
+		[QueryContextProviderSelector]
 		[FormatFilter]
 		[HttpGet("{objectType}")]
 		[HttpGet("{objectType}.{format}")]

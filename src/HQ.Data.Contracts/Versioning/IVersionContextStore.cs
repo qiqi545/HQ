@@ -16,12 +16,12 @@
 #endregion
 
 using System.Threading.Tasks;
-using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Data.Contracts.Versioning
 {
     public interface IVersionContextStore
     {
+	    bool SupportsFallbackVersion { get; }
         Task<VersionContext> FindByKeyAsync(string versionKey);
     }
 }

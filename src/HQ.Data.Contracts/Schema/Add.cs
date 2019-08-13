@@ -20,6 +20,7 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Services;
+using HQ.Data.Contracts.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -45,6 +46,7 @@ namespace HQ.Data.Contracts.Schema
 			services.AddTypeDiscovery();
 
 			services.AddSingleton<SchemaService>();
+			services.Replace(ServiceDescriptor.Singleton<IVersionContextStore, SchemaDiscoveryVersionContextStore>());
 			services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, SchemaDiscoveryService>());
 
 			return new SchemaBuilder(services);

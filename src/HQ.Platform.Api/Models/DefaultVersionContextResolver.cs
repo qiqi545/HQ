@@ -37,12 +37,12 @@ namespace HQ.Platform.Api.Models
     public class DefaultVersionContextResolver : IVersionContextResolver
     {
         private readonly ILogger _logger;
-        private readonly IOptions<VersioningOptions> _options;
+        private readonly IOptionsMonitor<VersioningOptions> _options;
         private readonly ICache _versionCache;
         private readonly IVersionContextStore _versionContextStore;
 
         public DefaultVersionContextResolver(ICache versionCache, IVersionContextStore versionContextStore,
-            IOptions<VersioningOptions> options, ILogger<IVersionContextResolver> logger)
+            IOptionsMonitor<VersioningOptions> options, ILogger<IVersionContextResolver> logger)
         {
             _versionCache = versionCache;
             _versionContextStore = versionContextStore;
@@ -55,10 +55,10 @@ namespace HQ.Platform.Api.Models
             if (http == null)
                 return null; // fail early, developer error
 
-            if (!_options.Value.Enabled || _options.Value.RequireExplicitVersion &&
-                !_options.Value.EnableVersionHeader &&
-                !_options.Value.EnableVersionParameter &&
-                !_options.Value.EnableVersionPath)
+            if (!_options.CurrentValue.Enabled || _options.CurrentValue.RequireExplicitVersion &&
+                !_options.CurrentValue.EnableVersionHeader &&
+                !_options.CurrentValue.EnableVersionParameter &&
+                !_options.CurrentValue.EnableVersionPath)
             {
                 return null; // fail early, no versioning, or no explicit version
             }
@@ -68,13 +68,13 @@ namespace HQ.Platform.Api.Models
             //
             // Explicit Version:
             {
-                if (_options.Value.EnableVersionHeader && !string.IsNullOrWhiteSpace(_options.Value.VersionHeader))
-                    http.Request.Headers.TryGetValue(_options.Value.VersionHeader, out versionKey);
+                if (_options.CurrentValue.EnableVersionHeader && !string.IsNullOrWhiteSpace(_options.CurrentValue.VersionHeader))
+                    http.Request.Headers.TryGetValue(_options.CurrentValue.VersionHeader, out versionKey);
 
-                if (_options.Value.EnableVersionParameter && !string.IsNullOrWhiteSpace(_options.Value.VersionParameter) && http.Request.QueryString.HasValue)
-                    http.Request.Query.TryGetValue(_options.Value.VersionParameter, out versionKey);
+                if (_options.CurrentValue.EnableVersionParameter && !string.IsNullOrWhiteSpace(_options.CurrentValue.VersionParameter) && http.Request.QueryString.HasValue)
+                    http.Request.Query.TryGetValue(_options.CurrentValue.VersionParameter, out versionKey);
 
-                if (_options.Value.EnableVersionPath && !string.IsNullOrWhiteSpace(_options.Value.VersionPathPrefix) && http.Request.PathBase.HasValue)
+                if (_options.CurrentValue.EnableVersionPath && !string.IsNullOrWhiteSpace(_options.CurrentValue.VersionPathPrefix) && http.Request.PathBase.HasValue)
                     versionKey = http.Request.PathBase.Value;
             }
 
@@ -82,7 +82,7 @@ namespace HQ.Platform.Api.Models
             {
                 //
                 // Implicit Version:
-                if (_options.Value.EnableUserVersions && !string.IsNullOrWhiteSpace(_options.Value.UserVersionClaim))
+                if (_options.CurrentValue.EnableUserVersions && !string.IsNullOrWhiteSpace(_options.CurrentValue.UserVersionClaim))
                 {
                     var claim = http.User.FindFirst(x => x.Type == ClaimTypes.Version);
                     if (claim != null)
@@ -90,10 +90,12 @@ namespace HQ.Platform.Api.Models
                 }
             }
 
-            if (versionKey == default(StringValues))
-                return null; // no derivable key
+            if (versionKey == default(StringValues) && !_versionContextStore.SupportsFallbackVersion)
+            {
+				return null; // no derivable key
+            }
 
-            var useCache = _options.Value.VersionLifetimeSeconds.HasValue;
+            var useCache = _options.CurrentValue.VersionLifetimeSeconds.HasValue;
             if (!useCache)
             {
                 return await _versionContextStore.FindByKeyAsync(versionKey);
@@ -113,7 +115,7 @@ namespace HQ.Platform.Api.Models
             foreach (var identifier in versionContext.Identifiers ?? Enumerable.Empty<string>())
             {
                 _versionCache.Set($"{Constants.ContextKeys.Version}:{identifier}", versionContext,
-                    TimeSpan.FromSeconds(_options.Value.VersionLifetimeSeconds.Value));
+                    TimeSpan.FromSeconds(_options.CurrentValue.VersionLifetimeSeconds.Value));
             }
 
             return versionContext;

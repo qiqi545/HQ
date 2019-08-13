@@ -14,13 +14,14 @@
 #endregion
 
 using System.Threading.Tasks;
-using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Platform.Api.Models
+namespace HQ.Data.Contracts.Versioning
 {
-    internal class NoVersionContextStore : IVersionContextStore
+	public class NoVersionContextStore : IVersionContextStore
     {
         private static readonly Task<VersionContext> None = Task.FromResult(VersionContext.None);
+
+        public bool SupportsFallbackVersion => false;
 
         public Task<VersionContext> FindByKeyAsync(string versionKey)
         {

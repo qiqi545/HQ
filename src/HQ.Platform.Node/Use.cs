@@ -45,10 +45,12 @@ namespace HQ.Platform.Node
 
             app.UseUi(root => { });
             app.UseSecurityPolicies();
-            app.UseOperationsApi();
-            app.UsePlatformApi();
-            app.UseMultiTenancy<IdentityTenant, string>();
             app.UseVersioning();
+			app.UseOperationsApi();
+            app.UsePlatformApi();
+            app.UseConfigurationApi();
+            app.UseMetaApi();
+            app.UseMultiTenancy<IdentityTenant, string>();
 
             try
             {
