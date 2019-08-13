@@ -78,6 +78,7 @@ namespace HQ.Integration.DocumentDb.Identity
 		        o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
 		        o.DatabaseId = o.DatabaseId ?? builder.Database;
 		        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
+		        o.SharedCollection = true; // User, Role, Tenant, Application, etc.
 	        }, scope);
         }
 
