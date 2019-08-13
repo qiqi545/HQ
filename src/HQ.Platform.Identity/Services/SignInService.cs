@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;
@@ -29,119 +30,117 @@ using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Services
 {
-    public class SignInService<TUser, TTenant, TApplication, TKey> : ISignInService<TUser, TTenant, TApplication, TKey>
-        where TUser : IdentityUserExtended<TKey>, IEmailProvider, IPhoneNumberProvider
-        where TTenant : IdentityTenant<TKey>
-        where TApplication : IdentityApplication<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly UserManager<TUser> _userManager;
-        private readonly SignInManager<TUser> _signInManager;
-        private readonly IAuthenticationService _authentication;
+	public class SignInService<TUser, TTenant, TApplication, TKey> : ISignInService<TUser, TTenant, TApplication, TKey>
+		where TUser : IdentityUserExtended<TKey>, IEmailProvider, IPhoneNumberProvider
+		where TTenant : IdentityTenant<TKey>
+		where TApplication : IdentityApplication<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		private readonly UserManager<TUser> _userManager;
+		private readonly SignInManager<TUser> _signInManager;
+		private readonly IAuthenticationService _authentication;
 
-        private readonly IHttpContextAccessor _http;
-        private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
-        private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+		private readonly IHttpContextAccessor _http;
+		private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
+		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
 
-        public SignInService(IHttpContextAccessor http,
-            UserManager<TUser> userManager,
-            SignInManager<TUser> signInManager,
-            IAuthenticationService authentication,
-            IOptionsMonitor<IdentityOptionsExtended> identityOptions,
-            IOptionsMonitor<SecurityOptions> securityOptions)
-        {
-            _http = http;
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _authentication = authentication;
-            _identityOptions = identityOptions;
-            _securityOptions = securityOptions;
-        }
+		public SignInService(IHttpContextAccessor http,
+			UserManager<TUser> userManager,
+			SignInManager<TUser> signInManager,
+			IAuthenticationService authentication,
+			IOptionsMonitor<IdentityOptionsExtended> identityOptions,
+			IOptionsMonitor<SecurityOptions> securityOptions)
+		{
+			_http = http;
+			_userManager = userManager;
+			_signInManager = signInManager;
+			_authentication = authentication;
+			_identityOptions = identityOptions;
+			_securityOptions = securityOptions;
+		}
 
-        public async Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password, bool isPersistent)
-        {
-            TUser user = default;
-            try
-            {
-                user = await _userManager.FindByIdentityAsync(identityType, identity);
-                if (user == null)
-                    return IdentityResultExtensions.NotFound<TUser>();
+		public async Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password, bool isPersistent)
+		{
+			TUser user = default;
+			try
+			{
+				user = await _userManager.FindByIdentityAsync(identityType, identity);
+				if (user == null)
+					return IdentityResultExtensions.NotFound<TUser>();
 
-                var result = await _signInManager.CheckPasswordSignInAsync(user, password, _identityOptions.CurrentValue.User.LockoutEnabled);
+				var result = await _signInManager.CheckPasswordSignInAsync(user, password, _identityOptions.CurrentValue.User.LockoutEnabled);
 
-                if (result.Succeeded)
-                {
-                    var claims = await BuildClaimsAsync(user, _http.HttpContext);
+				if (result.Succeeded)
+				{
+					var claims = await BuildClaimsAsync(user, _http.HttpContext);
 
-                    if (_securityOptions.CurrentValue.Cookies.Enabled)
-                    {
-                        const string scheme = CookieAuthenticationDefaults.AuthenticationScheme;
+					if (_securityOptions.CurrentValue.Cookies.Enabled)
+					{
+						const string scheme = Constants.Security.Schemes.PlatformCookies;
+						var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
+						var properties = new AuthenticationProperties { IsPersistent = isPersistent };
+						await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
 
-                        var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
-                        var properties = new AuthenticationProperties { IsPersistent = isPersistent };
-                        await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
+						_http.HttpContext.User = principal;
+					}
+				}
 
-                        _http.HttpContext.User = principal;
-                    }
-                }
+				return result.ToOperation(user);
+			}
+			catch (Exception ex)
+			{
+				var operation = IdentityResult.Failed(new IdentityError
+				{
+					Code = ex.GetType().Name,
+					Description = ex.Message
+				}).ToOperation(user);
 
-                return result.ToOperation(user);
-            }
-            catch (Exception ex)
-            {
-                var operation = IdentityResult.Failed(new IdentityError
-                {
-                    Code = ex.GetType().Name,
-                    Description = ex.Message
-                }).ToOperation(user);
+				return operation;
+			}
+		}
 
-                return operation;
-            }
-        }
-        
-        public async Task<Operation> SignOutAsync(TUser user)
-        {
-            try
-            {
-                await _signInManager.SignOutAsync();
-                return Operation.CompletedWithoutErrors;
-            }
-            catch (Exception ex)
-            {
-                var operation = IdentityResult.Failed(new IdentityError
-                {
-                    Code = ex.GetType().Name,
-                    Description = ex.Message
-                }).ToOperation();
+		public async Task<Operation> SignOutAsync(TUser user)
+		{
+			try
+			{
+				await _signInManager.SignOutAsync();
+				return Operation.CompletedWithoutErrors;
+			}
+			catch (Exception ex)
+			{
+				var operation = IdentityResult.Failed(new IdentityError
+				{
+					Code = ex.GetType().Name,
+					Description = ex.Message
+				}).ToOperation();
 
-                return operation;
-            }
-        }
+				return operation;
+			}
+		}
 
-        private async Task<IList<Claim>> BuildClaimsAsync(TUser user, HttpContext context)
-        {
-            var claims = await _userManager.GetClaimsAsync(user);
+		private async Task<IList<Claim>> BuildClaimsAsync(TUser user, HttpContext context)
+		{
+			var claims = await _userManager.GetClaimsAsync(user);
 
-            if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext && tenantContext.Tenant != null)
-            {
-                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
-                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
-            }
+			if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext && tenantContext.Tenant != null)
+			{
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+			}
 
-            if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext && applicationContext.Application != null)
-            {
-                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
-                claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
-            }
+			if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext && applicationContext.Application != null)
+			{
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
+			}
 
-            return claims;
-        }
-    }
+			return claims;
+		}
+	}
 }
