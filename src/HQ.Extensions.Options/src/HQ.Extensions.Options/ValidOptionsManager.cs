@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
@@ -24,22 +23,21 @@ namespace HQ.Extensions.Options
 	public sealed class ValidOptionsManager<TOptions> : IValidOptions<TOptions>, IValidOptionsSnapshot<TOptions>
         where TOptions : class, new()
     {
-        private readonly IOptions<TOptions> _default;
-        private readonly IOptionsSnapshot<TOptions> _snapshot;
-        private readonly IServiceProvider _serviceProvider;
+		private readonly IOptionsFactory<TOptions> _factory;
+		private readonly IServiceProvider _serviceProvider;
 
-        public ValidOptionsManager(IOptions<TOptions> @default, IOptionsSnapshot<TOptions> snapshot, IServiceProvider serviceProvider)
+        public ValidOptionsManager(IOptionsFactory<TOptions> factory, IServiceProvider serviceProvider)
         {
-            _default = @default;
-            _snapshot = snapshot;
+            _factory = factory;
             _serviceProvider = serviceProvider;
         }
+        private readonly OptionsCache<TOptions> _cache = new OptionsCache<TOptions>();
+        
+		public TOptions Value => Get(Microsoft.Extensions.Options.Options.DefaultName);
 
-        public TOptions Value => _default.Value;
-
-        public TOptions Get(string name)
+		public TOptions Get(string name)
         {
-            return _snapshot.Get(name).Validate(_serviceProvider);
+	        return _cache.GetOrAdd(name, () => _factory.Create(name)).Validate(_serviceProvider);
         }
     }
 }
