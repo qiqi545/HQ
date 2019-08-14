@@ -34,7 +34,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 			var root = validationContext.ObjectType;
 			return ComputedPredicate.Compute(root, Expression)
 				? ValidationResult.Success
-				: new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString);
+				: new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString));
 		}
 	}
 }
