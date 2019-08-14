@@ -22,6 +22,7 @@ using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;
 using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Identity;
@@ -93,6 +94,10 @@ namespace HQ.Platform.Node
 			services.AddTypeDiscovery();
 			services.AddLocalTimestamps();
 			services.AddSafeLogging();
+			services.AddValidOptions();
+
+			//
+			// Platform Services"
 			services.AddSecurityPolicies(hq.GetSection("Security"), hq.GetSection("SuperUser"), logger);
 			services.AddOperationsApi(env, hq.GetSection("Ops"));
 			services.AddPlatformApi(hq.GetSection("Api"));
