@@ -154,7 +154,11 @@ namespace HQ.Platform.Operations
 			mvcBuilder.Services.AddSwaggerGen(c =>
 			{
 				c.EnableAnnotations();
-				c.SwaggerDoc("swagger", new Info { Title = "Sample API", Version = "v1" });
+				c.SwaggerDoc("swagger", new Info
+				{
+					Title = "Sample API",
+					Version = "v1"
+				});
 				c.DescribeAllEnumsAsStrings();
 			});
 

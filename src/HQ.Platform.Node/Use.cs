@@ -36,13 +36,12 @@ namespace HQ.Platform.Node
             Bootstrap.EnsureInitialized();
 
             app.UseTraceContext();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
-                c.RoutePrefix = "docs/swagger";
-            });
-			
-            app.UseSecurityPolicies();
+			app.UseSwaggerUI(c =>
+			{
+				c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
+				c.RoutePrefix = "docs/swagger";
+			});
+			app.UseSecurityPolicies();
             app.UseVersioning();
 			app.UseOperationsApi();
             app.UsePlatformApi();
