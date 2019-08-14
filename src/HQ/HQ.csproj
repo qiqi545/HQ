@@ -68,11 +68,12 @@
     <Content Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
     
     <!-- UI -->
-    <Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--<Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="..\HQ.UI.Web\lib\**\*;..\HQ.UI.Web.SemanticUi\lib\**\*" Link="lib\%(RecursiveDir)\%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />-->
+
   </ItemGroup>
 
   <ItemGroup>
