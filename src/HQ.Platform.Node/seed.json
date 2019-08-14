@@ -63,17 +63,19 @@
       }
     },
 
+    "SuperUser": {
+      "Enabled": false,
+      "RootPath": "/superuser",
+      "Username": null,
+      "Email": null,
+      "PhoneNumber": null,
+      "Password": null
+    },
+
     "Security": {
-      "SuperUser": {
-        "Enabled": false,
-        "Username": null,
-        "Email": null,
-        "PhoneNumber": null,
-        "Password": null
-      },
       "Tokens": {
         "Enabled": true,
-        "RootPath": "",
+        "RootPath": "/auth",
         "SigningKey": "PRIVATE-KEY-REPLACE-ME",
         "EncryptionKey": "PRIVATE-KEY-REPLACE-ME",
         "Issuer": "https://mysite.com",

@@ -39,13 +39,13 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var claims = new List<Claim>();
 
-            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_security.CurrentValue.SuperUser?.Username))
+            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser.Value.Username))
             {
                 var superUser = CreateSuperUserInstance();
-                claims.TryAddClaim(_security.CurrentValue.Claims.UserIdClaim, $"{superUser.Id}");
-                claims.TryAddClaim(_security.CurrentValue.Claims.UserNameClaim, superUser.UserName);
-                claims.TryAddClaim(_security.CurrentValue.Claims.EmailClaim, superUser.Email, ClaimValueTypes.Email);
-                claims.TryAddClaim(_security.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser, ClaimValueTypes.Email);
+                claims.TryAddClaim(_security.Value.Claims.UserIdClaim, $"{superUser.Id}");
+                claims.TryAddClaim(_security.Value.Claims.UserNameClaim, superUser.UserName);
+                claims.TryAddClaim(_security.Value.Claims.EmailClaim, superUser.Email, ClaimValueTypes.Email);
+                claims.TryAddClaim(_security.Value.Claims.RoleClaim, ClaimValues.SuperUser, ClaimValueTypes.Email);
                 return claims;
             }
 
@@ -53,24 +53,24 @@ namespace HQ.Platform.Identity.Stores.Sql
 
 			if (_tenantId != null && !_tenantId.Equals(default))
 			{
-                claims.TryAddClaim(_security.CurrentValue.Claims.TenantIdClaim, $"{_tenantId}");
+                claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
             }
             if (_applicationId != null && !_applicationId.Equals(default))
             {
-                claims.TryAddClaim(_security.CurrentValue.Claims.ApplicationIdClaim, $"{_applicationId}");
+                claims.TryAddClaim(_security.Value.Claims.ApplicationIdClaim, $"{_applicationId}");
             }
             if (!string.IsNullOrWhiteSpace(_tenantName))
             {
-                claims.TryAddClaim(_security.CurrentValue.Claims.TenantNameClaim, _tenantName);
+                claims.TryAddClaim(_security.Value.Claims.TenantNameClaim, _tenantName);
             }
             if (!string.IsNullOrWhiteSpace(_applicationName))
             {
-                claims.TryAddClaim(_security.CurrentValue.Claims.ApplicationNameClaim, _applicationName);
+                claims.TryAddClaim(_security.Value.Claims.ApplicationNameClaim, _applicationName);
             }
 
-            claims.TryAddClaim(_security.CurrentValue.Claims.UserIdClaim, id);
-            claims.TryAddClaim(_security.CurrentValue.Claims.UserNameClaim, user.UserName);
-            claims.TryAddClaim(_security.CurrentValue.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
+            claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
+            claims.TryAddClaim(_security.Value.Claims.UserNameClaim, user.UserName);
+            claims.TryAddClaim(_security.Value.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
             claims.AddRange(await GetUserClaimsAsync(user));
 
             var roleNames = await GetRolesAsync(user, cancellationToken);
@@ -83,7 +83,7 @@ namespace HQ.Platform.Identity.Stores.Sql
                     continue;
                 }
 
-                claims.Add(new Claim(_security.CurrentValue.Claims.RoleClaim, roleName));
+                claims.Add(new Claim(_security.Value.Claims.RoleClaim, roleName));
 
                 var roleClaims = await _roles.GetClaimsAsync(role);
                 if (!roleClaims.Any())

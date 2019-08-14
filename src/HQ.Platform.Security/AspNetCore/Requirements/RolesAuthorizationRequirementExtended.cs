@@ -19,9 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -29,15 +29,20 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<RolesAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
-        private readonly IOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public RolesAuthorizationRequirementExtended(IOptionsMonitor<SecurityOptions> options, IEnumerable<string> allowedRoles)
+        public RolesAuthorizationRequirementExtended(
+	        IValidOptionsMonitor<SecurityOptions> options,
+	        IValidOptionsMonitor<SuperUserOptions> superUser,
+			IEnumerable<string> allowedRoles)
         {
 	        _options = options;
-			AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
+	        _superUser = superUser;
+	        AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
         }
 
-        private bool SupportsSuperUser => _options.CurrentValue.SuperUser?.Enabled ?? false;
+        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
         public IEnumerable<string> AllowedRoles { get; }
 
@@ -45,24 +50,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
             RolesAuthorizationRequirementExtended requirement)
         {
             var user = context.User;
-
-            //
-            // ASP.NET Core Identity is calling the requirement *before* validating and injecting the claim!
-            //
-			/*
-            if (!user.Identity.IsAuthenticated)
-            {
-                if (_serviceProvider.GetService(typeof(IAuthenticationService)) is IAuthenticationService service && context.Resource is AuthorizationFilterContext filter)
-                {
-                    var result = await service.AuthenticateAsync(filter.HttpContext, JwtBearerDefaults.AuthenticationScheme);
-                    if (result.Succeeded)
-                    {
-                        user = result.Principal;
-                    }
-                }
-            }
-			*/
-
             if (user != null)
             {
                 if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
@@ -81,7 +68,6 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
                     context.Succeed(requirement);
                 }
             }
-
             return Task.CompletedTask;
         }
     }

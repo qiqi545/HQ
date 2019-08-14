@@ -17,9 +17,9 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -27,14 +27,18 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
-        private readonly IOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public DenyAnonymousAuthorizationRequirementExtended(IOptionsMonitor<SecurityOptions> options)
+        public DenyAnonymousAuthorizationRequirementExtended(
+	        IValidOptionsMonitor<SecurityOptions> options,
+	        IValidOptionsMonitor<SuperUserOptions> superUser)
         {
-            _options = options;
+	        _options = options;
+	        _superUser = superUser;
         }
 
-        private bool SupportsSuperUser => _options.CurrentValue.SuperUser?.Enabled ?? false;
+        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
             DenyAnonymousAuthorizationRequirementExtended requirement)

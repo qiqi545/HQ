@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HQ.Integration.Sqlite.Options;
-using HQ.Integration.Sqlite.Sql;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Node.UI.Models;
@@ -31,7 +30,6 @@ using HQ.UI.Web;
 using HQ.UI.Web.SemanticUi;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Node.UI
@@ -43,8 +41,9 @@ namespace HQ.Platform.Node.UI
         private readonly IApplicationService<IdentityApplication> _applicationService;
         private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
         private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+        private readonly IOptionsMonitor<SuperUserOptions> _superUser;
 
-        private readonly ISignInService<IdentityUserExtended, IdentityTenant, IdentityApplication, string>
+		private readonly ISignInService<IdentityUserExtended, IdentityTenant, IdentityApplication, string>
             _signInService;
 
         public App(
@@ -75,7 +74,7 @@ namespace HQ.Platform.Node.UI
         private async Task Dashboard(Ui ui)
         {
             var hasApplication = (await _applicationService.GetCountAsync()).Data > 0;
-            var hasAccessToken = (_securityOptions.CurrentValue.SuperUser?.Enabled).GetValueOrDefault();
+            var hasAccessToken = (_superUser.CurrentValue?.Enabled).GetValueOrDefault();
             var hasSettings = !SqliteConfigurationHelper.IsEmptyConfiguration("settings.db");
 
             ui.Component<Dashboard>(new DashboardModel

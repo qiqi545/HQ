@@ -27,6 +27,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Cryptography;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
@@ -34,7 +35,6 @@ using HQ.Platform.Security.Internal.Extensions;
 using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
@@ -42,16 +42,18 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	/// A light-weight token issuer that only works against a super user.
 	/// </summary>
 	[Route("tokens")]
-	[DynamicController(typeof(SecurityOptions), nameof(SecurityOptions.SuperUser))]
+	[DynamicController(typeof(SuperUserOptions))]
     [ApiExplorerSettings(IgnoreApi = false)]
     public class SuperUserTokenController : DataController
     {
-	    private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+	    private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
+	    private readonly IValidOptionsSnapshot<SecurityOptions> _security;
 
-        public SuperUserTokenController(IOptionsMonitor<SecurityOptions> securityOptions)
-        {
-            _securityOptions = securityOptions;
-        }
+	    public SuperUserTokenController(IValidOptionsSnapshot<SuperUserOptions> options, IValidOptionsSnapshot<SecurityOptions> security)
+	    {
+		    _options = options;
+		    _security = security;
+	    }
 
         [FeatureSelector]
 		[AllowAnonymous]
@@ -65,7 +67,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				return Task.FromResult((IActionResult) error);
 
 			bool isSuperUser;
-			var superUser = _securityOptions.CurrentValue.SuperUser;
+			var superUser = _options.Value;
 			switch (model.IdentityType)
 			{
 				case IdentityType.Username:
@@ -88,18 +90,17 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			}
 			
 			var encoding = Encoding.UTF8;
-			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_securityOptions.CurrentValue.SuperUser.Password)))
+			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_options.Value.Password)))
 			{
 				Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
 				var claims = new List<Claim>
 				{
-					new Claim(_securityOptions?.CurrentValue?.Claims?.RoleClaim ?? ClaimTypes.Role,
-						 ClaimValues.SuperUser)
+					new Claim(_security.Value?.Claims?.RoleClaim ?? ClaimTypes.Role, ClaimValues.SuperUser)
 				};
 				var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
 
 				// FIXME: pin claims transformation to user-provided scope
-				var token = provider.CreateToken(claims, _securityOptions.CurrentValue);
+				var token = provider.CreateToken(claims, _security.Value);
 				return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
 			}
 
@@ -107,7 +108,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 		}
 
         [FeatureSelector]
-		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
+		[DynamicAuthorize(typeof(SuperUserOptions))]
 		[HttpPut]
         public IActionResult VerifyToken()
         {
@@ -123,6 +124,6 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			return Unauthorized();
 		}
 
-        private bool Enabled => _securityOptions.CurrentValue.SuperUser.Enabled;
+        private bool Enabled => _options.Value.Enabled;
     }
 }

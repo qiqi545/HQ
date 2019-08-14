@@ -19,9 +19,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
@@ -29,25 +29,33 @@ namespace HQ.Platform.Security.AspNetCore.Requirements
         AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,
         IAuthorizationRequirement
     {
-        private readonly IOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SecurityOptions> _options;
+        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public ClaimsAuthorizationRequirementExtended(IOptionsMonitor<SecurityOptions> options, string claimType,
+        public ClaimsAuthorizationRequirementExtended(
+	        IValidOptionsMonitor<SecurityOptions> options,
+	        IValidOptionsMonitor<SuperUserOptions> superUser,
+			string claimType,
             IEnumerable<string> allowedValues)
         {
             var values = allowedValues.ToArray();
 
             _options = options;
+            _superUser = superUser;
             ClaimType = claimType;
             AllowedValues = values;
         }
 
-        public ClaimsAuthorizationRequirementExtended(IOptionsMonitor<SecurityOptions> options, string claimType,
-            params string[] allowedValues) : this(options, claimType, allowedValues.AsEnumerable())
+        public ClaimsAuthorizationRequirementExtended(
+	        IValidOptionsMonitor<SecurityOptions> options,
+	        IValidOptionsMonitor<SuperUserOptions> superUser,
+			string claimType,
+            params string[] allowedValues) : this(options, superUser, claimType, allowedValues.AsEnumerable())
         {
 
         }
 
-        private bool SupportsSuperUser => _options.CurrentValue.SuperUser?.Enabled ?? false;
+        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
         public string ClaimType { get; }
         public IEnumerable<string> AllowedValues { get; }

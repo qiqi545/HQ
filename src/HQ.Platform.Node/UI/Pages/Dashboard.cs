@@ -150,14 +150,14 @@ namespace HQ.Platform.Node.UI.Pages
             {
                 try
                 {
-                    var options = ui.Context.UiServices.GetService<ISaveOptions<SecurityOptions>>();
+                    var options = ui.Context.UiServices.GetService<ISaveOptions<SuperUserOptions>>();
                     options.TrySave("HQ:Security", x =>
                     {
-                        x.SuperUser.Enabled = true;
-                        x.SuperUser.Username = "darthvader";
-                        x.SuperUser.Password = "deathstar";
-                        x.SuperUser.Email = "darthvader@deathstar.com";
-                        x.SuperUser.PhoneNumber = "5555555555";
+                        x.Enabled = true;
+                        x.Username = "darthvader";
+                        x.Password = "deathstar";
+                        x.Email = "darthvader@deathstar.com";
+                        x.PhoneNumber = "5555555555";
                     });
                     var configRoot = ui.Context.UiServices.GetRequiredService<IConfigurationRoot>();
                     configRoot.Reload();

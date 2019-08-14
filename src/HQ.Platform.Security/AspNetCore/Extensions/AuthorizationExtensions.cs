@@ -15,6 +15,7 @@
 
 #endregion
 
+using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Requirements;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
@@ -28,8 +29,9 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireAuthenticatedUserExtended(this AuthorizationPolicyBuilder builder, IServiceCollection services)
         {
 			var serviceProvider = services.BuildServiceProvider();
-			var monitor = serviceProvider.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
-			var requireAuthenticatedUser = new DenyAnonymousAuthorizationRequirementExtended(monitor);
+			var security = serviceProvider.GetRequiredService<IValidOptionsMonitor<SecurityOptions>>();
+			var superUser = serviceProvider.GetRequiredService<IValidOptionsMonitor<SuperUserOptions>>();
+			var requireAuthenticatedUser = new DenyAnonymousAuthorizationRequirementExtended(security, superUser);
             services.AddSingleton<IAuthorizationHandler>(requireAuthenticatedUser);
             builder.AddRequirements(requireAuthenticatedUser);
             return builder;
@@ -38,8 +40,9 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireClaimExtended(this AuthorizationPolicyBuilder builder, IServiceCollection services, string claimType, params string[] allowedValues)
         {
 			var serviceProvider = services.BuildServiceProvider();
-			var monitor = serviceProvider.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
-			var requireClaim = new ClaimsAuthorizationRequirementExtended(monitor, claimType, allowedValues);
+			var security = serviceProvider.GetRequiredService<IValidOptionsMonitor<SecurityOptions>>();
+			var superUser = serviceProvider.GetRequiredService<IValidOptionsMonitor<SuperUserOptions>>();
+			var requireClaim = new ClaimsAuthorizationRequirementExtended(security, superUser, claimType, allowedValues);
             services.AddSingleton<IAuthorizationHandler>(requireClaim);
             builder.AddRequirements(requireClaim);
             return builder;
@@ -48,8 +51,9 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
         public static AuthorizationPolicyBuilder RequireRoleExtended(this AuthorizationPolicyBuilder builder, IServiceCollection services, params string[] allowedRoles)
         {
             var serviceProvider = services.BuildServiceProvider();
-            var monitor = serviceProvider.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
-			var requireRole = new RolesAuthorizationRequirementExtended(monitor, allowedRoles);
+            var monitor = serviceProvider.GetRequiredService<IValidOptionsMonitor<SecurityOptions>>();
+            var superUser = serviceProvider.GetRequiredService<IValidOptionsMonitor<SuperUserOptions>>();
+			var requireRole = new RolesAuthorizationRequirementExtended(monitor, superUser, allowedRoles);
             services.AddSingleton<IAuthorizationHandler>(requireRole);
             builder.AddRequirements(requireRole);
             return builder;

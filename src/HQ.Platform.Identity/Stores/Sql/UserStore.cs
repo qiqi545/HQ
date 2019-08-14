@@ -26,11 +26,11 @@ using HQ.Common.AspNetCore;
 using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
+using HQ.Extensions.Options;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
@@ -50,7 +50,8 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IPasswordHasher<TUser> _passwordHasher;
         private readonly IQueryableProvider<TUser> _queryable;
         private readonly RoleManager<TRole> _roles;
-        private readonly IOptionsMonitor<SecurityOptions> _security;
+        private readonly IValidOptionsSnapshot<SecurityOptions> _security;
+        private readonly IValidOptionsSnapshot<SuperUserOptions> _superUser;
         private readonly ILookupNormalizer _lookupNormalizer;
 
         private readonly TKey _tenantId;
@@ -63,8 +64,9 @@ namespace HQ.Platform.Identity.Stores.Sql
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
             IQueryableProvider<TUser> queryable,
-            IOptionsMonitor<SecurityOptions> security,
-            ILookupNormalizer lookupNormalizer, 
+            IValidOptionsSnapshot<SecurityOptions> security,
+            IValidOptionsSnapshot<SuperUserOptions> superUser,
+			ILookupNormalizer lookupNormalizer, 
             IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
@@ -81,6 +83,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             _queryable = queryable;
 
             _security = security;
+            _superUser = superUser;
             _lookupNormalizer = lookupNormalizer;
         }
 
@@ -88,13 +91,13 @@ namespace HQ.Platform.Identity.Stores.Sql
 
         public CancellationToken CancellationToken { get; }
 
-        public bool SupportsSuperUser => _security?.CurrentValue?.SuperUser?.Enabled ?? false;
+        public bool SupportsSuperUser => _superUser?.Value?.Enabled ?? false;
 
         public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Username))
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Username))
             {
                 return new[] { CreateSuperUserInstance() };
             }
@@ -171,7 +174,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Username))
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Username))
             {
                 return CreateSuperUserInstance();
             }
@@ -272,7 +275,7 @@ namespace HQ.Platform.Identity.Stores.Sql
                 superuser.Id = (TKey) (object) SuperUserNumberId;
             }
 
-            var options = _security?.CurrentValue.SuperUser;
+            var options = _superUser?.Value;
 
             superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
             superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalize(superuser.UserName);

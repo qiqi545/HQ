@@ -35,38 +35,47 @@ namespace HQ.Platform.Security.AspNetCore
 {
 	public static class Add
 	{
-		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services, IConfiguration config, ISafeLogger logger)
+		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
+			IConfiguration securityConfig, 
+			IConfiguration superUserConfig,
+			ISafeLogger logger)
 		{
-			return AddSecurityPolicies(services, config.Bind, logger);
+			return AddSecurityPolicies(services, securityConfig.Bind, superUserConfig.Bind, logger);
 		}
 
 		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
-			Action<SecurityOptions> configureSecurityAction = null, ISafeLogger logger = null)
+			Action<SecurityOptions> configureSecurityAction = null,
+			Action<SuperUserOptions> configureSuperUserAction = null,
+			ISafeLogger logger = null)
 		{
 			Bootstrap.EnsureInitialized();
 			Bootstrap.ContractResolver.IgnoreTypes.Add(typeof(KestrelConfigurationLoader));
 
-			var options = new SecurityOptions(true);
-			configureSecurityAction?.Invoke(options);
-			AuthenticationExtensions.MaybeSetSecurityKeys(options);
+			var security = new SecurityOptions(true);
+			configureSecurityAction?.Invoke(security);
+
+			var superUser = new SuperUserOptions();
+			configureSuperUserAction?.Invoke(superUser);
+			
+			AuthenticationExtensions.MaybeSetSecurityKeys(security);
 
 			if (configureSecurityAction != null)
 			{
 				services.Configure<SecurityOptions>(o =>
 				{
 					configureSecurityAction.Invoke(o);
-					o.Signing = options.Signing;
-					o.Encrypting = options.Encrypting;
+					o.Signing = security.Signing;
+					o.Encrypting = security.Encrypting;
 				});
 			}
 
 			services.ConfigureOptions<ConfigureWebServer>();
 
 			services.AddDynamicAuthorization();
-			services.AddCors(logger, options.Cors);
-			services.AddAuthentication(logger, options);
-			services.AddSuperUser(logger, options.SuperUser);
-			services.AddHttps(logger, options);
+			services.AddCors(logger, security.Cors);
+			services.AddAuthentication(logger, security, superUser);
+			services.AddSuperUser(logger, superUser);
+			services.AddHttps(logger, security);
 
 			return services;
 		}
@@ -133,11 +142,12 @@ namespace HQ.Platform.Security.AspNetCore
 			}
 		}
 
-		private static void AddAuthentication(this IServiceCollection services, ISafeLogger logger, SecurityOptions security)
+		private static void AddAuthentication(this IServiceCollection services, ISafeLogger logger, 
+			SecurityOptions security,
+			SuperUserOptions superUser)
 		{
 			var tokens = security.Tokens;
 			var cookies = security.Cookies;
-			var superUser = security.SuperUser;
 			var claims = security.Claims;
 
 			if (tokens.Enabled || cookies.Enabled || superUser.Enabled)

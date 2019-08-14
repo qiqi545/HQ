@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,13 +12,14 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using HQ.Common;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore
 {
@@ -25,12 +27,13 @@ namespace HQ.Platform.Security.AspNetCore
 	{
 		public static IApplicationBuilder UseSecurityPolicies(this IApplicationBuilder app)
 		{
-			var options = app.ApplicationServices.GetRequiredService<IOptions<SecurityOptions>>();
+			var options = app.ApplicationServices.GetRequiredService<IValidOptions<SecurityOptions>>();
+			var superUser = app.ApplicationServices.GetRequiredService<IValidOptions<SuperUserOptions>>();
 
 			if (options.Value.Cors.Enabled)
 				app.UseCors(Constants.Security.Policies.CorsPolicy);
 
-			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || options.Value.SuperUser.Enabled)
+			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)
 			{
 				app.UseAuthentication();
 			}

@@ -93,7 +93,7 @@ namespace HQ.Platform.Node
 			services.AddTypeDiscovery();
 			services.AddLocalTimestamps();
 			services.AddSafeLogging();
-			services.AddSecurityPolicies(hq.GetSection("Security"), logger);
+			services.AddSecurityPolicies(hq.GetSection("Security"), hq.GetSection("SuperUser"), logger);
 			services.AddOperationsApi(env, hq.GetSection("Ops"));
 			services.AddPlatformApi(hq.GetSection("Api"));
 			services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))

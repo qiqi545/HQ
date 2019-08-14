@@ -57,7 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         public async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Email))
+            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Email))
             {
                 return CreateSuperUserInstance();
             }
@@ -85,7 +85,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.Email))
+            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Email))
             {
                 return new[] {CreateSuperUserInstance()};
             }

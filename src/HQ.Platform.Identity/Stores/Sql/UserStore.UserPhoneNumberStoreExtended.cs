@@ -57,7 +57,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.PhoneNumber))
+            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.PhoneNumber))
             {
                 return CreateSuperUserInstance();
             }
@@ -74,7 +74,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_security?.CurrentValue.SuperUser?.PhoneNumber))
+            if (SupportsSuperUser && _lookupNormalizer.MaybeNormalize(phoneNumber) == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.PhoneNumber))
             {
                 return new[] {CreateSuperUserInstance()};
             }
