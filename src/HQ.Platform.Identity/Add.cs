@@ -46,6 +46,8 @@ namespace HQ.Platform.Identity
                 // Sensible defaults not set by ASP.NET Core Identity:
                 x.Stores.ProtectPersonalData = true;
                 x.Stores.MaxLengthForKeys = 128;
+
+				// Extended:
                 x.User.RequireUniqueEmail = true;
             };
         }
@@ -149,7 +151,7 @@ namespace HQ.Platform.Identity
 
             identityBuilder.AddDefaultTokenProviders();
 
-            // https://github.com/blowdart/AspNetCoreIdentityEncryption
+            // See: https://github.com/blowdart/AspNetCoreIdentityEncryption
             identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
             identityBuilder.Services.AddSingleton<IPersonalDataProtector, DefaultPersonalDataProtector>();
 
