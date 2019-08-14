@@ -48,12 +48,8 @@ using HQ.Platform.Api.Runtime.Rest;
 using HQ.Platform.Identity;
 using HQ.Platform.Identity.AspNetCore.Mvc;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Node.UI.Pages;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using HQ.UI;
-using HQ.UI.Web;
-using HQ.UI.Web.SemanticUi;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -188,21 +184,6 @@ namespace HQ.Platform.Node
 				}
 			}
 			
-			UiConfig.Settings = settings =>
-			{
-				settings.DefaultPageTitle = Assembly.GetCallingAssembly().GetName().Name;
-				settings.ComponentAssemblies = new[]
-				{
-					typeof(UiComponent).Assembly, // HQ.UI
-				    typeof(HtmlSystem).Assembly,  // HQ.UI.Web
-				    typeof(SemanticUi).Assembly,  // HQ.Web.Semantic.Ui
-				    typeof(Dashboard).Assembly,   // HQ.Platform.Node
-				    Assembly.GetEntryAssembly()   // App
-			    };
-			};
-
-			services.AddUi(env, typeof(SemanticUi).Assembly);
-
 			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
 			return services;

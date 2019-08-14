@@ -23,7 +23,6 @@ using HQ.Platform.Api.Correlation;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using HQ.UI.Web;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -42,8 +41,7 @@ namespace HQ.Platform.Node
                 c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
                 c.RoutePrefix = "docs/swagger";
             });
-
-            app.UseUi(root => { });
+			
             app.UseSecurityPolicies();
             app.UseVersioning();
 			app.UseOperationsApi();
