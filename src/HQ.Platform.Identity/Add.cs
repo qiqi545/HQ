@@ -18,7 +18,6 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Extensions.Logging;
 using HQ.Platform.Api.Models;
@@ -31,7 +30,6 @@ using HQ.Platform.Identity.Validators;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Identity
 {
@@ -71,8 +69,6 @@ namespace HQ.Platform.Identity
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            AddIdentityPreamble(services);
-
             return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration);
         }
 
@@ -84,23 +80,10 @@ namespace HQ.Platform.Identity
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            AddIdentityPreamble(services);
-
             return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configureIdentityExtended: o =>
             {
 	            configureIdentityExtended?.Invoke(o);
             });
-        }
-
-        private static void AddIdentityPreamble(IServiceCollection services)
-        {
-	        var authBuilder = services.AddAuthentication(o =>
-            {
-                o.DefaultScheme = IdentityConstants.ApplicationScheme;
-                o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-            });
-
-	        authBuilder.AddIdentityCookies(o => { });
         }
 
         public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
@@ -112,13 +95,24 @@ namespace HQ.Platform.Identity
             where TApplication : IdentityApplication<TKey>
             where TKey : IEquatable<TKey>
         {
-            services.Configure<IdentityOptions>(configuration);
+	        AddIdentityPreamble(services);
+			services.Configure<IdentityOptions>(configuration);
             services.Configure<IdentityOptionsExtended>(configuration);
 
             return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration.Bind, configuration.Bind);
         }
 
-        public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
+        private static void AddIdentityPreamble(IServiceCollection services)
+        {
+	        var authBuilder = services.AddAuthentication(o =>
+	        {
+		        o.DefaultScheme = IdentityConstants.ApplicationScheme;
+		        o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+	        });
+	        authBuilder.AddIdentityCookies(o => { });
+        }
+
+		public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
 	        this IServiceCollection services,
 	        Action<IdentityOptionsExtended> configureIdentityExtended = null,
 	        Action<IdentityOptions> configureIdentity = null)
