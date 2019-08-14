@@ -32,6 +32,9 @@ namespace HQ.Platform.Identity.Models
 
         public async Task<TenantContext<TTenant>> FindByKeyAsync(string tenantKey)
         {
+			// FIXME!
+	        return null;
+
             var tenant = await _tenantService.FindByNameAsync(tenantKey);
             if (tenant?.Data == null)
             {
