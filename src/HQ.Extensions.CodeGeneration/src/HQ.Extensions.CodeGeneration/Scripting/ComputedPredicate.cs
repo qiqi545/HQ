@@ -16,30 +16,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
     public static class ComputedPredicate<T>
     {
-        // ReSharper disable once StaticMemberInGenericType
-        private static readonly Dictionary<Type, ScriptOptions> Options = new Dictionary<Type, ScriptOptions>();
-            
-        static ComputedPredicate()
-        {
-            Options[typeof(T)] = ScriptOptions.Default
-                .WithReferences(typeof(T).Assembly, typeof(MemberExpression).Assembly)
-                .WithImports("System", "System.Text", "System.Linq", "System.Collections.Generic");
-        }
-
-        public static Func<T, bool> AsPredicate(string expression)
-        {
-            return CSharpScript.EvaluateAsync<Func<T, bool>>(expression, Options[typeof(T)]).ConfigureAwait(false).GetAwaiter().GetResult();
-        }
-
         public static Expression<Func<T, bool>> AsExpression(string memberName, ExpressionOperator @operator, object value)
         {
             var parameter = Expression.Parameter(typeof(T), memberName);
