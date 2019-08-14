@@ -5,16 +5,23 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="UI\**" />
+    <EmbeddedResource Remove="UI\**" />
+    <None Remove="UI\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="seed.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UI\" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.1" />
   </ItemGroup>
 
   <ItemGroup>
