@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Security.Messaging
+namespace HQ.Data.Contracts.Security
 {
     public enum KeyType
     {

@@ -15,13 +15,35 @@
 
 #endregion
 
+using System;
 using System.Threading.Tasks;
+using Sodium;
 
-namespace HQ.Platform.Security.Messaging
+namespace HQ.Data.Contracts.Security
 {
-    public interface IKeygenStore
+    public class UnsafeKeygenStore : IKeygenStore
     {
-        Task<byte[]> AcquireKeyAsync(KeyType keyType);
-        Task<byte[]> AcquireNonceAsync(byte[] key);
+        public Task<byte[]> AcquireKeyAsync(KeyType keyType)
+        {
+            switch (keyType)
+            {
+                case KeyType.OneTimePassword:
+                    return Task.FromResult(OneTimeAuth.GenerateKey());
+                case KeyType.PrivateKey:
+                    throw new NotImplementedException();
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(keyType), keyType, null);
+            }
+        }
+
+        public Task<byte[]> AcquireNonceAsync(byte[] key)
+        {
+            return Task.FromResult(SecretBox.GenerateNonce());
+        }
+
+        public Task<byte[]> AcquireKeyAsync()
+        {
+            return Task.FromResult(OneTimeAuth.GenerateKey());
+        }
     }
 }

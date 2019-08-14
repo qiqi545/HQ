@@ -15,16 +15,13 @@
 
 #endregion
 
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace HQ.Platform.Security.Messaging
+namespace HQ.Data.Contracts.Security
 {
-    internal class DefaultEntropyProvider<TSubject> : IEntropyProvider<TSubject>
+    public interface IKeygenStore
     {
-        public Task<string> GetValueAsync(TSubject subject, string modifier)
-        {
-            return Task.FromResult(RuntimeHelpers.GetHashCode(subject) + modifier);
-        }
+        Task<byte[]> AcquireKeyAsync(KeyType keyType);
+        Task<byte[]> AcquireNonceAsync(byte[] key);
     }
 }

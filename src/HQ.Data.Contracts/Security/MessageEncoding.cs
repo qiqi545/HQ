@@ -15,12 +15,12 @@
 
 #endregion
 
-using System.Threading.Tasks;
+using System.Text;
 
-namespace HQ.Platform.Security.Messaging
+namespace HQ.Data.Contracts.Security
 {
-    public interface IEntropyProvider<in TSubject>
+	internal static class MessageEncoding
     {
-        Task<string> GetValueAsync(TSubject subject, string modifier);
+        public static Encoding Current = new UTF8Encoding(false, true);
     }
 }
