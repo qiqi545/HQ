@@ -28,10 +28,10 @@ namespace HQ.Platform.Api.Configuration
         public string DefaultTenantId { get; set; } = "0";
         public string DefaultTenantName { get; set; } = Constants.MultiTenancy.DefaultTenantName;
         public string TenantHeader { get; set; } = Constants.MultiTenancy.TenantHeader;
-        public int? TenantLifetimeSeconds { get; set; } = null;
+        public int? TenantLifetimeSeconds { get; set; } = 180;
         public TenantPartitionStrategy PartitionStrategy { get; set; } = TenantPartitionStrategy.Shared;
 
         public string ApplicationHeader { get; set; } = Constants.MultiTenancy.ApplicationHeader;
-        public int? ApplicationLifetimeSeconds { get; set; } = null;
+        public int? ApplicationLifetimeSeconds { get; set; } = 180;
     }
 }

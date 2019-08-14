@@ -264,9 +264,9 @@
       "DefaultTenantId": "0",
       "DefaultTenantName": "defaultTenant",
       "TenantHeader": "X-Api-Tenant",
-      "TenantLifetimeSeconds": null,
+      "TenantLifetimeSeconds": 180,
       "ApplicationHeader": "X-Api-Application",
-      "ApplicationLifetimeSeconds": null,
+      "ApplicationLifetimeSeconds": 180,
       "PartitionStrategy": "shared"
     },
 
@@ -280,7 +280,7 @@
       "VersionParameter": "api-version",
       "EnableVersionPath": true,
       "VersionPathPrefix": "v",
-      "VersionLifetimeSeconds": null,
+      "VersionLifetimeSeconds": 180,
       "VersionAgnosticPaths": [ "/", "/ops", "/auth", "/meta", "/superuser" ]
     }
   }

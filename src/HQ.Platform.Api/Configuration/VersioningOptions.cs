@@ -37,7 +37,7 @@ namespace HQ.Platform.Api.Configuration
         public bool EnableUserVersions { get; set; } = true;
         public string UserVersionClaim { get; set; } = Constants.Versioning.UserVersionClaim;
 
-        public int? VersionLifetimeSeconds { get; set; } = null;
+        public int? VersionLifetimeSeconds { get; set; } = 180;
 
         public string[] VersionAgnosticPaths { get; set; } = {"/"};
     }
