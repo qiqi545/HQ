@@ -15,6 +15,7 @@
 
 using System;
 using System.Diagnostics;
+using HQ.Common;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Configuration;
@@ -29,7 +30,8 @@ namespace HQ.Integration.DocumentDb.Options
         public DocumentConfigurationProvider(DocumentConfigurationSource source)
         {
             _source = source;
-            _repository = new DocumentDbRepository<ConfigurationDocument>("Options", new OptionsMonitorShim<DocumentDbOptions>(source.Options));
+            _repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, 
+	            new OptionsMonitorShim<DocumentDbOptions>(source.Options), null);
 		}
 
 		public bool HasChildren(string key)

@@ -20,6 +20,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts.Schema.Models;
+using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.Schema.Documents;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Options;
@@ -30,10 +31,9 @@ namespace HQ.Integration.DocumentDb.Schema
 	{
 		private readonly IDocumentDbRepository<SchemaVersionDocument> _repository;
 
-		public DocumentSchemaVersionStore(IOptionsMonitor<DocumentDbOptions> options)
+		public DocumentSchemaVersionStore(IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<SchemaVersionDocument>> logger)
 		{
-			_repository = new DocumentDbRepository<SchemaVersionDocument>(
-				Constants.ConnectionSlots.Schema, options);
+			_repository = new DocumentDbRepository<SchemaVersionDocument>(Constants.ConnectionSlots.Schema, options, logger);
 		}
 
 		public async Task<IEnumerable<SchemaVersion>> GetByApplicationId(string applicationId)

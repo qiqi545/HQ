@@ -44,7 +44,8 @@ namespace HQ.Integration.DocumentDb.Options
 	        
 	        if (configSeed != null)
 	        {
-		        var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, new OptionsMonitorShim<DocumentDbOptions>(options));
+		        var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, 
+			        new OptionsMonitorShim<DocumentDbOptions>(options), null);
 
 				switch (strategy)
 		        {

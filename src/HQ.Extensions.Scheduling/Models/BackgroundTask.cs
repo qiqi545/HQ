@@ -100,6 +100,8 @@ namespace HQ.Extensions.Scheduling.Models
             }
         }
 
+        public string Data { get; set; }
+
         private IEnumerable<DateTimeOffset> GetAllOccurrences()
         {
             if (!HasValidExpression)

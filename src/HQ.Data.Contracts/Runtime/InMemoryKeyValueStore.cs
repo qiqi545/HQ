@@ -42,9 +42,9 @@ namespace HQ.Data.Contracts.Runtime
 			return Memory.ContainsKey(name);
 		}
 
-		public void AddOrUpdate<T>(TKey name, T metric) where T : TValue
+		public void AddOrUpdate<T>(TKey name, T value) where T : TValue
 		{
-			Memory.AddOrUpdate(name, metric, (n, m) => m);
+			Memory.AddOrUpdate(name, value, (n, m) => m);
 		}
 
 		public bool Clear()

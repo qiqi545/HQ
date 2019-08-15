@@ -18,6 +18,7 @@
 using System;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Configuration;
+using Newtonsoft.Json;
 
 namespace HQ.Extensions.Scheduling.Models
 {
@@ -40,14 +41,14 @@ namespace HQ.Extensions.Scheduling.Models
         ///     depending on configuration. If `false`, it either failed to schedule or failed during execution, depending on
         ///     configuration.
         /// </returns>
-        public static Task<(bool, BackgroundTask)> TryScheduleTaskAsync(this BackgroundTaskHost host, Type type, Action<BackgroundTask> options = null)
+        public static Task<(bool, BackgroundTask)> TryScheduleTaskAsync(this BackgroundTaskHost host, Type type, object userData = null, Action<BackgroundTask> options = null)
         {
-            return host.QueueForExecutionAsync(type, options);
+            return host.QueueForExecutionAsync(type, userData, options);
         }
         
-        private static async Task<(bool, BackgroundTask)> QueueForExecutionAsync(this BackgroundTaskHost host, Type type, Action<BackgroundTask> options)
+        private static async Task<(bool, BackgroundTask)> QueueForExecutionAsync(this BackgroundTaskHost host, Type type, object userData, Action<BackgroundTask> options)
         {
-            var task = NewTask(host.Options, host.Serializer, type);
+            var task = NewTask(host.Options, host.Serializer, type, userData);
 
             options?.Invoke(task); // <-- at this stage, task should have a RunAt set by the user or it will be default
 
@@ -83,10 +84,10 @@ namespace HQ.Extensions.Scheduling.Models
             return (true, task);
         }
 
-        private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type)
+        private static BackgroundTask NewTask(BackgroundTaskOptions options, IBackgroundTaskSerializer serializer, Type type, object userData)
         {
             var handlerInfo = new HandlerInfo(type.Namespace, type.Name);
-            var task = new BackgroundTask { Handler = serializer?.Serialize(handlerInfo) };
+            var task = new BackgroundTask { Handler = serializer?.Serialize(handlerInfo), Data = userData == null ? null : JsonConvert.SerializeObject(userData) };
             options.ProvisionTask(task);
             return task;
         }

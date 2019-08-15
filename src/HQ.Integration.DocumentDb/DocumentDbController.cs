@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts.Mvc;
+using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +13,9 @@ namespace HQ.Integration.DocumentDb
     {
         protected DocumentDbRepository<T> Repository;
 
-        protected DocumentDbController(string slot, IOptionsMonitor<DocumentDbOptions> options)
+        protected DocumentDbController(string slot, IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<T>> logger)
         {
-            Repository = new DocumentDbRepository<T>(slot, options);
+            Repository = new DocumentDbRepository<T>(slot, options, logger);
         }
 
         [HttpPost("")]
@@ -42,14 +43,17 @@ namespace HQ.Integration.DocumentDb
         [HttpGet("")]
         public async Task<IActionResult> RetrieveAsync()
         {
-            var documents = await Repository.RetrieveAsync();
+            var documents = await Repository.RetrieveAsync(predicate: null, CancellationToken);
             return Ok(documents);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> RetrieveAsync(string id)
         {
-            var document = await Repository.RetrieveAsync(id);
+	        if (id == null)
+		        return BadRequest();
+
+			var document = await Repository.RetrieveAsync(id, CancellationToken);
             if (document == null)
             {
                 return NotFound();
@@ -61,12 +65,15 @@ namespace HQ.Integration.DocumentDb
         [HttpPut("")]
         public async Task<ActionResult> UpdateAsync(T item)
         {
-            if (!ValidModelState(out var error))
+	        if (item == null)
+		        return BadRequest();
+
+			if (!ValidModelState(out var error))
             {
                 return error;
             }
 
-            await Repository.UpdateAsync(item.Id, item);
+            await Repository.UpdateAsync(item.Id, item, CancellationToken);
             return Ok();
         }
 
@@ -74,17 +81,13 @@ namespace HQ.Integration.DocumentDb
         public async Task<ActionResult> DeleteAsync(string id)
         {
             if (id == null)
-            {
-                return BadRequest();
-            }
+				return BadRequest();
 
-            var document = await Repository.RetrieveAsync(id);
+			var document = await Repository.RetrieveAsync(id, CancellationToken);
             if (document == null)
-            {
-                return NotFound();
-            }
-
-            await Repository.DeleteAsync(id);
+				return NotFound();
+			
+			await Repository.DeleteAsync(id, CancellationToken);
             return NoContent();
         }
     }

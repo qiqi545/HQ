@@ -18,6 +18,7 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
@@ -34,14 +35,14 @@ namespace HQ.Integration.DocumentDb.Scheduling
 {
     public static class Add
     {
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, IConfiguration configuration = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, IConfiguration configuration = null)
         {
-            return builder.AddDocumentDbBackgroundTasksStore(configuration.Bind);
+            return builder.AddDocumentDbBackgroundTaskStore(configuration.Bind);
         }
 
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, string connectionString)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, string connectionString)
         {
-	        return builder.AddDocumentDbBackgroundTasksStore(o => { DefaultDbOptions(connectionString, o); });
+	        return builder.AddDocumentDbBackgroundTaskStore(o => { DefaultDbOptions(connectionString, o); });
         }
         private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
         {
@@ -51,10 +52,10 @@ namespace HQ.Integration.DocumentDb.Scheduling
 	        o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
 	        o.CollectionId = connectionStringBuilder.DefaultCollection ?? "BackgroundTasks";
 	        o.DatabaseId = connectionStringBuilder.Database ?? "Default";
-	        o.SharedCollection = false;
+	        o.SharedCollection = true; // Sequence, Document, etc.
         }
 
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTasksStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureAction = null)
+        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureAction = null)
         {
             Bootstrap.SetDefaultJsonSettings();
 
@@ -65,7 +66,10 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
             builder.Services.AddLocalTimestamps();
 			builder.Services.AddMetrics();
-			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
+			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, 
+				r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>(),
+				r.GetService<ISafeLogger<DocumentDbRepository<BackgroundTaskDocument>>>()
+				));
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
 			
             var serviceProvider = builder.Services.BuildServiceProvider();

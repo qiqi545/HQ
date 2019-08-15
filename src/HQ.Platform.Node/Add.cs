@@ -144,7 +144,7 @@ namespace HQ.Platform.Node
 			switch (backendType)
 			{
 				case nameof(DocumentDb):
-					tasksBuilder.AddDocumentDbBackgroundTasksStore(connectionString);
+					tasksBuilder.AddDocumentDbBackgroundTaskStore(connectionString);
 					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString);
 					runtimeBuilder.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddDocumentDbSchemaStores(connectionString);

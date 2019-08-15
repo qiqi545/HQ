@@ -21,7 +21,7 @@ namespace HQ.Extensions.Scheduling.Tests.DocumentDb
             };
 
             services.AddBackgroundTasks(o => { })
-                .AddDocumentDbBackgroundTasksStore(o =>
+                .AddDocumentDbBackgroundTaskStore(o =>
                 {
                     o.AccountKey = builder.AccountKey;
                     o.AccountEndpoint = builder.AccountEndpoint;

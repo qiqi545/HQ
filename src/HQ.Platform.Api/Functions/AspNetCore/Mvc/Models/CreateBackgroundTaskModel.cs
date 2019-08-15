@@ -30,5 +30,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
         public string[] Tags { get; set; }
 
         public string Expression { get; set; }
+
+		public object Data { get; set; }
     }
 }

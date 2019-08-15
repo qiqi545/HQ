@@ -31,7 +31,7 @@ namespace HQ.Extensions.Scheduling.Configuration
         {
             // System:
             DelayTasks = true;
-            SleepIntervalSeconds = 60;
+            SleepIntervalSeconds = 10;
             CleanupIntervalSeconds = 300;
             Concurrency = 0;
             ReadAhead = 5;
@@ -59,7 +59,7 @@ namespace HQ.Extensions.Scheduling.Configuration
         public bool DelayTasks { get; set; }
 
         /// <summary>
-        ///     The time to delay before checking for available tasks in the backing store. Default is 60 seconds.
+        ///     The time to delay before checking for available tasks in the backing store. Default is 10 seconds.
         /// </summary>
         public int SleepIntervalSeconds { get; set; }
 
@@ -95,7 +95,7 @@ namespace HQ.Extensions.Scheduling.Configuration
         public bool DeleteOnFailure { get; set; }
 
         /// <summary>
-        ///     Whether or not successful tasks are deleted from the backend store; default is false.
+        ///     Whether or not successful tasks are deleted from the backend store; default is true.
         /// </summary>
         public bool DeleteOnSuccess { get; set; }
 

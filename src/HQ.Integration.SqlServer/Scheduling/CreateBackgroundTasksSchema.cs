@@ -51,7 +51,8 @@ namespace HQ.Integration.SqlServer.Scheduling
                 .WithColumn("ContinueOnFailure").AsBoolean().NotNullable()
                 .WithColumn("ContinueOnError").AsBoolean().NotNullable()
                 .WithColumn("End").AsDateTimeOffset().Nullable()
-                ;
+                .WithColumn("Data").AsString(int.MaxValue).Nullable()
+				;
             Create.Table($"{nameof(BackgroundTask)}_Tag")
                 .WithColumn("Id").AsInt32().PrimaryKey().Identity()
                 .Unique() // CLUSTERED INDEX + UNIQUE (Faster Lookups)

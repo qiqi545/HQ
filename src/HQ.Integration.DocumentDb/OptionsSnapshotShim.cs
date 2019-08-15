@@ -1,5 +1,4 @@
-﻿#region LICENSE
-
+#region LICENSE
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,20 +11,27 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
-using System;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Runtime.Rest.Attributes
+namespace HQ.Integration.DocumentDb
 {
-    public class ResourceTypeAttribute : Attribute
-    {
-        public ResourceTypeAttribute(Type type)
-        {
-            Type = type;
-        }
+	internal sealed class OptionsSnapshotShim<T> : IOptionsSnapshot<T> where T : class, new()
+	{
+		public OptionsSnapshotShim(T options)
+		{
+			Value = options;
+		}
 
-        public Type Type { get; }
-    }
+		public T Get(string name)
+		{
+			return Value;
+		}
+		
+		public T Value
+		{
+			get;
+		}
+	}
 }

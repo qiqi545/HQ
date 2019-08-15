@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.DocumentDb.Scheduling
@@ -27,11 +28,13 @@ namespace HQ.Integration.DocumentDb.Scheduling
     {
         private readonly IDocumentDbRepository<BackgroundTaskDocument> _repository;
         private readonly IServerTimestampService _timestamps;
+        private readonly ISafeLogger<DocumentBackgroundTaskStore> _logger;
 
-        public DocumentBackgroundTaskStore(IDocumentDbRepository<BackgroundTaskDocument> repository, IServerTimestampService timestamps)
+        public DocumentBackgroundTaskStore(IDocumentDbRepository<BackgroundTaskDocument> repository, IServerTimestampService timestamps, ISafeLogger<DocumentBackgroundTaskStore> logger)
         {
             _repository = repository;
             _timestamps = timestamps;
+            _logger = logger;
         }
 
         public async Task<BackgroundTask> GetByIdAsync(int id)
@@ -92,13 +95,14 @@ namespace HQ.Integration.DocumentDb.Scheduling
             var existing = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
             if (existing == null)
             {
-                await _repository.CreateAsync(document);
-                return true;
+	            await _repository.CreateAsync(document);
+	            _logger.Trace(() => "Creating new task with ID {Id} and handler '{Handler}'", document.Id, document.Handler);
+				return true;
             }
 
             document.Id = existing.Id;
-
-            await _repository.UpdateAsync(existing.Id, document);
+            _logger.Trace(() => "Updating existing task with ID {Id} and handler '{Handler}'", document.Id, document.Handler);
+			await _repository.UpdateAsync(existing.Id, document);
             return true;
         }
 
@@ -106,9 +110,18 @@ namespace HQ.Integration.DocumentDb.Scheduling
         {
             var document = await _repository.RetrieveSingleOrDefaultAsync(x => x.TaskId == task.Id);
             if (document == null)
-                return false;
+            {
+	            _logger.Warn(() => "Could not delete task with ID {Id} as it was not found.", task.Id);
+				return false;
+            }
 
-            await _repository.DeleteAsync(document.Id);
+			var deleted = await _repository.DeleteAsync(document.Id);
+            if (!deleted)
+            {
+				_logger.Warn(() => "Could not delete task with ID {Id} successfully.", task.Id);
+				return false;
+            }
+
             return true;
         }
 

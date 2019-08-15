@@ -167,21 +167,21 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
                 if (type == null)
                     return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}", model.TaskType);
 
-                var result = await _host.TryScheduleTaskAsync(type, t =>
+                var (success, task) = await _host.TryScheduleTaskAsync(type, model.Data, t =>
                 {
-                    if (model.Tags?.Length > 0)
-                        t.Tags.AddRange(model.Tags);
+	                if (model.Tags?.Length > 0)
+		                t.Tags.AddRange(model.Tags);
 
-                    if (!string.IsNullOrWhiteSpace(model.Expression))
-                        t.Expression = model.Expression;
+	                if (!string.IsNullOrWhiteSpace(model.Expression))
+		                t.Expression = model.Expression;
                 });
 
-                if (!result.Item1)
+                if (!success)
                 {
                     return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
                 }
 
-                return Accepted(new Uri($"{Request.Path}/{result.Item2.Id}", UriKind.Relative));
+                return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
             }
 
             return NotImplemented();

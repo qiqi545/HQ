@@ -16,6 +16,8 @@
 #endregion
 
 using System.Net;
+using System.Threading;
+using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
@@ -89,6 +91,15 @@ namespace HQ.Data.Contracts.Mvc
 		public Error ConvertModelStateToError()
 		{
 			return ControllerExtensions.ConvertModelStateToError(this);
+		}
+
+		public CancellationToken CancellationToken
+		{
+			get
+			{
+				HttpContext.RequestServices.TryGetRequestAbortCancellationToken(out var cancellationToken);
+				return cancellationToken;
+			}
 		}
 
 		private bool ValidOrError(object instance, out ErrorResult error, params object[] args)

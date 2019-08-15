@@ -32,7 +32,7 @@ namespace HQ.Extensions.Scheduling.Models
         public ExecutionContext(IServiceProvider serviceProvider, IKeyValueStore<string, object> data, CancellationToken cancellationToken = default)
         {
             Continue = true;
-            Successful = false;
+            Successful = true;
             ExecutionServices = serviceProvider;
             CancellationToken = cancellationToken;
             _data = data;
@@ -69,5 +69,19 @@ namespace HQ.Extensions.Scheduling.Models
             item = default;
             return false;
         }
-    }
+
+        public bool TryGetData(string key, out bool item)
+        {
+	        if (_data.TryGetValue(key, out var value))
+	        {
+		        if (value is bool flag)
+		        {
+			        item = flag;
+			        return true;
+		        }
+	        }
+	        item = default;
+	        return false;
+        }
+	}
 }

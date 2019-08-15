@@ -52,40 +52,41 @@ namespace HQ.Integration.DocumentDb.Scheduling
             ContinueOnSuccess = task.ContinueOnSuccess;
             ContinueOnFailure = task.ContinueOnFailure;
             ContinueOnError = task.ContinueOnError;
-            
+
+            Data = task.Data;
             Tags = task.Tags ?? new List<string>();
         }
 
         public static implicit operator BackgroundTask (BackgroundTaskDocument document)
         {
-            var task = new BackgroundTask();
-
-            task.Id = document.TaskId;
-            task.Priority = document.Priority;
-            task.Attempts = document.Attempts;
-            task.Handler = document.Handler;
-            task.RunAt = document.RunAt;
-            task.MaximumRuntime = document.MaximumRuntime;
-            task.MaximumAttempts = document.MaximumAttempts;
-            task.DeleteOnSuccess = document.DeleteOnSuccess;
-            task.DeleteOnFailure = document.DeleteOnFailure;
-            task.DeleteOnError = document.DeleteOnError;
-            task.LastError = document.LastError;
-            task.FailedAt = document.FailedAt;
-            task.SucceededAt = document.SucceededAt;
-            task.LockedAt = document.LockedAt;
-            task.LockedBy = document.LockedBy;
-
-            task.Expression = document.Expression;
-            task.Start = document.Start;
-            task.End = document.End;
-            task.ContinueOnSuccess = document.ContinueOnSuccess;
-            task.ContinueOnFailure = document.ContinueOnFailure;
-            task.ContinueOnError = document.ContinueOnError;
-
-            task.Tags = document.Tags;
-            task.CreatedAt = document.Timestamp;
-            return task;
+			var task = new BackgroundTask
+			{
+				Id = document.TaskId,
+				Priority = document.Priority,
+				Attempts = document.Attempts,
+				Handler = document.Handler,
+				RunAt = document.RunAt,
+				MaximumRuntime = document.MaximumRuntime,
+				MaximumAttempts = document.MaximumAttempts,
+				DeleteOnSuccess = document.DeleteOnSuccess,
+				DeleteOnFailure = document.DeleteOnFailure,
+				DeleteOnError = document.DeleteOnError,
+				LastError = document.LastError,
+				FailedAt = document.FailedAt,
+				SucceededAt = document.SucceededAt,
+				LockedAt = document.LockedAt,
+				LockedBy = document.LockedBy,
+				Expression = document.Expression,
+				Start = document.Start,
+				End = document.End,
+				ContinueOnSuccess = document.ContinueOnSuccess,
+				ContinueOnFailure = document.ContinueOnFailure,
+				ContinueOnError = document.ContinueOnError,
+				Tags = document.Tags,
+				CreatedAt = document.Timestamp,
+				Data = document.Data
+	        };
+	        return task;
         }
 
         [AutoIncrement]
@@ -108,7 +109,10 @@ namespace HQ.Integration.DocumentDb.Scheduling
         public string Expression { get; set; }
         public DateTimeOffset Start { get; set; }
         public DateTimeOffset? End { get; set; }
-        public bool ContinueOnSuccess { get; set; } = true;
+
+        public string Data { get; set; }
+
+		public bool ContinueOnSuccess { get; set; } = true;
         public bool ContinueOnFailure { get; set; } = true;
         public bool ContinueOnError { get; set; } = true;
         public List<string> Tags { get; set; } = new List<string>();

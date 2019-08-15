@@ -203,7 +203,7 @@
       "Scheme": "PlatformBearer",
       "Policy": "ManageBackgroundTasks",
       "DelayTasks": true,
-      "SleepIntervalSeconds": 60,
+      "SleepIntervalSeconds": 10,
       "CleanupIntervalSeconds": 300,
       "Concurrency": 0,
       "ReadAhead": 5,

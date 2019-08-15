@@ -40,7 +40,7 @@ namespace HQ.Extensions.Scheduling.Tests
                 o.Concurrency = 1;
                 o.SleepIntervalSeconds = 1;
             });
-            await host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o => { o.RunAt =
+            await host.TryScheduleTaskAsync(typeof(StaticCountingHandler), null, o => { o.RunAt =
                 DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1); });
 
             host.Start(); // <-- starts background thread to poll for tasks
@@ -60,7 +60,7 @@ namespace HQ.Extensions.Scheduling.Tests
                 o.Concurrency = 1;
                 o.SleepIntervalSeconds = 1;
             });
-            host.TryScheduleTaskAsync(typeof(StaticCountingHandler), o =>
+            host.TryScheduleTaskAsync(typeof(StaticCountingHandler), null, o =>
             {
                 o.RunAt = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1);
                 o.RepeatIndefinitely(CronTemplates.Secondly(1));

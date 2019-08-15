@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Azure.Documents;
 
@@ -26,17 +27,20 @@ namespace HQ.Integration.DocumentDb
 {
     public interface IDocumentDbRepository<T> where T : IDocument
     {
-        Task<Document> CreateAsync(T item);
-        Task<T> RetrieveAsync(string id);
-		Task<long> CountAsync(Expression<Func<T, bool>> predicate = null);
-		Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null);
-        Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null);
-        Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
-        Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null);
-        Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null);
-        Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection);
-        Task<Document> UpdateAsync(string id, T item);
-        Task<Document> UpsertAsync(T item);
-		Task DeleteAsync(string id);
+        
+        Task<long> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+
+		Task<T> RetrieveAsync(string id, CancellationToken cancellationToken = default);
+		Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection, CancellationToken cancellationToken = default);
+		Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+		Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default);
+
+		Task<Document> CreateAsync(T item, CancellationToken cancellationToken = default);
+		Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default);
+		Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default);
+		Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default);
     }
 }

@@ -21,9 +21,11 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.CodeGeneration.Scripting;
+using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -42,13 +44,15 @@ namespace HQ.Integration.DocumentDb
 		private readonly string _slot;
 		private readonly DocumentClient _client;
 		private readonly IOptionsMonitor<DocumentDbOptions> _options;
+		private readonly ISafeLogger<DocumentDbRepository<T>> _logger;
 
-		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options)
+		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<T>> logger)
 		{
 			_reads = ReadAccessor.Create(typeof(T));
 			_writes = WriteAccessor.Create(typeof(T));
 			_slot = slot;
 			_options = options;
+			_logger = logger;
 
 			var defaultSettings = new JsonSerializerSettings();
 			_client = new DocumentClient(EndpointUri, options.Get(_slot).AccountKey, defaultSettings);
@@ -61,20 +65,19 @@ namespace HQ.Integration.DocumentDb
 		private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
 		private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
 
-		public async Task<Document> CreateAsync(T item)
+		public async Task<Document> CreateAsync(T item, CancellationToken cancellationToken = default)
 		{
-			await BeforeSaveAsync(item);
-
-			var document = await _client.CreateDocumentAsync(CollectionUri, item);
-
+			await BeforeSaveAsync(item, cancellationToken);
+			var document = await _client.CreateDocumentAsync(CollectionUri, item, cancellationToken: cancellationToken);
 			return document;
 		}
 
-		public async Task<T> RetrieveAsync(string id)
+		public async Task<T> RetrieveAsync(string id, CancellationToken cancellationToken = default)
 		{
 			try
 			{
-				Document document = await _client.ReadDocumentAsync(DocumentUri(id));
+				var options = GetRequestOptions(id);
+				Document document = await _client.ReadDocumentAsync(DocumentUri(id), options, cancellationToken);
 				return (T) (dynamic) document;
 			}
 			catch (DocumentClientException e)
@@ -88,84 +91,105 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
-		public Task<long> CountAsync(Expression<Func<T, bool>> predicate = null)
+		public Task<long> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
 			var queryable = CreateDocumentQuery();
 			var query = predicate != null ? queryable.Where(predicate).LongCount() : queryable.LongCount();
 			return Task.FromResult(query);
 		}
 
-		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection)
+		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection, CancellationToken cancellationToken = default)
 		{
 			var queryable = projection(CreateDocumentQuery());
 
-			var result = await GetResultsAsync(queryable.AsDocumentQuery());
+			var result = await GetResultsAsync(queryable.AsDocumentQuery(), cancellationToken);
 
 			return result;
 		}
 
-		public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null)
+		public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
 			var queryable = CreateDocumentQuery();
 
 			var query = predicate != null ? queryable.Where(predicate).AsDocumentQuery() : queryable.AsDocumentQuery();
 
-			return await GetResultsAsync(query);
+			return await GetResultsAsync(query, cancellationToken);
 		}
 
-		public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null)
+		public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
-			var results = await RetrieveAsync(predicate);
+			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.Single();
 		}
 
-		public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+		public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
-			var results = await RetrieveAsync(predicate);
+			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.SingleOrDefault();
 		}
 
-		public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null)
+		public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
-			var results = await RetrieveAsync(predicate);
+			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.First();
 		}
 
-		public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null)
+		public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
 		{
-			var results = await RetrieveAsync(predicate);
+			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.FirstOrDefault();
 		}
 
-		public async Task<Document> UpdateAsync(string id, T item)
+		public async Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default)
 		{
-			return await _client.ReplaceDocumentAsync(DocumentUri(id), item);
+			var options = GetRequestOptions(id);
+			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, options, cancellationToken);
 		}
 
-		public async Task<Document> UpsertAsync(T item)
+		public async Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default)
 		{
-			var response = await _client.UpsertDocumentAsync(CollectionUri, item);
-
+			var options = GetRequestOptions(item.Id);
+			var response = await _client.UpsertDocumentAsync(CollectionUri, item, options, cancellationToken: cancellationToken);
 			return response;
 		}
 
-		public async Task DeleteAsync(string id)
+		public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
 		{
-			await _client.DeleteDocumentAsync(DocumentUri(id));
+			var documentUri = DocumentUri(id);
+			var options = GetRequestOptions(id);
+			try
+			{
+				var response = await _client.DeleteDocumentAsync(documentUri, options, cancellationToken);
+				return response.StatusCode == HttpStatusCode.NoContent;
+			}
+			catch (Exception e)
+			{
+				_logger?.Error(() => "Error deleting document {Id} from task store", e, id);
+				return false;
+			}
 		}
 
-		private async Task BeforeSaveAsync(T item)
+		private static RequestOptions GetRequestOptions(string partitionKey)
 		{
-			await ValidateUniqueFields(item);
+			var options = new RequestOptions
+			{
+				PartitionKey = new PartitionKey(partitionKey)
+			};
+			return options;
+		}
+
+		private async Task BeforeSaveAsync(T item, CancellationToken cancellationToken)
+		{
+			await ValidateUniqueFields(item, cancellationToken);
 
 			await TryUpdateAutoIncrementingValues(item);
 		}
 
-		private async Task ValidateUniqueFields(T item)
+		private async Task ValidateUniqueFields(T item, CancellationToken cancellationToken)
 		{
 			IQueryable<T> queryable = null;
 			foreach (var member in AccessorMembers.Create(typeof(T)))
@@ -186,7 +210,7 @@ namespace HQ.Integration.DocumentDb
 			}
 
 			var query = queryable.AsDocumentQuery();
-			var results = await GetResultsAsync(query);
+			var results = await GetResultsAsync(query, cancellationToken);
 			if (results.Count > 0)
 			{
 				throw new DataException("Creating document would violate unique constraints for the document type.");
@@ -253,7 +277,10 @@ namespace HQ.Integration.DocumentDb
 
 		private Uri DocumentUri(string id)
 		{
-			return UriFactory.CreateDocumentUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId, id);
+			var databaseId = _options.Get(_slot).DatabaseId;
+			var collectionId = _options.Get(_slot).CollectionId;
+			var uri = UriFactory.CreateDocumentUri(databaseId, collectionId, id);
+			return uri;
 		}
 
 		private IQueryable<T> CreateDocumentQuery()
@@ -269,14 +296,14 @@ namespace HQ.Integration.DocumentDb
 			return queryable;
 		}
 
-		private static async Task<List<T>> GetResultsAsync(IDocumentQuery<T> query)
+		private static async Task<List<T>> GetResultsAsync(IDocumentQuery<T> query, CancellationToken cancellationToken)
 		{
 			try
 			{
 				var results = new List<T>();
 				while (query.HasMoreResults)
 				{
-					results.AddRange(await query.ExecuteNextAsync<T>());
+					results.AddRange(await query.ExecuteNextAsync<T>(cancellationToken));
 				}
 				return results;
 			}

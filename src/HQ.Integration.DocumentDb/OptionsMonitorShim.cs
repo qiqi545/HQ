@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb
 {
-	internal class OptionsMonitorShim<T> : IOptionsMonitor<T>
+	internal sealed class OptionsMonitorShim<T> : IOptionsMonitor<T>
 	{
 		public OptionsMonitorShim(T options)
 		{
