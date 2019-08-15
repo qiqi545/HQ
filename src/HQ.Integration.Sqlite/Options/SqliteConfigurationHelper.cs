@@ -19,7 +19,6 @@ using System.Diagnostics;
 using System.IO;
 using Dapper;
 using HQ.Extensions.Options;
-using HQ.Integration.Sqlite.Sql;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 

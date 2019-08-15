@@ -28,7 +28,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-
 using JsonInputFormatter = HQ.Platform.Api.Formatters.JsonInputFormatter;
 using JsonOutputFormatter = HQ.Platform.Api.Formatters.JsonOutputFormatter;
 using JsonPatchInputFormatter = HQ.Platform.Api.Formatters.JsonPatchInputFormatter;

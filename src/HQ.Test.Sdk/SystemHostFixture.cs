@@ -31,8 +31,6 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-
 namespace HQ.Test.Sdk
 {
     public sealed class SystemHostFixture<T> : IFunctionsHostBuilder, IDisposable where T : class

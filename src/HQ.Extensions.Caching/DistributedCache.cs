@@ -10,7 +10,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
-
 using SysOptions = Microsoft.Extensions.Options.Options;
 
 namespace HQ.Extensions.Caching

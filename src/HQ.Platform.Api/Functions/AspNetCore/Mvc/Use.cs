@@ -13,7 +13,6 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc

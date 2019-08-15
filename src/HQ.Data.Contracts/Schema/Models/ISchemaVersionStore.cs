@@ -16,7 +16,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Schema.Models

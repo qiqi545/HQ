@@ -23,7 +23,6 @@ using HQ.Common;
 using HQ.Data.Contracts.Schema.Extensions;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Cryptography;
-
 using S = HQ.Data.Contracts.Schema.Models.Schema;
 
 namespace HQ.Data.Contracts.Schema.Services

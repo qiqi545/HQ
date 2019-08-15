@@ -16,7 +16,6 @@
 #endregion
 
 using System.Data.Common;
-using HQ.Integration.DocumentDb.Sql.DbProvider;
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {

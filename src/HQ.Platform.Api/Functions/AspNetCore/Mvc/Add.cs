@@ -8,11 +8,9 @@ using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
-using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {

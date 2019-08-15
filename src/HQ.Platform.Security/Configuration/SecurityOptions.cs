@@ -15,10 +15,8 @@
 
 #endregion
 
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
-using HQ.Common;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HQ.Platform.Security.Configuration

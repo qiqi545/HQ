@@ -17,7 +17,6 @@ using System;
 using System.Diagnostics;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
-using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.DocumentDb.Options
@@ -110,7 +109,7 @@ namespace HQ.Integration.DocumentDb.Options
         private void ReloadAndLog()
         {
 	        OnReload();
-	        Trace.WriteLine("Configuration was reloaded.");
+	        Trace.TraceInformation("Configuration was reloaded.");
         }
     }
 }

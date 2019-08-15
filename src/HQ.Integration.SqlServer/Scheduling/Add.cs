@@ -1,5 +1,4 @@
 using System;
-using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;

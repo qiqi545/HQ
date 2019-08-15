@@ -23,7 +23,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {

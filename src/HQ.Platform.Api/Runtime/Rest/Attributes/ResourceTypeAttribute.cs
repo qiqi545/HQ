@@ -23,7 +23,7 @@ namespace HQ.Platform.Runtime.Rest.Attributes
     {
         public ResourceTypeAttribute(Type type)
         {
-            Type = type;
+            System.Type = type;
         }
 
         public Type Type { get; }

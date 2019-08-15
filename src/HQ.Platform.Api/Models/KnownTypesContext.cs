@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.Mvc;
 
 namespace HQ.Platform.Api.Models
 {

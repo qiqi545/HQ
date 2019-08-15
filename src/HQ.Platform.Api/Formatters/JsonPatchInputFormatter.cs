@@ -21,7 +21,6 @@ using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.Serialization;
-using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;

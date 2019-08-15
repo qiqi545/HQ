@@ -29,8 +29,6 @@ using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Runtime;
-using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

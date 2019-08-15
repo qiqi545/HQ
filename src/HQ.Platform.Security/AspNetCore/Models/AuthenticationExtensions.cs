@@ -31,7 +31,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-
 using CookieOptions = HQ.Platform.Security.Configuration.CookieOptions;
 
 namespace HQ.Platform.Security.AspNetCore.Models

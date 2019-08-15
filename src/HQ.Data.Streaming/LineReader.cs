@@ -27,7 +27,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics;
 using TypeKitchen;
-
 using Constants = HQ.Data.Streaming.Internal.Constants;
 
 namespace HQ.Data.Streaming

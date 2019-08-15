@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Immutable;
 using System.Text;
-using HQ.Common;
 using TypeKitchen;
 
 namespace HQ.Extensions.Metrics.Internal

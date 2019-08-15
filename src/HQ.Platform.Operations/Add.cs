@@ -30,14 +30,12 @@ using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
-using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Constants = HQ.Common.Constants;
 

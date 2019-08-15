@@ -30,7 +30,6 @@ using HQ.Integration.Sqlite.Sql;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
