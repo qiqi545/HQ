@@ -20,6 +20,7 @@
     "9B8316F4-6D55-4917-A18B-34F64DA84CFB"
   ],
   "symbols": {
+
     "db": {
       "type": "parameter",
       "datatype": "choice",
@@ -45,6 +46,7 @@
       "defaultValue": "sqlite",
       "description": "The storage technology used to persist permanent objects."
     },
+
     "port": {
       "type": "parameter",
       "datatype": "string",
@@ -52,6 +54,7 @@
       "replaces": "7070",
       "description": "The port to use for HTTPS communication. The default is 7070."
     },
+
     "appInsightsKey": {
       "type": "parameter",
       "datatype": "string",
@@ -59,6 +62,7 @@
       "replaces": "APP-INSIGHTS-KEY-REPLACE-ME",
       "description": "This is your Azure Application Insights instrumentation key. This will be used to configure the node with Application Insights telemetry."
     },
+    
     "DocumentDb": {
       "type": "computed",
       "value": "(db == \"cosmos-db\")"

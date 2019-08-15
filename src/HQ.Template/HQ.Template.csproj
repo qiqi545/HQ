@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
-    <PackageReference Include="HQ" Version="1.0.132" />
+    <PackageReference Include="HQ" Version="1.0.133" />
   </ItemGroup>
 
   <!--#if(false)-->
