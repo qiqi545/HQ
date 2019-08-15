@@ -31,7 +31,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			var root = validationContext.ObjectType;
+			var root = validationContext.ObjectInstance;
 			return ComputedPredicate.Compute(root, Expression)
 				? ValidationResult.Success
 				: new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString));

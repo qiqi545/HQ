@@ -13,8 +13,6 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Integration.DocumentDb.Sql;
-
 namespace HQ.Integration.DocumentDb.Options
 {
 	internal class ConfigurationDocument : DocumentBase<ConfigurationDocument>

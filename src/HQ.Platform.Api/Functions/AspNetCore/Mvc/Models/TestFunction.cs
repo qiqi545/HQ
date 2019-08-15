@@ -60,13 +60,13 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 
         public Task PerformAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(PerformAsync)} executed.");
+			_logger.Debug(() => $"{nameof(PerformAsync)} executed.");
             return Task.CompletedTask;
         }
 
         public Task SuccessAsync(ExecutionContext context)
         {
-            _logger.Debug(() => $"{nameof(SuccessAsync)} executed.");
+			_logger.Debug(() => $"{nameof(SuccessAsync)} executed.");
             return Task.CompletedTask;
         }
 

@@ -37,11 +37,12 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		public DocumentDbConnectionStringBuilder(DocumentDbOptions options) : this()
 		{
-			Database = options.DatabaseId;
-			DefaultCollection = options.CollectionId;
-			SharedCollection = options.SharedCollection;
 			AccountEndpoint = options.AccountEndpoint;
 			AccountKey = options.AccountKey;
+			DefaultCollection = options.CollectionId;
+			Database = options.DatabaseId;
+			SharedCollection = options.SharedCollection;
+			PartitionKeyPaths = options.PartitionKeyPaths;
 		}
 
 		public void Bind(DocumentDbOptions options)
@@ -53,7 +54,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			options.SharedCollection = SharedCollection;
 			options.PartitionKeyPaths = PartitionKeyPaths;
 		}
-		
+
 		public DocumentDbConnectionStringBuilder(string connectionString) : this()
 		{
 			var entries = connectionString.Split(new[] {';'}, StringSplitOptions.RemoveEmptyEntries);
@@ -95,7 +96,11 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		public string[] PartitionKeyPaths
 		{
-			get => this[Constants.PartitionKeyPathsKey] as string[];
+			get
+			{
+				var value = this[Constants.PartitionKeyPathsKey] as string;
+				return value?.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+			}
 			set
 			{
 				this[Constants.PartitionKeyPathsKey] = value;

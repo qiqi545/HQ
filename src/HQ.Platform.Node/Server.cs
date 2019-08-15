@@ -33,7 +33,7 @@ namespace HQ.Platform.Node
             Execute(args, () =>
             {
                 var builder = WebHost.CreateDefaultBuilder(args);
-                builder.ConfigureHq(args, false);
+                builder.ConfigureHq(args, true);
                 builder.UseStartup<TStartup>();
 
                 var host = builder.Build();

@@ -23,7 +23,11 @@ namespace HQ.Extensions.Scheduling.Configuration
 {
     public class BackgroundTaskOptions : FeatureToggle, IProtectedFeature, IComponentOptions
     {
-        public BackgroundTaskOptions()
+	    public string RootPath { get; set; } = "/ops";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+	    public string Policy { get; set; } = Constants.Security.Policies.ManageBackgroundTasks;
+
+		public BackgroundTaskOptions()
         {
             // System:
             DelayTasks = true;
@@ -42,8 +46,6 @@ namespace HQ.Extensions.Scheduling.Configuration
             DeleteOnError = false;
             Priority = 0;
         }
-
-        public string RootPath { get; set; } = "/ops";
 
         /// <summary>
         ///     The function responsible for calculating the next attempt date after a tasks fails;
@@ -107,9 +109,6 @@ namespace HQ.Extensions.Scheduling.Configuration
         ///     highest priority
         /// </summary>
         public int Priority { get; set; }
-
-        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-		public string Policy { get; set; } = Constants.Security.Policies.ManageBackgroundTasks;
 
 		public StoreOptions Store { get; set; }
 

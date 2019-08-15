@@ -27,20 +27,15 @@ namespace HQ.Integration.Sqlite.Options
     {
         public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, optional: false, reloadOnChange: false, configSeed: configSeed);
+            return AddSqlite(builder, provider: null, path: path, reloadOnChange: false, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional, IConfiguration configSeed = null)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path,  bool reloadOnChange, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: false, configSeed: configSeed);
+            return AddSqlite(builder, provider: null, path: path, reloadOnChange: reloadOnChange, configSeed: configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, bool optional, bool reloadOnChange, IConfiguration configSeed = null)
-        {
-            return AddSqlite(builder, provider: null, path: path, optional: optional, reloadOnChange: reloadOnChange, configSeed: configSeed);
-        }
-
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool optional, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
         {
 			var saveConfig = new SaveConfigurationOptions();
 			configureAction?.Invoke(saveConfig);

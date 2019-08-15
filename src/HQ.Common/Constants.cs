@@ -59,6 +59,11 @@ namespace HQ.Common
 	        public const string DefaultCollection = "Objects";
         }
 
+        public static class Options
+        {
+	        public const string DefaultCollection = "Options";
+        }
+
 		public static class Schemas
         {
             public const string DefaultNamespace = "MyNamespace";

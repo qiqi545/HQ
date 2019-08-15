@@ -21,7 +21,10 @@ using System.Linq;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class RetryPolicy
+	/// <summary>
+	///     A retry policy, for use with <see cref="PushQueue{T}" />
+	/// </summary>
+	public class RetryPolicy
     {
         private readonly IDictionary<int, RetryDecision> _rules;
         private RetryDecision _default = RetryDecision.Requeue;

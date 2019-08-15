@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
@@ -84,21 +85,32 @@ namespace HQ.Integration.DocumentDb.Options
 
 			Data[key] = value;
             if (_source.ReloadOnChange)
-                OnReload();
-        }
+				ReloadAndLog();
+		}
 
         public override void Load()
         {
             var onChange = Data.Count > 0;
             Data.Clear();
             var data = _repository.RetrieveAsync().GetAwaiter().GetResult();
+            var loadedKeys = 0;
             foreach (var item in data)
             {
 	            Data[item.Key] = item.Value;
 	            onChange = true;
+	            loadedKeys++;
             }
+
+            if (loadedKeys > 0)
+	            Trace.TraceInformation($"Configuration loaded {loadedKeys} keys from the store.");
 			if (onChange && _source.ReloadOnChange)
-                OnReload();
+				ReloadAndLog();
+		}
+
+        private void ReloadAndLog()
+        {
+	        OnReload();
+	        Trace.WriteLine("Configuration was reloaded.");
         }
     }
 }

@@ -14,9 +14,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Linq;
+using HQ.Common;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
-using HQ.Integration.DocumentDb.Sql;
 using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.DocumentDb.Options
@@ -40,7 +44,7 @@ namespace HQ.Integration.DocumentDb.Options
 	        
 	        if (configSeed != null)
 	        {
-		        var repository = new DocumentDbRepository<ConfigurationDocument>("Options", new OptionsMonitorShim<DocumentDbOptions>(options));
+		        var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, new OptionsMonitorShim<DocumentDbOptions>(options));
 
 				switch (strategy)
 		        {
@@ -67,20 +71,27 @@ namespace HQ.Integration.DocumentDb.Options
 
 	        void InsertIfNotExists(IDocumentDbRepository<ConfigurationDocument> repository)
 	        {
-		        foreach (var document in configSeed.AsEnumerable())
-		        {
-			        var exists = repository.RetrieveFirstOrDefaultAsync(x => x.Key == document.Key)
-				        .GetAwaiter().GetResult();
+		        var manifest = repository.RetrieveAsync()
+			        .GetAwaiter().GetResult().Select(x => x.Key).ToImmutableHashSet();
 
-			        if (exists != null)
-				        continue;
+		        var changedKeys = new HashSet<string>();
+				foreach (var document in configSeed.AsEnumerable())
+				{
+					if (manifest.Contains(document.Key))
+						continue;
 
 			        repository.CreateAsync(new ConfigurationDocument
 			        {
 				        Key = document.Key,
 				        Value = document.Value
 			        }).GetAwaiter().GetResult();
-		        }
+
+			        changedKeys.Add(document.Key);
+				}
+
+				Trace.TraceInformation(changedKeys.Count > 0
+					? $"Configuration updated the following keys: {string.Join(",", changedKeys)}"
+					: $"Configuration is up to date.");
 	        }
         }
     }

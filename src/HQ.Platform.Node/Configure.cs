@@ -22,80 +22,119 @@ using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Integration.Azure;
+using HQ.Integration.DocumentDb.Options;
 using HQ.Integration.Sqlite.Options;
+using HQ.Integration.SqlServer.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Platform.Node
 {
-    public static class Configure
-    {
-        private const string AppSettingsFileName = "appsettings";
-        private const string AppSettingsFileExtension = ".json";
+	public static class Configure
+	{
+		private const string AppSettingsFileName = "appsettings";
+		private const string AppSettingsFileExtension = ".json";
 
-        public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, bool seedOnLoad = false)
-        {
-            hostBuilder.ConfigureAppConfiguration((context, config) =>
-            {
-                config.Sources.Clear();
-				config.AddSqlite("settings.db", false, true, seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null);
-                config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
-                config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
+		public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, bool seedOnLoad = false)
+		{
+			hostBuilder.ConfigureAppConfiguration((context, config) =>
+			{
+				config.Sources.Clear();
 
-                if (context.HostingEnvironment.IsDevelopment())
-                {
-                    var assembly = GetApplicationAssembly(context);
-                    if (assembly != null)
+				config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
+				config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
+				config.AddCloudConfiguration(context, seedOnLoad);
+
+				if (context.HostingEnvironment.IsDevelopment())
+				{
+					var assembly = GetApplicationAssembly(context);
+					if (assembly != null)
 						config.AddUserSecrets(assembly, true);
 				}
 
-                config.AddEnvironmentVariables();
+				config.AddEnvironmentVariables();
 
-                if (args != null && args.Length > 0)
-                {
-                    config.AddCommandLine(args);
-                }
-            });
+				if (args != null && args.Length > 0)
+				{
+					config.AddCommandLine(args);
+				}
+			});
 
-            hostBuilder.ConfigureLogging((context, builder) =>
-            {
-                var config = context.Configuration;
+			hostBuilder.ConfigureLogging((context, builder) =>
+			{
+				var config = context.Configuration;
 
-                builder.ClearProviders();
-                builder.AddConfiguration(config);
+				builder.ClearProviders();
+				builder.AddConfiguration(config);
 
-                if (context.HostingEnvironment.IsDevelopment())
-                {
-                    builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
-                }
+				if (context.HostingEnvironment.IsDevelopment())
+				{
+					builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
+				}
 
-                builder.AddDebug();
-                builder.AddEventSourceLogger();
-                builder.AddSafeLogging();
+				builder.AddDebug();
+				builder.AddEventSourceLogger();
+				builder.AddSafeLogging();
+				builder.AddCloudLogging(config);
+			});
 
-                //
-                // Cloud Logging:
-                var cloudConfig = config.GetSection("Cloud");
-                switch (cloudConfig["Provider"])
-                {
-	                case nameof(Azure):
-	                {
-		                var cloudOptions = new AzureOptions();
-		                cloudConfig.Bind(cloudOptions);
+			return hostBuilder;
+		}
+
+		private static void AddCloudLogging(this ILoggingBuilder builder, IConfiguration config)
+		{
+			var cloudConfig = config.GetSection("Cloud");
+			switch (cloudConfig["Provider"])
+			{
+				case nameof(Azure):
+					{
+						var cloudOptions = new AzureOptions();
+						cloudConfig.Bind(cloudOptions);
 						builder.ConfigureCloudLogging(cloudOptions);
 						break;
-	                }
-                }
-            });
+					}
+			}
+		}
 
-            return hostBuilder;
-        }
+		private static void AddCloudConfiguration(this IConfigurationBuilder config, WebHostBuilderContext context,
+			bool seedOnLoad)
+		{
+			var root = config.Build();
 
-        private static Assembly GetApplicationAssembly(WebHostBuilderContext context)
-        {
-            var assembly = Assembly.Load(new AssemblyName(context.HostingEnvironment.ApplicationName));
-            return assembly;
-        }
-    }
+			var backend = root.GetSection("Backend");
+			var backendType = backend["Type"];
+			if (string.IsNullOrWhiteSpace(backendType))
+			{
+				Trace.TraceWarning("No backend type found!");
+				return;
+			}
+
+			Trace.TraceInformation($"Installing {backendType} back-end configuration.", backendType);
+
+			var connectionString = backend.GetConnectionString(Common.Constants.Options.DefaultCollection);
+			var seed = seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null;
+
+			switch (backendType)
+			{
+				case nameof(DocumentDb):
+					config.AddDocumentDb(connectionString, true, seed);
+					break;
+				case nameof(Sqlite):
+					config.AddSqlite(connectionString, true, seed);
+					break;
+				case nameof(SqlServer):
+					config.AddSqlServer(connectionString, true, seed);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(backendType, typeof(string), null);
+			}
+		}
+
+		private static Assembly GetApplicationAssembly(WebHostBuilderContext context)
+		{
+			var assembly = Assembly.Load(new AssemblyName(context.HostingEnvironment.ApplicationName));
+			return assembly;
+		}
+	}
 }

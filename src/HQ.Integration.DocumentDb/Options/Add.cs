@@ -30,15 +30,15 @@ namespace HQ.Integration.DocumentDb.Options
 		    return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, configureOptions.Bind, reloadOnChange, configSeed);
 	    }
 
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed =  null)
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureOptions = null)
 		{
 			return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, configureOptions, reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureAction, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureDatabase, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
 			var dbConfig = new DocumentDbOptions();
-			configureAction?.Invoke(dbConfig);
+			configureDatabase?.Invoke(dbConfig);
 
 			var saveConfig = new SaveConfigurationOptions();
 			configureOptions?.Invoke(saveConfig);
