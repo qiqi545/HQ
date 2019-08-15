@@ -15,9 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
-using HQ.Integration.Azure;
 using HQ.Platform.Node;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -26,42 +24,37 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Template
 {
-    public class Startup
-    {
-        public static void Main(string[] args) => Server.Start<Startup>(args, GetCloudOptions);
+	public class Startup
+	{
+		public static void Main(string[] args) => Server.Start<Startup>(args);
 
-        private readonly IConfiguration _configuration;
-        private readonly IHostingEnvironment _environment;
-        private readonly ISafeLogger<Startup> _logger;
+		private readonly IConfiguration _configuration;
+		private readonly IHostingEnvironment _environment;
+		private readonly ISafeLogger<Startup> _logger;
 
-        public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
-        {
-            _configuration = configuration;
-            _environment = environment;
-            _logger = logger;
-        }
+		public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
+		{
+			_configuration = configuration;
+			_environment = environment;
+			_logger = logger;
+		}
 
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddHq(_environment, _configuration, _logger, GetCloudOptions(_configuration));
-        }
+		// This method gets called by the runtime. Use this method to add services to the container.
+		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+		public void ConfigureServices(IServiceCollection services)
+		{
+			services.AddHq(_environment, _configuration, _logger);
+		}
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		{
+			if (env.IsDevelopment())
+			{
+				app.UseDeveloperExceptionPage();
+			}
 
-            app.UseHq(_logger, routes => { /* custom MVC routes */});
-        }
-
-        private static ICloudOptions[] GetCloudOptions(IConfiguration config)
-        {
-            return new ICloudOptions[] { config.GetSection("Cloud").Get<AzureOptions>() };
-        }
-    }
+			app.UseHq(_logger, routes => { /* custom MVC routes */});
+		}
+	}
 }

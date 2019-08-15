@@ -10,12 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="seed.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.5" />
-    <ProjectReference Include="..\HQ\HQ.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.2.6" />
+    <PackageReference Include="HQ" Version="1.0.132" />
   </ItemGroup>
 
   <!--#if(false)-->
@@ -33,6 +29,7 @@
     <Content Include="**\*.*" Exclude="bin\**;obj\**;*.nuspec;*.bat;*.user">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <EmbeddedResource Include="..\HQ.Platform.Node\seed.json" Link="seed.json" />
     <Content Update="**\*.*" Link="content\%(RecursiveDir)%(Filename)%(Extension)">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
