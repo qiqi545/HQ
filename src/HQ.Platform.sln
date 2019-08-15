@@ -116,7 +116,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Messaging.Tests", "..\test\HQ.Extensions.Messaging.Tests\HQ.Extensions.Messaging.Tests.csproj", "{85CF9678-EA77-43FD-ACF8-62EA488A913B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Platform.Node.UI", "HQ.Platform.Node.UI\HQ.Platform.Node.UI.csproj", "{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Node.UI", "HQ.Platform.Node.UI\HQ.Platform.Node.UI.csproj", "{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.Notifications", "HQ.Extensions.Notifications\HQ.Extensions.Notifications.csproj", "{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -413,6 +415,12 @@ Global
 		{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5}.Package|Any CPU.Build.0 = Debug|Any CPU
 		{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Package|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Package|Any CPU.Build.0 = Debug|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -466,6 +474,7 @@ Global
 		{34839922-6BDD-4CA3-8CD6-E7E8A830748E} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 		{85CF9678-EA77-43FD-ACF8-62EA488A913B} = {D5755C45-0F3F-4560-A94E-EE1E1057EA8E}
 		{EB8CF1BE-B373-4053-AD6F-167DB0A3E6D5} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
+		{5AA4066E-6B09-45BA-9BF8-5B3E4B6FFEF9} = {A0789B23-45A4-420D-8731-0B1186EAFD65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {10824399-8311-4632-833E-A9C7C7437B80}
