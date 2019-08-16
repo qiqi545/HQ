@@ -22,6 +22,7 @@ using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Notifications;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;
 using HQ.Integration.Azure;
@@ -130,7 +131,6 @@ namespace HQ.Platform.Node
 			//
 			// Backend Services:
 			var backend = configRoot.GetSection("Backend");
-			var connectionString = backend.GetConnectionString("DefaultConnection");
 			var dbConfig = backend.GetSection("DbOptions");
 			if (dbConfig?.Value == null)
 				dbConfig = null;
@@ -144,21 +144,21 @@ namespace HQ.Platform.Node
 			switch (backendType)
 			{
 				case nameof(DocumentDb):
-					tasksBuilder.AddDocumentDbBackgroundTaskStore(connectionString);
-					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString);
-					runtimeBuilder.AddDocumentDbRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
-					schemaBuilder.AddDocumentDbSchemaStores(connectionString);
+					tasksBuilder.AddDocumentDbBackgroundTaskStore(backend.GetConnectionString("Tasks"));
+					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"));
+					runtimeBuilder.AddDocumentDbRuntimeStores(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
+					schemaBuilder.AddDocumentDbSchemaStores(backend.GetConnectionString("Schema"));
 					break;
 				case nameof(SqlServer):
-					tasksBuilder.AddSqlServerBackgroundTasksStore(connectionString, ConnectionScope.ByRequest, dbConfig);
-					identityBuilder.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, ConnectionScope.ByRequest, dbConfig);
-					runtimeBuilder.AddSqlServerRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"), ConnectionScope.ByRequest, dbConfig);
+					identityBuilder.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqlServerRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddSqlServerSchemaStores();
 					break;
 				case nameof(Sqlite):
-					tasksBuilder.AddSqliteBackgroundTasksStore(connectionString, ConnectionScope.ByRequest, dbConfig);
-					identityBuilder.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, ConnectionScope.ByRequest, dbConfig);
-					runtimeBuilder.AddSqliteRuntime(connectionString, ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"), ConnectionScope.ByRequest, dbConfig);
+					identityBuilder.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqliteRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddSqliteSchemaStores();
 					break;
 				default:
@@ -183,6 +183,13 @@ namespace HQ.Platform.Node
 					logger.Info(() => "GraphQL is enabled.");
 				}
 			}
+
+			//
+			// Notification Services:
+			services.AddEmailNotifications(hq.GetSection("Email"));
+
+			//
+			// Media Services:
 			
 			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 

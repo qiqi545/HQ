@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
@@ -27,7 +26,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 {
     public static class Add
     {
-	    public static IdentityBuilder AddSqlStores<TDatabase, TKey, TUser, TRole, TTenant, TApplication>
+	    public static IdentityBuilder AddSqlIdentityStores<TDatabase, TKey, TUser, TRole, TTenant, TApplication>
         (
             this IdentityBuilder identityBuilder,
             string connectionString,
@@ -47,8 +46,7 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (scope == ConnectionScope.ByRequest)
 				services.AddHttpContextAccessor();
 
-			services.AddDatabaseConnection<TDatabase>(connectionString, scope, Constants.ConnectionSlots.Identity,
-                onConnection, onCommand);
+			services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, onConnection, onCommand);
 
             services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
             services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());

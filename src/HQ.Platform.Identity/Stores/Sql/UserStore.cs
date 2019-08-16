@@ -60,7 +60,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly TKey _applicationId;
         private readonly string _applicationName;
 
-        public UserStore(IDataConnection connection,
+        public UserStore(IDataConnection<IdentityBuilder> connection,
             IPasswordHasher<TUser> passwordHasher,
             RoleManager<TRole> roles,
             IQueryableProvider<TUser> queryable,

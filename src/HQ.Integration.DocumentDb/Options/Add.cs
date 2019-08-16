@@ -32,7 +32,7 @@ namespace HQ.Integration.DocumentDb.Options
 
 		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureOptions = null)
 		{
-			return builder.AddDocumentDb(new DocumentDbConnectionStringBuilder(connectionString).Bind, configureOptions, reloadOnChange, configSeed);
+			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions, reloadOnChange, configSeed);
 		}
 
 		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureDatabase, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed = null)
@@ -49,6 +49,18 @@ namespace HQ.Integration.DocumentDb.Options
 			};
 			builder.Add(source);
 			return builder;
+		}
+
+		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
+		{
+			var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
+			o.AccountKey = o.AccountKey ?? connectionStringBuilder.AccountKey;
+			o.AccountEndpoint = o.AccountEndpoint ?? connectionStringBuilder.AccountEndpoint;
+			o.DatabaseId = o.DatabaseId ?? connectionStringBuilder.Database;
+			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Common.Constants.Options.DefaultCollection;
+
+			o.SharedCollection = false;
+			o.PartitionKeyPaths = new[] { "id" };
 		}
 	}
 }

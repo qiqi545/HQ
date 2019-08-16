@@ -1,5 +1,4 @@
 ﻿#region LICENSE
-
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -12,17 +11,34 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
-
 #endregion
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Extensions.Notifications.Configuration;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Notifications.Models
+namespace HQ.Extensions.Notifications.Email.Models
 {
-	public interface INotificationService<in T>
+	internal sealed class EmailService : IEmailService
 	{
-		Task<bool> SendAsync(T message);
-		Task<IEnumerable<bool>> SendAsync(IEnumerable<T> messages);
+		private readonly IEmailProvider _provider;
+		private readonly IOptions<EmailOptions> _options;
+
+		public EmailService(IEmailProvider provider, IOptions<EmailOptions> options)
+		{
+			_provider = provider;
+			_options = options;
+		}
+
+		public async Task<bool> SendAsync(EmailMessage message)
+		{
+			return await _provider.SendAsync(message);
+		}
+
+		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<EmailMessage> messages)
+		{
+			return await _provider.SendAsync(messages);
+		}
 	}
 }

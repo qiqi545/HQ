@@ -38,7 +38,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
             services.AddLocalTimestamps();
 			services.AddSafeLogging();
-            services.AddDatabaseConnection<SqlServerConnectionFactory>(connectionString, scope, Common.Constants.ConnectionSlots.BackgroundTasks);
+            services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope);
             
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
 

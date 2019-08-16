@@ -21,12 +21,14 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Builders;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using Microsoft.Extensions.Options;
+
 
 namespace HQ.Data.Sql.Implementation
 {
@@ -37,7 +39,7 @@ namespace HQ.Data.Sql.Implementation
         private readonly IOptionsMonitor<QueryOptions> _options;
         private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
 
-        public SqlObjectGetRepository(IDataConnection db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
+        public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
         {
             _db = db;
             _dialect = dialect;
@@ -88,7 +90,7 @@ namespace HQ.Data.Sql.Implementation
         private readonly ISqlDialect _dialect;
         private readonly IOptionsMonitor<QueryOptions> _options;
 
-        public SqlObjectGetRepository(IDataConnection db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
+        public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
         {
             _db = db;
             _dialect = dialect;

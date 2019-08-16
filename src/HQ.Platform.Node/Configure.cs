@@ -100,6 +100,9 @@ namespace HQ.Platform.Node
 		private static void AddCloudConfiguration(this IConfigurationBuilder config, WebHostBuilderContext context,
 			bool seedOnLoad)
 		{
+			config.AddJsonFile("seed.json", optional: true, reloadOnChange: true);
+			return; // FIXME: Need options to re-seed before this is actually useful...
+
 			var root = config.Build();
 
 			var backend = root.GetSection("Backend");

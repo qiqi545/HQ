@@ -34,7 +34,7 @@ namespace HQ.Platform.Security.Configuration
             Enabled = false;
         }
 
-        [Required]
+        [RequiredIfTrue(nameof(Enabled))]
         [DataType(DataType.Text)]
         [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string Username
@@ -43,8 +43,8 @@ namespace HQ.Platform.Security.Configuration
             set => _username = value;
         }
 
-        [Required]
-        [DataType(DataType.Password)]
+		[RequiredIfTrue(nameof(Enabled))]
+		[DataType(DataType.Password)]
         [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
         public string Password
         {

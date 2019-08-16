@@ -35,7 +35,7 @@ namespace HQ.Integration.Sqlite.Scheduling
             if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddDatabaseConnection<SqliteConnectionFactory>(connectionString, scope, Constants.ConnectionSlots.BackgroundTasks);
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString, scope);
 			builder.Services.AddLocalTimestamps();
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 

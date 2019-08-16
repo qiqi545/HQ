@@ -26,6 +26,7 @@ using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.SqlServer.Scheduling
@@ -39,7 +40,7 @@ namespace HQ.Integration.SqlServer.Scheduling
         private readonly IDataConnection _db;
         private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
 
-        public SqlServerBackgroundTaskStore(IDataConnection db, string schema = "dbo", string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
+        public SqlServerBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db, string schema = "dbo", string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
         {
             _db = db;
             _schema = schema;

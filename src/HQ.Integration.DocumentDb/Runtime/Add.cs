@@ -28,6 +28,7 @@ using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -38,16 +39,16 @@ namespace HQ.Integration.DocumentDb.Runtime
 {
 	public static class Add
 	{
-		public static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, IConfiguration dbConfig)
+		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, IConfiguration dbConfig)
 		{
 			return dbConfig == null
-				? AddDocumentDbRuntime(builder, connectionString, scope)
-				: AddDocumentDbRuntime(builder, connectionString, scope, dbConfig.Bind);
+				? AddDocumentDbRuntimeStores(builder, connectionString, scope)
+				: AddDocumentDbRuntimeStores(builder, connectionString, scope, dbConfig.Bind);
 		}
 
-		public static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
 		{
-			return AddDocumentDbRuntime(builder, connectionString, scope, o => { DefaultDbOptions(connectionString, o); });
+			return AddDocumentDbRuntimeStores(builder, connectionString, scope, o => { DefaultDbOptions(connectionString, o); });
 		}
 
 		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
@@ -57,12 +58,17 @@ namespace HQ.Integration.DocumentDb.Runtime
 			o.AccountEndpoint = o.AccountEndpoint ?? connectionStringBuilder.AccountEndpoint;
 			o.DatabaseId = o.DatabaseId ?? connectionStringBuilder.Database;
 			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
+
+			o.SharedCollection = true; // Anything
+			o.PartitionKeyPaths = new[] {"id"};
 		}
 
-		private static RuntimeBuilder AddDocumentDbRuntime(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
+		private static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
 		{
-			void ConfigureDatabase(DocumentDbOptions o) { configureDatabase?.Invoke(o); }
-			builder.Services.Configure<DocumentDbOptions>(ConfigureDatabase);
+			var slot = Constants.ConnectionSlots.Runtime;
+
+			if(configureDatabase != null)
+				builder.Services.Configure(slot, configureDatabase);
 
 			var serviceProvider = builder.Services.BuildServiceProvider();
 

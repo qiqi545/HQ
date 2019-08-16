@@ -109,7 +109,7 @@ namespace HQ.Integration.Sqlite.Identity
             var dialect = new SqliteDialect();
             SqlBuilder.Dialect = dialect;
 
-            identityBuilder.AddSqlStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand(), OnConnection);
+            identityBuilder.AddSqlIdentityStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand(), OnConnection);
             
             SimpleDataDescriptor.TableNameConvention = s =>
             {

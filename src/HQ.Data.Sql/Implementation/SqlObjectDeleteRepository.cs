@@ -21,6 +21,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 
 namespace HQ.Data.Sql.Implementation
@@ -32,7 +33,7 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IObjectSaveRepository<TObject> _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection db, IObjectGetRepository<TObject> gets, IObjectSaveRepository<TObject> saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<TObject> gets, IObjectSaveRepository<TObject> saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;
@@ -98,7 +99,7 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IObjectSaveRepository _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection db, IObjectGetRepository gets, IObjectSaveRepository saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository gets, IObjectSaveRepository saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;

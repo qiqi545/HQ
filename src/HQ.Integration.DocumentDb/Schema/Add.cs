@@ -49,9 +49,11 @@ namespace HQ.Integration.DocumentDb.Schema
 
 			o.AccountKey = connectionStringBuilder.AccountKey;
 			o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
-			o.CollectionId = connectionStringBuilder.DefaultCollection ?? "Schema";
+			o.CollectionId = connectionStringBuilder.DefaultCollection ?? Constants.Schemas.DefaultCollection;
 			o.DatabaseId = connectionStringBuilder.Database ?? "Default";
+
 			o.SharedCollection = true; // SchemaVersionDocument, ApplicationVersionDocument
+			o.PartitionKeyPaths = new[] {"id"};
 		}
 
 		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder, Action<DocumentDbOptions> configureAction = null)

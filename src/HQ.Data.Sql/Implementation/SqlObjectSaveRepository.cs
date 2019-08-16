@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Descriptor;
@@ -36,7 +37,7 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IServerTimestampService _timestamps;
 		private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
 
-		public SqlObjectSaveRepository(IDataConnection db, IDataBatchOperation<TBatchOptions> batching, IServerTimestampService timestamps)
+		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TBatchOptions> batching, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_copy = batching;
@@ -79,7 +80,7 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IDataBatchOperation<TOptions> _copy;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectSaveRepository(IDataConnection db, IDataBatchOperation<TOptions> batching, IServerTimestampService timestamps)
+		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TOptions> batching, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_copy = batching;

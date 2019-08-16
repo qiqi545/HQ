@@ -295,7 +295,7 @@ namespace HQ.Platform.Api
 			if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddDatabaseConnection<IObjectGetRepository, TDatabase>(connectionString, scope, onConnection, onCommand);
+			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, onConnection, onCommand);
 			builder.Services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
 
 			return builder;

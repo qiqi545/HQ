@@ -18,6 +18,7 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
@@ -52,8 +53,10 @@ namespace HQ.Integration.DocumentDb.Scheduling
 	        o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
 	        o.CollectionId = connectionStringBuilder.DefaultCollection ?? "BackgroundTasks";
 	        o.DatabaseId = connectionStringBuilder.Database ?? "Default";
+
 	        o.SharedCollection = true; // Sequence, Document, etc.
-        }
+	        o.PartitionKeyPaths = new[] { "id" };
+		}
 
         public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureAction = null)
         {
@@ -64,7 +67,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 			if (configureAction != null)
 	            builder.Services.Configure(slot, configureAction);
 
-            builder.Services.AddLocalTimestamps();
+			builder.Services.AddLocalTimestamps();
 			builder.Services.AddMetrics();
 			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, 
 				r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>(),

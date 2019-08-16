@@ -37,7 +37,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IQueryableProvider<TApplication> _queryable;
 
         public ApplicationStore(
-            IDataConnection connection,
+	        IDataConnection<IdentityBuilder> connection,
             IQueryableProvider<TApplication> queryable,
             IServiceProvider serviceProvider)
         {

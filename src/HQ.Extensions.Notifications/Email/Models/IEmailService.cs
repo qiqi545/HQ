@@ -21,5 +21,6 @@ namespace HQ.Extensions.Notifications.Email.Models
 {
 	public interface IEmailService : INotificationService<EmailMessage>
 	{
+
 	}
 }

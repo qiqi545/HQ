@@ -17,7 +17,7 @@
 
 namespace HQ.Data.SessionManagement
 {
-    public interface IDataConnection<T> : IDataConnection
+    public interface IDataConnection<TScope> : IDataConnection
     {
     }
 }

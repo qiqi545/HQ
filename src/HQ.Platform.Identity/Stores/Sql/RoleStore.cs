@@ -46,7 +46,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly TKey _tenantId;
         private readonly TKey _applicationId;
 
-        public RoleStore(IDataConnection connection, IQueryableProvider<TRole> queryable, IServiceProvider serviceProvider)
+        public RoleStore(IDataConnection<IdentityBuilder> connection, IQueryableProvider<TRole> queryable, IServiceProvider serviceProvider)
         {
             serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
             serviceProvider.TryGetTenantId(out _tenantId);

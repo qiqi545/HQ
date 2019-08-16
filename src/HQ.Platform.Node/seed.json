@@ -282,6 +282,12 @@
       "VersionPathPrefix": "v",
       "VersionLifetimeSeconds": 180,
       "VersionAgnosticPaths": [ "/", "/ops", "/auth", "/meta", "/superuser" ]
+    },
+
+    "Email": {
+      "Provider": "DirectoryEmailProvider",
+      "ProviderKey": "/email",
+      "From": null 
     }
   }
 }

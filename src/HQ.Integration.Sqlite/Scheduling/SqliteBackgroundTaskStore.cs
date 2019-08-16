@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.Sqlite.Scheduling
@@ -34,7 +35,7 @@ namespace HQ.Integration.Sqlite.Scheduling
         private readonly IDataConnection _db;
         private readonly string _tablePrefix;
         
-        public SqliteBackgroundTaskStore(IDataConnection db, string tablePrefix = "BackgroundTask")
+        public SqliteBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db, string tablePrefix = "BackgroundTask")
         {
             _db = db;
             _tablePrefix = tablePrefix;

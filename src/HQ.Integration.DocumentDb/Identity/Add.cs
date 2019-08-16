@@ -73,16 +73,23 @@ namespace HQ.Integration.DocumentDb.Identity
         {
 	        return identityBuilder.AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(o =>
 	        {
-		        var builder = new DocumentDbConnectionStringBuilder(connectionString);
-		        o.AccountKey = o.AccountKey ?? builder.AccountKey;
-		        o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
-		        o.DatabaseId = o.DatabaseId ?? builder.Database;
-		        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
-		        o.SharedCollection = true; // User, Role, Tenant, Application, etc.
+		        DefaultDbOptions(connectionString, o);
 	        }, scope);
         }
 
-		public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+        private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
+        {
+	        var builder = new DocumentDbConnectionStringBuilder(connectionString);
+	        o.AccountKey = o.AccountKey ?? builder.AccountKey;
+	        o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
+	        o.DatabaseId = o.DatabaseId ?? builder.Database;
+	        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
+
+	        o.SharedCollection = true; // User, Role, Tenant, Application, etc.
+	        o.PartitionKeyPaths = new[] { "id" };
+		}
+
+        public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
 		   this IdentityBuilder identityBuilder,
 		   Action<DocumentDbOptions> configureAction = null,
 		   ConnectionScope scope = ConnectionScope.ByRequest)
@@ -94,7 +101,7 @@ namespace HQ.Integration.DocumentDb.Identity
 		{
 			var services = identityBuilder.Services;
 
-			const string slot = "Identity";
+			const string slot = Constants.ConnectionSlots.Identity;
 
 			if (configureAction != null)
 				services.Configure(slot, configureAction);
@@ -106,7 +113,7 @@ namespace HQ.Integration.DocumentDb.Identity
 
 			var builder = new DocumentDbConnectionStringBuilder(options);
 
-			identityBuilder.AddSqlStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
+			identityBuilder.AddSqlIdentityStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
 				builder.ConnectionString, scope, OnCommand<TKey>(slot), OnConnection);
 
 			var dialect = new DocumentDbDialect();

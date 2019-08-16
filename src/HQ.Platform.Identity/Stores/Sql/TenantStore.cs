@@ -39,7 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         private readonly IQueryableProvider<TTenant> _queryable;
 
         public TenantStore(
-            IDataConnection connection,
+	        IDataConnection<IdentityBuilder> connection,
             IQueryableProvider<TTenant> queryable,
             IServiceProvider serviceProvider)
         {
