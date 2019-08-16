@@ -1,0 +1,147 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
+
+  <PropertyGroup>
+    <Description>This package contains the full-stack build for HQ.io.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
+    <Description>This package contains the full-stack sources for HQ.io.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <Configurations>Debug;Release;</Configurations>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DefineConstants>TRACE;PLATFORM</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TieredCompilation>true</TieredCompilation>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+
+    <!-- Common -->
+    <Compile Include="..\HQ.Common\**\*.cs" Exclude="..\HQ.Common\obj\**\*" Link="Common\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Common.AspNetCore\**\*.cs" Exclude="..\HQ.Common.AspNetCore\obj\**\*" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Common.AspNetCore.Mvc\obj\**\*" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    
+    <!-- Extensions -->
+    <Compile Include="..\HQ.Extensions.Numerics\**\*.cs" Exclude="..\HQ.Extensions.Numerics\obj\**\*" Link="Extensions.Numerics\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Exclude="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\**\*" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Caching\**\*.cs" Exclude="..\HQ.Extensions.Caching\obj\**\*" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Exclude="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**\*" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Correlation\**\*.cs" Exclude="..\HQ.Extensions.Correlation\obj\**\*" Link="Extensions.Correlation\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Deployment\**\*.cs" Exclude="..\HQ.Extensions.Deployment\obj\**\*" Link="Extensions.Deployment\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Notifications\**\*.cs" Exclude="..\HQ.Extensions.Notifications\obj\**\*" Link="Extensions.Notifications\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Scheduling\**\*.cs" Exclude="..\HQ.Extensions.Scheduling\obj\**\*" Link="Extensions.Scheduling\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Scheduling.Sql\**\*.cs" Exclude="..\HQ.Extensions.Scheduling.Sql\obj\**\*" Link="Extensions.Scheduling.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    
+    <!-- Platform -->
+    <Compile Include="..\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Functions\**\*.cs" Exclude="..\HQ.Platform.Functions\obj\**\*" Link="Platform.Functions\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Functions.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Functions.AspNetCore.Mvc\obj\**\*" Link="Platform.Functions.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Identity\**\*.cs" Exclude="..\HQ.Platform.Identity\obj\**\*" Link="Platform.Identity\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Identity.Stores.Sql\**\*.cs" Exclude="..\HQ.Platform.Identity.Stores.Sql\obj\**\*" Link="Platform.Identity.Stores.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Identity.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Identity.AspNetCore.Mvc\obj\**\*" Link="Platform.Identity.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Node\**\*.cs" Exclude="..\HQ.Platform.Node\obj\**\*" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Operations\**\*.cs" Exclude="..\HQ.Platform.Operations\obj\**\*" Link="Platform.Operations\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Security\**\*.cs" Exclude="..\HQ.Platform.Security\obj\**\*" Link="Platform.Security\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.Platform.Node\**\*" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Data -->
+    <Compile Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
+    
+    <!-- UI -->
+    <!--<Compile Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.UI.Web\lib\**\*;..\HQ.UI.Web.SemanticUi\lib\**\*" Link="lib\%(RecursiveDir)\%(Filename)%(Extension)" />
+    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />-->
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Strings (RESX compilation must sit exactly relative to the namespace it is consumed by -->
+    <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <Compile Update="**\ErrorStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ErrorStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <!-- SQLite -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Compile Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
+  </ItemGroup>
+
+  <!-- SQL Server -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Compile Include="..\HQ.Integration.SqlServer\**\*.cs" Exclude="..\HQ.Integration.SqlServer\obj\**\*" Link="Integration.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- DocumentDB -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Compile Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
+  </ItemGroup>
+
+  <!-- Azure -->
+  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
+    <Compile Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Bogus" Version="28.0.2" />
+    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
+    <PackageReference Include="Humanizer" Version="2.6.2" />
+    <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
+    <PackageReference Include="AngleSharp" Version="0.12.1" />
+    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
+    <PackageReference Include="NCrontab" Version="3.3.1" />
+    <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
+    <PackageReference Include="Postmark" Version="4.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
+    <PackageReference Include="System.Reactive" Version="4.1.6" />
+    <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
+    <PackageReference Include="TypeKitchen" Version="1.0.7" />
+    <PackageReference Include="WyHash" Version="1.0.4" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
+    <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
+  </ItemGroup>
+
+</Project>
