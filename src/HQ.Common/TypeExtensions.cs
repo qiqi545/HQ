@@ -83,6 +83,8 @@ namespace HQ.Common
             }
         }
 
+
+
         public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType)
         {
             return GetImplementationsOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());
@@ -95,23 +97,32 @@ namespace HQ.Common
 
             foreach (var assembly in assemblies)
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var at in assembly.GetTypes())
                 {
-                    foreach (var member in type.GetMembers())
-                    {
-                        if (!(member is MethodBase ctorOrMethod))
-                            continue;
-
-                        foreach (var parameter in ctorOrMethod.GetParameters())
-                        {
-                            if (parameter.ParameterType.ImplementsGeneric(openGenericType))
-                            {
-                                yield return parameter.ParameterType;
-                            }
-                        }
-                    }
+	                foreach (var t in GetImplementationsOfOpenGeneric(openGenericType, at))
+		                yield return t;
                 }
             }
         }
+
+		public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType, Type type)
+		{
+			if (type.ImplementsGeneric(openGenericType))
+				yield return type;
+
+			foreach (var member in type.GetMembers())
+			{
+				if (!(member is MethodBase ctorOrMethod))
+					continue;
+
+				foreach (var parameter in ctorOrMethod.GetParameters())
+				{
+					if (parameter.ParameterType.ImplementsGeneric(openGenericType))
+					{
+						yield return parameter.ParameterType;
+					}
+				}
+			}
+		}
     }
 }

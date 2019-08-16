@@ -34,6 +34,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts.Mvc
 {
@@ -84,25 +85,29 @@ namespace HQ.Data.Contracts.Mvc
 			foreach (var descriptionGroup in _explorer.ApiDescriptionGroups.Items)
 			{
 				var groupName = descriptionGroup.GroupName;
-
-				foreach (var description in descriptionGroup.Items.OrderBy(x => x.RelativePath)
-					.ThenBy(x => x.HttpMethod))
+				var orderedActions = descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod);
+				
+				foreach (var description in orderedActions)
 				{
 					var controllerDescriptor = (ControllerActionDescriptor) description.ActionDescriptor;
-					var controllerType = controllerDescriptor.ControllerTypeInfo;
-					var controllerName = ResolveControllerName(controllerType);
+					var controllerTypeInfo = controllerDescriptor.ControllerTypeInfo;
+
+					if (!ResolveControllerFeatureEnabled(controllerTypeInfo.AsType(), serviceProvider))
+						continue;
+
+					var controllerName = ResolveControllerName(controllerTypeInfo);
 
 					var item = CreateOperationMetaItem(baseUri, description, serviceProvider);
 
-					if (!foldersByType.TryGetValue(controllerType, out var folder))
-						foldersByType.Add(controllerType,
+					if (!foldersByType.TryGetValue(controllerTypeInfo, out var folder))
+						foldersByType.Add(controllerTypeInfo,
 							folder = new MetaFolder
 							{
 								name = controllerName,
 								description = new MetaDescription
 								{
-									content = ResolveControllerDescription(controllerType)?.Content,
-									type = ResolveControllerDescription(controllerType)?.MediaType,
+									content = ResolveControllerDescription(controllerTypeInfo)?.Content,
+									type = ResolveControllerDescription(controllerTypeInfo)?.MediaType,
 									version = null
 								},
 								variable = new List<dynamic>(),
@@ -136,10 +141,6 @@ namespace HQ.Data.Contracts.Mvc
 			foreach (var folder in foldersByType)
 			{
 				var controllerType = folder.Key;
-
-				if (!ResolveControllerFeatureEnabled(controllerType, serviceProvider))
-					continue;
-
 				var category = ResolveControllerCategory(controllerType);
 				if (category != null)
 				{
@@ -318,7 +319,9 @@ namespace HQ.Data.Contracts.Mvc
 
 			//
 			// Bearer:
-			if (item.request?.auth != null && item.request.auth.Equals("bearer", StringComparison.OrdinalIgnoreCase))
+			if (item.request?.auth != null && 
+			    (item.request.auth.Equals("bearer", StringComparison.OrdinalIgnoreCase) ||
+			     item.request.auth.Equals("platformbearer", StringComparison.OrdinalIgnoreCase)))
 				item.request.header.Add(new MetaParameter
 				{
 					key = "Authorization",
@@ -365,8 +368,15 @@ namespace HQ.Data.Contracts.Mvc
 				: (MetaCategoryAttribute) controllerType.GetCustomAttribute(typeof(MetaCategoryAttribute), true);
 		}
 
-		private static bool ResolveControllerFeatureEnabled(MemberInfo controllerType, IServiceProvider serviceProvider)
+		private static bool ResolveControllerFeatureEnabled(Type controllerType, IServiceProvider serviceProvider)
 		{
+			foreach (var componentType in typeof(IDynamicComponentEnabled<>).GetImplementationsOfOpenGeneric(controllerType))
+			{
+				var component = serviceProvider.GetService(componentType);
+				if (component == null)
+					return false; // requires an installed component that isn't present
+			}
+
 			var attribute = !Attribute.IsDefined(controllerType, typeof(DynamicControllerAttribute)) ? null
 				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute), true);
 
@@ -381,8 +391,7 @@ namespace HQ.Data.Contracts.Mvc
 		{
 			if (!Attribute.IsDefined(controllerType, typeof(MetaDescriptionAttribute)))
 				return null;
-			var description =
-				(MetaDescriptionAttribute) controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
+			var description = (MetaDescriptionAttribute) controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
 			return description;
 		}
 
@@ -393,8 +402,7 @@ namespace HQ.Data.Contracts.Mvc
 			if (!Attribute.IsDefined(controllerType, typeof(DisplayNameAttribute)))
 				return controllerTypeName.Replace(nameof(Controller), string.Empty);
 
-			var description =
-				(DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
+			var description = (DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
 			return description.DisplayName;
 		}
 	}

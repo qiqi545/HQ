@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
@@ -29,6 +30,7 @@ using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Cryptography;
 using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Models;
+using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
@@ -44,7 +46,10 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	[Route("tokens")]
 	[DynamicController(typeof(SuperUserOptions))]
     [ApiExplorerSettings(IgnoreApi = false)]
-    public class SuperUserTokenController : DataController
+	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
+	[DisplayName("Tokens")]
+	[MetaDescription("Manages authentication tokens.")]
+	public class SuperUserTokenController : DataController, IDynamicComponentEnabled<SuperUserComponent>
     {
 	    private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
 	    private readonly IValidOptionsSnapshot<SecurityOptions> _security;

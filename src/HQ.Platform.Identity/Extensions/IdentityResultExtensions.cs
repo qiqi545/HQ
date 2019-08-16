@@ -88,7 +88,7 @@ namespace HQ.Platform.Identity.Extensions
             }
             else
             {
-	            operation = new Operation<TUser>();
+	            operation = new Operation<TUser>(user);
             }
 
             if (result.Succeeded)
