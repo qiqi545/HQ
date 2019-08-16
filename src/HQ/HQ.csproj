@@ -42,10 +42,11 @@
     <Content Include="..\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Notifications\**\*.cs" Exclude="..\HQ.Extensions.Notifications\obj\**\*" Link="Extensions.Notifications\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Scheduling\**\*.cs" Exclude="..\HQ.Extensions.Scheduling\obj\**\*" Link="Extensions.Scheduling\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Scheduling.Sql\**\*.cs" Exclude="..\HQ.Extensions.Scheduling.Sql\obj\**\*" Link="Extensions.Scheduling.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
-
+    
     <!-- Platform -->
     <Content Include="..\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Platform.Functions\**\*.cs" Exclude="..\HQ.Platform.Functions\obj\**\*" Link="Platform.Functions\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -93,6 +94,7 @@
     <Content Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
   </ItemGroup>
 

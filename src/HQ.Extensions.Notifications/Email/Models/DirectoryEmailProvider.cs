@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace HQ.Extensions.Notifications.Email.Models
 {
@@ -38,32 +39,31 @@ namespace HQ.Extensions.Notifications.Email.Models
 				PickupDirectoryLocation = directory
 			};
 
-		public bool Send(EmailMessage message)
+		public Task<bool> SendAsync(EmailMessage message)
 		{
-			AlternateView textView;
-			AlternateView htmlView;
-			var smtpMessage = SmtpEmailProvider.BuildMessageAndViews(message, out textView, out htmlView);
+			var smtpMessage = SmtpEmailProvider.BuildMessageAndViews(message, out var textView, out var htmlView);
 			try
 			{
 				_client().Send(smtpMessage);
-				return true;
+				return Task.FromResult(true);
 			}
 			catch
 			{
-				return false;
+				return Task.FromResult(false);
 			}
 			finally
 			{
-				if (htmlView != null) htmlView.Dispose();
-				if (textView != null) textView.Dispose();
+				htmlView?.Dispose();
+				textView?.Dispose();
 			}
 		}
 
-		public bool[] Send(IEnumerable<EmailMessage> messages)
+		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<EmailMessage> messages)
 		{
 			var result = new List<bool>();
-			foreach (var message in messages) Send(message);
-			return result.ToArray();
+			foreach (var message in messages)
+				result.Add(await SendAsync(message));
+			return result;
 		}
 	}
 }

@@ -16,7 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace HQ.Extensions.Notifications.Models
 {
@@ -26,18 +26,21 @@ namespace HQ.Extensions.Notifications.Models
 
 		public ICollection<T> Messages { get; }
 
-		public bool Send(T message)
+		public Task<bool> SendAsync(T message)
 		{
 			lock (Messages)
 			{
 				Messages.Add(message);
-				return true;
+				return Task.FromResult(true);
 			}
 		}
 
-		public bool[] Send(IEnumerable<T> messages)
+		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<T> messages)
 		{
-			return messages.Select(Send).ToArray();
+			var results = new List<bool>();
+			foreach (var message in messages)
+				results.Add(await SendAsync(message));
+			return results;
 		}
 	}
 }

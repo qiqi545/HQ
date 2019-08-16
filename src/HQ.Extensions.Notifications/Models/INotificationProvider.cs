@@ -16,12 +16,13 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HQ.Extensions.Notifications.Models
 {
-	public interface INotificationProvider<T>
+	public interface INotificationProvider<in T>
 	{
-		bool Send(T message);
-		bool[] Send(IEnumerable<T> messages);
+		Task<bool> SendAsync(T message);
+		Task<IEnumerable<bool>> SendAsync(IEnumerable<T> messages);
 	}
 }

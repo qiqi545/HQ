@@ -15,8 +15,7 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
+using HQ.Extensions.Notifications.Models;
 
 namespace HQ.Extensions.Notifications.Email.Models
 {
@@ -24,24 +23,5 @@ namespace HQ.Extensions.Notifications.Email.Models
 	///     Sends messages to a memory bucket. Probably only really useful for tests, but could be used in an intermediary
 	///     queue.
 	/// </summary>
-	public class MemoryEmailProvider : IEmailProvider
-	{
-		public MemoryEmailProvider() => Messages = new List<EmailMessage>();
-
-		public ICollection<EmailMessage> Messages { get; }
-
-		public bool Send(EmailMessage message)
-		{
-			lock (Messages)
-			{
-				Messages.Add(message);
-				return true;
-			}
-		}
-
-		public bool[] Send(IEnumerable<EmailMessage> messages)
-		{
-			return messages.Select(Send).ToArray();
-		}
-	}
+	public class MemoryEmailProvider : MemoryNotificationProvider<EmailMessage>, IEmailProvider { }
 }

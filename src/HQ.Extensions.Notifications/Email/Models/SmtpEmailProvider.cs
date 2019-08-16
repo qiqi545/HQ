@@ -21,6 +21,7 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace HQ.Extensions.Notifications.Email.Models
 {
@@ -45,32 +46,31 @@ namespace HQ.Extensions.Notifications.Email.Models
 
 		public SmtpEmailProvider(Func<SmtpClient> client) => _client = client;
 
-		public bool Send(EmailMessage message)
+		public Task<bool> SendAsync(EmailMessage message)
 		{
-			AlternateView textView;
-			AlternateView htmlView;
-			var smtpMessage = BuildMessageAndViews(message, out textView, out htmlView);
+			var smtpMessage = BuildMessageAndViews(message, out var textView, out var htmlView);
 			try
 			{
 				_client().Send(smtpMessage);
-				return true;
+				return Task.FromResult(true);
 			}
 			catch (SmtpException)
 			{
-				return false;
+				return Task.FromResult(false);
 			}
 			finally
 			{
-				if (htmlView != null) htmlView.Dispose();
-				if (textView != null) textView.Dispose();
+				htmlView?.Dispose();
+				textView?.Dispose();
 			}
 		}
 
-		public bool[] Send(IEnumerable<EmailMessage> messages)
+		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<EmailMessage> messages)
 		{
-			var result = new List<bool>();
-			foreach (var message in messages) Send(message);
-			return result.ToArray();
+			var results = new List<bool>();
+			foreach (var message in messages)
+				results.Add(await SendAsync(message));
+			return results;
 		}
 
 		public static MailMessage BuildMessageAndViews(EmailMessage message, out AlternateView textView,

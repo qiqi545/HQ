@@ -259,7 +259,9 @@ namespace HQ.Data.Contracts.Mvc
 				body = default
 			};
 
-			foreach(var provider in _parameterProviders)
+			operation.url = MetaUrl.FromRaw(url);
+
+			foreach (var provider in _parameterProviders)
 				provider.Enrich(url, operation, serviceProvider);
 
 			var item = new MetaItem
