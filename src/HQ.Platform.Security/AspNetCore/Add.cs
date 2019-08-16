@@ -69,6 +69,9 @@ namespace HQ.Platform.Security.AspNetCore
 				});
 			}
 
+			if (configureSuperUserAction != null)
+				services.Configure<SuperUserOptions>(configureSuperUserAction.Invoke);
+
 			services.ConfigureOptions<ConfigureWebServer>();
 
 			services.AddDynamicAuthorization();
