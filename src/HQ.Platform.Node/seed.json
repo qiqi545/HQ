@@ -77,7 +77,7 @@
         "Enabled": true,
         "RootPath": "/auth",
         "SigningKey": "PRIVATE-KEY-REPLACE-ME",
-        "EncryptionKey": "PRIVATE-KEY-REPLACE-ME",
+        "EncryptionKey": "ENCRYPTION-KEY-REPLACE-ME",
         "Issuer": "https://mysite.com",
         "Audience": "https://mysite.com",
         "TimeToLiveSeconds": 180,
