@@ -127,7 +127,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
         public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
         {
-            var now = _timestamps.GetCurrentTime();
+            var now = _timestamps.GetCurrentTime().UtcDateTime;
 
             var tasks = (await _repository.RetrieveAsync(x =>
                 x.LockedAt == null &&
