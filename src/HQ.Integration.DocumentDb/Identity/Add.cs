@@ -49,6 +49,11 @@ namespace HQ.Integration.DocumentDb.Identity
 			return identityBuilder.AddDocumentDbIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(configureAction, scope);
 		}
 
+		public static IdentityBuilder AddDocumentDbIdentityStore(this IdentityBuilder identityBuilder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+		{
+			return identityBuilder.AddDocumentDbIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, scope);
+		}
+
 		public static IdentityBuilder AddDocumentDbIdentityStore<TUser, TRole, TTenant, TApplication>(
             this IdentityBuilder identityBuilder, 
             string connectionString, 

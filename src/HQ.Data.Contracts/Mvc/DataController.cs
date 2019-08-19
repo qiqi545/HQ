@@ -93,14 +93,7 @@ namespace HQ.Data.Contracts.Mvc
 			return ControllerExtensions.ConvertModelStateToError(this);
 		}
 
-		public CancellationToken CancellationToken
-		{
-			get
-			{
-				HttpContext.RequestServices.TryGetRequestAbortCancellationToken(out var cancellationToken);
-				return cancellationToken;
-			}
-		}
+		public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
 		private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
 		{
