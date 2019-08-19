@@ -17,7 +17,6 @@
 
 using System;
 using System.Diagnostics;
-using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
@@ -62,8 +61,6 @@ namespace HQ.Platform.Node
         {
             try
             {
-                Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
-
                 Console.WriteLine(args == null || args.Length == 0
                     ? "HQ started."
                     : $"HQ started with args: {string.Join(" ", args)}");

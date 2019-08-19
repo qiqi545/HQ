@@ -15,6 +15,8 @@
 
 #endregion
 
+using System;
+using System.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -33,7 +35,8 @@ namespace HQ.Extensions.Logging
 
         public static ILoggingBuilder AddSafeLogging(this ILoggingBuilder builder)
         {
-            builder.Services.AddSafeLogging();
+	        Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
+			builder.Services.AddSafeLogging();
             return builder;
         }
     }
