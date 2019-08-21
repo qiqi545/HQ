@@ -36,8 +36,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Tenants")]
     [MetaDescription("Manages system tenants.")]
-    public class TenantController<TTenant, TKey> : DataController
-        where TTenant : IdentityTenant<TKey>
+    public class TenantController<TTenant, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+		where TTenant : IdentityTenant<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IOptions<IdentityApiOptions> _options;

@@ -43,7 +43,7 @@ namespace HQ.Platform.Api.Runtime
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to API resources over HTTP.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class RuntimeController : DataController
+	public class RuntimeController : DataController, IDynamicComponentEnabled<RuntimeComponent>
 	{
 		private readonly ITypeResolver _typeResolver;
 		private readonly IObjectGetRepository _repository;

@@ -34,8 +34,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
     [MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Applications")]
     [MetaDescription("Manages system applications.")]
-    public class ApplicationController<TApplication, TKey> : DataController
-        where TApplication : IdentityApplication<TKey>
+    public class ApplicationController<TApplication, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+		where TApplication : IdentityApplication<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IOptions<IdentityApiOptions> _options;

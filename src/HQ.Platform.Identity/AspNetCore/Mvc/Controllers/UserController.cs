@@ -39,7 +39,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Users")]
     [MetaDescription("Manages user accounts.")]
-    public class UserController<TUser, TTenant, TKey> : DataController
+    public class UserController<TUser, TTenant, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
         where TUser : IdentityUserExtended<TKey>
         where TKey : IEquatable<TKey>
     {

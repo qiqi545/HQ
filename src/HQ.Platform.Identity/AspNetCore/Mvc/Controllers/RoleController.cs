@@ -40,8 +40,8 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
     [DisplayName("Roles")]
     [MetaDescription("Manages system roles.")]
-    public class RoleController<TRole, TKey> : DataController
-        where TRole : IdentityRoleExtended<TKey>
+    public class RoleController<TRole, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+		where TRole : IdentityRoleExtended<TKey>
         where TKey : IEquatable<TKey>
     {
         private readonly IRoleService<TRole> _roleService;

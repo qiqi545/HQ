@@ -9,6 +9,7 @@ using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
+using HQ.Platform.Operations.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -24,7 +25,7 @@ namespace HQ.Platform.Operations.Controllers
 	[MetaDescription("Manages configuration items.")]
 	[DisplayName("Configuration")]
 	[ApiExplorerSettings(IgnoreApi = false)]
-	public class ConfigurationController : DataController
+	public class ConfigurationController : DataController, IDynamicComponentEnabled<ConfigurationComponent>
 	{
 		private readonly IConfigurationRoot _root;
 		private readonly ITypeResolver _typeResolver;

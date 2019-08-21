@@ -45,7 +45,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
-	public class TokenController<TUser, TTenant, TApplication, TKey> : DataController
+	public class TokenController<TUser, TTenant, TApplication, TKey> : DataController, IDynamicComponentEnabled<TokensComponent>
 		where TUser : IdentityUserExtended<TKey>
 		where TTenant : IdentityTenant<TKey>
 		where TApplication : IdentityApplication<TKey>
