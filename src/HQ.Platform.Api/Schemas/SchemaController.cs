@@ -39,7 +39,7 @@ namespace HQ.Platform.Api.Schemas
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to weak-typed object schemas.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class SchemaController : DataController
+	public class SchemaController : DataController, IDynamicComponentEnabled<SchemaComponent>
 	{
 		private readonly ISchemaVersionStore _store;
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
