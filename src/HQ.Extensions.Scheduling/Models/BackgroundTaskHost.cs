@@ -153,6 +153,8 @@ namespace HQ.Extensions.Scheduling.Models
 
 		public void Start(bool immediate = false)
 		{
+			_logger.Info(() => "Starting background task host");
+
 			if (_scheduler == null)
 			{
 				_scheduler = new QueuedTaskScheduler(ResolveConcurrency());
@@ -174,6 +176,8 @@ namespace HQ.Extensions.Scheduling.Models
 
 		public void Stop(CancellationToken cancellationToken = default, bool immediate = false)
 		{
+			_logger.Info(()=> "Stopping background task host");
+
 			var options = new ParallelOptions
 			{
 				CancellationToken = cancellationToken,
@@ -200,9 +204,9 @@ namespace HQ.Extensions.Scheduling.Models
 			if (!string.IsNullOrWhiteSpace(data))
 			{
 				var deserialized = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-				foreach (var entry in deserialized)
+				foreach (var (key, value) in deserialized)
 				{
-					kv.AddOrUpdate(entry.Key, entry.Value);
+					kv.AddOrUpdate(key, value);
 				}
 			}
 			var context = new ExecutionContext(_backgroundServices, kv, cancellationToken);
@@ -221,16 +225,20 @@ namespace HQ.Extensions.Scheduling.Models
 			return WithPendingTasks(tasks);
 		}
 
+		private static readonly Exception ExceededRuntimeException = new Exception(ErrorStrings.ExceededRuntime);
+
 		private bool WithHangingTasks(IEnumerable<BackgroundTask> tasks)
 		{
 			var now = _timestamps.GetCurrentTime();
+
+			_logger.Debug(() => "Cleaning up hanging tasks");
 
 			foreach (var task in tasks)
 			{
 				// bump up attempts (wouldn't have reached here normally since we never unlocked)
 				task.Attempts++;
 
-				// unlock hanging task (record failure)
+				// unlock hanging task and record runtime failure
 				task.LockedAt = null;
 				task.LockedBy = null;
 				task.LastError = ErrorStrings.ExceededRuntime;
@@ -241,16 +249,18 @@ namespace HQ.Extensions.Scheduling.Models
 					{
 						Store.DeleteAsync(task);
 					}
-					else
+
+					task.FailedAt = now;
+
+					if (ShouldRepeat(task, false, ExceededRuntimeException))
 					{
-						task.FailedAt = now;
+						CloneTaskAtNextOccurrence(task).GetAwaiter().GetResult();
 					}
-				}
-				else
-				{
-					task.RunAt += _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
+
+					continue;
 				}
 
+				task.RunAt += _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
 				Store.SaveAsync(task);
 			}
 
@@ -324,10 +334,15 @@ namespace HQ.Extensions.Scheduling.Models
 
 			if (!success)
 			{
+				_logger.Debug(() => "Task {Id} failed", task.Id);
+
 				if (task.Attempts >= task.MaximumAttempts)
 				{
+					_logger.Debug(() => "Task {Id} exceeded its maximum attempts limit", task.Id);
+
 					if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
 					{
+						_logger.Debug(()=> "Deleting task {Id} on failure", task.Id);
 						await Store.DeleteAsync(task);
 						deleted = true;
 					}
@@ -337,6 +352,10 @@ namespace HQ.Extensions.Scheduling.Models
 			}
 			else
 			{
+				_logger.Debug(() => "Task {Id} succeeded", task.Id);
+
+				task.SucceededAt = now;
+
 				if (task.DeleteOnSuccess.HasValue && task.DeleteOnSuccess.Value)
 				{
 					deleted = await Store.DeleteAsync(task);
@@ -344,45 +363,14 @@ namespace HQ.Extensions.Scheduling.Models
 					if (!deleted)
 					{
 						task.FailedAt = now;
-						task.LastError = "Unexpected error trying to delete this successful task.";
+						task.LastError = "Unexpected error trying to delete this successful task";
 					}
 				}
-
-				task.SucceededAt = now;
 			}
 
-			// repeat if we reached a final state on our task
-			if ((task.SucceededAt.HasValue || task.FailedAt.HasValue) && task.NextOccurrence != null)
+			if (ShouldRepeat(task, success, exception))
 			{
-				var shouldRepeat = success && task.ContinueOnSuccess ||
-								   !success && task.ContinueOnFailure ||
-								   exception != null && task.ContinueOnError;
-
-				if (shouldRepeat)
-				{
-					var nextOccurrence = task.NextOccurrence;
-
-					var clone = new BackgroundTask
-					{
-						Priority = task.Priority,
-						Handler = task.Handler,
-						DeleteOnSuccess = task.DeleteOnSuccess,
-						DeleteOnFailure = task.DeleteOnFailure,
-						DeleteOnError = task.DeleteOnError,
-						Expression = task.Expression,
-						Start = task.Start,
-						End = task.End,
-						ContinueOnSuccess = task.ContinueOnSuccess,
-						ContinueOnFailure = task.ContinueOnFailure,
-						ContinueOnError = task.ContinueOnError,
-						RunAt = nextOccurrence.GetValueOrDefault(),
-						MaximumAttempts = task.MaximumAttempts,
-						MaximumRuntime = task.MaximumRuntime,
-						Tags = task.Tags
-					};
-
-					await Store.SaveAsync(clone);
-				}
+				await CloneTaskAtNextOccurrence(task);
 			}
 
 			if (deleted)
@@ -392,6 +380,44 @@ namespace HQ.Extensions.Scheduling.Models
 			task.LockedAt = null;
 			task.LockedBy = null;
 			await Store.SaveAsync(task);
+		}
+
+		private async Task CloneTaskAtNextOccurrence(BackgroundTask task)
+		{
+			_logger.Debug(()=> "Repeating recurring task {Id}", task.Id);
+
+			var nextOccurrence = task.NextOccurrence;
+
+			var clone = new BackgroundTask
+			{
+				Priority = task.Priority,
+				Handler = task.Handler,
+				DeleteOnSuccess = task.DeleteOnSuccess,
+				DeleteOnFailure = task.DeleteOnFailure,
+				DeleteOnError = task.DeleteOnError,
+				Expression = task.Expression,
+				Start = task.Start,
+				End = task.End,
+				ContinueOnSuccess = task.ContinueOnSuccess,
+				ContinueOnFailure = task.ContinueOnFailure,
+				ContinueOnError = task.ContinueOnError,
+				RunAt = nextOccurrence.GetValueOrDefault(),
+				MaximumAttempts = task.MaximumAttempts,
+				MaximumRuntime = task.MaximumRuntime,
+				Tags = task.Tags
+			};
+
+			await Store.SaveAsync(clone);
+		}
+
+		private static bool ShouldRepeat(BackgroundTask task, bool success, Exception exception)
+		{
+			if (!task.SucceededAt.HasValue && !task.FailedAt.HasValue || task.NextOccurrence == null)
+				return false;
+
+			return (success && task.ContinueOnSuccess) ||
+			       (!success && task.ContinueOnFailure) ||
+			       (exception != null && task.ContinueOnError);
 		}
 
 		private async Task<(bool, Exception)> PerformAsync(BackgroundTask task)
@@ -475,10 +501,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 				var typeName = $"{handlerInfo.Namespace}.{handlerInfo.Entrypoint}";
 				var type = _typeResolver.FindByFullName(typeName) ?? _typeResolver.FindFirstByName(typeName);
-				if (type == null)
-					return null;
-
-				return _backgroundServices.AutoResolve(type);
+				return type == null ? null : _backgroundServices.AutoResolve(type);
 			}
 			catch (Exception e)
 			{
