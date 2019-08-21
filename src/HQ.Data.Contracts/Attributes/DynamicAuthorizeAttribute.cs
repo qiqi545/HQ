@@ -102,10 +102,6 @@ namespace HQ.Data.Contracts.Attributes
 			if (schemeProvider == null)
 				return;
 
-			var handlerProvider = ServiceProvider.GetService<IAuthenticationHandlerProvider>();
-			if (handlerProvider == null)
-				return;
-
 			var declared = AuthenticationSchemes.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var scheme in declared)
 			{
