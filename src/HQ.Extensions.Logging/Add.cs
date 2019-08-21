@@ -33,10 +33,21 @@ namespace HQ.Extensions.Logging
             return services;
         }
 
-        public static ILoggingBuilder AddSafeLogging(this ILoggingBuilder builder)
+        public static ILoggingBuilder AddTraceLogging(this ILoggingBuilder builder)
         {
 	        Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
-			builder.Services.AddSafeLogging();
+	        return builder;
+        }
+
+        public static IServiceCollection AddTraceLogging(this IServiceCollection services)
+        {
+	        Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
+	        return services;
+        }
+
+		public static ILoggingBuilder AddSafeLogging(this ILoggingBuilder builder)
+        {
+	        builder.Services.AddSafeLogging();
             return builder;
         }
     }

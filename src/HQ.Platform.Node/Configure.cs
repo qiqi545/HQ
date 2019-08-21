@@ -75,6 +75,7 @@ namespace HQ.Platform.Node
 
 				builder.AddDebug();
 				builder.AddEventSourceLogger();
+				builder.AddTraceLogging();
 				builder.AddSafeLogging();
 				builder.AddCloudLogging(config);
 			});
