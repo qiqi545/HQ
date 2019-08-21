@@ -82,7 +82,7 @@ namespace HQ.Platform.Operations.Controllers
 				return StatusCode((int) HttpStatusCode.NotImplemented);
 
 			var baseUri = $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
-			var apiName = _schemaOptions.CurrentValue.ApplicationId ?? Assembly.GetExecutingAssembly().GetName().Name;
+			var apiName = ResolveApplicationId();
 			var apiVersion = (await _schemaStore.GetByApplicationId(apiName)).FirstOrDefault()?.Revision ?? 0;
 			var apiVersionString = apiVersion == 0 ? Assembly.GetExecutingAssembly().GetName().Version?.ToString() : apiVersion.ToString();
 
@@ -132,6 +132,13 @@ namespace HQ.Platform.Operations.Controllers
 			}
 
 			return Ok(collection);
+		}
+
+		private string ResolveApplicationId()
+		{
+			return _metaOptions.CurrentValue.ApplicationId ??		// static app identifier
+			       _schemaOptions.CurrentValue.ApplicationId ??		// schema app identifier
+			       Assembly.GetExecutingAssembly().GetName().Name;	// fallback
 		}
 
 		private void ReplaceHostRecursive(MetaItem item)
