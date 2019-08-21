@@ -45,6 +45,7 @@ namespace HQ.Data.Contracts.Mvc.Security
 				return policy;
 
 			policy = new AuthorizationPolicyBuilder()
+				.AddAuthenticationSchemes(Constants.Security.Schemes.PlatformBearer)
 				.RequireAssertion(context => true)
 				.Build();
 

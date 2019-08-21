@@ -16,9 +16,12 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
@@ -85,6 +88,32 @@ namespace HQ.Data.Contracts.Attributes
 
 			policy = policy ?? policyProperty?.GetValue(currentValue);
 			_policy = policy as string ?? Constants.Security.Policies.NoPolicy;
+
+			GuardAgainstUnregisteredSchemes();
+		}
+
+		private void GuardAgainstUnregisteredSchemes()
+		{
+			if (AuthenticationSchemes == null)
+				return;
+
+			// IAuthenticationSchemeProvider is never updated once built, so we need to look in configuration
+			var schemeProvider = ServiceProvider.GetService<IAuthenticationSchemeProvider>();
+			if (schemeProvider == null)
+				return;
+
+			var handlerProvider = ServiceProvider.GetService<IAuthenticationHandlerProvider>();
+			if (handlerProvider == null)
+				return;
+
+			var declared = AuthenticationSchemes.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var scheme in declared)
+			{
+				var s = schemeProvider.GetSchemeAsync(scheme).GetAwaiter().GetResult();
+				if (s != null)
+					continue;
+				schemeProvider.AddScheme(new AuthenticationScheme(scheme, "Unregistered scheme proxy.", typeof(UnregisteredAuthenticationHandler)));
+			}
 		}
 
 		private object WalkPoliciesRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads,
@@ -95,14 +124,16 @@ namespace HQ.Data.Contracts.Attributes
 				var key = member.Name;
 
 				if (_segments.Length < segmentIndex + 1 ||
-				    _segments[segmentIndex] != key ||
-				    !member.CanRead ||
-				    !reads.TryGetValue(currentValue, key, out var segment))
+					_segments[segmentIndex] != key ||
+					!member.CanRead ||
+					!reads.TryGetValue(currentValue, key, out var segment))
 					continue;
 
-				if (segment is IProtectedFeatureScheme featureScheme) AuthenticationSchemes = featureScheme.Scheme;
+				if (segment is IProtectedFeatureScheme featureScheme)
+					AuthenticationSchemes = featureScheme.Scheme;
 
-				if (segment is IProtectedFeaturePolicy featurePolicy) policy = featurePolicy.Policy;
+				if (segment is IProtectedFeaturePolicy featurePolicy)
+					policy = featurePolicy.Policy;
 
 				currentValue = segment;
 				segmentIndex++;
@@ -111,6 +142,33 @@ namespace HQ.Data.Contracts.Attributes
 			}
 
 			return currentValue;
+		}
+
+		/// <summary>
+		/// Fills in for a declared, but not registered, authentication scheme handler.
+		/// Prevents a runtime exception when schemes may be missing since they are declared as optional.
+		/// </summary>
+		internal sealed class UnregisteredAuthenticationHandler : IAuthenticationHandler
+		{
+			public Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)
+			{
+				return Task.CompletedTask;
+			}
+
+			public Task<AuthenticateResult> AuthenticateAsync()
+			{
+				return Task.FromResult(AuthenticateResult.NoResult());
+			}
+
+			public Task ChallengeAsync(AuthenticationProperties properties)
+			{
+				return Task.CompletedTask;
+			}
+
+			public Task ForbidAsync(AuthenticationProperties properties)
+			{
+				return Task.CompletedTask;
+			}
 		}
 	}
 }

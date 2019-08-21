@@ -34,7 +34,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using TypeKitchen;
 
 namespace HQ.Data.Contracts.Mvc
 {

@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="$(ProjectDir)..\..\build\package.props" />
-  <Import Project="$(ProjectDir)..\..\build\build.props" />
-  <Import Project="$(ProjectDir)..\..\build\version.props" />
-
   <PropertyGroup>
     <Description>This package contains the full-stack build for HQ.io.</Description>
   </PropertyGroup>
@@ -136,12 +132,22 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="System.Reactive" Version="4.1.6" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.7" />
     <PackageReference Include="WyHash" Version="1.0.4" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.2.1" />
+
+    <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/1771 -->
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.2.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.2.1" PrivateAssets="all" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

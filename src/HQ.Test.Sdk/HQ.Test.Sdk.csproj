@@ -27,17 +27,12 @@
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
-    <PackageReference Include="TypeKitchen" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="xunit.assert" Version="2.4.1" />
     <PackageReference Include="xunit.extensibility.core" Version="2.4.1" />
     <PackageReference Include="xunit.extensibility.execution" Version="2.4.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\HQ.Extensions.DependencyInjection.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +49,11 @@
     <None Include="Xunit\Extensions\TheoryTestCase.cs.pp" />
     <None Include="Xunit\Extensions\TheoryTestCaseRunner.cs.pp" />
     <None Include="Xunit\Extensions\XunitSerializationInfo.cs.pp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
+    <ProjectReference Include="..\HQ\HQ.Dev.csproj" />
   </ItemGroup>
 
 </Project>
