@@ -19,6 +19,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Primitives;
 using TypeKitchen;
 
 namespace HQ.Extensions.Options
@@ -27,9 +28,10 @@ namespace HQ.Extensions.Options
 	{
 		public static Dictionary<string, string> Unbind(this object instance, string key)
 		{
-			var accessor = ReadAccessor.Create(instance);
+			var accessor = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
 			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var member in AccessorMembers.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public))
+
+			foreach (var member in members)
 			{
 				var prefix = $"{key}:{member.Name}";
 				if (!accessor.TryGetValue(instance, member.Name, out var value))
@@ -37,28 +39,60 @@ namespace HQ.Extensions.Options
 
 				var type = member.Type;
 
-				if (value == null)
+				switch (value)
 				{
-					map.Add(prefix, null);
-				}
-				else if (type.IsValueTypeOrNullableValueType())
-				{
-					map.Add(prefix, value?.ToString());
-				}
-				else if (value is IEnumerable enumerable)
-				{
-					int index = 0;
-					foreach (var item in enumerable)
+					case null:
+						map.Add(prefix, null);
+						break;
+					case string s:
+						map.Add(prefix, s);
+						break;
+					case StringValues sv:
+						map.Add(prefix, sv);
+						break;
+					default:
 					{
-						foreach (var child in item.Unbind($"{prefix}:{index}"))
-							map.Add(child.Key, child.Value);
-						index++;
+						if (type.IsValueTypeOrNullableValueType())
+						{
+							map.Add(prefix, value.ToString());
+						}
+						else switch (value)
+						{
+							case IEnumerable<string> strings:
+							{
+								var index = 0;
+								foreach (var child in strings)
+								{
+									map.Add($"{prefix}:{index}", child);
+									index++;
+								}
+
+								break;
+							}
+
+							case IEnumerable enumerable:
+							{
+								var index = 0;
+								foreach (var item in enumerable)
+								{
+									foreach (var (k, v) in item.Unbind($"{prefix}:{index}"))
+										map.Add(k, v);
+									index++;
+								}
+
+								break;
+							}
+
+							default:
+							{
+								foreach (var (k, v) in value.Unbind(prefix))
+									map.Add(k, v);
+								break;
+							}
+						}
+
+						break;
 					}
-				}
-				else
-				{
-					foreach (var child in value.Unbind(prefix))
-						map.Add(child.Key, child.Value);
 				}
 			}
 			return map;
