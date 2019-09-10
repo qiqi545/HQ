@@ -94,6 +94,12 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			}
 		}
 
+		public string CollectionId
+		{
+			get => DefaultCollection;
+			set => DefaultCollection = value;
+		}
+
 		public string[] PartitionKeyPaths
 		{
 			get
@@ -116,6 +122,12 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				this[Constants.DatabaseKey] = value;
 				ConnectionString = ToString();
 			}
+		}
+
+		public string DatabaseId
+		{
+			get => Database;
+			set => Database = value;
 		}
 
 		public bool SharedCollection
