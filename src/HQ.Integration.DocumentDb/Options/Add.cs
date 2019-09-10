@@ -60,7 +60,7 @@ namespace HQ.Integration.DocumentDb.Options
 			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Common.Constants.Options.DefaultCollection;
 
 			o.SharedCollection = false;
-			o.PartitionKeyPaths = new[] { "id" };
+			o.PartitionKeyPaths = connectionStringBuilder.PartitionKeyPaths ?? new[] { "id" };
 		}
 	}
 }
