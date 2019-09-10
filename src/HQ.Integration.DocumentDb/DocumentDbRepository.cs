@@ -173,12 +173,15 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
+		// ReSharper disable once StaticMemberInGenericType
+		private static readonly RequestOptions None = new RequestOptions();
+
 		private static RequestOptions GetRequestOptions(string partitionKey)
 		{
-			var options = new RequestOptions
-			{
-				PartitionKey = new PartitionKey(partitionKey)
-			};
+			if (string.IsNullOrWhiteSpace(partitionKey))
+				return None;
+
+			var options = new RequestOptions { PartitionKey = new PartitionKey(partitionKey) };
 			return options;
 		}
 

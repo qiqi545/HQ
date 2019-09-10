@@ -61,11 +61,13 @@ namespace HQ.Integration.DocumentDb.Options
 	            if (after == null)
 		            continue; // not null constraint violation
 
-	            _repository.UpsertAsync(new ConfigurationDocument
+	            var document = new ConfigurationDocument
 	            {
 		            Key = entry.Key,
 		            Value = after
-	            }).GetAwaiter().GetResult();
+	            };
+
+	            _repository.UpsertAsync(document).GetAwaiter().GetResult();
 
 	            changed = true;
             }
