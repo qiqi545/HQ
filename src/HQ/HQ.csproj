@@ -68,13 +68,6 @@
     <Content Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
     
-    <!-- UI -->
-    <!--<Content Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Content Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.UI.Web\lib\**\*;..\HQ.UI.Web.SemanticUi\lib\**\*" Link="lib\%(RecursiveDir)\%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />-->
-
   </ItemGroup>
 
   <ItemGroup>
@@ -108,7 +101,7 @@
     <Content Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.6.0" />
   </ItemGroup>
 
   <!-- Azure -->
@@ -121,13 +114,13 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Bogus" Version="28.0.2" />
-    <PackageReference Include="Dapper" Version="1.60.6" />
+    <PackageReference Include="Bogus" Version="28.2.1" />
+    <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
-    <PackageReference Include="Humanizer" Version="2.6.2" />
+    <PackageReference Include="Humanizer" Version="2.7.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
-    <PackageReference Include="AngleSharp" Version="0.12.1" />
+    <PackageReference Include="AngleSharp" Version="0.13.0" />
     <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
@@ -136,7 +129,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="System.Reactive" Version="4.1.6" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.8" />
+    <PackageReference Include="TypeKitchen" Version="1.0.14" />
     <PackageReference Include="WyHash" Version="1.0.4" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
@@ -146,9 +139,9 @@
     <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/1771 -->
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.2.1" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.1" PrivateAssets="all"/>
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="3.2.1" PrivateAssets="all"/>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.2.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.1" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="3.2.1" PrivateAssets="all" />
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

@@ -18,6 +18,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Microsoft.CodeAnalysis.Scripting;
 using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
@@ -25,14 +26,21 @@ namespace HQ.Data.Contracts.DataAnnotations
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
 	public abstract class DelegatedValidationAttribute : ValidationAttribute
 	{
+		protected static ScriptOptions Options;
+
 		static DelegatedValidationAttribute()
 		{
-			Snippet.Add<ReadAccessor>();
-			Snippet.Add<RequiredAttribute>();
+			var builder = Snippet.GetBuilder();
+			Options = builder
+				.Add<DelegatedValidationAttribute>()
+				.Add<RequiredAttribute>()
+				.Build();
 		}
 
-		protected DelegatedValidationAttribute(MethodInfo handler) => Condition =
-			Condition ?? (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
+		protected DelegatedValidationAttribute(MethodInfo handler)
+		{
+			Condition = Condition ?? (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
+		}
 
 		public Func<object, bool> Condition { get; set; }
 

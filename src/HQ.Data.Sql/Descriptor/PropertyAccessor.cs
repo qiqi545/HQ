@@ -29,7 +29,7 @@ namespace HQ.Data.Sql.Descriptor
 
         public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, string name)
         {
-            var members = AccessorMembers.Create(reads.Type, AccessorMemberScope.All, AccessorMemberTypes.Properties);
+            var members = AccessorMembers.Create(reads.Type, AccessorMemberTypes.Properties, AccessorMemberScope.All);
             Info = members.PropertyInfo.Single(m => m.Name == name);
 
             Type = Info.PropertyType;

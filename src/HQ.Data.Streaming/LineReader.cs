@@ -37,7 +37,7 @@ namespace HQ.Data.Streaming
 	    {
 			return Pooling.StringBuilderPool.Scoped(sb =>
 			{
-				var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberScope.Public, AccessorMemberTypes.Fields);
+				var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberTypes.Fields, AccessorMemberScope.Public);
 
 				// FIXME: convert to zero-alloc
 				var columns = members

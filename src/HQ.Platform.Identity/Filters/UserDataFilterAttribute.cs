@@ -25,7 +25,7 @@ namespace HQ.Platform.Identity.Filters
 
 		private static FilterOptions CreateFilter(Type type, IUserIdProvider id)
 		{
-			var members = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
+			var members = AccessorMembers.Create(type, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
 			if (!members.ContainsKey("UserId"))
 				throw new InvalidOperationException("UserDataFilter Type must have a public property 'UserId'");
 

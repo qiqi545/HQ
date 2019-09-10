@@ -71,7 +71,7 @@ namespace HQ.Common
             }
 
             var type = o.CurrentValue.GetType();
-            var members = AccessorMembers.Create(type, AccessorMemberScope.Public, AccessorMemberTypes.Properties);
+            var members = AccessorMembers.Create(type, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
             var featureType = members.SingleOrDefault(x => x.Type == typeof(TFeature));
             if (featureType == null)
             {

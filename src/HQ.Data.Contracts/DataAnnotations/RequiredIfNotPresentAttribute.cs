@@ -16,6 +16,7 @@
 #endregion
 
 using System.Reflection;
+using Microsoft.CodeAnalysis.Scripting;
 using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
@@ -23,7 +24,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 	public sealed class RequiredIfNotPresentAttribute : DelegatedValidationAttribute
 	{
 		public RequiredIfNotPresentAttribute(string propertyOrFieldName, bool allowEmptyStrings = false) : base(
-			ResolveDelegateType(propertyOrFieldName, allowEmptyStrings))
+			ResolveDelegateType(propertyOrFieldName, allowEmptyStrings, Options))
 		{
 			AllowEmptyStrings = allowEmptyStrings;
 
@@ -32,7 +33,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 		public bool AllowEmptyStrings { get; }
 
-		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings)
+		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings, ScriptOptions options)
 		{
 			var handler = Snippet.CreateMethod("public static bool Validate(object value)" +
 			                                   $"{{ " +
@@ -44,7 +45,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 			                                   $"       return present ? attribute.IsValid(value) : true;" +
 			                                   $"   }}" +
 			                                   $"   return false;" +
-			                                   $"}}");
+			                                   $"}}", options);
 			return handler;
 		}
 	}

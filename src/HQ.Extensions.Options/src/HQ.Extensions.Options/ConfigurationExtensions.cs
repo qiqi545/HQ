@@ -29,7 +29,7 @@ namespace HQ.Extensions.Options
 		{
 			var accessor = ReadAccessor.Create(instance);
 			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-			foreach (var member in AccessorMembers.Create(instance, AccessorMemberScope.Public, AccessorMemberTypes.Properties))
+			foreach (var member in AccessorMembers.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public))
 			{
 				var prefix = $"{key}:{member.Name}";
 				if (!accessor.TryGetValue(instance, member.Name, out var value))
