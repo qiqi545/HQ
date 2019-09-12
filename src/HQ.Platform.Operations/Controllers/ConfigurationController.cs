@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -10,10 +11,13 @@ using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Models;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Morcatko.AspNetCore.JsonMergePatch;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using TypeKitchen;
 
 namespace HQ.Platform.Operations.Controllers
@@ -54,6 +58,62 @@ namespace HQ.Platform.Operations.Controllers
 		}
 
 		[FeatureSelector]
+		[HttpPatch("")]
+		[HttpPatch("{section?}"), MustHaveQueryParameters("type")]
+		[Consumes(Constants.MediaTypes.JsonPatch)]
+		public IActionResult Patch([FromQuery] string type, [FromBody] JsonPatchDocument patch, [FromRoute] string section = null)
+		{
+			if (string.IsNullOrWhiteSpace(section))
+				return NotAcceptableError(ErrorEvents.UnsafeRequest, "You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+
+			var prototype = _typeResolver.FindFirstByName(type);
+			if (prototype == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter, $"No configuration type found with name '{type}'.");
+
+			var config = _root.GetSection(section.Replace("/", ":"));
+			if (config == null)
+				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
+			
+			var model = Activator.CreateInstance(prototype);
+			config.Bind(model);
+			patch.ApplyTo(model);
+
+			return Set(type, model, section);
+		}
+
+		[FeatureSelector]
+		[HttpPatch("")]
+		[HttpPatch("{section?}"), MustHaveQueryParameters("type")]
+		[Consumes(Constants.MediaTypes.JsonMergePatch)]
+		public IActionResult Patch([FromQuery] string type, [FromBody] object patch, [FromRoute] string section = null)
+		{
+			if (string.IsNullOrWhiteSpace(section))
+				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+
+			var prototype = _typeResolver.FindFirstByName(type);
+			if (prototype == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter, $"No configuration type found with name '{type}'.");
+
+			var config = _root.GetSection(section.Replace("/", ":"));
+			if (config == null)
+				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
+
+			var buildMethod = typeof(JsonMergePatchDocument).GetMethod(nameof(JsonMergePatchDocument.Build), new[] { typeof(JObject) })?.MakeGenericMethod(prototype);
+			var patchModel = buildMethod?.Invoke(null, new[] {patch});
+
+			var model = Activator.CreateInstance(prototype);
+			config.Bind(model);
+
+			var patchType = typeof(JsonMergePatchDocument<>).MakeGenericType(prototype);
+			var patchMethods = patchType.GetTypeInfo().DeclaredMethods;
+			var patchMethod = patchMethods.Single(x => x.Name == "ApplyTo" && !x.IsGenericMethod);
+			patchMethod?.Invoke(patchModel, new[] { model });
+
+			return Set(type, model, section);
+		}
+
+		[FeatureSelector]
 		[HttpPut("")]
 		[HttpPut("{section?}"), MustHaveQueryParameters("type")]
 		public IActionResult Set([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
@@ -88,9 +148,20 @@ namespace HQ.Platform.Operations.Controllers
 			if (trySaveMethod == null || valueProperty == null)
 				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
-			var json = model.ToString();
-			var result = JsonConvert.DeserializeObject(json, prototype);
+			object result;
+			if (model is JObject)
+			{
+				var json = model.ToString();
+				result = JsonConvert.DeserializeObject(json, prototype);
+			}
+			else
+				result = model;
 
+			return TrySave(section, result, trySaveMethod, saveOptions, prototype, valueProperty);
+		}
+
+		private IActionResult TrySave(string section, object result, MethodBase trySaveMethod, object saveOptions, Type prototype, PropertyInfo valueProperty)
+		{
 			try
 			{
 				result.Validate(_serviceProvider);
@@ -102,10 +173,7 @@ namespace HQ.Platform.Operations.Controllers
 
 			var saved = trySaveMethod.Invoke(saveOptions, new object[]
 			{
-				section, new Action(() =>
-				{
-					SaveOptions(prototype, saveOptions, valueProperty, result);
-				})
+				section, new Action(() => { SaveOptions(prototype, saveOptions, valueProperty, result); })
 			});
 
 			if (saved is bool flag && !flag)
@@ -120,7 +188,7 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			var config = _root.GetSection(section?.Replace("/", ":"));
 			if (config == null)
-				return NotFound();
+				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
 
 			var template = Activator.CreateInstance(type);
 			config.Bind(template);

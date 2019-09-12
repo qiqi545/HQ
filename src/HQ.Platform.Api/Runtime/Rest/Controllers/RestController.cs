@@ -170,6 +170,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPatch("X/{id}")]
+		[Consumes(Constants.MediaTypes.JsonPatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
@@ -191,6 +192,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPatch("X/{id}/merge")]
+		[Consumes(Constants.MediaTypes.JsonMergePatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
