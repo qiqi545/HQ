@@ -63,13 +63,6 @@
     <Compile Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
-    
-    <!-- UI -->
-    <!--<Compile Include="..\HQ.UI\**\*.cs" Exclude="..\HQ.UI\obj\**\*" Link="UI\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.UI.Web\**\*.cs" Exclude="..\HQ.UI.Web\obj\**\*" Link="UI.Web\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.UI.Web.SemanticUi\**\*.cs" Exclude="..\HQ.UI.Web.SemanticUi\obj\**\*" Link="UI.Web.SemanticUi\%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.UI.Web\lib\**\*;..\HQ.UI.Web.SemanticUi\lib\**\*" Link="lib\%(RecursiveDir)\%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.UI.Web\wasm\**\*" Link="wasm\%(RecursiveDir)\%(Filename)%(Extension)" />-->
 
   </ItemGroup>
 
@@ -116,6 +109,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="TypeKitchen" Version="1.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Bogus" Version="28.2.1" />
     <PackageReference Include="Dapper" Version="2.0.4" />
@@ -137,11 +131,6 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>
