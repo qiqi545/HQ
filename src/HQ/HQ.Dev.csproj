@@ -138,12 +138,6 @@
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
     <PackageReference Include="Microsoft.CodeAnalysis.Scripting" Version="3.2.1" />
-
-    <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/1771 -->
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.Common" Version="3.2.1" PrivateAssets="all" />
-
   </ItemGroup>
 
   <ItemGroup>
