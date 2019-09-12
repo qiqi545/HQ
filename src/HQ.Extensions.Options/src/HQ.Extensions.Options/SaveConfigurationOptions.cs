@@ -18,6 +18,8 @@ namespace HQ.Extensions.Options
 	{
 		public bool CreateIfNotExists { get; set; } = true;
 		public bool MigrateOnStartup { get; set; } = true;
+		public SeedStrategy SeedStrategy { get; set; } = SeedStrategy.None;
+
 		public static SaveConfigurationOptions Default = new SaveConfigurationOptions();
 	}
 }

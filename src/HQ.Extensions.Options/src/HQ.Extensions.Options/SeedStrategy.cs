@@ -17,6 +17,7 @@ namespace HQ.Extensions.Options
 {
     public enum SeedStrategy
     {
+		None,
         InsertIfNotExists,
         InsertIfEmpty
     }

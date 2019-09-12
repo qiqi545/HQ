@@ -43,7 +43,7 @@ namespace HQ.Integration.DocumentDb.Options
 			var saveConfig = new SaveConfigurationOptions();
 			configureOptions?.Invoke(saveConfig);
 			
-			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed, SeedStrategy.InsertIfNotExists)
+			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed)
 			{
 				ReloadOnChange = reloadOnChange
 			};

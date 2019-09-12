@@ -47,30 +47,39 @@ namespace HQ.Integration.DocumentDb.Options
             var map = instance.Unbind(key);
             var changed = false;
 
-            foreach (var entry in map)
+            foreach (var (k, v) in Data)
             {
-	            if (!Data.TryGetValue(entry.Key, out var value))
-		            continue; // deprecated?
+	            if (v == null)
+		            continue;
 
-	            var before = value;
-	            var after = entry.Value;
+	            if (map.ContainsKey(k))
+		            continue;
 
-	            if (before.Equals(after, StringComparison.Ordinal))
+	            if (_repository.DeleteAsync(k).GetAwaiter().GetResult())
+		            changed = true;
+            }
+
+			foreach (var (k, v) in map)
+            {
+				Data.TryGetValue(k, out var value);
+
+				var before = value;
+				if (before == null && v == null)
 		            continue; // no change
 
-	            if (after == null)
+	            if (before != null && before.Equals(v, StringComparison.Ordinal))
+		            continue; // no change
+
+	            if (v == null)
 		            continue; // not null constraint violation
 
-	            var document = new ConfigurationDocument
-	            {
-		            Key = entry.Key,
-		            Value = after
-	            };
-
+	            var document = new ConfigurationDocument { Key = k, Value = v };
 	            _repository.UpsertAsync(document).GetAwaiter().GetResult();
-
 	            changed = true;
             }
+
+			if (changed)
+				Load();
 
 			return changed;
         }

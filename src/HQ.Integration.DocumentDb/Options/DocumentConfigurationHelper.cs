@@ -42,7 +42,7 @@ namespace HQ.Integration.DocumentDb.Options
 		        runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
 			}
 	        
-	        if (configSeed != null)
+	        if (configSeed != null && strategy != SeedStrategy.None)
 	        {
 		        var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, 
 			        new OptionsMonitorShim<DocumentDbOptions>(options), null);

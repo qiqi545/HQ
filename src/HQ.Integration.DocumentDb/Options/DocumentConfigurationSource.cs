@@ -23,13 +23,11 @@ namespace HQ.Integration.DocumentDb.Options
     {
 	    public DocumentDbOptions Options { get; }
 
-	    public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
-		    IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
+	    public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null)
         {
 	        SaveConfig = saveConfig;
 	        Options = options;
 	        ConfigSeed = configSeed;
-            SeedStrategy = strategy;
         }
 
 	    public SaveConfigurationOptions SaveConfig { get; set; }
@@ -37,11 +35,10 @@ namespace HQ.Integration.DocumentDb.Options
 	    public bool ReloadOnChange { get; set; }
 
         public IConfiguration ConfigSeed { get; set; }
-        public SeedStrategy SeedStrategy { get; set; }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-	        DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed, SeedStrategy);
+	        DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed, SaveConfig?.SeedStrategy ?? SeedStrategy.None);
             return new DocumentConfigurationProvider(this);
         }
     }
