@@ -14,6 +14,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using HQ.Common;
 using HQ.Extensions.Options;
@@ -26,12 +27,13 @@ namespace HQ.Integration.DocumentDb.Options
     {
         private readonly DocumentConfigurationSource _source;
         private readonly IDocumentDbRepository<ConfigurationDocument> _repository;
+        private readonly IDictionary<string, string> _ids;
 
-        public DocumentConfigurationProvider(DocumentConfigurationSource source)
+		public DocumentConfigurationProvider(DocumentConfigurationSource source)
         {
-            _source = source;
-            _repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, 
-	            new OptionsMonitorShim<DocumentDbOptions>(source.Options), null);
+			_ids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			_source = source;
+            _repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, new OptionsMonitorShim<DocumentDbOptions>(source.Options), null);
 		}
 
 		public bool HasChildren(string key)
@@ -55,7 +57,8 @@ namespace HQ.Integration.DocumentDb.Options
 	            if (map.ContainsKey(k))
 		            continue;
 
-	            if (_repository.DeleteAsync(k).GetAwaiter().GetResult())
+	            var id = _ids[k];
+	            if (_repository.DeleteAsync(id).GetAwaiter().GetResult())
 		            changed = true;
             }
 
@@ -73,14 +76,11 @@ namespace HQ.Integration.DocumentDb.Options
 	            if (v == null)
 		            continue; // not null constraint violation
 
-	            var document = new ConfigurationDocument { Key = k, Value = v };
-	            _repository.UpsertAsync(document).GetAwaiter().GetResult();
+	            var document = _repository.UpsertAsync(new ConfigurationDocument { Key = k, Value = v }).GetAwaiter().GetResult();
+	            _ids[k] = document.Id;
 	            changed = true;
             }
-
-			if (changed)
-				Load();
-
+			
 			return changed;
         }
 
@@ -89,13 +89,15 @@ namespace HQ.Integration.DocumentDb.Options
             if (TryGet(key, out var previousValue) && value == previousValue)
                 return;
 
-			_repository.UpsertAsync(new ConfigurationDocument
+			var document = _repository.UpsertAsync(new ConfigurationDocument
 			{
 				Key = key,
 				Value = value
 			}).GetAwaiter().GetResult();
 
 			Data[key] = value;
+			_ids[key] = document.Id;
+
             if (_source.ReloadOnChange)
 				ReloadAndLog();
 		}
@@ -104,11 +106,13 @@ namespace HQ.Integration.DocumentDb.Options
         {
             var onChange = Data.Count > 0;
             Data.Clear();
+            _ids.Clear();
             var data = _repository.RetrieveAsync().GetAwaiter().GetResult();
             var loadedKeys = 0;
             foreach (var item in data)
             {
 	            Data[item.Key] = item.Value;
+	            _ids[item.Key] = item.Id;
 	            onChange = true;
 	            loadedKeys++;
             }
