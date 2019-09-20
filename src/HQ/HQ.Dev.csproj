@@ -25,7 +25,7 @@
     <Compile Include="..\HQ.Common.AspNetCore\**\*.cs" Exclude="..\HQ.Common.AspNetCore\obj\**\*" Link="Common.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Common.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Common.AspNetCore.Mvc\obj\**\*" Link="Common.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     
-    <!-- Extensions -->
+    <!-- Extensions (.NET Standard) -->
     <Compile Include="..\HQ.Extensions.Numerics\**\*.cs" Exclude="..\HQ.Extensions.Numerics\obj\**\*" Link="Extensions.Numerics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Exclude="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\**\*" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Caching\**\*.cs" Exclude="..\HQ.Extensions.Caching\obj\**\*" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -34,7 +34,6 @@
     <Compile Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Deployment\**\*.cs" Exclude="..\HQ.Extensions.Deployment\obj\**\*" Link="Extensions.Deployment\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -42,7 +41,19 @@
     <Compile Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Scheduling\**\*.cs" Exclude="..\HQ.Extensions.Scheduling\obj\**\*" Link="Extensions.Scheduling\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Scheduling.Sql\**\*.cs" Exclude="..\HQ.Extensions.Scheduling.Sql\obj\**\*" Link="Extensions.Scheduling.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <!-- Extensions (.NET Core) -->
+    <Compile Include="..\HQ.Extensions.DependencyInjection.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection.AspNetCore\obj\**\*" Link="Extensions.DependencyInjection.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Metrics.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.Metrics.AspNetCore\obj\**\*" Link="Extensions.Metrics.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.Caching.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.Caching.AspNetCore\obj\**\*" Link="Extensions.Caching.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     
+    <!-- Data -->
+    <Compile Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.Contracts.AspNetCore\**\*.cs" Exclude="..\HQ.Data.Contracts.AspNetCore\obj\**\*" Link="Data.Contracts.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
+
     <!-- Platform -->
     <Compile Include="..\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Functions\**\*.cs" Exclude="..\HQ.Platform.Functions\obj\**\*" Link="Platform.Functions\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -58,11 +69,7 @@
     <Compile Include="..\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="..\HQ.Platform.Node\**\*" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
 
-    <!-- Data -->
-    <Compile Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
+    
 
   </ItemGroup>
 
