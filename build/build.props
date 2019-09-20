@@ -57,11 +57,12 @@
     <Exec Command="dotnet nuget push &quot;$(TargetDir)..\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
 
-  <!-- TODO only tokenize changed files -->
+  <!--
   <PropertyGroup>
     <PreBuildEvent>
-      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)..\package\PackagePrep\PackagePrep.csproj&quot; -- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
+      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)..\package\PackagePrep\PackagePrep.csproj&quot; \-\- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
     </PreBuildEvent>
   </PropertyGroup>
+  -->
 
 </Project>

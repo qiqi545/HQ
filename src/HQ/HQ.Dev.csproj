@@ -71,6 +71,12 @@
     <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
+    <Compile Remove="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\Internal\**" />
+    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\IMethodInvoker.cs" />
+    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\IMethodResolver.cs" />
+    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodFactory.cs" />
+    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodInvokerBase.cs" />
+    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodResolverBase.cs" />
     <Compile Update="**\ErrorStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

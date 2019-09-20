@@ -204,9 +204,9 @@ namespace HQ.Extensions.Scheduling.Models
 			if (!string.IsNullOrWhiteSpace(data))
 			{
 				var deserialized = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-				foreach (var (key, value) in deserialized)
+				foreach (var entry in deserialized)
 				{
-					kv.AddOrUpdate(key, value);
+					kv.AddOrUpdate(entry.Key, entry.Value);
 				}
 			}
 			var context = new ExecutionContext(_backgroundServices, kv, cancellationToken);

@@ -23,32 +23,24 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using HQ.Extensions.CodeGeneration;
-using HQ.Extensions.DependencyInjection.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.DependencyInjection
 {
-	public sealed class DependencyContainer : IContainer, IMethodResolver, IMethodInvoker
+	public sealed class DependencyContainer : IContainer
     {
         private readonly List<IResolverExtension> _extensions;
         private readonly IEnumerable<Assembly> _fallbackAssemblies;
         private readonly IServiceProvider _fallbackProvider;
-        private readonly IMethodInvoker _methodInvoker;
-
-        private readonly IMethodResolver _methodResolver;
 
         public DependencyContainer(
             IServiceProvider fallbackProvider = null,
-            IEnumerable<Assembly> fallbackAssemblies = null,
-            IMethodResolver methodResolver = null,
-            IMethodInvoker methodInvoker = null)
+            IEnumerable<Assembly> fallbackAssemblies = null)
         {
             _extensions = new List<IResolverExtension>();
 
             _fallbackProvider = fallbackProvider;
             _fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
-            _methodResolver = methodResolver ?? new DefaultMethodResolver(this);
-            _methodInvoker = methodInvoker ?? new DefaultMethodInvoker(this);
         }
 
         public bool ThrowIfCantResolve { get; set; }
@@ -62,36 +54,7 @@ namespace HQ.Extensions.DependencyInjection
             _extensions.Add(extension);
             return true;
         }
-
-        #region Method Resolution
-
-        public MethodInfo ResolveMethod(Type serviceType, string name)
-        {
-            return _methodResolver?.ResolveMethod(serviceType, name);
-        }
-
-        public MethodInfo ResolveMethod<T>(string name) where T : class
-        {
-            return _methodResolver?.ResolveMethod<T>(name);
-        }
-
-        public MethodInfo ResolveMethod(string serviceTypeName, string name)
-        {
-            return _methodResolver?.ResolveMethod(serviceTypeName, name);
-        }
-
-        public object InvokeMethod(Type serviceType, string name)
-        {
-            return _methodInvoker.InvokeMethod(serviceType, name);
-        }
-
-        public object InvokeMethod<T>(string name) where T : class
-        {
-            return _methodInvoker.InvokeMethod<T>(name);
-        }
-
-        #endregion
-
+        
         #region Register
 
         private readonly IDictionary<Type, Func<object>>

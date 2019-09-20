@@ -49,9 +49,12 @@ namespace HQ.Integration.DocumentDb.Options
             var map = instance.Unbind(key);
             var changed = false;
 
-            foreach (var (k, v) in Data)
+            foreach (var entry in Data)
             {
-	            if (v == null)
+	            var k = entry.Key;
+	            var v = entry.Value;
+
+				if (v == null)
 		            continue;
 
 	            if (map.ContainsKey(k))
@@ -62,8 +65,11 @@ namespace HQ.Integration.DocumentDb.Options
 		            changed = true;
             }
 
-			foreach (var (k, v) in map)
-            {
+			foreach (var entry in map)
+			{
+				var k = entry.Key;
+				var v = entry.Value;
+
 				Data.TryGetValue(k, out var value);
 
 				var before = value;

@@ -1,4 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\build\package.props" />
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
+  <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -7,8 +11,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
-    <ProjectReference Include="..\HQ.UI.Web.SemanticUi\HQ.UI.Web.SemanticUi.csproj" />
-    <ProjectReference Include="..\HQ.UI\HQ.UI.csproj" />
   </ItemGroup>
 
 </Project>

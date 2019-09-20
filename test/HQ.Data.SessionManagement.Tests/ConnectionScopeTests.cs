@@ -17,6 +17,7 @@
 
 using System.Data;
 using System.Linq;
+using HQ.Data.SessionManagement;
 using HQ.Integration.Sqlite.SessionManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -104,8 +105,8 @@ namespace HQ.Data.SessionManagement.Tests
         {
             var cs = CreateConnectionString();
             var services = new ServiceCollection();
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive, "one");
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive, "two");
+			services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
+            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
 
             var provider = services.BuildServiceProvider();
             var connections = provider.GetServices<DataContext>().ToList();

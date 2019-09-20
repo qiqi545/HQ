@@ -28,7 +28,6 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.UI.V3.Pages.Internal.Account;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -371,7 +370,7 @@ namespace HQ.Data.Contracts.Mvc
 
 		private static bool ResolveControllerFeatureEnabled(Type controllerType, IServiceProvider serviceProvider)
 		{
-			var componentTypes = serviceProvider.GetServices<IDynamicComponent>().Select(x => x.GetType()).ToHashSet();
+			var componentTypes = serviceProvider.GetServices<IDynamicComponent>().Select(x => x.GetType()).ToList();
 			foreach (var @interface in controllerType.GetInterfaces())
 			{
 				if (!@interface.IsGenericType)
