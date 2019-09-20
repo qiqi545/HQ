@@ -5,7 +5,7 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
@@ -30,6 +30,7 @@
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.Caching.AspNetCore\HQ.Extensions.Caching.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />

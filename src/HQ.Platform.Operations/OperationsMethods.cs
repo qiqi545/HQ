@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HQ.Common;
-using HQ.Common.AspNetCore;
 using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;

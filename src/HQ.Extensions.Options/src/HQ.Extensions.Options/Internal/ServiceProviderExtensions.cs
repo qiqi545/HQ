@@ -1,5 +1,5 @@
 ﻿using System;
-using HQ.Common.AspNetCore;
+using HQ.Common;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options.Internal

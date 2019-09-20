@@ -17,8 +17,6 @@
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="2.2.0" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
@@ -26,7 +24,6 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
@@ -35,6 +32,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\HQ.Extensions.Dates.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Models\IMetaParameterProvider.cs.pp" />
+    <None Include="Models\IMetaProvider.cs.pp" />
+    <None Include="Models\IMetaVersionProvider.cs.pp" />
+    <None Include="Models\MetaCollection.cs.pp" />
+    <None Include="Models\MetaDescription.cs.pp" />
+    <None Include="Models\MetaFolder.cs.pp" />
+    <None Include="Models\MetaItem.cs.pp" />
+    <None Include="Models\MetaOperation.cs.pp" />
+    <None Include="Models\MetaParameter.cs.pp" />
+    <None Include="Models\MetaUrl.cs.pp" />
+    <None Include="Models\NoMetaVersionProvider.cs.pp" />
   </ItemGroup>
 
 </Project>

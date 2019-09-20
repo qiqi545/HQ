@@ -155,7 +155,9 @@ namespace HQ.Extensions.Logging
                 }
             }
             else
-                SafeLog();
+            {
+	            SafeLog();
+            }
 
             void SafeLog()
             {

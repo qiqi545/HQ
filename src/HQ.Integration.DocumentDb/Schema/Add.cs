@@ -17,7 +17,6 @@
 
 using System;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;

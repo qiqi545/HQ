@@ -63,10 +63,5 @@ namespace HQ.Platform.Api.Runtime.Rest.Models
 			}
 			yield return context;
         }
-
-		public IActionResult ToResult(params object[] results)
-        {
-	        throw new NotImplementedException();
-        }
     }
 }

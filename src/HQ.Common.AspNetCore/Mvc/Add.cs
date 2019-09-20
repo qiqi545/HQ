@@ -41,18 +41,5 @@ namespace HQ.Common.AspNetCore.Mvc
 			});
 			return mvcBuilder;
 		}
-		
-		public static IServiceCollection AddLocalTimestamps(this IServiceCollection services)
-		{
-			services.TryAddSingleton<IServerTimestampService, LocalServerTimestampService>();
-			return services;
-		}
-
-		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services)
-		{
-			services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
-			services.TryAddSingleton<ITypeRegistry, TypeRegistry>();
-			return services;
-		}
 	}
 }

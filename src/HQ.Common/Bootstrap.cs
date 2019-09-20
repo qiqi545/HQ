@@ -25,7 +25,7 @@ using Newtonsoft.Json.Serialization;
 
 namespace HQ.Common
 {
-    public class Bootstrap
+	public class Bootstrap
     {
         public static void EnsureInitialized()
         {

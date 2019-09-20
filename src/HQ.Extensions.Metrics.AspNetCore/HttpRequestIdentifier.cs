@@ -1,8 +1,9 @@
 using System.Net;
 using HQ.Common.AspNetCore;
+using HQ.Extensions.Metrics.SplitTesting;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.Metrics.AspNetCore
 {
     /// <summary>
     /// A default identity that is based on the user first, if they are authenticated,

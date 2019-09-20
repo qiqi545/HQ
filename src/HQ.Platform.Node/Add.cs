@@ -17,6 +17,7 @@
 
 using System;
 using System.Reflection;
+using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;

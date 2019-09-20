@@ -16,19 +16,26 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Common.AspNetCore
 {
-	public interface IQueryContextProvider
-	{
-		IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
-		IEnumerable<QueryContext> Parse(Type type, HttpContext source);
-		IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source);
-		IActionResult ToResult(params object[] results);
-	}
+    public static class ServiceProviderExtensions
+    {
+        public static bool TryGetRequestAbortCancellationToken(this IServiceProvider services,
+            out CancellationToken cancelToken)
+        {
+            cancelToken = CancellationToken.None;
+            var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+            var token = accessor?.HttpContext?.RequestAborted;
+            if (!token.HasValue)
+            {
+                return false;
+            }
+
+            cancelToken = token.Value;
+            return true;
+        }
+    }
 }

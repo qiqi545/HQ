@@ -18,7 +18,6 @@
 using System;
 using System.Data;
 using HQ.Extensions.DependencyInjection;
-using HQ.Extensions.DependencyInjection.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Data.SessionManagement
@@ -37,7 +36,7 @@ namespace HQ.Data.SessionManagement
 
             var serviceProvider = services.BuildServiceProvider();
             _container = _container ?? new DependencyContainer(serviceProvider);
-            _container.AddAspNetCore();
+            // _container.AddAspNetCore();
             _container.Register(r => serviceProvider);
 
             var slot = $"{typeof(TScope).FullName}";
@@ -86,7 +85,7 @@ namespace HQ.Data.SessionManagement
 
 			var serviceProvider = services.BuildServiceProvider();
             _container = _container ?? new DependencyContainer(serviceProvider);
-            _container.AddAspNetCore();
+            // _container.AddAspNetCore();
             _container.Register(slot, r => factory, Lifetime.Permanent);
             _container.Register(slot, r => serviceProvider);
 

@@ -26,4 +26,8 @@
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AspNetCore\" />
+  </ItemGroup>
+
 </Project>

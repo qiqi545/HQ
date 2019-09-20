@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,6 +32,7 @@ using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
@@ -96,7 +98,9 @@ namespace HQ.Platform.Api.Runtime
 			var results = new List<object>();
 			foreach (var context in contexts)
 				results.Add(await context.GetAsync(_repository));
-			return provider.ToResult(results);
+
+			throw new NotImplementedException();
+			//return provider.ToResult(results);
 		}
 
 		#endregion

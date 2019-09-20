@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 using System;
 using Dapper;
-using HQ.Common.AspNetCore.Mvc;
+using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;

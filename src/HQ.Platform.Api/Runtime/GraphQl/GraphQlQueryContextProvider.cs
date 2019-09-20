@@ -171,6 +171,7 @@ namespace HQ.Platform.Api.Runtime.GraphQL
 		}
 
         public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
+
         public IEnumerable<QueryContext> Parse(Type type, HttpContext source)
         {
             throw new NotImplementedException();
@@ -179,11 +180,6 @@ namespace HQ.Platform.Api.Runtime.GraphQL
         public IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source)
         {
             throw new NotImplementedException();
-        }
-
-        public IActionResult ToResult(params object[] results)
-        {
-	        throw new NotImplementedException();
         }
 	}
 }

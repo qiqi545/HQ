@@ -20,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Common.AspNetCore;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts.Versioning;
 using HQ.Platform.Api.Configuration;

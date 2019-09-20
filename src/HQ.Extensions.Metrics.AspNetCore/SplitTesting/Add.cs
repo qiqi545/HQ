@@ -1,8 +1,9 @@
+using HQ.Extensions.Metrics.SplitTesting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
 {
     public static class Add
     {
