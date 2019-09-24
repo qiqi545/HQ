@@ -20,6 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
+using HQ.Extensions.DependencyInjection;
+using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Test.Sdk.Configuration;
 using HQ.Test.Sdk.Internal;
 using Microsoft.AspNetCore.Builder;
@@ -28,6 +30,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TypeKitchen;
 
 namespace HQ.Test.Sdk
 {
@@ -99,7 +102,7 @@ namespace HQ.Test.Sdk
 			return new TestServer(builder).CreateClient();
 		}
 
-		private static void ConfigureAppConfiguration(IHostingEnvironment env, TestSettings testSettings,
+		private static void ConfigureAppConfiguration(IWebHostEnvironment env, TestSettings testSettings,
             IConfigurationBuilder c)
         {
             if (!string.IsNullOrWhiteSpace(testSettings.AppSettingsPath))
@@ -153,7 +156,7 @@ namespace HQ.Test.Sdk
         {
             T startup = null;
             IConfiguration config = null;
-            IHostingEnvironment env;
+            IWebHostEnvironment env;
             IServiceCollection services = null;
 
             var builder = new WebHostBuilder()
@@ -189,8 +192,13 @@ namespace HQ.Test.Sdk
 
                         container.Register(startup);
 
-                        var methodName = topology == SystemTopology.Web ? "ConfigureServices" : nameof(FunctionsStartup.Configure);
-                        container.InvokeMethod<T>(methodName);
+                        var method = startup.GetType().GetMethod("ConfigureServices");
+                        if (method != null)
+                        {
+	                        var accessor = CallAccessor.Create(method);
+	                        accessor.Call(startup);
+						}
+                        
                         foreach (var action in configureServices)
                             action(serviceCollection);
                     }
@@ -218,7 +226,12 @@ namespace HQ.Test.Sdk
                         container.Register(startup);
                         container.Register(app);
 
-                        container.InvokeMethod<T>("Configure");
+                        var method = startup.GetType().GetMethod("Configure");
+                        if (method != null)
+                        {
+	                        var accessor = CallAccessor.Create(method);
+	                        accessor.Call(startup);
+						}
                         foreach (var action in configure)
                             action(app);
                     }

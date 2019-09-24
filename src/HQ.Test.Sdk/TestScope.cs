@@ -27,7 +27,6 @@ using HQ.Test.Sdk.Internal;
 using HQ.Test.Sdk.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Internal;
 using TypeKitchen;
 
 namespace HQ.Test.Sdk
@@ -367,12 +366,14 @@ namespace HQ.Test.Sdk
 
         public void Log(LogLevel logLevel, EventId eventId, Exception exception, string message, params object[] args)
         {
-            Log(logLevel, eventId, (object) new FormattedLogValues(message, args), exception, MessageFormatter);
+	        throw new NotImplementedException();
+            //Log(logLevel, eventId, (object) new FormattedLogValues(message, args), exception, MessageFormatter);
         }
 
         public IDisposable BeginScope(string messageFormat, params object[] args)
         {
-            return BeginScope(new FormattedLogValues(messageFormat, args));
+	        throw new NotImplementedException();
+			//return BeginScope(new FormattedLogValues(messageFormat, args));
         }
 
         #endregion
