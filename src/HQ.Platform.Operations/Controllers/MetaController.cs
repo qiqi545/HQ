@@ -36,7 +36,6 @@ namespace HQ.Platform.Operations.Controllers
 		private readonly ISwaggerProvider _swaggerProvider;
 		private readonly ISchemaVersionStore _schemaStore;
 		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
-		private readonly JsonSerializer _swaggerSerializer;
 		private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
 		private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
@@ -45,7 +44,7 @@ namespace HQ.Platform.Operations.Controllers
 			ISwaggerProvider swaggerProvider,
 			ISchemaVersionStore schemaStore,
 			IOptionsMonitor<MetaApiOptions> metaOptions,
-			IOptionsMonitor<MvcJsonOptions> mvcOptions,
+			IOptionsMonitor<MvcNewtonsoftJsonOptions> mvcOptions,
 			IOptionsMonitor<SwaggerOptions> swaggerOptions,
 			IOptionsMonitor<SchemaOptions> schemaOptions)
 		{
@@ -56,15 +55,8 @@ namespace HQ.Platform.Operations.Controllers
 			_metaOptions = metaOptions;
 			_swaggerOptions = swaggerOptions;
 			_schemaOptions = schemaOptions;
-			_swaggerSerializer = SetSwaggerSerializer(mvcOptions.CurrentValue);
-			mvcOptions.OnChange((o, l) => SetSwaggerSerializer(o));
 		}
-
-		private static JsonSerializer SetSwaggerSerializer(MvcJsonOptions options)
-		{
-			return SwaggerSerializerFactory.Create(Microsoft.Extensions.Options.Options.Create(options));
-		}
-
+		
 		[FeatureSelector]
 		[HttpOptions("")]
 		public IActionResult Options()
@@ -176,7 +168,8 @@ namespace HQ.Platform.Operations.Controllers
 				{
 					using (var writer = new StringWriter(sb))
 					{
-						_swaggerSerializer.Serialize(writer, swagger);
+						var serializer = new JsonSerializer();
+						serializer.Serialize(writer, swagger);
 					}
 				}), "application/json", Encoding.UTF8);
 			}

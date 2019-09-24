@@ -20,18 +20,20 @@ using System.Collections.Generic;
 using HQ.Common;
 using HQ.Common.Serialization;
 using HQ.Platform.Api.Extensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Formatters
 {
-    public class JsonOutputFormatter : Microsoft.AspNetCore.Mvc.Formatters.JsonOutputFormatter
+    public class JsonOutputFormatter : NewtonsoftJsonOutputFormatter
     {
         private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
         private JsonSerializer _serializer;
 
-        public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool) : base(
-            serializerSettings, charPool)
+        public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool, IOptions<MvcOptions> options) : base(
+            serializerSettings, charPool, options.Value)
         {
             _resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
         }

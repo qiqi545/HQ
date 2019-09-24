@@ -31,8 +31,12 @@ namespace HQ.Platform.Security.AspNetCore
 			var superUser = app.ApplicationServices.GetRequiredService<IValidOptions<SuperUserOptions>>();
 
 			if (options.Value.Cors.Enabled)
+			{
+				app.UseRouting();
 				app.UseCors(Constants.Security.Policies.CorsPolicy);
-
+				app.UseEndpoints(builder => { });
+			}
+			
 			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)
 			{
 				app.UseAuthentication();

@@ -21,7 +21,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Correlation
 {
-    public static class Use
+	public static class Use
     {
         // 
         // See: https://www.w3.org/TR/trace-context/#problem-statement

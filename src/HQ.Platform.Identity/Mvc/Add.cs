@@ -18,7 +18,7 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.Mvc.Security;
+using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
@@ -62,7 +62,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 		    where TKey : IEquatable<TKey>
 	    {
 		    services.AddMvc()
-			    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+			    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
 			    .AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
 
 		    return services;

@@ -105,7 +105,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(tenantName));
             }
 
-            tenantName = KeyNormalizer.MaybeNormalize(tenantName);
+            tenantName = KeyNormalizer.MaybeNormalizeName(tenantName);
 
             var tenant = await _tenantStore.FindByNameAsync(tenantName, CancellationToken);
             if (tenant != null || !Options.Stores.ProtectPersonalData)
@@ -140,7 +140,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(email));
             }
 
-            email = KeyNormalizer.MaybeNormalize(email);
+            email = KeyNormalizer.MaybeNormalizeName(email);
 
             if (!(_userStore is IUserEmailStoreExtended<TUser> emailStore))
             {
@@ -243,7 +243,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(username));
             }
 
-            username = KeyNormalizer.MaybeNormalize(username);
+            username = KeyNormalizer.MaybeNormalizeName(username);
 
             var users = await _userStore.FindAllByNameAsync(username, CancellationToken);
             if (users != null || !Options.Stores.ProtectPersonalData)
@@ -402,7 +402,7 @@ namespace HQ.Platform.Identity.Models
         public virtual async Task UpdateNormalizedTenantNameAsync(TTenant tenant)
         {
             var tenantName = await GetTenantNameAsync(tenant);
-            var normalizedName = ProtectPersonalData(KeyNormalizer.MaybeNormalize(tenantName));
+            var normalizedName = ProtectPersonalData(KeyNormalizer.MaybeNormalizeName(tenantName));
             await _tenantStore.SetNormalizedTenantNameAsync(tenant, normalizedName, CancellationToken);
         }
 

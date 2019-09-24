@@ -5,13 +5,8 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>An SQL generator multi-tool for .NET. This package adds dialect support for SQL Server.</Description>
-    <PackageTags>sql generator dotnet-standard sql-server hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

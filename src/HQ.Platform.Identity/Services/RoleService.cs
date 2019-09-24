@@ -67,7 +67,7 @@ namespace HQ.Platform.Identity.Services
             var role = (TRole) FormatterServices.GetUninitializedObject(typeof(TRole));
             role.Name = model.Name;
             role.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
-            role.NormalizedName = _lookupNormalizer.MaybeNormalize(model.Name);
+            role.NormalizedName = _lookupNormalizer.MaybeNormalizeName(model.Name);
             
             var result = await _roleManager.CreateAsync(role);
             return result.ToOperation(role);

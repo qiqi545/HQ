@@ -24,6 +24,7 @@ using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Schema.Configuration;

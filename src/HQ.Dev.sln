@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29009.5
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E5A6C044-2BB1-4E7A-B7F3-0A7D4E537E52}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE.txt = ..\LICENSE.txt
+		..\LICENSE_FULL.txt = ..\LICENSE_FULL.txt
+		..\README.md = ..\README.md
+		..\THIRD-PARTY-NOTICES-LIBRARY.txt = ..\THIRD-PARTY-NOTICES-LIBRARY.txt
+		..\THIRD-PARTY-NOTICES.txt = ..\THIRD-PARTY-NOTICES.txt
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Dev", "HQ\HQ.Dev.csproj", "{B8BC7CC2-E036-4D1A-A475-5EB878B5B5EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B8BC7CC2-E036-4D1A-A475-5EB878B5B5EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8BC7CC2-E036-4D1A-A475-5EB878B5B5EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8BC7CC2-E036-4D1A-A475-5EB878B5B5EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8BC7CC2-E036-4D1A-A475-5EB878B5B5EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1F1FE3EE-A455-4863-8957-61FD7CEA6B0D}
+	EndGlobalSection
+EndGlobal

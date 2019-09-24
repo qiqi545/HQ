@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Configurations>Debug;Release;PackageSources;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
@@ -33,6 +33,7 @@
     <Content Include="..\HQ.Extensions.Numerics\**\*.cs" Exclude="..\HQ.Extensions.Numerics\obj\**\*" Link="Extensions.Numerics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\**\*.cs" Exclude="..\HQ.Extensions.Dates\src\HQ.Extensions.Dates\obj\**\*" Link="Extensions.Dates\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Caching\**\*.cs" Exclude="..\HQ.Extensions.Caching\obj\**\*" Link="Extensions.Caching\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Extensions.Caching.AspNetCore\**\*.cs" Exclude="..\HQ.Extensions.Caching.AspNetCore\obj\**\*" Link="Extensions.Caching.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\**\*.cs" Exclude="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\obj\**\*" Link="Extensions.CodeGeneration\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Correlation\**\*.cs" Exclude="..\HQ.Extensions.Correlation\obj\**\*" Link="Extensions.Correlation\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -64,6 +65,7 @@
 
     <!-- Data -->
     <Content Include="..\HQ.Data.Contracts\**\*.cs" Exclude="..\HQ.Data.Contracts\obj\**\*" Link="Data.Contracts\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Content Include="..\HQ.Data.Contracts.AspNetCore\**\*.cs" Exclude="..\HQ.Data.Contracts.AspNetCore\obj\**\*" Link="Data.Contracts.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.SessionManagement\**\*.cs" Exclude="..\HQ.Data.SessionManagement\obj\**\*" Link="Data.SessionManagement\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Sql\**\*.cs" Exclude="..\HQ.Data.Sql\obj\**\*" Link="Data.Sql\%(RecursiveDir)%(Filename)%(Extension)" />
     <Content Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -88,7 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.0.0" />
   </ItemGroup>
 
   <!-- SQL Server -->
@@ -109,17 +111,23 @@
     <Content Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.0" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Bogus" Version="28.2.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
+    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
+    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+    <PackageReference Include="Bogus" Version="28.3.1" />
     <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.7.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
-    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="AngleSharp" Version="0.13.0" />
     <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
@@ -129,19 +137,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
     <PackageReference Include="System.Reactive" Version="4.1.6" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.15" />
+    <PackageReference Include="TypeKitchen" Version="1.0.17" />
     <PackageReference Include="WyHash" Version="1.0.4" />
-    <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
-
-    <!-- See: https://github.com/dotnet/roslyn-analyzers/issues/1771 -->
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.4" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Features" Version="3.2.1" PrivateAssets="all" />
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

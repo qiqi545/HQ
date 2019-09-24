@@ -15,7 +15,6 @@
 
 #endregion
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
@@ -23,7 +22,5 @@ namespace HQ.Extensions.Logging
     public class SafeLogger<TCategoryName> : SafeLogger, ISafeLogger<TCategoryName>
     {
         public SafeLogger(ILogger<TCategoryName> inner) : base(inner) { }
-
-        public SafeLogger(ILogger<TCategoryName> inner, IHttpContextAccessor accessor) : base(inner, accessor) { }
     }
 }

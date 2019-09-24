@@ -97,7 +97,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Username))
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
             {
                 return new[] { CreateSuperUserInstance() };
             }
@@ -174,7 +174,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Username))
+            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
             {
                 return CreateSuperUserInstance();
             }
@@ -278,11 +278,11 @@ namespace HQ.Platform.Identity.Stores.Sql
             var options = _superUser?.Value;
 
             superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
-            superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalize(superuser.UserName);
-            superuser.PhoneNumber = _lookupNormalizer.MaybeNormalize(options?.PhoneNumber ?? SuperUserDefaultPhoneNumber);
+            superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalizeName(superuser.UserName);
+            superuser.PhoneNumber = _lookupNormalizer.MaybeNormalizeName(options?.PhoneNumber ?? SuperUserDefaultPhoneNumber);
             superuser.PhoneNumberConfirmed = true;
             superuser.Email = options?.Email ?? SuperUserDefaultEmail;
-            superuser.NormalizedEmail = _lookupNormalizer.MaybeNormalize(options?.Email ?? SuperUserDefaultEmail);
+            superuser.NormalizedEmail = _lookupNormalizer.MaybeNormalizeName(options?.Email ?? SuperUserDefaultEmail);
             superuser.EmailConfirmed = true;
             superuser.LockoutEnabled = false;
             superuser.TwoFactorEnabled = false;

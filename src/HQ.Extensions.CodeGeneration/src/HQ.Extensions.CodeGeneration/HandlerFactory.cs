@@ -19,15 +19,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using HQ.Extensions.CodeGeneration.Internal.Execution;
-using Microsoft.AspNetCore.NodeServices;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyModel;
 
 namespace HQ.Extensions.CodeGeneration
@@ -56,41 +51,26 @@ function(callback) {
 
         private readonly IAssemblyBuilder _builder;
         private readonly IEnumerable<Assembly> _defaultDependencies;
-        private readonly INodeServices _nodeServices;
 
-        public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices,
-            IEnumerable<Assembly> defaultDependencies)
+        public HandlerFactory(IAssemblyBuilder builder, IEnumerable<Assembly> defaultDependencies)
         {
             _builder = builder;
-            _nodeServices = nodeServices;
             _defaultDependencies = defaultDependencies ?? GetRuntimeAssemblies();
         }
 
-        public HandlerFactory(IAssemblyBuilder builder, INodeServices nodeServices,
-            params Assembly[] defaultDependencies) : this(builder, nodeServices, defaultDependencies.AsEnumerable())
+        public HandlerFactory(IAssemblyBuilder builder, params Assembly[] defaultDependencies) : this(builder, defaultDependencies.AsEnumerable())
         {
         }
 
-        public HandlerFactory(INodeServices nodeServices,
-            params Assembly[] defaultDependencies) : this(AssemblyBuilder.Default.Value, nodeServices,
-            defaultDependencies.AsEnumerable())
+        public HandlerFactory(params Assembly[] defaultDependencies) : this(AssemblyBuilder.Default.Value, defaultDependencies.AsEnumerable())
         {
         }
 
-        public HandlerFactory() : this(AssemblyBuilder.Default.Value,
-            NodeServicesFactory.CreateNodeServices(DefaultNodeServicesOptions()))
+        public HandlerFactory() : this(AssemblyBuilder.Default.Value)
         {
-        }
 
-        private static NodeServicesOptions DefaultNodeServicesOptions()
-        {
-            var options = new NodeServicesOptions(new ServiceCollection().BuildServiceProvider())
-            {
-                ProjectPath = Directory.GetCurrentDirectory()
-            };
-            return options;
         }
-
+		
         public Assembly BuildAssemblyInMemory(string assemblyName, HandlerInfo info, params Assembly[] dependencies)
         {
             var code = info.Code ?? NoCSharpCodeHandler;
@@ -133,25 +113,7 @@ function(callback) {
             var method = t?.GetMethod(function, BindingFlags.Public | BindingFlags.Static);
             return method;
         }
-
-        public Handler BuildJavaScriptHandler<T>(HandlerInfo info)
-        {
-            var @namespace = info.Namespace ?? "module";
-            var entrypoint = info.Entrypoint ?? "exports";
-            var code = info.Code ?? $"{@namespace}.{entrypoint} = {NoJavaScriptCodeHandler}";
-
-            var md5 = MD5.Create();
-            var inputBytes = Encoding.UTF8.GetBytes(code);
-            var hash = md5.ComputeHash(inputBytes);
-            var sb = new StringBuilder();
-            foreach (var c in hash)
-                sb.Append(c.ToString("X2"));
-            var moduleName = $"{sb}.js";
-
-            File.WriteAllText(moduleName, code);
-            return (t, p) => _nodeServices.InvokeAsync<T>(moduleName, p).Result;
-        }
-
+		
         private static IEnumerable<Assembly> GetRuntimeAssemblies()
         {
             var dependencies = DependencyContext.Default.RuntimeLibraries

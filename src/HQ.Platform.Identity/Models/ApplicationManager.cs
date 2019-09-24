@@ -102,7 +102,7 @@ namespace HQ.Platform.Identity.Models
                 throw new ArgumentNullException(nameof(applicationName));
             }
 
-            applicationName = KeyNormalizer.MaybeNormalize(applicationName);
+            applicationName = KeyNormalizer.MaybeNormalizeName(applicationName);
 
             var application = await _applicationStore.FindByNameAsync(applicationName, CancellationToken);
             if (application != null || !Options.Stores.ProtectPersonalData)
@@ -251,7 +251,7 @@ namespace HQ.Platform.Identity.Models
         {
             var applicationName = await GetApplicationNameAsync(application);
             ;
-            var normalizedName = ProtectPersonalData(KeyNormalizer.MaybeNormalize(applicationName));
+            var normalizedName = ProtectPersonalData(KeyNormalizer.MaybeNormalizeName(applicationName));
             await _applicationStore.SetNormalizedApplicationNameAsync(application, normalizedName, CancellationToken);
         }
 

@@ -1,6 +1,7 @@
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
@@ -24,7 +25,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, Action<BackgroundTaskOptions> configureTasks = null)
 	    {
 		    services.AddMvc()
-			    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+			    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
 			    .AddBackgroundTasksApi();
 
 		    return services;

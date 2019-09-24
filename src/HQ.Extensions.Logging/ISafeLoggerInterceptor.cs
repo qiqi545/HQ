@@ -13,23 +13,14 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.Mvc.Security;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+using System;
+using Microsoft.Extensions.Logging;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
+namespace HQ.Extensions.Logging
 {
-	public static class Add
+	public interface ISafeLoggerInterceptor
 	{
-		public static void AddDynamicAuthorization(this IServiceCollection services)
-		{
-			services.TryAddTransient<IFilterProvider>(r => new DynamicAuthorizeFilterProvider(r.GetServices<IDynamicComponent>()));
-			services.TryAddEnumerable(ServiceDescriptor.Transient<IApplicationModelProvider, DynamicApplicationModelProvider>());
-			services.Replace(ServiceDescriptor.Singleton<IAuthorizationPolicyProvider, DynamicAuthorizationPolicyProvider>());
-		}
+		bool CanIntercept { get; }
+		bool TryLog<TState>(ILogger inner, ref int safe, LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter);
 	}
 }

@@ -39,7 +39,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
             var claims = new List<Claim>();
 
-            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser.Value.Username))
+            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser.Value.Username))
             {
                 var superUser = CreateSuperUserInstance();
                 claims.TryAddClaim(_security.Value.Claims.UserIdClaim, $"{superUser.Id}");

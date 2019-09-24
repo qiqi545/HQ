@@ -18,6 +18,7 @@
 using System;
 using System.Linq;
 using HQ.Common;
+using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
@@ -26,10 +27,11 @@ using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using CorsOptions = HQ.Platform.Security.Configuration.CorsOptions;
 
 namespace HQ.Platform.Security.AspNetCore
 {
@@ -90,6 +92,8 @@ namespace HQ.Platform.Security.AspNetCore
 
 			logger?.Trace(() => "CORS enabled.");
 
+			services.AddRouting(o => { });
+
 			services.AddCors(o =>
 			{
 				o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
@@ -113,10 +117,9 @@ namespace HQ.Platform.Security.AspNetCore
 				});
 			});
 
-			services.AddMvc(o =>
-			{
-				o.Filters.Add(new CorsAuthorizationFilterFactory(Constants.Security.Policies.CorsPolicy));
-			});
+
+			services.AddMvc(o => { })
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 		}
 
 		private static void AddHttps(this IServiceCollection services, ISafeLogger logger, SecurityOptions options)

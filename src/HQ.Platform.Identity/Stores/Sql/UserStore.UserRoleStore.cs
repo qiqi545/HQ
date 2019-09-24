@@ -75,7 +75,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (user.NormalizedUserName == _lookupNormalizer.MaybeNormalize(_superUser?.Value?.Username))
+            if (user.NormalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
             {
                 return SuperUserRoles;
             }
@@ -128,7 +128,7 @@ namespace HQ.Platform.Identity.Stores.Sql
         {
             var query = SqlBuilder.Select<TRole>(new
             {
-                NormalizedName = _lookupNormalizer.MaybeNormalize(roleName),
+                NormalizedName = _lookupNormalizer.MaybeNormalizeName(roleName),
                 TenantId = _tenantId
             });
             _connection.SetTypeInfo(typeof(TRole));

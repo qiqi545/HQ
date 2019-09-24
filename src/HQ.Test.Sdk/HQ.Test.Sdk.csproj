@@ -5,7 +5,7 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 

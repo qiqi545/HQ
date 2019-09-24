@@ -115,7 +115,7 @@ namespace HQ.Data.Contracts {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The provided type is not an open generic type.
+        ///   Looks up a localized string similar to The provided implementationType is not an open generic implementationType.
         /// </summary>
         public static string TypeIsNotAnOpenGeneric {
             get {

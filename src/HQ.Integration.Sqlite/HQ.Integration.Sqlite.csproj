@@ -5,22 +5,17 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <Description>An SQL generator multi-tool for .NET. This package adds dialect support for SQLite.</Description>
-    <PackageTags>sql generator dotnet-standard sqlite hq-stack</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.4" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.6" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 

@@ -18,30 +18,29 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using HQ.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
 {
-    public class SafeLogger : ISafeLogger
+	public class SafeLogger : ISafeLogger
     {
         private readonly ILogger _inner;
-        private readonly IHttpContextAccessor _accessor;
-        private volatile int _safe;
+        private readonly IEnumerable<ISafeLoggerInterceptor> _interceptors;
+        private int _safe;
 
-        public SafeLogger(ILogger inner)
+        public SafeLogger(ILogger inner, IEnumerable<ISafeLoggerInterceptor> interceptors)
         {
-            _inner = inner;
+	        _inner = inner;
+	        _interceptors = interceptors;
         }
 
-        public SafeLogger(ILogger inner, IHttpContextAccessor accessor)
+        public SafeLogger(ILogger inner, params ISafeLoggerInterceptor[] interceptors)
         {
-            _inner = inner;
-            _accessor = accessor;
+	        _inner = inner;
+	        _interceptors = interceptors;
         }
 
-        public void Trace(Func<string> message, params object[] args)
+		public void Trace(Func<string> message, params object[] args)
         {
             SafeLog(LogLevel.Trace, message, args);
         }
@@ -127,44 +126,16 @@ namespace HQ.Extensions.Logging
             if (_safe != 1)
                 throw new InvalidOperationException("Logging operation was called in an unsafe way.");
 
-            if (_accessor?.HttpContext?.Request?.Headers != null &&
-                _accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent, out var traceContext))
-            {
-                try
-                {
-                    // See: https://messagetemplates.org/
-                    var data = new Dictionary<string, object>
-                    {
-                        { $"@{Constants.HttpHeaders.TraceParent}", traceContext}
-                    };
+			foreach (var interceptor in _interceptors)
+			{
+				if (!interceptor.CanIntercept || !interceptor.TryLog(_inner, ref _safe, logLevel, eventId, state, exception, formatter))
+					continue;
+				return;
+			}
 
-                    using (_inner.BeginScope(data))
-                    {
-                        SafeLog();
-                    }
-                }
-                catch (Exception ex) when (LogError(ex))
-                {
-                    throw;
-                }
-
-                bool LogError(Exception ex)
-                {
-                    _inner.LogError(ex, "Unhandled exception");
-                    return true;
-                }
-            }
-            else
-            {
-	            SafeLog();
-            }
-
-            void SafeLog()
-            {
-                _inner.Log(logLevel, eventId, state, exception, formatter);
-                Interlocked.Exchange(ref _safe, 0);
-            }
-        }
+			_inner.Log(logLevel, eventId, state, exception, formatter);
+			Interlocked.Exchange(ref _safe, 0);
+		}
 
         public bool IsEnabled(LogLevel logLevel)
         {

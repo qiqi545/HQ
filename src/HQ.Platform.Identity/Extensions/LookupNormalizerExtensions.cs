@@ -19,9 +19,9 @@ namespace HQ.Platform.Identity.Extensions
 {
     public static class LookupNormalizerExtensions
     {
-        public static string MaybeNormalize(this ILookupNormalizer normalizer, string lookup)
+        public static string MaybeNormalizeName(this ILookupNormalizer normalizer, string lookup)
         {
-            return normalizer != null ? normalizer.Normalize(lookup) : lookup;    
+            return normalizer != null ? normalizer.NormalizeName(lookup) : lookup;    
         }
     }
 }

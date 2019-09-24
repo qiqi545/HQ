@@ -18,7 +18,6 @@
 using System;
 using System.Reflection;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
@@ -44,6 +43,7 @@ using HQ.Integration.SqlServer.Schema;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
+using HQ.Platform.Api.Correlation;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc;
 using HQ.Platform.Api.Runtime.GraphQl;
 using HQ.Platform.Api.Runtime.Rest;
@@ -93,6 +93,7 @@ namespace HQ.Platform.Node
 			services.AddLocalTimestamps();
 			services.AddSafeLogging();
 			services.AddValidOptions();
+			services.AddTraceContext();
 
 			//
 			// Platform Services"

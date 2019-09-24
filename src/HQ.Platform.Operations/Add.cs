@@ -19,6 +19,7 @@ using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.Contracts.Schema.Models;
@@ -98,7 +99,7 @@ namespace HQ.Platform.Operations
 		{
 			services.AddSingleton(configurationRoot);
 			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
 				.AddConfigurationApi(configureAction);
 
 			return services;
@@ -127,7 +128,7 @@ namespace HQ.Platform.Operations
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
 		{
 			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
 				.AddMetaApi(configureAction);
 
 			return services;
@@ -157,7 +158,6 @@ namespace HQ.Platform.Operations
 					Title = "Sample API",
 					Version = "v1"
 				});
-				c.DescribeAllEnumsAsStrings();
 			});
 
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();

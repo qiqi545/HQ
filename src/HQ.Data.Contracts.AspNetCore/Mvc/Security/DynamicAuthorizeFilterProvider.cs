@@ -20,14 +20,14 @@ using System.Collections.Generic;
 using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.Mvc.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 {
 	public sealed class DynamicAuthorizeFilterProvider : DefaultFilterProvider
 	{

@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0" />
   </ItemGroup>
 
 </Project>
