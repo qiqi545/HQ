@@ -16,15 +16,22 @@
 #endregion
 
 using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using TypeKitchen;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
 	public static class Add
 	{
+		public static IMvcBuilder AddMvcCommon(this IServiceCollection services, Action<MvcOptions> configureAction = null)
+		{
+			return services
+				.AddControllers(configureAction)
+				.AddNewtonsoftJson()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+		}
+
 		public static IMvcBuilder AddComponentFeature<TComponent, TComponentOptions>(this IMvcBuilder mvcBuilder) 
 			where TComponent : IDynamicComponent
 			where TComponentOptions : IComponentOptions

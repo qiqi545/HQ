@@ -11,6 +11,7 @@
 
   <PropertyGroup>
     <Description>Simple connection management for ADO.NET data providers.</Description>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

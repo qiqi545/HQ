@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -17,9 +16,6 @@ using HQ.Data.Contracts.Schema.Models;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Swagger;
-using TypeKitchen;
 
 namespace HQ.Platform.Operations.Controllers
 {
@@ -33,27 +29,27 @@ namespace HQ.Platform.Operations.Controllers
 	public class MetaController : Controller
 	{
 		private readonly IEnumerable<IMetaProvider> _providers;
-		private readonly ISwaggerProvider _swaggerProvider;
+		// private readonly ISwaggerProvider _swaggerProvider;
 		private readonly ISchemaVersionStore _schemaStore;
 		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
-		private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
+		//private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
 		private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
 		public MetaController(
 			IEnumerable<IMetaProvider> providers,
-			ISwaggerProvider swaggerProvider,
+			//ISwaggerProvider swaggerProvider,
 			ISchemaVersionStore schemaStore,
 			IOptionsMonitor<MetaApiOptions> metaOptions,
 			IOptionsMonitor<MvcNewtonsoftJsonOptions> mvcOptions,
-			IOptionsMonitor<SwaggerOptions> swaggerOptions,
+			//IOptionsMonitor<SwaggerOptions> swaggerOptions,
 			IOptionsMonitor<SchemaOptions> schemaOptions)
 		{
 			_providers = providers;
 
-			_swaggerProvider = swaggerProvider;
+			//_swaggerProvider = swaggerProvider;
 			_schemaStore = schemaStore;
 			_metaOptions = metaOptions;
-			_swaggerOptions = swaggerOptions;
+			//_swaggerOptions = swaggerOptions;
 			_schemaOptions = schemaOptions;
 		}
 		
@@ -155,6 +151,9 @@ namespace HQ.Platform.Operations.Controllers
 		[HttpGet("swagger")]
 		public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")] string version = "2.0")
 		{
+			return StatusCode((int) HttpStatusCode.NotImplemented);
+
+			/*
 			var basePath = string.IsNullOrEmpty(Request.PathBase) ? null : Request.PathBase.ToString();
 			try
 			{
@@ -177,6 +176,7 @@ namespace HQ.Platform.Operations.Controllers
 			{
 				return NotFound();
 			}
+			*/
 		}
 	}
 }

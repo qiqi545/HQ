@@ -4,6 +4,7 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
+using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
@@ -39,8 +40,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
             services.AddLocalTimestamps();
 			services.AddSafeLogging();
-            services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope);
-            
+            services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope).AddAspNetCore();
             services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
 
             var dialect = new SqlServerDialect();

@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />

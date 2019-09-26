@@ -4,6 +4,7 @@ using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
+using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
@@ -35,7 +36,9 @@ namespace HQ.Integration.Sqlite.Scheduling
             if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString, scope);
+            var extensions = new[] {new HttpAccessorExtension()};
+
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString, scope, extensions);
 			builder.Services.AddLocalTimestamps();
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 

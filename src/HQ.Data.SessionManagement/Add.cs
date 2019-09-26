@@ -16,18 +16,20 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using HQ.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Data.SessionManagement
 {
-    public static class ServiceCollectionExtensions
+	public static class Add
     {
         private static DependencyContainer _container;
 
-        public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(
+        public static ContainerBuilder AddDatabaseConnection<TScope, TConnectionFactory>(
             this IServiceCollection services, string connectionString, ConnectionScope scope,
+			IEnumerable<IResolverExtension> extensions = null,
             Action<IDbConnection, IServiceProvider> onConnection = null,
             Action<IDbCommand, Type, IServiceProvider> onCommand = null)
             where TConnectionFactory : class, IConnectionFactory, new()
@@ -35,13 +37,12 @@ namespace HQ.Data.SessionManagement
             services.AddTransient(r => _container.Resolve<IDataConnection<TScope>>());
 
             var serviceProvider = services.BuildServiceProvider();
-            _container = _container ?? new DependencyContainer(serviceProvider);
-            // _container.AddAspNetCore();
+            _container ??= new DependencyContainer(serviceProvider);
             _container.Register(r => serviceProvider);
 
             var slot = $"{typeof(TScope).FullName}";
 
-            AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, onConnection, onCommand);
+            var builder = AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, extensions, onConnection, onCommand);
 
             switch (scope)
             {
@@ -69,13 +70,14 @@ namespace HQ.Data.SessionManagement
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
 
-            return services;
+            return builder;
         }
 
-		private static void AddDatabaseConnection<TConnectionFactory>(this IServiceCollection services,
+		private static ContainerBuilder AddDatabaseConnection<TConnectionFactory>(this IServiceCollection services,
 			string connectionString,
 			ConnectionScope scope,
 			string slot,
+			IEnumerable<IResolverExtension> extensions = null,
 			Action<IDbConnection, IServiceProvider> onConnection = null,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null) where TConnectionFactory : class, IConnectionFactory, new()
         {
@@ -84,10 +86,17 @@ namespace HQ.Data.SessionManagement
             services.AddSingleton(factory);
 
 			var serviceProvider = services.BuildServiceProvider();
-            _container = _container ?? new DependencyContainer(serviceProvider);
-            // _container.AddAspNetCore();
+            _container ??= new DependencyContainer(serviceProvider);
             _container.Register(slot, r => factory, Lifetime.Permanent);
             _container.Register(slot, r => serviceProvider);
+
+            if (extensions != null)
+            {
+	            foreach (var extension in extensions)
+	            {
+		            _container.AddExtension(extension);
+	            }
+            }
 
             switch (scope)
             {
@@ -125,7 +134,9 @@ namespace HQ.Data.SessionManagement
                 default:
                     throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
             }
-        }
+
+            return new ContainerBuilder(services, _container);
+		}
     }
 }
 

@@ -39,6 +39,7 @@ namespace HQ.Platform.Security.AspNetCore
 			
 			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)
 			{
+				app.UseAuthorization();
 				app.UseAuthentication();
 			}
 

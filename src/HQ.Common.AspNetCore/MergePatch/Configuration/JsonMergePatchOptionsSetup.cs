@@ -1,0 +1,69 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Options;
+using Morcatko.AspNetCore.JsonMergePatch.Formatters;
+using Newtonsoft.Json;
+using System;
+using System.Buffers;
+
+namespace Morcatko.AspNetCore.JsonMergePatch.Configuration
+{
+	internal class JsonMergePatchOptionsSetup : IConfigureOptions<MvcOptions>
+	{
+		private readonly ILoggerFactory _loggerFactory;
+		private readonly IOptions<MvcNewtonsoftJsonOptions> _jsonOptions;
+		private readonly JsonSerializerSettings _jsonSerializerSettings;
+		private readonly ArrayPool<char> _charPool;
+		private readonly ObjectPoolProvider _objectPoolProvider;
+		private readonly IOptions<JsonMergePatchOptions> _options;
+
+		public JsonMergePatchOptionsSetup(
+			ILoggerFactory loggerFactory,
+			IOptions<MvcNewtonsoftJsonOptions> jsonOptions,
+			ArrayPool<char> charPool,
+			ObjectPoolProvider objectPoolProvider,
+			IOptions<JsonMergePatchOptions> options)
+		{
+			if (loggerFactory == null)
+			{
+				throw new ArgumentNullException(nameof(loggerFactory));
+			}
+
+			if (jsonOptions == null)
+			{
+				throw new ArgumentNullException(nameof(jsonOptions));
+			}
+
+			if (charPool == null)
+			{
+				throw new ArgumentNullException(nameof(charPool));
+			}
+
+			if (objectPoolProvider == null)
+			{
+				throw new ArgumentNullException(nameof(objectPoolProvider));
+			}
+
+			_loggerFactory = loggerFactory;
+			_jsonOptions = jsonOptions;
+			_jsonSerializerSettings = jsonOptions.Value.SerializerSettings;
+			_charPool = charPool;
+			_objectPoolProvider = objectPoolProvider;
+			_options = options;
+		}
+
+		public void Configure(MvcOptions options)
+		{
+			var jsonMergePatchLogger = _loggerFactory.CreateLogger<JsonMergePatchInputFormatter>();
+			options.InputFormatters.Insert(0, new JsonMergePatchInputFormatter(
+				jsonMergePatchLogger,
+				_jsonSerializerSettings,
+				_charPool,
+				_objectPoolProvider, 
+				options,
+				_jsonOptions.Value,
+				_options.Value));
+		}
+	}
+}

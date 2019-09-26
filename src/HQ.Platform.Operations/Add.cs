@@ -21,7 +21,6 @@ using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc;
-using HQ.Data.Contracts.Mvc.Security;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
@@ -32,12 +31,11 @@ using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Hosting;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations
@@ -45,13 +43,13 @@ namespace HQ.Platform.Operations
 	public static class Add
 	{
 		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-			IHostingEnvironment environment, IConfiguration config)
+			IWebHostEnvironment environment, IConfiguration config)
 		{
 			return AddOperationsApi(services, environment, config.Bind);
 		}
 
 		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-			IHostingEnvironment environment, Action<OperationsApiOptions> configureAction = null)
+			IWebHostEnvironment environment, Action<OperationsApiOptions> configureAction = null)
 		{
 			Bootstrap.EnsureInitialized();
 
@@ -98,10 +96,7 @@ namespace HQ.Platform.Operations
 		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			services.AddSingleton(configurationRoot);
-			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-				.AddConfigurationApi(configureAction);
-
+			services.AddMvcCommon().AddConfigurationApi(configureAction);
 			return services;
 		}
 
@@ -127,10 +122,7 @@ namespace HQ.Platform.Operations
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
 		{
-			services.AddMvc()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-				.AddMetaApi(configureAction);
-
+			services.AddMvcCommon().AddMetaApi(configureAction);
 			return services;
 		}
 
@@ -150,6 +142,7 @@ namespace HQ.Platform.Operations
 			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
 
+			/* FIXME: Swashbuckle doesn't work with ASP.NET Core 3.0
 			mvcBuilder.Services.AddSwaggerGen(c =>
 			{
 				c.EnableAnnotations();
@@ -159,6 +152,7 @@ namespace HQ.Platform.Operations
 					Version = "v1"
 				});
 			});
+			*/
 
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
 			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
@@ -166,9 +160,9 @@ namespace HQ.Platform.Operations
 
 		public static IServiceCollection AddGraphViz(this IServiceCollection services)
 		{
-			services.AddMvc(options =>
+			services.AddMvcCommon(o =>
 			{
-				options.OutputFormatters.Add(new GraphVizOutputFormatter());
+				o.OutputFormatters.Add(new GraphVizOutputFormatter());
 			});
 
 			return services;

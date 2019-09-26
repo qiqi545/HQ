@@ -10,12 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.HttpOverrides" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.ResponseCompression" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.0" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.0" />
@@ -33,6 +28,7 @@
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching.AspNetCore\HQ.Extensions.Caching.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+    <ProjectReference Include="..\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\HQ.Platform.Security\HQ.Platform.Security.csproj" />

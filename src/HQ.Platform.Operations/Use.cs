@@ -174,14 +174,16 @@ namespace HQ.Platform.Operations
 
         public static IApplicationBuilder UseConfigurationApi(this IApplicationBuilder app)
         {
-	        app.UseMvc();
+	        app.UseRouting();
+	        app.UseEndpoints(endpoints => endpoints.MapControllers());
 	        return app;
         }
 
         public static IApplicationBuilder UseMetaApi(this IApplicationBuilder app)
         {
-	        app.UseMvc();
-	        return app;
+			app.UseRouting();
+			app.UseEndpoints(endpoints => endpoints.MapControllers());
+			return app;
         }
 	}
 }

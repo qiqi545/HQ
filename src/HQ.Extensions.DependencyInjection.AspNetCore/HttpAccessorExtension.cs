@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Extensions.DependencyInjection.AspNetCore
 {
-    internal class HttpAccessorExtension : IResolverExtension
+	public class HttpAccessorExtension : IResolverExtension
     {
         public bool CanResolve(Lifetime lifetime)
         {

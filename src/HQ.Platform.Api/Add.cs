@@ -33,6 +33,7 @@ using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
+using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -145,7 +146,7 @@ namespace HQ.Platform.Api
 
         public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+	        services.AddHttpContextAccessor();
 
             if (configureAction != null)
 				services.Configure(configureAction);
@@ -194,9 +195,9 @@ namespace HQ.Platform.Api
             where TApplicationResolver : class, IApplicationContextResolver<TApplication>
             where TApplication : class, new()
         {
-            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+			services.AddHttpContextAccessor();
 
-            if (configureAction != null)
+			if (configureAction != null)
 				services.Configure(configureAction);
 
 			services.AddInProcessCache();
@@ -223,7 +224,7 @@ namespace HQ.Platform.Api
 
 		public static IServiceCollection AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
 		{
-			var mvcBuilder = services.AddMvc();
+			var mvcBuilder = services.AddMvcCommon();
 			mvcBuilder.AddSchemaApi(configureAction);
 			return mvcBuilder.Services;
 		}
@@ -260,7 +261,7 @@ namespace HQ.Platform.Api
 
 		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
 		{
-			var mvcBuilder = services.AddMvc();
+			var mvcBuilder = services.AddMvcCommon();
 			mvcBuilder.AddRuntimeApi(configureAction);
 			return new RuntimeBuilder(mvcBuilder.Services);
 		}
@@ -296,7 +297,8 @@ namespace HQ.Platform.Api
 			if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, onConnection, onCommand);
+			var extensions = new[] {new HttpAccessorExtension()};
+			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, extensions, onConnection, onCommand).AddAspNetCore();
 			builder.Services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
 
 			return builder;

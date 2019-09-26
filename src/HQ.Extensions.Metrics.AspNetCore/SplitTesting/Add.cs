@@ -29,8 +29,8 @@ namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
 
         public static IMetricsBuilder AddSplitTesting(this IMetricsBuilder builder)
         {
-            builder.Services.TryAddScoped<IHttpContextAccessor, HttpContextAccessor>();
-            builder.Services.TryAddScoped<ICohortIdentifier, HttpRequestIdentifier>();
+	        builder.Services.AddHttpContextAccessor();
+			builder.Services.TryAddScoped<ICohortIdentifier, HttpRequestIdentifier>();
             return builder;
         }
 

@@ -13,18 +13,35 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
+using HQ.Test.Sdk;
+using Xunit;
 
-namespace HQ.Platform.Api.Correlation
+namespace HQ.Common.Tests
 {
-	public static class Add
-	{
-		public static IServiceCollection AddTraceContext(this IServiceCollection services)
-		{
-			services.AddHttpContextAccessor();
-			services.AddScoped<ISafeLoggerInterceptor, TraceParentSafeLoggerInterceptor>();
-			return services;
-		}
-	}
+    public class FuncEnumerationTests : UnitUnderTest
+    {
+        [Test]
+        public void Can_enumerate()
+        {
+            var expected = new List<Outer> {new Outer {Value = "A"}, new Outer {Value = "B"}, new Outer {Value = "C"}};
+            var actual = new List<string>();
+
+            var enumerable = expected.Enumerate(outer => outer.Value);
+            foreach (var value in enumerable)
+                actual.Add(value);
+
+            actual.Clear();
+            foreach (var value in enumerable)
+                actual.Add(value);
+
+            Assert.NotEmpty(actual);
+            Assert.Equal(3, actual.Count);
+        }
+
+        public class Outer
+        {
+            public string Value { get; set; }
+        }
+    }
 }

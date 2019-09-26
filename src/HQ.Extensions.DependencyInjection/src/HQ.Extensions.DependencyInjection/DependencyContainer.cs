@@ -47,7 +47,7 @@ namespace HQ.Extensions.DependencyInjection
 
         public void Dispose() { }
 
-        internal bool AddExtension<T>(T extension) where T : IResolverExtension
+        public bool AddExtension<T>(T extension) where T : IResolverExtension
         {
             if (_extensions.Contains(extension))
                 return false;

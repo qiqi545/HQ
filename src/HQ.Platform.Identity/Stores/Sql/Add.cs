@@ -18,6 +18,7 @@
 using System;
 using System.Data;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -46,9 +47,10 @@ namespace HQ.Platform.Identity.Stores.Sql
             if (scope == ConnectionScope.ByRequest)
 				services.AddHttpContextAccessor();
 
-			services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, onConnection, onCommand);
+            var extensions = new[] {new HttpAccessorExtension()};
+            services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, extensions, onConnection, onCommand);
 
-            services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
+			services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
             services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());
 
             services.AddTransient<IRoleStoreExtended<TRole>, RoleStore<TKey, TRole>>();

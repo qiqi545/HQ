@@ -28,8 +28,12 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 				throw new ArgumentNullException(nameof(context));
 			if (context.ActionContext.ActionDescriptor.FilterDescriptors == null)
 				return;
-			foreach (var result in context.Results)
+
+			for (var i = 0; i < context.Results.Count; i++)
+			{
+				var result = context.Results[i];
 				ProvideFilter(context, result);
+			}
 		}
 
 		public virtual void OnProvidersExecuted(FilterProviderContext context) { }

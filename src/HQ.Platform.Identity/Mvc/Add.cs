@@ -61,8 +61,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 		    where TApplication : IdentityApplication<TKey>
 		    where TKey : IEquatable<TKey>
 	    {
-		    services.AddMvc()
-			    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+		    services.AddMvcCommon()
 			    .AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
 
 		    return services;

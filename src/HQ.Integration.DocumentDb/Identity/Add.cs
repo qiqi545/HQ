@@ -85,10 +85,10 @@ namespace HQ.Integration.DocumentDb.Identity
         private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
         {
 	        var builder = new DocumentDbConnectionStringBuilder(connectionString);
-	        o.AccountKey = o.AccountKey ?? builder.AccountKey;
-	        o.AccountEndpoint = o.AccountEndpoint ?? builder.AccountEndpoint;
-	        o.DatabaseId = o.DatabaseId ?? builder.Database;
-	        o.CollectionId = o.CollectionId ?? builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
+	        o.AccountKey ??= builder.AccountKey;
+	        o.AccountEndpoint ??= builder.AccountEndpoint;
+	        o.DatabaseId ??= builder.Database;
+	        o.CollectionId ??= builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
 
 	        o.SharedCollection = true; // User, Role, Tenant, Application, etc.
 	        o.PartitionKeyPaths = new[] { "id" };
@@ -126,15 +126,12 @@ namespace HQ.Integration.DocumentDb.Identity
 
 			SimpleDataDescriptor.TableNameConvention = s =>
 			{
-				switch (s)
+				return s switch
 				{
-					case nameof(IdentityRoleExtended):
-						return nameof(IdentityRole);
-					case nameof(IdentityUserExtended):
-						return nameof(IdentityUser);
-					default:
-						return s;
-				}
+					nameof(IdentityRoleExtended) => nameof(IdentityRole),
+					nameof(IdentityUserExtended) => nameof(IdentityUser),
+					_ => s
+				};
 			};
 
 			DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);

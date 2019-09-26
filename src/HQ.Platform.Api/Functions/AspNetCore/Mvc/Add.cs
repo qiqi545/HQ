@@ -24,15 +24,15 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 
 	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, Action<BackgroundTaskOptions> configureTasks = null)
 	    {
-		    services.AddMvc()
-			    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-			    .AddBackgroundTasksApi();
-
+		    services.AddMvcCommon()
+			    .AddBackgroundTasksApi(configureTasks);
 		    return services;
 	    }
 		
-	    private static void AddBackgroundTasksApi(this IMvcBuilder mvcBuilder)
+	    private static void AddBackgroundTasksApi(this IMvcBuilder mvcBuilder, Action<BackgroundTaskOptions> configureTasks = null)
 	    {
+		    mvcBuilder.Services.Configure(configureTasks);
+
 			mvcBuilder.Services.AddLocalTimestamps();
             mvcBuilder.Services.AddSafeLogging();
 			

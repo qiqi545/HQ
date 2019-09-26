@@ -17,7 +17,6 @@
 
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
-using HQ.Data.Contracts.Mvc.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Security.Configuration;
@@ -29,7 +28,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 	{
 		public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
 		{
-			var mvcBuilder = services.AddMvc();
+			var mvcBuilder = services.AddMvcCommon();
 			mvcBuilder.AddSuperUserTokenController();
 			return services;
 		}

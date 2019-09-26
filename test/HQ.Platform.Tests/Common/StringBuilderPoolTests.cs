@@ -13,18 +13,27 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using HQ.Test.Sdk;
+using TypeKitchen;
 
-namespace HQ.Platform.Api.Correlation
+namespace HQ.Common.Tests
 {
-	public static class Add
-	{
-		public static IServiceCollection AddTraceContext(this IServiceCollection services)
-		{
-			services.AddHttpContextAccessor();
-			services.AddScoped<ISafeLoggerInterceptor, TraceParentSafeLoggerInterceptor>();
-			return services;
-		}
-	}
+    public class StringBuilderPoolTests : UnitUnderTest
+    {
+        [Test]
+        public void Can_use_scoped_builder()
+        {
+            var result = Pooling.StringBuilderPool.Scoped(sb =>
+            {
+                sb.Append("This is a line.");
+            });
+            Assert.Equal("This is a line.", result);
+
+            result = Pooling.StringBuilderPool.Scoped(sb =>
+            {
+                sb.Append("This is a line.");
+            }, 10, 4);
+            Assert.Equal("line", result);
+        }
+    }
 }

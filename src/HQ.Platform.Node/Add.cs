@@ -73,7 +73,7 @@ namespace HQ.Platform.Node
 
 	public static class Add
 	{
-		public static IServiceCollection AddHq(this IServiceCollection services, IHostingEnvironment env, IConfiguration config, ISafeLogger logger)
+		public static IServiceCollection AddHq(this IServiceCollection services, IWebHostEnvironment env, IConfiguration config, ISafeLogger logger)
 		{
 			var subject = Assembly.GetCallingAssembly();
 
@@ -192,7 +192,9 @@ namespace HQ.Platform.Node
 
 			//
 			// Media Services:
-			
+
+            //
+            // Custom Objects:
 			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
 			return services;
@@ -212,8 +214,7 @@ namespace HQ.Platform.Node
 					continue;
 				}
 
-				var method = type.GetMethod("AddGenerated",
-					new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
+				var method = type.GetMethod("AddGenerated", new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
 				if (method == null)
 				{
 					continue;

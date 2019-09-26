@@ -18,8 +18,8 @@
 using System;
 using System.Linq;
 using HQ.Common;
+using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
-using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
@@ -27,10 +27,10 @@ using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using CorsOptions = HQ.Platform.Security.Configuration.CorsOptions;
 
 namespace HQ.Platform.Security.AspNetCore
@@ -104,7 +104,7 @@ namespace HQ.Platform.Security.AspNetCore
 						.WithHeaders(cors.Headers ?? new[] { "*" })
 						.WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
 
-					if (cors.AllowCredentials)
+					if (cors.AllowCredentials && cors.Origins?.Length > 0 && cors.Origins[0] != "*")
 						builder.AllowCredentials();
 					else
 						builder.DisallowCredentials();
@@ -118,8 +118,7 @@ namespace HQ.Platform.Security.AspNetCore
 			});
 
 
-			services.AddMvc(o => { })
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+			services.AddMvcCommon();
 		}
 
 		private static void AddHttps(this IServiceCollection services, ISafeLogger logger, SecurityOptions options)

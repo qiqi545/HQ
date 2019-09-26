@@ -31,16 +31,20 @@ namespace HQ.Platform.Node
     public static class Use
     {
         public static IApplicationBuilder UseHq(this IApplicationBuilder app, ISafeLogger logger = null,
-            Action<IRouteBuilder> configureRoutes = null)
+            Action<IEndpointRouteBuilder> configureRoutes = null)
         {
             Bootstrap.EnsureInitialized();
 
             app.UseTraceContext();
+
+			/* FIXME: Swashbuckle doesn't work with ASP.NET Core 3.0
 			app.UseSwaggerUI(c =>
 			{
 				c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
 				c.RoutePrefix = "docs/swagger";
 			});
+            */
+
 			app.UseSecurityPolicies();
             app.UseVersioning();
 			app.UseOperationsApi();
@@ -49,16 +53,21 @@ namespace HQ.Platform.Node
             app.UseMetaApi();
             app.UseMultiTenancy<IdentityTenant, string>();
 
-            try
+			app.UseRouting();
+            app.UseEndpoints(endpoints =>
             {
-                app.UseMvc(routes => { configureRoutes?.Invoke(routes); });
-            }
-            catch (Exception e)
-            {
-                logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
-                throw;
-            }
-
+                try
+	            {
+		            configureRoutes?.Invoke(endpoints);
+					endpoints.MapControllers();
+				}
+	            catch (Exception e)
+	            {
+		            logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
+		            throw;
+	            }
+            });
+            
             return app;
         }
     }

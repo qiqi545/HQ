@@ -13,18 +13,23 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using HQ.Test.Sdk;
 
-namespace HQ.Platform.Api.Correlation
+namespace HQ.Common.Tests
 {
-	public static class Add
-	{
-		public static IServiceCollection AddTraceContext(this IServiceCollection services)
-		{
-			services.AddHttpContextAccessor();
-			services.AddScoped<ISafeLoggerInterceptor, TraceParentSafeLoggerInterceptor>();
-			return services;
-		}
-	}
+    public class StopwatchPoolTests : UnitUnderTest
+    {
+        [Test]
+        public void Can_use_scoped_builder()
+        {
+            var elapsed = StopwatchPool.Scoped(x =>
+            {
+                Task.Delay(100).Wait();
+            });
+
+            Assert.NotEqual(default, elapsed);
+            Assert.True(elapsed.TotalMilliseconds >= 100, elapsed.ToString());
+        }
+    }
 }
