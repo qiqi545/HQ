@@ -55,6 +55,7 @@
     <Compile Include="..\HQ.Data.Streaming\**\*.cs" Exclude="..\HQ.Data.Streaming\obj\**\*" Link="Data.Streaming\%(RecursiveDir)%(Filename)%(Extension)" />
 
     <!-- Platform -->
+    <EmbeddedResource Include="..\HQ.Platform.Node\**\*.json" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Api\**\*.cs" Exclude="..\HQ.Platform.Api\obj\**\*" Link="Platform.Api\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Functions\**\*.cs" Exclude="..\HQ.Platform.Functions\obj\**\*" Link="Platform.Functions\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Functions.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Functions.AspNetCore.Mvc\obj\**\*" Link="Platform.Functions.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -67,7 +68,6 @@
     <Compile Include="..\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="..\HQ.Platform.Node\**\*" Link="Platform.Node\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -75,12 +75,6 @@
     <EmbeddedResource Include="..\HQ.Data.Contracts\**\*.resx" Link="Data.Contracts\%(Filename)%(Extension)">
       <Generator>PublicResXFileCodeGenerator</Generator>
     </EmbeddedResource>
-    <Compile Remove="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\Internal\**" />
-    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\IMethodInvoker.cs" />
-    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\IMethodResolver.cs" />
-    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodFactory.cs" />
-    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodInvokerBase.cs" />
-    <Compile Remove="..\HQ.Extensions.CodeGeneration\src\HQ.Extensions.CodeGeneration\MethodResolverBase.cs" />
     <Compile Update="**\ErrorStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -121,7 +115,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />

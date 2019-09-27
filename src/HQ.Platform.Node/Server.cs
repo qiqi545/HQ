@@ -17,30 +17,51 @@
 
 using System;
 using System.Diagnostics;
+using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Node
 {
     public static class Server
     {
-        public static void Start<TStartup>(string[] args)
-            where TStartup : class
+	    public static void Start(string[] args, 
+	        Action<IServiceCollection> configureServices = null,
+	        Action<IApplicationBuilder, IWebHostEnvironment> configure = null)
         {
             Masthead();
 
             Execute(args, () =>
             {
-                var builder = WebHost.CreateDefaultBuilder(args);
+				var builder = WebHost.CreateDefaultBuilder(args);
+
                 builder.ConfigureHq(args, true);
-                builder.UseStartup<TStartup>();
+
+				builder.Configure((context, app) =>
+				{
+					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
+	                configure?.Invoke(app, context.HostingEnvironment);
+					app.UseHq(context.HostingEnvironment, logger, routes => { /* custom endpoint routes */});
+                });
+
+                builder.ConfigureServices((context, services) =>
+                {
+					configureServices?.Invoke(services);
+					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
+					services.AddHq(context.HostingEnvironment, context.Configuration, logger);
+				});
 
                 var host = builder.Build();
                 host.Run();
             });
         }
 
-        public static void Masthead()
+	    // ReSharper disable once ClassNeverInstantiated.Local
+	    private class Startup { }
+
+		public static void Masthead()
         {
             // Credit: http://patorjk.com/software/taag/
             var color = Console.ForegroundColor;

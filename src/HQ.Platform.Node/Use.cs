@@ -24,18 +24,23 @@ using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting;
 
 namespace HQ.Platform.Node
 {
     public static class Use
     {
-        public static IApplicationBuilder UseHq(this IApplicationBuilder app, ISafeLogger logger = null,
+        public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env, ISafeLogger logger = null,
             Action<IEndpointRouteBuilder> configureRoutes = null)
         {
             Bootstrap.EnsureInitialized();
 
-            app.UseTraceContext();
+            if (env.IsDevelopment())
+	            app.UseDeveloperExceptionPage();
+
+			app.UseTraceContext();
 
 			/* FIXME: Swashbuckle doesn't work with ASP.NET Core 3.0
 			app.UseSwaggerUI(c =>

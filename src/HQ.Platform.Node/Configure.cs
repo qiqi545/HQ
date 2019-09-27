@@ -42,7 +42,6 @@ namespace HQ.Platform.Node
 			hostBuilder.ConfigureAppConfiguration((context, config) =>
 			{
 				config.Sources.Clear();
-
 				config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
 				config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
 				config.AddCloudConfiguration(context, seedOnLoad);
@@ -57,9 +56,7 @@ namespace HQ.Platform.Node
 				config.AddEnvironmentVariables();
 
 				if (args != null && args.Length > 0)
-				{
 					config.AddCommandLine(args);
-				}
 			});
 
 			hostBuilder.ConfigureLogging((context, builder) =>
@@ -70,9 +67,7 @@ namespace HQ.Platform.Node
 				builder.AddConfiguration(config);
 
 				if (context.HostingEnvironment.IsDevelopment())
-				{
-					builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
-				}
+	                builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
 
 				builder.AddDebug();
 				builder.AddEventSourceLogger();
