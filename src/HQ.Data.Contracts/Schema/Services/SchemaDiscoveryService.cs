@@ -29,6 +29,8 @@ using Newtonsoft.Json;
 
 #if NETCOREAPP2_2
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#elif NETSTANDARD2_0
+using IWebHostEnvironment = Microsoft.Extensions.Hosting.IHostingEnvironment;
 #else
 using Microsoft.AspNetCore.Hosting;
 #endif
