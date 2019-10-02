@@ -20,8 +20,7 @@ using HQ.Platform.Api.Models;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityTenantContextStore<TTenant> : ITenantContextStore<TTenant>
-        where TTenant : IdentityTenant
+    public class IdentityTenantContextStore<TTenant> : ITenantContextStore<TTenant> where TTenant : IdentityTenant
     {
         private readonly ITenantService<TTenant> _tenantService;
 

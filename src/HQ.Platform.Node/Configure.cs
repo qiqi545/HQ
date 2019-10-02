@@ -18,6 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using HQ.Common;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
@@ -44,7 +45,7 @@ namespace HQ.Platform.Node
 				config.Sources.Clear();
 				config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
 				config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
-				config.AddCloudConfiguration(context, seedOnLoad);
+				config.AddCloudConfiguration(seedOnLoad);
 
 				if (context.HostingEnvironment.IsDevelopment())
 				{
@@ -94,14 +95,11 @@ namespace HQ.Platform.Node
 			}
 		}
 
-		private static void AddCloudConfiguration(this IConfigurationBuilder config, WebHostBuilderContext context,
-			bool seedOnLoad)
+		private static void AddCloudConfiguration(this IConfigurationBuilder config, bool seedOnLoad)
 		{
 			config.AddJsonFile("seed.json", optional: true, reloadOnChange: true);
-			return; // FIXME: Need options to re-seed before this is actually useful...
-
+			
 			var root = config.Build();
-
 			var backend = root.GetSection("Backend");
 			var backendType = backend["Type"];
 			if (string.IsNullOrWhiteSpace(backendType))
@@ -112,19 +110,26 @@ namespace HQ.Platform.Node
 
 			Trace.TraceInformation($"Installing {backendType} back-end configuration.", backendType);
 
-			var connectionString = backend.GetConnectionString(Common.Constants.Options.DefaultCollection);
+			var connectionString = backend.GetConnectionString(Constants.Options.DefaultCollection);
 			var seed = seedOnLoad ? ConfigurationLoader.FromEmbeddedJsonFile("seed.json") : null;
+
+			static void DefaultSaveOptions(SaveConfigurationOptions o)
+			{
+				o.MigrateOnStartup = true;
+				o.CreateIfNotExists = true;
+				o.SeedStrategy = SeedStrategy.InsertIfNotExists;
+			}
 
 			switch (backendType)
 			{
 				case nameof(DocumentDb):
-					config.AddDocumentDb(connectionString, true, seed);
+					config.AddDocumentDb(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				case nameof(Sqlite):
-					config.AddSqlite(connectionString, true, seed);
+					config.AddSqlite(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				case nameof(SqlServer):
-					config.AddSqlServer(connectionString, true, seed);
+					config.AddSqlServer(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(backendType, typeof(string), null);

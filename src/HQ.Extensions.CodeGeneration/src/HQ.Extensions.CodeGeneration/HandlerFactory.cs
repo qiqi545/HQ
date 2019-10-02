@@ -40,14 +40,7 @@ namespace HelloWorld
         }
     }
 }";
-
-        private const string NoJavaScriptCodeHandler = @"
-function(callback) { 
-  var result = 'Hello, World!';
-  callback(null, result); 
-};";
-
-        public static HandlerFactory Default = new HandlerFactory();
+		public static HandlerFactory Default = new HandlerFactory();
 
         private readonly IAssemblyBuilder _builder;
         private readonly IEnumerable<Assembly> _defaultDependencies;

@@ -47,6 +47,7 @@ namespace HQ.Integration.DocumentDb.Options
 			{
 				ReloadOnChange = reloadOnChange
 			};
+
 			builder.Add(source);
 			return builder;
 		}
@@ -54,10 +55,10 @@ namespace HQ.Integration.DocumentDb.Options
 		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
 		{
 			var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
-			o.AccountKey = o.AccountKey ?? connectionStringBuilder.AccountKey;
-			o.AccountEndpoint = o.AccountEndpoint ?? connectionStringBuilder.AccountEndpoint;
-			o.DatabaseId = o.DatabaseId ?? connectionStringBuilder.Database;
-			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Common.Constants.Options.DefaultCollection;
+			o.AccountKey ??= connectionStringBuilder.AccountKey;
+			o.AccountEndpoint ??= connectionStringBuilder.AccountEndpoint;
+			o.DatabaseId ??= connectionStringBuilder.Database;
+			o.CollectionId ??= connectionStringBuilder.DefaultCollection ?? Common.Constants.Options.DefaultCollection;
 
 			o.SharedCollection = false;
 			o.PartitionKeyPaths = connectionStringBuilder.PartitionKeyPaths ?? new[] { "id" };

@@ -22,7 +22,7 @@ namespace HQ.Integration.Sqlite.Options
 {
     public class SqliteConfigurationSource : IConfigurationSource
     {
-        public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfEmpty)
+        public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.Initialize)
         {
 	        SaveConfig = saveConfig;
             ConfigSeed = configSeed;

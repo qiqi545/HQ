@@ -12,6 +12,7 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
+
 namespace HQ.Extensions.Options
 {
 	public class SaveConfigurationOptions

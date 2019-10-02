@@ -26,15 +26,25 @@ using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
+
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
 using Microsoft.Extensions.Hosting;
+#endif
 
 namespace HQ.Platform.Node
 {
     public static class Use
     {
         public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env, ISafeLogger logger = null,
-            Action<IEndpointRouteBuilder> configureRoutes = null)
-        {
+#if NETCOREAPP2_2
+			Action<IRouteBuilder> configureRoutes = null
+#else
+			Action<IEndpointRouteBuilder> configureRoutes = null
+#endif
+			)
+		{
             Bootstrap.EnsureInitialized();
 
             if (env.IsDevelopment())
@@ -58,6 +68,20 @@ namespace HQ.Platform.Node
             app.UseMetaApi();
             app.UseMultiTenancy<IdentityTenant, string>();
 
+#if NETCOREAPP2_2
+	        app.UseMvc(routes =>
+	        {
+		        try
+		        {
+			        configureRoutes?.Invoke(routes);
+		        }
+		        catch (Exception e)
+		        {
+			        logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
+			        throw;
+		        }
+	        });
+#else
 			app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -72,8 +96,9 @@ namespace HQ.Platform.Node
 		            throw;
 	            }
             });
-            
-            return app;
+#endif
+
+			return app;
         }
     }
 }

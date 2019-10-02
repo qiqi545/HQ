@@ -16,7 +16,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Morcatko.AspNetCore.JsonMergePatch.Formatters
 {
-	internal class JsonMergePatchInputFormatter : NewtonsoftJsonInputFormatter
+	internal class JsonMergePatchInputFormatter :
+#if NETCOREAPP2_2
+		JsonInputFormatter
+#else
+		NewtonsoftJsonInputFormatter
+#endif
 	{
 		private static readonly MediaTypeHeaderValue JsonMergePatchMediaType = MediaTypeHeaderValue.Parse(JsonMergePatchDocument.ContentType).CopyAsReadOnly();
 
@@ -51,7 +56,11 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Formatters
 			ArrayPool<char> charPool,
 			ObjectPoolProvider objectPoolProvider,
 			MvcOptions mvcOptions,
+#if NETCOREAPP2_2
+			MvcJsonOptions jsonOptions,
+#else
 			MvcNewtonsoftJsonOptions jsonOptions,
+#endif
 			JsonMergePatchOptions mergePatchOptions)
 			: base(logger, serializerSettings, charPool, objectPoolProvider, mvcOptions, jsonOptions)
 		{

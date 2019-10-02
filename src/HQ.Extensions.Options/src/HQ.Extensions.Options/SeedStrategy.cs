@@ -17,8 +17,19 @@ namespace HQ.Extensions.Options
 {
     public enum SeedStrategy
     {
+		/// <summary>
+		/// Do not seed any settings to the upstream provider.
+		/// </summary>
 		None,
-        InsertIfNotExists,
-        InsertIfEmpty
-    }
+
+		/// <summary>
+		/// Seed new settings to the upstream provider.
+		/// </summary>
+		InsertIfNotExists,
+
+		/// <summary>
+		/// Seed all settings to the upstream provider, if none exist.
+		/// </summary>
+		Initialize
+	}
 }

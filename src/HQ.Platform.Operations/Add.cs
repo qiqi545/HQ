@@ -35,8 +35,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 using Constants = HQ.Common.Constants;
+
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.Extensions.Hosting;
+#endif
 
 namespace HQ.Platform.Operations
 {

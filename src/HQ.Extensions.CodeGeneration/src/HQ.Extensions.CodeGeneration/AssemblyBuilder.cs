@@ -73,18 +73,15 @@ namespace HQ.Extensions.CodeGeneration
         {
             var compilation = CreateCompilation(assemblyName, code, dependencyLocations);
 
-            using (var peStream = new MemoryStream())
-            {
-                using (var pdbStream = new MemoryStream())
-                {
-                    var result = compilation.Emit(peStream, pdbStream);
-                    MaybeLogWarningsAndErrors(result);
+            using var peStream = new MemoryStream();
+            using var pdbStream = new MemoryStream();
 
-                    peStream.Seek(0, SeekOrigin.Begin);
-                    var assembly = _context.LoadFromStream(peStream, pdbStream);
-                    return assembly;
-                }
-            }
+            var result = compilation.Emit(peStream, pdbStream);
+            MaybeLogWarningsAndErrors(result);
+
+            peStream.Seek(0, SeekOrigin.Begin);
+            var assembly = _context.LoadFromStream(peStream, pdbStream);
+            return assembly;
         }
 
         public Assembly CreateOnDisk(string assemblyName, string code, string outputPath, string pdbPath = null,

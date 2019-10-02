@@ -27,15 +27,24 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Formatters
 {
-    public class JsonOutputFormatter : NewtonsoftJsonOutputFormatter
-    {
+    public class JsonOutputFormatter :
+#if NETCOREAPP2_2
+		Microsoft.AspNetCore.Mvc.Formatters.JsonOutputFormatter
+#else
+		NewtonsoftJsonOutputFormatter
+#endif
+	{
         private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
         private JsonSerializer _serializer;
 
-        public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool, IOptions<MvcOptions> options) : base(
-            serializerSettings, charPool, options.Value)
-        {
-            _resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
+        public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool, IOptions<MvcOptions> options) :
+#if NETCOREAPP2_2
+			base(serializerSettings, charPool)
+#else
+	        base(serializerSettings, charPool, options.Value)
+#endif
+		{
+			_resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
         }
 
         public override bool CanWriteResult(OutputFormatterCanWriteContext context)
@@ -75,7 +84,7 @@ namespace HQ.Platform.Api.Formatters
 
         protected override JsonSerializer CreateJsonSerializer()
         {
-            return _serializer ?? (_serializer = JsonSerializer.Create(SerializerSettings));
+            return _serializer ??= JsonSerializer.Create(SerializerSettings);
         }
     }
 }

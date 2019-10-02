@@ -174,15 +174,23 @@ namespace HQ.Platform.Operations
 
         public static IApplicationBuilder UseConfigurationApi(this IApplicationBuilder app)
         {
+#if NETCOREAPP2_2
+			app.UseMvc();
+#else
 	        app.UseRouting();
 	        app.UseEndpoints(endpoints => endpoints.MapControllers());
-	        return app;
+#endif
+			return app;
         }
 
         public static IApplicationBuilder UseMetaApi(this IApplicationBuilder app)
         {
+#if NETCOREAPP2_2
+			app.UseMvc();
+#else
 			app.UseRouting();
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
+#endif
 			return app;
         }
 	}

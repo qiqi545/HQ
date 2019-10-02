@@ -25,17 +25,17 @@ namespace HQ.Integration.Sqlite.Options
 {
     public static class SqliteConfigurationExtensions
     {
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path, IConfiguration configSeed = null)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString, IConfiguration configSeed = null)
         {
-            return AddSqlite(builder, provider: null, path: path, reloadOnChange: false, configSeed: configSeed);
+            return AddSqlite(builder, null, connectionString, false, configSeed);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string path,  bool reloadOnChange, IConfiguration configSeed = null)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureAction = null)
         {
-            return AddSqlite(builder, provider: null, path: path, reloadOnChange: reloadOnChange, configSeed: configSeed);
+            return AddSqlite(builder, null, connectionString, reloadOnChange, configSeed, configureAction);
         }
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
+        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool reloadOnChange, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureAction = null)
         {
 			var saveConfig = new SaveConfigurationOptions();
 			configureAction?.Invoke(saveConfig);
@@ -45,13 +45,15 @@ namespace HQ.Integration.Sqlite.Options
                 provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
                 path = Path.GetFileName(path);
             }
+
             var source = new SqliteConfigurationSource(path, saveConfig)
             {
 				ReloadOnChange = reloadOnChange,
                 ConfigSeed = configSeed,
-                SeedStrategy = SeedStrategy.InsertIfEmpty,
+                SeedStrategy = SeedStrategy.Initialize,
                 FileProvider = provider
             };
+
             builder.Add(source);
             return builder;
         }

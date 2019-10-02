@@ -1,23 +1,39 @@
-﻿using System;
+﻿#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using System;
 using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
 
 namespace HQ.Integration.SqlServer.Options
 {
 	public static class SqlServerConfigurationExtensions
 	{
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string path, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, IConfiguration configSeed = null)
 		{
-			return AddSqlServer(builder, provider: null, path: path, reloadOnChange: false, configSeed: configSeed);
+			return AddSqlServer(builder, connectionString, true, configSeed);
 		}
 
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string path, bool reloadOnChange, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed = null)
 		{
-			return AddSqlServer(builder, provider: null, path: path, reloadOnChange: reloadOnChange, configSeed: configSeed);
+			return AddSqlServer(builder, connectionString, reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, IFileProvider provider, string path, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
 		{
 			throw new NotImplementedException();
 			var saveConfig = new SaveConfigurationOptions();

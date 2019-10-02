@@ -23,6 +23,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.AspNetCore.Hosting;
+#endif
+
 namespace HQ.Platform.Node
 {
     public static class Server
@@ -39,20 +45,36 @@ namespace HQ.Platform.Node
 
                 builder.ConfigureHq(args, true);
 
+#if NETCOREAPP2_2
+				IWebHostEnvironment env = null;
+#endif
+
+				builder.ConfigureServices((context, services) =>
+                {
+#if NETCOREAPP2_2
+					env = context.HostingEnvironment;	
+#endif
+					configureServices?.Invoke(services);
+	                var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
+	                services.AddHq(context.HostingEnvironment, context.Configuration, logger);
+                });
+
+#if NETCOREAPP2_2
+				builder.Configure(app =>
+				{
+					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
+					configure?.Invoke(app, env);
+					app.UseHq(env, logger, routes => { /* custom endpoint routes */});
+				});
+#else
 				builder.Configure((context, app) =>
 				{
 					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
 	                configure?.Invoke(app, context.HostingEnvironment);
 					app.UseHq(context.HostingEnvironment, logger, routes => { /* custom endpoint routes */});
                 });
-
-                builder.ConfigureServices((context, services) =>
-                {
-					configureServices?.Invoke(services);
-					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
-					services.AddHq(context.HostingEnvironment, context.Configuration, logger);
-				});
-
+#endif
+				
                 var host = builder.Build();
                 host.Run();
             });

@@ -27,9 +27,14 @@ namespace HQ.Common.AspNetCore.Mvc
 		public static IMvcBuilder AddMvcCommon(this IServiceCollection services, Action<MvcOptions> configureAction = null)
 		{
 			return services
+#if NETCOREAPP2_2
+				.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+#else
 				.AddControllers(configureAction)
 				.AddNewtonsoftJson()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+#endif
 		}
 
 		public static IMvcBuilder AddComponentFeature<TComponent, TComponentOptions>(this IMvcBuilder mvcBuilder) 

@@ -59,8 +59,13 @@ namespace HQ.Platform.Api.Configuration
         {
             var logger = _loggerFactory.CreateLogger(Constants.Loggers.Formatters);
 
-            var jsonOptions = new MvcNewtonsoftJsonOptions();
-            jsonOptions.Apply(_settings);
+#if NETCOREAPP2_2
+	        var jsonOptions = new MvcJsonOptions();
+#else
+			var jsonOptions = new MvcNewtonsoftJsonOptions();
+#endif
+
+			jsonOptions.Apply(_settings);
 
             options.InputFormatters.Clear();
             options.OutputFormatters.Clear();
@@ -87,13 +92,25 @@ namespace HQ.Platform.Api.Configuration
             options.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(options));
         }
 
-        private void AddJson(MvcOptions options, ILogger logger, MvcNewtonsoftJsonOptions jsonOptions)
-        {
+        private void AddJson(MvcOptions options, ILogger logger,
+#if NETCOREAPP2_2
+	        MvcJsonOptions jsonOptions
+#else
+			MvcNewtonsoftJsonOptions jsonOptions
+#endif
+			)
+		{
             if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
 				options.FormatterMappings.SetMediaTypeMappingForFormat("json", Constants.MediaTypes.Json);
+#if NETCOREAPP2_2
+			options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+			options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
+			options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
+#else
 			options.InputFormatters.Add(new NewtonsoftJsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
             options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
             options.OutputFormatters.Add(new NewtonsoftJsonOutputFormatter(_settings, _charPool, options));
-        }
+#endif
+		}
     }
 }

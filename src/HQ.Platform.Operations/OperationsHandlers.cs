@@ -34,7 +34,6 @@ using HQ.Extensions.Metrics.Internal;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -42,6 +41,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.AspNetCore.Hosting;
+#endif
 
 namespace HQ.Platform.Operations
 {
@@ -68,7 +73,7 @@ namespace HQ.Platform.Operations
                     : null;
             }
 
-            var hosting = context.RequestServices.GetRequiredService<IHostingEnvironment>();
+            var hosting = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
             var config = context.RequestServices.GetRequiredService<IConfiguration>();
 
             var process = Process.GetCurrentProcess();

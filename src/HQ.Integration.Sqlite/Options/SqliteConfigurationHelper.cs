@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS 'Configuration'
                 case SeedStrategy.InsertIfNotExists:
                     InsertIfNotExists();
                     break;
-                case SeedStrategy.InsertIfEmpty:
+                case SeedStrategy.Initialize:
                     var count = db.ExecuteScalar<int>("SELECT COUNT(1) FROM 'Configuration'");
                     if (count == 0)
                         InsertIfNotExists();

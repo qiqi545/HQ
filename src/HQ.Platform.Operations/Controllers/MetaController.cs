@@ -16,6 +16,9 @@ using HQ.Data.Contracts.Schema.Models;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+#if NETCOREAPP2_2
+using Swashbuckle.AspNetCore.Swagger;
+#endif
 
 namespace HQ.Platform.Operations.Controllers
 {
@@ -29,27 +32,39 @@ namespace HQ.Platform.Operations.Controllers
 	public class MetaController : Controller
 	{
 		private readonly IEnumerable<IMetaProvider> _providers;
-		// private readonly ISwaggerProvider _swaggerProvider;
+#if NETCOREAPP2_2
+		private readonly ISwaggerProvider _swaggerProvider;
+		private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
+#endif
 		private readonly ISchemaVersionStore _schemaStore;
 		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
-		//private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
+		
 		private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
 		public MetaController(
 			IEnumerable<IMetaProvider> providers,
-			//ISwaggerProvider swaggerProvider,
 			ISchemaVersionStore schemaStore,
 			IOptionsMonitor<MetaApiOptions> metaOptions,
+#if NETCOREAPP2_2
+			IOptionsMonitor<MvcJsonOptions> mvcOptions,
+#else
 			IOptionsMonitor<MvcNewtonsoftJsonOptions> mvcOptions,
-			//IOptionsMonitor<SwaggerOptions> swaggerOptions,
-			IOptionsMonitor<SchemaOptions> schemaOptions)
+#endif
+#if NETCOREAPP2_2
+			ISwaggerProvider swaggerProvider,
+			IOptionsMonitor<SwaggerOptions> swaggerOptions,
+#endif
+			IOptionsMonitor<SchemaOptions> schemaOptions
+			)
 		{
 			_providers = providers;
-
-			//_swaggerProvider = swaggerProvider;
 			_schemaStore = schemaStore;
 			_metaOptions = metaOptions;
-			//_swaggerOptions = swaggerOptions;
+
+#if NETCOREAPP2_2
+			_swaggerProvider = swaggerProvider;
+			_swaggerOptions = swaggerOptions;
+#endif
 			_schemaOptions = schemaOptions;
 		}
 		

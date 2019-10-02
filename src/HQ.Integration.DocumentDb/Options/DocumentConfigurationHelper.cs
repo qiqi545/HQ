@@ -55,7 +55,7 @@ namespace HQ.Integration.DocumentDb.Options
 				        break;
 			        }
 
-			        case SeedStrategy.InsertIfEmpty:
+			        case SeedStrategy.Initialize:
 			        {
 				        var count = repository.CountAsync().GetAwaiter().GetResult();
 				        if (count == 0)

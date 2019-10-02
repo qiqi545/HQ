@@ -52,10 +52,15 @@ using HQ.Platform.Identity.AspNetCore.Mvc;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Operations;
 using HQ.Platform.Security.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.AspNetCore.Hosting;
+#endif
 
 namespace HQ.Platform.Node
 {
@@ -96,7 +101,7 @@ namespace HQ.Platform.Node
 			services.AddTraceContext();
 
 			//
-			// Platform Services"
+			// Platform Services:
 			services.AddSecurityPolicies(hq.GetSection("Security"), hq.GetSection("SuperUser"), logger);
 			services.AddOperationsApi(env, hq.GetSection("Ops"));
 			services.AddPlatformApi(hq.GetSection("Api"));

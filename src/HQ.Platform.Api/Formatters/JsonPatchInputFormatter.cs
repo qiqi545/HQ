@@ -29,7 +29,12 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Formatters
 {
-    public class JsonPatchInputFormatter : NewtonsoftJsonPatchInputFormatter
+    public class JsonPatchInputFormatter :
+#if NETCOREAPP2_2
+		Microsoft.AspNetCore.Mvc.Formatters.JsonPatchInputFormatter
+#else
+		NewtonsoftJsonPatchInputFormatter
+#endif
     {
         private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
         private JsonSerializer _serializer;
@@ -40,8 +45,12 @@ namespace HQ.Platform.Api.Formatters
             ArrayPool<char> charPool,
             ObjectPoolProvider objectPoolProvider,
             MvcOptions options,
-            MvcNewtonsoftJsonOptions jsonOptions) :
-            base(logger, serializerSettings, charPool, objectPoolProvider, options, jsonOptions)
+#if NETCOREAPP2_2
+            MvcJsonOptions jsonOptions
+#else
+			MvcNewtonsoftJsonOptions jsonOptions
+#endif
+		) : base(logger, serializerSettings, charPool, objectPoolProvider, options, jsonOptions)
         {
             _resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
         }
@@ -69,7 +78,7 @@ namespace HQ.Platform.Api.Formatters
 
         protected override JsonSerializer CreateJsonSerializer()
         {
-            return _serializer ?? (_serializer = JsonSerializer.Create(SerializerSettings));
+            return _serializer ??= JsonSerializer.Create(SerializerSettings);
         }
 
         public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)

@@ -23,7 +23,13 @@ namespace HQ.Platform.Api.Extensions
 {
     public static class MvcJsonOptionsExtensions
     {
-        public static void Apply(this MvcNewtonsoftJsonOptions options, JsonSerializerSettings settings)
+        public static void Apply(this
+#if NETCOREAPP2_2
+			MvcJsonOptions options,
+#else
+			MvcNewtonsoftJsonOptions options, 
+#endif
+			JsonSerializerSettings settings)
         {
             options.SerializerSettings.CheckAdditionalContent = settings.CheckAdditionalContent;
             options.SerializerSettings.ConstructorHandling = settings.ConstructorHandling;
