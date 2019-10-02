@@ -16,8 +16,10 @@
 #endregion
 
 using System;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
@@ -43,5 +45,29 @@ namespace HQ.Extensions.Options
             services.TryAdd(ServiceDescriptor.Singleton(typeof(ISaveOptions<>), typeof(SaveOptionsManager<>)));
             return services;
         }
-    }
+
+		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, IConfiguration config) where TOptions : class
+			=> services.Configure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config);
+
+		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, IConfiguration config) where TOptions : class
+			=> services.Configure<TOptions>(name, config, _ => { });
+
+		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, IConfiguration config, Action<BinderOptions> configureBinder)
+			where TOptions : class
+			=> services.Configure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config, configureBinder);
+
+		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name, IConfiguration config, Action<BinderOptions> configureBinder)
+			where TOptions : class
+		{
+			if (services == null)
+				throw new ArgumentNullException(nameof(services));
+
+			if (config == null)
+				throw new ArgumentNullException(nameof(config));
+
+			services.AddOptions();
+			services.AddSingleton<IOptionsChangeTokenSource<TOptions>>(new ConfigurationChangeTokenSource<TOptions>(name, config));
+			return services.AddSingleton<IConfigureOptions<TOptions>>(new FastNamedConfigureFromConfigurationOptions<TOptions>(name, config, configureBinder));
+		}
+	}
 }

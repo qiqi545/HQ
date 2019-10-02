@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.Buffers;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch.Configuration
 {
 	internal class JsonMergePatchOptionsSetup : IConfigureOptions<MvcOptions>
@@ -67,3 +68,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Configuration
 		}
 	}
 }
+#endif

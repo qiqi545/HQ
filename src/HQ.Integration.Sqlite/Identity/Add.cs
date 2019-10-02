@@ -26,6 +26,7 @@ using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Integration.Sqlite.SessionManagement;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Integration.Sqlite.Sql.Configuration;
@@ -76,7 +77,7 @@ namespace HQ.Integration.Sqlite.Identity
             where TApplication : IdentityApplication<TKey>
         {
             var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<SqliteOptions>) null;
+                databaseConfig != null ? databaseConfig.FastBind : (Action<SqliteOptions>) null;
 
             return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder,
                 connectionString, scope, configureDatabase);

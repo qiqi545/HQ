@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using HQ.Extensions.Options;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
@@ -36,7 +37,7 @@ namespace HQ.Integration.Azure.Metrics.Reporters
         /// </summary>
         public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder, IConfiguration config)
         {
-            return builder.PushToApplicationInsights(config.Bind);
+            return builder.PushToApplicationInsights(config.FastBind);
         }
 
         /// <summary>

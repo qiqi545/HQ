@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Reflection;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch.Builder
 {
 	public class PatchBuilder<TModel> where TModel : class
@@ -19,7 +20,7 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Builder
 	{
 		private static readonly JsonSerializer defaultSerializer = JsonSerializer.CreateDefault();
 
-		#region Static methods
+#region Static methods
 		public static JsonMergePatchDocument<TModel> Build<TModel>(TModel original, TModel patched, JsonMergePatchOptions options = null) where TModel : class
 			=> Build<TModel>(DiffBuilder.Build(original, patched) ?? new JObject(), options);
 
@@ -31,9 +32,9 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Builder
 
 		public static JsonMergePatchDocument<TModel> Build<TModel>(JObject jsonObjectPatch, JsonMergePatchOptions options = null) where TModel : class
 			=> CreatePatchDocument<TModel>(jsonObjectPatch, defaultSerializer, options ?? new JsonMergePatchOptions());
-		#endregion
+#endregion
 
-		#region PatchCreation methods
+#region PatchCreation methods
 		private static JsonMergePatchDocument<TModel> CreatePatchDocument<TModel>(JObject patchObject, JsonSerializer jsonSerializer, JsonMergePatchOptions options) where TModel : class
 			=> CreatePatchDocument(typeof(JsonMergePatchDocument<TModel>), typeof(TModel), patchObject, jsonSerializer, options) as JsonMergePatchDocument<TModel>;
 
@@ -66,7 +67,8 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Builder
 			AddOperation(jsonMergePatchDocument, "/", patchObject, options);
 			return jsonMergePatchDocument;
 		}
-		#endregion
+#endregion
 
 	}
 }
+#endif

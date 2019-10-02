@@ -25,6 +25,7 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Integration.Sqlite.Identity;
 using HQ.Integration.Sqlite.SessionManagement;
 using HQ.Integration.Sqlite.Sql;
@@ -45,7 +46,7 @@ namespace HQ.Integration.Sqlite.Runtime
 			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
 			IConfiguration databaseConfig = null)
 		{
-			var configureDatabase = databaseConfig != null ? databaseConfig.Bind : (Action<SqliteOptions>) null;
+			var configureDatabase = databaseConfig != null ? databaseConfig.FastBind : (Action<SqliteOptions>) null;
 
 			return AddSqliteRuntime(builder, connectionString, scope, configureDatabase);
 		}

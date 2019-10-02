@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch.Builders
 {
 	public static class DiffBuilder
@@ -93,3 +94,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Builders
 		}
 	}
 }
+#endif

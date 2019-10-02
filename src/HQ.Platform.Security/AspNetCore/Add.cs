@@ -21,6 +21,7 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
@@ -42,7 +43,7 @@ namespace HQ.Platform.Security.AspNetCore
 			IConfiguration superUserConfig,
 			ISafeLogger logger)
 		{
-			return AddSecurityPolicies(services, securityConfig.Bind, superUserConfig.Bind, logger);
+			return AddSecurityPolicies(services, securityConfig.FastBind, superUserConfig.FastBind, logger);
 		}
 
 		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,

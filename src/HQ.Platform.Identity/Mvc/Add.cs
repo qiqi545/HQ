@@ -19,6 +19,7 @@ using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
+using HQ.Extensions.Options;
 using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
@@ -36,7 +37,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
     {
 	    public static IServiceCollection AddIdentityApi(this IServiceCollection services, IConfiguration apiConfig)
 	    {
-		    return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, apiConfig.Bind);
+		    return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, apiConfig.FastBind);
 	    }
 
 		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, IConfiguration apiConfig)
@@ -46,7 +47,7 @@ namespace HQ.Platform.Identity.AspNetCore.Mvc
 		    where TApplication : IdentityApplication<TKey>
 		    where TKey : IEquatable<TKey>
 		{
-		    return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.Bind);
+		    return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.FastBind);
 	    }
 
 		public static IServiceCollection AddIdentityApi(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)

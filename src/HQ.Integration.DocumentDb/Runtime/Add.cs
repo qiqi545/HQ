@@ -23,12 +23,12 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -43,7 +43,7 @@ namespace HQ.Integration.DocumentDb.Runtime
 		{
 			return dbConfig == null
 				? AddDocumentDbRuntimeStores(builder, connectionString, scope)
-				: AddDocumentDbRuntimeStores(builder, connectionString, scope, dbConfig.Bind);
+				: AddDocumentDbRuntimeStores(builder, connectionString, scope, dbConfig.FastBind);
 		}
 
 		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
@@ -54,10 +54,10 @@ namespace HQ.Integration.DocumentDb.Runtime
 		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
 		{
 			var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
-			o.AccountKey = o.AccountKey ?? connectionStringBuilder.AccountKey;
-			o.AccountEndpoint = o.AccountEndpoint ?? connectionStringBuilder.AccountEndpoint;
-			o.DatabaseId = o.DatabaseId ?? connectionStringBuilder.Database;
-			o.CollectionId = o.CollectionId ?? connectionStringBuilder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
+			o.AccountKey ??= connectionStringBuilder.AccountKey;
+			o.AccountEndpoint ??= connectionStringBuilder.AccountEndpoint;
+			o.DatabaseId ??= connectionStringBuilder.Database;
+			o.CollectionId ??= connectionStringBuilder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
 
 			o.SharedCollection = true; // Anything
 			o.PartitionKeyPaths = new[] {"id"};

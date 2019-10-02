@@ -27,7 +27,7 @@ namespace HQ.Integration.DocumentDb.Options
     {
 	    public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
 	    {
-		    return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions.Bind, reloadOnChange, configSeed);
+		    return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions.FastBind, reloadOnChange, configSeed);
 	    }
 
 		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureOptions = null)

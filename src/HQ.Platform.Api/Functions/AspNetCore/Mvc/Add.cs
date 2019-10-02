@@ -4,6 +4,7 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc.Security;
 using HQ.Extensions.Logging;
+using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
@@ -19,7 +20,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
     {
 	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, IConfiguration config)
 	    {
-		    return AddBackgroundTasksApi(services, config.Bind);
+		    return AddBackgroundTasksApi(services, config.FastBind);
 	    }
 
 	    public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services, Action<BackgroundTaskOptions> configureTasks = null)

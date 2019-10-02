@@ -146,7 +146,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
-    <PackageReference Include="Microsoft.Experimental.Collections" Version="1.0.6-e190117-3" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Bogus" Version="28.3.1" />
@@ -155,7 +154,6 @@
     <PackageReference Include="Humanizer" Version="2.7.2" />
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="AngleSharp" Version="0.13.0" />
-    <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Postmark" Version="4.1.0" />

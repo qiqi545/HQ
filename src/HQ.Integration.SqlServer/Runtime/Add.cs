@@ -24,6 +24,7 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
@@ -43,7 +44,7 @@ namespace HQ.Integration.SqlServer.Runtime
 			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
 			IConfiguration databaseConfig = null)
 		{
-			var configureDatabase = databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>) null;
+			var configureDatabase = databaseConfig != null ? databaseConfig.FastBind : (Action<SqlServerOptions>) null;
 
 			return AddSqlServerRuntime(builder, connectionString, scope, configureDatabase);
 		}

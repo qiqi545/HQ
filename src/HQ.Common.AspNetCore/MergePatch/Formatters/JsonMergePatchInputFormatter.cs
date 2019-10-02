@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch.Formatters
 {
 	internal class JsonMergePatchInputFormatter :
@@ -159,3 +160,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch.Formatters
 		}
 	}
 }
+#endif

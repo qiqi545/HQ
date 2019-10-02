@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch
 {
 	public abstract class JsonMergePatchDocument
@@ -61,7 +62,7 @@ namespace Morcatko.AspNetCore.JsonMergePatch
 			this.Model = model;
 		}
 
-		#region Build Patch
+#region Build Patch
 		internal override void AddOperation_Replace(string path, object value)
 			=> _jsonPatchDocument.Operations.Add(new Operation<TModel>(replaceOp, path, null, value));
 
@@ -73,7 +74,7 @@ namespace Morcatko.AspNetCore.JsonMergePatch
 			var propertyType = ReflectionHelper.GetPropertyTypeFromPath(_modelType, path, ContractResolver);
 			_jsonPatchDocument.Operations.Add(new Operation<TModel>(addOp, path, null, ContractResolver.ResolveContract(propertyType).DefaultCreator()));
 		}
-		#endregion
+#endregion
 
 
 		bool clean = false;
@@ -116,3 +117,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch
 		}
 	}
 }
+#endif

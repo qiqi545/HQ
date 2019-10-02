@@ -7,6 +7,7 @@ using HQ.Data.Sql.Queries;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
@@ -26,7 +27,7 @@ namespace HQ.Integration.SqlServer.Scheduling
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)
         {
-            return builder.AddSqlServerBackgroundTasksStore(connectionString, scope, databaseConfig.Bind);
+            return builder.AddSqlServerBackgroundTasksStore(connectionString, scope, databaseConfig.FastBind);
         }
 
         public static BackgroundTaskBuilder AddSqlServerBackgroundTasksStore(this BackgroundTaskBuilder builder,

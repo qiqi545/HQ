@@ -17,6 +17,7 @@
 
 using System;
 using System.IO;
+using HQ.Extensions.Options;
 using HQ.Extensions.Notifications.Configuration;
 using HQ.Extensions.Notifications.Email.Models;
 using HQ.Extensions.Notifications.Email.Providers;
@@ -29,7 +30,7 @@ namespace HQ.Extensions.Notifications
 	{
 		public static IServiceCollection AddEmailNotifications(this IServiceCollection services, IConfiguration config)
 		{
-			return services.AddEmailNotifications(config.Bind);
+			return services.AddEmailNotifications(config.FastBind);
 		}
 
 		public static IServiceCollection AddEmailNotifications(this IServiceCollection services, Action<EmailOptions> configureAction = null)

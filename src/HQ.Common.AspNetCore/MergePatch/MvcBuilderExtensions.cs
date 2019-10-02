@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Morcatko.AspNetCore.JsonMergePatch.Configuration;
 using System;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch
 {
 	public static class MvcBuilderExtensions
@@ -38,3 +39,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch
 		public bool EnableDelete { get; set; }
 	}
 }
+#endif

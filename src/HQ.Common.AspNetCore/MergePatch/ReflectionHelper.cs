@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+#if NETCOREAPP3_0
 namespace Morcatko.AspNetCore.JsonMergePatch
 {
 	static class ReflectionHelper
@@ -70,3 +71,4 @@ namespace Morcatko.AspNetCore.JsonMergePatch
 			=> Exist(value, path.Split(pathSplitter, StringSplitOptions.RemoveEmptyEntries), contractResolver);
 	}
 }
+#endif

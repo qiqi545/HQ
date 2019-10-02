@@ -27,6 +27,7 @@ using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
 using HQ.Platform.Identity.Configuration;
@@ -75,7 +76,7 @@ namespace HQ.Integration.SqlServer.Identity
             where TApplication : IdentityApplication<TKey>
         {
             var configureDatabase =
-                databaseConfig != null ? databaseConfig.Bind : (Action<SqlServerOptions>) null;
+                databaseConfig != null ? databaseConfig.FastBind : (Action<SqlServerOptions>) null;
 
             return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder, connectionString, scope,
                 configureDatabase);

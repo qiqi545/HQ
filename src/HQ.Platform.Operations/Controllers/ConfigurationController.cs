@@ -75,7 +75,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
 			
 			var model = Activator.CreateInstance(prototype);
-			config.Bind(model);
+			config.FastBind(model);
 			patch.ApplyTo(model);
 
 			return Set(type, model, section);
@@ -103,7 +103,7 @@ namespace HQ.Platform.Operations.Controllers
 			var patchModel = buildMethod?.Invoke(null, new[] {patch});
 
 			var model = Activator.CreateInstance(prototype);
-			config.Bind(model);
+			config.FastBind(model);
 
 			var patchType = typeof(JsonMergePatchDocument<>).MakeGenericType(prototype);
 			var patchMethods = patchType.GetTypeInfo().DeclaredMethods;
@@ -191,7 +191,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.");
 
 			var template = Activator.CreateInstance(type);
-			config.Bind(template);
+			config.FastBind(template);
 
 			return Ok(template);
 		}

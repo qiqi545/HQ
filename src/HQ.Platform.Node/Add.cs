@@ -129,7 +129,7 @@ namespace HQ.Platform.Node
 				case nameof(Azure):
 					{
 						var options = new AzureOptions();
-						cloud.Bind(options);
+						cloud.FastBind(options);
 						services.AddCloudServices(logger, options);
 						break;
 					}
@@ -176,7 +176,7 @@ namespace HQ.Platform.Node
 			// Runtime Services:
 			{
 				var runtimeOptions = new RuntimeOptions();
-				hq.GetSection("Runtime").Bind(runtimeOptions);
+				hq.GetSection("Runtime").FastBind(runtimeOptions);
 
 				if (runtimeOptions.EnableRest)
 				{

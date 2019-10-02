@@ -6,6 +6,7 @@ using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
@@ -26,7 +27,7 @@ namespace HQ.Integration.Sqlite.Scheduling
             string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
             IConfiguration databaseConfig = null)
         {
-            return builder.AddSqliteBackgroundTasksStore(connectionString, scope, databaseConfig.Bind);
+            return builder.AddSqliteBackgroundTasksStore(connectionString, scope, databaseConfig.FastBind);
         }
 
         public static BackgroundTaskBuilder AddSqliteBackgroundTasksStore(this BackgroundTaskBuilder builder,

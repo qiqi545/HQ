@@ -22,9 +22,9 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Schema.Models;
+using HQ.Extensions.Options;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
-using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
@@ -50,7 +50,7 @@ namespace HQ.Platform.Operations
 		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
 			IWebHostEnvironment environment, IConfiguration config)
 		{
-			return AddOperationsApi(services, environment, config.Bind);
+			return AddOperationsApi(services, environment, config.FastBind);
 		}
 
 		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
@@ -95,7 +95,7 @@ namespace HQ.Platform.Operations
 
 		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
 		{
-			return AddConfigurationApi(services, configurationRoot, config.Bind);
+			return AddConfigurationApi(services, configurationRoot, config.FastBind);
 		}
 
 		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
@@ -122,7 +122,7 @@ namespace HQ.Platform.Operations
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
 		{
-			return AddMetaApi(services, config.Bind);
+			return AddMetaApi(services, config.FastBind);
 		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)

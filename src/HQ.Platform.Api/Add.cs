@@ -34,6 +34,7 @@ using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Extensions.DependencyInjection.AspNetCore;
+using HQ.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -60,7 +61,7 @@ namespace HQ.Platform.Api
     {
         public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
         {
-            return services.AddPlatformApi(config.Bind);
+            return services.AddPlatformApi(config.FastBind);
         }
 
         public static IServiceCollection AddPlatformApi(this IServiceCollection services, Action<ApiOptions> configureAction = null)
@@ -130,7 +131,7 @@ namespace HQ.Platform.Api
 
         public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
         {
-            return services.AddVersioning(config.Bind);
+            return services.AddVersioning(config.FastBind);
         }
 
         public static IServiceCollection AddVersioning(this IServiceCollection services, Action<VersioningOptions> configureAction = null)
@@ -141,7 +142,7 @@ namespace HQ.Platform.Api
         public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, IConfiguration config)
             where TVersionResolver : class, IVersionContextResolver
         {
-            return services.AddVersioning<TVersionResolver>(config.Bind);
+            return services.AddVersioning<TVersionResolver>(config.FastBind);
         }
 
         public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
@@ -167,7 +168,7 @@ namespace HQ.Platform.Api
             where TTenant : class, new()
             where TApplication : class, new()
         {
-            return services.AddMultiTenancy<TTenant, TApplication>(config.Bind);
+            return services.AddMultiTenancy<TTenant, TApplication>(config.FastBind);
         }
 
         public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
@@ -185,7 +186,7 @@ namespace HQ.Platform.Api
             where TApplicationResolver : class, IApplicationContextResolver<TApplication>
             where TApplication : class, new()
         {
-            return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(config.Bind);
+            return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(config.FastBind);
         }
 
         public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(this IServiceCollection services,
@@ -219,7 +220,7 @@ namespace HQ.Platform.Api
 
 		public static IServiceCollection AddSchemaApi(this IServiceCollection services, IConfiguration config)
 		{
-			return services.AddSchemaApi(config.Bind);
+			return services.AddSchemaApi(config.FastBind);
 		}
 
 		public static IServiceCollection AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
@@ -231,7 +232,7 @@ namespace HQ.Platform.Api
 
 		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, IConfiguration config)
 		{
-			mvcBuilder.AddSchemaApi(config.Bind);
+			mvcBuilder.AddSchemaApi(config.FastBind);
 			return mvcBuilder;
 		}
 
@@ -256,7 +257,7 @@ namespace HQ.Platform.Api
 
 		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, IConfiguration config)
 		{
-			return services.AddRuntimeApi(config.Bind);
+			return services.AddRuntimeApi(config.FastBind);
 		}
 
 		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
@@ -268,7 +269,7 @@ namespace HQ.Platform.Api
 
 		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, IConfiguration config)
 		{
-			return mvcBuilder.AddRuntimeApi(config.Bind);
+			return mvcBuilder.AddRuntimeApi(config.FastBind);
 		}
 
 		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, Action<RuntimeOptions> configureAction = null)

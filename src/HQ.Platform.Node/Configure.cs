@@ -28,8 +28,11 @@ using HQ.Integration.Sqlite.Options;
 using HQ.Integration.SqlServer.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#endif
 
 namespace HQ.Platform.Node
 {
@@ -88,7 +91,7 @@ namespace HQ.Platform.Node
 				case nameof(Azure):
 					{
 						var cloudOptions = new AzureOptions();
-						cloudConfig.Bind(cloudOptions);
+						cloudConfig.FastBind(cloudOptions);
 						builder.ConfigureCloudLogging(cloudOptions);
 						break;
 					}
