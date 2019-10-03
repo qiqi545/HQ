@@ -66,14 +66,6 @@ namespace HQ.Platform.Node
 {
 	#region Sentinels
 
-	public interface IBackend { }
-	public sealed class DocumentDb : IBackend { }
-	public sealed class SqlServer : IBackend { }
-	public sealed class Sqlite : IBackend { }
-
-	public interface ICloud { }
-	public sealed class Azure : ICloud { }
-
 	#endregion
 
 	public static class Add
