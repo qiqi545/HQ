@@ -18,7 +18,6 @@
 using System;
 using System.Data;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;

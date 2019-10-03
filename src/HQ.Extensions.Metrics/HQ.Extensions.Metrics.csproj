@@ -10,24 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.6.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AspNetCore\" />
   </ItemGroup>
 
 </Project>
