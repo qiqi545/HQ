@@ -17,11 +17,10 @@
 
 using System.Net;
 using System.Threading;
-using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public class DataController : ControllerExtended
 	{

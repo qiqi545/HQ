@@ -21,7 +21,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Data.Contracts.AspNetCore.Runtime
 {
 	public interface IQueryContextProvider
 	{

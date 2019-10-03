@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	[DebuggerDisplay("Collection: ({item.Count} items)")]
 	public class MetaCollection

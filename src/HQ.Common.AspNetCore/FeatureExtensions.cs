@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
-namespace HQ.Common
+namespace HQ.Common.AspNetCore
 {
     public static class FeatureExtensions
     {

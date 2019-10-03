@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Data.Contracts.AspNetCore.Runtime
 {
 	public class QueryContext
 	{

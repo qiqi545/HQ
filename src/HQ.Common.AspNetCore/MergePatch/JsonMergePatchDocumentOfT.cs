@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.JsonPatch.Operations;
-using Morcatko.AspNetCore.JsonMergePatch.Builder;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Common.AspNetCore.MergePatch.Builders;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.JsonPatch.Operations;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch
+namespace HQ.Common.AspNetCore.MergePatch
 {
 	public abstract class JsonMergePatchDocument
 	{

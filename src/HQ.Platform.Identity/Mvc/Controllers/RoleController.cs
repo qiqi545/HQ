@@ -21,17 +21,18 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common;
+using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.AspNetCore.Attributes;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
-using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
+namespace HQ.Platform.Identity.Mvc.Controllers
 {
     [Route("roles")]
 	[DynamicController(typeof(IdentityApiOptions))]

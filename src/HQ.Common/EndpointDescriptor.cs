@@ -15,7 +15,7 @@
 
 using System.Net.Http;
 
-namespace HQ.Common.AspNetCore
+namespace HQ.Common
 {
     public class EndpointDescriptor
     {

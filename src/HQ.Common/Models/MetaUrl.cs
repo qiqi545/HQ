@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	[DebuggerDisplay("Url: {raw}")]
 	public class MetaUrl

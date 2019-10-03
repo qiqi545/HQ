@@ -17,12 +17,12 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Common.AspNetCore.MergePatch;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Morcatko.AspNetCore.JsonMergePatch;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
 	{

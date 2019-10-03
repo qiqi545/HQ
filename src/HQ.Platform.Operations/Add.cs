@@ -17,10 +17,10 @@
 
 using System;
 using HQ.Common;
-using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Common.Models;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
-using HQ.Data.Contracts.Mvc;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Options;
 using HQ.Extensions.Metrics;

@@ -26,7 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.Attributes
+namespace HQ.Data.Contracts.AspNetCore.Attributes
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 	public sealed class DynamicAuthorizeAttribute : Attribute, IAuthorizeData, IDynamicAttribute

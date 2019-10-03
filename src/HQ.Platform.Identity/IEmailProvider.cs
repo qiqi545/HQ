@@ -13,7 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Identity
 {
     public interface IEmailProvider
     {

@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json.Serialization;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json.Serialization;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch
+namespace HQ.Common.AspNetCore.MergePatch
 {
 	static class ReflectionHelper
 	{

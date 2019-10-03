@@ -20,9 +20,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts.AspNetCore.Attributes;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
-using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Logging;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Security;
@@ -37,7 +39,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Identity.AspNetCore.Mvc.Controllers
+namespace HQ.Platform.Identity.Mvc.Controllers
 {
 	[Route("tokens")]
 	[DynamicController(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]

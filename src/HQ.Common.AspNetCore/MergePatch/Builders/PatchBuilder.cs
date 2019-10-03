@@ -1,12 +1,10 @@
-
-using Morcatko.AspNetCore.JsonMergePatch.Builders;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Reflection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch.Builder
+namespace HQ.Common.AspNetCore.MergePatch.Builders
 {
 	public class PatchBuilder<TModel> where TModel : class
 	{

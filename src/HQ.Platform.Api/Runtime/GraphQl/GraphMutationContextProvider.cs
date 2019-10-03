@@ -15,10 +15,10 @@
 
 using System.Collections.Generic;
 using System.Security.Claims;
-using HQ.Data.Contracts.Runtime;
+using HQ.Data.Contracts.AspNetCore.Runtime;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Platform.Api.Runtime.GraphQL
+namespace HQ.Platform.Api.Runtime.GraphQl
 {
     public class GraphMutationContextProvider : IMutationContextProvider
     {

@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Data.Contracts.AspNetCore.Runtime
 {
 	public interface IMutationContextProvider
 	{

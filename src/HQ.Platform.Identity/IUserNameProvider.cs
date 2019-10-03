@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Identity
 {
     public interface IUserNameProvider
     {

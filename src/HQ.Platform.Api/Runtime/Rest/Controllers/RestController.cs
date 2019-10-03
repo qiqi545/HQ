@@ -4,9 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Mvc;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
@@ -16,7 +17,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-using Morcatko.AspNetCore.JsonMergePatch;
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {

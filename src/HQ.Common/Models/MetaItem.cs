@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	[DebuggerDisplay("Item: {name} ({description}")]
 	public class MetaItem

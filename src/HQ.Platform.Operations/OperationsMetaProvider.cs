@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using HQ.Common;
 using HQ.Common.AspNetCore;
-using HQ.Common.AspNetCore.Models;
+using HQ.Common.Models;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.Extensions.Options;
 

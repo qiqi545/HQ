@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Platform.Runtime.Rest.Attributes
+namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
     public class ResourceTypeAttribute : Attribute
     {

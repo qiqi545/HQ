@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace HQ.Data.Contracts.Runtime
+namespace HQ.Data.Contracts.AspNetCore.Runtime
 {
 	public class MutationContext
 	{

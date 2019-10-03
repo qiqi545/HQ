@@ -1,9 +1,9 @@
-using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch.Builders
+namespace HQ.Common.AspNetCore.MergePatch.Builders
 {
 	public static class DiffBuilder
 	{

@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;

@@ -18,7 +18,7 @@ using HQ.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 {
 	public sealed class DynamicAuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
 	{

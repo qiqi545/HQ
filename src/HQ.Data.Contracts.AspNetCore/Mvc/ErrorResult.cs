@@ -18,7 +18,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public class ErrorResult : ObjectResult
 	{

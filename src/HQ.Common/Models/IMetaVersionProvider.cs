@@ -13,7 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	public interface IMetaVersionProvider
 	{

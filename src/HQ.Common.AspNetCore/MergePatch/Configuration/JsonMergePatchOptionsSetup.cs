@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Buffers;
+using HQ.Common.AspNetCore.MergePatch.Formatters;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
-using Morcatko.AspNetCore.JsonMergePatch.Formatters;
 using Newtonsoft.Json;
-using System;
-using System.Buffers;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch.Configuration
+namespace HQ.Common.AspNetCore.MergePatch.Configuration
 {
 	internal class JsonMergePatchOptionsSetup : IConfigureOptions<MvcOptions>
 	{

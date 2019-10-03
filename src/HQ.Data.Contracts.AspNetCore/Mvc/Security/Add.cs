@@ -14,7 +14,6 @@
 #endregion
 
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.Mvc.Security;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.AspNetCore.Mvc.Filters;

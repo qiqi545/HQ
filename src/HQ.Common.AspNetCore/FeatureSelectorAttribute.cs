@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Routing;
 
-namespace HQ.Common
+namespace HQ.Common.AspNetCore
 {
 	public class FeatureSelectorAttribute : ActionMethodSelectorAttribute
 	{

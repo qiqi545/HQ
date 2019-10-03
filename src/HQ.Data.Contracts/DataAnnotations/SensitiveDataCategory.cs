@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Data.Contracts.Attributes
+namespace HQ.Data.Contracts.DataAnnotations
 {
 	public enum SensitiveDataCategory
 	{

@@ -1,6 +1,6 @@
 using System;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	public interface IMetaProvider
     {

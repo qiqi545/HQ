@@ -13,7 +13,7 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
-using HQ.Common.AspNetCore.Models;
+using HQ.Common.Models;
 using HQ.Platform.Api.Configuration;
 using Microsoft.Extensions.Options;
 

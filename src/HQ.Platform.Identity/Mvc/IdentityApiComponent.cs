@@ -18,9 +18,9 @@
 using System;
 using System.Collections.Generic;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Identity.Mvc.Controllers;
 
-namespace HQ.Platform.Identity.AspNetCore.Mvc
+namespace HQ.Platform.Identity.Mvc
 {
     public class IdentityApiComponent : DynamicComponent
 	{

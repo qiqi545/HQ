@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using HQ.Extensions.Notifications.Email.Providers;
 
 namespace HQ.Extensions.Notifications.Email.Models
 {

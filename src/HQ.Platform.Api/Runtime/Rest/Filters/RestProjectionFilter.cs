@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using HQ.Data.Contracts;
+using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;

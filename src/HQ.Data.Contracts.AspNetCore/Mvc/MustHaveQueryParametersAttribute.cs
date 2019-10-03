@@ -18,7 +18,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public class MustHaveQueryParametersAttribute : Attribute, IActionConstraint
 	{

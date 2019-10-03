@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public enum GraphDirection
 	{

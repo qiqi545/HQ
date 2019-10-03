@@ -13,12 +13,11 @@ using System.Security.Claims;
 using GraphQLParser;
 using GraphQLParser.AST;
 using HQ.Common;
-using HQ.Data.Contracts.Runtime;
+using HQ.Data.Contracts.AspNetCore.Runtime;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
 
-namespace HQ.Platform.Api.Runtime.GraphQL
+namespace HQ.Platform.Api.Runtime.GraphQl
 {
 	public class GraphQlQueryContextProvider : IQueryContextProvider
 	{

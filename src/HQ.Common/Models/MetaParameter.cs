@@ -15,7 +15,7 @@
 
 using System.Diagnostics;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	[DebuggerDisplay("Parameter: {key} = {value} ({description})")]
     public class MetaParameter

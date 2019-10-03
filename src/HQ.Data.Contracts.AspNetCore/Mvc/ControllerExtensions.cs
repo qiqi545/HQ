@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public static class ControllerExtensions
 	{

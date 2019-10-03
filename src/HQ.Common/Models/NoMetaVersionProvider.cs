@@ -12,7 +12,7 @@
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
 #endregion
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	public class NoMetaVersionProvider : IMetaVersionProvider
 	{

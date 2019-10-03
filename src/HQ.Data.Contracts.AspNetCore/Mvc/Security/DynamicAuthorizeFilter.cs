@@ -14,11 +14,11 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Data.Contracts.Attributes;
+using HQ.Data.Contracts.AspNetCore.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
-namespace HQ.Data.Contracts.Mvc.Security
+namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 {
 	public sealed class DynamicAuthorizeFilter : AuthorizeFilter
 	{

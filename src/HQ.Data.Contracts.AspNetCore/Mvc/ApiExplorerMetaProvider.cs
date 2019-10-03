@@ -23,8 +23,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using HQ.Common;
-using HQ.Common.AspNetCore.Models;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Common.Models;
+using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace HQ.Data.Contracts.Mvc
+namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public class ApiExplorerMetaProvider : IMetaProvider
 	{

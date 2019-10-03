@@ -15,8 +15,8 @@
 
 #endregion
 
+using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Api.Runtime.GraphQL;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

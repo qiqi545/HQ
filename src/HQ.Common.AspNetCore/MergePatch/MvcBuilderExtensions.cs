@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using HQ.Common.AspNetCore.MergePatch.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Morcatko.AspNetCore.JsonMergePatch.Configuration;
-using System;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch
+namespace HQ.Common.AspNetCore.MergePatch
 {
 	public static class MvcBuilderExtensions
 	{

@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace HQ.Common.AspNetCore.Models
+namespace HQ.Common.Models
 {
 	[DebuggerDisplay("Folder: {name} ({item.Count} items)")]
 	public class MetaFolder : MetaItem

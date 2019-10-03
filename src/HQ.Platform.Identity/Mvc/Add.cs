@@ -20,18 +20,17 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Extensions.Options;
-using HQ.Platform.Identity.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
+using HQ.Platform.Identity.Mvc.Controllers;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.Configuration;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Identity.AspNetCore.Mvc
+namespace HQ.Platform.Identity.Mvc
 {
     public static class Add
     {

@@ -22,8 +22,9 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Extensions.Notifications.Email.Models;
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Extensions.Notifications.Email.Providers
 {
 	internal sealed class SmtpEmailProvider : IEmailProvider
 	{

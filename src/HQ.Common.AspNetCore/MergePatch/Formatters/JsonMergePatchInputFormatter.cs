@@ -1,21 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc.Formatters;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ObjectPool;
-using Microsoft.Net.Http.Headers;
-using Morcatko.AspNetCore.JsonMergePatch.Builder;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HQ.Common.AspNetCore.MergePatch.Builders;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.ObjectPool;
+using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 #if NETCOREAPP3_0
-namespace Morcatko.AspNetCore.JsonMergePatch.Formatters
+namespace HQ.Common.AspNetCore.MergePatch.Formatters
 {
 	internal class JsonMergePatchInputFormatter :
 #if NETCOREAPP2_2

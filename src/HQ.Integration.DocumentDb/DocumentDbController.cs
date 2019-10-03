@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Data.Contracts.Mvc;
+using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
