@@ -79,15 +79,16 @@ namespace HQ.Platform.Node
 					configure?.Invoke(app, env);
 				});
 #else
-				builder.Configure((context, app) =>
+	            builder.UseStaticWebAssets(); // required for component static files visibility
+	            builder.Configure((context, app) =>
 				{
 					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
 					app.UseHq(context.HostingEnvironment, logger, routes);
 					configure?.Invoke(app, context.HostingEnvironment);
 				});
 #endif
-				
-                var host = builder.Build();
+
+				var host = builder.Build();
                 host.Run();
             });
         }
