@@ -91,8 +91,6 @@ namespace HQ.Platform.Node
 	            {
 		            configureRoutes?.Invoke(endpoints);
 					endpoints.MapControllers();
-					endpoints.MapBlazorHub();
-					endpoints.MapFallbackToPage("/_Host");
 				}
 	            catch (Exception e)
 	            {

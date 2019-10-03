@@ -28,8 +28,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 #if NETCOREAPP2_2
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.AspNetCore.Hosting;
 #endif
 
 namespace HQ.Platform.Node
