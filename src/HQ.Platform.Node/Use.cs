@@ -52,13 +52,13 @@ namespace HQ.Platform.Node
 
 			app.UseTraceContext();
 
-			/* FIXME: Swashbuckle doesn't work with ASP.NET Core 3.0
+#if NETCOREAPP2_2
 			app.UseSwaggerUI(c =>
 			{
 				c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
 				c.RoutePrefix = "docs/swagger";
 			});
-            */
+#endif
 
 			app.UseSecurityPolicies();
             app.UseVersioning();
@@ -69,7 +69,8 @@ namespace HQ.Platform.Node
             app.UseMultiTenancy<IdentityTenant, string>();
 
 #if NETCOREAPP2_2
-	        app.UseMvc(routes =>
+			app.UseStaticFiles();
+			app.UseMvc(routes =>
 	        {
 		        try
 		        {
@@ -82,6 +83,7 @@ namespace HQ.Platform.Node
 		        }
 	        });
 #else
+			app.UseStaticFiles();
 			app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
@@ -89,6 +91,8 @@ namespace HQ.Platform.Node
 	            {
 		            configureRoutes?.Invoke(endpoints);
 					endpoints.MapControllers();
+					endpoints.MapBlazorHub();
+					endpoints.MapFallbackToPage("/_Host");
 				}
 	            catch (Exception e)
 	            {
@@ -97,7 +101,6 @@ namespace HQ.Platform.Node
 	            }
             });
 #endif
-
 			return app;
         }
     }

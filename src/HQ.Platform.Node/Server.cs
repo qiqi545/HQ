@@ -17,10 +17,13 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 #if NETCOREAPP2_2
@@ -35,15 +38,24 @@ namespace HQ.Platform.Node
     {
 	    public static void Start(string[] args, 
 	        Action<IServiceCollection> configureServices = null,
-	        Action<IApplicationBuilder, IWebHostEnvironment> configure = null)
+			Action<IApplicationBuilder, IWebHostEnvironment> configure = null,
+#if NETCOREAPP2_2
+			Action<IRouteBuilder> routes = null
+#else
+			Action<IEndpointRouteBuilder> routes = null
+#endif
+			)
         {
             Masthead();
 
-            Execute(args, () =>
+			// https://github.com/aspnet/AspNetCore/issues/11921
+			var appName = Assembly.GetCallingAssembly().GetName().Name;
+
+			Execute(args, () =>
             {
 				var builder = WebHost.CreateDefaultBuilder(args);
 
-                builder.ConfigureHq(args, true);
+				builder.ConfigureHq(args, appName, true);
 
 #if NETCOREAPP2_2
 				IWebHostEnvironment env = null;
@@ -54,25 +66,25 @@ namespace HQ.Platform.Node
 #if NETCOREAPP2_2
 					env = context.HostingEnvironment;	
 #endif
-					configureServices?.Invoke(services);
-	                var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
+	                configureServices?.Invoke(services);
+					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
 	                services.AddHq(context.HostingEnvironment, context.Configuration, logger);
-                });
+				});
 
 #if NETCOREAPP2_2
 				builder.Configure(app =>
 				{
 					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
+					app.UseHq(env, logger, routes);
 					configure?.Invoke(app, env);
-					app.UseHq(env, logger, routes => { /* custom endpoint routes */});
 				});
 #else
 				builder.Configure((context, app) =>
 				{
 					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
-	                configure?.Invoke(app, context.HostingEnvironment);
-					app.UseHq(context.HostingEnvironment, logger, routes => { /* custom endpoint routes */});
-                });
+					app.UseHq(context.HostingEnvironment, logger, routes);
+					configure?.Invoke(app, context.HostingEnvironment);
+				});
 #endif
 				
                 var host = builder.Build();

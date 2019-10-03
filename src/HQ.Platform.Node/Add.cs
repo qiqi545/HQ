@@ -202,6 +202,12 @@ namespace HQ.Platform.Node
             // Custom Objects:
 			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
+			//
+			// Front-End Services:
+#if NETCOREAPP3_0
+			services.AddRazorPages(o => { o.RootDirectory = "/Pages"; });
+			services.AddServerSideBlazor(o => { });
+#endif
 			return services;
 		}
 

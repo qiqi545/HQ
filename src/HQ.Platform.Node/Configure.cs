@@ -41,10 +41,14 @@ namespace HQ.Platform.Node
 		private const string AppSettingsFileName = "appsettings";
 		private const string AppSettingsFileExtension = ".json";
 
-		public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, bool seedOnLoad = false)
+		public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, string appName = null, bool seedOnLoad = false)
 		{
 			hostBuilder.ConfigureAppConfiguration((context, config) =>
 			{
+				// https://github.com/aspnet/AspNetCore/issues/11921
+				if (appName != null)
+					context.HostingEnvironment.ApplicationName = appName;
+
 				config.Sources.Clear();
 				config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
 				config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
