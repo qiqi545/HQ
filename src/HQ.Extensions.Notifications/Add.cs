@@ -50,12 +50,17 @@ namespace HQ.Extensions.Notifications
 						return new DirectoryEmailProvider(options.ProviderKey);
 					});
 					break;
+
 				case nameof(MemoryEmailProvider):
 					services.AddSingleton<IEmailProvider>(r => new MemoryEmailProvider());
 					break;
+
 				case nameof(PostmarkEmailProvider):
 					services.AddSingleton<IEmailProvider>(r => new PostmarkEmailProvider(options.ProviderKey));
 					break;
+
+				default:
+					throw new NotSupportedException($"No email provider named '{options.Provider}' is available.");
 			}
 
 			services.AddSingleton<IEmailService, EmailService>();
