@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System.Linq;
@@ -43,11 +45,12 @@ namespace HQ.Platform.Api.Schemas
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	public class SchemaController : DataController, IDynamicComponentEnabled<SchemaComponent>
 	{
-		private readonly ISchemaVersionStore _store;
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
 		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
+		private readonly ISchemaVersionStore _store;
 
-		public SchemaController(ISchemaVersionStore store, IOptionsMonitor<ApiOptions> apiOptions, IOptionsMonitor<QueryOptions> queryOptions)
+		public SchemaController(ISchemaVersionStore store, IOptionsMonitor<ApiOptions> apiOptions,
+			IOptionsMonitor<QueryOptions> queryOptions)
 		{
 			_store = store;
 			_apiOptions = apiOptions;
@@ -56,14 +59,15 @@ namespace HQ.Platform.Api.Schemas
 
 		[FeatureSelector]
 		[HttpGet("{applicationId}")]
-		public async Task<IActionResult> GetSchemas([FromRoute, BindRequired] string applicationId)
+		public async Task<IActionResult> GetSchemas([FromRoute] [BindRequired] string applicationId)
 		{
 			//var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
 			var data = await _store.GetByApplicationId(applicationId);
 			var count = data.Count();
 			var page = new Page<SchemaVersion>(data, count, 0, count, count);
 			var slice = new Operation<IPage<SchemaVersion>>(page);
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice.Data, slice.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice.Data,
+				slice.Errors, out var body);
 			return Ok(body);
 		}
 	}

@@ -20,9 +20,9 @@ using System.Linq;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IQueryableApplicationStore<TApplication> : IApplicationStore<TApplication>, IDisposable
-        where TApplication : class
-    {
-        IQueryable<TApplication> Applications { get; }
-    }
+	public interface IQueryableApplicationStore<TApplication> : IApplicationStore<TApplication>, IDisposable
+		where TApplication : class
+	{
+		IQueryable<TApplication> Applications { get; }
+	}
 }

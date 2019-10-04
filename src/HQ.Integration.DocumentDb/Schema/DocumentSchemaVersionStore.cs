@@ -31,19 +31,18 @@ namespace HQ.Integration.DocumentDb.Schema
 	{
 		private readonly IDocumentDbRepository<SchemaVersionDocument> _repository;
 
-		public DocumentSchemaVersionStore(IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<SchemaVersionDocument>> logger)
-		{
-			_repository = new DocumentDbRepository<SchemaVersionDocument>(Constants.ConnectionSlots.Schema, options, logger);
-		}
+		public DocumentSchemaVersionStore(IOptionsMonitor<DocumentDbOptions> options,
+			ISafeLogger<DocumentDbRepository<SchemaVersionDocument>> logger) => _repository =
+			new DocumentDbRepository<SchemaVersionDocument>(Constants.ConnectionSlots.Schema, options, logger);
 
 		public async Task<IEnumerable<SchemaVersion>> GetByApplicationId(string applicationId)
 		{
 			var current = (await _repository.RetrieveAsync(q =>
-				q.Where(x => x.ApplicationId == applicationId)
-				 .OrderByDescending(x => x.Timestamp)
-			))
-				.GroupBy(k => k.Name).Select(g => g.First())	// have to group outside DocumentDB :(
-				.ToList();										// projection required to avoid leaking expression
+					q.Where(x => x.ApplicationId == applicationId)
+						.OrderByDescending(x => x.Timestamp)
+				))
+				.GroupBy(k => k.Name).Select(g => g.First()) // have to group outside DocumentDB :(
+				.ToList(); // projection required to avoid leaking expression
 
 			return current.Select(x => x.Model);
 		}
@@ -62,12 +61,13 @@ namespace HQ.Integration.DocumentDb.Schema
 
 		public async Task<SchemaVersion> GetLastRevisionAsync(SchemaType type, string @namespace, string name)
 		{
-			var query = (await _repository.RetrieveAsync(q => q
+			var query = await _repository.RetrieveAsync(q => q
 				.Where(x =>
-					x.Type.ToString() == type.ToString() && // Azure SDK does not respect serializer settings: force conversion
+					x.Type.ToString() ==
+					type.ToString() && // Azure SDK does not respect serializer settings: force conversion
 					x.Namespace == @namespace &&
 					x.Name == name)
-				.OrderByDescending(x => x.Revision)));
+				.OrderByDescending(x => x.Revision));
 
 			var lastRevision = query.FirstOrDefault();
 			return lastRevision?.Model;

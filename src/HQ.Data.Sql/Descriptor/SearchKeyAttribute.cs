@@ -19,12 +19,12 @@ using System;
 
 namespace HQ.Data.Sql.Descriptor
 {
-    /// <summary>
-    ///     Useful for when your database stores based on one key (Id) but your external searches are fetched commonly
-    ///     from another field.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class SearchKeyAttribute : Attribute
-    {
-    }
+	/// <summary>
+	///     Useful for when your database stores based on one key (Id) but your external searches are fetched commonly
+	///     from another field.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property)]
+	public class SearchKeyAttribute : Attribute
+	{
+	}
 }

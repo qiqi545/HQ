@@ -20,18 +20,17 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class MultiTenancyOptions : FeatureToggle
-    {
-        public bool RequireTenant { get; set; } = false;
+	public class MultiTenancyOptions : FeatureToggle
+	{
+		public int TenantRequiredStatusCode = (int) HttpStatusCode.NotFound;
+		public bool RequireTenant { get; set; } = false;
+		public string DefaultTenantId { get; set; } = "0";
+		public string DefaultTenantName { get; set; } = Constants.MultiTenancy.DefaultTenantName;
+		public string TenantHeader { get; set; } = Constants.MultiTenancy.TenantHeader;
+		public int? TenantLifetimeSeconds { get; set; } = 180;
+		public TenantPartitionStrategy PartitionStrategy { get; set; } = TenantPartitionStrategy.Shared;
 
-        public int TenantRequiredStatusCode = (int)HttpStatusCode.NotFound;
-        public string DefaultTenantId { get; set; } = "0";
-        public string DefaultTenantName { get; set; } = Constants.MultiTenancy.DefaultTenantName;
-        public string TenantHeader { get; set; } = Constants.MultiTenancy.TenantHeader;
-        public int? TenantLifetimeSeconds { get; set; } = 180;
-        public TenantPartitionStrategy PartitionStrategy { get; set; } = TenantPartitionStrategy.Shared;
-
-        public string ApplicationHeader { get; set; } = Constants.MultiTenancy.ApplicationHeader;
-        public int? ApplicationLifetimeSeconds { get; set; } = 180;
-    }
+		public string ApplicationHeader { get; set; } = Constants.MultiTenancy.ApplicationHeader;
+		public int? ApplicationLifetimeSeconds { get; set; } = 180;
+	}
 }

@@ -17,11 +17,11 @@
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
-    /// <summary>
-    /// See: https://tools.ietf.org/html/rfc7232#section-2
-    /// </summary>
-    public interface IETagGenerator
-    {
-        string GenerateFromBuffer(byte[] data);
-    }
+	/// <summary>
+	///     See: https://tools.ietf.org/html/rfc7232#section-2
+	/// </summary>
+	public interface IETagGenerator
+	{
+		string GenerateFromBuffer(byte[] data);
+	}
 }

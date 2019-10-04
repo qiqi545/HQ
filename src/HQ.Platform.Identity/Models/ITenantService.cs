@@ -21,22 +21,23 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ITenantService
-    {
-        Task<Operation<int>> GetCountAsync();
-    }
-    public interface ITenantService<TTenant> : ITenantService
-    {
-        Task<Operation<IEnumerable<TTenant>>> GetAsync();
-        Task<Operation<TTenant>> CreateAsync(CreateTenantModel model);
-        Task<Operation> UpdateAsync(TTenant tenant);
-        Task<Operation> DeleteAsync(string id);
+	public interface ITenantService
+	{
+		Task<Operation<int>> GetCountAsync();
+	}
 
-        Task<Operation<TTenant>> FindByIdAsync(string id);
-        Task<Operation<TTenant>> FindByNameAsync(string name);
+	public interface ITenantService<TTenant> : ITenantService
+	{
+		Task<Operation<IEnumerable<TTenant>>> GetAsync();
+		Task<Operation<TTenant>> CreateAsync(CreateTenantModel model);
+		Task<Operation> UpdateAsync(TTenant tenant);
+		Task<Operation> DeleteAsync(string id);
 
-        Task<Operation<IEnumerable<TTenant>>> FindByPhoneNumberAsync(string phoneNumber);
-        Task<Operation<IEnumerable<TTenant>>> FindByEmailAsync(string email);
-        Task<Operation<IEnumerable<TTenant>>> FindByUserNameAsync(string username);
-    }
+		Task<Operation<TTenant>> FindByIdAsync(string id);
+		Task<Operation<TTenant>> FindByNameAsync(string name);
+
+		Task<Operation<IEnumerable<TTenant>>> FindByPhoneNumberAsync(string phoneNumber);
+		Task<Operation<IEnumerable<TTenant>>> FindByEmailAsync(string email);
+		Task<Operation<IEnumerable<TTenant>>> FindByUserNameAsync(string username);
+	}
 }

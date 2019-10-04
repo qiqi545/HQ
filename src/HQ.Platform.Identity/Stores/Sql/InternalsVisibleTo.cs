@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

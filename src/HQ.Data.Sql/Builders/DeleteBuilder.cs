@@ -24,94 +24,94 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class DeleteBuilder
-    {
-        public static string Delete(this ISqlDialect d, string table, string schema)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
-            });
-        }
+	public static class DeleteBuilder
+	{
+		public static string Delete(this ISqlDialect d, string table, string schema)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeDelete(descriptor, sb))
-                    return;
+		public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeDelete(descriptor, sb))
+					return;
 
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
-            });
-        }
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
-                sb.AppendWhereClause(d, keys);
-            });
-        }
+		public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
+				sb.AppendWhereClause(d, keys);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<string> keys)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeDelete(descriptor, sb))
-                    return;
+		public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<string> keys)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeDelete(descriptor, sb))
+					return;
 
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
 
-                if (!d.BeforeWhere(descriptor, sb, keys))
-                    return;
+				if (!d.BeforeWhere(descriptor, sb, keys))
+					return;
 
-                sb.AppendWhereClause(descriptor, d, keys);
-            });
-        }
+				sb.AppendWhereClause(descriptor, d, keys);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys,
-            List<string> parameters)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
-                sb.AppendWhereClause(d, keys, parameters);
-            });
-        }
+		public static string Delete(this ISqlDialect d, string table, string schema, List<string> keys,
+			List<string> parameters)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
+				sb.AppendWhereClause(d, keys, parameters);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<string> keys, List<string> parameters)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeDelete(descriptor, sb))
-                    return;
+		public static string Delete(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<string> keys, List<string> parameters)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeDelete(descriptor, sb))
+					return;
 
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
 
-                if (!d.BeforeWhere(descriptor, sb, keys, parameters))
-                    return;
+				if (!d.BeforeWhere(descriptor, sb, keys, parameters))
+					return;
 
-                sb.AppendWhereClause(descriptor, d, keys, parameters);
-            });
-        }
+				sb.AppendWhereClause(descriptor, d, keys, parameters);
+			});
+		}
 
-        public static string Delete(this ISqlDialect d, string table, string schema, List<PropertyToColumn> keys)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("DELETE FROM ");
-                sb.AppendTable(d, table, schema);
-                sb.AppendWhereClause(d, keys.Select(x => x.ColumnName).ToList());
-            });
-        }
-    }
+		public static string Delete(this ISqlDialect d, string table, string schema, List<PropertyToColumn> keys)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("DELETE FROM ");
+				sb.AppendTable(d, table, schema);
+				sb.AppendWhereClause(d, keys.Select(x => x.ColumnName).ToList());
+			});
+		}
+	}
 }

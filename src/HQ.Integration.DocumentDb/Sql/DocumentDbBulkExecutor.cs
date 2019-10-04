@@ -34,7 +34,20 @@ namespace HQ.Integration.DocumentDb.Sql
 {
 	public class DocumentDbBulkExecutor
 	{
-		private static readonly ConcurrentDictionary<Uri, DocumentClient> BulkClients = new ConcurrentDictionary<Uri, DocumentClient>();
+		private static readonly ConcurrentDictionary<Uri, DocumentClient> BulkClients =
+			new ConcurrentDictionary<Uri, DocumentClient>();
+
+		private static readonly ConnectionPolicy ConnectionPolicy = new ConnectionPolicy
+		{
+			ConnectionMode = ConnectionMode.Direct,
+			ConnectionProtocol = Protocol.Tcp,
+			RequestTimeout = new TimeSpan(1, 0, 0),
+			MaxConnectionLimit = 1000,
+			RetryOptions = new RetryOptions
+			{
+				MaxRetryAttemptsOnThrottledRequests = 10, MaxRetryWaitTimeInSeconds = 60
+			}
+		};
 
 		public static DocumentClient RequisitionBulkCopyClient(IDocumentClient template)
 		{
@@ -45,7 +58,8 @@ namespace HQ.Integration.DocumentDb.Sql
 
 		public static DocumentClient CreateBulkCopyClient(Uri endpoint, IDocumentClient template)
 		{
-			var client = new DocumentClient(endpoint, template.AuthKey, Defaults.JsonSettings, ConnectionPolicy, template.ConsistencyLevel);
+			var client = new DocumentClient(endpoint, template.AuthKey, Defaults.JsonSettings, ConnectionPolicy,
+				template.ConsistencyLevel);
 
 			// See: https://docs.microsoft.com/en-us/azure/cosmos-db/performance-tips
 			client.OpenAsync().GetAwaiter().GetResult();
@@ -53,20 +67,8 @@ namespace HQ.Integration.DocumentDb.Sql
 			return client;
 		}
 
-		private static readonly ConnectionPolicy ConnectionPolicy = new ConnectionPolicy
-		{
-			ConnectionMode = ConnectionMode.Direct,
-			ConnectionProtocol = Protocol.Tcp,
-			RequestTimeout = new TimeSpan(1, 0, 0),
-			MaxConnectionLimit = 1000,
-			RetryOptions = new RetryOptions
-			{
-				MaxRetryAttemptsOnThrottledRequests = 10,
-				MaxRetryWaitTimeInSeconds = 60
-			}
-		};
-
-		public static async Task ExecuteAsync<TData>(IDataDescriptor descriptor, IServerTimestampService timestamps, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects,
+		public static async Task ExecuteAsync<TData>(IDataDescriptor descriptor, IServerTimestampService timestamps,
+			BatchSaveStrategy saveStrategy, IEnumerable<TData> objects,
 			long startingAt, int? count, DocumentClient client, string databaseId, Resource collection)
 		{
 			var offer = client.CreateOfferQuery().Where(o => o.ResourceLink == collection.SelfLink)
@@ -81,76 +83,77 @@ namespace HQ.Integration.DocumentDb.Sql
 			switch (saveStrategy)
 			{
 				case BatchSaveStrategy.Insert:
+				{
+					// ReSharper disable once PossibleMultipleEnumeration
+					var data = objects.Skip((int) startingAt).Take(batchSize);
+					if (descriptor.Id != null && descriptor.Id.IsIdentity)
 					{
-						// ReSharper disable once PossibleMultipleEnumeration
-						var data = objects.Skip((int) startingAt).Take(batchSize);
-						if (descriptor.Id != null && descriptor.Id.IsIdentity)
-						{
-							var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData).Name,
+						var nextValues = await client.GetNextValuesForSequenceAsync(typeof(TData).Name,
 							databaseId, collection.Id, batchSize);
 
-							// ReSharper disable once PossibleMultipleEnumeration
-							data = data.Select((x, i) =>
-							{
-								descriptor.Id.Property.Set(x, nextValues.Item1 + i);
-								return x;
-							});
-						}
-
-						if (descriptor.Timestamp != null)
+						// ReSharper disable once PossibleMultipleEnumeration
+						data = data.Select((x, i) =>
 						{
-							var timestamp = timestamps.GetCurrentTime();
-							data = data.Select(x =>
-							{
-								descriptor.Timestamp?.Property?.Set(x, timestamp);
-								return x;
-							});
-						}
-
-						var batch = data.Select(x =>
-						{
-							var @object = new ExpandoObject();
-							var document = (IDictionary<string, object>) @object;
-							foreach (var property in descriptor.Inserted)
-								document.Add(property.ColumnName, property.Property.Get(x));
-							if(!document.ContainsKey("DocumentType"))
-								document.Add("DocumentType", typeof(TData).Name);
-
-							document["id"] = Guid.NewGuid().ToString();
-							return @object;
+							descriptor.Id.Property.Set(x, nextValues.Item1 + i);
+							return x;
 						});
-
-						// set TaskCount = 10 for each 10k RUs, minimum 1, maximum 250
-						var taskCount = Math.Min(Math.Max(throughput / 1000, 1), 250);
-						var tasks = new List<Task>();
-						var pageSize = batchSize / taskCount;
-						for (var i = 0; i < taskCount; i++)
-						{
-							// ReSharper disable once PossibleMultipleEnumeration
-							var page = batch.Skip(i * pageSize).Take(pageSize);
-							tasks.Add(InsertDocumentAsync(client, databaseId, collection, page));
-						}
-
-						await Task.WhenAll(tasks);
-						break;
 					}
+
+					if (descriptor.Timestamp != null)
+					{
+						var timestamp = timestamps.GetCurrentTime();
+						data = data.Select(x =>
+						{
+							descriptor.Timestamp?.Property?.Set(x, timestamp);
+							return x;
+						});
+					}
+
+					var batch = data.Select(x =>
+					{
+						var @object = new ExpandoObject();
+						var document = (IDictionary<string, object>) @object;
+						foreach (var property in descriptor.Inserted)
+							document.Add(property.ColumnName, property.Property.Get(x));
+						if (!document.ContainsKey("DocumentType"))
+							document.Add("DocumentType", typeof(TData).Name);
+
+						document["id"] = Guid.NewGuid().ToString();
+						return @object;
+					});
+
+					// set TaskCount = 10 for each 10k RUs, minimum 1, maximum 250
+					var taskCount = Math.Min(Math.Max(throughput / 1000, 1), 250);
+					var tasks = new List<Task>();
+					var pageSize = batchSize / taskCount;
+					for (var i = 0; i < taskCount; i++)
+					{
+						// ReSharper disable once PossibleMultipleEnumeration
+						var page = batch.Skip(i * pageSize).Take(pageSize);
+						tasks.Add(InsertDocumentAsync(client, databaseId, collection, page));
+					}
+
+					await Task.WhenAll(tasks);
+					break;
+				}
 
 				case BatchSaveStrategy.Upsert:
-					{
-						throw new NotImplementedException();
-					}
+				{
+					throw new NotImplementedException();
+				}
 
 				case BatchSaveStrategy.Update:
-					{
-						throw new NotImplementedException();
-					}
+				{
+					throw new NotImplementedException();
+				}
 
 				default:
 					throw new ArgumentOutOfRangeException(nameof(saveStrategy), saveStrategy, null);
 			}
 		}
 
-		private static async Task InsertDocumentAsync(IDocumentClient client, string databaseId, Resource collection, IEnumerable<ExpandoObject> page)
+		private static async Task InsertDocumentAsync(IDocumentClient client, string databaseId, Resource collection,
+			IEnumerable<ExpandoObject> page)
 		{
 			var options = new RequestOptions();
 

@@ -19,16 +19,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Security
 {
-    internal sealed class NoLookupProtector : ILookupProtector
-    {
-        public string Protect(string keyId, string data)
-        {
-            return data;
-        }
+	internal sealed class NoLookupProtector : ILookupProtector
+	{
+		public string Protect(string keyId, string data)
+		{
+			return data;
+		}
 
-        public string Unprotect(string keyId, string data)
-        {
-            return data;
-        }
-    }
+		public string Unprotect(string keyId, string data)
+		{
+			return data;
+		}
+	}
 }

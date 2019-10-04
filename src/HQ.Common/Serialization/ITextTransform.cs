@@ -17,9 +17,9 @@
 
 namespace HQ.Common.Serialization
 {
-    public interface ITextTransform
-    {
-        string Name { get; }
-        string Transform(string input);
-    }
+	public interface ITextTransform
+	{
+		string Name { get; }
+		string Transform(string input);
+	}
 }

@@ -29,9 +29,9 @@ using HQ.Integration.SqlServer.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-
 #if NETCOREAPP3_0
 using Microsoft.Extensions.Hosting;
+
 #endif
 
 namespace HQ.Platform.Node
@@ -41,7 +41,8 @@ namespace HQ.Platform.Node
 		private const string AppSettingsFileName = "appsettings";
 		private const string AppSettingsFileExtension = ".json";
 
-		public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args, string appName = null, bool seedOnLoad = false)
+		public static IWebHostBuilder ConfigureHq(this IWebHostBuilder hostBuilder, string[] args,
+			string appName = null, bool seedOnLoad = false)
 		{
 			hostBuilder.ConfigureAppConfiguration((context, config) =>
 			{
@@ -51,7 +52,9 @@ namespace HQ.Platform.Node
 
 				config.Sources.Clear();
 				config.AddJsonFile($"{AppSettingsFileName}{AppSettingsFileExtension}", true, true);
-				config.AddJsonFile($"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}", true, true);
+				config.AddJsonFile(
+					$"{AppSettingsFileName}.{context.HostingEnvironment.EnvironmentName}{AppSettingsFileExtension}",
+					true, true);
 				config.AddCloudConfiguration(seedOnLoad);
 
 				if (context.HostingEnvironment.IsDevelopment())
@@ -75,7 +78,7 @@ namespace HQ.Platform.Node
 				builder.AddConfiguration(config);
 
 				if (context.HostingEnvironment.IsDevelopment())
-	                builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
+					builder.AddConsole(o => { o.IncludeScopes = Debugger.IsAttached; });
 
 				builder.AddDebug();
 				builder.AddEventSourceLogger();
@@ -93,19 +96,19 @@ namespace HQ.Platform.Node
 			switch (cloudConfig["Provider"])
 			{
 				case nameof(Azure):
-					{
-						var cloudOptions = new AzureOptions();
-						cloudConfig.FastBind(cloudOptions);
-						builder.ConfigureCloudLogging(cloudOptions);
-						break;
-					}
+				{
+					var cloudOptions = new AzureOptions();
+					cloudConfig.FastBind(cloudOptions);
+					builder.ConfigureCloudLogging(cloudOptions);
+					break;
+				}
 			}
 		}
 
 		private static void AddCloudConfiguration(this IConfigurationBuilder config, bool seedOnLoad)
 		{
-			config.AddJsonFile("seed.json", optional: true, reloadOnChange: true);
-			
+			config.AddJsonFile("seed.json", true, true);
+
 			var root = config.Build();
 			var backend = root.GetSection("Backend");
 			var backendType = backend["Type"];

@@ -26,85 +26,84 @@ using Newtonsoft.Json.Serialization;
 namespace HQ.Common
 {
 	public class Bootstrap
-    {
-        public static void EnsureInitialized()
-        {
-            try
-            {
-                SetDefaultJsonSettings();
-            }
-            catch (Exception e)
-            {
-                Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
-            }
-        }
+	{
+		public static void EnsureInitialized()
+		{
+			try
+			{
+				SetDefaultJsonSettings();
+			}
+			catch (Exception e)
+			{
+				Trace.TraceWarning("Bootstrapper failed unexpectedly: {0}", e);
+			}
+		}
 
-        public static void SetDefaultJsonSettings()
-        {
-            JsonConvert.DefaultSettings = () =>
-            {
-                var settings = CreateDefaultJsonSerializerSettings();
+		public static void SetDefaultJsonSettings()
+		{
+			JsonConvert.DefaultSettings = () =>
+			{
+				var settings = CreateDefaultJsonSerializerSettings();
 
-                return settings;
-            };
-        }
+				return settings;
+			};
+		}
 
-        public static JsonSerializerSettings CreateDefaultJsonSerializerSettings()
-        {
-            var settings = new JsonSerializerSettings
-            {
-                ContractResolver = new ContractResolver(),
-                TypeNameHandling = TypeNameHandling.None,
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Include,
-                DefaultValueHandling = DefaultValueHandling.Include,
-                DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
-                DateParseHandling = DateParseHandling.DateTimeOffset,
-                DateFormatHandling = DateFormatHandling.IsoDateFormat,
-                DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
-            };
-            settings.Converters.Add(new StringEnumConverter());
-            return settings;
-        }
+		public static JsonSerializerSettings CreateDefaultJsonSerializerSettings()
+		{
+			var settings = new JsonSerializerSettings
+			{
+				ContractResolver = new ContractResolver(),
+				TypeNameHandling = TypeNameHandling.None,
+				Formatting = Formatting.Indented,
+				NullValueHandling = NullValueHandling.Include,
+				DefaultValueHandling = DefaultValueHandling.Include,
+				DateTimeZoneHandling = DateTimeZoneHandling.RoundtripKind,
+				DateParseHandling = DateParseHandling.DateTimeOffset,
+				DateFormatHandling = DateFormatHandling.IsoDateFormat,
+				DateFormatString = "yyyy-MM-dd'T'HH:mm:ss.FFFFFF'Z'"
+			};
+			settings.Converters.Add(new StringEnumConverter());
+			return settings;
+		}
 
-        public class ContractResolver : DefaultContractResolver
-        {
-            public static HashSet<Type> IgnoreTypes = new HashSet<Type>();
+		public class ContractResolver : DefaultContractResolver
+		{
+			public static HashSet<Type> IgnoreTypes = new HashSet<Type>();
 
-            static ContractResolver()
-            {
-	            IgnoreTypes.Add(typeof(Assembly));
-	            IgnoreTypes.Add(typeof(Module));
-	            IgnoreTypes.Add(typeof(Type));
-	            IgnoreTypes.Add(typeof(MethodBase));
-	            IgnoreTypes.Add(typeof(MemberInfo));
-	            IgnoreTypes.Add(typeof(RuntimeMethodHandle));
-	            IgnoreTypes.Add(typeof(Delegate));
-	            IgnoreTypes.Add(typeof(IServiceProvider));
+			static ContractResolver()
+			{
+				IgnoreTypes.Add(typeof(Assembly));
+				IgnoreTypes.Add(typeof(Module));
+				IgnoreTypes.Add(typeof(Type));
+				IgnoreTypes.Add(typeof(MethodBase));
+				IgnoreTypes.Add(typeof(MemberInfo));
+				IgnoreTypes.Add(typeof(RuntimeMethodHandle));
+				IgnoreTypes.Add(typeof(Delegate));
+				IgnoreTypes.Add(typeof(IServiceProvider));
 			}
 
-            public ContractResolver()
-            {
-                NamingStrategy = new CamelCaseNamingStrategy
-                {
-                    ProcessDictionaryKeys = true,
-                    OverrideSpecifiedNames = true
-                };
-            }
-            
-            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
-            {
-                var property = base.CreateProperty(member, memberSerialization);
+			public ContractResolver() =>
+				NamingStrategy = new CamelCaseNamingStrategy
+				{
+					ProcessDictionaryKeys = true, OverrideSpecifiedNames = true
+				};
 
-                if (IgnoreTypes.Contains(property.PropertyType) || typeof(MulticastDelegate).IsAssignableFrom(property.PropertyType.BaseType))
-                {
-                    Trace.TraceError($"Runtime avoided JSON serializing property '{property.PropertyType.Name} {property.DeclaringType.Name}.{property.PropertyName}' that would cause a circular reference.");
-                    property.ShouldSerialize = i => false;
-                    property.Ignored = true;
-                }
+			protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+			{
+				var property = base.CreateProperty(member, memberSerialization);
 
-                return property;
-            }
-        }
-    }
+				if (IgnoreTypes.Contains(property.PropertyType) ||
+				    typeof(MulticastDelegate).IsAssignableFrom(property.PropertyType.BaseType))
+				{
+					Trace.TraceError(
+						$"Runtime avoided JSON serializing property '{property.PropertyType.Name} {property.DeclaringType.Name}.{property.PropertyName}' that would cause a circular reference.");
+					property.ShouldSerialize = i => false;
+					property.Ignored = true;
+				}
+
+				return property;
+			}
+		}
+	}
 }

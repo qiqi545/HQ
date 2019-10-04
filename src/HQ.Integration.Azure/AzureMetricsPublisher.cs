@@ -22,20 +22,20 @@ using HQ.Integration.Azure.Metrics.Reporters;
 
 namespace HQ.Integration.Azure
 {
-    public class AzureMetricsPublisher : ICloudMetricsPublisher<AzureOptions>
-    {
-        public void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, AzureOptions options)
-        {
-            logger.Info(() => "Adding Application Insights Metrics & Health Checks Reporting");
+	public class AzureMetricsPublisher : ICloudMetricsPublisher<AzureOptions>
+	{
+		public void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, AzureOptions options)
+		{
+			logger.Info(() => "Adding Application Insights Metrics & Health Checks Reporting");
 
-            builder.PushToApplicationInsights(p =>
-            {
-                p.MetricsSampleEventName = Constants.Events.MetricsSample;
-                p.HealthCheckEventName = Constants.Events.HealthCheck;
-                p.PublishHealthChecks = true;
-                p.PublishHealthy = false;
-                p.PublishMetrics = true;
-            });
-        }
-    }
+			builder.PushToApplicationInsights(p =>
+			{
+				p.MetricsSampleEventName = Constants.Events.MetricsSample;
+				p.HealthCheckEventName = Constants.Events.HealthCheck;
+				p.PublishHealthChecks = true;
+				p.PublishHealthy = false;
+				p.PublishMetrics = true;
+			});
+		}
+	}
 }

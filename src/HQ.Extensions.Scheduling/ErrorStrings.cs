@@ -17,9 +17,9 @@
 
 namespace HQ.Extensions.Scheduling
 {
-    public static class ErrorStrings
-    {
-        public static string ExceededRuntime = "Exceeded runtime";
-        public static string InvalidHandler = "Missing or invalid handler";
-    }
+	public static class ErrorStrings
+	{
+		public static string ExceededRuntime = "Exceeded runtime";
+		public static string InvalidHandler = "Missing or invalid handler";
+	}
 }

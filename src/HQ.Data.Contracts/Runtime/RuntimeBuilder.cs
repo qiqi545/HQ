@@ -21,11 +21,8 @@ namespace HQ.Data.Contracts.Runtime
 {
 	public class RuntimeBuilder
 	{
-		public IServiceCollection Services { get; }
+		public RuntimeBuilder(IServiceCollection services) => Services = services;
 
-		public RuntimeBuilder(IServiceCollection services)
-		{
-			Services = services;
-		}
+		public IServiceCollection Services { get; }
 	}
 }

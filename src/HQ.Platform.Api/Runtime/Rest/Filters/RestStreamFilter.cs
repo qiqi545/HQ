@@ -20,7 +20,6 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -28,43 +27,40 @@ using Microsoft.Extensions.Primitives;
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
 	public class RestStreamFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestStreamFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestStreamFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => _options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-            qs.TryGetValue(_options.Value.AfterOperator, out var after);
-            qs.TryGetValue(_options.Value.BeforeOperator, out var before);
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+			qs.TryGetValue(_options.Value.AfterOperator, out var after);
+			qs.TryGetValue(_options.Value.BeforeOperator, out var before);
 
-            var options = new StreamOptions();
+			var options = new StreamOptions();
 
-            if (after.Count == 0 || !long.TryParse(after[0], out var afterValue))
-            {
-                afterValue = 0;
-            }
+			if (after.Count == 0 || !long.TryParse(after[0], out var afterValue))
+			{
+				afterValue = 0;
+			}
 
-            if (before.Count == 0 || !long.TryParse(before[0], out var beforeValue))
-            {
-                beforeValue = _options.Value.PerPageDefault + _options.Value.PerPageDefault * afterValue;
-            }
+			if (before.Count == 0 || !long.TryParse(before[0], out var beforeValue))
+			{
+				beforeValue = _options.Value.PerPageDefault + _options.Value.PerPageDefault * afterValue;
+			}
 
-            options.After = afterValue;
-            options.Before = beforeValue;
+			options.After = afterValue;
+			options.Before = beforeValue;
 
-            if (!options.Validate(context.Type, _options.Value, out var errors))
-            {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
-                    HttpStatusCode.BadRequest, errors));
-            }
+			if (!options.Validate(context.Type, _options.Value, out var errors))
+			{
+				context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
+					HttpStatusCode.BadRequest, errors));
+			}
 
-            context.Streaming = options;
-        }
-    }
+			context.Streaming = options;
+		}
+	}
 }

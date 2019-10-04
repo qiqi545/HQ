@@ -25,48 +25,49 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public static class Add
-    {
-	    public static IdentityBuilder AddSqlIdentityStores<TDatabase, TKey, TUser, TRole, TTenant, TApplication>
-        (
-            this IdentityBuilder identityBuilder,
-            string connectionString,
-            ConnectionScope scope,
-            Action<IDbCommand, Type, IServiceProvider> onCommand = null,
-            Action<IDbConnection, IServiceProvider> onConnection = null
-        )
-            where TDatabase : class, IConnectionFactory, new()
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var services = identityBuilder.Services;
+	public static class Add
+	{
+		public static IdentityBuilder AddSqlIdentityStores<TDatabase, TKey, TUser, TRole, TTenant, TApplication>
+		(
+			this IdentityBuilder identityBuilder,
+			string connectionString,
+			ConnectionScope scope,
+			Action<IDbCommand, Type, IServiceProvider> onCommand = null,
+			Action<IDbConnection, IServiceProvider> onConnection = null
+		)
+			where TDatabase : class, IConnectionFactory, new()
+			where TKey : IEquatable<TKey>
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+		{
+			var services = identityBuilder.Services;
 
-            if (scope == ConnectionScope.ByRequest)
+			if (scope == ConnectionScope.ByRequest)
 				services.AddHttpContextAccessor();
 
-            var extensions = new[] {new HttpAccessorExtension()};
-            services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, extensions, onConnection, onCommand);
+			var extensions = new[] {new HttpAccessorExtension()};
+			services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, extensions,
+				onConnection, onCommand);
 
 			services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
-            services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());
+			services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());
 
-            services.AddTransient<IRoleStoreExtended<TRole>, RoleStore<TKey, TRole>>();
-            services.AddTransient<IRoleStore<TRole>>(r => r.GetRequiredService<IRoleStoreExtended<TRole>>());
+			services.AddTransient<IRoleStoreExtended<TRole>, RoleStore<TKey, TRole>>();
+			services.AddTransient<IRoleStore<TRole>>(r => r.GetRequiredService<IRoleStoreExtended<TRole>>());
 
-            services.AddTransient<ITenantStore<TTenant>, TenantStore<TTenant, TKey>>();
-            services.AddScoped<TenantManager<TTenant, TUser, TKey>>();
+			services.AddTransient<ITenantStore<TTenant>, TenantStore<TTenant, TKey>>();
+			services.AddScoped<TenantManager<TTenant, TUser, TKey>>();
 
-            services.AddTransient<IApplicationStore<TApplication>, ApplicationStore<TApplication, TKey>>();
-            services.AddScoped<ApplicationManager<TApplication, TUser, TKey>>();
+			services.AddTransient<IApplicationStore<TApplication>, ApplicationStore<TApplication, TKey>>();
+			services.AddScoped<ApplicationManager<TApplication, TUser, TKey>>();
 
-            return identityBuilder
-                .AddRoles<TRole>()
-                .AddUserManager<UserManager<TUser>>()
-                .AddRoleManager<RoleManager<TRole>>()
-                .AddSignInManager<SignInManager<TUser>>();
-        }
-    }
+			return identityBuilder
+				.AddRoles<TRole>()
+				.AddUserManager<UserManager<TUser>>()
+				.AddRoleManager<RoleManager<TRole>>()
+				.AddSignInManager<SignInManager<TUser>>();
+		}
+	}
 }

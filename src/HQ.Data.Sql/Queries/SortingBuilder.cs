@@ -22,24 +22,24 @@ using HQ.Data.Sql.Dialects;
 
 namespace HQ.Data.Sql.Queries
 {
-    public static class SortingBuilder
-    {
-        public static readonly Lazy<SortOptions> SortByIdAscending = new Lazy<SortOptions>(DefaultSort);
+	public static class SortingBuilder
+	{
+		public static readonly Lazy<SortOptions> SortByIdAscending = new Lazy<SortOptions>(DefaultSort);
 
-        public static string OrderBy(ISqlDialect dialect, SortOptions options)
-        {
-            var clauses = string.Join(", ",
-                options.Fields.Select(a =>
-                    $"r.{dialect.StartIdentifier}{a.Field}{dialect.EndIdentifier} {(a.Descending ? "DESC" : "ASC")}"));
+		public static string OrderBy(ISqlDialect dialect, SortOptions options)
+		{
+			var clauses = string.Join(", ",
+				options.Fields.Select(a =>
+					$"r.{dialect.StartIdentifier}{a.Field}{dialect.EndIdentifier} {(a.Descending ? "DESC" : "ASC")}"));
 
-            return $"ORDER BY {clauses}";
-        }
+			return $"ORDER BY {clauses}";
+		}
 
-        private static SortOptions DefaultSort()
-        {
-            var sort = new SortOptions();
-            sort.Fields.Add(new Sort {Field = "Id", Descending = false});
-            return sort;
-        }
-    }
+		private static SortOptions DefaultSort()
+		{
+			var sort = new SortOptions();
+			sort.Fields.Add(new Sort {Field = "Id", Descending = false});
+			return sort;
+		}
+	}
 }

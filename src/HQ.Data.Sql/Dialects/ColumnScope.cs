@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Sql.Dialects
 {
-    public enum ColumnScope
-    {
-        All,
-        Inserted,
-        Updated
-    }
+	public enum ColumnScope
+	{
+		All,
+		Inserted,
+		Updated
+	}
 }

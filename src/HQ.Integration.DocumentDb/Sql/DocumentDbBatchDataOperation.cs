@@ -36,18 +36,18 @@ namespace HQ.Integration.DocumentDb.Sql
 	// See: https://docs.microsoft.com/en-us/azure/cosmos-db/bulk-executor-dot-net (deprecated)
 
 	public class DocumentDbBatchDataOperation : IDataBatchOperation<DocumentDbBatchOptions>
-    {
-        private readonly IOptions<DocumentDbBatchOptions> _batchOptions;
-        private readonly IOptions<DocumentDbOptions> _options;
-        private readonly IServerTimestampService _timestamps;
+	{
+		private readonly IOptions<DocumentDbBatchOptions> _batchOptions;
+		private readonly IOptions<DocumentDbOptions> _options;
+		private readonly IServerTimestampService _timestamps;
 
-        public DocumentDbBatchDataOperation(IServerTimestampService timestamps, IOptions<DocumentDbOptions> options,
-            IOptions<DocumentDbBatchOptions> batchOptions)
-        {
-            _timestamps = timestamps;
-            _options = options;
-            _batchOptions = batchOptions;
-        }
+		public DocumentDbBatchDataOperation(IServerTimestampService timestamps, IOptions<DocumentDbOptions> options,
+			IOptions<DocumentDbBatchOptions> batchOptions)
+		{
+			_timestamps = timestamps;
+			_options = options;
+			_batchOptions = batchOptions;
+		}
 
 		public Task<(DocumentDbBatchOptions, object)> BeforeAsync(IDbConnection connection,
 			IDataDescriptor descriptor, IDbTransaction transaction = null, int? commandTimeout = null)
@@ -64,23 +64,24 @@ namespace HQ.Integration.DocumentDb.Sql
 		}
 
 		public async Task ExecuteAsync<TData>(IDbConnection connection, IDataDescriptor descriptor,
-            DocumentDbBatchOptions options,
-            object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
-            int? count = null, IDbTransaction transaction = null,
-            int? commandTimeout = null, CancellationToken cancellationToken = default)
-        {
-	        var client = DocumentDbBulkExecutor.RequisitionBulkCopyClient(connection.GetClient());
-	        var collection = (DocumentCollection) userState;
-	        var databaseId = connection.GetDatabaseId();
+			DocumentDbBatchOptions options,
+			object userState, BatchSaveStrategy saveStrategy, IEnumerable<TData> objects, long startingAt = 0,
+			int? count = null, IDbTransaction transaction = null,
+			int? commandTimeout = null, CancellationToken cancellationToken = default)
+		{
+			var client = DocumentDbBulkExecutor.RequisitionBulkCopyClient(connection.GetClient());
+			var collection = (DocumentCollection) userState;
+			var databaseId = connection.GetDatabaseId();
 
-			await DocumentDbBulkExecutor.ExecuteAsync(descriptor, _timestamps, saveStrategy, objects, startingAt, count, client, databaseId, collection);
-        }
-		 
+			await DocumentDbBulkExecutor.ExecuteAsync(descriptor, _timestamps, saveStrategy, objects, startingAt, count,
+				client, databaseId, collection);
+		}
+
 		public Task AfterAsync(IDbConnection connection, IDataDescriptor descriptor, DocumentDbBatchOptions options,
-            object userState, BatchSaveStrategy saveStrategy, IDbTransaction transaction = null,
-            int? commandTimeout = null)
-        {
-            return Task.CompletedTask;
-        }
-    }
+			object userState, BatchSaveStrategy saveStrategy, IDbTransaction transaction = null,
+			int? commandTimeout = null)
+		{
+			return Task.CompletedTask;
+		}
+	}
 }

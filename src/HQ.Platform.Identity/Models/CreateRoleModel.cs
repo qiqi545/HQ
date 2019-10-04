@@ -19,10 +19,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class CreateRoleModel
-    {
-        [Required] public string Name { get; set; }
+	public class CreateRoleModel
+	{
+		[Required] public string Name { get; set; }
 
-        public string ConcurrencyStamp { get; set; }
-    }
+		public string ConcurrencyStamp { get; set; }
+	}
 }

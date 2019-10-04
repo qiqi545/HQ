@@ -16,15 +16,12 @@
 #endregion
 
 using HQ.Common;
-using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {
 	public class TokenOptions : FeatureToggle, IProtectedFeatureScheme, IComponentOptions
 	{
-		public string RootPath { get; set; } = "/auth";
-
 		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
 		public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
 
@@ -37,6 +34,7 @@ namespace HQ.Platform.Security.Configuration
 		public bool Encrypt { get; set; } = true;
 		public int ClockSkewSeconds { get; set; } = 10;
 		public bool AllowRefresh { get; set; } = true;
+		public string RootPath { get; set; } = "/auth";
 
 		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 	}

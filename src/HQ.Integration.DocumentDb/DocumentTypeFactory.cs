@@ -21,19 +21,19 @@ using System.Runtime.Serialization;
 
 namespace HQ.Integration.DocumentDb
 {
-    public static class DocumentTypeFactory<T> where T : IDocument
-    {
-	    // ReSharper disable once StaticMemberInGenericType
-	    private static readonly Dictionary<Type, string> Types = new Dictionary<Type, string>();
+	public static class DocumentTypeFactory<T> where T : IDocument
+	{
+		// ReSharper disable once StaticMemberInGenericType
+		private static readonly Dictionary<Type, string> Types = new Dictionary<Type, string>();
+
+		static DocumentTypeFactory()
+		{
+			if (FormatterServices.GetSafeUninitializedObject(typeof(T)) is T type)
+			{
+				Types[typeof(T)] = type.DocumentType;
+			}
+		}
 
 		public static string Type => Types[typeof(T)];
-
-        static DocumentTypeFactory()
-        {
-            if (FormatterServices.GetSafeUninitializedObject(typeof(T)) is T type)
-            {
-	            Types[typeof(T)] = type.DocumentType;
-            }
-        }
-    }
+	}
 }

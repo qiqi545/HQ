@@ -24,6 +24,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 {
 	public class DataController : ControllerExtended
 	{
+		public CancellationToken CancellationToken => HttpContext.RequestAborted;
+
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
 		public IActionResult BadRequestError(long eventId, string errorMessage, params object[] args)
@@ -91,8 +93,6 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 		{
 			return ControllerExtensions.ConvertModelStateToError(this);
 		}
-
-		public CancellationToken CancellationToken => HttpContext.RequestAborted;
 
 		private bool ValidOrError(object instance, out ErrorResult error, params object[] args)
 		{

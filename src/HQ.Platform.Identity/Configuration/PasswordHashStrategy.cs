@@ -17,9 +17,9 @@
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public enum PasswordHashStrategy
-    {
-        Pbkdf2,
-        Argon2i
-    }
+	public enum PasswordHashStrategy
+	{
+		Pbkdf2,
+		Argon2i
+	}
 }

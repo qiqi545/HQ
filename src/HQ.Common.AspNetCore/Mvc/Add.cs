@@ -24,7 +24,8 @@ namespace HQ.Common.AspNetCore.Mvc
 {
 	public static class Add
 	{
-		public static IMvcBuilder AddMvcCommon(this IServiceCollection services, Action<MvcOptions> configureAction = null)
+		public static IMvcBuilder AddMvcCommon(this IServiceCollection services,
+			Action<MvcOptions> configureAction = null)
 		{
 			return services
 #if NETCOREAPP2_2
@@ -37,7 +38,7 @@ namespace HQ.Common.AspNetCore.Mvc
 #endif
 		}
 
-		public static IMvcBuilder AddComponentFeature<TComponent, TComponentOptions>(this IMvcBuilder mvcBuilder) 
+		public static IMvcBuilder AddComponentFeature<TComponent, TComponentOptions>(this IMvcBuilder mvcBuilder)
 			where TComponent : IDynamicComponent
 			where TComponentOptions : IComponentOptions
 		{

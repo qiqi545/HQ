@@ -27,67 +27,67 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorRecoveryCodeStore<TUser>
-    {
-        public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+	partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorRecoveryCodeStore<TUser>
+	{
+		public async Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string update = "UPDATE AspNetUserTokens " +
-                                  "SET Value = @Value " +
-                                  "WHERE UserId = @UserId " +
-                                  "AND LoginProvider = '[AspNetUserStore]' " +
-                                  "AND Name = 'RecoveryCodes' " +
-                                  "AND TenantId = @TenantId";
+			const string update = "UPDATE AspNetUserTokens " +
+			                      "SET Value = @Value " +
+			                      "WHERE UserId = @UserId " +
+			                      "AND LoginProvider = '[AspNetUserStore]' " +
+			                      "AND Name = 'RecoveryCodes' " +
+			                      "AND TenantId = @TenantId";
 
-            await _connection.Current.ExecuteAsync(update,
-                new {UserId = user.Id, Value = string.Join(";", recoveryCodes), TenantId = _tenantId});
-        }
+			await _connection.Current.ExecuteAsync(update,
+				new {UserId = user.Id, Value = string.Join(";", recoveryCodes), TenantId = _tenantId});
+		}
 
-        public async Task<bool> RedeemCodeAsync(TUser user, string code, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<bool> RedeemCodeAsync(TUser user, string code, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string sql = "SELECT Value FROM AspNetUserTokens " +
-                               "WHERE UserId = @UserId " +
-                               "AND LoginProvider = '[AspNetUserStore]' " +
-                               "AND Name = 'RecoveryCodes' " +
-                               "AND TenantId = @TenantId";
+			const string sql = "SELECT Value FROM AspNetUserTokens " +
+			                   "WHERE UserId = @UserId " +
+			                   "AND LoginProvider = '[AspNetUserStore]' " +
+			                   "AND Name = 'RecoveryCodes' " +
+			                   "AND TenantId = @TenantId";
 
-            var value = await _connection.Current.QuerySingleOrDefaultAsync<string>(sql,
-                new {UserId = user.Id, TenantId = _tenantId});
+			var value = await _connection.Current.QuerySingleOrDefaultAsync<string>(sql,
+				new {UserId = user.Id, TenantId = _tenantId});
 
-            if (!string.IsNullOrWhiteSpace(value))
-            {
-                var recoveryCodes = value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+			if (!string.IsNullOrWhiteSpace(value))
+			{
+				var recoveryCodes = value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
 
-                return recoveryCodes.Contains(code);
-            }
+				return recoveryCodes.Contains(code);
+			}
 
-            return false;
-        }
+			return false;
+		}
 
-        public async Task<int> CountCodesAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<int> CountCodesAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
-            {
-                UserId = user.Id, Name = "RecoveryCodes", LoginProvider = "[AspNetUserStore]", TenantId = _tenantId
-            });
-            _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
+			var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
+			{
+				UserId = user.Id, Name = "RecoveryCodes", LoginProvider = "[AspNetUserStore]", TenantId = _tenantId
+			});
+			_connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 
-            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
-                query.Parameters);
+			var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
+				query.Parameters);
 
-            if (!string.IsNullOrWhiteSpace(token.Value))
-            {
-                var recoveryCodes = token.Value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
-                return recoveryCodes.Length;
-            }
+			if (!string.IsNullOrWhiteSpace(token.Value))
+			{
+				var recoveryCodes = token.Value.Split(new[] {";"}, StringSplitOptions.RemoveEmptyEntries);
+				return recoveryCodes.Length;
+			}
 
-            return 0;
-        }
-    }
+			return 0;
+		}
+	}
 }

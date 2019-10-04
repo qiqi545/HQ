@@ -23,19 +23,19 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.AspNetCore
 {
-    public static class Use
-    {
-        public static IApplicationBuilder UseMetrics(this IApplicationBuilder app, PathString path)
-        {
-            var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
-            foreach (var reporter in reporters)
-            {
-                reporter.InitializeAsync();
-            }
+	public static class Use
+	{
+		public static IApplicationBuilder UseMetrics(this IApplicationBuilder app, PathString path)
+		{
+			var reporters = app.ApplicationServices.GetServices<IMetricsReporter>();
+			foreach (var reporter in reporters)
+			{
+				reporter.InitializeAsync();
+			}
 
-            app.UseMiddleware<MetricsMiddleware>(path,
-                app.ApplicationServices.GetRequiredService<IOptions<MetricsOptions>>());
-            return app;
-        }
-    }
+			app.UseMiddleware<MetricsMiddleware>(path,
+				app.ApplicationServices.GetRequiredService<IOptions<MetricsOptions>>());
+			return app;
+		}
+	}
 }

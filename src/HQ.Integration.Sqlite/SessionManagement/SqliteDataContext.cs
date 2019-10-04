@@ -21,12 +21,12 @@ using HQ.Data.SessionManagement;
 
 namespace HQ.Integration.Sqlite.SessionManagement
 {
-    public class SqliteDataContext : DataContext
-    {
-        public SqliteDataContext(string connectionString, IServiceProvider serviceProvider,
-            Action<IDbConnection, IServiceProvider> onConnection = null) :
-            base(new SqliteConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
-        {
-        }
-    }
+	public class SqliteDataContext : DataContext
+	{
+		public SqliteDataContext(string connectionString, IServiceProvider serviceProvider,
+			Action<IDbConnection, IServiceProvider> onConnection = null) :
+			base(new SqliteConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
+		{
+		}
+	}
 }

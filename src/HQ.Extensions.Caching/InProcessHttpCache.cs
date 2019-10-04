@@ -24,41 +24,44 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Caching
 {
-    public class InProcessHttpCache : InProcessCacheManager, IHttpCache
-    {
-	    public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(cacheOptions, timestamps) { }
-        
-        public bool TryGetETag(string key, out string etag)
-        {
-            if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out etag))
-            {
-                return true;
-            }
+	public class InProcessHttpCache : InProcessCacheManager, IHttpCache
+	{
+		public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(
+			cacheOptions, timestamps)
+		{
+		}
 
-            etag = default;
-            return false;
-        }
+		public bool TryGetETag(string key, out string etag)
+		{
+			if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out etag))
+			{
+				return true;
+			}
 
-        public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
-        {
-            if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out lastModified))
-            {
-                return true;
-            }
+			etag = default;
+			return false;
+		}
 
-            lastModified = default;
-            return false;
-        }
+		public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
+		{
+			if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out lastModified))
+			{
+				return true;
+			}
 
-        public void Save(string key, string etag)
-        {
-            Cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
-        }
+			lastModified = default;
+			return false;
+		}
 
-        public void Save(string key, DateTimeOffset lastModified)
-        {
-            Cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
-                Encoding.UTF8.GetBytes(lastModified.ToString("d")));
-        }
-    }
+		public void Save(string key, string etag)
+		{
+			Cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
+		}
+
+		public void Save(string key, DateTimeOffset lastModified)
+		{
+			Cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
+				Encoding.UTF8.GetBytes(lastModified.ToString("d")));
+		}
+	}
 }

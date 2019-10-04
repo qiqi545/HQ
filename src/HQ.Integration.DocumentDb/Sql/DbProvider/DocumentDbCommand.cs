@@ -38,26 +38,9 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		private DocumentDbConnection _connection;
 
-		#region Custom Properties
+		public DocumentDbCommand() => _parameters = new DocumentDbParameterCollection();
 
-		public Type Type { get; set; }
-		public string DocumentType { get; set; }
-		public string Id { get; set; }
-		public string Collection { get; set; }
-
-		private bool UseTypeDiscrimination => Type != null && Collection != DocumentType;
-
-		#endregion
-
-		public DocumentDbCommand()
-		{
-			_parameters = new DocumentDbParameterCollection();
-		}
-
-		public DocumentDbCommand(DocumentDbConnection connection) : this()
-		{
-			_connection = connection;
-		}
+		public DocumentDbCommand(DocumentDbConnection connection) : this() => _connection = connection;
 
 		protected override DbParameterCollection DbParameterCollection => _parameters;
 
@@ -84,7 +67,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 		{
 			if (CommandText.Contains("COUNT"))
 			{
-				var options = new FeedOptions { MaxItemCount = 1, EnableCrossPartitionQuery = true };
+				var options = new FeedOptions {MaxItemCount = 1, EnableCrossPartitionQuery = true};
 				var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 				var query = this.ToQuerySpec();
 				MaybeTypeDiscriminate(query);
@@ -93,11 +76,9 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				var count = result.ExecuteNextAsync<long>().GetAwaiter().GetResult();
 				return count.SingleOrDefault();
 			}
-			else
-			{
-				var resultSet = GetQueryResultSet();
-				return resultSet?[0]?.ElementAt(0).Value;
-			}
+
+			var resultSet = GetQueryResultSet();
+			return resultSet?[0]?.ElementAt(0).Value;
 		}
 
 		public override int ExecuteNonQuery()
@@ -125,19 +106,22 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 			const bool disableAutomaticIdGeneration = true;
 			var options = new RequestOptions();
-			var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
+			var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
+				.Result;
 			return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
 		}
 
 		private void SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
 		{
-			var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
+			var query = new SqlQuerySpec(
+				$"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
 			query.Parameters.Add(new SqlParameter("@Id", document[Id]));
 			query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
 
 			var ids = new List<string>();
 			var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
-			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, feedOptions).AsDocumentQuery();
+			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, feedOptions)
+				.AsDocumentQuery();
 			while (projection.HasMoreResults)
 			{
 				var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
@@ -171,7 +155,8 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 			var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
 			var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-			var response = _connection.Client.CreateDocumentAsync(uri, document, options, disableAutomaticIdGeneration).Result;
+			var response = _connection.Client.CreateDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
+				.Result;
 			return response.StatusCode == HttpStatusCode.Created ? 1 : 0;
 		}
 
@@ -189,14 +174,15 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 
 				var sql = $"SELECT c.id FROM c WHERE c.{Id} = @{Id}";
-				var parameters = new SqlParameterCollection(new []{ new SqlParameter($"@{Id}", objectId) });
+				var parameters = new SqlParameterCollection(new[] {new SqlParameter($"@{Id}", objectId)});
 				var query = new SqlQuerySpec(sql, parameters);
 
 				if (MaybeTypeDiscriminate(query))
 					query.QueryText += " AND c.DocumentType = @DocumentType";
 
 				var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
-				var getId = _connection.Client.CreateDocumentQuery(collectionUri, query, feedOptions).ToList().SingleOrDefault();
+				var getId = _connection.Client.CreateDocumentQuery(collectionUri, query, feedOptions).ToList()
+					.SingleOrDefault();
 
 				if (getId == null)
 					return 0;
@@ -220,45 +206,48 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			switch (preamble)
 			{
 				case Constants.Insert:
+				{
+					var commandBase = CommandText.Substring(Constants.Insert.Length);
+					var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
+					var qualifier = collectionName + ".";
+
+					foreach (DocumentDbParameter parameter in _parameters)
 					{
-						var commandBase = CommandText.Substring(Constants.Insert.Length);
-						var collectionName = commandBase.Truncate(commandBase.IndexOf(" ", StringComparison.Ordinal));
-						var qualifier = collectionName + ".";
+						var parameterName = parameter.ParameterName.Substring(qualifier.Length);
+						document.Add(parameterName, parameter.Value);
 
-						foreach (DocumentDbParameter parameter in _parameters)
+						var parameterType = parameter.Value.GetType();
+						var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
+						if (isValidIdType && parameterName == Id)
+							document.Add(Constants.IdKey, parameter.Value);
+
+						var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) ||
+						                       parameterType == typeof(short);
+						if (parameterName == Id && isSequenceIdType)
 						{
-							var parameterName = parameter.ParameterName.Substring(qualifier.Length);
-							document.Add(parameterName, parameter.Value);
-
-							var parameterType = parameter.Value.GetType();
-							var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
-							if (isValidIdType && parameterName == Id)
-								document.Add(Constants.IdKey, parameter.Value);
-
-							var isSequenceIdType = parameterType == typeof(long) || parameterType == typeof(int) || parameterType == typeof(short);
-							if (parameterName == Id && isSequenceIdType)
-							{
-								_connection.Client.GetNextValueForSequenceAsync(Type.Name, _connection.Database, Collection)
-									.GetAwaiter().GetResult();
-							}
+							_connection.Client.GetNextValueForSequenceAsync(Type.Name, _connection.Database, Collection)
+								.GetAwaiter().GetResult();
 						}
-						break;
 					}
+
+					break;
+				}
 				default:
+				{
+					foreach (DocumentDbParameter parameter in _parameters)
 					{
-						foreach (DocumentDbParameter parameter in _parameters)
-						{
-							document.Add(parameter.ParameterName, parameter.Value);
+						document.Add(parameter.ParameterName, parameter.Value);
 
-							var parameterName = parameter.ParameterName;
+						var parameterName = parameter.ParameterName;
 
-							var parameterType = parameter.Value.GetType();
-							var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
-							if (isValidIdType && parameterName == Id)
-								document.Add(Constants.IdKey, parameter.Value);
-						}
-						break;
+						var parameterType = parameter.Value.GetType();
+						var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
+						if (isValidIdType && parameterName == Id)
+							document.Add(Constants.IdKey, parameter.Value);
 					}
+
+					break;
+				}
 			}
 
 			return document;
@@ -283,7 +272,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		private QueryResultSet GetQueryResultSet()
 		{
-			var options = new FeedOptions { EnableCrossPartitionQuery = true };
+			var options = new FeedOptions {EnableCrossPartitionQuery = true};
 
 			var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 
@@ -315,7 +304,8 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			options.MaxItemCount = page * perPage;
 
 			var ids = new List<string>();
-			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options).AsDocumentQuery();
+			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options)
+				.AsDocumentQuery();
 			while (projection.HasMoreResults)
 			{
 				var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();
@@ -362,6 +352,17 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
 			return UseTypeDiscrimination;
 		}
+
+		#region Custom Properties
+
+		public Type Type { get; set; }
+		public string DocumentType { get; set; }
+		public string Id { get; set; }
+		public string Collection { get; set; }
+
+		private bool UseTypeDiscrimination => Type != null && Collection != DocumentType;
+
+		#endregion
 
 		#region Deactivated
 

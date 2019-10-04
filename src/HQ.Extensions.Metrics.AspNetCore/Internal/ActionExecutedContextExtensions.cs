@@ -20,26 +20,26 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Extensions.Metrics.AspNetCore.Internal
 {
-    internal static class ActionExecutedContextExtensions
-    {
-        public static Type GetMetricOwner(this ActionExecutingContext filterContext)
-        {
-            return filterContext.Controller.GetType();
-        }
+	internal static class ActionExecutedContextExtensions
+	{
+		public static Type GetMetricOwner(this ActionExecutingContext filterContext)
+		{
+			return filterContext.Controller.GetType();
+		}
 
-        public static string GetMetricName<T>(this ActionExecutingContext filterContext) where T : IMetric
-        {
-            return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
-        }
+		public static string GetMetricName<T>(this ActionExecutingContext filterContext) where T : IMetric
+		{
+			return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
+		}
 
-        public static Type GetMetricOwner(this ActionExecutedContext filterContext)
-        {
-            return filterContext.Controller.GetType();
-        }
+		public static Type GetMetricOwner(this ActionExecutedContext filterContext)
+		{
+			return filterContext.Controller.GetType();
+		}
 
-        public static string GetMetricName<T>(this ActionExecutedContext filterContext) where T : IMetric
-        {
-            return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
-        }
-    }
+		public static string GetMetricName<T>(this ActionExecutedContext filterContext) where T : IMetric
+		{
+			return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
+		}
+	}
 }

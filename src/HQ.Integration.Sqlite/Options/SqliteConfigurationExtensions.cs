@@ -23,39 +23,44 @@ using Microsoft.Extensions.FileProviders;
 
 namespace HQ.Integration.Sqlite.Options
 {
-    public static class SqliteConfigurationExtensions
-    {
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString, IConfiguration configSeed = null)
-        {
-            return AddSqlite(builder, null, connectionString, false, configSeed);
-        }
+	public static class SqliteConfigurationExtensions
+	{
+		public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString,
+			IConfiguration configSeed = null)
+		{
+			return AddSqlite(builder, null, connectionString, false, configSeed);
+		}
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureAction = null)
-        {
-            return AddSqlite(builder, null, connectionString, reloadOnChange, configSeed, configureAction);
-        }
+		public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, string connectionString,
+			bool reloadOnChange, IConfiguration configSeed = null,
+			Action<SaveConfigurationOptions> configureAction = null)
+		{
+			return AddSqlite(builder, null, connectionString, reloadOnChange, configSeed, configureAction);
+		}
 
-        public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider, string path, bool reloadOnChange, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureAction = null)
-        {
+		public static IConfigurationBuilder AddSqlite(this IConfigurationBuilder builder, IFileProvider provider,
+			string path, bool reloadOnChange, IConfiguration configSeed = null,
+			Action<SaveConfigurationOptions> configureAction = null)
+		{
 			var saveConfig = new SaveConfigurationOptions();
 			configureAction?.Invoke(saveConfig);
 
-            if (provider == null && Path.IsPathRooted(path))
-            {
-                provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
-                path = Path.GetFileName(path);
-            }
+			if (provider == null && Path.IsPathRooted(path))
+			{
+				provider = new PhysicalFileProvider(Path.GetDirectoryName(path));
+				path = Path.GetFileName(path);
+			}
 
-            var source = new SqliteConfigurationSource(path, saveConfig)
-            {
+			var source = new SqliteConfigurationSource(path, saveConfig)
+			{
 				ReloadOnChange = reloadOnChange,
-                ConfigSeed = configSeed,
-                SeedStrategy = SeedStrategy.Initialize,
-                FileProvider = provider
-            };
+				ConfigSeed = configSeed,
+				SeedStrategy = SeedStrategy.Initialize,
+				FileProvider = provider
+			};
 
-            builder.Add(source);
-            return builder;
-        }
-    }
+			builder.Add(source);
+			return builder;
+		}
+	}
 }

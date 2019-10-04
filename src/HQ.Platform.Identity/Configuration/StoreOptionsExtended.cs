@@ -19,19 +19,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class StoreOptionsExtended : StoreOptions
-    {
-        public StoreOptionsExtended()
-        {
-        }
+	public class StoreOptionsExtended : StoreOptions
+	{
+		public StoreOptionsExtended()
+		{
+		}
 
-        public StoreOptionsExtended(StoreOptions inner)
-        {
-            MaxLengthForKeys = inner.MaxLengthForKeys;
-            ProtectPersonalData = inner.ProtectPersonalData;
-        }
+		public StoreOptionsExtended(StoreOptions inner)
+		{
+			MaxLengthForKeys = inner.MaxLengthForKeys;
+			ProtectPersonalData = inner.ProtectPersonalData;
+		}
 
-        public bool CreateIfNotExists { get; set; } = true;
-        public bool MigrateOnStartup { get; set; } = true;
-    }
+		public bool CreateIfNotExists { get; set; } = true;
+		public bool MigrateOnStartup { get; set; } = true;
+	}
 }

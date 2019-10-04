@@ -33,7 +33,8 @@ namespace HQ.Common.AspNetCore.Mvc
 			foreach (var component in _components)
 			{
 				var controllerTypes = component.ControllerTypes.ToList();
-				var controllerNames = controllerTypes.Select(x => x.Name.Contains('`') ? x.Name : x.Name.Replace(nameof(Controller), string.Empty)).ToList();
+				var controllerNames = controllerTypes.Select(x =>
+					x.Name.Contains('`') ? x.Name : x.Name.Replace(nameof(Controller), string.Empty)).ToList();
 
 				foreach (var controller in application.Controllers)
 				{

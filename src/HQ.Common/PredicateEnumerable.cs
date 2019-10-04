@@ -20,21 +20,21 @@ using System.Collections.Generic;
 
 namespace HQ.Common
 {
-    public struct PredicateEnumerable<T>
-    {
-        private readonly Predicate<T> _predicate;
+	public struct PredicateEnumerable<T>
+	{
+		private readonly Predicate<T> _predicate;
 
-        public PredicateEnumerable(List<T> inner, Predicate<T> predicate)
-        {
-            AsList = inner;
-            _predicate = predicate;
-        }
+		public PredicateEnumerable(List<T> inner, Predicate<T> predicate)
+		{
+			AsList = inner;
+			_predicate = predicate;
+		}
 
-        public PredicateEnumerator<T> GetEnumerator()
-        {
-            return new PredicateEnumerator<T>(AsList, _predicate);
-        }
+		public PredicateEnumerator<T> GetEnumerator()
+		{
+			return new PredicateEnumerator<T>(AsList, _predicate);
+		}
 
-        public List<T> AsList { get; }
-    }
+		public List<T> AsList { get; }
+	}
 }

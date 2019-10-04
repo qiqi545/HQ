@@ -45,7 +45,8 @@ namespace HQ.Data.Contracts
 			return operation.Data;
 		}
 
-		public virtual async Task<IStream<TObject>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null, FilterOptions filter = null,
+		public virtual async Task<IStream<TObject>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null,
+			FilterOptions filter = null,
 			ProjectionOptions projection = null)
 		{
 			var operation = await _repository.GetAsync(segment, fields, filter, projection);
@@ -62,20 +63,23 @@ namespace HQ.Data.Contracts
 
 		public ObjectGetService(IObjectGetRepository repository) => _repository = repository;
 
-		public virtual async Task<IPage<IObject>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
+		public virtual async Task<IPage<IObject>> GetAsync(Type type, string query = null, SortOptions sort = null,
+			PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
 			ProjectionOptions projection = null)
 		{
 			var operation = await _repository.GetAsync(type, query, sort, page, fields, filter, projection);
 			return operation.Data;
 		}
 
-		public virtual async Task<IObject> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null)
+		public virtual async Task<IObject> GetAsync(Type type, long id, FieldOptions fields = null,
+			ProjectionOptions projection = null)
 		{
 			var operation = await _repository.GetAsync(type, id, fields, projection);
 			return operation.Data;
 		}
 
-		public virtual async Task<IStream<IObject>> GetAsync(Type type, SegmentOptions segment = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
+		public virtual async Task<IStream<IObject>> GetAsync(Type type, SegmentOptions segment = null,
+			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
 		{
 			var operation = await _repository.GetAsync(type, segment, fields, filter, projection);
 			return operation.Data;

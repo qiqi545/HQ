@@ -20,11 +20,11 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    public class HubReporterOptions
-    {
-        public string CategoryName { get; set; } = Common.Constants.Categories.Metrics;
-        public LogLevel LogLevel { get; set; } = LogLevel.Information;
-        public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(5);
-        public bool StopOnError { get; set; } = false;
-    }
+	public class HubReporterOptions
+	{
+		public string CategoryName { get; set; } = Common.Constants.Categories.Metrics;
+		public LogLevel LogLevel { get; set; } = LogLevel.Information;
+		public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(5);
+		public bool StopOnError { get; set; } = false;
+	}
 }

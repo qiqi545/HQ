@@ -25,50 +25,51 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
-    public class RolesAuthorizationRequirementExtended :
-        AuthorizationHandler<RolesAuthorizationRequirementExtended>,
-        IAuthorizationRequirement
-    {
-        private readonly IValidOptionsMonitor<SecurityOptions> _options;
-        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
+	public class RolesAuthorizationRequirementExtended :
+		AuthorizationHandler<RolesAuthorizationRequirementExtended>,
+		IAuthorizationRequirement
+	{
+		private readonly IValidOptionsMonitor<SecurityOptions> _options;
+		private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public RolesAuthorizationRequirementExtended(
-	        IValidOptionsMonitor<SecurityOptions> options,
-	        IValidOptionsMonitor<SuperUserOptions> superUser,
+		public RolesAuthorizationRequirementExtended(
+			IValidOptionsMonitor<SecurityOptions> options,
+			IValidOptionsMonitor<SuperUserOptions> superUser,
 			IEnumerable<string> allowedRoles)
-        {
-	        _options = options;
-	        _superUser = superUser;
-	        AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
-        }
+		{
+			_options = options;
+			_superUser = superUser;
+			AllowedRoles = allowedRoles ?? throw new ArgumentNullException(nameof(allowedRoles));
+		}
 
-        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
+		private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
-        public IEnumerable<string> AllowedRoles { get; }
+		public IEnumerable<string> AllowedRoles { get; }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-            RolesAuthorizationRequirementExtended requirement)
-        {
-            var user = context.User;
-            if (user != null)
-            {
-                if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
-                {
-                    context.Succeed(requirement);
-                }
+		protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+			RolesAuthorizationRequirementExtended requirement)
+		{
+			var user = context.User;
+			if (user != null)
+			{
+				if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
+				{
+					context.Succeed(requirement);
+				}
 
-                var flag = false;
-                if (requirement.AllowedRoles != null && requirement.AllowedRoles.Any())
-                {
-                    flag = requirement.AllowedRoles.Any(r => user.IsInRole(r));
-                }
+				var flag = false;
+				if (requirement.AllowedRoles != null && requirement.AllowedRoles.Any())
+				{
+					flag = requirement.AllowedRoles.Any(r => user.IsInRole(r));
+				}
 
-                if (flag)
-                {
-                    context.Succeed(requirement);
-                }
-            }
-            return Task.CompletedTask;
-        }
-    }
+				if (flag)
+				{
+					context.Succeed(requirement);
+				}
+			}
+
+			return Task.CompletedTask;
+		}
+	}
 }

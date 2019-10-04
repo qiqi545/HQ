@@ -27,8 +27,8 @@ namespace HQ.Data.Contracts.Versioning
 {
 	public class SchemaDiscoveryVersionContextStore : IVersionContextStore
 	{
-		private readonly ISchemaVersionStore _store;
 		private readonly IOptionsMonitor<SchemaOptions> _options;
+		private readonly ISchemaVersionStore _store;
 
 		public SchemaDiscoveryVersionContextStore(ISchemaVersionStore store, IOptionsMonitor<SchemaOptions> options)
 		{
@@ -78,7 +78,7 @@ namespace HQ.Data.Contracts.Versioning
 			// Resolve to latest version:
 			// ReSharper disable once PossibleMultipleEnumeration
 			var latest = versions.LastOrDefault();
-			if(latest == null)
+			if (latest == null)
 				return VersionContext.None;
 
 			return MatchedContext(latest);
@@ -88,23 +88,14 @@ namespace HQ.Data.Contracts.Versioning
 		{
 			var context = new VersionContext
 			{
-				Group = new VersionGroup($"{version.Revision}"),
-				Map = new Dictionary<string, Version>()
+				Group = new VersionGroup($"{version.Revision}"), Map = new Dictionary<string, Version>()
 			};
 
-			context.Map.Add(version.Data.Name, new Version
-			{
-				Major = version.Fingerprint,
-				Minor = 0
-			});
+			context.Map.Add(version.Data.Name, new Version {Major = version.Fingerprint, Minor = 0});
 
 			foreach (var entry in version.Data.GetMap())
 			{
-				context.Map.Add(entry.Value.Name, new Version
-				{
-					Major = ValueHash.ComputeHash(entry.Value),
-					Minor = 0
-				});
+				context.Map.Add(entry.Value.Name, new Version {Major = ValueHash.ComputeHash(entry.Value), Minor = 0});
 			}
 
 			context.Identifiers = new string[0];

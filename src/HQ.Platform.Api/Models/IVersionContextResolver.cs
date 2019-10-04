@@ -21,8 +21,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Models
 {
-    public interface IVersionContextResolver
-    {
-        Task<VersionContext> ResolveAsync(HttpContext http);
-    }
+	public interface IVersionContextResolver
+	{
+		Task<VersionContext> ResolveAsync(HttpContext http);
+	}
 }

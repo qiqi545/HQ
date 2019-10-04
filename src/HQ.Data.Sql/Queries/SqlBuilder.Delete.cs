@@ -23,56 +23,60 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    partial class SqlBuilder
-    {
-        public static Query DeleteAll<T>()
-        {
-            var descriptor = GetDescriptor<T>();
-            var sql = Dialect.Delete(Dialect.ResolveTableName(descriptor), descriptor.Schema);
-            return new Query(sql);
-        }
+	partial class SqlBuilder
+	{
+		public static Query DeleteAll<T>()
+		{
+			var descriptor = GetDescriptor<T>();
+			var sql = Dialect.Delete(Dialect.ResolveTableName(descriptor), descriptor.Schema);
+			return new Query(sql);
+		}
 
-        public static Query Delete<T>(T instance)
-        {
-            var accessor = ReadAccessor.Create(instance);
-            var descriptor = GetDescriptor<T>();
-            var where = new Dictionary<string, object>();
-            foreach (var key in descriptor.Keys)
-            {
-                if(accessor.TryGetValue(instance, key.Property.Name, out var value))
-                    where.Add(key.ColumnName, value);
-            }
-            return Delete(descriptor, where);
-        }
+		public static Query Delete<T>(T instance)
+		{
+			var accessor = ReadAccessor.Create(instance);
+			var descriptor = GetDescriptor<T>();
+			var where = new Dictionary<string, object>();
+			foreach (var key in descriptor.Keys)
+			{
+				if (accessor.TryGetValue(instance, key.Property.Name, out var value))
+					where.Add(key.ColumnName, value);
+			}
 
-        public static Query Delete<T>(dynamic where = null)
-        {
-            return Delete(GetDescriptor<T>(), where);
-        }
-        
-        public static Query Delete(object instance)
-        {
-            return Delete(GetDescriptor(instance.GetType()), instance);
-        }
+			return Delete(descriptor, where);
+		}
 
-        private static Query Delete(IDataDescriptor descriptor, object instance)
-        {
-            var accessor = ReadAccessor.Create(instance);
-            var whereHash = accessor.AsReadOnlyDictionary(instance);
-            return Delete(descriptor, whereHash);
-        }
+		public static Query Delete<T>(dynamic where = null)
+		{
+			return Delete(GetDescriptor<T>(), where);
+		}
 
-        private static Query Delete(IDataDescriptor descriptor, IReadOnlyDictionary<string, object> whereHash)
-        {
-            var whereHashKeyRewrite = whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+		public static Query Delete(object instance)
+		{
+			return Delete(GetDescriptor(instance.GetType()), instance);
+		}
 
-            var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeyRewrite.Keys).ToList();
-            var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}", key => whereHash[whereHashKeyRewrite[key]]);
-            var whereParameters = whereParams.Keys.ToList();
+		private static Query Delete(IDataDescriptor descriptor, object instance)
+		{
+			var accessor = ReadAccessor.Create(instance);
+			var whereHash = accessor.AsReadOnlyDictionary(instance);
+			return Delete(descriptor, whereHash);
+		}
 
-            var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
-            var parameters = whereParams.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
-            return new Query(sql, parameters);
-        }
-    }
+		private static Query Delete(IDataDescriptor descriptor, IReadOnlyDictionary<string, object> whereHash)
+		{
+			var whereHashKeyRewrite =
+				whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+
+			var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeyRewrite.Keys).ToList();
+			var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
+				key => whereHash[whereHashKeyRewrite[key]]);
+			var whereParameters = whereParams.Keys.ToList();
+
+			var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter,
+				whereParameters);
+			var parameters = whereParams.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
+			return new Query(sql, parameters);
+		}
+	}
 }

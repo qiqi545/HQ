@@ -15,6 +15,11 @@
 
 #endregion
 
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.Extensions.Hosting;
+#endif
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -22,9 +27,9 @@ using HQ.Common.Models;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Extensions.Options;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
+using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;
@@ -36,12 +41,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Constants = HQ.Common.Constants;
-
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.Extensions.Hosting;
-#endif
 
 namespace HQ.Platform.Operations
 {
@@ -75,10 +74,10 @@ namespace HQ.Platform.Operations
 			services.AddMetrics(c =>
 			{
 				c.AddCheck<OperationsHealthChecks.ServicesHealth>(nameof(OperationsHealthChecks.ServicesHealth),
-					HealthStatus.Unhealthy, new[] { "ops", "startup" });
+					HealthStatus.Unhealthy, new[] {"ops", "startup"});
 
 				c.AddCheck<OperationsHealthChecks.OptionsHealth>(nameof(OperationsHealthChecks.OptionsHealth),
-					HealthStatus.Unhealthy, new[] { "ops", "startup" });
+					HealthStatus.Unhealthy, new[] {"ops", "startup"});
 
 				c.AddServerTimingReporter(o =>
 				{
@@ -89,16 +88,19 @@ namespace HQ.Platform.Operations
 				});
 			});
 
-			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations, ClaimValues.AccessOperations);
+			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations,
+				ClaimValues.AccessOperations);
 			return services;
 		}
 
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services,
+			IConfigurationRoot configurationRoot, IConfiguration config)
 		{
 			return AddConfigurationApi(services, configurationRoot, config.FastBind);
 		}
 
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services,
+			IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			services.AddSingleton(configurationRoot);
 			services.AddMvcCommon().AddConfigurationApi(configureAction);
@@ -117,7 +119,8 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
 			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration, ClaimValues.ManageConfiguration);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration,
+				ClaimValues.ManageConfiguration);
 		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
@@ -125,7 +128,8 @@ namespace HQ.Platform.Operations
 			return AddMetaApi(services, config.FastBind);
 		}
 
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
+		public static IServiceCollection AddMetaApi(this IServiceCollection services,
+			Action<MetaApiOptions> configureAction = null)
 		{
 			services.AddMvcCommon().AddMetaApi(configureAction);
 			return services;

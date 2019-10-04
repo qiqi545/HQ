@@ -21,23 +21,23 @@ using TypeKitchen;
 
 namespace HQ.Platform.Identity.Extensions
 {
-    internal static class IdentityResultFactory
-    {
-        /// <summary>
-        ///     Provides an <see cref="IdentityResult" /> in a failed state, with errors.
-        ///     This prevents an allocation by forcing the error collection to an array.
-        /// </summary>
-        /// <param name="errors"></param>
-        /// <returns></returns>
-        public static IdentityResult Failed(ICollection<IdentityError> errors)
-        {
-            var read = ReadAccessor.Create(typeof(IdentityResult));
-            var write = WriteAccessor.Create(typeof(IdentityResult));
-            var result = new IdentityResult();
-            var list = read[result, "_errors"] as List<IdentityError>;
-            list?.AddRange(errors);
-            write[result, "Succeeded"] = false;
-            return result;
-        }
-    }
+	internal static class IdentityResultFactory
+	{
+		/// <summary>
+		///     Provides an <see cref="IdentityResult" /> in a failed state, with errors.
+		///     This prevents an allocation by forcing the error collection to an array.
+		/// </summary>
+		/// <param name="errors"></param>
+		/// <returns></returns>
+		public static IdentityResult Failed(ICollection<IdentityError> errors)
+		{
+			var read = ReadAccessor.Create(typeof(IdentityResult));
+			var write = WriteAccessor.Create(typeof(IdentityResult));
+			var result = new IdentityResult();
+			var list = read[result, "_errors"] as List<IdentityError>;
+			list?.AddRange(errors);
+			write[result, "Succeeded"] = false;
+			return result;
+		}
+	}
 }

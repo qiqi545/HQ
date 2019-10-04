@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

@@ -19,10 +19,10 @@ using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb
 {
-    public interface IDocument
-    {
-        [JsonProperty("id")] string Id { get; }
+	public interface IDocument
+	{
+		[JsonProperty("id")] string Id { get; }
 
-        [JsonProperty("documentType")] string DocumentType { get; }
-    }
+		[JsonProperty("documentType")] string DocumentType { get; }
+	}
 }

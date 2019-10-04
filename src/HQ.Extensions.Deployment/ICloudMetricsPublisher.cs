@@ -20,8 +20,8 @@ using HQ.Extensions.Metrics;
 
 namespace HQ.Extensions.Deployment
 {
-    public interface ICloudMetricsPublisher<in T> where T : ICloudOptions
-    {
-        void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, T options);
-    }
+	public interface ICloudMetricsPublisher<in T> where T : ICloudOptions
+	{
+		void AddCloudMetricsPublisher(IMetricsBuilder builder, ISafeLogger logger, T options);
+	}
 }

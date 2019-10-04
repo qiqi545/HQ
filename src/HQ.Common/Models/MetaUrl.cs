@@ -44,7 +44,7 @@ namespace HQ.Common.Models
 				{
 					raw = Uri.UnescapeDataString(uri.AbsoluteUri),
 					protocol = uri.Scheme.ToLowerInvariant(),
-					host = new[] { uri.Host },
+					host = new[] {uri.Host},
 					port = uri.Port.ToString(),
 					path = uri.Segments.Where(x => !string.IsNullOrWhiteSpace(x))
 						.Select(x => Uri.UnescapeDataString(x.Replace("/", "")))

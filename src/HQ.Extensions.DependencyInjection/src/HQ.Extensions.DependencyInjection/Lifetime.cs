@@ -17,11 +17,11 @@
 
 namespace HQ.Extensions.DependencyInjection
 {
-    public enum Lifetime
-    {
-        AlwaysNew,
-        Permanent,
-        Thread,
-        Request
-    }
+	public enum Lifetime
+	{
+		AlwaysNew,
+		Permanent,
+		Thread,
+		Request
+	}
 }

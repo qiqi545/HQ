@@ -21,25 +21,22 @@ using Microsoft.Extensions.Hosting;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class BackgroundTaskService : IHostedService
-    {
-        private readonly BackgroundTaskHost _host;
+	public class BackgroundTaskService : IHostedService
+	{
+		private readonly BackgroundTaskHost _host;
 
-        public BackgroundTaskService(BackgroundTaskHost host)
-        {
-            _host = host;
-        }
+		public BackgroundTaskService(BackgroundTaskHost host) => _host = host;
 
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            _host.Start();
-            return Task.CompletedTask;
-        }
+		public Task StartAsync(CancellationToken cancellationToken)
+		{
+			_host.Start();
+			return Task.CompletedTask;
+		}
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            _host.Stop(cancellationToken);
-            return Task.CompletedTask;
-        }
-    }
+		public Task StopAsync(CancellationToken cancellationToken)
+		{
+			_host.Stop(cancellationToken);
+			return Task.CompletedTask;
+		}
+	}
 }

@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Attributes;
-using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -33,10 +32,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 	{
 		private readonly IEnumerable<IDynamicComponent> _components;
 
-		public DynamicAuthorizeFilterProvider(IEnumerable<IDynamicComponent> components)
-		{
-			_components = components;
-		}
+		public DynamicAuthorizeFilterProvider(IEnumerable<IDynamicComponent> components) => _components = components;
 
 		public override void ProvideFilter(FilterProviderContext context, FilterItem filterItem)
 		{
@@ -55,7 +51,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 
 			RemoveUnrelatedFilters(context);
 
-			var attributes = context.ActionContext.ActionDescriptor.EndpointMetadata.OfType<DynamicAuthorizeAttribute>();
+			var attributes = context.ActionContext.ActionDescriptor.EndpointMetadata
+				.OfType<DynamicAuthorizeAttribute>();
 			// ReSharper disable once PossibleMultipleEnumeration
 			if (!attributes.Any())
 			{
@@ -92,7 +89,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 			// ReSharper disable once PossibleMultipleEnumeration
 			var authorize = new DynamicAuthorizeFilter(policyProvider, attributes);
 			var descriptor = new FilterDescriptor(authorize, FilterScope.Controller);
-			var filter = new FilterItem(descriptor) { Filter = authorize };
+			var filter = new FilterItem(descriptor) {Filter = authorize};
 			context.Results.Add(filter);
 
 			base.ProvideFilter(context, filterItem);
@@ -103,7 +100,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 			for (var i = context.Results.Count - 1; i >= 0; i--)
 			{
 				var result = context.Results[i];
-				if (!(result.Descriptor.Filter is AuthorizeFilter) || result.Descriptor.Filter is DynamicAuthorizeFilter)
+				if (!(result.Descriptor.Filter is AuthorizeFilter) ||
+				    result.Descriptor.Filter is DynamicAuthorizeFilter)
 					continue;
 				context.Results.Remove(result);
 			}
@@ -122,6 +120,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc.Security
 					return type;
 				}
 			}
+
 			return default;
 		}
 	}

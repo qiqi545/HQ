@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public enum SchemaType
-    {
-        Object,
-        Enum,
-        View
-    }
+	public enum SchemaType
+	{
+		Object,
+		Enum,
+		View
+	}
 }

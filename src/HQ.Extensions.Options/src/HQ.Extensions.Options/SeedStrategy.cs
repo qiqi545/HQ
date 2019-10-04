@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,24 +12,25 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 namespace HQ.Extensions.Options
 {
-    public enum SeedStrategy
-    {
+	public enum SeedStrategy
+	{
 		/// <summary>
-		/// Do not seed any settings to the upstream provider.
+		///     Do not seed any settings to the upstream provider.
 		/// </summary>
 		None,
 
 		/// <summary>
-		/// Seed new settings to the upstream provider.
+		///     Seed new settings to the upstream provider.
 		/// </summary>
 		InsertIfNotExists,
 
 		/// <summary>
-		/// Seed all settings to the upstream provider, if none exist.
+		///     Seed all settings to the upstream provider, if none exist.
 		/// </summary>
 		Initialize
 	}

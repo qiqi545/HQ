@@ -21,7 +21,6 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
@@ -30,78 +29,78 @@ using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    /// <inheritdoc />
-    /// <summary>
-    ///     An adapter for running runtime filters in a static context.
-    /// </summary>
-    public abstract class StaticFilterAttribute : ActionFilterAttribute
-    {
-        internal static void Execute<T>(ActionExecutingContext context, Func<T, string> getOperator,
-            Func<QueryContext, IQueryValidator> getValidator)
-            where T : IRestFilter
-        {
-            Execute(context, getOperator, getValidator,
-                QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value),
-                new QueryContext(context.HttpContext.User), true);
-        }
+	/// <inheritdoc />
+	/// <summary>
+	///     An adapter for running runtime filters in a static context.
+	/// </summary>
+	public abstract class StaticFilterAttribute : ActionFilterAttribute
+	{
+		internal static void Execute<T>(ActionExecutingContext context, Func<T, string> getOperator,
+			Func<QueryContext, IQueryValidator> getValidator)
+			where T : IRestFilter
+		{
+			Execute(context, getOperator, getValidator,
+				QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value),
+				new QueryContext(context.HttpContext.User), true);
+		}
 
-        internal static void Execute<T>(ActionExecutingContext context, Func<T, StringValues> getOperators,
-            Func<QueryContext, IQueryValidator> getValidator)
-            where T : IRestFilter
-        {
-            Execute(context, getOperators, getValidator,
-                QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value),
-                new QueryContext(context.HttpContext.User), true);
-        }
+		internal static void Execute<T>(ActionExecutingContext context, Func<T, StringValues> getOperators,
+			Func<QueryContext, IQueryValidator> getValidator)
+			where T : IRestFilter
+		{
+			Execute(context, getOperators, getValidator,
+				QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value),
+				new QueryContext(context.HttpContext.User), true);
+		}
 
-        internal static void Execute<T>(ActionExecutingContext context, Func<T, StringValues> getOperators,
-            Func<QueryContext, IQueryValidator> getValidator, IDictionary<string, StringValues> qs, QueryContext qc,
-            bool isolated = false) where T : IRestFilter
-        {
-            var filter = context.HttpContext.RequestServices.GetRequiredService<T>();
-            var fields = getOperators(filter);
-            foreach (var field in fields)
-            {
-                if (!context.ActionArguments.ContainsKey(field))
-                {
-                    return;
-                }
-            }
+		internal static void Execute<T>(ActionExecutingContext context, Func<T, StringValues> getOperators,
+			Func<QueryContext, IQueryValidator> getValidator, IDictionary<string, StringValues> qs, QueryContext qc,
+			bool isolated = false) where T : IRestFilter
+		{
+			var filter = context.HttpContext.RequestServices.GetRequiredService<T>();
+			var fields = getOperators(filter);
+			foreach (var field in fields)
+			{
+				if (!context.ActionArguments.ContainsKey(field))
+				{
+					return;
+				}
+			}
 
-            filter.Execute(qs, ref qc);
+			filter.Execute(qs, ref qc);
 
-            if (isolated && qc.Errors?.Count > 0)
-            {
-                context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
-                    ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
-            }
+			if (isolated && qc.Errors?.Count > 0)
+			{
+				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+					ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
+			}
 
-            foreach (var field in fields)
-            {
-                context.ActionArguments[field] = getValidator(qc);
-            }
-        }
+			foreach (var field in fields)
+			{
+				context.ActionArguments[field] = getValidator(qc);
+			}
+		}
 
-        internal static void Execute<T>(ActionExecutingContext context, Func<T, string> getOperator,
-            Func<QueryContext, IQueryValidator> getValidator, IDictionary<string, StringValues> qs, QueryContext qc,
-            bool isolated = false) where T : IRestFilter
-        {
-            var filter = context.HttpContext.RequestServices.GetRequiredService<T>();
-            var field = getOperator(filter);
-            if (!context.ActionArguments.ContainsKey(field))
-            {
-                return;
-            }
+		internal static void Execute<T>(ActionExecutingContext context, Func<T, string> getOperator,
+			Func<QueryContext, IQueryValidator> getValidator, IDictionary<string, StringValues> qs, QueryContext qc,
+			bool isolated = false) where T : IRestFilter
+		{
+			var filter = context.HttpContext.RequestServices.GetRequiredService<T>();
+			var field = getOperator(filter);
+			if (!context.ActionArguments.ContainsKey(field))
+			{
+				return;
+			}
 
-            filter.Execute(qs, ref qc);
+			filter.Execute(qs, ref qc);
 
-            if (isolated && qc.Errors?.Count > 0)
-            {
-                context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
-                    ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
-            }
+			if (isolated && qc.Errors?.Count > 0)
+			{
+				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+					ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
+			}
 
-            context.ActionArguments[field] = getValidator(qc);
-        }
-    }
+			context.ActionArguments[field] = getValidator(qc);
+		}
+	}
 }

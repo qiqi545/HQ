@@ -15,6 +15,11 @@
 
 #endregion
 
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.AspNetCore.Hosting;
+#endif
 using System;
 using System.Reflection;
 using HQ.Common;
@@ -56,12 +61,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.AspNetCore.Hosting;
-#endif
-
 namespace HQ.Platform.Node
 {
 	#region Sentinels
@@ -70,7 +69,8 @@ namespace HQ.Platform.Node
 
 	public static class Add
 	{
-		public static IServiceCollection AddHq(this IServiceCollection services, IWebHostEnvironment env, IConfiguration config, ISafeLogger logger)
+		public static IServiceCollection AddHq(this IServiceCollection services, IWebHostEnvironment env,
+			IConfiguration config, ISafeLogger logger)
 		{
 			var subject = Assembly.GetCallingAssembly();
 
@@ -119,12 +119,12 @@ namespace HQ.Platform.Node
 			switch (cloud["Provider"])
 			{
 				case nameof(Azure):
-					{
-						var options = new AzureOptions();
-						cloud.FastBind(options);
-						services.AddCloudServices(logger, options);
-						break;
-					}
+				{
+					var options = new AzureOptions();
+					cloud.FastBind(options);
+					services.AddCloudServices(logger, options);
+					break;
+				}
 			}
 
 			//
@@ -144,20 +144,33 @@ namespace HQ.Platform.Node
 			{
 				case nameof(DocumentDb):
 					tasksBuilder.AddDocumentDbBackgroundTaskStore(backend.GetConnectionString("Tasks"));
-					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"));
-					runtimeBuilder.AddDocumentDbRuntimeStores(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
+					identityBuilder
+						.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+							IdentityApplication>(backend.GetConnectionString("Identity"));
+					runtimeBuilder.AddDocumentDbRuntimeStores(backend.GetConnectionString("Runtime"),
+						ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddDocumentDbSchemaStores(backend.GetConnectionString("Schema"));
 					break;
 				case nameof(SqlServer):
-					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"), ConnectionScope.ByRequest, dbConfig);
-					identityBuilder.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
-					runtimeBuilder.AddSqlServerRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"),
+						ConnectionScope.ByRequest, dbConfig);
+					identityBuilder
+						.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
+							dbConfig);
+					runtimeBuilder.AddSqlServerRuntime(backend.GetConnectionString("Runtime"),
+						ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddSqlServerSchemaStores();
 					break;
 				case nameof(Sqlite):
-					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"), ConnectionScope.ByRequest, dbConfig);
-					identityBuilder.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
-					runtimeBuilder.AddSqliteRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"),
+						ConnectionScope.ByRequest, dbConfig);
+					identityBuilder
+						.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
+							dbConfig);
+					runtimeBuilder.AddSqliteRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest,
+						dbConfig);
 					schemaBuilder.AddSqliteSchemaStores();
 					break;
 				default:
@@ -190,14 +203,15 @@ namespace HQ.Platform.Node
 			//
 			// Media Services:
 
-            //
-            // Custom Objects:
+			//
+			// Custom Objects:
 			services.ScanForGeneratedObjects(backendType, hq.GetSection("Security"), logger, "/api", subject);
 
 			return services;
 		}
 
-		private static void ScanForGeneratedObjects(this IServiceCollection services, string backendType, IConfiguration security, ISafeLogger logger, string rootPath, Assembly assembly)
+		private static void ScanForGeneratedObjects(this IServiceCollection services, string backendType,
+			IConfiguration security, ISafeLogger logger, string rootPath, Assembly assembly)
 		{
 			foreach (var type in assembly.GetExportedTypes())
 			{
@@ -211,7 +225,8 @@ namespace HQ.Platform.Node
 					continue;
 				}
 
-				var method = type.GetMethod("AddGenerated", new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
+				var method = type.GetMethod("AddGenerated",
+					new[] {typeof(IServiceCollection), typeof(IConfiguration), typeof(string)});
 				if (method == null)
 				{
 					continue;
@@ -235,7 +250,7 @@ namespace HQ.Platform.Node
 
 				logger.Info(() => "Found generated objects API in {AssemblyName}", assembly.GetName().Name);
 				method.MakeGenericMethod(batchOptionsType)
-					.Invoke(null, new object[] { services, security, rootPath });
+					.Invoke(null, new object[] {services, security, rootPath});
 			}
 		}
 	}

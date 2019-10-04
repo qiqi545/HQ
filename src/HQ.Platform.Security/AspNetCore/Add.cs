@@ -32,14 +32,12 @@ using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using CorsOptions = HQ.Platform.Security.Configuration.CorsOptions;
-
 namespace HQ.Platform.Security.AspNetCore
 {
 	public static class Add
 	{
 		public static IServiceCollection AddSecurityPolicies(this IServiceCollection services,
-			IConfiguration securityConfig, 
+			IConfiguration securityConfig,
 			IConfiguration superUserConfig,
 			ISafeLogger logger)
 		{
@@ -59,7 +57,7 @@ namespace HQ.Platform.Security.AspNetCore
 
 			var superUser = new SuperUserOptions();
 			configureSuperUserAction?.Invoke(superUser);
-			
+
 			AuthenticationExtensions.MaybeSetSecurityKeys(security);
 
 			if (configureSecurityAction != null)
@@ -100,9 +98,9 @@ namespace HQ.Platform.Security.AspNetCore
 				o.AddPolicy(Constants.Security.Policies.CorsPolicy, builder =>
 				{
 					builder
-						.WithOrigins(cors.Origins ?? new[] { "*" })
-						.WithMethods(cors.Methods ?? new[] { "*" })
-						.WithHeaders(cors.Headers ?? new[] { "*" })
+						.WithOrigins(cors.Origins ?? new[] {"*"})
+						.WithMethods(cors.Methods ?? new[] {"*"})
+						.WithHeaders(cors.Headers ?? new[] {"*"})
 						.WithExposedHeaders(cors.ExposedHeaders ?? new string[0]);
 
 					if (cors.AllowCredentials && cors.Origins?.Length > 0 && cors.Origins[0] != "*")
@@ -148,7 +146,7 @@ namespace HQ.Platform.Security.AspNetCore
 			}
 		}
 
-		private static void AddAuthentication(this IServiceCollection services, ISafeLogger logger, 
+		private static void AddAuthentication(this IServiceCollection services, ISafeLogger logger,
 			SecurityOptions security,
 			SuperUserOptions superUser)
 		{
@@ -191,16 +189,18 @@ namespace HQ.Platform.Security.AspNetCore
 		{
 			if (options.Enabled)
 			{
-				logger?.Trace(() => $"SuperUser enabled.");
+				logger?.Trace(() => "SuperUser enabled.");
 				services.AddDefaultAuthorization(Constants.Security.Policies.SuperUserOnly, ClaimValues.SuperUser);
 			}
 		}
 
-		private static void TryAddDefaultPolicy(this IServiceCollection services, ISafeLogger logger, AuthorizationOptions x, string scheme)
+		private static void TryAddDefaultPolicy(this IServiceCollection services, ISafeLogger logger,
+			AuthorizationOptions x, string scheme)
 		{
 			if (x.DefaultPolicy?.AuthenticationSchemes.Count != 0)
 			{
-				logger?.Info(() => $"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered.");
+				logger?.Info(() =>
+					$"Skipping default policy build; '{string.Join(",", x.DefaultPolicy?.AuthenticationSchemes ?? Enumerable.Empty<string>())}' already registered.");
 				return;
 			}
 

@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -26,74 +28,72 @@ using Microsoft.Extensions.Configuration;
 namespace HQ.Integration.DocumentDb.Options
 {
 	public static class DocumentConfigurationHelper
-    {
-        public static void MigrateToLatest(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
-	        IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
-        {
-	        var runner = new DocumentDbMigrationRunner(options);
+	{
+		public static void MigrateToLatest(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
+			IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.InsertIfNotExists)
+		{
+			var runner = new DocumentDbMigrationRunner(options);
 
-	        if (saveConfig.CreateIfNotExists)
-	        {
-		        runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
+			if (saveConfig.CreateIfNotExists)
+			{
+				runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
 			}
 
-	        if (saveConfig.MigrateOnStartup)
-	        {
-		        runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
+			if (saveConfig.MigrateOnStartup)
+			{
+				runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
 			}
-	        
-	        if (configSeed != null && strategy != SeedStrategy.None)
-	        {
-		        var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection, 
-			        new OptionsMonitorShim<DocumentDbOptions>(options), null);
+
+			if (configSeed != null && strategy != SeedStrategy.None)
+			{
+				var repository = new DocumentDbRepository<ConfigurationDocument>(Constants.Options.DefaultCollection,
+					new OptionsMonitorShim<DocumentDbOptions>(options), null);
 
 				switch (strategy)
-		        {
-			        case SeedStrategy.InsertIfNotExists:
-			        {
-				        InsertIfNotExists(repository);
-				        break;
-			        }
+				{
+					case SeedStrategy.InsertIfNotExists:
+					{
+						InsertIfNotExists(repository);
+						break;
+					}
 
-			        case SeedStrategy.Initialize:
-			        {
-				        var count = repository.CountAsync().GetAwaiter().GetResult();
-				        if (count == 0)
-				        {
+					case SeedStrategy.Initialize:
+					{
+						var count = repository.CountAsync().GetAwaiter().GetResult();
+						if (count == 0)
+						{
 							InsertIfNotExists(repository);
-				        }
-				        break;
-			        }
-				        
-			        default:
-				        throw new ArgumentOutOfRangeException();
-		        }
-	        }
+						}
 
-	        void InsertIfNotExists(IDocumentDbRepository<ConfigurationDocument> repository)
-	        {
-		        var manifest = repository.RetrieveAsync()
-			        .GetAwaiter().GetResult().Select(x => x.Key).ToImmutableHashSet();
+						break;
+					}
 
-		        var changedKeys = new HashSet<string>();
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			}
+
+			void InsertIfNotExists(IDocumentDbRepository<ConfigurationDocument> repository)
+			{
+				var manifest = repository.RetrieveAsync()
+					.GetAwaiter().GetResult().Select(x => x.Key).ToImmutableHashSet();
+
+				var changedKeys = new HashSet<string>();
 				foreach (var document in configSeed.AsEnumerable())
 				{
 					if (manifest.Contains(document.Key))
 						continue;
 
-			        repository.CreateAsync(new ConfigurationDocument
-			        {
-				        Key = document.Key,
-				        Value = document.Value
-			        }).GetAwaiter().GetResult();
+					repository.CreateAsync(new ConfigurationDocument {Key = document.Key, Value = document.Value})
+						.GetAwaiter().GetResult();
 
-			        changedKeys.Add(document.Key);
+					changedKeys.Add(document.Key);
 				}
 
 				Trace.TraceInformation(changedKeys.Count > 0
 					? $"Configuration updated the following keys: {string.Join(",", changedKeys)}"
-					: $"Configuration is up to date.");
-	        }
-        }
-    }
+					: "Configuration is up to date.");
+			}
+		}
+	}
 }

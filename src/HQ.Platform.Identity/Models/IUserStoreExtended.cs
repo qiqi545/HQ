@@ -22,11 +22,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IUserStoreExtended<TUser> : IUserStore<TUser> where TUser : class
-    {
-        CancellationToken CancellationToken { get; }
-        Task<int> GetCountAsync(CancellationToken cancellationToken);
-        bool SupportsSuperUser { get; }
-        Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken);
-    }
+	public interface IUserStoreExtended<TUser> : IUserStore<TUser> where TUser : class
+	{
+		CancellationToken CancellationToken { get; }
+		bool SupportsSuperUser { get; }
+		Task<int> GetCountAsync(CancellationToken cancellationToken);
+		Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken);
+	}
 }

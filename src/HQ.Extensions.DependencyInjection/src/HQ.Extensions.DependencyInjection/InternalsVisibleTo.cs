@@ -22,7 +22,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Extensions.DependencyInjection
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

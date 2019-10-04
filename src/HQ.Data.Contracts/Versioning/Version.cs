@@ -17,9 +17,9 @@
 
 namespace HQ.Data.Contracts.Versioning
 {
-    public struct Version
-    {
-        public ulong Major { get; set; }
-        public ulong? Minor { get; set; }
-    }
+	public struct Version
+	{
+		public ulong Major { get; set; }
+		public ulong? Minor { get; set; }
+	}
 }

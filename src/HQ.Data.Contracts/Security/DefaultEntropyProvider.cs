@@ -21,10 +21,10 @@ using System.Threading.Tasks;
 namespace HQ.Data.Contracts.Security
 {
 	public class DefaultEntropyProvider<TSubject> : IEntropyProvider<TSubject>
-    {
-        public Task<string> GetValueAsync(TSubject subject, string modifier)
-        {
-            return Task.FromResult(RuntimeHelpers.GetHashCode(subject) + modifier);
-        }
-    }
+	{
+		public Task<string> GetValueAsync(TSubject subject, string modifier)
+		{
+			return Task.FromResult(RuntimeHelpers.GetHashCode(subject) + modifier);
+		}
+	}
 }

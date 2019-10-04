@@ -19,12 +19,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Identity.Stores.Sql.Models
 {
-    public class AspNetUserRoles<TKey>
-    {
-        [Required] public TKey TenantId { get; set; }
+	public class AspNetUserRoles<TKey>
+	{
+		[Required] public TKey TenantId { get; set; }
 
-        [Required] public TKey UserId { get; set; }
+		[Required] public TKey UserId { get; set; }
 
-        [Required] public TKey RoleId { get; set; }
-    }
+		[Required] public TKey RoleId { get; set; }
+	}
 }

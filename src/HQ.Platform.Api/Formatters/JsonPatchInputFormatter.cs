@@ -29,77 +29,77 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Formatters
 {
-    public class JsonPatchInputFormatter :
+	public class JsonPatchInputFormatter :
 #if NETCOREAPP2_2
 		Microsoft.AspNetCore.Mvc.Formatters.JsonPatchInputFormatter
 #else
 		NewtonsoftJsonPatchInputFormatter
 #endif
-    {
-        private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
-        private JsonSerializer _serializer;
+	{
+		private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
+		private JsonSerializer _serializer;
 
-        public JsonPatchInputFormatter(
-            ILogger logger,
-            JsonSerializerSettings serializerSettings,
-            ArrayPool<char> charPool,
-            ObjectPoolProvider objectPoolProvider,
-            MvcOptions options,
+		public JsonPatchInputFormatter(
+			ILogger logger,
+			JsonSerializerSettings serializerSettings,
+			ArrayPool<char> charPool,
+			ObjectPoolProvider objectPoolProvider,
+			MvcOptions options,
 #if NETCOREAPP2_2
             MvcJsonOptions jsonOptions
 #else
 			MvcNewtonsoftJsonOptions jsonOptions
 #endif
 		) : base(logger, serializerSettings, charPool, objectPoolProvider, options, jsonOptions)
-        {
-            _resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
-        }
+		{
+			_resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
+		}
 
-        public override bool CanRead(InputFormatterContext context)
-        {
-            EnsureSerializer(context);
+		public override bool CanRead(InputFormatterContext context)
+		{
+			EnsureSerializer(context);
 
-            return base.CanRead(context);
-        }
+			return base.CanRead(context);
+		}
 
-        private void EnsureSerializer(InputFormatterContext context)
-        {
-            if (context.HttpContext.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
-            {
-                if (!_resolvers.TryGetValue(transform, out var resolver))
-                {
-                    resolver = new JsonContractResolver(transform, JsonProcessingDirection.Input);
-                    _resolvers.Add(transform, resolver);
-                }
+		private void EnsureSerializer(InputFormatterContext context)
+		{
+			if (context.HttpContext.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
+			{
+				if (!_resolvers.TryGetValue(transform, out var resolver))
+				{
+					resolver = new JsonContractResolver(transform, JsonProcessingDirection.Input);
+					_resolvers.Add(transform, resolver);
+				}
 
-                _serializer.ContractResolver = resolver;
-            }
-        }
+				_serializer.ContractResolver = resolver;
+			}
+		}
 
-        protected override JsonSerializer CreateJsonSerializer()
-        {
-            return _serializer ??= JsonSerializer.Create(SerializerSettings);
-        }
+		protected override JsonSerializer CreateJsonSerializer()
+		{
+			return _serializer ??= JsonSerializer.Create(SerializerSettings);
+		}
 
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
-        {
-            return base.ReadRequestBodyAsync(context);
-        }
+		public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
+		{
+			return base.ReadRequestBodyAsync(context);
+		}
 
-        public override Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
-        {
-            return base.ReadAsync(context);
-        }
+		public override Task<InputFormatterResult> ReadAsync(InputFormatterContext context)
+		{
+			return base.ReadAsync(context);
+		}
 
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context,
-            Encoding encoding)
-        {
-            return base.ReadRequestBodyAsync(context, encoding);
-        }
+		public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context,
+			Encoding encoding)
+		{
+			return base.ReadRequestBodyAsync(context, encoding);
+		}
 
-        protected override void ReleaseJsonSerializer(JsonSerializer serializer)
-        {
-            _serializer = null;
-        }
-    }
+		protected override void ReleaseJsonSerializer(JsonSerializer serializer)
+		{
+			_serializer = null;
+		}
+	}
 }

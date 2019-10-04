@@ -16,19 +16,17 @@
 #endregion
 
 using System;
-using HQ.Platform.Security;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityUserExtended<TKey> : IdentityUser<TKey>, IEmailProvider, IPhoneNumberProvider
-        where TKey : IEquatable<TKey>
-    {
-        public TKey TenantId { get; set; }
-    }
+	public class IdentityUserExtended<TKey> : IdentityUser<TKey>, IEmailProvider, IPhoneNumberProvider
+		where TKey : IEquatable<TKey>
+	{
+		public TKey TenantId { get; set; }
+	}
 
-    public class IdentityUserExtended : IdentityUserExtended<string>
-    {
-
-    }
+	public class IdentityUserExtended : IdentityUserExtended<string>
+	{
+	}
 }

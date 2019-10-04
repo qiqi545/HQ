@@ -23,113 +23,113 @@ using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Dialects
 {
-    public abstract class SqlDialect : ISqlDialect
-    {
-        public const string DefaultSetSuffix = "_set";
+	public abstract class SqlDialect : ISqlDialect
+	{
+		public const string DefaultSetSuffix = "_set";
 
-        public abstract char? StartIdentifier { get; }
-        public abstract char? EndIdentifier { get; }
-        public abstract char? Separator { get; }
-        public abstract char? Parameter { get; }
-        public abstract char? Quote { get; }
-        public virtual string Count => "COUNT(1)";
+		public abstract char? StartIdentifier { get; }
+		public abstract char? EndIdentifier { get; }
+		public abstract char? Separator { get; }
+		public abstract char? Parameter { get; }
+		public abstract char? Quote { get; }
+		public virtual string Count => "COUNT(1)";
 
-        public string SetSuffix => DefaultSetSuffix;
-        public bool SupportsSelectStar => false;
+		public string SetSuffix => DefaultSetSuffix;
+		public bool SupportsSelectStar => false;
 
-        public abstract bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
-        public abstract void Page(string sql, StringBuilder sb);
+		public abstract bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
+		public abstract void Page(string sql, StringBuilder sb);
 
-        public string ResolveTableName(IDataDescriptor descriptor)
-        {
-            return descriptor.Table;
-        }
+		public string ResolveTableName(IDataDescriptor descriptor)
+		{
+			return descriptor.Table;
+		}
 
-        public string ResolveColumnName(IDataDescriptor descriptor, string columnName)
-        {
-            return columnName;
-        }
+		public string ResolveColumnName(IDataDescriptor descriptor, string columnName)
+		{
+			return columnName;
+		}
 
-        public IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor)
-        {
-            return descriptor.Keys.Select(c => c.ColumnName);
-        }
+		public IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor)
+		{
+			return descriptor.Keys.Select(c => c.ColumnName);
+		}
 
-        public IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All)
-        {
-            switch (scope)
-            {
-                case ColumnScope.All:
-                    return descriptor.All.Select(c => ResolveColumnName(descriptor, c.ColumnName));
-                case ColumnScope.Inserted:
-                    return descriptor.Inserted.Select(c => ResolveColumnName(descriptor, c.ColumnName));
-                case ColumnScope.Updated:
-                    return descriptor.Updated.Select(c => ResolveColumnName(descriptor, c.ColumnName));
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
-            }
-        }
+		public IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All)
+		{
+			switch (scope)
+			{
+				case ColumnScope.All:
+					return descriptor.All.Select(c => ResolveColumnName(descriptor, c.ColumnName));
+				case ColumnScope.Inserted:
+					return descriptor.Inserted.Select(c => ResolveColumnName(descriptor, c.ColumnName));
+				case ColumnScope.Updated:
+					return descriptor.Updated.Select(c => ResolveColumnName(descriptor, c.ColumnName));
+				default:
+					throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
+			}
+		}
 
-        public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb)
-        {
-            return true;
-        }
+		public bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb)
+		{
+			return true;
+		}
 
-        public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
-        {
-            return true;
-        }
+		public bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+		{
+			return true;
+		}
 
-        public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb)
-        {
-            return true;
-        }
+		public bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb)
+		{
+			return true;
+		}
 
-        public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
-        {
-            return true;
-        }
+		public bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+		{
+			return true;
+		}
 
-        public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb)
-        {
-            return true;
-        }
+		public bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb)
+		{
+			return true;
+		}
 
-        public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
-        {
-            return true;
-        }
+		public bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns)
+		{
+			return true;
+		}
 
-        public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb)
-        {
-            return true;
-        }
+		public bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb)
+		{
+			return true;
+		}
 
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
-        {
-            return true;
-        }
+		public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
+		{
+			return true;
+		}
 
-        public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters)
-        {
-            return true;
-        }
+		public bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+			IList<string> parameters)
+		{
+			return true;
+		}
 
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
-        {
-            return true;
-        }
+		public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys)
+		{
+			return true;
+		}
 
-        public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
-            IList<string> parameters)
-        {
-            return true;
-        }
+		public bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys,
+			IList<string> parameters)
+		{
+			return true;
+		}
 
-        public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate)
-        {
-            return true;
-        }
-    }
+		public bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate)
+		{
+			return true;
+		}
+	}
 }

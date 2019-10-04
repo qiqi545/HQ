@@ -116,8 +116,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.17" />
-    <PackageReference Include="Bogus" Version="28.3.1" />
+    <PackageReference Include="TypeKitchen" Version="1.0.18" />
+    <PackageReference Include="Bogus" Version="28.3.2" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.7.9" />

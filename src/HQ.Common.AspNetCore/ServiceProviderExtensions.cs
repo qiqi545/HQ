@@ -21,21 +21,21 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Common.AspNetCore
 {
-    public static class ServiceProviderExtensions
-    {
-        public static bool TryGetRequestAbortCancellationToken(this IServiceProvider services,
-            out CancellationToken cancelToken)
-        {
-            cancelToken = CancellationToken.None;
-            var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
-            var token = accessor?.HttpContext?.RequestAborted;
-            if (!token.HasValue)
-            {
-                return false;
-            }
+	public static class ServiceProviderExtensions
+	{
+		public static bool TryGetRequestAbortCancellationToken(this IServiceProvider services,
+			out CancellationToken cancelToken)
+		{
+			cancelToken = CancellationToken.None;
+			var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+			var token = accessor?.HttpContext?.RequestAborted;
+			if (!token.HasValue)
+			{
+				return false;
+			}
 
-            cancelToken = token.Value;
-            return true;
-        }
-    }
+			cancelToken = token.Value;
+			return true;
+		}
+	}
 }

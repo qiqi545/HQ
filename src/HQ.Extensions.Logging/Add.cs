@@ -23,32 +23,32 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
 {
-    public static class Add
-    {
-        public static IServiceCollection AddSafeLogging(this IServiceCollection services)
-        {
-            services.AddLogging();
-            services.TryAddSingleton<ISafeLogger, SafeLogger>();
-            services.TryAddSingleton(typeof(ISafeLogger<>), typeof(SafeLogger<>));
-            return services;
-        }
+	public static class Add
+	{
+		public static IServiceCollection AddSafeLogging(this IServiceCollection services)
+		{
+			services.AddLogging();
+			services.TryAddSingleton<ISafeLogger, SafeLogger>();
+			services.TryAddSingleton(typeof(ISafeLogger<>), typeof(SafeLogger<>));
+			return services;
+		}
 
-        public static ILoggingBuilder AddTraceLogging(this ILoggingBuilder builder)
-        {
-	        Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
-	        return builder;
-        }
+		public static ILoggingBuilder AddTraceLogging(this ILoggingBuilder builder)
+		{
+			Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
+			return builder;
+		}
 
-        public static IServiceCollection AddTraceLogging(this IServiceCollection services)
-        {
-	        Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
-	        return services;
-        }
+		public static IServiceCollection AddTraceLogging(this IServiceCollection services)
+		{
+			Trace.Listeners.Add(new ActionTraceListener(Console.Write, Console.WriteLine));
+			return services;
+		}
 
 		public static ILoggingBuilder AddSafeLogging(this ILoggingBuilder builder)
-        {
-	        builder.Services.AddSafeLogging();
-            return builder;
-        }
-    }
+		{
+			builder.Services.AddSafeLogging();
+			return builder;
+		}
+	}
 }

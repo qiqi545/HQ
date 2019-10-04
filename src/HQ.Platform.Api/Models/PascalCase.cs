@@ -19,13 +19,13 @@ using HQ.Common.Serialization;
 
 namespace HQ.Platform.Api.Models
 {
-    internal class PascalCase : ITextTransform
-    {
-        public string Name => "Pascal";
+	internal class PascalCase : ITextTransform
+	{
+		public string Name => "Pascal";
 
-        public string Transform(string input)
-        {
-            return input;
-        }
-    }
+		public string Transform(string input)
+		{
+			return input;
+		}
+	}
 }

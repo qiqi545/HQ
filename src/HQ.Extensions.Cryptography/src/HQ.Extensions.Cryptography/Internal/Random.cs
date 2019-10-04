@@ -22,53 +22,53 @@ using Sodium;
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal static class Random
-    {
-        private static readonly RandomNumberGenerator SystemNetRandom = RandomNumberGenerator.Create();
+	internal static class Random
+	{
+		private static readonly RandomNumberGenerator SystemNetRandom = RandomNumberGenerator.Create();
 
-        public static byte[] NextBytes(int length, RandomSource source)
-        {
-            var buffer = new byte[length];
-            NextBytes(buffer, source);
-            return buffer;
-        }
+		public static byte[] NextBytes(int length, RandomSource source)
+		{
+			var buffer = new byte[length];
+			NextBytes(buffer, source);
+			return buffer;
+		}
 
-        public static void NextBytes(byte[] buffer, RandomSource source)
-        {
-            switch (source)
-            {
-                case RandomSource.SystemNet:
-                    SystemNetRandom.GetBytes(buffer);
-                    break;
-                case RandomSource.SodiumCore:
-                    SodiumCore.GetRandomBytes(new Span<byte>(buffer, 0, buffer.Length));
-                    break;
-                case RandomSource.NSec:
-                    RandomGenerator.Default.GenerateBytes(buffer);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
+		public static void NextBytes(byte[] buffer, RandomSource source)
+		{
+			switch (source)
+			{
+				case RandomSource.SystemNet:
+					SystemNetRandom.GetBytes(buffer);
+					break;
+				case RandomSource.SodiumCore:
+					SodiumCore.GetRandomBytes(new Span<byte>(buffer, 0, buffer.Length));
+					break;
+				case RandomSource.NSec:
+					RandomGenerator.Default.GenerateBytes(buffer);
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+		}
 
-        public static void NextBytes(Span<byte> buffer, RandomSource source)
-        {
-            NextBytes(buffer, buffer.Length, source);
-        }
+		public static void NextBytes(Span<byte> buffer, RandomSource source)
+		{
+			NextBytes(buffer, buffer.Length, source);
+		}
 
-        public static void NextBytes(Span<byte> buffer, int count, RandomSource source)
-        {
-            switch (source)
-            {
-                case RandomSource.SodiumCore:
-                    SodiumCore.GetRandomBytes(buffer, count);
-                    break;
-                case RandomSource.NSec:
-                    RandomGenerator.Default.GenerateBytes(buffer);
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-    }
+		public static void NextBytes(Span<byte> buffer, int count, RandomSource source)
+		{
+			switch (source)
+			{
+				case RandomSource.SodiumCore:
+					SodiumCore.GetRandomBytes(buffer, count);
+					break;
+				case RandomSource.NSec:
+					RandomGenerator.Default.GenerateBytes(buffer);
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+		}
+	}
 }

@@ -17,5 +17,7 @@
 
 namespace HQ.Integration.DocumentDb.Sql
 {
-    public class DocumentDbBatchOptions { }
+	public class DocumentDbBatchOptions
+	{
+	}
 }

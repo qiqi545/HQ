@@ -19,23 +19,23 @@ using System.Collections.Generic;
 
 namespace HQ.Common
 {
-    public struct SelfEnumerator<T>
-    {
-        private readonly List<T> _inner;
-        private int _index;
+	public struct SelfEnumerator<T>
+	{
+		private readonly List<T> _inner;
+		private int _index;
 
-        public SelfEnumerator(List<T> inner)
-        {
-            _inner = inner;
-            _index = 0;
-        }
+		public SelfEnumerator(List<T> inner)
+		{
+			_inner = inner;
+			_index = 0;
+		}
 
-        public T Current => _inner == null || _index == 0 ? default : _inner[_index - 1];
+		public T Current => _inner == null || _index == 0 ? default : _inner[_index - 1];
 
-        public bool MoveNext()
-        {
-            _index++;
-            return _inner != null && _inner.Count >= _index;
-        }
-    }
+		public bool MoveNext()
+		{
+			_index++;
+			return _inner != null && _inner.Count >= _index;
+		}
+	}
 }

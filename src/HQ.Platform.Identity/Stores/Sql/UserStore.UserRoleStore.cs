@@ -29,111 +29,110 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserRoleStore<TUser>
-    {
-        private static readonly List<string> SuperUserRoles = new List<string> {ClaimValues.SuperUser};
+	partial class UserStore<TUser, TKey, TRole> : IUserRoleStore<TUser>
+	{
+		private static readonly List<string> SuperUserRoles = new List<string> {ClaimValues.SuperUser};
 
-        public async Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task AddToRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var roleId = await GetRoleIdByNameAsync(roleName);
+			var roleId = await GetRoleIdByNameAsync(roleName);
 
-            if (roleId != null)
-            {
-                var query = SqlBuilder.Insert(new AspNetUserRoles<TKey>
-                {
-                    UserId = user.Id, RoleId = roleId, TenantId = _tenantId
-                });
+			if (roleId != null)
+			{
+				var query = SqlBuilder.Insert(new AspNetUserRoles<TKey>
+				{
+					UserId = user.Id, RoleId = roleId, TenantId = _tenantId
+				});
 
-                _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
-                var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-                Debug.Assert(inserted == 1);
-            }
-        }
+				_connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
+				var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+				Debug.Assert(inserted == 1);
+			}
+		}
 
-        public async Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task RemoveFromRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var roleId = await GetRoleIdByNameAsync(roleName);
+			var roleId = await GetRoleIdByNameAsync(roleName);
 
-            if (roleId != null)
-            {
-                var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new
-                {
-                    UserId = user.Id, RoleId = roleId, TenantId = _tenantId
-                });
+			if (roleId != null)
+			{
+				var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new
+				{
+					UserId = user.Id, RoleId = roleId, TenantId = _tenantId
+				});
 
-                _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
-                var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-                Debug.Assert(deleted == 1);
-            }
-        }
+				_connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
+				var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+				Debug.Assert(deleted == 1);
+			}
+		}
 
-        public async Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            if (user.NormalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
-            {
-                return SuperUserRoles;
-            }
+			if (user.NormalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
+			{
+				return SuperUserRoles;
+			}
 
-            var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
+			var mappingQuery = SqlBuilder.Select<AspNetUserRoles<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
 
-            // Mapping:
-            _connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
-            var roleMapping =
-                (await _connection.Current.QueryAsync<AspNetUserRoles<TKey>>(mappingQuery.Sql, mappingQuery.Parameters))
-                .AsList();
+			// Mapping:
+			_connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
+			var roleMapping =
+				(await _connection.Current.QueryAsync<AspNetUserRoles<TKey>>(mappingQuery.Sql, mappingQuery.Parameters))
+				.AsList();
 
-            // Roles:
-            if (roleMapping.Any())
-            {
-                var descriptor = SqlBuilder.GetDescriptor<TRole>();
-                var roleQuery = SqlBuilder.Select<TRole>(descriptor,
-                    new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId)});
-                _connection.SetTypeInfo(typeof(TRole));
+			// Roles:
+			if (roleMapping.Any())
+			{
+				var descriptor = SqlBuilder.GetDescriptor<TRole>();
+				var roleQuery = SqlBuilder.Select<TRole>(descriptor,
+					new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId)});
+				_connection.SetTypeInfo(typeof(TRole));
 
-                var roles = await _connection.Current.QueryAsync<TRole>(roleQuery.Sql, roleQuery.Parameters);
-                return roles.Select(x => x.Name).ToList();
-            }
+				var roles = await _connection.Current.QueryAsync<TRole>(roleQuery.Sql, roleQuery.Parameters);
+				return roles.Select(x => x.Name).ToList();
+			}
 
-            return new List<string>(0);
-        }
+			return new List<string>(0);
+		}
 
-        public async Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
-        {
-            var userRoles = await GetRolesAsync(user, cancellationToken);
-            return userRoles.Contains(roleName);
-        }
+		public async Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
+		{
+			var userRoles = await GetRolesAsync(user, cancellationToken);
+			return userRoles.Contains(roleName);
+		}
 
-        public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
-        {
-            const string sql = "SELECT u.* " +
-                               "FROM AspNetRoles r " +
-                               "INNER JOIN AspNetUserRoles AS ur ON ur.RoleId = r.Id " +
-                               "INNER JOIN AspNetUsers u ON u.Id = ur.UserId " +
-                               "WHERE r.NormalizedName = @NormalizedName " +
-                               "AND r.TenantId = @TenantId";
+		public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+		{
+			const string sql = "SELECT u.* " +
+			                   "FROM AspNetRoles r " +
+			                   "INNER JOIN AspNetUserRoles AS ur ON ur.RoleId = r.Id " +
+			                   "INNER JOIN AspNetUsers u ON u.Id = ur.UserId " +
+			                   "WHERE r.NormalizedName = @NormalizedName " +
+			                   "AND r.TenantId = @TenantId";
 
-            var users = await _connection.Current.QueryAsync<TUser>(sql,
-                new {NormalizedName = roleName, TenantId = _tenantId});
+			var users = await _connection.Current.QueryAsync<TUser>(sql,
+				new {NormalizedName = roleName, TenantId = _tenantId});
 
-            return users.AsList();
-        }
+			return users.AsList();
+		}
 
-        private async Task<TKey> GetRoleIdByNameAsync(string roleName)
-        {
-            var query = SqlBuilder.Select<TRole>(new
-            {
-                NormalizedName = _lookupNormalizer.MaybeNormalizeName(roleName),
-                TenantId = _tenantId
-            });
-            _connection.SetTypeInfo(typeof(TRole));
-            var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
-            return role.Id;
-        }
-    }
+		private async Task<TKey> GetRoleIdByNameAsync(string roleName)
+		{
+			var query = SqlBuilder.Select<TRole>(new
+			{
+				NormalizedName = _lookupNormalizer.MaybeNormalizeName(roleName), TenantId = _tenantId
+			});
+			_connection.SetTypeInfo(typeof(TRole));
+			var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
+			return role.Id;
+		}
+	}
 }

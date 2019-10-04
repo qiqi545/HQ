@@ -39,7 +39,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 	{
 		private static readonly object Sync = new object();
 
-		public static void AddAuthentication(this IServiceCollection services, SecurityOptions security, SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
+		public static void AddAuthentication(this IServiceCollection services, SecurityOptions security,
+			SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
 		{
 			lock (Sync)
 			{
@@ -141,7 +142,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			return Task.CompletedTask;
 		}
 
-		public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims, SecurityOptions security) where TUser : IUserIdProvider
+		public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims,
+			SecurityOptions security) where TUser : IUserIdProvider
 		{
 			var now = DateTimeOffset.Now;
 			var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
@@ -178,7 +180,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 
 			if (!security.Tokens.Encrypt)
 			{
-				var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime, security.Signing);
+				var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime,
+					security.Signing);
 
 				return handler.WriteToken(jwt);
 			}
@@ -197,7 +200,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 		internal static void MaybeSetSecurityKeys(SecurityOptions security)
 		{
 			security.Signing = security.Signing ?? (security.Signing = BuildSigningCredentials(security.Tokens));
-			security.Encrypting = security.Encrypting ?? (security.Encrypting = BuildEncryptingCredentials(security.Tokens));
+			security.Encrypting =
+				security.Encrypting ?? (security.Encrypting = BuildEncryptingCredentials(security.Tokens));
 		}
 
 		private static SigningCredentials BuildSigningCredentials(TokenOptions options)
@@ -211,7 +215,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 		{
 			MaybeSelfCreateMissingKeys(options);
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.EncryptionKey));
-			return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg, SecurityAlgorithms.Aes256CbcHmacSha512);
+			return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg,
+				SecurityAlgorithms.Aes256CbcHmacSha512);
 		}
 
 		public static bool MaybeSelfCreateMissingKeys(TokenOptions options)
@@ -235,7 +240,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			return changed;
 		}
 
-		private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions security, TokenOptions tokens, ClaimOptions claims)
+		private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions security,
+			TokenOptions tokens, ClaimOptions claims)
 		{
 			MaybeSetSecurityKeys(security);
 
@@ -246,7 +252,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			{
 				return new TokenValidationParameters
 				{
-					TokenDecryptionKeyResolver = (token, securityToken, kid, parameters) => new[] { security.Encrypting.Key },
+					TokenDecryptionKeyResolver =
+						(token, securityToken, kid, parameters) => new[] {security.Encrypting.Key},
 					ValidateIssuerSigningKey = false,
 					ValidIssuer = tokens.Issuer,
 					ValidateLifetime = true,

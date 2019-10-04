@@ -20,16 +20,16 @@ using Microsoft.CodeAnalysis;
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public class DefaultMetadataReferenceResolver : IMetadataReferenceResolver
-    {
-        public MetadataReference Resolve(Assembly assembly)
-        {
-            return MetadataReference.CreateFromFile(assembly.Location);
-        }
+	public class DefaultMetadataReferenceResolver : IMetadataReferenceResolver
+	{
+		public MetadataReference Resolve(Assembly assembly)
+		{
+			return MetadataReference.CreateFromFile(assembly.Location);
+		}
 
-        public MetadataReference Resolve(string location)
-        {
-            return MetadataReference.CreateFromFile(location);
-        }
-    }
+		public MetadataReference Resolve(string location)
+		{
+			return MetadataReference.CreateFromFile(location);
+		}
+	}
 }

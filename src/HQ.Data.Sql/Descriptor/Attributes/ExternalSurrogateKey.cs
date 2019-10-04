@@ -19,13 +19,13 @@ using System;
 
 namespace HQ.Data.Sql.Descriptor.Attributes
 {
-    /// <inheritdoc />
-    /// <summary>
-    ///     Properties with this attribute should only appear in a WHERE clause, if the property is present
-    ///     in the underlying hash, but should never appear in an INSERT or UPDATE statement.
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ExternalSurrogateKey : Attribute
-    {
-    }
+	/// <inheritdoc />
+	/// <summary>
+	///     Properties with this attribute should only appear in a WHERE clause, if the property is present
+	///     in the underlying hash, but should never appear in an INSERT or UPDATE statement.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Property)]
+	public class ExternalSurrogateKey : Attribute
+	{
+	}
 }

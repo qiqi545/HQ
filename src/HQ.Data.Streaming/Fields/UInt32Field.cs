@@ -21,30 +21,33 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct UInt32Field
-    {
-        public bool Initialized => _buffer != null;
-        public uint? Value => Initialized ? !_encoding.TryParse(_buffer, out uint value) ? default(uint?) : value : default;
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
-        public int Length => _buffer.Length;
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+	public readonly ref struct UInt32Field
+	{
+		public bool Initialized => _buffer != null;
 
-        private readonly Encoding _encoding;
-        private readonly ReadOnlySpan<byte> _buffer;
+		public uint? Value =>
+			Initialized ? !_encoding.TryParse(_buffer, out uint value) ? default(uint?) : value : default;
 
-        public UInt32Field(ReadOnlySpan<byte> buffer, Encoding encoding)
-        {
-            _buffer = buffer;
-            _encoding = encoding;
-        }
+		public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+		public int Length => _buffer.Length;
 
-        public unsafe UInt32Field(byte* start, int length, Encoding encoding)
-        {
-            _buffer = new ReadOnlySpan<byte>(start, length);
-            _encoding = encoding;
-        }
+		private readonly Encoding _encoding;
+		private readonly ReadOnlySpan<byte> _buffer;
 
-        public string DisplayName =>
-            $"{nameof(UInt32Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-    }
+		public UInt32Field(ReadOnlySpan<byte> buffer, Encoding encoding)
+		{
+			_buffer = buffer;
+			_encoding = encoding;
+		}
+
+		public unsafe UInt32Field(byte* start, int length, Encoding encoding)
+		{
+			_buffer = new ReadOnlySpan<byte>(start, length);
+			_encoding = encoding;
+		}
+
+		public string DisplayName =>
+			$"{nameof(UInt32Field).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+	}
 }

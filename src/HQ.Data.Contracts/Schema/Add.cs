@@ -34,7 +34,8 @@ namespace HQ.Data.Contracts.Schema
 			return services.AddSchemaDiscovery(configuration.Bind);
 		}
 
-		public static SchemaBuilder AddSchemaDiscovery(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
+		public static SchemaBuilder AddSchemaDiscovery(this IServiceCollection services,
+			Action<SchemaOptions> configureAction = null)
 		{
 			Bootstrap.EnsureInitialized();
 

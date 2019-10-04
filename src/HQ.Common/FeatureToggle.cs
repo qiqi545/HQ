@@ -17,8 +17,8 @@
 
 namespace HQ.Common
 {
-    public class FeatureToggle : IFeatureToggle
-    {
-        public bool Enabled { get; set; } = true;
-    }
+	public class FeatureToggle : IFeatureToggle
+	{
+		public bool Enabled { get; set; } = true;
+	}
 }

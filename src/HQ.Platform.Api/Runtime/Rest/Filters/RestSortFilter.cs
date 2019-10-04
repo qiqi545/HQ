@@ -21,48 +21,44 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
-    public class RestSortFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class RestSortFilter : IRestFilter
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestSortFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestSortFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => _options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-            qs.TryGetValue(_options.Value.SortOperator, out var sorters);
-            if (sorters.Count == 0)
-            {
-                return;
-            }
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+			qs.TryGetValue(_options.Value.SortOperator, out var sorters);
+			if (sorters.Count == 0)
+			{
+				return;
+			}
 
-            var options = new SortOptions();
-            foreach (var sorter in sorters)
-            foreach (var value in sorter.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var v = value.Trim();
+			var options = new SortOptions();
+			foreach (var sorter in sorters)
+			foreach (var value in sorter.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var v = value.Trim();
 
-                options.Fields.Add(new Sort {Field = v.TrimStart('-'), Descending = v.StartsWith("-")});
-            }
+				options.Fields.Add(new Sort {Field = v.TrimStart('-'), Descending = v.StartsWith("-")});
+			}
 
-            if (!options.Validate(context.Type, _options.Value, out var errors))
-            {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
-                    HttpStatusCode.BadRequest, errors));
-            }
+			if (!options.Validate(context.Type, _options.Value, out var errors))
+			{
+				context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
+					HttpStatusCode.BadRequest, errors));
+			}
 
-            context.Sorting = options;
-        }
-    }
+			context.Sorting = options;
+		}
+	}
 }

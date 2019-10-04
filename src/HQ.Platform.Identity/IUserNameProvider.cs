@@ -17,8 +17,8 @@
 
 namespace HQ.Platform.Identity
 {
-    public interface IUserNameProvider
-    {
-        string UserName { get; }
-    }
+	public interface IUserNameProvider
+	{
+		string UserName { get; }
+	}
 }

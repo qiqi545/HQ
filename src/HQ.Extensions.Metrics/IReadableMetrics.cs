@@ -19,8 +19,8 @@ using System.Collections.Immutable;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IReadableMetrics
-    {
-        IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None);
-    }
+	public interface IReadableMetrics
+	{
+		IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None);
+	}
 }

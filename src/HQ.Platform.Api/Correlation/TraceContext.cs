@@ -20,26 +20,24 @@ using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Correlation
 {
-    public struct TraceContext
-    {
-        public byte Version => 0;
-        public byte[] TraceId { get; set; }
-        public byte[] ParentId { get; set; }
-        public TraceFlags Flags { get; set; }
+	public struct TraceContext
+	{
+		public byte Version => 0;
+		public byte[] TraceId { get; set; }
+		public byte[] ParentId { get; set; }
+		public TraceFlags Flags { get; set; }
 
-        public static TraceContext Empty = new TraceContext();
+		public static TraceContext Empty = new TraceContext();
 
-        public static TraceContext New()
-        {
-            var context = new TraceContext
-            {
-                TraceId = Crypto.GetRandomBytes(16),
-                ParentId = Crypto.GetRandomBytes(8),
-                Flags = TraceFlags.None
-            };
-            return context;
-        }
+		public static TraceContext New()
+		{
+			var context = new TraceContext
+			{
+				TraceId = Crypto.GetRandomBytes(16), ParentId = Crypto.GetRandomBytes(8), Flags = TraceFlags.None
+			};
+			return context;
+		}
 
-        public StringValues Header => $"00-{Crypto.BinToHex(TraceId)}-{Crypto.BinToHex(ParentId)}-{Flags:x}";
-    }
+		public StringValues Header => $"00-{Crypto.BinToHex(TraceId)}-{Crypto.BinToHex(ParentId)}-{Flags:x}";
+	}
 }

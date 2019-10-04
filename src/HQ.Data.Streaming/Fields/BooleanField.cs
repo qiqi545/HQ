@@ -21,37 +21,40 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct BooleanField
-    {
-        public bool Initialized => _buffer != null;
-        public bool? Value => Initialized ? !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value : default;
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
-        public int Length => _buffer.Length;
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+	public readonly ref struct BooleanField
+	{
+		public bool Initialized => _buffer != null;
 
-        private readonly Encoding _encoding;
-        private readonly ReadOnlySpan<byte> _buffer;
+		public bool? Value =>
+			Initialized ? !_encoding.TryParse(_buffer, out bool value) ? default(bool?) : value : default;
 
-        public BooleanField(ReadOnlySpan<byte> buffer, Encoding encoding)
-        {
-            _buffer = buffer;
-            _encoding = encoding;
-        }
+		public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+		public int Length => _buffer.Length;
 
-        public unsafe BooleanField(byte* start, int length, Encoding encoding)
-        {
-            try
-            {
-                _buffer = new ReadOnlySpan<byte>(start, length);
-                _encoding = encoding;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+		private readonly Encoding _encoding;
+		private readonly ReadOnlySpan<byte> _buffer;
 
-        public string DisplayName =>
-            $"{nameof(BooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-    }
+		public BooleanField(ReadOnlySpan<byte> buffer, Encoding encoding)
+		{
+			_buffer = buffer;
+			_encoding = encoding;
+		}
+
+		public unsafe BooleanField(byte* start, int length, Encoding encoding)
+		{
+			try
+			{
+				_buffer = new ReadOnlySpan<byte>(start, length);
+				_encoding = encoding;
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+		}
+
+		public string DisplayName =>
+			$"{nameof(BooleanField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+	}
 }

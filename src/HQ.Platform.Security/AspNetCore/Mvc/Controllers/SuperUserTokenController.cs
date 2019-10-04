@@ -43,32 +43,38 @@ using Microsoft.AspNetCore.Mvc;
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
 	/// <summary>
-	/// A light-weight token issuer that only works against a super user.
+	///     A light-weight token issuer that only works against a super user.
 	/// </summary>
 	[Route("tokens")]
 	[DynamicController(typeof(SuperUserOptions))]
-    [ApiExplorerSettings(IgnoreApi = false)]
+	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
 	public class SuperUserTokenController : DataController, IDynamicComponentEnabled<SuperUserComponent>
-    {
-	    private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
-	    private readonly IValidOptionsSnapshot<SecurityOptions> _security;
+	{
+		private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
+		private readonly IValidOptionsSnapshot<SecurityOptions> _security;
 
-	    public SuperUserTokenController(IValidOptionsSnapshot<SuperUserOptions> options, IValidOptionsSnapshot<SecurityOptions> security)
-	    {
-		    _options = options;
-		    _security = security;
-	    }
+		public SuperUserTokenController(IValidOptionsSnapshot<SuperUserOptions> options,
+			IValidOptionsSnapshot<SecurityOptions> security)
+		{
+			_options = options;
+			_security = security;
+		}
 
-        [FeatureSelector]
+		private bool Enabled => _options.Value.Enabled;
+
+		[FeatureSelector]
 		[AllowAnonymous]
-        [HttpPost]
-        public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
-        [FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
-        [FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
-        [FromHeader(Name = Constants.Versioning.VersionHeader)] string version)
+		[HttpPost]
+		public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
+			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]
+			string application,
+			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)]
+			string tenant,
+			[FromHeader(Name = Constants.Versioning.VersionHeader)]
+			string version)
 		{
 			if (!ValidModelState(out var error))
 				return Task.FromResult((IActionResult) error);
@@ -95,42 +101,41 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-			
+
 			var encoding = Encoding.UTF8;
-			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_options.Value.Password)))
+			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password),
+				encoding.GetBytes(_options.Value.Password)))
 			{
 				Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
 				var claims = new List<Claim>
 				{
 					new Claim(_security.Value?.Claims?.RoleClaim ?? ClaimTypes.Role, ClaimValues.SuperUser)
 				};
-				var provider = new { Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1" }.ActLike<IUserIdProvider>();
+				var provider = new {Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1"}.ActLike<IUserIdProvider>();
 
 				// FIXME: pin claims transformation to user-provided scope
 				var token = provider.CreateToken(claims, _security.Value);
-				return Task.FromResult((IActionResult) Ok(new { AccessToken = token }));
+				return Task.FromResult((IActionResult) Ok(new {AccessToken = token}));
 			}
 
 			return UnauthorizedResult();
 		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[DynamicAuthorize(typeof(SuperUserOptions))]
 		[HttpPut]
-        public IActionResult VerifyToken()
-        {
-	        if (!Enabled)
-		        return NotFound();
+		public IActionResult VerifyToken()
+		{
+			if (!Enabled)
+				return NotFound();
 
-	        if (User.Identity == null)
-		        return Unauthorized();
+			if (User.Identity == null)
+				return Unauthorized();
 
-	        if (User.Identity.IsAuthenticated)
-				return Ok(new { Data = User.Claims() });
+			if (User.Identity.IsAuthenticated)
+				return Ok(new {Data = User.Claims()});
 
 			return Unauthorized();
 		}
-
-        private bool Enabled => _options.Value.Enabled;
-    }
+	}
 }

@@ -21,25 +21,25 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserPasswordStore<TUser>
-    {
-        public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.PasswordHash = passwordHash;
-            return Task.CompletedTask;
-        }
+	partial class UserStore<TUser, TKey, TRole> : IUserPasswordStore<TUser>
+	{
+		public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.PasswordHash = passwordHash;
+			return Task.CompletedTask;
+		}
 
-        public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.PasswordHash);
-        }
+		public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.PasswordHash);
+		}
 
-        public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(!string.IsNullOrWhiteSpace(user.PasswordHash));
-        }
-    }
+		public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(!string.IsNullOrWhiteSpace(user.PasswordHash));
+		}
+	}
 }

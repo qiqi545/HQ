@@ -18,26 +18,22 @@
 using System.Collections.Generic;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
-    public class RestSearchFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class RestSearchFilter : IRestFilter
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestSearchFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestSearchFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => _options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-        }
-    }
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+		}
+	}
 }

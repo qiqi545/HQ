@@ -19,14 +19,14 @@ using System;
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    [Flags]
-    public enum PropertyScope : byte
-    {
-        Read = 1 << 0,
-        Write = 1 << 1,
+	[Flags]
+	public enum PropertyScope : byte
+	{
+		Read = 1 << 0,
+		Write = 1 << 1,
 
-        ReadWrite = Read | Write,
-        None = 0x0,
-        All = 0xFF
-    }
+		ReadWrite = Read | Write,
+		None = 0x0,
+		All = 0xFF
+	}
 }

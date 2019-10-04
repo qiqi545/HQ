@@ -19,10 +19,10 @@ using System.Collections.Generic;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsRegistry : IEnumerable<IMetricsHost>
-    {
-        IEnumerable<KeyValuePair<string, IMetricsHost>> Manifest { get; }
+	public interface IMetricsRegistry : IEnumerable<IMetricsHost>
+	{
+		IEnumerable<KeyValuePair<string, IMetricsHost>> Manifest { get; }
 
-        void Add(IMetricsHost host);
-    }
+		void Add(IMetricsHost host);
+	}
 }

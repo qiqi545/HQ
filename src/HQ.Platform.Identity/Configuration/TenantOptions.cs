@@ -17,9 +17,9 @@
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class TenantOptions
-    {
-        public string AllowedTenantNameCharacters { get; set; } =
-            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-    }
+	public class TenantOptions
+	{
+		public string AllowedTenantNameCharacters { get; set; } =
+			"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+	}
 }

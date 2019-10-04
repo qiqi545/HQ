@@ -1,4 +1,21 @@
-﻿using System;
+﻿#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,10 +31,7 @@ namespace HQ.Extensions.Notifications.Email.Providers
 
 		private readonly PostmarkClient _client;
 
-		public PostmarkEmailProvider(string serverToken)
-		{
-			_client = new PostmarkClient(serverToken);
-		}
+		public PostmarkEmailProvider(string serverToken) => _client = new PostmarkClient(serverToken);
 
 		public async Task<bool> SendAsync(EmailMessage message)
 		{
@@ -29,7 +43,25 @@ namespace HQ.Extensions.Notifications.Email.Providers
 			{
 				message.DeliveredAt = DateTime.UtcNow;
 			}
+
 			return message.Delivered;
+		}
+
+		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<EmailMessage> messages)
+		{
+			// Postmark only allows 500 messages per batch, so we'll send successive batches
+			var payload = messages.ToList();
+			var results = new List<bool>();
+			if (payload.Count <= BatchMax)
+				return results.ToArray();
+			var batches = (int) Math.Ceiling(payload.Count / (double) BatchMax);
+			for (var i = 0; i < batches; i++)
+			{
+				var slice = payload.Skip(i * BatchMax).Take(BatchMax).ToList();
+				results.Add(await SendBatch(slice));
+			}
+
+			return results;
 		}
 
 		private static PostmarkMessage CreatePostmarkMessage(EmailMessage message)
@@ -49,23 +81,8 @@ namespace HQ.Extensions.Notifications.Email.Providers
 			{
 				pm.Headers.Add(new MailHeader(header.Name, header.Value));
 			}
-			return pm;
-		}
 
-		public async Task<IEnumerable<bool>> SendAsync(IEnumerable<EmailMessage> messages)
-		{
-			// Postmark only allows 500 messages per batch, so we'll send successive batches
-			var payload = messages.ToList();
-			var results = new List<bool>();
-			if (payload.Count <= BatchMax)
-				return results.ToArray();
-			var batches = (int)Math.Ceiling(payload.Count / (double)BatchMax);
-			for (var i = 0; i < batches; i++)
-			{
-				var slice = payload.Skip(i * BatchMax).Take(BatchMax).ToList();
-				results.Add(await SendBatch(slice));
-			}
-			return results;
+			return pm;
 		}
 
 		private async Task<bool> SendBatch(IList<EmailMessage> payload)
@@ -79,9 +96,11 @@ namespace HQ.Extensions.Notifications.Email.Providers
 				{
 					continue;
 				}
+
 				payload[i].Delivered = true;
 				payload[i].DeliveredAt = DateTime.UtcNow;
 			}
+
 			return responses.All(r => r.Status == PostmarkStatus.Success);
 		}
 	}

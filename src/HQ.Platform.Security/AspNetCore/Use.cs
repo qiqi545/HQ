@@ -40,7 +40,6 @@ namespace HQ.Platform.Security.AspNetCore
 				app.UseCors(Constants.Security.Policies.CorsPolicy);
 				app.UseEndpoints(builder => { });
 #endif
-
 			}
 
 			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)

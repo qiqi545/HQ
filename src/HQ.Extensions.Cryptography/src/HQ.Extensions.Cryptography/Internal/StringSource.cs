@@ -17,11 +17,11 @@
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal enum StringSource
-    {
-        SystemNet,
-        SodiumCore,
-        SodiumCoreDirect,
-        SodiumCoreUnsafePooled
-    }
+	internal enum StringSource
+	{
+		SystemNet,
+		SodiumCore,
+		SodiumCoreDirect,
+		SodiumCoreUnsafePooled
+	}
 }

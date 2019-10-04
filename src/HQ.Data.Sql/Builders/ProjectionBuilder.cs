@@ -27,118 +27,118 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class ProjectionBuilder
-    {
-        public static string Select(this ISqlDialect d, string table, string schema, IList<string> columns,
-            params Projection[] projections)
-        {
-            return Select(d, table, schema, columns, projections, null);
-        }
+	public static class ProjectionBuilder
+	{
+		public static string Select(this ISqlDialect d, string table, string schema, IList<string> columns,
+			params Projection[] projections)
+		{
+			return Select(d, table, schema, columns, projections, null);
+		}
 
-        public static string Select(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<Projection> projections, IList<Filter> filters)
-        {
-            return Pooling.StringBuilderPool.Scoped(
-                sb => { AppendSelect(sb, d, table, schema, columns, projections, filters); });
-        }
+		public static string Select(this ISqlDialect d, string table, string schema, IList<string> columns,
+			IList<Projection> projections, IList<Filter> filters)
+		{
+			return Pooling.StringBuilderPool.Scoped(
+				sb => { AppendSelect(sb, d, table, schema, columns, projections, filters); });
+		}
 
-        internal static void AppendSelect(StringBuilder sb, ISqlDialect d, string table, string schema,
-            IList<string> columns, IList<Projection> projections, IList<Filter> filters)
-        {
-            sb.Append("SELECT ");
+		internal static void AppendSelect(StringBuilder sb, ISqlDialect d, string table, string schema,
+			IList<string> columns, IList<Projection> projections, IList<Filter> filters)
+		{
+			sb.Append("SELECT ");
 
-            for (var i = 0; i < columns.Count; i++)
-            {
-                sb.Append(Constants.Sql.ParentAlias).Append('.');
-                sb.AppendName(d, columns[i]);
-                if (i < columns.Count - 1)
-                    sb.Append(", ");
-            }
+			for (var i = 0; i < columns.Count; i++)
+			{
+				sb.Append(Constants.Sql.ParentAlias).Append('.');
+				sb.AppendName(d, columns[i]);
+				if (i < columns.Count - 1)
+					sb.Append(", ");
+			}
 
-            var joins = 0;
-            foreach (var _ in projections)
-            {
-                sb.Append(", ").Append(Constants.Sql.ParentAlias).Append(joins).Append(".*");
-                joins++;
-            }
+			var joins = 0;
+			foreach (var _ in projections)
+			{
+				sb.Append(", ").Append(Constants.Sql.ParentAlias).Append(joins).Append(".*");
+				joins++;
+			}
 
-            sb.Append(" FROM ").AppendTable(d, table, schema).Append(' ').Append(Constants.Sql.ParentAlias).Append(' ');
+			sb.Append(" FROM ").AppendTable(d, table, schema).Append(' ').Append(Constants.Sql.ParentAlias).Append(' ');
 
-            joins = 0;
-            for (var i = 0; i < filters.Count; i++)
-            {
-                var filter = filters[i];
-                if (filter.Type != FilterType.Join)
-                    continue;
+			joins = 0;
+			for (var i = 0; i < filters.Count; i++)
+			{
+				var filter = filters[i];
+				if (filter.Type != FilterType.Join)
+					continue;
 
-                var title = filter.Field.Humanize(LetterCasing.Title);
+				var title = filter.Field.Humanize(LetterCasing.Title);
 
-                sb.Append("LEFT JOIN ")
-                    .AppendName(d, title)
-                    .Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
-                    .Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(table).Append("Id").Append(" = ")
-                    .Append(Constants.Sql.ParentAlias).Append('.').AppendName(d, "Id");
+				sb.Append("LEFT JOIN ")
+					.AppendName(d, title)
+					.Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
+					.Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(table).Append("Id").Append(" = ")
+					.Append(Constants.Sql.ParentAlias).Append('.').AppendName(d, "Id");
 
-                if (i < projections.Count - 1)
-                    sb.Append(' ');
+				if (i < projections.Count - 1)
+					sb.Append(' ');
 
-                joins++;
-            }
+				joins++;
+			}
 
-            joins = 0;
-            for (var i = 0; i < projections.Count; i++)
-            {
-                var expansion = projections[i];
+			joins = 0;
+			for (var i = 0; i < projections.Count; i++)
+			{
+				var expansion = projections[i];
 
-                if (expansion.Type == ProjectionType.Scalar)
-                    continue;
+				if (expansion.Type == ProjectionType.Scalar)
+					continue;
 
-                var title = expansion.Field.Humanize(LetterCasing.Title);
+				var title = expansion.Field.Humanize(LetterCasing.Title);
 
-                switch (expansion.Type)
-                {
-                    case ProjectionType.OneToOne:
+				switch (expansion.Type)
+				{
+					case ProjectionType.OneToOne:
 
-                        sb.Append("LEFT JOIN ").AppendName(d, title).Append(' ')
-                            .Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
-                            .Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
-                            .Append(" = ")
-                            .Append(Constants.Sql.ParentAlias).Append('.')
-                            .Append(d.StartIdentifier).Append(title).Append("Id").Append(d.EndIdentifier);
+						sb.Append("LEFT JOIN ").AppendName(d, title).Append(' ')
+							.Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
+							.Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
+							.Append(" = ")
+							.Append(Constants.Sql.ParentAlias).Append('.')
+							.Append(d.StartIdentifier).Append(title).Append("Id").Append(d.EndIdentifier);
 
-                        break;
-                    case ProjectionType.OneToMany:
+						break;
+					case ProjectionType.OneToMany:
 
-                        var singularRoute = title.Singularize();
-                        var name = singularRoute;
+						var singularRoute = title.Singularize();
+						var name = singularRoute;
 
-                        sb.Append("LEFT JOIN ").Append(d.StartIdentifier).Append(table).Append(name)
-                            .Append(d.EndIdentifier)
-                            .Append(' ')
-                            .Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
-                            .Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(d.StartIdentifier)
-                            .Append(table)
-                            .Append("Id").Append(d.EndIdentifier).Append(" = ").Append(Constants.Sql.ParentAlias)
-                            .Append('.')
-                            .AppendName(d, "Id")
-                            .Append(' ');
+						sb.Append("LEFT JOIN ").Append(d.StartIdentifier).Append(table).Append(name)
+							.Append(d.EndIdentifier)
+							.Append(' ')
+							.Append(Constants.Sql.ChildAlias).Append(joins).Append(" ON ")
+							.Append(Constants.Sql.ChildAlias).Append(joins).Append('.').Append(d.StartIdentifier)
+							.Append(table)
+							.Append("Id").Append(d.EndIdentifier).Append(" = ").Append(Constants.Sql.ParentAlias)
+							.Append('.')
+							.AppendName(d, "Id")
+							.Append(' ');
 
-                        sb.Append("LEFT JOIN ").AppendName(d, name).Append(' ')
-                            .Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
-                            .Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
-                            .Append(" = ")
-                            .Append(Constants.Sql.ChildAlias).Append(joins).Append('.')
-                            .Append(d.StartIdentifier).Append(name).Append("Id").Append(d.EndIdentifier);
+						sb.Append("LEFT JOIN ").AppendName(d, name).Append(' ')
+							.Append(Constants.Sql.ParentAlias).Append(joins).Append(" ON ")
+							.Append(Constants.Sql.ParentAlias).Append(joins).Append('.').AppendName(d, "Id")
+							.Append(" = ")
+							.Append(Constants.Sql.ChildAlias).Append(joins).Append('.')
+							.Append(d.StartIdentifier).Append(name).Append("Id").Append(d.EndIdentifier);
 
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+						break;
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
 
-                if (i < projections.Count - 1)
-                    sb.Append(' ');
-                joins++;
-            }
-        }
-    }
+				if (i < projections.Count - 1)
+					sb.Append(' ');
+				joins++;
+			}
+		}
+	}
 }

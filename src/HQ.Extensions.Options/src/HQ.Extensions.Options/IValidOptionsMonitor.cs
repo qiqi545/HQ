@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
-    public interface IValidOptionsMonitor<out T> : IOptionsMonitor<T> where T : class, new()
-    {
-    }
+	public interface IValidOptionsMonitor<out T> : IOptionsMonitor<T> where T : class, new()
+	{
+	}
 }

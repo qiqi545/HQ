@@ -19,8 +19,8 @@ using System;
 
 namespace HQ.Data.Sql.Descriptor.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class OneToManyAttribute : Attribute
-    {
-    }
+	[AttributeUsage(AttributeTargets.Property)]
+	public class OneToManyAttribute : Attribute
+	{
+	}
 }

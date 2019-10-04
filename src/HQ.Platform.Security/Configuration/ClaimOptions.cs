@@ -19,16 +19,16 @@ using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class ClaimOptions
-    {
-        public string TenantIdClaim { get; set; } = Constants.Claims.TenantId;
-        public string TenantNameClaim { get; set; } = Constants.Claims.TenantName;
-        public string ApplicationIdClaim { get; set; } = Constants.Claims.ApplicationId;
-        public string ApplicationNameClaim { get; set; } = Constants.Claims.ApplicationName;
-        public string UserIdClaim { get; set; } = Constants.Claims.UserId;
-        public string UserNameClaim { get; set; } = Constants.Claims.UserName;
-        public string RoleClaim { get; set; } = Constants.Claims.Role;
-        public string EmailClaim { get; set; } = Constants.Claims.Email;
-        public string PermissionClaim { get; set; } = Constants.Claims.Permission;
-    }
+	public class ClaimOptions
+	{
+		public string TenantIdClaim { get; set; } = Constants.Claims.TenantId;
+		public string TenantNameClaim { get; set; } = Constants.Claims.TenantName;
+		public string ApplicationIdClaim { get; set; } = Constants.Claims.ApplicationId;
+		public string ApplicationNameClaim { get; set; } = Constants.Claims.ApplicationName;
+		public string UserIdClaim { get; set; } = Constants.Claims.UserId;
+		public string UserNameClaim { get; set; } = Constants.Claims.UserName;
+		public string RoleClaim { get; set; } = Constants.Claims.Role;
+		public string EmailClaim { get; set; } = Constants.Claims.Email;
+		public string PermissionClaim { get; set; } = Constants.Claims.Permission;
+	}
 }

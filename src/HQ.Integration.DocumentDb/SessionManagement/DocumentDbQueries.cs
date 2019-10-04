@@ -25,59 +25,59 @@ using Microsoft.Azure.Documents.Linq;
 
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
-    internal abstract class DocumentDbQueries
-    {
-        private static readonly FeedOptions EmptyOptions = new FeedOptions();
-        private static readonly FeedOptions SingleItemOptions = new FeedOptions {MaxItemCount = 1};
-        private readonly DocumentClient _client;
-        private readonly Uri _collectionUri;
+	internal abstract class DocumentDbQueries
+	{
+		private static readonly FeedOptions EmptyOptions = new FeedOptions();
+		private static readonly FeedOptions SingleItemOptions = new FeedOptions {MaxItemCount = 1};
+		private readonly DocumentClient _client;
+		private readonly Uri _collectionUri;
 
-        private readonly IMetricsHost<DocumentClient> _metrics;
+		private readonly IMetricsHost<DocumentClient> _metrics;
 
-        protected DocumentDbQueries(DocumentClient client, Uri collectionUri, IMetricsHost<DocumentClient> metrics)
-        {
-            _client = client;
-            _collectionUri = collectionUri;
-            _metrics = metrics;
-        }
+		protected DocumentDbQueries(DocumentClient client, Uri collectionUri, IMetricsHost<DocumentClient> metrics)
+		{
+			_client = client;
+			_collectionUri = collectionUri;
+			_metrics = metrics;
+		}
 
-        public async Task<T> SingleOrDefaultAsync<T>(Expression<Func<T, bool>> predicate)
-        {
-            return (await FindByPredicateAsync(predicate, SingleItemOptions)).SingleOrDefault();
-        }
+		public async Task<T> SingleOrDefaultAsync<T>(Expression<Func<T, bool>> predicate)
+		{
+			return (await FindByPredicateAsync(predicate, SingleItemOptions)).SingleOrDefault();
+		}
 
-        public T SingleOrDefault<T>(Expression<Func<T, bool>> predicate)
-        {
-            return FindByPredicate(predicate, SingleItemOptions).SingleOrDefault();
-        }
+		public T SingleOrDefault<T>(Expression<Func<T, bool>> predicate)
+		{
+			return FindByPredicate(predicate, SingleItemOptions).SingleOrDefault();
+		}
 
-        public async Task<T> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> predicate)
-        {
-            return (await FindByPredicateAsync(predicate, SingleItemOptions)).FirstOrDefault();
-        }
+		public async Task<T> FirstOrDefaultAsync<T>(Expression<Func<T, bool>> predicate)
+		{
+			return (await FindByPredicateAsync(predicate, SingleItemOptions)).FirstOrDefault();
+		}
 
-        public T FirstOrDefault<T>(Expression<Func<T, bool>> predicate)
-        {
-            return FindByPredicate(predicate, SingleItemOptions).FirstOrDefault();
-        }
+		public T FirstOrDefault<T>(Expression<Func<T, bool>> predicate)
+		{
+			return FindByPredicate(predicate, SingleItemOptions).FirstOrDefault();
+		}
 
-        protected FeedResponse<T> FindByPredicate<T>(Expression<Func<T, bool>> predicate, FeedOptions options = default)
-        {
-            var queryable = _client.CreateDocumentQuery<T>(_collectionUri, options ?? EmptyOptions);
-            var query = queryable.Where(predicate);
-            var response = query.AsDocumentQuery().ExecuteNextAsync<T>().ConfigureAwait(false).GetAwaiter().GetResult();
-            _metrics.Gauge(nameof(FeedResponse<T>.RequestCharge), () => response.RequestCharge);
-            return response;
-        }
+		protected FeedResponse<T> FindByPredicate<T>(Expression<Func<T, bool>> predicate, FeedOptions options = default)
+		{
+			var queryable = _client.CreateDocumentQuery<T>(_collectionUri, options ?? EmptyOptions);
+			var query = queryable.Where(predicate);
+			var response = query.AsDocumentQuery().ExecuteNextAsync<T>().ConfigureAwait(false).GetAwaiter().GetResult();
+			_metrics.Gauge(nameof(FeedResponse<T>.RequestCharge), () => response.RequestCharge);
+			return response;
+		}
 
-        protected async Task<FeedResponse<T>> FindByPredicateAsync<T>(Expression<Func<T, bool>> predicate,
-            FeedOptions options = default)
-        {
-            var queryable = _client.CreateDocumentQuery<T>(_collectionUri, options ?? EmptyOptions);
-            var query = queryable.Where(predicate);
-            var response = await query.AsDocumentQuery().ExecuteNextAsync<T>();
-            _metrics.Gauge(nameof(FeedResponse<T>.RequestCharge), () => response.RequestCharge);
-            return response;
-        }
-    }
+		protected async Task<FeedResponse<T>> FindByPredicateAsync<T>(Expression<Func<T, bool>> predicate,
+			FeedOptions options = default)
+		{
+			var queryable = _client.CreateDocumentQuery<T>(_collectionUri, options ?? EmptyOptions);
+			var query = queryable.Where(predicate);
+			var response = await query.AsDocumentQuery().ExecuteNextAsync<T>();
+			_metrics.Gauge(nameof(FeedResponse<T>.RequestCharge), () => response.RequestCharge);
+			return response;
+		}
+	}
 }

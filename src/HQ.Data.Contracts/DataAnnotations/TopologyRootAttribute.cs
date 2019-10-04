@@ -35,7 +35,8 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			var accessor = ReadAccessor.Create(value, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
+			var accessor = ReadAccessor.Create(value, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
+				out var members);
 
 			var nodes = new HashSet<INode<string>>();
 			var visited = new HashSet<object>();
@@ -43,7 +44,10 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 			var cycles = nodes.HasCycles(node => node.Dependents);
 
-			return cycles ? new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString, accessor.Type.Name)) : ValidationResult.Success;
+			return cycles
+				? new ValidationResult(
+					string.Format(CultureInfo.CurrentCulture, ErrorMessageString, accessor.Type.Name))
+				: ValidationResult.Success;
 		}
 
 		private static void WalkGraph(ISet<object> visited, object value, AccessorMembers members,

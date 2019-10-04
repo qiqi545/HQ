@@ -21,61 +21,65 @@ using System.Linq;
 
 namespace HQ.Common
 {
-    public static class CollectionExtensions
-    {
-        public static IEnumerable<List<T>> Split<T>(this IEnumerable<T> source, int size)
-        {
-            var toReturn = new List<T>(size);
-            foreach (var item in source)
-            {
-                toReturn.Add(item);
-                if (toReturn.Count != size)
-                {
-                    continue;
-                }
+	public static class CollectionExtensions
+	{
+		public static IEnumerable<List<T>> Split<T>(this IEnumerable<T> source, int size)
+		{
+			var toReturn = new List<T>(size);
+			foreach (var item in source)
+			{
+				toReturn.Add(item);
+				if (toReturn.Count != size)
+				{
+					continue;
+				}
 
-                yield return toReturn;
-                toReturn = new List<T>(size);
-            }
+				yield return toReturn;
+				toReturn = new List<T>(size);
+			}
 
-            if (toReturn.Any())
-            {
-                yield return toReturn;
-            }
-        }
+			if (toReturn.Any())
+			{
+				yield return toReturn;
+			}
+		}
 
-        public static SelfEnumerable<T> OrderByTopology<T>(this IReadOnlyCollection<T> collection, Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
-        {
-	        var sorted = TopologicalSort(collection, getDependentsFunc);
-	        if (sorted == null)
-	        {
-		        throw new InvalidOperationException($"{typeof(T).Name} collection has at least one cycle");
-	        }
-	        return sorted.Enumerate();
-        }
+		public static SelfEnumerable<T> OrderByTopology<T>(this IReadOnlyCollection<T> collection,
+			Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
+		{
+			var sorted = TopologicalSort(collection, getDependentsFunc);
+			if (sorted == null)
+			{
+				throw new InvalidOperationException($"{typeof(T).Name} collection has at least one cycle");
+			}
 
-        public static bool HasCycles<T>(this IReadOnlyCollection<T> collection, Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
-        {
+			return sorted.Enumerate();
+		}
+
+		public static bool HasCycles<T>(this IReadOnlyCollection<T> collection,
+			Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
+		{
 			var sorted = TopologicalSort(collection, getDependentsFunc);
 			return sorted == null;
-        }
+		}
 
-		private static List<T> TopologicalSort<T>(IReadOnlyCollection<T> collection, Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
-        {
-	        var edges = new List<Tuple<T, T>>();
+		private static List<T> TopologicalSort<T>(IReadOnlyCollection<T> collection,
+			Func<T, IEnumerable<T>> getDependentsFunc) where T : IEquatable<T>
+		{
+			var edges = new List<Tuple<T, T>>();
 
-	        foreach (var item in collection)
-	        {
-		        var dependents = getDependentsFunc(item);
+			foreach (var item in collection)
+			{
+				var dependents = getDependentsFunc(item);
 
-		        foreach (var dependent in dependents)
-		        {
-			        edges.Add(new Tuple<T, T>(item, dependent));
-		        }
-	        }
+				foreach (var dependent in dependents)
+				{
+					edges.Add(new Tuple<T, T>(item, dependent));
+				}
+			}
 
-	        var sorted = TopologicalSorter<T>.Sort(collection, edges);
-	        return sorted;
-        }
+			var sorted = TopologicalSorter<T>.Sort(collection, edges);
+			return sorted;
+		}
 	}
 }

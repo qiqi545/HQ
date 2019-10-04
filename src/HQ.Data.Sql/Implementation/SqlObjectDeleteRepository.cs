@@ -33,7 +33,8 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IObjectSaveRepository<TObject> _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<TObject> gets, IObjectSaveRepository<TObject> saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<TObject> gets,
+			IObjectSaveRepository<TObject> saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;
@@ -83,12 +84,7 @@ namespace HQ.Data.Sql.Implementation
 		public virtual Task<Operation> DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null)
 		{
 			var ids = objects.Skip((int) startingAt).Take(count.GetValueOrDefault()).Select(x => x.Id);
-			return DeleteAsync(new SegmentOptions
-			{
-				Ids = ids,
-				StartingAt = 0,
-				Count = count.GetValueOrDefault()
-			});
+			return DeleteAsync(new SegmentOptions {Ids = ids, StartingAt = 0, Count = count.GetValueOrDefault()});
 		}
 	}
 
@@ -99,7 +95,8 @@ namespace HQ.Data.Sql.Implementation
 		private readonly IObjectSaveRepository _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository gets, IObjectSaveRepository saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository gets,
+			IObjectSaveRepository saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;
@@ -146,15 +143,11 @@ namespace HQ.Data.Sql.Implementation
 			throw new NotImplementedException("Segmentation not available.");
 		}
 
-		public virtual Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null)
+		public virtual Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, IEnumerable<IObject> objects,
+			long startingAt = 0, int? count = null)
 		{
 			var ids = objects.Skip((int) startingAt).Take(count.GetValueOrDefault()).Select(x => x.Id);
-			return DeleteAsync(type, new SegmentOptions
-			{
-				Ids = ids,
-				StartingAt = 0,
-				Count = count.GetValueOrDefault()
-			});
+			return DeleteAsync(type, new SegmentOptions {Ids = ids, StartingAt = 0, Count = count.GetValueOrDefault()});
 		}
 	}
 }

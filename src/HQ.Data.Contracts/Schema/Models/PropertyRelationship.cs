@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public enum PropertyRelationship
-    {
-        Scalar,
-        OneToOne,
-        OneToMany
-    }
+	public enum PropertyRelationship
+	{
+		Scalar,
+		OneToOne,
+		OneToMany
+	}
 }

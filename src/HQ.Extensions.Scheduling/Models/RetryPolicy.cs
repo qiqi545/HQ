@@ -25,41 +25,41 @@ namespace HQ.Extensions.Scheduling.Models
 	///     A retry policy, for use with <see cref="PushQueue{T}" />
 	/// </summary>
 	public class RetryPolicy
-    {
-        private readonly IDictionary<int, RetryDecision> _rules;
-        private RetryDecision _default = RetryDecision.Requeue;
+	{
+		private readonly IDictionary<int, RetryDecision> _rules;
+		private RetryDecision _default = RetryDecision.Requeue;
 
-        public RetryPolicy()
-        {
-            _rules = new Dictionary<int, RetryDecision>();
-            RequeueInterval = a => TimeSpan.FromSeconds(5 + Math.Pow(a, 4));
-        }
+		public RetryPolicy()
+		{
+			_rules = new Dictionary<int, RetryDecision>();
+			RequeueInterval = a => TimeSpan.FromSeconds(5 + Math.Pow(a, 4));
+		}
 
-        public Func<int, TimeSpan> RequeueInterval { get; set; }
+		public Func<int, TimeSpan> RequeueInterval { get; set; }
 
-        public void Default(RetryDecision action)
-        {
-            _default = action;
-        }
+		public void Default(RetryDecision action)
+		{
+			_default = action;
+		}
 
-        public void After(int tries, RetryDecision action)
-        {
-            _rules.Add(tries, action);
-        }
+		public void After(int tries, RetryDecision action)
+		{
+			_rules.Add(tries, action);
+		}
 
-        public void Clear()
-        {
-            _rules.Clear();
-        }
+		public void Clear()
+		{
+			_rules.Clear();
+		}
 
-        public RetryDecision DecideOn<T>(T @event, int attempts)
-        {
-            foreach (var threshold in _rules.Keys.OrderBy(k => k).Where(threshold => attempts >= threshold))
-            {
-                return _rules[threshold];
-            }
+		public RetryDecision DecideOn<T>(T @event, int attempts)
+		{
+			foreach (var threshold in _rules.Keys.OrderBy(k => k).Where(threshold => attempts >= threshold))
+			{
+				return _rules[threshold];
+			}
 
-            return _default;
-        }
-    }
+			return _default;
+		}
+	}
 }

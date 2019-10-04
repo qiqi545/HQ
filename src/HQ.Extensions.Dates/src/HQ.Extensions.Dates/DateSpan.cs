@@ -19,383 +19,383 @@ using System;
 
 namespace HQ.Extensions.Dates
 {
-    /// <summary>
-    /// A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
-    /// but does so in a way that respects the number of actual days in the elapsed years and months.
-    /// </summary>
-    [Serializable]
-    public struct DateSpan
-    {
-        /// <param name="start">The start date</param>
-        /// <param name="end">The end date</param>
-        /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
-        public DateSpan(DateTime start, DateTime end, bool excludeEndDate = true) : this()
-        {
-            Initialize(start, end, excludeEndDate);
-        }
+	/// <summary>
+	///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,
+	///     but does so in a way that respects the number of actual days in the elapsed years and months.
+	/// </summary>
+	[Serializable]
+	public struct DateSpan
+	{
+		/// <param name="start">The start date</param>
+		/// <param name="end">The end date</param>
+		/// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
+		public DateSpan(DateTime start, DateTime end, bool excludeEndDate = true) : this() =>
+			Initialize(start, end, excludeEndDate);
 
-        /// <param name="start">The start date</param>
-        /// <param name="end">The end date</param>
-        /// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
-        public DateSpan(DateTimeOffset start, DateTimeOffset end, bool excludeEndDate = true) : this()
-        {
-            Initialize(start.DateTime, end.DateTime, excludeEndDate);
-        }
+		/// <param name="start">The start date</param>
+		/// <param name="end">The end date</param>
+		/// <param name="excludeEndDate">If true, the span is exclusive of the end date</param>
+		public DateSpan(DateTimeOffset start, DateTimeOffset end, bool excludeEndDate = true) : this() =>
+			Initialize(start.DateTime, end.DateTime, excludeEndDate);
 
-        private void Initialize(DateTime start, DateTime end, bool excludeEndDate)
-        {
-            if (start > end)
-            {
-                var temp = start;
-                start = end;
-                end = temp;
-            }
+		private void Initialize(DateTime start, DateTime end, bool excludeEndDate)
+		{
+			if (start > end)
+			{
+				var temp = start;
+				start = end;
+				end = temp;
+			}
 
-            CalculateYears(start, end);
-            CalculateMonths(start, end);
-            CalculateDays(start, end, excludeEndDate);
-            CalculateHours(start, end);
-            CalculateMinutes(start, end);
-            CalculateSeconds(start, end);
-        }
+			CalculateYears(start, end);
+			CalculateMonths(start, end);
+			CalculateDays(start, end, excludeEndDate);
+			CalculateHours(start, end);
+			CalculateMinutes(start, end);
+			CalculateSeconds(start, end);
+		}
 
-        /// <summary>
-        /// The number of discrete years occurring in this span
-        /// </summary>
-        public int Years { get; private set; }
+		/// <summary>
+		///     The number of discrete years occurring in this span
+		/// </summary>
+		public int Years { get; private set; }
 
-        /// <summary>
-        /// The number of discrete months occurring in this span
-        /// </summary>
-        public int Months { get; private set; }
+		/// <summary>
+		///     The number of discrete months occurring in this span
+		/// </summary>
+		public int Months { get; private set; }
 
-        /// <summary>
-        /// The number of discrete weeks occurring in this span
-        /// </summary>
-        public int Weeks { get; private set; }
+		/// <summary>
+		///     The number of discrete weeks occurring in this span
+		/// </summary>
+		public int Weeks { get; private set; }
 
-        /// <summary>
-        /// The number of discrete days occurring in this span
-        /// </summary>
-        public int Days { get; private set; }
+		/// <summary>
+		///     The number of discrete days occurring in this span
+		/// </summary>
+		public int Days { get; private set; }
 
-        /// <summary>
-        /// The number of discrete hours occurring in this span
-        /// </summary>
-        public int Hours { get; private set; }
+		/// <summary>
+		///     The number of discrete hours occurring in this span
+		/// </summary>
+		public int Hours { get; private set; }
 
-        /// <summary>
-        /// The number of discrete minutes occurring in this span
-        /// </summary>
-        public int Minutes { get; private set; }
+		/// <summary>
+		///     The number of discrete minutes occurring in this span
+		/// </summary>
+		public int Minutes { get; private set; }
 
-        /// <summary>
-        /// The number of discrete seconds occurring in this span
-        /// </summary>
-        public int Seconds { get; private set; }
+		/// <summary>
+		///     The number of discrete seconds occurring in this span
+		/// </summary>
+		public int Seconds { get; private set; }
 
-        /// <summary>
-        /// Gets the scalar difference between two dates given a <see cref="DateInterval"/> value.
-        /// </summary>
-        /// <param name="start">The interval to calculate</param>
-        /// <param name="end">The start date</param>
-        /// <param name="excludeEndDate">The end date</param>
-        /// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
-        /// <returns></returns>
-        public static long GetDifference(DateInterval interval, DateTime start, DateTime end, bool excludeEndDate = false)
-        {
-            return CalculateDifference(interval, start, end, excludeEndDate);
-        }
+		/// <summary>
+		///     Gets the scalar difference between two dates given a <see cref="DateInterval" /> value.
+		/// </summary>
+		/// <param name="start">The interval to calculate</param>
+		/// <param name="end">The start date</param>
+		/// <param name="excludeEndDate">The end date</param>
+		/// <param name="excludeEndDate">If true, the difference is exclusive of the end date</param>
+		/// <returns></returns>
+		public static long GetDifference(DateInterval interval, DateTime start, DateTime end,
+			bool excludeEndDate = false)
+		{
+			return CalculateDifference(interval, start, end, excludeEndDate);
+		}
 
-        public static long GetDifference(DateInterval interval, DateTimeOffset start, DateTimeOffset end, bool excludeEndDate = false)
-        {
-            return CalculateDifference(interval, start.DateTime, end.DateTime, excludeEndDate);
-        }
+		public static long GetDifference(DateInterval interval, DateTimeOffset start, DateTimeOffset end,
+			bool excludeEndDate = false)
+		{
+			return CalculateDifference(interval, start.DateTime, end.DateTime, excludeEndDate);
+		}
 
-        private static long CalculateDifference(DateInterval interval, DateTime start, DateTime end, bool excludeEndDate)
-        {
-            long sum = 0;
-            var span = new DateSpan(start, end);
+		private static long CalculateDifference(DateInterval interval, DateTime start, DateTime end,
+			bool excludeEndDate)
+		{
+			long sum = 0;
+			var span = new DateSpan(start, end);
 
-            long differenceInDays = GetDifferenceInDays(start, span, excludeEndDate);
+			var differenceInDays = GetDifferenceInDays(start, span, excludeEndDate);
 
-            switch (interval)
-            {
-                case DateInterval.Years:
-                    sum += span.Years;
-                    break;
-                case DateInterval.Months:
-                    if (span.Years > 0)
-                        sum += span.Years * 12;
-                    sum += span.Months;
-                    sum += span.Weeks / 4; // Helps resolve lower resolution
-                    break;
-                case DateInterval.Weeks:
-                    sum = differenceInDays / 7;
-                    break;
-                case DateInterval.Days:
-                    sum = differenceInDays;
-                    break;
-                case DateInterval.Hours:
-                    sum = differenceInDays * 24;
-                    sum += span.Hours;
-                    break;
-                case DateInterval.Minutes:
-                    sum = differenceInDays * 24 * 60;
-                    sum += span.Hours * 60;
-                    sum += span.Minutes;
-                    break;
-                case DateInterval.Seconds:
-                    sum = differenceInDays * 24 * 60 * 60;
-                    sum += span.Hours * 60 * 60;
-                    sum += span.Minutes * 60;
-                    sum += span.Seconds;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(interval));
-            }
+			switch (interval)
+			{
+				case DateInterval.Years:
+					sum += span.Years;
+					break;
+				case DateInterval.Months:
+					if (span.Years > 0)
+						sum += span.Years * 12;
+					sum += span.Months;
+					sum += span.Weeks / 4; // Helps resolve lower resolution
+					break;
+				case DateInterval.Weeks:
+					sum = differenceInDays / 7;
+					break;
+				case DateInterval.Days:
+					sum = differenceInDays;
+					break;
+				case DateInterval.Hours:
+					sum = differenceInDays * 24;
+					sum += span.Hours;
+					break;
+				case DateInterval.Minutes:
+					sum = differenceInDays * 24 * 60;
+					sum += span.Hours * 60;
+					sum += span.Minutes;
+					break;
+				case DateInterval.Seconds:
+					sum = differenceInDays * 24 * 60 * 60;
+					sum += span.Hours * 60 * 60;
+					sum += span.Minutes * 60;
+					sum += span.Seconds;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(interval));
+			}
 
-            return sum;
-        }
+			return sum;
+		}
 
-        private static long GetDifferenceInDays(DateTime start, DateSpan span, bool excludeEndDate = true)
-        {
-            var sum = 0;
+		private static long GetDifferenceInDays(DateTime start, DateSpan span, bool excludeEndDate = true)
+		{
+			var sum = 0;
 
-            if (span.Years > 0)
-            {
-                for (var i = 0; i < span.Years; i++)
-                {
-                    var year = start.Year + i;
-                    sum += DateTime.IsLeapYear(year) ? 366 : 365;
-                }
-            }
+			if (span.Years > 0)
+			{
+				for (var i = 0; i < span.Years; i++)
+				{
+					var year = start.Year + i;
+					sum += DateTime.IsLeapYear(year) ? 366 : 365;
+				}
+			}
 
-            if (span.Months > 0)
-            {
-                for (var i = 1; i <= span.Months; i++)
-                {
-                    var month = start.Month + i;
-                    if (month >= 13)
-                    {
-                        month -= 12;
-                    }
-                    sum += DateTime.DaysInMonth(start.Year + span.Years, month);
-                }
-            }
+			if (span.Months > 0)
+			{
+				for (var i = 1; i <= span.Months; i++)
+				{
+					var month = start.Month + i;
+					if (month >= 13)
+					{
+						month -= 12;
+					}
 
-            sum += span.Weeks * 7;
+					sum += DateTime.DaysInMonth(start.Year + span.Years, month);
+				}
+			}
 
-            sum += span.Days;
+			sum += span.Weeks * 7;
 
-            if (excludeEndDate)
-            {
-                sum--;
-            }
+			sum += span.Days;
 
-            return sum;
-        }
+			if (excludeEndDate)
+			{
+				sum--;
+			}
 
-        private void CalculateSeconds(DateTime start, DateTime end)
-        {
-            Seconds = end.Second - start.Second;
+			return sum;
+		}
 
-            if (end.Second < start.Second)
-            {
-                Seconds = 60 - start.Second + end.Second;
-            }
-        }
+		private void CalculateSeconds(DateTime start, DateTime end)
+		{
+			Seconds = end.Second - start.Second;
 
-        private void CalculateMinutes(DateTime start, DateTime end)
-        {
-            Minutes = end.Minute - start.Minute;
+			if (end.Second < start.Second)
+			{
+				Seconds = 60 - start.Second + end.Second;
+			}
+		}
 
-            if (end.Minute < start.Minute)
-            {
-                Minutes = 60 - start.Minute + end.Minute;
-            }
+		private void CalculateMinutes(DateTime start, DateTime end)
+		{
+			Minutes = end.Minute - start.Minute;
 
-            if (Minutes <= 0)
-            {
-                return;
-            }
+			if (end.Minute < start.Minute)
+			{
+				Minutes = 60 - start.Minute + end.Minute;
+			}
 
-            if (end.Second < start.Second)
-            {
-                Minutes--;
-            }
-        }
+			if (Minutes <= 0)
+			{
+				return;
+			}
 
-        private void CalculateHours(DateTime start, DateTime end)
-        {
-            Hours = end.Hour - start.Hour;
+			if (end.Second < start.Second)
+			{
+				Minutes--;
+			}
+		}
 
-            if (end.Hour < start.Hour)
-            {
-                Hours = 24 - start.Hour + end.Hour;
-            }
+		private void CalculateHours(DateTime start, DateTime end)
+		{
+			Hours = end.Hour - start.Hour;
 
-            if (Hours <= 0)
-            {
-                return;
-            }
+			if (end.Hour < start.Hour)
+			{
+				Hours = 24 - start.Hour + end.Hour;
+			}
 
-            if (end.Minute >= start.Minute)
-            {
-                if (end.Minute != start.Minute ||
-                    end.Second >= start.Second)
-                {
-                    return;
-                }
+			if (Hours <= 0)
+			{
+				return;
+			}
 
-                Hours--;
-            }
-            else
-            {
-                Hours--;
-            }
-        }
+			if (end.Minute >= start.Minute)
+			{
+				if (end.Minute != start.Minute ||
+				    end.Second >= start.Second)
+				{
+					return;
+				}
 
-        private void CalculateDays(DateTime start, DateTime end, bool excludeEndDate = false)
-        {
-            Days = end.Day - start.Day;
+				Hours--;
+			}
+			else
+			{
+				Hours--;
+			}
+		}
 
-            if (end.Day < start.Day)
-            {
-                Days = DateTime.DaysInMonth(start.Year, start.Month) - start.Day + end.Day;
-            }
+		private void CalculateDays(DateTime start, DateTime end, bool excludeEndDate = false)
+		{
+			Days = end.Day - start.Day;
 
-            if (Days <= 0)
-            {
-                return;
-            }
+			if (end.Day < start.Day)
+			{
+				Days = DateTime.DaysInMonth(start.Year, start.Month) - start.Day + end.Day;
+			}
 
-            if (end.Hour < start.Hour)
-            {
-                Days--;
-            }
-            else if (end.Hour == start.Hour)
-            {
-                if (end.Minute >= start.Minute)
-                {
-                    if (end.Minute == start.Minute && end.Second < start.Second)
-                    {
-                        Days--;
-                    }
-                }
-                else
-                {
-                    Days--;
-                }
-            }
+			if (Days <= 0)
+			{
+				return;
+			}
 
-            Weeks = Days / 7;
+			if (end.Hour < start.Hour)
+			{
+				Days--;
+			}
+			else if (end.Hour == start.Hour)
+			{
+				if (end.Minute >= start.Minute)
+				{
+					if (end.Minute == start.Minute && end.Second < start.Second)
+					{
+						Days--;
+					}
+				}
+				else
+				{
+					Days--;
+				}
+			}
 
-            Days = Days % 7;
+			Weeks = Days / 7;
 
-            if (!excludeEndDate)
-            {
-                Days++;
-            }
-        }
+			Days = Days % 7;
 
-        private void CalculateMonths(DateTime start, DateTime end)
-        {
-            Months = end.Month - start.Month;
+			if (!excludeEndDate)
+			{
+				Days++;
+			}
+		}
 
-            if (end.Month < start.Month || (end.Month <= start.Month && Years > 1))
-            {
-                Months = 12 - start.Month + end.Month;
-            }
+		private void CalculateMonths(DateTime start, DateTime end)
+		{
+			Months = end.Month - start.Month;
 
-            if (Months <= 0)
-            {
-                return;
-            }
+			if (end.Month < start.Month || end.Month <= start.Month && Years > 1)
+			{
+				Months = 12 - start.Month + end.Month;
+			}
 
-            if (end.Day < start.Day)
-            {
-                Months--;
-            }
-            else if (end.Day == start.Day)
-            {
-                if (end.Hour < start.Hour)
-                {
-                    Months--;
-                }
-                else if (end.Hour == start.Hour)
-                {
-                    if (end.Minute >= start.Minute)
-                    {
-                        if (end.Minute != start.Minute || end.Second >= start.Second)
-                        {
-                            return;
-                        }
+			if (Months <= 0)
+			{
+				return;
+			}
 
-                        Months--;
-                    }
-                    else
-                    {
-                        Months--;
-                    }
-                }
-            }
-        }
+			if (end.Day < start.Day)
+			{
+				Months--;
+			}
+			else if (end.Day == start.Day)
+			{
+				if (end.Hour < start.Hour)
+				{
+					Months--;
+				}
+				else if (end.Hour == start.Hour)
+				{
+					if (end.Minute >= start.Minute)
+					{
+						if (end.Minute != start.Minute || end.Second >= start.Second)
+						{
+							return;
+						}
 
-        private void CalculateYears(DateTime start, DateTime end)
-        {
-            Years = end.Year - start.Year;
+						Months--;
+					}
+					else
+					{
+						Months--;
+					}
+				}
+			}
+		}
 
-            if (Years <= 0)
-            {
-                return;
-            }
+		private void CalculateYears(DateTime start, DateTime end)
+		{
+			Years = end.Year - start.Year;
 
-            if (end.Month < start.Month)
-            {
-                Years--;
-            }
-            else if (end.Month == start.Month)
-            {
-                if (end.Day >= start.Day)
-                {
-                    if (end.Day != start.Day)
-                    {
-                        return;
-                    }
+			if (Years <= 0)
+			{
+				return;
+			}
 
-                    if (end.Hour < start.Hour)
-                    {
-                        Years--;
-                    }
+			if (end.Month < start.Month)
+			{
+				Years--;
+			}
+			else if (end.Month == start.Month)
+			{
+				if (end.Day >= start.Day)
+				{
+					if (end.Day != start.Day)
+					{
+						return;
+					}
 
-                    else if (end.Hour == start.Hour)
-                    {
-                        if (end.Minute >= start.Minute)
-                        {
-                            if (end.Minute != start.Minute)
-                            {
-                                return;
-                            }
+					if (end.Hour < start.Hour)
+					{
+						Years--;
+					}
 
-                            if (end.Second >= start.Second)
-                            {
-                                return;
-                            }
+					else if (end.Hour == start.Hour)
+					{
+						if (end.Minute >= start.Minute)
+						{
+							if (end.Minute != start.Minute)
+							{
+								return;
+							}
 
-                            Years--;
-                        }
-                        else
-                        {
-                            Years--;
-                        }
-                    }
-                }
-                else
-                {
-                    Years--;
-                }
-            }
-        }
-    }
+							if (end.Second >= start.Second)
+							{
+								return;
+							}
+
+							Years--;
+						}
+						else
+						{
+							Years--;
+						}
+					}
+				}
+				else
+				{
+					Years--;
+				}
+			}
+		}
+	}
 }

@@ -22,5 +22,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Platform.Security.Internal
 {
-    internal sealed class InternalsVisibleTo { }
+	internal sealed class InternalsVisibleTo
+	{
+	}
 }

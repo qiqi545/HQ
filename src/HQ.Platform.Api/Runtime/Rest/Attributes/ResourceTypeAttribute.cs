@@ -19,13 +19,10 @@ using System;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class ResourceTypeAttribute : Attribute
-    {
-        public ResourceTypeAttribute(Type type)
-        {
-            Type = type;
-        }
+	public class ResourceTypeAttribute : Attribute
+	{
+		public ResourceTypeAttribute(Type type) => Type = type;
 
-        public Type Type { get; }
-    }
+		public Type Type { get; }
+	}
 }

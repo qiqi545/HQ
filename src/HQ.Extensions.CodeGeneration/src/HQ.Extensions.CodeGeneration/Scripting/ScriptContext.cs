@@ -17,9 +17,9 @@
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
-    public class ScriptContext
-    {
-        // ReSharper disable once InconsistentNaming
-        public object @this;
-    }
+	public class ScriptContext
+	{
+		// ReSharper disable once InconsistentNaming
+		public object @this;
+	}
 }

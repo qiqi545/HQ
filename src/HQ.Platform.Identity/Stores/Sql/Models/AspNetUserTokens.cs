@@ -19,16 +19,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Identity.Stores.Sql.Models
 {
-    public class AspNetUserTokens<TKey>
-    {
-        [Required] public TKey TenantId { get; set; }
+	public class AspNetUserTokens<TKey>
+	{
+		[Required] public TKey TenantId { get; set; }
 
-        [Required] public TKey UserId { get; set; }
+		[Required] public TKey UserId { get; set; }
 
-        [Required] public string Name { get; set; }
+		[Required] public string Name { get; set; }
 
-        [Required] public string LoginProvider { get; set; }
+		[Required] public string LoginProvider { get; set; }
 
-        [Required] public string Value { get; set; }
-    }
+		[Required] public string Value { get; set; }
+	}
 }

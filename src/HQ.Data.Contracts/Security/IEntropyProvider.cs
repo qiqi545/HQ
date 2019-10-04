@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Security
 {
-    public interface IEntropyProvider<in TSubject>
-    {
-        Task<string> GetValueAsync(TSubject subject, string modifier);
-    }
+	public interface IEntropyProvider<in TSubject>
+	{
+		Task<string> GetValueAsync(TSubject subject, string modifier);
+	}
 }

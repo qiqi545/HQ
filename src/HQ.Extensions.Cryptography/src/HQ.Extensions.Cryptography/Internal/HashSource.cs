@@ -19,12 +19,12 @@ using System;
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    [Flags]
-    internal enum HashSource : byte
-    {
-        SystemNetManaged,
-        SystemNetFips,
-        SodiumCore,
-        NSec
-    }
+	[Flags]
+	internal enum HashSource : byte
+	{
+		SystemNetManaged,
+		SystemNetFips,
+		SodiumCore,
+		NSec
+	}
 }

@@ -19,10 +19,10 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class CanonicalRoutesOptions : FeatureToggle
-    {
-        public bool LowercaseUrls { get; set; } = true;
-        public bool LowercaseQueryStrings { get; set; } = false;
-        public bool AppendTrailingSlash { get; set; } = true;
-    }
+	public class CanonicalRoutesOptions : FeatureToggle
+	{
+		public bool LowercaseUrls { get; set; } = true;
+		public bool LowercaseQueryStrings { get; set; } = false;
+		public bool AppendTrailingSlash { get; set; } = true;
+	}
 }

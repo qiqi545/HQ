@@ -39,16 +39,19 @@ namespace HQ.Integration.DocumentDb.Runtime
 {
 	public static class Add
 	{
-		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, IConfiguration dbConfig)
+		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString,
+			ConnectionScope scope, IConfiguration dbConfig)
 		{
 			return dbConfig == null
 				? AddDocumentDbRuntimeStores(builder, connectionString, scope)
 				: AddDocumentDbRuntimeStores(builder, connectionString, scope, dbConfig.FastBind);
 		}
 
-		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope = ConnectionScope.ByRequest)
+		public static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString,
+			ConnectionScope scope = ConnectionScope.ByRequest)
 		{
-			return AddDocumentDbRuntimeStores(builder, connectionString, scope, o => { DefaultDbOptions(connectionString, o); });
+			return AddDocumentDbRuntimeStores(builder, connectionString, scope,
+				o => { DefaultDbOptions(connectionString, o); });
 		}
 
 		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
@@ -63,11 +66,12 @@ namespace HQ.Integration.DocumentDb.Runtime
 			o.PartitionKeyPaths = new[] {"id"};
 		}
 
-		private static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString, ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
+		private static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString,
+			ConnectionScope scope, Action<DocumentDbOptions> configureDatabase)
 		{
 			var slot = Constants.ConnectionSlots.Runtime;
 
-			if(configureDatabase != null)
+			if (configureDatabase != null)
 				builder.Services.Configure(slot, configureDatabase);
 
 			var serviceProvider = builder.Services.BuildServiceProvider();
@@ -78,12 +82,14 @@ namespace HQ.Integration.DocumentDb.Runtime
 			var dialect = new DocumentDbDialect();
 			SqlBuilder.Dialect = dialect;
 
-			builder.AddSqlRuntimeStores<DocumentDbConnectionFactory>(connectionString, scope, OnCommand(), OnConnection);
+			builder.AddSqlRuntimeStores<DocumentDbConnectionFactory>(connectionString, scope, OnCommand(),
+				OnConnection);
 
 			builder.Services.AddMetrics();
 			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
 			builder.Services.TryAddSingleton(dialect);
-			builder.Services.TryAddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
+			builder.Services
+				.TryAddSingleton<IDataBatchOperation<DocumentDbBatchOptions>, DocumentDbBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 

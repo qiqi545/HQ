@@ -25,86 +25,86 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class QueryBuilder
-    {
-        public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<Filter> filters, IList<Projection> projections, IList<Sort> orderByColumns)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
-            });
-        }
+	public static class QueryBuilder
+	{
+		public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
+			IList<Filter> filters, IList<Projection> projections, IList<Sort> orderByColumns)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
+			});
+		}
 
-        public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<Filter> filters, IList<Projection> projections, IList<Tuple<string, string, bool>> orderByColumns)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
-            });
-        }
+		public static string Query(this ISqlDialect d, string table, string schema, IList<string> columns,
+			IList<Filter> filters, IList<Projection> projections, IList<Tuple<string, string, bool>> orderByColumns)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
+			});
+		}
 
-        public static string Query<T>(this ISqlDialect d, string table, string schema, IList<string> columns,
-            IList<Filter> filters, IList<Projection> projections, Expression<Func<T, object>>[] orderByColumns)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
-            });
-        }
+		public static string Query<T>(this ISqlDialect d, string table, string schema, IList<string> columns,
+			IList<Filter> filters, IList<Projection> projections, Expression<Func<T, object>>[] orderByColumns)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				AppendQuery(sb, d, table, schema, columns, filters, projections, orderByColumns);
+			});
+		}
 
-        internal static void AppendQuery(StringBuilder sb, ISqlDialect d, string table, string schema,
-            IList<string> columns, IList<Filter> filters, IList<Projection> projections, IList<Sort> orderByColumns)
-        {
-            ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
+		internal static void AppendQuery(StringBuilder sb, ISqlDialect d, string table, string schema,
+			IList<string> columns, IList<Filter> filters, IList<Projection> projections, IList<Sort> orderByColumns)
+		{
+			ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
 
-            if (filters?.Count > 0)
-            {
-                sb.Append(' ');
-                FilterBuilder.AppendWhere(sb, d, filters);
-            }
+			if (filters?.Count > 0)
+			{
+				sb.Append(' ');
+				FilterBuilder.AppendWhere(sb, d, filters);
+			}
 
-            if (orderByColumns?.Count > 0)
-            {
-                sb.Append(' ');
-                OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
-            }
-        }
+			if (orderByColumns?.Count > 0)
+			{
+				sb.Append(' ');
+				OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
+			}
+		}
 
-        internal static void AppendQuery(StringBuilder sb, ISqlDialect d, string table, string schema,
-            IList<string> columns, IList<Filter> filters, IList<Projection> projections,
-            IList<Tuple<string, string, bool>> orderByColumns)
-        {
-            ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
+		internal static void AppendQuery(StringBuilder sb, ISqlDialect d, string table, string schema,
+			IList<string> columns, IList<Filter> filters, IList<Projection> projections,
+			IList<Tuple<string, string, bool>> orderByColumns)
+		{
+			ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
 
-            if (filters?.Count > 0)
-            {
-                sb.Append(' ');
-                FilterBuilder.AppendWhere(sb, d, filters);
-            }
+			if (filters?.Count > 0)
+			{
+				sb.Append(' ');
+				FilterBuilder.AppendWhere(sb, d, filters);
+			}
 
-            if (orderByColumns?.Count > 0)
-            {
-                sb.Append(' ');
-                OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
-            }
-        }
+			if (orderByColumns?.Count > 0)
+			{
+				sb.Append(' ');
+				OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
+			}
+		}
 
-        internal static void AppendQuery<T>(StringBuilder sb, ISqlDialect d, string table, string schema,
-            IList<string> columns, IList<Filter> filters, IList<Projection> projections,
-            Expression<Func<T, object>>[] orderByColumns)
-        {
-            ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
+		internal static void AppendQuery<T>(StringBuilder sb, ISqlDialect d, string table, string schema,
+			IList<string> columns, IList<Filter> filters, IList<Projection> projections,
+			Expression<Func<T, object>>[] orderByColumns)
+		{
+			ProjectionBuilder.AppendSelect(sb, d, table, schema, columns, projections, filters);
 
-            if (filters?.Count > 0)
-            {
-                sb.Append(' ');
-                FilterBuilder.AppendWhere(sb, d, filters);
-            }
+			if (filters?.Count > 0)
+			{
+				sb.Append(' ');
+				FilterBuilder.AppendWhere(sb, d, filters);
+			}
 
-            if (orderByColumns?.Length > 0)
-                OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
-        }
-    }
+			if (orderByColumns?.Length > 0)
+				OrderByBuilder.AppendOrderBy(sb, d, orderByColumns);
+		}
+	}
 }

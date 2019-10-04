@@ -34,192 +34,194 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class RoleStore<TKey, TRole> :
-        IComponentStore<TKey, TRole>,
-        IRoleStoreExtended<TRole>,
-        IQueryableRoleStore<TRole>
-        where TRole : IdentityRoleExtended<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly IDataConnection _connection;
-        private readonly IQueryableProvider<TRole> _queryable;
-        private readonly TKey _tenantId;
-        private readonly TKey _applicationId;
+	public partial class RoleStore<TKey, TRole> :
+		IComponentStore<TKey, TRole>,
+		IRoleStoreExtended<TRole>,
+		IQueryableRoleStore<TRole>
+		where TRole : IdentityRoleExtended<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		private readonly TKey _applicationId;
+		private readonly IDataConnection _connection;
+		private readonly IQueryableProvider<TRole> _queryable;
+		private readonly TKey _tenantId;
 
-        public RoleStore(IDataConnection<IdentityBuilder> connection, IQueryableProvider<TRole> queryable, IServiceProvider serviceProvider)
-        {
-            serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
-            serviceProvider.TryGetTenantId(out _tenantId);
-            serviceProvider.TryGetApplicationId(out _applicationId);
+		public RoleStore(IDataConnection<IdentityBuilder> connection, IQueryableProvider<TRole> queryable,
+			IServiceProvider serviceProvider)
+		{
+			serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
+			serviceProvider.TryGetTenantId(out _tenantId);
+			serviceProvider.TryGetApplicationId(out _applicationId);
 
-            CancellationToken = cancellationToken;
+			CancellationToken = cancellationToken;
 
-            _connection = connection;
-            _queryable = queryable;
-        }
+			_connection = connection;
+			_queryable = queryable;
+		}
 
-        public IQueryable<TRole> Roles => MaybeQueryable();
-        
-        public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		#region Component Store
 
-            role.ApplicationId = _applicationId;
-            role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+		async Task<Operation<ObjectSave>> IComponentStore<TKey, TRole>.CreateAsync(TRole role,
+			CancellationToken cancellationToken)
+		{
+			var result = await CreateAsync(role, cancellationToken);
+			return result.ToOperation(ObjectSave.Created);
+		}
 
-            if (role.Id == null)
-            {
-                var idType = typeof(TKey);
-                var id = Guid.NewGuid();
-                if (idType == typeof(Guid))
-                {
-                    role.Id = (TKey) (object) id;
-                }
-                else if (idType == typeof(string))
-                {
-                    role.Id = (TKey) (object) $"{id}";
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
+		#endregion
 
-            var query = SqlBuilder.Insert(role);
-            _connection.SetTypeInfo(typeof(TRole));
-            var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+		public IQueryable<TRole> Roles => MaybeQueryable();
 
-            Debug.Assert(inserted == 1);
-            return IdentityResult.Success;
-        }
+		public async Task<IdentityResult> CreateAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			role.ApplicationId = _applicationId;
+			role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			if (role.Id == null)
+			{
+				var idType = typeof(TKey);
+				var id = Guid.NewGuid();
+				if (idType == typeof(Guid))
+				{
+					role.Id = (TKey) (object) id;
+				}
+				else if (idType == typeof(string))
+				{
+					role.Id = (TKey) (object) $"{id}";
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 
-            var query = SqlBuilder.Update(role, new {role.Id, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TRole));
-            var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			var query = SqlBuilder.Insert(role);
+			_connection.SetTypeInfo(typeof(TRole));
+			var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(updated == 1);
-            return IdentityResult.Success;
-        }
+			Debug.Assert(inserted == 1);
+			return IdentityResult.Success;
+		}
 
-        public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IdentityResult> UpdateAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Delete<TRole>(new {role.Id, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TRole));
-            var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			var query = SqlBuilder.Update(role, new {role.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TRole));
+			var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(deleted == 1);
-            return IdentityResult.Success;
-        }
+			Debug.Assert(updated == 1);
+			return IdentityResult.Success;
+		}
 
-        public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(role?.Id?.ToString());
-        }
+		public async Task<IdentityResult> DeleteAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(role?.Name);
-        }
+			role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-        public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            role.Name = roleName;
-            return Task.CompletedTask;
-        }
+			var query = SqlBuilder.Delete<TRole>(new {role.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TRole));
+			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-        public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(role?.NormalizedName);
-        }
+			Debug.Assert(deleted == 1);
+			return IdentityResult.Success;
+		}
 
-        public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            role.NormalizedName = normalizedName;
-            return Task.CompletedTask;
-        }
+		public Task<string> GetRoleIdAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(role?.Id?.ToString());
+		}
 
-        public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public Task<string> GetRoleNameAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(role?.Name);
+		}
 
-            var query = SqlBuilder.Select<TRole>(new {Id = roleId, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TRole));
+		public Task SetRoleNameAsync(TRole role, string roleName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			role.Name = roleName;
+			return Task.CompletedTask;
+		}
 
-            var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
-            return role;
-        }
+		public Task<string> GetNormalizedRoleNameAsync(TRole role, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(role?.NormalizedName);
+		}
 
-        public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public Task SetNormalizedRoleNameAsync(TRole role, string normalizedName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			role.NormalizedName = normalizedName;
+			return Task.CompletedTask;
+		}
 
-            var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TRole));
+		public async Task<TRole> FindByIdAsync(string roleId, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
-            return role;
-        }
+			var query = SqlBuilder.Select<TRole>(new {Id = roleId, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TRole));
 
-        public void Dispose() { }
+			var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
+			return role;
+		}
 
-        public CancellationToken CancellationToken { get; }
+		public async Task<TRole> FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        private IQueryable<TRole> MaybeQueryable()
-        {
-            if (_queryable.IsSafe)
-            {
-                return _queryable.Queryable;
-            }
+			var query = SqlBuilder.Select<TRole>(new {NormalizedName = normalizedRoleName, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TRole));
 
-            if (_queryable.SupportsUnsafe)
-            {
-                return _queryable.UnsafeQueryable;
-            }
+			var role = await _connection.Current.QuerySingleOrDefaultAsync<TRole>(query.Sql, query.Parameters);
+			return role;
+		}
 
-            return Task.Run(() => GetAllRolesAsync(CancellationToken), CancellationToken).Result.AsQueryable();
-        }
+		public void Dispose() { }
 
-        private async Task<IEnumerable<TRole>> GetAllRolesAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var query = SqlBuilder.Select<TRole>(new {TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TRole));
-            var roles = await _connection.Current.QueryAsync<TRole>(query.Sql, query.Parameters);
-            return roles;
-        }
+		public CancellationToken CancellationToken { get; }
 
-        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var query = SqlBuilder.Count<TRole>();
-            _connection.SetTypeInfo(typeof(TRole));
-            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
-            return count;
-        }
+		public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Count<TRole>();
+			_connection.SetTypeInfo(typeof(TRole));
+			var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+			return count;
+		}
 
-        #region Component Store
+		private IQueryable<TRole> MaybeQueryable()
+		{
+			if (_queryable.IsSafe)
+			{
+				return _queryable.Queryable;
+			}
 
-        async Task<Operation<ObjectSave>> IComponentStore<TKey, TRole>.CreateAsync(TRole role, CancellationToken cancellationToken)
-        {
-            var result = await CreateAsync(role, cancellationToken);
-            return result.ToOperation(ObjectSave.Created);
-        }
+			if (_queryable.SupportsUnsafe)
+			{
+				return _queryable.UnsafeQueryable;
+			}
 
-        #endregion
-    }
+			return Task.Run(() => GetAllRolesAsync(CancellationToken), CancellationToken).Result.AsQueryable();
+		}
+
+		private async Task<IEnumerable<TRole>> GetAllRolesAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<TRole>(new {TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TRole));
+			var roles = await _connection.Current.QueryAsync<TRole>(query.Sql, query.Parameters);
+			return roles;
+		}
+	}
 }

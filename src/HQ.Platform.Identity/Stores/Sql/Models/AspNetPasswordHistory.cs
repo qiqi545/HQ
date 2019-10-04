@@ -20,14 +20,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Identity.Stores.Sql.Models
 {
-    public class AspNetPasswordHistory<TKey>
-    {
-        [Required] public TKey TenantId { get; set; }
+	public class AspNetPasswordHistory<TKey>
+	{
+		[Required] public TKey TenantId { get; set; }
 
-        [Required] public TKey UserId { get; set; }
+		[Required] public TKey UserId { get; set; }
 
-        public string PasswordHash { get; set; }
-        public DateTimeOffset StartedAt { get; set; }
-        public DateTimeOffset? EndedAt { get; set; }
-    }
+		public string PasswordHash { get; set; }
+		public DateTimeOffset StartedAt { get; set; }
+		public DateTimeOffset? EndedAt { get; set; }
+	}
 }

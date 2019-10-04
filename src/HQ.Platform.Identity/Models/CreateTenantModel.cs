@@ -20,10 +20,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class CreateTenantModel
-    {
-        [Required] [ProtectedPersonalData] public string Name { get; set; }
+	public class CreateTenantModel
+	{
+		[Required] [ProtectedPersonalData] public string Name { get; set; }
 
-        public string ConcurrencyStamp { get; set; }
-    }
+		public string ConcurrencyStamp { get; set; }
+	}
 }

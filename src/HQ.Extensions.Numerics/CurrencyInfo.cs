@@ -23,317 +23,254 @@ using System.Linq;
 
 namespace HQ.Extensions.Numerics
 {
-    /// <summary>
-    ///     A seamless currency class for working with money.
-    ///     This class uses runtime information to separate how currency is displayed
-    ///     to a user from the native currency format itself. You can create instances
-    ///     of CurrencyInfo implicitly using instances of <see cref="Currency" />,
-    ///     <see cref="DisplayCulture" />, or <see cref="RegionInfo" />.
-    /// </summary>
-    [Serializable]
-    [DebuggerDisplay("{" + nameof(Code) + "}")]
-    public class CurrencyInfo
-    {
-        private static readonly IDictionary<string, CultureInfo> Cultures;
+	/// <summary>
+	///     A seamless currency class for working with money.
+	///     This class uses runtime information to separate how currency is displayed
+	///     to a user from the native currency format itself. You can create instances
+	///     of CurrencyInfo implicitly using instances of <see cref="Currency" />,
+	///     <see cref="DisplayCulture" />, or <see cref="RegionInfo" />.
+	/// </summary>
+	[Serializable]
+	[DebuggerDisplay("{" + nameof(Code) + "}")]
+	public class CurrencyInfo
+	{
+		private static readonly IDictionary<string, CultureInfo> Cultures;
 
-        static CurrencyInfo()
-        {
-            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures)
-                .Where(c => !c.IsNeutralCulture &&
-                            !c.ThreeLetterISOLanguageName.Equals("IVL", StringComparison.InvariantCultureIgnoreCase));
+		#region Entries
 
-            Cultures = new Dictionary<string, CultureInfo>(0);
-            foreach (var culture in cultures)
-            {
-                Cultures.Add(culture.Name, culture);
-            }
-        }
+		private static readonly IDictionary<Currency, CurrencyInfo> _currencies
+			= new Dictionary<Currency, CurrencyInfo>(2)
+			{
+				{Currency.USD, new CurrencyInfo {DisplayName = "US Dollar", Code = Currency.USD}},
+				{Currency.CAD, new CurrencyInfo {DisplayName = "Canadian Dollar", Code = Currency.CAD}},
+				{Currency.EUR, new CurrencyInfo {DisplayName = "Euro", Code = Currency.EUR}},
+				{Currency.GBP, new CurrencyInfo {DisplayName = "Pound Sterling", Code = Currency.GBP}},
+				{Currency.JPY, new CurrencyInfo {DisplayName = "Yen", Code = Currency.JPY}},
+				{Currency.CHF, new CurrencyInfo {DisplayName = "Swiss Franc", Code = Currency.CHF}},
+				{Currency.AUD, new CurrencyInfo {DisplayName = "Australian Dollar", Code = Currency.AUD}},
+				{Currency.NZD, new CurrencyInfo {DisplayName = "New Zealand Dollar", Code = Currency.NZD}},
+				{Currency.INR, new CurrencyInfo {DisplayName = "Indian Rupee", Code = Currency.INR}}
+			};
 
-        private CurrencyInfo()
-        {
-        }
+		#endregion
 
-        /// <summary>
-        ///     Gets the display name.
-        /// </summary>
-        /// <value>The display name.</value>
-        public string DisplayName { get; private set; }
+		static CurrencyInfo()
+		{
+			var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures)
+				.Where(c => !c.IsNeutralCulture &&
+				            !c.ThreeLetterISOLanguageName.Equals("IVL", StringComparison.InvariantCultureIgnoreCase));
 
-        /// <summary>
-        ///     Gets the currency code.
-        /// </summary>
-        /// <value>The currency code.</value>
-        public Currency Code { get; private set; }
+			Cultures = new Dictionary<string, CultureInfo>(0);
+			foreach (var culture in cultures)
+			{
+				Cultures.Add(culture.Name, culture);
+			}
+		}
 
-        /// <summary>
-        ///     Gets the native region where this currency is from.
-        /// </summary>
-        public RegionInfo NativeRegion { get; private set; }
+		private CurrencyInfo()
+		{
+		}
 
-        /// <summary>
-        ///     Gets the display culture set when this currency instance was created.
-        ///     It reflects the best guess between the thread of the culture the instance
-        ///     was created on, and the native region of the currency itself.
-        /// </summary>
-        public CultureInfo DisplayCulture { get; private set; }
+		/// <summary>
+		///     Gets the display name.
+		/// </summary>
+		/// <value>The display name.</value>
+		public string DisplayName { get; private set; }
 
-        /// <summary>
-        ///     Compares equality between this instance and a value.
-        /// </summary>
-        /// <param name="other">The other value.</param>
-        /// <returns></returns>
-        public bool Equals(CurrencyInfo other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
+		/// <summary>
+		///     Gets the currency code.
+		/// </summary>
+		/// <value>The currency code.</value>
+		public Currency Code { get; private set; }
 
-            return ReferenceEquals(this, other) || Equals(other.Code, Code);
-        }
+		/// <summary>
+		///     Gets the native region where this currency is from.
+		/// </summary>
+		public RegionInfo NativeRegion { get; private set; }
 
-        /// <summary>
-        ///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
-        ///     <see cref="T:System.Object" />.
-        /// </summary>
-        /// <returns>
-        ///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
-        ///     otherwise, false.
-        /// </returns>
-        /// <param name="other">
-        ///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
-        /// </param>
-        /// <exception cref="T:System.NullReferenceException">
-        ///     The <paramref name="other" /> parameter is null.
-        /// </exception>
-        /// <filterpriority>2</filterpriority>
-        public override bool Equals(object other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
+		/// <summary>
+		///     Gets the display culture set when this currency instance was created.
+		///     It reflects the best guess between the thread of the culture the instance
+		///     was created on, and the native region of the currency itself.
+		/// </summary>
+		public CultureInfo DisplayCulture { get; private set; }
 
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
+		/// <summary>
+		///     Compares equality between this instance and a value.
+		/// </summary>
+		/// <param name="other">The other value.</param>
+		/// <returns></returns>
+		public bool Equals(CurrencyInfo other)
+		{
+			if (ReferenceEquals(null, other))
+			{
+				return false;
+			}
 
-            return other.GetType() == typeof(CurrencyInfo) && Equals((CurrencyInfo) other);
-        }
+			return ReferenceEquals(this, other) || Equals(other.Code, Code);
+		}
 
-        /// <summary>
-        ///     Serves as a hash function for a particular type.
-        /// </summary>
-        /// <returns>
-        ///     A hash code for the current <see cref="T:System.Object" />.
-        /// </returns>
-        /// <filterpriority>2</filterpriority>
-        public override int GetHashCode()
-        {
-            return Code.GetHashCode();
-        }
+		/// <summary>
+		///     Determines whether the specified <see cref="T:System.Object" /> is equal to the current
+		///     <see cref="T:System.Object" />.
+		/// </summary>
+		/// <returns>
+		///     true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />;
+		///     otherwise, false.
+		/// </returns>
+		/// <param name="other">
+		///     The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.
+		/// </param>
+		/// <exception cref="T:System.NullReferenceException">
+		///     The <paramref name="other" /> parameter is null.
+		/// </exception>
+		/// <filterpriority>2</filterpriority>
+		public override bool Equals(object other)
+		{
+			if (ReferenceEquals(null, other))
+			{
+				return false;
+			}
 
-        /// <summary>
-        ///     Implements the operator ==.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator ==(CurrencyInfo left, CurrencyInfo right)
-        {
-            return Equals(left, right);
-        }
+			if (ReferenceEquals(this, other))
+			{
+				return true;
+			}
 
-        /// <summary>
-        ///     Implements the operator !=.
-        /// </summary>
-        /// <param name="left">The left.</param>
-        /// <param name="right">The right.</param>
-        /// <returns>The result of the operator.</returns>
-        public static bool operator !=(CurrencyInfo left, CurrencyInfo right)
-        {
-            return !Equals(left, right);
-        }
+			return other.GetType() == typeof(CurrencyInfo) && Equals((CurrencyInfo) other);
+		}
 
-        /// <summary>
-        ///     Performs an implicit conversion from <see cref="Currency" /> to <see cref="CurrencyInfo" />.
-        /// </summary>
-        /// <param name="currency">The currency.</param>
-        /// <returns>The result of the conversion.</returns>
-        public static implicit operator CurrencyInfo(Currency currency)
-        {
-            var currencyInfo = _currencies[currency];
+		/// <summary>
+		///     Serves as a hash function for a particular type.
+		/// </summary>
+		/// <returns>
+		///     A hash code for the current <see cref="T:System.Object" />.
+		/// </returns>
+		/// <filterpriority>2</filterpriority>
+		public override int GetHashCode()
+		{
+			return Code.GetHashCode();
+		}
 
-            CultureInfo fallbackCulture;
+		/// <summary>
+		///     Implements the operator ==.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator ==(CurrencyInfo left, CurrencyInfo right)
+		{
+			return Equals(left, right);
+		}
 
-            currencyInfo.NativeRegion = GetNativeRegionFromCurrencyCodeAndUserCulture(currency, out fallbackCulture);
+		/// <summary>
+		///     Implements the operator !=.
+		/// </summary>
+		/// <param name="left">The left.</param>
+		/// <param name="right">The right.</param>
+		/// <returns>The result of the operator.</returns>
+		public static bool operator !=(CurrencyInfo left, CurrencyInfo right)
+		{
+			return !Equals(left, right);
+		}
 
-            currencyInfo.DisplayCulture = GetDisplayCultureFromCurrencyCodeAndUserCulture(currency);
+		/// <summary>
+		///     Performs an implicit conversion from <see cref="Currency" /> to <see cref="CurrencyInfo" />.
+		/// </summary>
+		/// <param name="currency">The currency.</param>
+		/// <returns>The result of the conversion.</returns>
+		public static implicit operator CurrencyInfo(Currency currency)
+		{
+			var currencyInfo = _currencies[currency];
 
-            if (fallbackCulture != null && currencyInfo.DisplayCulture.IsNeutralCulture)
-            {
-                currencyInfo.DisplayCulture = fallbackCulture;
-            }
+			CultureInfo fallbackCulture;
 
-            return currencyInfo;
-        }
+			currencyInfo.NativeRegion = GetNativeRegionFromCurrencyCodeAndUserCulture(currency, out fallbackCulture);
 
-        /// <summary>
-        ///     Performs an implicit conversion from <see cref="System.Globalization.RegionInfo" /> to <see cref="CurrencyInfo" />.
-        /// </summary>
-        /// <param name="regionInfo">The region info.</param>
-        /// <returns>The result of the conversion.</returns>
-        public static implicit operator CurrencyInfo(RegionInfo regionInfo)
-        {
-            var symbol = regionInfo.ISOCurrencySymbol;
+			currencyInfo.DisplayCulture = GetDisplayCultureFromCurrencyCodeAndUserCulture(currency);
 
-            var currencyCode = (Currency) Enum.Parse(typeof(Currency), symbol);
+			if (fallbackCulture != null && currencyInfo.DisplayCulture.IsNeutralCulture)
+			{
+				currencyInfo.DisplayCulture = fallbackCulture;
+			}
 
-            return currencyCode;
-        }
+			return currencyInfo;
+		}
 
-        /// <summary>
-        ///     Performs an implicit conversion from <see cref="System.Globalization.CultureInfo" /> to <see cref="CurrencyInfo" />
-        ///     .
-        /// </summary>
-        /// <param name="cultureInfo">The culture info.</param>
-        /// <returns>The result of the conversion.</returns>
-        public static implicit operator CurrencyInfo(CultureInfo cultureInfo)
-        {
-            return new RegionInfo(cultureInfo.LCID);
-        }
+		/// <summary>
+		///     Performs an implicit conversion from <see cref="System.Globalization.RegionInfo" /> to <see cref="CurrencyInfo" />.
+		/// </summary>
+		/// <param name="regionInfo">The region info.</param>
+		/// <returns>The result of the conversion.</returns>
+		public static implicit operator CurrencyInfo(RegionInfo regionInfo)
+		{
+			var symbol = regionInfo.ISOCurrencySymbol;
 
-        private static RegionInfo GetNativeRegionFromCurrencyCodeAndUserCulture(Enum currencyCode,
-            out CultureInfo fallbackCulture)
-        {
-            // Get the current culture and region
-            var userCulture = CultureInfo.CurrentCulture;
-            var userLanguageName = userCulture.TwoLetterISOLanguageName;
-            var userRegionName = new RegionInfo(userCulture.LCID).TwoLetterISORegionName;
-            var currencySymbol = currencyCode.ToString("G");
+			var currencyCode = (Currency) Enum.Parse(typeof(Currency), symbol);
 
-            // Get all regions with the given currency (pivot on language to avoid losing precision)
-            var locales = from c in Cultures.Values
-                let r = new RegionInfo(c.LCID)
-                where r.ISOCurrencySymbol.Equals(currencySymbol)
-                select new {Region = r, Culture = c};
+			return currencyCode;
+		}
 
-            // Resolve the native region to the one the user is in, or the first valid one
-            var locale = locales.SingleOrDefault(
-                l =>
-                    l.Region.TwoLetterISORegionName.Equals(userRegionName) &&
-                    l.Culture.TwoLetterISOLanguageName.Equals(userLanguageName)
-            );
+		/// <summary>
+		///     Performs an implicit conversion from <see cref="System.Globalization.CultureInfo" /> to <see cref="CurrencyInfo" />
+		///     .
+		/// </summary>
+		/// <param name="cultureInfo">The culture info.</param>
+		/// <returns>The result of the conversion.</returns>
+		public static implicit operator CurrencyInfo(CultureInfo cultureInfo)
+		{
+			return new RegionInfo(cultureInfo.LCID);
+		}
 
-            fallbackCulture = null;
+		private static RegionInfo GetNativeRegionFromCurrencyCodeAndUserCulture(Enum currencyCode,
+			out CultureInfo fallbackCulture)
+		{
+			// Get the current culture and region
+			var userCulture = CultureInfo.CurrentCulture;
+			var userLanguageName = userCulture.TwoLetterISOLanguageName;
+			var userRegionName = new RegionInfo(userCulture.LCID).TwoLetterISORegionName;
+			var currencySymbol = currencyCode.ToString("G");
 
-            if (locale == null)
-            {
-                // There was no logical match for this currency in the current culture;
-                // choose the most used equivalent for the native country as a fallback
-                locale = locales.FirstOrDefault();
-                fallbackCulture = locale.Culture;
-            }
+			// Get all regions with the given currency (pivot on language to avoid losing precision)
+			var locales = from c in Cultures.Values
+				let r = new RegionInfo(c.LCID)
+				where r.ISOCurrencySymbol.Equals(currencySymbol)
+				select new {Region = r, Culture = c};
 
-            return locale.Region;
-        }
+			// Resolve the native region to the one the user is in, or the first valid one
+			var locale = locales.SingleOrDefault(
+				l =>
+					l.Region.TwoLetterISORegionName.Equals(userRegionName) &&
+					l.Culture.TwoLetterISOLanguageName.Equals(userLanguageName)
+			);
 
-        private static CultureInfo GetDisplayCultureFromCurrencyCodeAndUserCulture(Enum currencyCode)
-        {
-            var userCulture = CultureInfo.CurrentCulture;
-            var languageCode = userCulture.TwoLetterISOLanguageName;
+			fallbackCulture = null;
 
-            CultureInfo fallbackCulture;
-            var nativeRegion = GetNativeRegionFromCurrencyCodeAndUserCulture(currencyCode, out fallbackCulture);
+			if (locale == null)
+			{
+				// There was no logical match for this currency in the current culture;
+				// choose the most used equivalent for the native country as a fallback
+				locale = locales.FirstOrDefault();
+				fallbackCulture = locale.Culture;
+			}
 
-            var cultureName = string.Format("{0}-{1}", languageCode, nativeRegion);
-            var cultureInfo = Cultures.ContainsKey(cultureName)
-                ? new CultureInfo(cultureName)
-                : new CultureInfo(languageCode);
+			return locale.Region;
+		}
 
-            return cultureInfo;
-        }
+		private static CultureInfo GetDisplayCultureFromCurrencyCodeAndUserCulture(Enum currencyCode)
+		{
+			var userCulture = CultureInfo.CurrentCulture;
+			var languageCode = userCulture.TwoLetterISOLanguageName;
 
-        #region Entries
+			CultureInfo fallbackCulture;
+			var nativeRegion = GetNativeRegionFromCurrencyCodeAndUserCulture(currencyCode, out fallbackCulture);
 
-        private static readonly IDictionary<Currency, CurrencyInfo> _currencies
-            = new Dictionary<Currency, CurrencyInfo>(2)
-            {
-                {
-                    Currency.USD,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "US Dollar",
-                        Code = Currency.USD
-                    }
-                },
-                {
-                    Currency.CAD,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Canadian Dollar",
-                        Code = Currency.CAD
-                    }
-                },
-                {
-                    Currency.EUR,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Euro",
-                        Code = Currency.EUR
-                    }
-                },
-                {
-                    Currency.GBP,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Pound Sterling",
-                        Code = Currency.GBP
-                    }
-                },
-                {
-                    Currency.JPY,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Yen",
-                        Code = Currency.JPY
-                    }
-                },
-                {
-                    Currency.CHF,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Swiss Franc",
-                        Code = Currency.CHF
-                    }
-                },
-                {
-                    Currency.AUD,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Australian Dollar",
-                        Code = Currency.AUD
-                    }
-                },
-                {
-                    Currency.NZD,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "New Zealand Dollar",
-                        Code = Currency.NZD
-                    }
-                },
-                {
-                    Currency.INR,
-                    new CurrencyInfo
-                    {
-                        DisplayName = "Indian Rupee",
-                        Code = Currency.INR
-                    }
-                }
-            };
+			var cultureName = string.Format("{0}-{1}", languageCode, nativeRegion);
+			var cultureInfo = Cultures.ContainsKey(cultureName)
+				? new CultureInfo(cultureName)
+				: new CultureInfo(languageCode);
 
-        #endregion
-    }
+			return cultureInfo;
+		}
+	}
 }

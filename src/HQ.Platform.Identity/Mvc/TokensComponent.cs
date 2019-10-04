@@ -22,8 +22,8 @@ using HQ.Platform.Identity.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.Mvc
 {
-    public class TokensComponent : DynamicComponent
-    {
-        public override IEnumerable<Type> ControllerTypes => new[] {typeof(TokenController<,,,>)};
-    }
+	public class TokensComponent : DynamicComponent
+	{
+		public override IEnumerable<Type> ControllerTypes => new[] {typeof(TokenController<,,,>)};
+	}
 }

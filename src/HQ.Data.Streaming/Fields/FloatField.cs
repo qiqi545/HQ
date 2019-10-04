@@ -21,30 +21,33 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct FloatField
-    {
-        public bool Initialized => _buffer != null;
-        public float? Value => Initialized ? !_encoding.TryParse(_buffer, out float value) ? default(float?) : value : default;
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
-        public int Length => _buffer.Length;
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+	public readonly ref struct FloatField
+	{
+		public bool Initialized => _buffer != null;
 
-        private readonly Encoding _encoding;
-        private readonly ReadOnlySpan<byte> _buffer;
+		public float? Value =>
+			Initialized ? !_encoding.TryParse(_buffer, out float value) ? default(float?) : value : default;
 
-        public FloatField(ReadOnlySpan<byte> buffer, Encoding encoding)
-        {
-            _buffer = buffer;
-            _encoding = encoding;
-        }
+		public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+		public int Length => _buffer.Length;
 
-        public unsafe FloatField(byte* start, int length, Encoding encoding)
-        {
-            _buffer = new ReadOnlySpan<byte>(start, length);
-            _encoding = encoding;
-        }
+		private readonly Encoding _encoding;
+		private readonly ReadOnlySpan<byte> _buffer;
 
-        public string DisplayName =>
-            $"{nameof(FloatField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-    }
+		public FloatField(ReadOnlySpan<byte> buffer, Encoding encoding)
+		{
+			_buffer = buffer;
+			_encoding = encoding;
+		}
+
+		public unsafe FloatField(byte* start, int length, Encoding encoding)
+		{
+			_buffer = new ReadOnlySpan<byte>(start, length);
+			_encoding = encoding;
+		}
+
+		public string DisplayName =>
+			$"{nameof(FloatField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+	}
 }

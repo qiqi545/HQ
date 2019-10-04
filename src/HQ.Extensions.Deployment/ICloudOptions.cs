@@ -17,7 +17,7 @@
 
 namespace HQ.Extensions.Deployment
 {
-    public interface ICloudOptions
-    {
-    }
+	public interface ICloudOptions
+	{
+	}
 }

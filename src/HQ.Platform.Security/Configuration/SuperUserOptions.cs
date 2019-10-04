@@ -17,59 +17,55 @@
 
 using System.ComponentModel.DataAnnotations;
 using HQ.Common;
-using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class SuperUserOptions : FeatureToggle, IComponentOptions, IProtectedFeature
-    {
-        private string _email;
-        private string _password;
-        private string _phoneNumber;
-        private string _username;
+	public class SuperUserOptions : FeatureToggle, IComponentOptions, IProtectedFeature
+	{
+		private string _email;
+		private string _password;
+		private string _phoneNumber;
+		private string _username;
 
-        public SuperUserOptions()
-        {
-            Enabled = false;
-        }
+		public SuperUserOptions() => Enabled = false;
 
-        [RequiredIfTrue(nameof(Enabled))]
-        [DataType(DataType.Text)]
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string Username
-        {
-            get => Enabled ? _username : null;
-            set => _username = value;
-        }
+		[RequiredIfTrue(nameof(Enabled))]
+		[DataType(DataType.Text)]
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string Username
+		{
+			get => Enabled ? _username : null;
+			set => _username = value;
+		}
 
 		[RequiredIfTrue(nameof(Enabled))]
 		[DataType(DataType.Password)]
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string Password
-        {
-            get => Enabled ? _password : null;
-            set => _password = value;
-        }
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string Password
+		{
+			get => Enabled ? _password : null;
+			set => _password = value;
+		}
 
-        [DataType(DataType.PhoneNumber)]
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string PhoneNumber
-        {
-            get => Enabled ? _phoneNumber : null;
-            set => _phoneNumber = value;
-        }
+		[DataType(DataType.PhoneNumber)]
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string PhoneNumber
+		{
+			get => Enabled ? _phoneNumber : null;
+			set => _phoneNumber = value;
+		}
 
-        [DataType(DataType.EmailAddress)]
-        [SensitiveData(SensitiveDataCategory.OperationalSecurity)]
-        public string Email
-        {
-            get => Enabled ? _email : null;
-            set => _email = value;
-        }
+		[DataType(DataType.EmailAddress)]
+		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
+		public string Email
+		{
+			get => Enabled ? _email : null;
+			set => _email = value;
+		}
 
-        public string RootPath { get; set; } = "/superuser";
-        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-        public string Policy { get; } = Constants.Security.Policies.SuperUserOnly;
-    }
+		public string RootPath { get; set; } = "/superuser";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; } = Constants.Security.Policies.SuperUserOnly;
+	}
 }

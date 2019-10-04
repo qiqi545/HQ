@@ -19,8 +19,8 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class RequestLimitOptions : FeatureToggle
-    {
-        public long MaxRequestSizeBytes { get; set; } = 30_000_000;
-    }
+	public class RequestLimitOptions : FeatureToggle
+	{
+		public long MaxRequestSizeBytes { get; set; } = 30_000_000;
+	}
 }

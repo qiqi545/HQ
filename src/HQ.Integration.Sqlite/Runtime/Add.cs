@@ -51,7 +51,7 @@ namespace HQ.Integration.Sqlite.Runtime
 		}
 
 		public static RuntimeBuilder AddSqliteRuntime(this RuntimeBuilder builder,
-			string connectionString, 
+			string connectionString,
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqliteOptions> configureDatabase = null)
 		{

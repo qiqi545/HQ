@@ -25,95 +25,97 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    public static class ProjectionBuilder
-    {
-        public static string Select<T>(this ISqlDialect dialect, FieldOptions fields, ProjectionOptions projections)
-        {
-            return Select(dialect, typeof(T), fields, projections);
-        }
+	public static class ProjectionBuilder
+	{
+		public static string Select<T>(this ISqlDialect dialect, FieldOptions fields, ProjectionOptions projections)
+		{
+			return Select(dialect, typeof(T), fields, projections);
+		}
 
-        public static string Select(this ISqlDialect dialect, Type type, FieldOptions fields, ProjectionOptions projections)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                // SELECT * FROM ...
-                sb.Append($"SELECT {BuildFields(dialect, type, fields, projections)} " +
-                          $"FROM {dialect.StartIdentifier}{type.Name}{dialect.EndIdentifier} r ");
+		public static string Select(this ISqlDialect dialect, Type type, FieldOptions fields,
+			ProjectionOptions projections)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				// SELECT * FROM ...
+				sb.Append($"SELECT {BuildFields(dialect, type, fields, projections)} " +
+				          $"FROM {dialect.StartIdentifier}{type.Name}{dialect.EndIdentifier} r ");
 
-                if (projections?.Fields == null)
-                    return;
+				if (projections?.Fields == null)
+					return;
 
-                // INNER JOIN...
-                var joins = 0;
-                foreach (var projection in projections.Fields)
-                {
-                    var name = projection.Field.ToTitleCase();
-                    if (name.EndsWith("s"))
-                        name = name.Substring(0, name.Length - 1);
+				// INNER JOIN...
+				var joins = 0;
+				foreach (var projection in projections.Fields)
+				{
+					var name = projection.Field.ToTitleCase();
+					if (name.EndsWith("s"))
+						name = name.Substring(0, name.Length - 1);
 
-                    switch (projection.Type)
-                    {
-                        case ProjectionType.OneToOne:
-                            sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
-                            break;
-                        case ProjectionType.OneToMany:
-                            sb.Append($"INNER JOIN {type.Name}{name} x{joins} ON x{joins}.{type.Name}Id = r.Id ");
-                            sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
-                            break;
-                        case ProjectionType.Scalar:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+					switch (projection.Type)
+					{
+						case ProjectionType.OneToOne:
+							sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
+							break;
+						case ProjectionType.OneToMany:
+							sb.Append($"INNER JOIN {type.Name}{name} x{joins} ON x{joins}.{type.Name}Id = r.Id ");
+							sb.Append($"INNER JOIN {name} r{joins} ON r{joins}.Id = x{joins}.{name}Id ");
+							break;
+						case ProjectionType.Scalar:
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
 
-                    joins++;
-                }
-            });
-        }
+					joins++;
+				}
+			});
+		}
 
-        private static string BuildFields(this ISqlDialect dialect, Type type, FieldOptions options, ProjectionOptions projections)
-        {
-            var source = BuildFieldSource(type, options);
+		private static string BuildFields(this ISqlDialect dialect, Type type, FieldOptions options,
+			ProjectionOptions projections)
+		{
+			var source = BuildFieldSource(type, options);
 
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append(string.Join(", ",
-                    source.Select(a => $"r.{dialect.StartIdentifier}{a}{dialect.EndIdentifier}")));
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append(string.Join(", ",
+					source.Select(a => $"r.{dialect.StartIdentifier}{a}{dialect.EndIdentifier}")));
 
-                if (projections?.Fields == null)
-                    return;
+				if (projections?.Fields == null)
+					return;
 
-                var joins = 0;
-                foreach (var projection in projections.Fields)
-                {
-                    sb.Append($", r{joins}.*");
-                    joins++;
-                }
-            });
-        }
-        
-        private static IOrderedEnumerable<string> BuildFieldSource(Type type, FieldOptions options)
-        {
-            IOrderedEnumerable<string> source;
-            if (options?.Fields == null || options.Fields.Count == 0)
-            {
-                var memberSet = GetProjectionMembersNames(type);
+				var joins = 0;
+				foreach (var projection in projections.Fields)
+				{
+					sb.Append($", r{joins}.*");
+					joins++;
+				}
+			});
+		}
 
-                source = memberSet.OrderBy(a => a);
-            }
-            else
-            {
-                source = options.Fields.Select(a => $"{a}").OrderBy(a => a);
-            }
+		private static IOrderedEnumerable<string> BuildFieldSource(Type type, FieldOptions options)
+		{
+			IOrderedEnumerable<string> source;
+			if (options?.Fields == null || options.Fields.Count == 0)
+			{
+				var memberSet = GetProjectionMembersNames(type);
 
-            return source;
-        }
+				source = memberSet.OrderBy(a => a);
+			}
+			else
+			{
+				source = options.Fields.Select(a => $"{a}").OrderBy(a => a);
+			}
 
-        private static IEnumerable<string> GetProjectionMembersNames(Type type)
-        {
-            // TODO get property names from a cache
-            var descriptor = SqlBuilder.GetDescriptor(type);
-            return descriptor.Inserted.Select(x => x.Property.Name);
-        }
-    }
+			return source;
+		}
+
+		private static IEnumerable<string> GetProjectionMembersNames(Type type)
+		{
+			// TODO get property names from a cache
+			var descriptor = SqlBuilder.GetDescriptor(type);
+			return descriptor.Inserted.Select(x => x.Property.Name);
+		}
+	}
 }

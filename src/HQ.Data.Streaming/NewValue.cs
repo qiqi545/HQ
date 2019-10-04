@@ -20,6 +20,6 @@ using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming
 {
-    public unsafe delegate void NewValue(long lineNumber, int index, byte* start, int length, Encoding encoding,
-        IMetricsHost metrics);
+	public unsafe delegate void NewValue(long lineNumber, int index, byte* start, int length, Encoding encoding,
+		IMetricsHost metrics);
 }

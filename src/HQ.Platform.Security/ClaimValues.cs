@@ -17,19 +17,19 @@
 
 namespace HQ.Platform.Security
 {
-    public static class ClaimValues
-    {
-        public const string SuperUser = "superuser";
-        public const string ManageUsers = "manage_users";
-        public const string ManageRoles = "manage_roles";
-        public const string ManageTenants = "manage_tenants";
-        public const string ManageApplications = "manage_applications";
-        public const string ManageBackgroundTasks = "manage_background_tasks";
-        public const string ManageConfiguration = "manage_configuration";
-        public const string ManageObjects = "manage_objects";
-        public const string ManageSchemas = "manage_schemas";
+	public static class ClaimValues
+	{
+		public const string SuperUser = "superuser";
+		public const string ManageUsers = "manage_users";
+		public const string ManageRoles = "manage_roles";
+		public const string ManageTenants = "manage_tenants";
+		public const string ManageApplications = "manage_applications";
+		public const string ManageBackgroundTasks = "manage_background_tasks";
+		public const string ManageConfiguration = "manage_configuration";
+		public const string ManageObjects = "manage_objects";
+		public const string ManageSchemas = "manage_schemas";
 
 		public const string AccessMeta = "access_meta";
-        public const string AccessOperations = "access_operations";
-    }
+		public const string AccessOperations = "access_operations";
+	}
 }

@@ -27,45 +27,45 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.AspNetCore.Internal
 {
-    internal class MetricsMiddleware
-    {
-        private readonly PathString _endpoint;
-        private readonly RequestDelegate _next;
-        private readonly IOptions<MetricsOptions> _options;
+	internal class MetricsMiddleware
+	{
+		private readonly PathString _endpoint;
+		private readonly RequestDelegate _next;
+		private readonly IOptions<MetricsOptions> _options;
 
-        public MetricsMiddleware(RequestDelegate next, PathString endpoint, IOptions<MetricsOptions> options)
-        {
-            _next = next;
-            _endpoint = endpoint;
-            _options = options;
-            if (!_endpoint.Value.StartsWith("/"))
-            {
-                _endpoint = $"/{_endpoint}";
-            }
-        }
+		public MetricsMiddleware(RequestDelegate next, PathString endpoint, IOptions<MetricsOptions> options)
+		{
+			_next = next;
+			_endpoint = endpoint;
+			_options = options;
+			if (!_endpoint.Value.StartsWith("/"))
+			{
+				_endpoint = $"/{_endpoint}";
+			}
+		}
 
-        public async Task Invoke(HttpContext context)
-        {
-            if (context.Request.Path == _endpoint)
-            {
-                await GetMetricsSample(context, TimeSpan.FromSeconds(_options.Value.SampleTimeoutSeconds),
-                    _options.Value.TypeFilter);
-            }
-            else
-            {
-                await _next.Invoke(context);
-            }
-        }
+		public async Task Invoke(HttpContext context)
+		{
+			if (context.Request.Path == _endpoint)
+			{
+				await GetMetricsSample(context, TimeSpan.FromSeconds(_options.Value.SampleTimeoutSeconds),
+					_options.Value.TypeFilter);
+			}
+			else
+			{
+				await _next.Invoke(context);
+			}
+		}
 
-        public static async Task GetMetricsSample(HttpContext context, TimeSpan timeout, MetricType typeFilter)
-        {
-            var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
-            var samples = registry.SelectMany(x => x.GetSample(typeFilter)).ToImmutableDictionary();
-            var cancel = new CancellationTokenSource(timeout);
+		public static async Task GetMetricsSample(HttpContext context, TimeSpan timeout, MetricType typeFilter)
+		{
+			var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
+			var samples = registry.SelectMany(x => x.GetSample(typeFilter)).ToImmutableDictionary();
+			var cancel = new CancellationTokenSource(timeout);
 
-            context.Response.StatusCode = 200;
-            context.Response.Headers.Add(Common.Constants.HttpHeaders.ContentType, Common.Constants.MediaTypes.Json);
-            await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
-        }
-    }
+			context.Response.StatusCode = 200;
+			context.Response.Headers.Add(Common.Constants.HttpHeaders.ContentType, Common.Constants.MediaTypes.Json);
+			await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
+		}
+	}
 }

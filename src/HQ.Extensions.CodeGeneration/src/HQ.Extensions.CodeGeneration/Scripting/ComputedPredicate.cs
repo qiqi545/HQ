@@ -20,27 +20,28 @@ using System.Linq.Expressions;
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
-    public static class ComputedPredicate<T>
-    {
-        public static Expression<Func<T, bool>> AsExpression(string memberName, ExpressionOperator @operator, object value)
-        {
-            var parameter = Expression.Parameter(typeof(T), memberName);
-            var memberExpression = Expression.PropertyOrField(parameter, memberName);
+	public static class ComputedPredicate<T>
+	{
+		public static Expression<Func<T, bool>> AsExpression(string memberName, ExpressionOperator @operator,
+			object value)
+		{
+			var parameter = Expression.Parameter(typeof(T), memberName);
+			var memberExpression = Expression.PropertyOrField(parameter, memberName);
 
-            BinaryExpression expression;
-            switch (@operator)
-            {
-                case ExpressionOperator.Equal:
-                    expression = Expression.Equal(memberExpression, Expression.Constant(value));
-                    break;
-                case ExpressionOperator.NotEqual:
-                    expression = Expression.NotEqual(memberExpression, Expression.Constant(value));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(@operator), @operator, null);
-            }
+			BinaryExpression expression;
+			switch (@operator)
+			{
+				case ExpressionOperator.Equal:
+					expression = Expression.Equal(memberExpression, Expression.Constant(value));
+					break;
+				case ExpressionOperator.NotEqual:
+					expression = Expression.NotEqual(memberExpression, Expression.Constant(value));
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(@operator), @operator, null);
+			}
 
-            return Expression.Lambda<Func<T, bool>>(expression, parameter);
-        }
-    }
+			return Expression.Lambda<Func<T, bool>>(expression, parameter);
+		}
+	}
 }

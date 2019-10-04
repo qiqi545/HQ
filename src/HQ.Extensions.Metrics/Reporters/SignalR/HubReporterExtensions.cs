@@ -22,27 +22,27 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    public static class HubReporterExtensions
-    {
-        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder) where T : Hub
-        {
-            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricsReporter, HubReporter<T>>());
-            return builder;
-        }
+	public static class HubReporterExtensions
+	{
+		public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder) where T : Hub
+		{
+			builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IMetricsReporter, HubReporter<T>>());
+			return builder;
+		}
 
-        public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder,
-            Action<HubReporterOptions> configureAction)
-            where T : Hub
-        {
-            if (configureAction == null)
-            {
-                throw new ArgumentNullException(nameof(configureAction));
-            }
+		public static IMetricsBuilder AddHubReporter<T>(this IMetricsBuilder builder,
+			Action<HubReporterOptions> configureAction)
+			where T : Hub
+		{
+			if (configureAction == null)
+			{
+				throw new ArgumentNullException(nameof(configureAction));
+			}
 
-            builder.AddHubReporter<T>();
-            builder.Services.Configure(configureAction);
+			builder.AddHubReporter<T>();
+			builder.Services.Configure(configureAction);
 
-            return builder;
-        }
-    }
+			return builder;
+		}
+	}
 }

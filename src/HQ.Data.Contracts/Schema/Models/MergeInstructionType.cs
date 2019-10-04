@@ -17,10 +17,10 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public enum MergeInstructionType
-    {
-        Add,
-        Remove,
-        Replace
-    }
+	public enum MergeInstructionType
+	{
+		Add,
+		Remove,
+		Replace
+	}
 }

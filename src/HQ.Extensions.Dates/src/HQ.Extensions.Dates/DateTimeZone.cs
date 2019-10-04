@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -22,10 +24,11 @@ using TimeZoneConverter;
 namespace HQ.Extensions.Dates
 {
 	/// <summary>
-	/// A <see cref="DateTimeOffset"/> replacement that doesn't lose time zone information,
-	/// and normalizes to IANA time zone names.
+	///     A <see cref="DateTimeOffset" /> replacement that doesn't lose time zone information,
+	///     and normalizes to IANA time zone names.
 	/// </summary>
-	public struct DateTimeZone : IEquatable<DateTimeZone>, IEquatable<DateTimeOffset>, IComparable<DateTimeZone>, IComparable<DateTimeOffset>, IFormattable, IComparable, ISerializable, IDeserializationCallback
+	public struct DateTimeZone : IEquatable<DateTimeZone>, IEquatable<DateTimeOffset>, IComparable<DateTimeZone>,
+		IComparable<DateTimeOffset>, IFormattable, IComparable, ISerializable, IDeserializationCallback
 	{
 		private const string CoordinatedUniversalTime = "Coordinated Universal Time";
 		private readonly DateTimeOffset _instant;
@@ -36,22 +39,33 @@ namespace HQ.Extensions.Dates
 
 		public DateTimeOffset DateTimeOffset => TimeZoneInfo.ConvertTime(_instant, _timeZone);
 
-		/// <summary> Creates a <see cref="DateTimeZone"/> instance based on the most prevalent time zone associated with the provided instant's time zone offset </summary>
+		/// <summary>
+		///     Creates a <see cref="DateTimeZone" /> instance based on the most prevalent time zone associated with the
+		///     provided instant's time zone offset
+		/// </summary>
 		public DateTimeZone(DateTimeOffset instant, string ianaOrWindowsTimeZoneId)
 		{
 			if (!TryGetTimeZoneInfo(ianaOrWindowsTimeZoneId, out _timeZone))
-				throw new ArgumentException("The provided time zone identifier was not recognized.", nameof(ianaOrWindowsTimeZoneId));
+				throw new ArgumentException("The provided time zone identifier was not recognized.",
+					nameof(ianaOrWindowsTimeZoneId));
 			_instant = instant.ToUniversalTime();
 		}
 
-		/// <summary> Creates a <see cref="DateTimeZone"/> instance based on the most prevalent time zone associated with the provided instant's time zone offset </summary>
+		/// <summary>
+		///     Creates a <see cref="DateTimeZone" /> instance based on the most prevalent time zone associated with the
+		///     provided instant's time zone offset
+		/// </summary>
 		public DateTimeZone(DateTimeOffset instant, TimeZoneInfo timeZone)
 		{
 			_instant = instant.ToUniversalTime();
 			_timeZone = timeZone;
 		}
 
-		public static implicit operator DateTimeOffset(DateTimeZone dateTimeZone) => dateTimeZone.DateTimeOffset;
+		public static implicit operator DateTimeOffset(DateTimeZone dateTimeZone)
+		{
+			return dateTimeZone.DateTimeOffset;
+		}
+
 		public static explicit operator DateTimeZone(DateTimeOffset dateTimeOffset)
 		{
 			if (dateTimeOffset.Offset == TimeSpan.Zero)
@@ -66,7 +80,8 @@ namespace HQ.Extensions.Dates
 				var windows = candidate.Id;
 				var territoryCode = CultureInfo.CurrentCulture.TwoLetterISOLanguageName;
 
-				return TZConvert.TryWindowsToIana(windows, territoryCode, out var iana) && TryGetTimeZoneInfo(iana, out var result)
+				return TZConvert.TryWindowsToIana(windows, territoryCode, out var iana) &&
+				       TryGetTimeZoneInfo(iana, out var result)
 					? new DateTimeZone(dateTimeOffset, result)
 					: new DateTimeZone(dateTimeOffset, candidate);
 			}
@@ -79,8 +94,8 @@ namespace HQ.Extensions.Dates
 			if (!TZConvert.TryGetTimeZoneInfo(ianaOrWindowsTimeZoneId, out timeZoneInfo))
 			{
 				if (!string.IsNullOrWhiteSpace(ianaOrWindowsTimeZoneId) &&
-					ianaOrWindowsTimeZoneId == CoordinatedUniversalTime ||
-					ianaOrWindowsTimeZoneId == TimeZoneInfo.Utc.StandardName)
+				    ianaOrWindowsTimeZoneId == CoordinatedUniversalTime ||
+				    ianaOrWindowsTimeZoneId == TimeZoneInfo.Utc.StandardName)
 				{
 					timeZoneInfo = TimeZoneInfo.Utc;
 					return true;
@@ -169,7 +184,10 @@ namespace HQ.Extensions.Dates
 
 		#region Formatting
 
-		public override string ToString() => DisplayName;
+		public override string ToString()
+		{
+			return DisplayName;
+		}
 
 		private string DisplayName => $"{DateTimeOffset} [{TimeZone}]";
 

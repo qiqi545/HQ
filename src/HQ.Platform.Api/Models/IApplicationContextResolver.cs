@@ -20,8 +20,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Models
 {
-    public interface IApplicationContextResolver<TApplication> where TApplication : class
-    {
-        Task<ApplicationContext<TApplication>> ResolveAsync(HttpContext http);
-    }
+	public interface IApplicationContextResolver<TApplication> where TApplication : class
+	{
+		Task<ApplicationContext<TApplication>> ResolveAsync(HttpContext http);
+	}
 }

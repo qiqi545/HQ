@@ -19,9 +19,9 @@ using System;
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public interface IMethodInvoker : IDisposable
-    {
-        object InvokeMethod(Type serviceType, string name);
-        object InvokeMethod<T>(string name) where T : class;
-    }
+	public interface IMethodInvoker : IDisposable
+	{
+		object InvokeMethod(Type serviceType, string name);
+		object InvokeMethod<T>(string name) where T : class;
+	}
 }

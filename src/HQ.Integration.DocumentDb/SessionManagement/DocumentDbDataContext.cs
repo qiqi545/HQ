@@ -21,12 +21,12 @@ using HQ.Data.SessionManagement;
 
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
-    public class DocumentDbDataContext : DataContext
-    {
-        public DocumentDbDataContext(string connectionString, IServiceProvider serviceProvider,
-            Action<IDbConnection, IServiceProvider> onConnection = null) :
-            base(new DocumentDbConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
-        {
-        }
-    }
+	public class DocumentDbDataContext : DataContext
+	{
+		public DocumentDbDataContext(string connectionString, IServiceProvider serviceProvider,
+			Action<IDbConnection, IServiceProvider> onConnection = null) :
+			base(new DocumentDbConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
+		{
+		}
+	}
 }

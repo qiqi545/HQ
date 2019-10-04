@@ -17,60 +17,60 @@
 
 using System;
 using HQ.Extensions.Metrics;
+using HQ.Extensions.Options;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
-using HQ.Extensions.Options;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {
-    // https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2
+	// https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/health-checks?view=aspnetcore-2.2
 
-    public static class Add
-    {
-        /// <summary>
-        ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
-        /// </summary>
-        public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder, IConfiguration config)
-        {
-            return builder.PushToApplicationInsights(config.FastBind);
-        }
+	public static class Add
+	{
+		/// <summary>
+		///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
+		/// </summary>
+		public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder, IConfiguration config)
+		{
+			return builder.PushToApplicationInsights(config.FastBind);
+		}
 
-        /// <summary>
-        ///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
-        /// </summary>
-        public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder,
-            Action<AppInsightsMetricsReporterOptions> configureAction = null)
-        {
-            builder.Services.Configure<HealthCheckPublisherOptions>(options =>
-            {
-                options.Predicate = r => !r.Tags.Contains("startup");
-                options.Delay = TimeSpan.FromSeconds(2);
-                options.Timeout = TimeSpan.FromSeconds(30);
-                options.Period = TimeSpan.FromSeconds(30);
-            });
-            builder.Services.Configure(configureAction);
-            builder.Services.AddSingleton<IHealthCheckPublisher>(r => new AppInsightsMetricsPublisher(
-                r.GetRequiredService<IMetricsRegistry>(),
-                r.GetRequiredService<TelemetryClient>(),
-                r.GetRequiredService<IOptionsMonitor<AppInsightsMetricsReporterOptions>>()
-            ));
+		/// <summary>
+		///     Sends all metrics and health checks periodically to an Application Insights instrumentation.
+		/// </summary>
+		public static IMetricsBuilder PushToApplicationInsights(this IMetricsBuilder builder,
+			Action<AppInsightsMetricsReporterOptions> configureAction = null)
+		{
+			builder.Services.Configure<HealthCheckPublisherOptions>(options =>
+			{
+				options.Predicate = r => !r.Tags.Contains("startup");
+				options.Delay = TimeSpan.FromSeconds(2);
+				options.Timeout = TimeSpan.FromSeconds(30);
+				options.Period = TimeSpan.FromSeconds(30);
+			});
+			builder.Services.Configure(configureAction);
+			builder.Services.AddSingleton<IHealthCheckPublisher>(r => new AppInsightsMetricsPublisher(
+				r.GetRequiredService<IMetricsRegistry>(),
+				r.GetRequiredService<TelemetryClient>(),
+				r.GetRequiredService<IOptionsMonitor<AppInsightsMetricsReporterOptions>>()
+			));
 
-            // The following workaround permits adding an IHealthCheckPublisher 
-            // instance to the service container when one or more other hosted 
-            // services have already been added to the app. This workaround
-            // won't be required with the release of ASP.NET Core 3.0. For more 
-            // information, see: https://github.com/aspnet/Extensions/issues/639.
-            builder.Services.TryAddEnumerable(
-                ServiceDescriptor.Singleton(typeof(IHostedService),
-                    typeof(HealthCheckPublisherOptions).Assembly.GetType(
-                        "Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckPublisherHostedService")));
+			// The following workaround permits adding an IHealthCheckPublisher 
+			// instance to the service container when one or more other hosted 
+			// services have already been added to the app. This workaround
+			// won't be required with the release of ASP.NET Core 3.0. For more 
+			// information, see: https://github.com/aspnet/Extensions/issues/639.
+			builder.Services.TryAddEnumerable(
+				ServiceDescriptor.Singleton(typeof(IHostedService),
+					typeof(HealthCheckPublisherOptions).Assembly.GetType(
+						"Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckPublisherHostedService")));
 
-            return builder;
-        }
-    }
+			return builder;
+		}
+	}
 }

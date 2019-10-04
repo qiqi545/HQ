@@ -17,10 +17,10 @@
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class WebServerOptions
-    {
-        public int? MaxConcurrentConnections { get; set; } = 100;
-        public int? MaxConcurrentUpgradedConnections { get; set; } = 100;
-        public long? MaxRequestBodySize { get; set; } = 10240;
-    }
+	public class WebServerOptions
+	{
+		public int? MaxConcurrentConnections { get; set; } = 100;
+		public int? MaxConcurrentUpgradedConnections { get; set; } = 100;
+		public long? MaxRequestBodySize { get; set; } = 10240;
+	}
 }

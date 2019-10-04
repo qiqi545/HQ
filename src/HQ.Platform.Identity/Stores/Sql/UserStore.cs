@@ -34,263 +34,267 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class UserStore<TUser, TKey, TRole> : IQueryableUserStore<TUser>
-        where TUser : IdentityUserExtended<TKey>
-        where TKey : IEquatable<TKey>
-        where TRole : IdentityRole<TKey>
-    {
-        private const string SuperUserDefaultUserName = "superuser";
-        private const string SuperUserDefaultEmail = "superuser@email.com";
-        private const string SuperUserDefaultPhoneNumber = "9999999999";
-        private const string SuperUserGuidId = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1";
-        private const string SuperUserSecurityStamp = "A2ECC018-9B97-420B-815E-9D5B595BFA86";
-        private const int SuperUserNumberId = int.MaxValue;
+	public partial class UserStore<TUser, TKey, TRole> : IQueryableUserStore<TUser>
+		where TUser : IdentityUserExtended<TKey>
+		where TKey : IEquatable<TKey>
+		where TRole : IdentityRole<TKey>
+	{
+		private const string SuperUserDefaultUserName = "superuser";
+		private const string SuperUserDefaultEmail = "superuser@email.com";
+		private const string SuperUserDefaultPhoneNumber = "9999999999";
+		private const string SuperUserGuidId = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1";
+		private const string SuperUserSecurityStamp = "A2ECC018-9B97-420B-815E-9D5B595BFA86";
+		private const int SuperUserNumberId = int.MaxValue;
 
-        private readonly IDataConnection _connection;
-        private readonly IPasswordHasher<TUser> _passwordHasher;
-        private readonly IQueryableProvider<TUser> _queryable;
-        private readonly RoleManager<TRole> _roles;
-        private readonly IValidOptionsSnapshot<SecurityOptions> _security;
-        private readonly IValidOptionsSnapshot<SuperUserOptions> _superUser;
-        private readonly ILookupNormalizer _lookupNormalizer;
+		private readonly TKey _applicationId;
+		private readonly string _applicationName;
 
-        private readonly TKey _tenantId;
-        private readonly string _tenantName;
+		private readonly IDataConnection _connection;
+		private readonly ILookupNormalizer _lookupNormalizer;
+		private readonly IPasswordHasher<TUser> _passwordHasher;
+		private readonly IQueryableProvider<TUser> _queryable;
+		private readonly RoleManager<TRole> _roles;
+		private readonly IValidOptionsSnapshot<SecurityOptions> _security;
+		private readonly IValidOptionsSnapshot<SuperUserOptions> _superUser;
 
-        private readonly TKey _applicationId;
-        private readonly string _applicationName;
+		private readonly TKey _tenantId;
+		private readonly string _tenantName;
 
-        public UserStore(IDataConnection<IdentityBuilder> connection,
-            IPasswordHasher<TUser> passwordHasher,
-            RoleManager<TRole> roles,
-            IQueryableProvider<TUser> queryable,
-            IValidOptionsSnapshot<SecurityOptions> security,
-            IValidOptionsSnapshot<SuperUserOptions> superUser,
-			ILookupNormalizer lookupNormalizer, 
-            IServiceProvider serviceProvider)
-        {
-            serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
-            serviceProvider.TryGetTenantId(out _tenantId);
-            serviceProvider.TryGetTenantName(out _tenantName);
-            serviceProvider.TryGetApplicationId(out _applicationId);
-            serviceProvider.TryGetApplicationName(out _applicationName);
+		public UserStore(IDataConnection<IdentityBuilder> connection,
+			IPasswordHasher<TUser> passwordHasher,
+			RoleManager<TRole> roles,
+			IQueryableProvider<TUser> queryable,
+			IValidOptionsSnapshot<SecurityOptions> security,
+			IValidOptionsSnapshot<SuperUserOptions> superUser,
+			ILookupNormalizer lookupNormalizer,
+			IServiceProvider serviceProvider)
+		{
+			serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
+			serviceProvider.TryGetTenantId(out _tenantId);
+			serviceProvider.TryGetTenantName(out _tenantName);
+			serviceProvider.TryGetApplicationId(out _applicationId);
+			serviceProvider.TryGetApplicationName(out _applicationName);
 
-            CancellationToken = cancellationToken;
+			CancellationToken = cancellationToken;
 
-            _connection = connection;
-            _passwordHasher = passwordHasher;
-            _roles = roles;
-            _queryable = queryable;
+			_connection = connection;
+			_passwordHasher = passwordHasher;
+			_roles = roles;
+			_queryable = queryable;
 
-            _security = security;
-            _superUser = superUser;
-            _lookupNormalizer = lookupNormalizer;
-        }
+			_security = security;
+			_superUser = superUser;
+			_lookupNormalizer = lookupNormalizer;
+		}
 
-        public IQueryable<TUser> Users => MaybeQueryable();
+		public IQueryable<TUser> Users => MaybeQueryable();
 
-        public CancellationToken CancellationToken { get; }
+		public CancellationToken CancellationToken { get; }
 
-        public bool SupportsSuperUser => _superUser?.Value?.Enabled ?? false;
+		public bool SupportsSuperUser => _superUser?.Value?.Enabled ?? false;
 
-        public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IEnumerable<TUser>> FindAllByNameAsync(string normalizedUserName,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
-            {
-                return new[] { CreateSuperUserInstance() };
-            }
+			if (SupportsSuperUser &&
+			    normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
+			{
+				return new[] {CreateSuperUserInstance()};
+			}
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
-            _connection.SetTypeInfo(typeof(TUser));
+			var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName});
+			_connection.SetTypeInfo(typeof(TUser));
 
-            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
-            return users;
-        }
+			var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+			return users;
+		}
 
-        public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            user.TenantId = _tenantId;
-            user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			user.TenantId = _tenantId;
+			user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            if (user.Id == null)
-            {
-                var idType = typeof(TKey);
-                var id = Guid.NewGuid();
-                if (idType == typeof(Guid))
-                {
-                    user.Id = (TKey) (object) id;
-                }
-                else if (idType == typeof(string))
-                {
-                    user.Id = (TKey) (object) $"{id}";
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
+			if (user.Id == null)
+			{
+				var idType = typeof(TKey);
+				var id = Guid.NewGuid();
+				if (idType == typeof(Guid))
+				{
+					user.Id = (TKey) (object) id;
+				}
+				else if (idType == typeof(string))
+				{
+					user.Id = (TKey) (object) $"{id}";
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 
-            var query = SqlBuilder.Insert(user);
-            _connection.SetTypeInfo(typeof(TUser));
-            var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			var query = SqlBuilder.Insert(user);
+			_connection.SetTypeInfo(typeof(TUser));
+			var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(inserted == 1);
-            return IdentityResult.Success;
-        }
+			Debug.Assert(inserted == 1);
+			return IdentityResult.Success;
+		}
 
-        public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Delete<TUser>(new {user.Id, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
-            var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			var query = SqlBuilder.Delete<TUser>(new {user.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
+			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            Debug.Assert(deleted == 1);
-            return IdentityResult.Success;
-        }
+			Debug.Assert(deleted == 1);
+			return IdentityResult.Success;
+		}
 
-        public async Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && userId == SuperUserGuidId)
-            {
-                return CreateSuperUserInstance();
-            }
+			if (SupportsSuperUser && userId == SuperUserGuidId)
+			{
+				return CreateSuperUserInstance();
+			}
 
-            var query = SqlBuilder.Select<TUser>(new {Id = userId, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
+			var query = SqlBuilder.Select<TUser>(new {Id = userId, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
 
-            var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
-            return user;
-        }
+			var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
+			return user;
+		}
 
-        public async Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            if (SupportsSuperUser && normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
-            {
-                return CreateSuperUserInstance();
-            }
+			if (SupportsSuperUser &&
+			    normalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Username))
+			{
+				return CreateSuperUserInstance();
+			}
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
+			var query = SqlBuilder.Select<TUser>(new {NormalizedUserName = normalizedUserName, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
 
-            var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
-            return user;
-        }
+			var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
+			return user;
+		}
 
-        public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.NormalizedUserName);
-        }
+		public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.NormalizedUserName);
+		}
 
-        public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult($"{user.Id}");
-        }
+		public Task<string> GetUserIdAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult($"{user.Id}");
+		}
 
-        public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.UserName);
-        }
+		public Task<string> GetUserNameAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.UserName);
+		}
 
-        public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.NormalizedUserName = normalizedName;
-            return Task.CompletedTask;
-        }
+		public Task SetNormalizedUserNameAsync(TUser user, string normalizedName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.NormalizedUserName = normalizedName;
+			return Task.CompletedTask;
+		}
 
-        public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.UserName = userName;
-            return Task.CompletedTask;
-        }
+		public Task SetUserNameAsync(TUser user, string userName, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.UserName = userName;
+			return Task.CompletedTask;
+		}
 
-        public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Update(user, new {user.Id, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
+			var query = SqlBuilder.Update(user, new {user.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
 
-            var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            Debug.Assert(updated == 1);
-            return IdentityResult.Success;
-        }
+			var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(updated == 1);
+			return IdentityResult.Success;
+		}
 
-        public void Dispose()
-        {
-        }
+		public void Dispose()
+		{
+		}
 
-        private IQueryable<TUser> MaybeQueryable()
-        {
-            if (_queryable.IsSafe)
-            {
-                return _queryable.Queryable;
-            }
+		private IQueryable<TUser> MaybeQueryable()
+		{
+			if (_queryable.IsSafe)
+			{
+				return _queryable.Queryable;
+			}
 
-            if (_queryable.SupportsUnsafe)
-            {
-                return _queryable.UnsafeQueryable;
-            }
+			if (_queryable.SupportsUnsafe)
+			{
+				return _queryable.UnsafeQueryable;
+			}
 
-            return Task.Run(GetAllUsersAsync, CancellationToken).Result.AsQueryable();
-        }
+			return Task.Run(GetAllUsersAsync, CancellationToken).Result.AsQueryable();
+		}
 
-        private Task<IEnumerable<TUser>> GetAllUsersAsync()
-        {
-            var query = SqlBuilder.Select<TUser>(new {TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
-            var users = _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
-            return users;
-        }
+		private Task<IEnumerable<TUser>> GetAllUsersAsync()
+		{
+			var query = SqlBuilder.Select<TUser>(new {TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
+			var users = _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+			return users;
+		}
 
-        private TUser CreateSuperUserInstance()
-        {
-            var superuser = Activator.CreateInstance<TUser>();
-            if (typeof(TKey) == typeof(Guid))
-            {
-                superuser.Id = (TKey) (object) Guid.Parse(SuperUserGuidId);
-            }
-            else if (typeof(TKey) == typeof(string))
-            {
-                superuser.Id = (TKey) (object) SuperUserGuidId;
-            }
-            else
-            {
-                superuser.Id = (TKey) (object) SuperUserNumberId;
-            }
+		private TUser CreateSuperUserInstance()
+		{
+			var superuser = Activator.CreateInstance<TUser>();
+			if (typeof(TKey) == typeof(Guid))
+			{
+				superuser.Id = (TKey) (object) Guid.Parse(SuperUserGuidId);
+			}
+			else if (typeof(TKey) == typeof(string))
+			{
+				superuser.Id = (TKey) (object) SuperUserGuidId;
+			}
+			else
+			{
+				superuser.Id = (TKey) (object) SuperUserNumberId;
+			}
 
-            var options = _superUser?.Value;
+			var options = _superUser?.Value;
 
-            superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
-            superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalizeName(superuser.UserName);
-            superuser.PhoneNumber = _lookupNormalizer.MaybeNormalizeName(options?.PhoneNumber ?? SuperUserDefaultPhoneNumber);
-            superuser.PhoneNumberConfirmed = true;
-            superuser.Email = options?.Email ?? SuperUserDefaultEmail;
-            superuser.NormalizedEmail = _lookupNormalizer.MaybeNormalizeName(options?.Email ?? SuperUserDefaultEmail);
-            superuser.EmailConfirmed = true;
-            superuser.LockoutEnabled = false;
-            superuser.TwoFactorEnabled = false;
-            superuser.SecurityStamp = SuperUserSecurityStamp;
-            superuser.ConcurrencyStamp = $"{Guid.NewGuid()}";
-            superuser.PasswordHash = _passwordHasher.HashPassword(superuser, options?.Password);
+			superuser.UserName = options?.Username ?? SuperUserDefaultUserName;
+			superuser.NormalizedUserName = _lookupNormalizer.MaybeNormalizeName(superuser.UserName);
+			superuser.PhoneNumber =
+				_lookupNormalizer.MaybeNormalizeName(options?.PhoneNumber ?? SuperUserDefaultPhoneNumber);
+			superuser.PhoneNumberConfirmed = true;
+			superuser.Email = options?.Email ?? SuperUserDefaultEmail;
+			superuser.NormalizedEmail = _lookupNormalizer.MaybeNormalizeName(options?.Email ?? SuperUserDefaultEmail);
+			superuser.EmailConfirmed = true;
+			superuser.LockoutEnabled = false;
+			superuser.TwoFactorEnabled = false;
+			superuser.SecurityStamp = SuperUserSecurityStamp;
+			superuser.ConcurrencyStamp = $"{Guid.NewGuid()}";
+			superuser.PasswordHash = _passwordHasher.HashPassword(superuser, options?.Password);
 
-            return superuser;
-        }
-    }
+			return superuser;
+		}
+	}
 }

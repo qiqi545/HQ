@@ -17,9 +17,9 @@
 
 namespace HQ.Extensions.CodeGeneration.Scripting
 {
-    public enum ExpressionOperator
-    {
-        Equal,
-        NotEqual
-    }
+	public enum ExpressionOperator
+	{
+		Equal,
+		NotEqual
+	}
 }

@@ -20,14 +20,14 @@ using Dapper;
 
 namespace HQ.Data.Sql.Dapper
 {
-    public static partial class DapperExtensions
-    {
-        private static DynamicParameters Prepare(this IEnumerable<KeyValuePair<string, object>> parameters)
-        {
-            var result = new DynamicParameters();
-            foreach (var parameter in parameters)
-                result.Add(parameter.Key, parameter.Value);
-            return result;
-        }
-    }
+	public static partial class DapperExtensions
+	{
+		private static DynamicParameters Prepare(this IEnumerable<KeyValuePair<string, object>> parameters)
+		{
+			var result = new DynamicParameters();
+			foreach (var parameter in parameters)
+				result.Add(parameter.Key, parameter.Value);
+			return result;
+		}
+	}
 }

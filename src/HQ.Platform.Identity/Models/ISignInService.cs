@@ -17,16 +17,16 @@
 
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
-using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ISignInService<TUser, TTenant, TApplication, TKey>
-        where TUser : class, IEmailProvider, IPhoneNumberProvider
-    {
-        Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password, bool persistent);
+	public interface ISignInService<TUser, TTenant, TApplication, TKey>
+		where TUser : class, IEmailProvider, IPhoneNumberProvider
+	{
+		Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password,
+			bool persistent);
 
-        Task<Operation> SignOutAsync(TUser user);
-    }
+		Task<Operation> SignOutAsync(TUser user);
+	}
 }

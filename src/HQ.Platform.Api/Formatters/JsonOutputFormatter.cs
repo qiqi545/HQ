@@ -27,64 +27,64 @@ using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Formatters
 {
-    public class JsonOutputFormatter :
+	public class JsonOutputFormatter :
 #if NETCOREAPP2_2
 		Microsoft.AspNetCore.Mvc.Formatters.JsonOutputFormatter
 #else
 		NewtonsoftJsonOutputFormatter
 #endif
 	{
-        private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
-        private JsonSerializer _serializer;
+		private readonly IDictionary<ITextTransform, JsonContractResolver> _resolvers;
+		private JsonSerializer _serializer;
 
-        public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool, IOptions<MvcOptions> options) :
+		public JsonOutputFormatter(JsonSerializerSettings serializerSettings, ArrayPool<char> charPool
 #if NETCOREAPP2_2
-			base(serializerSettings, charPool)
+			): base(serializerSettings, charPool)
 #else
-	        base(serializerSettings, charPool, options.Value)
+			, IOptions<MvcOptions> options) : base(serializerSettings, charPool, options.Value)
 #endif
 		{
 			_resolvers = new Dictionary<ITextTransform, JsonContractResolver>();
-        }
+		}
 
-        public override bool CanWriteResult(OutputFormatterCanWriteContext context)
-        {
-            EnsureSerializer(context);
+		public override bool CanWriteResult(OutputFormatterCanWriteContext context)
+		{
+			EnsureSerializer(context);
 
-            return base.CanWriteResult(context);
-        }
+			return base.CanWriteResult(context);
+		}
 
-        private void EnsureSerializer(OutputFormatterCanWriteContext context)
-        {
-            if (context.HttpContext.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
-            {
-                if (!_resolvers.TryGetValue(transform, out var resolver))
-                {
-                    resolver = new JsonContractResolver(transform, JsonProcessingDirection.Output);
-                    _resolvers.Add(transform, resolver);
-                }
+		private void EnsureSerializer(OutputFormatterCanWriteContext context)
+		{
+			if (context.HttpContext.Items[Constants.ContextKeys.JsonMultiCase] is ITextTransform transform)
+			{
+				if (!_resolvers.TryGetValue(transform, out var resolver))
+				{
+					resolver = new JsonContractResolver(transform, JsonProcessingDirection.Output);
+					_resolvers.Add(transform, resolver);
+				}
 
-                _serializer.ContractResolver = resolver;
-            }
+				_serializer.ContractResolver = resolver;
+			}
 
-            if (context.HttpContext.Items[Constants.ContextKeys.JsonPrettyPrint] is bool prettyPrint && !prettyPrint)
-            {
-                _serializer.Apply(s => s.Formatting = Formatting.None);
-            }
+			if (context.HttpContext.Items[Constants.ContextKeys.JsonPrettyPrint] is bool prettyPrint && !prettyPrint)
+			{
+				_serializer.Apply(s => s.Formatting = Formatting.None);
+			}
 
-            if (context.HttpContext.Items[Constants.ContextKeys.JsonTrim] is bool trim && trim)
-            {
-                _serializer.Apply(s =>
-                {
-                    s.NullValueHandling = NullValueHandling.Ignore;
-                    s.DefaultValueHandling = DefaultValueHandling.Ignore;
-                });
-            }
-        }
+			if (context.HttpContext.Items[Constants.ContextKeys.JsonTrim] is bool trim && trim)
+			{
+				_serializer.Apply(s =>
+				{
+					s.NullValueHandling = NullValueHandling.Ignore;
+					s.DefaultValueHandling = DefaultValueHandling.Ignore;
+				});
+			}
+		}
 
-        protected override JsonSerializer CreateJsonSerializer()
-        {
-            return _serializer ??= JsonSerializer.Create(SerializerSettings);
-        }
-    }
+		protected override JsonSerializer CreateJsonSerializer()
+		{
+			return _serializer ??= JsonSerializer.Create(SerializerSettings);
+		}
+	}
 }

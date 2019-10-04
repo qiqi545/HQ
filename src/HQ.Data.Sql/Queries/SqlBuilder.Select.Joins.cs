@@ -26,29 +26,29 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    partial class SqlBuilder
-    {
-        public static Query Select<T>(dynamic data, List<Filter> filters, List<Projection> projections,
-            params Expression<Func<T, object>>[] orderBy)
-        {
-            var descriptor = GetDescriptor<T>();
-            Query query = Select(descriptor, data, null, filters, projections, orderBy);
-            if (orderBy?.Length > 0)
-                query.Sql = Dialect.OrderBy(query.Sql, orderBy);
-            return query;
-        }
+	partial class SqlBuilder
+	{
+		public static Query Select<T>(dynamic data, List<Filter> filters, List<Projection> projections,
+			params Expression<Func<T, object>>[] orderBy)
+		{
+			var descriptor = GetDescriptor<T>();
+			Query query = Select(descriptor, data, null, filters, projections, orderBy);
+			if (orderBy?.Length > 0)
+				query.Sql = Dialect.OrderBy(query.Sql, orderBy);
+			return query;
+		}
 
-        private static Query Select<T>(IDataDescriptor descriptor, dynamic data, List<string> columnFilter,
-            List<Filter> filters, List<Projection> projections, Expression<Func<T, object>>[] orderBy)
-        {
-            var columns = columnFilter ?? Dialect.ResolveColumnNames(descriptor).ToList();
-            var sql = Dialect.Query(descriptor.Table, descriptor.Schema, columns, filters, projections, orderBy);
+		private static Query Select<T>(IDataDescriptor descriptor, dynamic data, List<string> columnFilter,
+			List<Filter> filters, List<Projection> projections, Expression<Func<T, object>>[] orderBy)
+		{
+			var columns = columnFilter ?? Dialect.ResolveColumnNames(descriptor).ToList();
+			var sql = Dialect.Query(descriptor.Table, descriptor.Schema, columns, filters, projections, orderBy);
 
-            IDictionary<string, object> whereHash = ReadAccessor.Create(data.GetType()).AsReadOnlyDictionary(data);
-            var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToList();
-            var parameters = whereFilter.ToDictionary(key => $"{Dialect.Parameter}{key}", key => whereHash[key]);
+			IDictionary<string, object> whereHash = ReadAccessor.Create(data.GetType()).AsReadOnlyDictionary(data);
+			var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHash.Keys).ToList();
+			var parameters = whereFilter.ToDictionary(key => $"{Dialect.Parameter}{key}", key => whereHash[key]);
 
-            return new Query(sql, parameters);
-        }
-    }
+			return new Query(sql, parameters);
+		}
+	}
 }

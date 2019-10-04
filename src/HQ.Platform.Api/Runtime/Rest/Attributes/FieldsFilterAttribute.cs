@@ -17,29 +17,28 @@
 
 using System.Collections.Generic;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class FieldsFilterAttribute : StaticFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            Execute(context);
-        }
+	public class FieldsFilterAttribute : StaticFilterAttribute
+	{
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			Execute(context);
+		}
 
-        public static void Execute(ActionExecutingContext context)
-        {
-            Execute<RestFieldsFilter>(context, filter => filter.Options.FieldsOperator, c => c.Fields);
-        }
+		public static void Execute(ActionExecutingContext context)
+		{
+			Execute<RestFieldsFilter>(context, filter => filter.Options.FieldsOperator, c => c.Fields);
+		}
 
-        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
-            QueryContext qc)
-        {
-            Execute<RestFieldsFilter>(context, filter => filter.Options.FieldsOperator, c => c.Fields, qs, qc);
-        }
-    }
+		public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
+			QueryContext qc)
+		{
+			Execute<RestFieldsFilter>(context, filter => filter.Options.FieldsOperator, c => c.Fields, qs, qc);
+		}
+	}
 }

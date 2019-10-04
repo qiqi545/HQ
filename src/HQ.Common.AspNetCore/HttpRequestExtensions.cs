@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System.Net;
@@ -18,17 +20,17 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Common.AspNetCore
 {
-    public static class HttpRequestExtensions
-    {
-        public static bool IsLocal(this HttpRequest req)
-        {
-            var connection = req.HttpContext.Connection;
+	public static class HttpRequestExtensions
+	{
+		public static bool IsLocal(this HttpRequest req)
+		{
+			var connection = req.HttpContext.Connection;
 
-            return connection?.RemoteIpAddress == null ||
-                   IPAddress.IsLoopback(connection.RemoteIpAddress) ||
-                   connection.LocalIpAddress == null ||
-                   connection.RemoteIpAddress.Equals(connection.LocalIpAddress) ||
-                   IPAddress.IsLoopback(connection.LocalIpAddress);
-        }
-    }
+			return connection?.RemoteIpAddress == null ||
+			       IPAddress.IsLoopback(connection.RemoteIpAddress) ||
+			       connection.LocalIpAddress == null ||
+			       connection.RemoteIpAddress.Equals(connection.LocalIpAddress) ||
+			       IPAddress.IsLoopback(connection.LocalIpAddress);
+		}
+	}
 }

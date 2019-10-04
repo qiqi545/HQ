@@ -17,8 +17,8 @@
 
 namespace HQ.Extensions.Messaging
 {
-    public interface IMessageHandler<in T>
-    {
-        bool Handle(T message);
-    }
+	public interface IMessageHandler<in T>
+	{
+		bool Handle(T message);
+	}
 }

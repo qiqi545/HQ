@@ -19,11 +19,11 @@ using System.Runtime.Loader;
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
-    {
-        public AssemblyLoadContext Get()
-        {
-            return AssemblyLoadContext.Default;
-        }
-    }
+	public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
+	{
+		public AssemblyLoadContext Get()
+		{
+			return AssemblyLoadContext.Default;
+		}
+	}
 }

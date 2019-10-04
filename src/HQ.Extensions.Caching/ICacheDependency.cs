@@ -20,8 +20,8 @@ using Microsoft.Extensions.Primitives;
 
 namespace HQ.Extensions.Caching
 {
-    public interface ICacheDependency : IDisposable
-    {
-        IChangeToken GetChangeToken();
-    }
+	public interface ICacheDependency : IDisposable
+	{
+		IChangeToken GetChangeToken();
+	}
 }

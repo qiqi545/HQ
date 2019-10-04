@@ -21,61 +21,60 @@ using System.Data.Common;
 
 namespace HQ.Data.SessionManagement
 {
-    public class DataConnection : IDataConnection
-    {
-        private readonly DataContext _current;
-        private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
-        private readonly IServiceProvider _serviceProvider;
-        private Type _type;
+	public class DataConnection : IDataConnection
+	{
+		private readonly DataContext _current;
+		private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
+		private readonly IServiceProvider _serviceProvider;
+		private Type _type;
 
-        public DataConnection(DataContext current, IServiceProvider serviceProvider,
-            Action<IDbCommand, Type, IServiceProvider> onCommand)
-        {
-            _current = current;
-            _serviceProvider = serviceProvider;
-            _onCommand = onCommand;
-        }
+		public DataConnection(DataContext current, IServiceProvider serviceProvider,
+			Action<IDbCommand, Type, IServiceProvider> onCommand)
+		{
+			_current = current;
+			_serviceProvider = serviceProvider;
+			_onCommand = onCommand;
+		}
 
-        public void SetTypeInfo(Type type)
-        {
-            _type = type;
-        }
+		public void SetTypeInfo(Type type)
+		{
+			_type = type;
+		}
 
-        public void SetTypeInfo<T>()
-        {
-            _type = typeof(T);
-        }
+		public void SetTypeInfo<T>()
+		{
+			_type = typeof(T);
+		}
 
-        public bool TryGetLastInsertedId<TKey>(out TKey key)
-        {
-            if (!(Current is WrapDbConnection wrapped))
-            {
-                key = default;
-                return false;
-            }
+		public bool TryGetLastInsertedId<TKey>(out TKey key)
+		{
+			if (!(Current is WrapDbConnection wrapped))
+			{
+				key = default;
+				return false;
+			}
 
-            if (wrapped.LastInsertedId == null)
-            {
-                key = default;
-                return false;
-            }
+			if (wrapped.LastInsertedId == null)
+			{
+				key = default;
+				return false;
+			}
 
-            key = (TKey) Convert.ChangeType(wrapped.LastInsertedId, typeof(TKey));
-            return true;
-        }
+			key = (TKey) Convert.ChangeType(wrapped.LastInsertedId, typeof(TKey));
+			return true;
+		}
 
-        public IDbConnection Current
-        {
-            get
-            {
-                if (_onCommand != null && _current.Connection is DbConnection connection)
-                    return new WrapDbConnection(connection, _serviceProvider, _onCommand, _type);
+		public IDbConnection Current
+		{
+			get
+			{
+				if (_onCommand != null && _current.Connection is DbConnection connection)
+					return new WrapDbConnection(connection, _serviceProvider, _onCommand, _type);
 
-                return _current.Connection;
-            }
-        }
+				return _current.Connection;
+			}
+		}
 
-        public IDbTransaction Transaction { get; set; }
-    }
+		public IDbTransaction Transaction { get; set; }
+	}
 }
-

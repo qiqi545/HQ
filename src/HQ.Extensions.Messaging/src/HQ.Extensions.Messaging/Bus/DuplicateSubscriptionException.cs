@@ -19,8 +19,8 @@ using System;
 
 namespace HQ.Extensions.Messaging.Bus
 {
-    [Serializable]
-    public class DuplicateSubscriptionException : Exception
-    {
-    }
+	[Serializable]
+	public class DuplicateSubscriptionException : Exception
+	{
+	}
 }

@@ -23,83 +23,84 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class SelectBuilder
-    {
-        public static string Select(this ISqlDialect d, string table, string schema = "")
-        {
-            return Pooling.StringBuilderPool.Scoped(sb => { sb.Append("SELECT * FROM ").AppendTable(d, table, schema); });
-        }
+	public static class SelectBuilder
+	{
+		public static string Select(this ISqlDialect d, string table, string schema = "")
+		{
+			return Pooling.StringBuilderPool.Scoped(
+				sb => { sb.Append("SELECT * FROM ").AppendTable(d, table, schema); });
+		}
 
-        public static string Select(this ISqlDialect d, string table, string schema, List<string> keys)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("SELECT * FROM ").AppendTable(d, table, schema).AppendWhereClause(d, keys);
-            });
-        }
+		public static string Select(this ISqlDialect d, string table, string schema, List<string> keys)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("SELECT * FROM ").AppendTable(d, table, schema).AppendWhereClause(d, keys);
+			});
+		}
 
-        public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
-            List<string> keys)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("SELECT ");
+		public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
+			List<string> keys)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("SELECT ");
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    sb.AppendName(d, columns[i]);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					sb.AppendName(d, columns[i]);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.Append(" FROM ").AppendTable(d, table, schema).AppendWhereClause(d, keys);
-            });
-        }
+				sb.Append(" FROM ").AppendTable(d, table, schema).AppendWhereClause(d, keys);
+			});
+		}
 
-        public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
-            List<string> keys, List<string> parameters)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("SELECT ");
+		public static string Select(this ISqlDialect d, string table, string schema, List<string> columns,
+			List<string> keys, List<string> parameters)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("SELECT ");
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    sb.AppendName(d, columns[i]);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					sb.AppendName(d, columns[i]);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.Append(" FROM ").AppendTable(d, table, schema);
+				sb.Append(" FROM ").AppendTable(d, table, schema);
 
-                sb.AppendWhereClause(d, keys, parameters);
-            });
-        }
+				sb.AppendWhereClause(d, keys, parameters);
+			});
+		}
 
-        public static string Select(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<string> columns, List<string> keys, List<string> parameters)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (descriptor != null && !d.BeforeSelect(descriptor, sb))
-                    return;
+		public static string Select(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<string> columns, List<string> keys, List<string> parameters)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (descriptor != null && !d.BeforeSelect(descriptor, sb))
+					return;
 
-                sb.Append("SELECT ");
+				sb.Append("SELECT ");
 
-                if (!d.BeforeSelectColumns(descriptor, sb, columns))
-                    return;
+				if (!d.BeforeSelectColumns(descriptor, sb, columns))
+					return;
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    sb.AppendName(d, columns[i]);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					sb.AppendName(d, columns[i]);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.Append(" FROM ").AppendTable(d, table, schema);
+				sb.Append(" FROM ").AppendTable(d, table, schema);
 
-                sb.AppendWhereClause(descriptor, d, keys, parameters);
-            });
-        }
-    }
+				sb.AppendWhereClause(descriptor, d, keys, parameters);
+			});
+		}
+	}
 }

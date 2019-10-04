@@ -20,22 +20,22 @@ using HQ.Data.Contracts;
 
 namespace HQ.Data.Sql.Descriptor
 {
-    public class PropertyToColumn
-    {
-        public PropertyToColumn(PropertyAccessor typedPropertyDescriptor)
-        {
-            Property = typedPropertyDescriptor;
-            ColumnName = Property.Name;
-            Property.Name = Property.Name;
-            IsTimestamp = typedPropertyDescriptor.Type == typeof(DateTimeOffset) &&
-                          typedPropertyDescriptor.Name == nameof(IObject.CreatedAt);
-        }
+	public class PropertyToColumn
+	{
+		public PropertyToColumn(PropertyAccessor typedPropertyDescriptor)
+		{
+			Property = typedPropertyDescriptor;
+			ColumnName = Property.Name;
+			Property.Name = Property.Name;
+			IsTimestamp = typedPropertyDescriptor.Type == typeof(DateTimeOffset) &&
+			              typedPropertyDescriptor.Name == nameof(IObject.CreatedAt);
+		}
 
-        public PropertyAccessor Property { get; }
-        public string ColumnName { get; }
-        public bool IsComputed { get; set; }
-        public bool IsIdentity { get; set; }
-        public bool IsKey { get; set; }
-        public bool IsTimestamp { get; }
-    }
+		public PropertyAccessor Property { get; }
+		public string ColumnName { get; }
+		public bool IsComputed { get; set; }
+		public bool IsIdentity { get; set; }
+		public bool IsKey { get; set; }
+		public bool IsTimestamp { get; }
+	}
 }

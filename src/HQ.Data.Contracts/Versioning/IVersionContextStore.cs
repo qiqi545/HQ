@@ -19,9 +19,9 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Versioning
 {
-    public interface IVersionContextStore
-    {
-	    bool SupportsFallbackVersion { get; }
-        Task<VersionContext> FindByKeyAsync(string versionKey);
-    }
+	public interface IVersionContextStore
+	{
+		bool SupportsFallbackVersion { get; }
+		Task<VersionContext> FindByKeyAsync(string versionKey);
+	}
 }

@@ -19,18 +19,15 @@ using System.Collections.Generic;
 
 namespace HQ.Common
 {
-    public struct SelfEnumerable<T>
-    {
-        public SelfEnumerable(List<T> inner)
-        {
-            AsList = inner;
-        }
+	public struct SelfEnumerable<T>
+	{
+		public SelfEnumerable(List<T> inner) => AsList = inner;
 
-        public SelfEnumerator<T> GetEnumerator()
-        {
-            return new SelfEnumerator<T>(AsList);
-        }
+		public SelfEnumerator<T> GetEnumerator()
+		{
+			return new SelfEnumerator<T>(AsList);
+		}
 
-        public List<T> AsList { get; }
-    }
+		public List<T> AsList { get; }
+	}
 }

@@ -17,10 +17,10 @@
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public enum DelegateBuildStrategy
-    {
-        MethodInfo,
-        Expression,
-        ObjectExecutor
-    }
+	public enum DelegateBuildStrategy
+	{
+		MethodInfo,
+		Expression,
+		ObjectExecutor
+	}
 }

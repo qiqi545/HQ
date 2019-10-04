@@ -21,36 +21,33 @@ using HQ.Data.Sql.Dialects;
 
 namespace HQ.Data.Sql.Queries
 {
-    // todo kill all static access and use DI
+	// todo kill all static access and use DI
 
-    public static partial class SqlBuilder
-    {
-        static SqlBuilder()
-        {
-            Dialect = NoDialect.Default;
-        }
+	public static partial class SqlBuilder
+	{
+		static SqlBuilder() => Dialect = NoDialect.Default;
 
-        public static ISqlDialect Dialect { get; set; }
-        public static Func<Type, IDataDescriptor> DescriptorFunction { get; set; } = SimpleDataDescriptor.Create;
+		public static ISqlDialect Dialect { get; set; }
+		public static Func<Type, IDataDescriptor> DescriptorFunction { get; set; } = SimpleDataDescriptor.Create;
 
-        public static IDataDescriptor GetDescriptor<T>()
-        {
-            return DescriptorFunction(typeof(T));
-        }
+		public static IDataDescriptor GetDescriptor<T>()
+		{
+			return DescriptorFunction(typeof(T));
+		}
 
-        internal static IDataDescriptor GetDescriptor(Type type)
-        {
-            return DescriptorFunction(type);
-        }
+		internal static IDataDescriptor GetDescriptor(Type type)
+		{
+			return DescriptorFunction(type);
+		}
 
-        public static object Asc(this object clause)
-        {
-            return clause;
-        }
+		public static object Asc(this object clause)
+		{
+			return clause;
+		}
 
-        public static object Desc(this object clause)
-        {
-            return clause;
-        }
-    }
+		public static object Desc(this object clause)
+		{
+			return clause;
+		}
+	}
 }

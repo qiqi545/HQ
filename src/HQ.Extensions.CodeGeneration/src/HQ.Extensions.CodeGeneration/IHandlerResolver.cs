@@ -20,10 +20,10 @@ using System.Reflection;
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public interface IHandlerResolver
-    {
-        Handler ResolveHandler(MethodInfo method);
-        Handler ResolveHandler(Type serviceType, string name);
-        Handler ResolveHandler<T>(string name) where T : class;
-    }
+	public interface IHandlerResolver
+	{
+		Handler ResolveHandler(MethodInfo method);
+		Handler ResolveHandler(Type serviceType, string name);
+		Handler ResolveHandler<T>(string name) where T : class;
+	}
 }

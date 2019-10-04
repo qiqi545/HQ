@@ -17,8 +17,8 @@
 
 namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 {
-    public enum ServerTimingRendering
-    {
-        Verbose
-    }
+	public enum ServerTimingRendering
+	{
+		Verbose
+	}
 }

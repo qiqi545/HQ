@@ -28,145 +28,149 @@ using TypeKitchen;
 
 namespace HQ.Platform.Api.Filters
 {
-    /// <summary>
-    /// Compares externally source routing based on existing <see cref="RouteOptions" /> and permanently redirects when they differ.
-    /// <see href="https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-2.2" />
-    /// </summary>
-    public class CanonicalRoutesResourceFilter : IResourceFilter
-    {
-        private const string SchemeDelimiter = "://";
-        private const char ForwardSlash = '/';
+	/// <summary>
+	///     Compares externally source routing based on existing <see cref="RouteOptions" /> and permanently redirects when
+	///     they differ.
+	///     <see href="https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/filters?view=aspnetcore-2.2" />
+	/// </summary>
+	public class CanonicalRoutesResourceFilter : IResourceFilter
+	{
+		private const string SchemeDelimiter = "://";
+		private const char ForwardSlash = '/';
 
-        private readonly IOptions<ApiOptions> _options;
+		private readonly IOptions<ApiOptions> _options;
 
-        public CanonicalRoutesResourceFilter(IOptions<ApiOptions> options)
-        {
-            _options = options;
-        }
+		public CanonicalRoutesResourceFilter(IOptions<ApiOptions> options) => _options = options;
 
-        public void OnResourceExecuting(ResourceExecutingContext context)
-        {
-            if (!string.Equals(context.HttpContext.Request.Method, Constants.HttpVerbs.Get, StringComparison.OrdinalIgnoreCase))
-                return;
+		public void OnResourceExecuting(ResourceExecutingContext context)
+		{
+			if (!string.Equals(context.HttpContext.Request.Method, Constants.HttpVerbs.Get,
+				StringComparison.OrdinalIgnoreCase))
+				return;
 
-            if (!TryGetCanonicalRoute(context.HttpContext.Request, _options.Value.CanonicalRoutes, out var redirectToUrl))
-                context.Result = new RedirectResult(redirectToUrl, true);
-        }
+			if (!TryGetCanonicalRoute(context.HttpContext.Request, _options.Value.CanonicalRoutes,
+				out var redirectToUrl))
+				context.Result = new RedirectResult(redirectToUrl, true);
+		}
 
-        public void OnResourceExecuted(ResourceExecutedContext context) { /* Opportunity to display bad URLs in dashboard */ }
+		public void OnResourceExecuted(ResourceExecutedContext context)
+		{
+			/* Opportunity to display bad URLs in dashboard */
+		}
 
-        internal static bool TryGetCanonicalRoute(HttpRequest request, CanonicalRoutesOptions options, out string redirectToUrl)
-        {
-            var canonical = true;
+		internal static bool TryGetCanonicalRoute(HttpRequest request, CanonicalRoutesOptions options,
+			out string redirectToUrl)
+		{
+			var canonical = true;
 
-            var appendTrailingSlash = options.AppendTrailingSlash;
-            var lowercaseUrls = options.LowercaseUrls;
-            var lowercaseQueryStrings = options.LowercaseQueryStrings;
-            
-            var sb = Pooling.StringBuilderPool.Get();
-            try
-            {
-                if (lowercaseUrls)
-                {
-                    AppendLowercase(sb, request.Scheme, ref canonical);
-                }
-                else
-                {
-                    sb.Append(request.Scheme);
-                }
+			var appendTrailingSlash = options.AppendTrailingSlash;
+			var lowercaseUrls = options.LowercaseUrls;
+			var lowercaseQueryStrings = options.LowercaseQueryStrings;
 
-                sb.Append(SchemeDelimiter);
+			var sb = Pooling.StringBuilderPool.Get();
+			try
+			{
+				if (lowercaseUrls)
+				{
+					AppendLowercase(sb, request.Scheme, ref canonical);
+				}
+				else
+				{
+					sb.Append(request.Scheme);
+				}
 
-                if (request.Host.HasValue)
-                {
-                    if (lowercaseUrls)
-                    {
-                        AppendLowercase(sb, request.Host.Value, ref canonical);
-                    }
-                    else
-                    {
-                        sb.Append(request.Host);
-                    }
-                }
-                
-                if (request.PathBase.HasValue)
-                {
-                    if (lowercaseUrls)
-                    {
-                        AppendLowercase(sb, request.PathBase.Value, ref canonical);
-                    }
-                    else
-                    {
-                        sb.Append(request.PathBase);
-                    }
+				sb.Append(SchemeDelimiter);
 
-                    if (appendTrailingSlash && !request.Path.HasValue)
-                    {
-                        if (request.PathBase.Value[request.PathBase.Value.Length - 1] != ForwardSlash)
-                        {
-                            sb.Append(ForwardSlash);
-                            canonical = false;
-                        }
-                    }
-                }
+				if (request.Host.HasValue)
+				{
+					if (lowercaseUrls)
+					{
+						AppendLowercase(sb, request.Host.Value, ref canonical);
+					}
+					else
+					{
+						sb.Append(request.Host);
+					}
+				}
 
-                if (request.Path.HasValue)
-                {
-                    if (lowercaseUrls)
-                    {
-                        AppendLowercase(sb, request.Path.Value, ref canonical);
-                    }
-                    else
-                    {
-                        sb.Append(request.Path);
-                    }
+				if (request.PathBase.HasValue)
+				{
+					if (lowercaseUrls)
+					{
+						AppendLowercase(sb, request.PathBase.Value, ref canonical);
+					}
+					else
+					{
+						sb.Append(request.PathBase);
+					}
 
-                    if (appendTrailingSlash)
-                    {
-                        if (request.Path.Value[request.Path.Value.Length - 1] != ForwardSlash)
-                        {
-                            sb.Append(ForwardSlash);
-                            canonical = false;
-                        }
-                    }
-                }
+					if (appendTrailingSlash && !request.Path.HasValue)
+					{
+						if (request.PathBase.Value[request.PathBase.Value.Length - 1] != ForwardSlash)
+						{
+							sb.Append(ForwardSlash);
+							canonical = false;
+						}
+					}
+				}
 
-                if (request.QueryString.HasValue)
-                {
-                    if (lowercaseUrls && lowercaseQueryStrings)
-                    {
-                        AppendLowercase(sb, request.QueryString.Value, ref canonical);
-                    }
-                    else
-                    {
-                        sb.Append(request.QueryString);
-                    }
-                }
+				if (request.Path.HasValue)
+				{
+					if (lowercaseUrls)
+					{
+						AppendLowercase(sb, request.Path.Value, ref canonical);
+					}
+					else
+					{
+						sb.Append(request.Path);
+					}
 
-                redirectToUrl = canonical ? null : sb.ToString();
-            }
-            finally
-            {
-                Pooling.StringBuilderPool.Return(sb);
-            }
+					if (appendTrailingSlash)
+					{
+						if (request.Path.Value[request.Path.Value.Length - 1] != ForwardSlash)
+						{
+							sb.Append(ForwardSlash);
+							canonical = false;
+						}
+					}
+				}
 
-            return canonical;
-        }
+				if (request.QueryString.HasValue)
+				{
+					if (lowercaseUrls && lowercaseQueryStrings)
+					{
+						AppendLowercase(sb, request.QueryString.Value, ref canonical);
+					}
+					else
+					{
+						sb.Append(request.QueryString);
+					}
+				}
 
-        private static void AppendLowercase(StringBuilder sb, string value, ref bool valid)
-        {
-            for (var i = 0; i < value.Length; i++)
-            {
-                if (char.IsUpper(value, i))
-                {
-                    valid = false;
-                    sb.Append(char.ToLowerInvariant(value[i]));
-                }
-                else
-                {
-                    sb.Append(value[i]);
-                }
-            }
-        }
-    }
+				redirectToUrl = canonical ? null : sb.ToString();
+			}
+			finally
+			{
+				Pooling.StringBuilderPool.Return(sb);
+			}
+
+			return canonical;
+		}
+
+		private static void AppendLowercase(StringBuilder sb, string value, ref bool valid)
+		{
+			for (var i = 0; i < value.Length; i++)
+			{
+				if (char.IsUpper(value, i))
+				{
+					valid = false;
+					sb.Append(char.ToLowerInvariant(value[i]));
+				}
+				else
+				{
+					sb.Append(value[i]);
+				}
+			}
+		}
+	}
 }

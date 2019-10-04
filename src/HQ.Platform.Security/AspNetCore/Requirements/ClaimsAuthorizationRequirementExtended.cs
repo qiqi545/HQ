@@ -25,64 +25,63 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
-    public class ClaimsAuthorizationRequirementExtended :
-        AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,
-        IAuthorizationRequirement
-    {
-        private readonly IValidOptionsMonitor<SecurityOptions> _options;
-        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
+	public class ClaimsAuthorizationRequirementExtended :
+		AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,
+		IAuthorizationRequirement
+	{
+		private readonly IValidOptionsMonitor<SecurityOptions> _options;
+		private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public ClaimsAuthorizationRequirementExtended(
-	        IValidOptionsMonitor<SecurityOptions> options,
-	        IValidOptionsMonitor<SuperUserOptions> superUser,
+		public ClaimsAuthorizationRequirementExtended(
+			IValidOptionsMonitor<SecurityOptions> options,
+			IValidOptionsMonitor<SuperUserOptions> superUser,
 			string claimType,
-            IEnumerable<string> allowedValues)
-        {
-            var values = allowedValues.ToArray();
+			IEnumerable<string> allowedValues)
+		{
+			var values = allowedValues.ToArray();
 
-            _options = options;
-            _superUser = superUser;
-            ClaimType = claimType;
-            AllowedValues = values;
-        }
+			_options = options;
+			_superUser = superUser;
+			ClaimType = claimType;
+			AllowedValues = values;
+		}
 
-        public ClaimsAuthorizationRequirementExtended(
-	        IValidOptionsMonitor<SecurityOptions> options,
-	        IValidOptionsMonitor<SuperUserOptions> superUser,
+		public ClaimsAuthorizationRequirementExtended(
+			IValidOptionsMonitor<SecurityOptions> options,
+			IValidOptionsMonitor<SuperUserOptions> superUser,
 			string claimType,
-            params string[] allowedValues) : this(options, superUser, claimType, allowedValues.AsEnumerable())
-        {
+			params string[] allowedValues) : this(options, superUser, claimType, allowedValues.AsEnumerable())
+		{
+		}
 
-        }
+		private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
-        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
+		public string ClaimType { get; }
+		public IEnumerable<string> AllowedValues { get; }
 
-        public string ClaimType { get; }
-        public IEnumerable<string> AllowedValues { get; }
+		protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+			ClaimsAuthorizationRequirementExtended requirement)
+		{
+			var user = context.User;
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-            ClaimsAuthorizationRequirementExtended requirement)
-        {
-            var user = context.User;
+			if (user != null)
+			{
+				if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
+				{
+					context.Succeed(requirement);
+				}
+				else if (requirement.AllowedValues == null || !requirement.AllowedValues.Any()
+					? user.Claims.Any(c =>
+						string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase))
+					: user.Claims.Any(c =>
+						string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase) &&
+						requirement.AllowedValues.Contains(c.Value, StringComparer.Ordinal)))
+				{
+					context.Succeed(requirement);
+				}
+			}
 
-            if (user != null)
-            {
-                if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
-                {
-                    context.Succeed(requirement);
-                }
-                else if (requirement.AllowedValues == null || !requirement.AllowedValues.Any()
-                    ? user.Claims.Any(c =>
-                        string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase))
-                    : user.Claims.Any(c =>
-                        string.Equals(c.Type, requirement.ClaimType, StringComparison.OrdinalIgnoreCase) &&
-                        requirement.AllowedValues.Contains(c.Value, StringComparer.Ordinal)))
-                {
-                    context.Succeed(requirement);
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-    }
+			return Task.CompletedTask;
+		}
+	}
 }

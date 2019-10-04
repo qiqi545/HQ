@@ -20,8 +20,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Deployment
 {
-    public interface ICloudTelemetry<in T> where T : ICloudOptions
-    {
-        void AddCloudTelemetry(IServiceCollection services, ISafeLogger logger, T options);
-    }
+	public interface ICloudTelemetry<in T> where T : ICloudOptions
+	{
+		void AddCloudTelemetry(IServiceCollection services, ISafeLogger logger, T options);
+	}
 }

@@ -17,8 +17,8 @@
 
 namespace HQ.Platform.Api.Models
 {
-    public interface IApplicationContext<out TApplication>
-    {
-        TApplication Value { get; }
-    }
+	public interface IApplicationContext<out TApplication>
+	{
+		TApplication Value { get; }
+	}
 }

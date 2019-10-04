@@ -23,80 +23,77 @@ using HQ.Extensions.CodeGeneration.Internal;
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
-    public sealed class StringBufferPool : IDisposable, IEnumerable<KeyValuePair<string, IStringBuffer>>
-    {
-        private readonly Dictionary<string, IStringBuffer> _inner;
+	public sealed class StringBufferPool : IDisposable, IEnumerable<KeyValuePair<string, IStringBuffer>>
+	{
+		private readonly Dictionary<string, IStringBuffer> _inner;
 
-        public StringBufferPool()
-        {
-            _inner = new Dictionary<string, IStringBuffer>();
-        }
+		public StringBufferPool() => _inner = new Dictionary<string, IStringBuffer>();
 
-        public void Dispose()
-        {
-            foreach (var inner in _inner.Values)
-                inner.Dispose();
-        }
+		public void Dispose()
+		{
+			foreach (var inner in _inner.Values)
+				inner.Dispose();
+		}
 
-        IEnumerator<KeyValuePair<string, IStringBuffer>> IEnumerable<KeyValuePair<string, IStringBuffer>>.
-            GetEnumerator()
-        {
-            return _inner.GetEnumerator();
-        }
+		IEnumerator<KeyValuePair<string, IStringBuffer>> IEnumerable<KeyValuePair<string, IStringBuffer>>.
+			GetEnumerator()
+		{
+			return _inner.GetEnumerator();
+		}
 
-        public IEnumerator GetEnumerator()
-        {
-            return _inner.GetEnumerator();
-        }
+		public IEnumerator GetEnumerator()
+		{
+			return _inner.GetEnumerator();
+		}
 
-        public IStringBuffer GetOrAdd(string key)
-        {
-            if (!_inner.TryGetValue(key, out var buffer))
-                _inner.Add(key, buffer = new StringBuffer(key));
-            return buffer;
-        }
+		public IStringBuffer GetOrAdd(string key)
+		{
+			if (!_inner.TryGetValue(key, out var buffer))
+				_inner.Add(key, buffer = new StringBuffer(key));
+			return buffer;
+		}
 
-        private class StringBuffer : IStringBuffer
-        {
-            private readonly StringBuilder _inner;
+		private class StringBuffer : IStringBuffer
+		{
+			private readonly StringBuilder _inner;
 
-            public string Key { get; }
+			public StringBuffer(string key)
+			{
+				Key = key;
+				_inner = StringBuilderPool.Pool.Get();
+			}
 
-            public StringBuffer(string key)
-            {
-                Key = key;
-                _inner = StringBuilderPool.Pool.Get();
-            }
+			public string Key { get; }
 
-            public void AppendLine(string value)
-            {
-                _inner.AppendLine(value);
-            }
+			public void AppendLine(string value)
+			{
+				_inner.AppendLine(value);
+			}
 
-            public void AppendLine()
-            {
-                _inner.AppendLine();
-            }
+			public void AppendLine()
+			{
+				_inner.AppendLine();
+			}
 
-            public void Append(string value)
-            {
-                _inner.Append(value);
-            }
+			public void Append(string value)
+			{
+				_inner.Append(value);
+			}
 
-            public void Append(object value)
-            {
-                _inner.Append(value);
-            }
+			public void Append(object value)
+			{
+				_inner.Append(value);
+			}
 
-            public void Dispose()
-            {
-                StringBuilderPool.Pool.Return(_inner);
-            }
+			public void Dispose()
+			{
+				StringBuilderPool.Pool.Return(_inner);
+			}
 
-            public override string ToString()
-            {
-                return _inner.ToString();
-            }
-        }
-    }
+			public override string ToString()
+			{
+				return _inner.ToString();
+			}
+		}
+	}
 }

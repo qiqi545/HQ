@@ -20,29 +20,27 @@ using HQ.Platform.Api.Models;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityApplicationContextStore<TApplication> : IApplicationContextStore<TApplication>
-        where TApplication : IdentityApplication
-    {
-        private readonly IApplicationService<TApplication> _applicationService;
+	public class IdentityApplicationContextStore<TApplication> : IApplicationContextStore<TApplication>
+		where TApplication : IdentityApplication
+	{
+		private readonly IApplicationService<TApplication> _applicationService;
 
-        public IdentityApplicationContextStore(IApplicationService<TApplication> applicationService)
-        {
-            _applicationService = applicationService;
-        }
+		public IdentityApplicationContextStore(IApplicationService<TApplication> applicationService) =>
+			_applicationService = applicationService;
 
-        public async Task<ApplicationContext<TApplication>> FindByKeyAsync(string applicationKey)
-        {
-            var application = await _applicationService.FindByNameAsync(applicationKey);
-            if (application?.Data == null)
-            {
-                return null;
-            }
+		public async Task<ApplicationContext<TApplication>> FindByKeyAsync(string applicationKey)
+		{
+			var application = await _applicationService.FindByNameAsync(applicationKey);
+			if (application?.Data == null)
+			{
+				return null;
+			}
 
-            var context = new ApplicationContext<TApplication>
-            {
-                Application = application.Data, Identifiers = new[] {application.Data.Name}
-            };
-            return context;
-        }
-    }
+			var context = new ApplicationContext<TApplication>
+			{
+				Application = application.Data, Identifiers = new[] {application.Data.Name}
+			};
+			return context;
+		}
+	}
 }

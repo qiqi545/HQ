@@ -20,25 +20,25 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
 {
-    /// <inheritdoc />
-    public interface ISafeLogger : ILogger
-    {
-        void Trace(Func<string> message, params object[] args);
-        void Trace(Func<string> message, Exception exception, params object[] args);
+	/// <inheritdoc />
+	public interface ISafeLogger : ILogger
+	{
+		void Trace(Func<string> message, params object[] args);
+		void Trace(Func<string> message, Exception exception, params object[] args);
 
-        void Debug(Func<string> message, params object[] args);
-        void Debug(Func<string> message, Exception exception, params object[] args);
+		void Debug(Func<string> message, params object[] args);
+		void Debug(Func<string> message, Exception exception, params object[] args);
 
-        void Info(Func<string> message, params object[] args);
-        void Info(Func<string> message, Exception exception, params object[] args);
+		void Info(Func<string> message, params object[] args);
+		void Info(Func<string> message, Exception exception, params object[] args);
 
-        void Warn(Func<string> message, params object[] args);
-        void Warn(Func<string> message, Exception exception, params object[] args);
+		void Warn(Func<string> message, params object[] args);
+		void Warn(Func<string> message, Exception exception, params object[] args);
 
-        void Error(Func<string> message, params object[] args);
-        void Error(Func<string> message, Exception exception, params object[] args);
+		void Error(Func<string> message, params object[] args);
+		void Error(Func<string> message, Exception exception, params object[] args);
 
-        void Critical(Func<string> message, params object[] args);
-        void Critical(Func<string> message, Exception exception, params object[] args);
-    }
+		void Critical(Func<string> message, params object[] args);
+		void Critical(Func<string> message, Exception exception, params object[] args);
+	}
 }

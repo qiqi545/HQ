@@ -30,10 +30,8 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 	{
 		private readonly IDictionary<string, string> _settings;
 
-		public DocumentDbConnectionStringBuilder()
-		{
+		public DocumentDbConnectionStringBuilder() =>
 			_settings = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-		}
 
 		public DocumentDbConnectionStringBuilder(DocumentDbOptions options) : this()
 		{
@@ -43,16 +41,6 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			Database = options.DatabaseId;
 			SharedCollection = options.SharedCollection;
 			PartitionKeyPaths = options.PartitionKeyPaths;
-		}
-
-		public void Bind(DocumentDbOptions options)
-		{
-			options.AccountEndpoint = AccountEndpoint;
-			options.AccountKey = AccountKey;
-			options.CollectionId = DefaultCollection;
-			options.DatabaseId = Database;
-			options.SharedCollection = SharedCollection;
-			options.PartitionKeyPaths = PartitionKeyPaths;
 		}
 
 		public DocumentDbConnectionStringBuilder(string connectionString) : this()
@@ -105,7 +93,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			get
 			{
 				var value = this[Constants.PartitionKeyPathsKey] as string;
-				return value?.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+				return value?.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
 			}
 			set
 			{
@@ -138,6 +126,16 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				this[Constants.SharedCollectionKey] = value;
 				ConnectionString = ToString();
 			}
+		}
+
+		public void Bind(DocumentDbOptions options)
+		{
+			options.AccountEndpoint = AccountEndpoint;
+			options.AccountKey = AccountKey;
+			options.CollectionId = DefaultCollection;
+			options.DatabaseId = Database;
+			options.SharedCollection = SharedCollection;
+			options.PartitionKeyPaths = PartitionKeyPaths;
 		}
 
 		public DocumentClient Build()

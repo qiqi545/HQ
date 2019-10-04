@@ -15,6 +15,11 @@
 
 #endregion
 
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.AspNetCore.Hosting;
+#endif
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -42,317 +47,312 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.AspNetCore.Hosting;
-#endif
-
 namespace HQ.Platform.Operations
 {
-    internal static class OperationsHandlers
-    {
-        public static async Task GetEnvironmentHandler(IApplicationBuilder app, HttpContext context)
-        {
-            string GetPlatform()
-            {
-                return
-                    RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "Linux" :
-                    RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows" :
-                    RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "OSX" : "Unknown";
-            }
+	internal static class OperationsHandlers
+	{
+		public static async Task GetEnvironmentHandler(IApplicationBuilder app, HttpContext context)
+		{
+			string GetPlatform()
+			{
+				return
+					RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "Linux" :
+					RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "Windows" :
+					RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "OSX" : "Unknown";
+			}
 
-            // See: https://github.com/dotnet/BenchmarkDotNet/issues/448#issuecomment-308424100
-            string GetNetCoreVersion()
-            {
-                var assembly = typeof(GCSettings).Assembly;
-                var assemblyPath = assembly.CodeBase.Split(new[] {'/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
-                var netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
-                return netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2
-                    ? assemblyPath[netCoreAppIndex + 1]
-                    : null;
-            }
+			// See: https://github.com/dotnet/BenchmarkDotNet/issues/448#issuecomment-308424100
+			string GetNetCoreVersion()
+			{
+				var assembly = typeof(GCSettings).Assembly;
+				var assemblyPath = assembly.CodeBase.Split(new[] {'/', '\\'}, StringSplitOptions.RemoveEmptyEntries);
+				var netCoreAppIndex = Array.IndexOf(assemblyPath, "Microsoft.NETCore.App");
+				return netCoreAppIndex > 0 && netCoreAppIndex < assemblyPath.Length - 2
+					? assemblyPath[netCoreAppIndex + 1]
+					: null;
+			}
 
-            var hosting = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
-            var config = context.RequestServices.GetRequiredService<IConfiguration>();
+			var hosting = context.RequestServices.GetRequiredService<IWebHostEnvironment>();
+			var config = context.RequestServices.GetRequiredService<IConfiguration>();
 
-            var process = Process.GetCurrentProcess();
-            var hostName = Dns.GetHostName();
-            var hostEntry = Dns.GetHostEntry(hostName);
+			var process = Process.GetCurrentProcess();
+			var hostName = Dns.GetHostName();
+			var hostEntry = Dns.GetHostEntry(hostName);
 
-            IDictionary<string, object> configuration = new ExpandoObject();
-            foreach (var entry in config.AsEnumerable())
-            {
-                configuration.Add(entry.Key, entry.Value);
-            }
+			IDictionary<string, object> configuration = new ExpandoObject();
+			foreach (var entry in config.AsEnumerable())
+			{
+				configuration.Add(entry.Key, entry.Value);
+			}
 
-            var env = new
-            {
-                Dns =
-                    new
-                    {
-                        HostName = hostName,
-                        HostEntry = new
-                        {
-                            hostEntry.Aliases, Addresses = hostEntry.AddressList.Select(x => x.ToString())
-                        }
-                    },
-                OperatingSystem =
-                    new
-                    {
-                        Platform = GetPlatform(),
-                        Description = RuntimeInformation.OSDescription,
-                        Architecture = RuntimeInformation.OSArchitecture,
-                        Version = Environment.OSVersion,
-                        Is64Bit = Environment.Is64BitOperatingSystem
-                    },
-                Process = new
-                {
-                    process.Id,
-                    process.ProcessName,
-                    process.MachineName,
-                    Arguments = Environment.GetCommandLineArgs(),
-                    Architecture = RuntimeInformation.ProcessArchitecture,
-                    MaxWorkingSet = process.MaxWorkingSet.ToInt64(),
-                    MinWorkingSet = process.MinWorkingSet.ToInt64(),
-                    process.PagedMemorySize64,
-                    process.PeakWorkingSet64,
-                    process.PrivateMemorySize64,
-                    process.StartTime,
-                    Is64Bit = Environment.Is64BitProcess
-                },
-                Environment =
-                    new
-                    {
-                        hosting.EnvironmentName,
-                        hosting.ApplicationName,
-                        hosting.ContentRootPath,
-                        hosting.WebRootPath,
-                        Environment.CurrentDirectory,
-                        Environment.CurrentManagedThreadId
-                    },
-                Framework = new
-                {
-                    Version = $"{RuntimeInformation.FrameworkDescription}",
-                    NetCoreVersion = GetNetCoreVersion(),
-                    ClrVersion = Environment.Version.ToString()
-                },
-                Configuration = configuration
-            };
+			var env = new
+			{
+				Dns =
+					new
+					{
+						HostName = hostName,
+						HostEntry = new
+						{
+							hostEntry.Aliases, Addresses = hostEntry.AddressList.Select(x => x.ToString())
+						}
+					},
+				OperatingSystem =
+					new
+					{
+						Platform = GetPlatform(),
+						Description = RuntimeInformation.OSDescription,
+						Architecture = RuntimeInformation.OSArchitecture,
+						Version = Environment.OSVersion,
+						Is64Bit = Environment.Is64BitOperatingSystem
+					},
+				Process = new
+				{
+					process.Id,
+					process.ProcessName,
+					process.MachineName,
+					Arguments = Environment.GetCommandLineArgs(),
+					Architecture = RuntimeInformation.ProcessArchitecture,
+					MaxWorkingSet = process.MaxWorkingSet.ToInt64(),
+					MinWorkingSet = process.MinWorkingSet.ToInt64(),
+					process.PagedMemorySize64,
+					process.PeakWorkingSet64,
+					process.PrivateMemorySize64,
+					process.StartTime,
+					Is64Bit = Environment.Is64BitProcess
+				},
+				Environment =
+					new
+					{
+						hosting.EnvironmentName,
+						hosting.ApplicationName,
+						hosting.ContentRootPath,
+						hosting.WebRootPath,
+						Environment.CurrentDirectory,
+						Environment.CurrentManagedThreadId
+					},
+				Framework = new
+				{
+					Version = $"{RuntimeInformation.FrameworkDescription}",
+					NetCoreVersion = GetNetCoreVersion(),
+					ClrVersion = Environment.Version.ToString()
+				},
+				Configuration = configuration
+			};
 
-            await app.WriteResultAsJson(context, env);
-        }
+			await app.WriteResultAsJson(context, env);
+		}
 
-        public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter,
-            IApplicationBuilder app)
-        {
-            var options = context.RequestServices.GetRequiredService<IOptionsMonitor<HealthCheckOptions>>();
-            var service = context.RequestServices.GetRequiredService<HealthCheckService>();
-            var report =
-                await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
-            if (!options.CurrentValue.ResultStatusCodes.TryGetValue(report.Status, out var num))
-            {
-                throw new InvalidOperationException(
-                    $"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
-            }
+		public static async Task GetHealthChecksHandler(HttpContext context, Func<HealthCheckRegistration, bool> filter,
+			IApplicationBuilder app)
+		{
+			var options = context.RequestServices.GetRequiredService<IOptionsMonitor<HealthCheckOptions>>();
+			var service = context.RequestServices.GetRequiredService<HealthCheckService>();
+			var report =
+				await service.CheckHealthAsync(filter ?? options.CurrentValue.Predicate, context.RequestAborted);
+			if (!options.CurrentValue.ResultStatusCodes.TryGetValue(report.Status, out var num))
+			{
+				throw new InvalidOperationException(
+					$"No status code mapping found for {"HealthStatus" as object} value: {report.Status as object}.HealthCheckOptions.ResultStatusCodes must contain an entry for {report.Status as object}.");
+			}
 
-            context.Response.StatusCode = num;
+			context.Response.StatusCode = num;
 
-            if (!options.CurrentValue.AllowCachingResponses)
-            {
-                var headers = context.Response.Headers;
-                headers["Cache-Control"] = "no-store, no-cache";
-                headers["Pragma"] = "no-cache";
-                headers["Expires"] = "Thu, 01 Jan 1970 00:00:00 GMT";
-            }
+			if (!options.CurrentValue.AllowCachingResponses)
+			{
+				var headers = context.Response.Headers;
+				headers["Cache-Control"] = "no-store, no-cache";
+				headers["Pragma"] = "no-cache";
+				headers["Expires"] = "Thu, 01 Jan 1970 00:00:00 GMT";
+			}
 
-            await app.WriteResultAsJson(context, report);
-        }
+			await app.WriteResultAsJson(context, report);
+		}
 
-        public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options,
-            IApplicationBuilder app)
-        {
-            var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
-            var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
-            var cancel = new CancellationTokenSource(timeout);
-            var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(), cancel.Token);
-            var json = JsonSampleSerializer.Serialize(samples);
+		public static async Task GetMetricsHandler(HttpContext context, OperationsApiOptions options,
+			IApplicationBuilder app)
+		{
+			var registry = context.RequestServices.GetRequiredService<IMetricsRegistry>();
+			var timeout = TimeSpan.FromSeconds(options.MetricsOptions.SampleTimeoutSeconds);
+			var cancel = new CancellationTokenSource(timeout);
+			var samples = await Task.Run(() => registry.SelectMany(x => x.GetSample()).ToImmutableDictionary(),
+				cancel.Token);
+			var json = JsonSampleSerializer.Serialize(samples);
 
-            await app.WriteResultAsJson(context, json);
-        }
+			await app.WriteResultAsJson(context, json);
+		}
 
-        public static Task GetRoutesDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            var provider = context.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>();
+		public static Task GetRoutesDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			var provider = context.RequestServices.GetRequiredService<IActionDescriptorCollectionProvider>();
 
-            var map = provider.ActionDescriptors.Items.Select(Map);
+			var map = provider.ActionDescriptors.Items.Select(Map);
 
-            object Map(ActionDescriptor descriptor)
-            {
-                var controller = descriptor.RouteValues["Controller"];
-                var action = descriptor.RouteValues["Action"];
-                var constraints = descriptor.ActionConstraints;
-                var filters = descriptor.FilterDescriptors.OrderBy(x => x.Order)
-                    .ThenBy(x => x.Scope)
-                    .Select(x => x.Filter.GetType().Name);
+			object Map(ActionDescriptor descriptor)
+			{
+				var controller = descriptor.RouteValues["Controller"];
+				var action = descriptor.RouteValues["Action"];
+				var constraints = descriptor.ActionConstraints;
+				var filters = descriptor.FilterDescriptors.OrderBy(x => x.Order)
+					.ThenBy(x => x.Scope)
+					.Select(x => x.Filter.GetType().Name);
 
-                return new
-                {
-                    descriptor.Id,
-                    Path = $"{controller}/{action}",
-                    Action = action,
-                    descriptor.DisplayName,
-                    descriptor.AttributeRouteInfo?.Template,
-                    descriptor.AttributeRouteInfo?.Name,
-                    Filters = filters,
-                    Constraints = constraints
-                };
-            }
+				return new
+				{
+					descriptor.Id,
+					Path = $"{controller}/{action}",
+					Action = action,
+					descriptor.DisplayName,
+					descriptor.AttributeRouteInfo?.Template,
+					descriptor.AttributeRouteInfo?.Name,
+					Filters = filters,
+					Constraints = constraints
+				};
+			}
 
-            return app.WriteResultAsJson(context, map);
-        }
+			return app.WriteResultAsJson(context, map);
+		}
 
-        public static Task GetServicesDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            return app.WriteResultAsJson(context, OperationsMethods.ServicesReport(context.RequestServices));
-        }
+		public static Task GetServicesDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			return app.WriteResultAsJson(context, OperationsMethods.ServicesReport(context.RequestServices));
+		}
 
-        public static Task GetHostedServicesDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            return app.WriteResultAsJson(context, OperationsMethods.HostedServicesReport(context.RequestServices));
-        }
-		
-        public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            return app.WriteResultAsJson(context, OperationsMethods.OptionsReport(app.ApplicationServices));
-        }
+		public static Task GetHostedServicesDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			return app.WriteResultAsJson(context, OperationsMethods.HostedServicesReport(context.RequestServices));
+		}
 
-        public static Task GetFeaturesDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            var registered = new Dictionary<string, bool>();
-            var unregistered = new HashSet<string>();
-            var indeterminate = new HashSet<string>();
+		public static Task GetOptionsDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			return app.WriteResultAsJson(context, OperationsMethods.OptionsReport(app.ApplicationServices));
+		}
 
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-            {
-                foreach (var featureType in assembly.GetTypes())
-                {
-                    if (!featureType.IsSubclassOf(typeof(FeatureToggle)))
-                    {
-                        continue;
-                    }
+		public static Task GetFeaturesDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			var registered = new Dictionary<string, bool>();
+			var unregistered = new HashSet<string>();
+			var indeterminate = new HashSet<string>();
 
-                    Type optionsWrapperType;
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				foreach (var featureType in assembly.GetTypes())
+				{
+					if (!featureType.IsSubclassOf(typeof(FeatureToggle)))
+					{
+						continue;
+					}
 
-                    try
-                    {
-                        optionsWrapperType = typeof(IOptions<>).MakeGenericType(featureType);
-                    }
-                    catch
-                    {
-                        indeterminate.Add(featureType.Name);
-                        continue;
-                    }
+					Type optionsWrapperType;
 
-                    var instance = context.RequestServices.GetService(optionsWrapperType) ??
-                                   context.RequestServices.GetService(featureType);
+					try
+					{
+						optionsWrapperType = typeof(IOptions<>).MakeGenericType(featureType);
+					}
+					catch
+					{
+						indeterminate.Add(featureType.Name);
+						continue;
+					}
 
-                    if (instance == null)
-                    {
-                        unregistered.Add(featureType.Name);
-                        continue;
-                    }
+					var instance = context.RequestServices.GetService(optionsWrapperType) ??
+					               context.RequestServices.GetService(featureType);
 
-                    var serviceType = instance.GetType();
-                    if (optionsWrapperType.IsAssignableFrom(serviceType))
-                    {
-                        var property = optionsWrapperType.GetProperty(nameof(IOptions<object>.Value));
-                        if (!(property?.GetValue(instance) is FeatureToggle feature))
-                        {
-                            indeterminate.Add(featureType.Name);
-                            continue;
-                        }
+					if (instance == null)
+					{
+						unregistered.Add(featureType.Name);
+						continue;
+					}
 
-                        registered[featureType.Name] = feature.Enabled;
-                        continue;
-                    }
+					var serviceType = instance.GetType();
+					if (optionsWrapperType.IsAssignableFrom(serviceType))
+					{
+						var property = optionsWrapperType.GetProperty(nameof(IOptions<object>.Value));
+						if (!(property?.GetValue(instance) is FeatureToggle feature))
+						{
+							indeterminate.Add(featureType.Name);
+							continue;
+						}
 
-                    if (serviceType == featureType)
-                    {
-                        if (instance is FeatureToggle feature)
-                        {
-                            registered[featureType.Name] = feature.Enabled;
-                        }
-                    }
-                }
-            }
+						registered[featureType.Name] = feature.Enabled;
+						continue;
+					}
 
-            return app.WriteResultAsJson(context,
-                new {Registered = registered, Unregistered = unregistered, Indeterminate = indeterminate});
-        }
+					if (serviceType == featureType)
+					{
+						if (instance is FeatureToggle feature)
+						{
+							registered[featureType.Name] = feature.Enabled;
+						}
+					}
+				}
+			}
 
-        public static Task GetCacheDebugHandler(HttpContext context, IApplicationBuilder app)
-        {
-            // TODO Caches - Formal (IDistributedCache, IOptionsSnapshot, etc.)
-            // TODO Caches - Opaque (Dictionary, etc.)
+			return app.WriteResultAsJson(context,
+				new {Registered = registered, Unregistered = unregistered, Indeterminate = indeterminate});
+		}
 
-            var totalCacheKeys = 0L;
-            var totalCacheMemory = 0L;
+		public static Task GetCacheDebugHandler(HttpContext context, IApplicationBuilder app)
+		{
+			// TODO Caches - Formal (IDistributedCache, IOptionsSnapshot, etc.)
+			// TODO Caches - Opaque (Dictionary, etc.)
 
-            var managed = new List<object>();
-            var unmanaged = new List<object>();
+			var totalCacheKeys = 0L;
+			var totalCacheMemory = 0L;
 
-            foreach (var cache in app.ApplicationServices.GetServices<ICache>())
-            {
-                if (cache is ICacheManager manager)
-                {
-                    totalCacheMemory += manager.SizeBytes;
-                    totalCacheKeys += manager.Count;
+			var managed = new List<object>();
+			var unmanaged = new List<object>();
 
-                    managed.Add(new
-                    {
-                        Type = manager.GetType().Name,
-                        manager.Count,
-                        Size = manager.SizeBytes,
-                        SizeLimit = manager.SizeLimitBytes
-                    });
+			foreach (var cache in app.ApplicationServices.GetServices<ICache>())
+			{
+				if (cache is ICacheManager manager)
+				{
+					totalCacheMemory += manager.SizeBytes;
+					totalCacheKeys += manager.Count;
 
-                    continue;
-                }
+					managed.Add(new
+					{
+						Type = manager.GetType().Name,
+						manager.Count,
+						Size = manager.SizeBytes,
+						SizeLimit = manager.SizeLimitBytes
+					});
 
-                unmanaged.Add(new {Type = cache.GetType().Name});
-            }
+					continue;
+				}
 
-            foreach (var cache in app.ApplicationServices.GetServices<IHttpCache>())
-            {
-                if (cache is ICacheManager manager)
-                {
-                    totalCacheMemory += manager.SizeBytes;
-                    totalCacheKeys += manager.Count;
+				unmanaged.Add(new {Type = cache.GetType().Name});
+			}
 
-                    managed.Add(new
-                    {
-                        Type = manager.GetType().Name,
-                        manager.Count,
-                        Size = manager.SizeBytes,
-                        SizeLimit = manager.SizeLimitBytes
-                    });
+			foreach (var cache in app.ApplicationServices.GetServices<IHttpCache>())
+			{
+				if (cache is ICacheManager manager)
+				{
+					totalCacheMemory += manager.SizeBytes;
+					totalCacheKeys += manager.Count;
 
-                    continue;
-                }
+					managed.Add(new
+					{
+						Type = manager.GetType().Name,
+						manager.Count,
+						Size = manager.SizeBytes,
+						SizeLimit = manager.SizeLimitBytes
+					});
 
-                unmanaged.Add(new {Type = cache.GetType().Name});
-            }
+					continue;
+				}
 
-            return app.WriteResultAsJson(context,
-                new
-                {
-                    Managed = managed,
-                    TotalMemory = GC.GetTotalMemory(false),
-                    TotalCacheKeys = totalCacheKeys,
-                    TotalCacheMemory = totalCacheMemory,
-                    Unmanaged = unmanaged
-                });
-        }
-    }
+				unmanaged.Add(new {Type = cache.GetType().Name});
+			}
+
+			return app.WriteResultAsJson(context,
+				new
+				{
+					Managed = managed,
+					TotalMemory = GC.GetTotalMemory(false),
+					TotalCacheKeys = totalCacheKeys,
+					TotalCacheMemory = totalCacheMemory,
+					Unmanaged = unmanaged
+				});
+		}
+	}
 }

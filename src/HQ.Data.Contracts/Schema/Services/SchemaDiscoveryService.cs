@@ -39,12 +39,13 @@ namespace HQ.Data.Contracts.Schema.Services
 {
 	public class SchemaDiscoveryService : IHostedService
 	{
-		private readonly SchemaService _service;
 		private readonly IWebHostEnvironment _environment;
-		private readonly IOptionsMonitor<SchemaOptions> _options;
 		private readonly ISafeLogger<SchemaDiscoveryService> _logger;
+		private readonly IOptionsMonitor<SchemaOptions> _options;
+		private readonly SchemaService _service;
 
-		public SchemaDiscoveryService(SchemaService service, IWebHostEnvironment environment, IOptionsMonitor<SchemaOptions> options, ISafeLogger<SchemaDiscoveryService> logger)
+		public SchemaDiscoveryService(SchemaService service, IWebHostEnvironment environment,
+			IOptionsMonitor<SchemaOptions> options, ISafeLogger<SchemaDiscoveryService> logger)
 		{
 			_service = service;
 			_environment = environment;
@@ -60,19 +61,20 @@ namespace HQ.Data.Contracts.Schema.Services
 			_logger.Info(() => "Starting schema discovery...");
 
 			var schemaRelativeDir = _options.CurrentValue.SchemaFolder;
-			
+
 			if (!string.IsNullOrWhiteSpace(schemaRelativeDir))
 			{
 				if (schemaRelativeDir.StartsWith("/") || schemaRelativeDir.StartsWith("\\"))
 					schemaRelativeDir = schemaRelativeDir.Substring(1);
 
 				var schemaDir = Path.Combine(_environment.ContentRootPath, schemaRelativeDir);
-				if(Directory.Exists(schemaDir))
+				if (Directory.Exists(schemaDir))
 				{
-					_logger.Info(()=> "Found schemas in {SchemaDir}", schemaDir);
+					_logger.Info(() => "Found schemas in {SchemaDir}", schemaDir);
 
-					var revision = await UpdateSchemaAsync(schemaRelativeDir, _options.CurrentValue.ApplicationId ?? Constants.Schemas.DefaultApplicationId);
-					if(revision != 0)
+					var revision = await UpdateSchemaAsync(schemaRelativeDir,
+						_options.CurrentValue.ApplicationId ?? Constants.Schemas.DefaultApplicationId);
+					if (revision != 0)
 						_logger.Info(() => "Schema updated to revision {Revision}", revision);
 					else
 						_logger.Info(() => "Schema is unchanged");
@@ -80,24 +82,26 @@ namespace HQ.Data.Contracts.Schema.Services
 			}
 		}
 
+		public Task StopAsync(CancellationToken cancellationToken)
+		{
+			return Task.CompletedTask;
+		}
+
 		private async Task<ulong> UpdateSchemaAsync(string folder, string applicationId)
 		{
 			var revisionSet = new List<Models.Schema>();
-			var files = Directory.GetFiles(folder, "*.json", SearchOption.TopDirectoryOnly).Select(x => new FileInfo(x));
+			var files = Directory.GetFiles(folder, "*.json", SearchOption.TopDirectoryOnly)
+				.Select(x => new FileInfo(x));
 			foreach (var file in files.OrderBy(x => x.LastWriteTimeUtc).ThenBy(x => x.Name))
 			{
 				var json = File.ReadAllText(file.FullName);
 				var schemas = JsonConvert.DeserializeObject<Models.Schema[]>(json);
-				foreach(var schema in schemas)
-					_logger.Info(()=>"{FileName} => {SchemaName}", file.FullName, schema.Name);
+				foreach (var schema in schemas)
+					_logger.Info(() => "{FileName} => {SchemaName}", file.FullName, schema.Name);
 				revisionSet.AddRange(schemas);
 			}
-			return await _service.TrySaveRevisionAsync(applicationId, revisionSet);
-		}
 
-		public Task StopAsync(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
+			return await _service.TrySaveRevisionAsync(applicationId, revisionSet);
 		}
 	}
 }

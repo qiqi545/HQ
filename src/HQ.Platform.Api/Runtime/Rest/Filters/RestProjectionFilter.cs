@@ -22,7 +22,6 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -30,76 +29,73 @@ using TypeKitchen;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
-    public class RestProjectionFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class RestProjectionFilter : IRestFilter
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestProjectionFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestProjectionFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => _options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-            qs.TryGetValue(_options.Value.ProjectionOperator, out var projections);
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+			qs.TryGetValue(_options.Value.ProjectionOperator, out var projections);
 
-            ProjectionOptions options;
-            if (projections.Count == 0)
-            {
-                options = ProjectionOptions.Empty;
-            }
-            else
-            {
-                options = new ProjectionOptions();
-                foreach (var projection in projections)
-                foreach (var value in projection.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    var v = value.Trim();
-                    var attribute = new Projection {Field = v.ToUpperInvariant()};
-                    options.Fields.Add(attribute);
-                }
-            }
+			ProjectionOptions options;
+			if (projections.Count == 0)
+			{
+				options = ProjectionOptions.Empty;
+			}
+			else
+			{
+				options = new ProjectionOptions();
+				foreach (var projection in projections)
+				foreach (var value in projection.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
+				{
+					var v = value.Trim();
+					var attribute = new Projection {Field = v.ToUpperInvariant()};
+					options.Fields.Add(attribute);
+				}
+			}
 
-            if (!options.Validate(context.Type, _options.Value, out var errors))
-            {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
-                    HttpStatusCode.BadRequest, errors));
-            }
-            else
-            {
-                if (options.Fields.Count > 0)
-                {
-                    var members = AccessorMembers.Create(context.Type);
+			if (!options.Validate(context.Type, _options.Value, out var errors))
+			{
+				context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
+					HttpStatusCode.BadRequest, errors));
+			}
+			else
+			{
+				if (options.Fields.Count > 0)
+				{
+					var members = AccessorMembers.Create(context.Type);
 
-                    foreach (var field in options.Fields)
-                    foreach (var member in members)
-                    {
-                        if (!field.Field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
+					foreach (var field in options.Fields)
+					foreach (var member in members)
+					{
+						if (!field.Field.Equals(member.Name, StringComparison.OrdinalIgnoreCase))
+						{
+							continue;
+						}
 
-                        if (typeof(IEnumerable).IsAssignableFrom(member.Type))
-                        {
-                            field.Type = ProjectionType.OneToMany;
-                            break;
-                        }
+						if (typeof(IEnumerable).IsAssignableFrom(member.Type))
+						{
+							field.Type = ProjectionType.OneToMany;
+							break;
+						}
 
-                        if (member.Type.IsClass && member.Type != typeof(string))
-                        {
-                            field.Type = ProjectionType.OneToOne;
-                            break;
-                        }
+						if (member.Type.IsClass && member.Type != typeof(string))
+						{
+							field.Type = ProjectionType.OneToOne;
+							break;
+						}
 
-                        field.Type = ProjectionType.Scalar;
-                        break;
-                    }
-                }
+						field.Type = ProjectionType.Scalar;
+						break;
+					}
+				}
 
-                context.Projections = options;
-            }
-        }
-    }
+				context.Projections = options;
+			}
+		}
+	}
 }

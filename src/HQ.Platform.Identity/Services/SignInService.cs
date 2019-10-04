@@ -26,7 +26,6 @@ using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
@@ -42,13 +41,13 @@ namespace HQ.Platform.Identity.Services
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
 	{
-		private readonly UserManager<TUser> _userManager;
-		private readonly SignInManager<TUser> _signInManager;
 		private readonly IAuthenticationService _authentication;
 
 		private readonly IHttpContextAccessor _http;
 		private readonly IOptionsMonitor<IdentityOptionsExtended> _identityOptions;
 		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
+		private readonly SignInManager<TUser> _signInManager;
+		private readonly UserManager<TUser> _userManager;
 
 		public SignInService(IHttpContextAccessor http,
 			UserManager<TUser> userManager,
@@ -65,7 +64,8 @@ namespace HQ.Platform.Identity.Services
 			_securityOptions = securityOptions;
 		}
 
-		public async Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password, bool isPersistent)
+		public async Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password,
+			bool isPersistent)
 		{
 			TUser user = default;
 			try
@@ -74,7 +74,8 @@ namespace HQ.Platform.Identity.Services
 				if (user == null)
 					return IdentityResultExtensions.NotFound<TUser>();
 
-				var result = await _signInManager.CheckPasswordSignInAsync(user, password, _identityOptions.CurrentValue.User.LockoutEnabled);
+				var result = await _signInManager.CheckPasswordSignInAsync(user, password,
+					_identityOptions.CurrentValue.User.LockoutEnabled);
 
 				if (result.Succeeded)
 				{
@@ -84,7 +85,7 @@ namespace HQ.Platform.Identity.Services
 					{
 						const string scheme = Constants.Security.Schemes.PlatformCookies;
 						var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, scheme));
-						var properties = new AuthenticationProperties { IsPersistent = isPersistent };
+						var properties = new AuthenticationProperties {IsPersistent = isPersistent};
 						await _authentication.SignInAsync(_http.HttpContext, scheme, principal, properties);
 
 						_http.HttpContext.User = principal;
@@ -97,8 +98,7 @@ namespace HQ.Platform.Identity.Services
 			{
 				var operation = IdentityResult.Failed(new IdentityError
 				{
-					Code = ex.GetType().Name,
-					Description = ex.Message
+					Code = ex.GetType().Name, Description = ex.Message
 				}).ToOperation(user);
 
 				return operation;
@@ -116,8 +116,7 @@ namespace HQ.Platform.Identity.Services
 			{
 				var operation = IdentityResult.Failed(new IdentityError
 				{
-					Code = ex.GetType().Name,
-					Description = ex.Message
+					Code = ex.GetType().Name, Description = ex.Message
 				}).ToOperation();
 
 				return operation;
@@ -128,16 +127,20 @@ namespace HQ.Platform.Identity.Services
 		{
 			var claims = await _userManager.GetClaimsAsync(user);
 
-			if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext && tenantContext.Tenant != null)
+			if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext &&
+			    tenantContext.Tenant != null)
 			{
 				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
 				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
 			}
 
-			if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext && applicationContext.Application != null)
+			if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext &&
+			    applicationContext.Application != null)
 			{
-				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim, $"{applicationContext.Application.Id}"));
-				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim, applicationContext.Application.Name));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim,
+					$"{applicationContext.Application.Id}"));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationNameClaim,
+					applicationContext.Application.Name));
 			}
 
 			return claims;

@@ -21,12 +21,12 @@ using HQ.Data.SessionManagement;
 
 namespace HQ.Integration.SqlServer.SessionManagement
 {
-    public class SqlServerDataContext : DataContext
-    {
-        public SqlServerDataContext(string connectionString, IServiceProvider serviceProvider,
-            Action<IDbConnection, IServiceProvider> onConnection = null) :
-            base(new SqlServerConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
-        {
-        }
-    }
+	public class SqlServerDataContext : DataContext
+	{
+		public SqlServerDataContext(string connectionString, IServiceProvider serviceProvider,
+			Action<IDbConnection, IServiceProvider> onConnection = null) :
+			base(new SqlServerConnectionFactory {ConnectionString = connectionString}, serviceProvider, onConnection)
+		{
+		}
+	}
 }

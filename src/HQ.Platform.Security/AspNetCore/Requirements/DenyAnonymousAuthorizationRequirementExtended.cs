@@ -23,45 +23,46 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace HQ.Platform.Security.AspNetCore.Requirements
 {
-    public class DenyAnonymousAuthorizationRequirementExtended :
-        AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,
-        IAuthorizationRequirement
-    {
-        private readonly IValidOptionsMonitor<SecurityOptions> _options;
-        private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
+	public class DenyAnonymousAuthorizationRequirementExtended :
+		AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,
+		IAuthorizationRequirement
+	{
+		private readonly IValidOptionsMonitor<SecurityOptions> _options;
+		private readonly IValidOptionsMonitor<SuperUserOptions> _superUser;
 
-        public DenyAnonymousAuthorizationRequirementExtended(
-	        IValidOptionsMonitor<SecurityOptions> options,
-	        IValidOptionsMonitor<SuperUserOptions> superUser)
-        {
-	        _options = options;
-	        _superUser = superUser;
-        }
+		public DenyAnonymousAuthorizationRequirementExtended(
+			IValidOptionsMonitor<SecurityOptions> options,
+			IValidOptionsMonitor<SuperUserOptions> superUser)
+		{
+			_options = options;
+			_superUser = superUser;
+		}
 
-        private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
+		private bool SupportsSuperUser => _superUser.CurrentValue?.Enabled ?? false;
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
-            DenyAnonymousAuthorizationRequirementExtended requirement)
-        {
-            var user = context.User;
+		protected override Task HandleRequirementAsync(AuthorizationHandlerContext context,
+			DenyAnonymousAuthorizationRequirementExtended requirement)
+		{
+			var user = context.User;
 
-            if (user != null)
-            {
-                if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
-                {
-                    context.Succeed(requirement);
-                }
-                else if ((context.User.Identity == null ? 1 : context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
-                {
-                    context.Succeed(requirement);
-                }
-                else
-                {
-                    context.Fail();
-                }
-            }
+			if (user != null)
+			{
+				if (SupportsSuperUser && user.HasClaim(_options.CurrentValue.Claims.RoleClaim, ClaimValues.SuperUser))
+				{
+					context.Succeed(requirement);
+				}
+				else if ((context.User.Identity == null ? 1 :
+					         context.User.Identities.Any(i => i.IsAuthenticated) ? 0 : 1) == 0)
+				{
+					context.Succeed(requirement);
+				}
+				else
+				{
+					context.Fail();
+				}
+			}
 
-            return Task.CompletedTask;
-        }
-    }
+			return Task.CompletedTask;
+		}
+	}
 }

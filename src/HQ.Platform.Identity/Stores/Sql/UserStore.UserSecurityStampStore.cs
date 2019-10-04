@@ -21,19 +21,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserSecurityStampStore<TUser>
-    {
-        public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.SecurityStamp = stamp;
-            return Task.CompletedTask;
-        }
+	partial class UserStore<TUser, TKey, TRole> : IUserSecurityStampStore<TUser>
+	{
+		public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.SecurityStamp = stamp;
+			return Task.CompletedTask;
+		}
 
-        public Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.SecurityStamp);
-        }
-    }
+		public Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.SecurityStamp);
+		}
+	}
 }

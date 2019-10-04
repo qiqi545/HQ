@@ -21,54 +21,54 @@ using Sodium;
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal static class Strings
-    {
-        public static string BinToHex(byte[] buffer, StringSource source)
-        {
-            switch (source)
-            {
-                case StringSource.SystemNet:
-                {
-                    var sb = new StringBuilder(buffer.Length * 2);
-                    foreach (var b in buffer)
-                    {
-                        sb.AppendFormat("{0:x2}", b);
-                    }
+	internal static class Strings
+	{
+		public static string BinToHex(byte[] buffer, StringSource source)
+		{
+			switch (source)
+			{
+				case StringSource.SystemNet:
+				{
+					var sb = new StringBuilder(buffer.Length * 2);
+					foreach (var b in buffer)
+					{
+						sb.AppendFormat("{0:x2}", b);
+					}
 
-                    return sb.ToString();
-                }
-                case StringSource.SodiumCore:
-                    return Utilities.BinaryToHex(buffer, Utilities.HexFormat.None);
-                case StringSource.SodiumCoreDirect:
-                    return Utilities.BinaryToHex(buffer);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
-            }
-        }
+					return sb.ToString();
+				}
+				case StringSource.SodiumCore:
+					return Utilities.BinaryToHex(buffer, Utilities.HexFormat.None);
+				case StringSource.SodiumCoreDirect:
+					return Utilities.BinaryToHex(buffer);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(source), source, null);
+			}
+		}
 
-        public static string BinToHex(ReadOnlySpan<byte> buffer, StringSource source)
-        {
-            switch (source)
-            {
-                case StringSource.SystemNet:
-                {
-                    var sb = new StringBuilder(buffer.Length * 2);
-                    foreach (var b in buffer)
-                    {
-                        sb.AppendFormat("{0:x2}", b);
-                    }
+		public static string BinToHex(ReadOnlySpan<byte> buffer, StringSource source)
+		{
+			switch (source)
+			{
+				case StringSource.SystemNet:
+				{
+					var sb = new StringBuilder(buffer.Length * 2);
+					foreach (var b in buffer)
+					{
+						sb.AppendFormat("{0:x2}", b);
+					}
 
-                    return sb.ToString();
-                }
-                case StringSource.SodiumCore:
-                    throw new NotSupportedException();
-                case StringSource.SodiumCoreDirect:
-                    throw new NotSupportedException();
-                case StringSource.SodiumCoreUnsafePooled:
-                    return Utilities.BinaryToHex(buffer);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(source), source, null);
-            }
-        }
-    }
+					return sb.ToString();
+				}
+				case StringSource.SodiumCore:
+					throw new NotSupportedException();
+				case StringSource.SodiumCoreDirect:
+					throw new NotSupportedException();
+				case StringSource.SodiumCoreUnsafePooled:
+					return Utilities.BinaryToHex(buffer);
+				default:
+					throw new ArgumentOutOfRangeException(nameof(source), source, null);
+			}
+		}
+	}
 }

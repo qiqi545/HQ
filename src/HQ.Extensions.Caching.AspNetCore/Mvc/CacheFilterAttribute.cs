@@ -21,53 +21,54 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
-    public class CacheFilterAttribute : ActionFilterAttribute
-    {
-        private readonly ICache _cache;
+	public class CacheFilterAttribute : ActionFilterAttribute
+	{
+		private readonly ICache _cache;
 
-        public CacheFilterAttribute(ICache cache)
-        {
-            _cache = cache;
-            Order = int.MaxValue;
-        }
+		public CacheFilterAttribute(ICache cache)
+		{
+			_cache = cache;
+			Order = int.MaxValue;
+		}
 
-        public override void OnActionExecuting(ActionExecutingContext filterContext)
-        {
-            var keyBuilder = new CacheKeyBuilder(filterContext);
-            var http = filterContext.HttpContext;
-            var cacheKey = keyBuilder.Build();
+		public override void OnActionExecuting(ActionExecutingContext filterContext)
+		{
+			var keyBuilder = new CacheKeyBuilder(filterContext);
+			var http = filterContext.HttpContext;
+			var cacheKey = keyBuilder.Build();
 
-            if (filterContext.ActionArguments.ContainsKey(Constants.ContextKeys.CacheArgument))
-            {
-                filterContext.ActionArguments[Constants.ContextKeys.CacheArgument] = http.RequestServices.GetService(typeof(ICache));
-            }
+			if (filterContext.ActionArguments.ContainsKey(Constants.ContextKeys.CacheArgument))
+			{
+				filterContext.ActionArguments[Constants.ContextKeys.CacheArgument] =
+					http.RequestServices.GetService(typeof(ICache));
+			}
 
-            if (filterContext.ActionArguments.ContainsKey(Constants.ContextKeys.CacheKeyArgument))
-            {
-                filterContext.ActionArguments[Constants.ContextKeys.CacheKeyArgument] = cacheKey;
-            }
+			if (filterContext.ActionArguments.ContainsKey(Constants.ContextKeys.CacheKeyArgument))
+			{
+				filterContext.ActionArguments[Constants.ContextKeys.CacheKeyArgument] = cacheKey;
+			}
 
-            var existing = _cache.Get(cacheKey);
-            if (existing is IActionResult result)
-            {
-                filterContext.Result = result;
-                return;
-            }
+			var existing = _cache.Get(cacheKey);
+			if (existing is IActionResult result)
+			{
+				filterContext.Result = result;
+				return;
+			}
 
-            http.Items.Add("cacheKey", cacheKey);
-            base.OnActionExecuting(filterContext);
-        }
+			http.Items.Add("cacheKey", cacheKey);
+			base.OnActionExecuting(filterContext);
+		}
 
-        public override void OnResultExecuted(ResultExecutedContext filterContext)
-        {
-            if (!(filterContext.HttpContext.Items[Constants.ContextKeys.CacheKeyArgument] is string key))
-                return;
+		public override void OnResultExecuted(ResultExecutedContext filterContext)
+		{
+			if (!(filterContext.HttpContext.Items[Constants.ContextKeys.CacheKeyArgument] is string key))
+				return;
 
-            var value = filterContext.Result;
-            if (value != null)
-                _cache.Set(key, value);
+			var value = filterContext.Result;
+			if (value != null)
+				_cache.Set(key, value);
 
-            base.OnResultExecuted(filterContext);
-        }
-    }
+			base.OnResultExecuted(filterContext);
+		}
+	}
 }

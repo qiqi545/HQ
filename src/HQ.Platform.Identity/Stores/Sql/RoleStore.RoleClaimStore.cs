@@ -29,68 +29,63 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class RoleStore<TKey, TRole> : IRoleClaimStore<TRole>
-    {
-        public async Task<IList<Claim>> GetClaimsAsync(TRole role,
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+	public partial class RoleStore<TKey, TRole> : IRoleClaimStore<TRole>
+	{
+		public async Task<IList<Claim>> GetClaimsAsync(TRole role,
+			CancellationToken cancellationToken = new CancellationToken())
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new { ApplicationId = _applicationId, RoleId = role.Id });
+			var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(
+				new {ApplicationId = _applicationId, RoleId = role.Id});
 
-            _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
-            var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
-            return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
-        }
+			_connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
+			var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
+			return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
+		}
 
-        public async Task AddClaimAsync(TRole role, Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task AddClaimAsync(TRole role, Claim claim,
+			CancellationToken cancellationToken = new CancellationToken())
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			role.ConcurrencyStamp = role.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var query = SqlBuilder.Insert(new AspNetRoleClaims<TKey>
-            {
-                ApplicationId = _applicationId,
-                RoleId = role.Id,
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value
-            });
-            _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
+			var query = SqlBuilder.Insert(new AspNetRoleClaims<TKey>
+			{
+				ApplicationId = _applicationId, RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value
+			});
+			_connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
 
-            var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            Debug.Assert(inserted == 1);
-        }
+			var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(inserted == 1);
+		}
 
-        public async Task RemoveClaimAsync(TRole role, Claim claim,
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task RemoveClaimAsync(TRole role, Claim claim,
+			CancellationToken cancellationToken = new CancellationToken())
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Delete<AspNetRoleClaims<TKey>>(new
-            {
-                ApplicationId = _applicationId,
-                RoleId = role.Id,
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value
-            });
-            _connection.SetTypeInfo(typeof(TRole));
+			var query = SqlBuilder.Delete<AspNetRoleClaims<TKey>>(new
+			{
+				ApplicationId = _applicationId, RoleId = role.Id, ClaimType = claim.Type, ClaimValue = claim.Value
+			});
+			_connection.SetTypeInfo(typeof(TRole));
 
-            var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            Debug.Assert(deleted == 1);
-        }
+			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(deleted == 1);
+		}
 
-        public async Task<IList<Claim>> GetAllRoleClaimsAsync(
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<IList<Claim>> GetAllRoleClaimsAsync(
+			CancellationToken cancellationToken = new CancellationToken())
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new { ApplicationId = _applicationId });
+			var query = SqlBuilder.Select<AspNetRoleClaims<TKey>>(new {ApplicationId = _applicationId});
 
-            _connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
-            var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
-            return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
-        }
-    }
+			_connection.SetTypeInfo(typeof(AspNetRoleClaims<TKey>));
+			var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
+			return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
+		}
+	}
 }

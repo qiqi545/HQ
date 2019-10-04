@@ -20,12 +20,12 @@ using System.Security.Claims;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class CreateClaimModel
-    {
-        [Required] public string Type { get; set; }
+	public class CreateClaimModel
+	{
+		[Required] public string Type { get; set; }
 
-        [Required] public string Value { get; set; }
+		[Required] public string Value { get; set; }
 
-        [Required] public string ValueType { get; set; } = ClaimValueTypes.String;
-    }
+		[Required] public string ValueType { get; set; } = ClaimValueTypes.String;
+	}
 }

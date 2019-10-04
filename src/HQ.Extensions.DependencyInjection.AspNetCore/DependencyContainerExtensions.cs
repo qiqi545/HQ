@@ -17,16 +17,16 @@
 
 namespace HQ.Extensions.DependencyInjection.AspNetCore
 {
-    public static class DependencyContainerExtensions
-    {
-        public static bool AddAspNetCore(this ContainerBuilder builder)
-        {
-	        return builder.AddExtension(new HttpAccessorExtension());
-        }
+	public static class DependencyContainerExtensions
+	{
+		public static bool AddAspNetCore(this ContainerBuilder builder)
+		{
+			return builder.AddExtension(new HttpAccessorExtension());
+		}
 
-        public static bool AddAspNetCore(this DependencyContainer container)
-        {
-	        return container.AddExtension(new HttpAccessorExtension());
-        }
+		public static bool AddAspNetCore(this DependencyContainer container)
+		{
+			return container.AddExtension(new HttpAccessorExtension());
+		}
 	}
 }

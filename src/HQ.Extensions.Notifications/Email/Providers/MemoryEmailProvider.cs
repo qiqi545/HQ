@@ -24,5 +24,7 @@ namespace HQ.Extensions.Notifications.Email.Providers
 	///     Sends messages to a memory bucket. Probably only really useful for tests, but could be used in an intermediary
 	///     queue.
 	/// </summary>
-	public class MemoryEmailProvider : MemoryNotificationProvider<EmailMessage>, IEmailProvider { }
+	public class MemoryEmailProvider : MemoryNotificationProvider<EmailMessage>, IEmailProvider
+	{
+	}
 }

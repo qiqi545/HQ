@@ -19,13 +19,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Models
 {
-    public class BearerTokenRequest
-    {
-        [Required] public IdentityType IdentityType { get; set; } = IdentityType.Username;
+	public class BearerTokenRequest
+	{
+		[Required] public IdentityType IdentityType { get; set; } = IdentityType.Username;
 
-        [Required] public string Identity { get; set; }
+		[Required] public string Identity { get; set; }
 
-        [DataType(DataType.Password)]
-        [Required] public string Password { get; set; }
-    }
+		[DataType(DataType.Password)]
+		[Required]
+		public string Password { get; set; }
+	}
 }

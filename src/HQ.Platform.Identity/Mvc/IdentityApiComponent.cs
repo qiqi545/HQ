@@ -22,14 +22,12 @@ using HQ.Platform.Identity.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.Mvc
 {
-    public class IdentityApiComponent : DynamicComponent
+	public class IdentityApiComponent : DynamicComponent
 	{
-        public override IEnumerable<Type> ControllerTypes => new[]
-        {
-            typeof(UserController<,,>),
-            typeof(RoleController<,>),
-            typeof(TenantController<,>),
-            typeof(ApplicationController<,>)
-        };
-    }
+		public override IEnumerable<Type> ControllerTypes => new[]
+		{
+			typeof(UserController<,,>), typeof(RoleController<,>), typeof(TenantController<,>),
+			typeof(ApplicationController<,>)
+		};
+	}
 }

@@ -20,51 +20,47 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
-    public class RestPageFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class RestPageFilter : IRestFilter
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestPageFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestPageFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => _options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-            qs.TryGetValue(_options.Value.PageOperator, out var page);
-            qs.TryGetValue(_options.Value.PerPageOperator, out var perPage);
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+			qs.TryGetValue(_options.Value.PageOperator, out var page);
+			qs.TryGetValue(_options.Value.PerPageOperator, out var perPage);
 
-            var options = new PageOptions();
+			var options = new PageOptions();
 
-            if (page.Count == 0 || !int.TryParse(page[0], out var pageValue))
-            {
-                pageValue = 1;
-            }
+			if (page.Count == 0 || !int.TryParse(page[0], out var pageValue))
+			{
+				pageValue = 1;
+			}
 
-            if (perPage.Count == 0 || !int.TryParse(perPage[0], out var perPageValue))
-            {
-                perPageValue = _options.Value.PerPageDefault;
-            }
+			if (perPage.Count == 0 || !int.TryParse(perPage[0], out var perPageValue))
+			{
+				perPageValue = _options.Value.PerPageDefault;
+			}
 
-            options.Page = pageValue;
-            options.PerPage = perPageValue;
+			options.Page = pageValue;
+			options.PerPage = perPageValue;
 
-            if (!options.Validate(context.Type, _options.Value, out var errors))
-            {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
-                    HttpStatusCode.BadRequest, errors));
-            }
+			if (!options.Validate(context.Type, _options.Value, out var errors))
+			{
+				context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
+					HttpStatusCode.BadRequest, errors));
+			}
 
-            context.Paging = options;
-        }
-    }
+			context.Paging = options;
+		}
+	}
 }

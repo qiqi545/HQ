@@ -20,29 +20,26 @@ using TypeKitchen;
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
-    public class CacheKeyBuilder
-    {
-        private readonly ActionContext _context;
+	public class CacheKeyBuilder
+	{
+		private readonly ActionContext _context;
 
-        public CacheKeyBuilder(ActionContext context)
-        {
-            _context = context;
-        }
+		public CacheKeyBuilder(ActionContext context) => _context = context;
 
-        public string Build()
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                foreach (var item in _context.RouteData.DataTokens)
-                {
-                    sb.Append(item.Key)
-                        .Append(":")
-                        .Append(item.Value);
-                }
+		public string Build()
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				foreach (var item in _context.RouteData.DataTokens)
+				{
+					sb.Append(item.Key)
+						.Append(":")
+						.Append(item.Value);
+				}
 
-                sb.Append(":");
-                sb.Append(_context.HttpContext.Request.QueryString);
-            });
-        }
-    }
+				sb.Append(":");
+				sb.Append(_context.HttpContext.Request.QueryString);
+			});
+		}
+	}
 }

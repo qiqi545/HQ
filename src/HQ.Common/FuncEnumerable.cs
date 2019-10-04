@@ -20,21 +20,21 @@ using System.Collections.Generic;
 
 namespace HQ.Common
 {
-    public struct FuncEnumerable<T, TResult>
-    {
-        private readonly Func<T, TResult> _func;
+	public struct FuncEnumerable<T, TResult>
+	{
+		private readonly Func<T, TResult> _func;
 
-        public FuncEnumerable(List<T> inner, Func<T, TResult> func)
-        {
-            AsList = inner;
-            _func = func;
-        }
+		public FuncEnumerable(List<T> inner, Func<T, TResult> func)
+		{
+			AsList = inner;
+			_func = func;
+		}
 
-        public FuncEnumerator<T, TResult> GetEnumerator()
-        {
-            return new FuncEnumerator<T, TResult>(AsList, _func);
-        }
+		public FuncEnumerator<T, TResult> GetEnumerator()
+		{
+			return new FuncEnumerator<T, TResult>(AsList, _func);
+		}
 
-        public List<T> AsList { get; }
-    }
+		public List<T> AsList { get; }
+	}
 }

@@ -23,17 +23,20 @@ namespace HQ.Integration.SqlServer.Options
 {
 	public static class SqlServerConfigurationExtensions
 	{
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString,
+			IConfiguration configSeed = null)
 		{
 			return AddSqlServer(builder, connectionString, true, configSeed);
 		}
 
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString,
+			bool reloadOnChange, IConfiguration configSeed = null)
 		{
 			return AddSqlServer(builder, connectionString, reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
+		public static IConfigurationBuilder AddSqlServer(this IConfigurationBuilder builder, string connectionString,
+			bool reloadOnChange, IConfiguration configSeed, Action<SaveConfigurationOptions> configureAction = null)
 		{
 			throw new NotImplementedException();
 			var saveConfig = new SaveConfigurationOptions();

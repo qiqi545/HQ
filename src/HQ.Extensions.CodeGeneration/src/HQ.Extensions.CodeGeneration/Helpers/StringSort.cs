@@ -17,9 +17,9 @@
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
-    public enum StringSort
-    {
-        Ascending,
-        Descending
-    }
+	public enum StringSort
+	{
+		Ascending,
+		Descending
+	}
 }

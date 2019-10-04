@@ -23,71 +23,71 @@ using HQ.Extensions.CodeGeneration.Internal;
 
 namespace HQ.Extensions.CodeGeneration.Helpers
 {
-    public sealed class UniqueStringBuilder : IDisposable
-    {
-        private readonly HashSet<string> _bucket;
-        private readonly StringBuilder _buffer;
+	public sealed class UniqueStringBuilder : IDisposable
+	{
+		private readonly HashSet<string> _bucket;
+		private readonly StringBuilder _buffer;
 
-        public StringSort? Sort;
+		public StringSort? Sort;
 
-        public UniqueStringBuilder() : this(new StringBuilder())
-        {
-        }
+		public UniqueStringBuilder() : this(new StringBuilder())
+		{
+		}
 
-        public UniqueStringBuilder(StringBuilder buffer)
-        {
-            _buffer = buffer;
-            _bucket = new HashSet<string>();
-        }
+		public UniqueStringBuilder(StringBuilder buffer)
+		{
+			_buffer = buffer;
+			_bucket = new HashSet<string>();
+		}
 
-        public override string ToString()
-        {
-            var output = StringBuilderPool.Scoped(sb =>
-            {
-                if (Sort.HasValue)
-                    switch (Sort)
-                    {
-                        case StringSort.Ascending:
-                            foreach (var line in _bucket.OrderBy(s => s))
-                                sb.AppendLine(line);
-                            break;
-                        case StringSort.Descending:
-                            foreach (var line in _bucket.OrderByDescending(s => s))
-                                sb.AppendLine(line);
-                            break;
-                        case null:
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                else
-                    foreach (var line in _bucket)
-                        sb.AppendLine(line);
-            });
-            _buffer.Append(output);
-            return output;
-        }
+		public void Dispose()
+		{
+			_buffer.Clear();
+			_bucket?.Clear();
+		}
 
-        public void AppendLine(string value)
-        {
-            _bucket.Add(value);
-        }
+		public override string ToString()
+		{
+			var output = StringBuilderPool.Scoped(sb =>
+			{
+				if (Sort.HasValue)
+					switch (Sort)
+					{
+						case StringSort.Ascending:
+							foreach (var line in _bucket.OrderBy(s => s))
+								sb.AppendLine(line);
+							break;
+						case StringSort.Descending:
+							foreach (var line in _bucket.OrderByDescending(s => s))
+								sb.AppendLine(line);
+							break;
+						case null:
+							break;
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				else
+					foreach (var line in _bucket)
+						sb.AppendLine(line);
+			});
+			_buffer.Append(output);
+			return output;
+		}
 
-        public void AppendLine(StringBuilder value)
-        {
-            _bucket.Add(value.ToString());
-        }
+		public void AppendLine(string value)
+		{
+			_bucket.Add(value);
+		}
 
-        public void AppendLine(UniqueStringBuilder value)
-        {
-            foreach(var line in value._bucket)
-                _bucket.Add(line);
-        }
+		public void AppendLine(StringBuilder value)
+		{
+			_bucket.Add(value.ToString());
+		}
 
-        public void Dispose()
-        {
-            _buffer.Clear();
-            _bucket?.Clear();
-        }
-    }
+		public void AppendLine(UniqueStringBuilder value)
+		{
+			foreach (var line in value._bucket)
+				_bucket.Add(line);
+		}
+	}
 }

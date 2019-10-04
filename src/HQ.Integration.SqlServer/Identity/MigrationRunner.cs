@@ -27,72 +27,72 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Integration.SqlServer.Identity
 {
-    public class MigrationRunner
-    {
-        private readonly string _connectionString;
-        private readonly SqlServerOptions _options;
+	public class MigrationRunner
+	{
+		private readonly string _connectionString;
+		private readonly SqlServerOptions _options;
 
-        public MigrationRunner(string connectionString, SqlServerOptions options)
-        {
-            _connectionString = connectionString;
-            _options = options;
-        }
+		public MigrationRunner(string connectionString, SqlServerOptions options)
+		{
+			_connectionString = connectionString;
+			_options = options;
+		}
 
-        public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
-        {
-            var csb = new SqlConnectionStringBuilder(_connectionString);
-            if (csb.DataSource.Equals("(localdb)\\mssqllocaldb", StringComparison.OrdinalIgnoreCase))
-            {
-                var dbFilePath = $"%USERPROFILE%\\{csb.InitialCatalog}.mdf";
-                var filePath = Environment.ExpandEnvironmentVariables(dbFilePath);
-                if (!File.Exists(filePath))
-                {
-                    using (var connection =
-                        new SqlConnection(
-                            @"Data Source=(localdb)\mssqllocaldb;Initial Catalog=master;Integrated Security=True"))
-                    {
-                        connection.Open();
+		public async Task CreateDatabaseIfNotExistsAsync(CancellationToken cancellationToken)
+		{
+			var csb = new SqlConnectionStringBuilder(_connectionString);
+			if (csb.DataSource.Equals("(localdb)\\mssqllocaldb", StringComparison.OrdinalIgnoreCase))
+			{
+				var dbFilePath = $"%USERPROFILE%\\{csb.InitialCatalog}.mdf";
+				var filePath = Environment.ExpandEnvironmentVariables(dbFilePath);
+				if (!File.Exists(filePath))
+				{
+					using (var connection =
+						new SqlConnection(
+							@"Data Source=(localdb)\mssqllocaldb;Initial Catalog=master;Integrated Security=True"))
+					{
+						connection.Open();
 
-                        {
-                            var command = connection.CreateCommand();
-                            command.CommandText =
-                                $"IF EXISTS (SELECT name FROM sys.databases WHERE name = N'{csb.InitialCatalog}') EXEC SP_DETACH_DB N'{csb.InitialCatalog}'";
-                            await command.ExecuteNonQueryAsync(cancellationToken);
-                        }
+						{
+							var command = connection.CreateCommand();
+							command.CommandText =
+								$"IF EXISTS (SELECT name FROM sys.databases WHERE name = N'{csb.InitialCatalog}') EXEC SP_DETACH_DB N'{csb.InitialCatalog}'";
+							await command.ExecuteNonQueryAsync(cancellationToken);
+						}
 
-                        {
-                            var command = connection.CreateCommand();
-                            command.CommandText =
-                                $"CREATE DATABASE [{csb.InitialCatalog}] ON (NAME = N'{csb.InitialCatalog}', FILENAME = '{filePath}')";
-                            await command.ExecuteNonQueryAsync(cancellationToken);
-                        }
-                    }
-                }
-            }
-        }
+						{
+							var command = connection.CreateCommand();
+							command.CommandText =
+								$"CREATE DATABASE [{csb.InitialCatalog}] ON (NAME = N'{csb.InitialCatalog}', FILENAME = '{filePath}')";
+							await command.ExecuteNonQueryAsync(cancellationToken);
+						}
+					}
+				}
+			}
+		}
 
-        public void MigrateUp(CancellationToken cancellationToken)
-        {
-            var container = new ServiceCollection()
-                .AddFluentMigratorCore()
-                .ConfigureRunner(
-                    builder => builder
-                        .AddSqlServer()
-                        .WithGlobalConnectionString(_connectionString)
-                        .ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
-                .BuildServiceProvider();
+		public void MigrateUp(CancellationToken cancellationToken)
+		{
+			var container = new ServiceCollection()
+				.AddFluentMigratorCore()
+				.ConfigureRunner(
+					builder => builder
+						.AddSqlServer()
+						.WithGlobalConnectionString(_connectionString)
+						.ScanIn(typeof(CreateIdentitySchema).Assembly).For.Migrations())
+				.BuildServiceProvider();
 
-            var runner = container.GetRequiredService<IMigrationRunner>();
-            if (runner is FluentMigrator.Runner.MigrationRunner defaultRunner &&
-                defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
-            {
-                var source = container.GetRequiredService<IFilteringMigrationSource>();
-                defaultRunner.MigrationLoader =
-                    new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
-            }
+			var runner = container.GetRequiredService<IMigrationRunner>();
+			if (runner is FluentMigrator.Runner.MigrationRunner defaultRunner &&
+			    defaultRunner.MigrationLoader is DefaultMigrationInformationLoader defaultLoader)
+			{
+				var source = container.GetRequiredService<IFilteringMigrationSource>();
+				defaultRunner.MigrationLoader =
+					new NamespaceMigrationInformationLoader(typeof(MigrationRunner).Namespace, source, defaultLoader);
+			}
 
-            ;
-            runner.MigrateUp();
-        }
-    }
+			;
+			runner.MigrateUp();
+		}
+	}
 }

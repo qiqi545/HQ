@@ -20,23 +20,23 @@ using System.Collections.Generic;
 
 namespace HQ.Data.Sql.Descriptor
 {
-    // TODO cache the property names for each bucket (lazy)
+	// TODO cache the property names for each bucket (lazy)
 
-    public interface IDataDescriptor
-    {
-        IList<Type> Types { get; }
-        Type Type { get; }
+	public interface IDataDescriptor
+	{
+		IList<Type> Types { get; }
+		Type Type { get; }
 
-        string Schema { get; }
-        string Table { get; }
+		string Schema { get; }
+		string Table { get; }
 
-        PropertyToColumn Id { get; }
-        PropertyToColumn Timestamp { get; }
+		PropertyToColumn Id { get; }
+		PropertyToColumn Timestamp { get; }
 
-        IList<PropertyToColumn> All { get; }
-        IList<PropertyToColumn> Keys { get; }
-        IList<PropertyToColumn> Inserted { get; }
-        IList<PropertyToColumn> Updated { get; }
-        IList<PropertyToColumn> Computed { get; }
-    }
+		IList<PropertyToColumn> All { get; }
+		IList<PropertyToColumn> Keys { get; }
+		IList<PropertyToColumn> Inserted { get; }
+		IList<PropertyToColumn> Updated { get; }
+		IList<PropertyToColumn> Computed { get; }
+	}
 }

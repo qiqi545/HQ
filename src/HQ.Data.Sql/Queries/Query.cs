@@ -19,24 +19,24 @@ using System.Collections.Generic;
 
 namespace HQ.Data.Sql.Queries
 {
-    public class Query
-    {
-        public Query(string sql) : this(sql, new Dictionary<string, object>())
-        {
-        }
+	public class Query
+	{
+		public Query(string sql) : this(sql, new Dictionary<string, object>())
+		{
+		}
 
-        public Query(string sql, IReadOnlyDictionary<string, object> parameters)
-        {
-            Sql = sql;
-            Parameters = parameters;
-        }
+		public Query(string sql, IReadOnlyDictionary<string, object> parameters)
+		{
+			Sql = sql;
+			Parameters = parameters;
+		}
 
-        public string Sql { get; set; }
-        public IReadOnlyDictionary<string, object> Parameters { get; set; }
+		public string Sql { get; set; }
+		public IReadOnlyDictionary<string, object> Parameters { get; set; }
 
-        public override string ToString()
-        {
-            return Sql;
-        }
-    }
+		public override string ToString()
+		{
+			return Sql;
+		}
+	}
 }

@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -22,112 +24,111 @@ using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.Sqlite.Options
 {
-    public class SqliteConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
-    {
-        private readonly SqliteConfigurationSource _source;
+	public class SqliteConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
+	{
+		private readonly SqliteConfigurationSource _source;
 
-        public SqliteConfigurationProvider(SqliteConfigurationSource source)
-        {
-            _source = source;
-        }
+		public SqliteConfigurationProvider(SqliteConfigurationSource source) => _source = source;
 
-        public bool HasChildren(string key)
-        {
-            foreach (var entry in Data)
-                if (entry.Key.StartsWith(key, StringComparison.OrdinalIgnoreCase))
-                    return true;
-            return false;
-        }
+		public bool HasChildren(string key)
+		{
+			foreach (var entry in Data)
+				if (entry.Key.StartsWith(key, StringComparison.OrdinalIgnoreCase))
+					return true;
+			return false;
+		}
 
-        public bool Save<TOptions>(string key, TOptions instance)
-        {
-            var map = instance.Unbind(key);
+		public bool Save<TOptions>(string key, TOptions instance)
+		{
+			var map = instance.Unbind(key);
 
-            var changed = false;
-            using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
-            {
-                db.Open();
+			var changed = false;
+			using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
+			{
+				db.Open();
 
-                var t = db.BeginTransaction();
+				var t = db.BeginTransaction();
 
-                foreach (var entry in map)
-                {
-                    if (!Data.TryGetValue(entry.Key, out var value))
-                        continue; // deprecated?
+				foreach (var entry in map)
+				{
+					if (!Data.TryGetValue(entry.Key, out var value))
+						continue; // deprecated?
 
-                    var before = value;
-                    var after = entry.Value;
+					var before = value;
+					var after = entry.Value;
 
-                    if (before.Equals(after, StringComparison.Ordinal))
-                        continue; // no change
+					if (before.Equals(after, StringComparison.Ordinal))
+						continue; // no change
 
-                    if (after == null)
-                        continue; // not null constraint violation
-                    
-                    var count = db.Execute(Update, new { entry.Key, Value = after }, t);
-                    if (count == 0)
-                        count = db.Execute(Insert, new { entry.Key, Value = after }, t);
-                    if (count > 0)
-                        changed = true;
-                }
+					if (after == null)
+						continue; // not null constraint violation
 
-                t.Commit();
-            }
+					var count = db.Execute(Update, new {entry.Key, Value = after}, t);
+					if (count == 0)
+						count = db.Execute(Insert, new {entry.Key, Value = after}, t);
+					if (count > 0)
+						changed = true;
+				}
 
-            return changed;
-        }
+				t.Commit();
+			}
 
-        public override void Set(string key, string value)
-        {
-            if (TryGet(key, out var previousValue) && value == previousValue)
-                return;
-            using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
-            {
-                db.Open();
-                var t = db.BeginTransaction();
-                var count = db.Execute(Update, new {Key = key, Value = value}, t);
-                if (count == 0)
-                    db.Execute(Insert, new {Key = key, Value = value}, t);
-                t.Commit();
-            }
-            Data[key] = value;
-            if (_source.ReloadOnChange)
-                OnReload();
-        }
+			return changed;
+		}
 
-        public override void Load()
-        {
-            var onChange = Data.Count > 0;
-            Data.Clear();
-            using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
-            {
-                db.Open();
-                var data = db.Query<ConfigurationRow>(GetAll);
-                foreach (var item in data)
-                {
-                    Data[item.Key] = item.Value;
-                    onChange = true;
-                }
-            }
-            if(onChange && _source.ReloadOnChange)
-                OnReload();
-        }
-        
-        [DebuggerDisplay("{Key} = {Value}")]
-        private struct ConfigurationRow
-        {
+		public override void Set(string key, string value)
+		{
+			if (TryGet(key, out var previousValue) && value == previousValue)
+				return;
+			using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
+			{
+				db.Open();
+				var t = db.BeginTransaction();
+				var count = db.Execute(Update, new {Key = key, Value = value}, t);
+				if (count == 0)
+					db.Execute(Insert, new {Key = key, Value = value}, t);
+				t.Commit();
+			}
+
+			Data[key] = value;
+			if (_source.ReloadOnChange)
+				OnReload();
+		}
+
+		public override void Load()
+		{
+			var onChange = Data.Count > 0;
+			Data.Clear();
+			using (var db = new SqliteConnection($"Data Source={_source.DataFilePath}"))
+			{
+				db.Open();
+				var data = db.Query<ConfigurationRow>(GetAll);
+				foreach (var item in data)
+				{
+					Data[item.Key] = item.Value;
+					onChange = true;
+				}
+			}
+
+			if (onChange && _source.ReloadOnChange)
+				OnReload();
+		}
+
+		[DebuggerDisplay("{Key} = {Value}")]
+		private struct ConfigurationRow
+		{
 #pragma warning disable 649
-            public string Key;
-            public string Value;
+			public string Key;
+			public string Value;
 #pragma warning restore 649
-        }
+		}
 
-        #region SQL
+		#region SQL
 
-        private const string GetAll = "SELECT * FROM Configuration";
-        private const string Update = "UPDATE Configuration SET Value = :Value WHERE Key = :Key";
-        private const string Insert = "INSERT INTO Configuration (Key, Value) VALUES (:Key, :Value)";
+		private const string GetAll = "SELECT * FROM Configuration";
+		private const string Update = "UPDATE Configuration SET Value = :Value WHERE Key = :Key";
+		private const string Insert = "INSERT INTO Configuration (Key, Value) VALUES (:Key, :Value)";
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -21,42 +21,42 @@ using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Dialects
 {
-    public interface ISqlDialect
-    {
-        char? StartIdentifier { get; }
-        char? EndIdentifier { get; }
-        char? Separator { get; }
-        char? Parameter { get; }
-        char? Quote { get; }
-        string Count { get; }
+	public interface ISqlDialect
+	{
+		char? StartIdentifier { get; }
+		char? EndIdentifier { get; }
+		char? Separator { get; }
+		char? Parameter { get; }
+		char? Quote { get; }
+		string Count { get; }
 
-        string SetSuffix { get; }
-        bool SupportsSelectStar { get; }
+		string SetSuffix { get; }
+		bool SupportsSelectStar { get; }
 
-        bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
-        void Page(string sql, StringBuilder sb);
+		bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql);
+		void Page(string sql, StringBuilder sb);
 
-        string ResolveTableName(IDataDescriptor descriptor);
-        string ResolveColumnName(IDataDescriptor descriptor, string columnName);
-        IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor);
-        IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All);
+		string ResolveTableName(IDataDescriptor descriptor);
+		string ResolveColumnName(IDataDescriptor descriptor, string columnName);
+		IEnumerable<string> ResolveKeyNames(IDataDescriptor descriptor);
+		IEnumerable<string> ResolveColumnNames(IDataDescriptor descriptor, ColumnScope scope = ColumnScope.All);
 
-        bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb);
-        bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+		bool BeforeSelect(IDataDescriptor descriptor, StringBuilder sb);
+		bool BeforeSelectColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
 
-        bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb);
-        bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+		bool BeforeInsert(IDataDescriptor descriptor, StringBuilder sb);
+		bool BeforeInsertColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
 
-        bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb);
-        bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
+		bool BeforeUpdate(IDataDescriptor descriptor, StringBuilder sb);
+		bool BeforeUpdateColumns(IDataDescriptor descriptor, StringBuilder sb, IList<string> columns);
 
-        bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb);
+		bool BeforeDelete(IDataDescriptor descriptor, StringBuilder sb);
 
-        bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
-        bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
-        bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
-        bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
+		bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
+		bool BeforeWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
+		bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys);
+		bool AfterWhere(IDataDescriptor descriptor, StringBuilder sb, IList<string> keys, IList<string> parameters);
 
-        bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate);
-    }
+		bool AfterCount(IDataDescriptor descriptor, StringBuilder sb, bool hasPredicate);
+	}
 }

@@ -21,30 +21,34 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct DateTimeField
-    {
-        public bool Initialized => _buffer != null;
-        public DateTime? Value => Initialized ? !_encoding.TryParse(_buffer, out DateTime value) ? default(DateTime?) : value : default; 
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
-        public int Length => _buffer.Length;
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+	public readonly ref struct DateTimeField
+	{
+		public bool Initialized => _buffer != null;
 
-        private readonly Encoding _encoding;
-        private readonly ReadOnlySpan<byte> _buffer;
+		public DateTime? Value => Initialized
+			? !_encoding.TryParse(_buffer, out DateTime value) ? default(DateTime?) : value
+			: default;
 
-        public DateTimeField(ReadOnlySpan<byte> buffer, Encoding encoding)
-        {
-            _buffer = buffer;
-            _encoding = encoding;
-        }
+		public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+		public int Length => _buffer.Length;
 
-        public unsafe DateTimeField(byte* start, int length, Encoding encoding)
-        {
-            _buffer = new ReadOnlySpan<byte>(start, length);
-            _encoding = encoding;
-        }
+		private readonly Encoding _encoding;
+		private readonly ReadOnlySpan<byte> _buffer;
 
-        public string DisplayName =>
-            $"{nameof(DateTimeField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-    }
+		public DateTimeField(ReadOnlySpan<byte> buffer, Encoding encoding)
+		{
+			_buffer = buffer;
+			_encoding = encoding;
+		}
+
+		public unsafe DateTimeField(byte* start, int length, Encoding encoding)
+		{
+			_buffer = new ReadOnlySpan<byte>(start, length);
+			_encoding = encoding;
+		}
+
+		public string DisplayName =>
+			$"{nameof(DateTimeField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+	}
 }

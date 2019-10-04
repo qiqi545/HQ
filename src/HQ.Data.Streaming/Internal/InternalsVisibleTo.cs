@@ -22,7 +22,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Data.Streaming.Internal
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+	internal sealed class InternalsVisibleTo
+	{
+	}
 }

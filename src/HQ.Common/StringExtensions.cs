@@ -17,21 +17,21 @@
 
 namespace HQ.Common
 {
-    public static class StringExtensions
-    {
-        public static string ToTitleCase(this string value)
-        {
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return value;
-            }
+	public static class StringExtensions
+	{
+		public static string ToTitleCase(this string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+			{
+				return value;
+			}
 
-            if (!char.IsUpper(value[0]))
-            {
-                return char.ToUpperInvariant(value[0]) + value.Substring(1);
-            }
+			if (!char.IsUpper(value[0]))
+			{
+				return char.ToUpperInvariant(value[0]) + value.Substring(1);
+			}
 
-            return value;
-        }
-    }
+			return value;
+		}
+	}
 }

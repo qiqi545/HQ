@@ -17,40 +17,41 @@
 
 using System;
 using HQ.Extensions.Cryptography.Internal;
+using Sodium;
 using Random = HQ.Extensions.Cryptography.Internal.Random;
 
 namespace HQ.Extensions.Cryptography
 {
-    public static class Crypto
-    {
-        public static byte[] GetRandomBytes(int length)
-        {
-            return Random.NextBytes(length, RandomSource.SodiumCore);
-        }
+	public static class Crypto
+	{
+		public static byte[] GetRandomBytes(int length)
+		{
+			return Random.NextBytes(length, RandomSource.SodiumCore);
+		}
 
-        public static void FillRandomBytes(Span<byte> buffer)
-        {
-            FillRandomBytes(buffer, buffer.Length);
-        }
+		public static void FillRandomBytes(Span<byte> buffer)
+		{
+			FillRandomBytes(buffer, buffer.Length);
+		}
 
-        public static void FillRandomBytes(Span<byte> buffer, int length)
-        {
-            Random.NextBytes(buffer, length, RandomSource.SodiumCore);
-        }
+		public static void FillRandomBytes(Span<byte> buffer, int length)
+		{
+			Random.NextBytes(buffer, length, RandomSource.SodiumCore);
+		}
 
-        public static string BinToHex(ReadOnlySpan<byte> buffer)
-        {
-            return Strings.BinToHex(buffer, StringSource.SodiumCoreUnsafePooled);
-        }
+		public static string BinToHex(ReadOnlySpan<byte> buffer)
+		{
+			return Strings.BinToHex(buffer, StringSource.SodiumCoreUnsafePooled);
+		}
 
-        public static string GetRandomString(int length)
-        {
-            return BinToHex(GetRandomBytes(length / 2));
-        }
+		public static string GetRandomString(int length)
+		{
+			return BinToHex(GetRandomBytes(length / 2));
+		}
 
-        public static bool ConstantTimeEquals(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
-        {
-            return Sodium.Utilities.Compare(left, right);
-        }
-    }
+		public static bool ConstantTimeEquals(ReadOnlySpan<byte> left, ReadOnlySpan<byte> right)
+		{
+			return Utilities.Compare(left, right);
+		}
+	}
 }

@@ -19,26 +19,26 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class UserOptionsExtended : UserOptions
-    {
-        public UserOptionsExtended()
-        {
-        }
+	public class UserOptionsExtended : UserOptions
+	{
+		public UserOptionsExtended()
+		{
+		}
 
-        public UserOptionsExtended(UserOptions inner)
-        {
-            AllowedUserNameCharacters = inner.AllowedUserNameCharacters;
-            RequireUniqueEmail = inner.RequireUniqueEmail;
-        }
+		public UserOptionsExtended(UserOptions inner)
+		{
+			AllowedUserNameCharacters = inner.AllowedUserNameCharacters;
+			RequireUniqueEmail = inner.RequireUniqueEmail;
+		}
 
-        public bool RequireUniqueUsername { get; set; } = true;
-        public bool RequireUniquePhoneNumber { get; set; } = false;
-        public bool RequireEmail { get; set; } = true;
-        public bool RequirePhoneNumber { get; set; } = false;
-        public bool RequireUsername { get; set; } = true;
-        public bool RequireEmailPhoneNumberOrUsername { get; set; } = false;
+		public bool RequireUniqueUsername { get; set; } = true;
+		public bool RequireUniquePhoneNumber { get; set; } = false;
+		public bool RequireEmail { get; set; } = true;
+		public bool RequirePhoneNumber { get; set; } = false;
+		public bool RequireUsername { get; set; } = true;
+		public bool RequireEmailPhoneNumberOrUsername { get; set; } = false;
 
-        public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
-        public bool LockoutEnabled { get; set; } = true;
-    }
+		public string AllowedPhoneNumberCharacters { get; set; } = "()123456789-+#";
+		public bool LockoutEnabled { get; set; } = true;
+	}
 }

@@ -29,141 +29,149 @@ using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using Microsoft.Extensions.Options;
 
-
 namespace HQ.Data.Sql.Implementation
 {
 	public class SqlObjectGetRepository<TObject> : IObjectGetRepository<TObject> where TObject : IObject
-    {
-        private readonly IDataConnection _db;
-        private readonly ISqlDialect _dialect;
-        private readonly IOptionsMonitor<QueryOptions> _options;
-        private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
+	{
+		private readonly IDataConnection _db;
+		private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
+		private readonly ISqlDialect _dialect;
+		private readonly IOptionsMonitor<QueryOptions> _options;
 
-        public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
-        {
-            _db = db;
-            _dialect = dialect;
-            _options = options;
-        }
+		public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect,
+			IOptionsMonitor<QueryOptions> options)
+		{
+			_db = db;
+			_dialect = dialect;
+			_options = options;
+		}
 
-        public async Task<Operation<IPage<TObject>>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null,
-            FilterOptions filter = null, ProjectionOptions projection = null)
-        {
-            _db.SetTypeInfo(typeof(TObject));
+		public async Task<Operation<IPage<TObject>>> GetAsync(string query = null, SortOptions sort = null,
+			PageOptions page = null, FieldOptions fields = null,
+			FilterOptions filter = null, ProjectionOptions projection = null)
+		{
+			_db.SetTypeInfo(typeof(TObject));
 
-            if (sort == null || sort == SortOptions.Empty)
-                sort = SortOptions.FromType<TObject>(x => x.Id);
+			if (sort == null || sort == SortOptions.Empty)
+				sort = SortOptions.FromType<TObject>(x => x.Id);
 
-            if (page == null || page == PageOptions.Empty)
-                page = new PageOptions { Page = 1, PerPage = _options.CurrentValue.PerPageDefault };
+			if (page == null || page == PageOptions.Empty)
+				page = new PageOptions {Page = 1, PerPage = _options.CurrentValue.PerPageDefault};
 
-            var sql = _dialect.Build<TObject>(sort, fields, filter, projection);
-            var data = (await _db.Current.QueryAsync<TObject>(PageBuilder.Page(_dialect, sql), new { page.Page, page.PerPage })).AsList();
-            var total = await _db.Current.ExecuteScalarAsync<long>(_dialect.Count(_descriptor, filter?.Fields));
-            var slice = new Page<TObject>(data, data.Count, page.Page - 1, page.PerPage, total);
+			var sql = _dialect.Build<TObject>(sort, fields, filter, projection);
+			var data = (await _db.Current.QueryAsync<TObject>(PageBuilder.Page(_dialect, sql),
+				new {page.Page, page.PerPage})).AsList();
+			var total = await _db.Current.ExecuteScalarAsync<long>(_dialect.Count(_descriptor, filter?.Fields));
+			var slice = new Page<TObject>(data, data.Count, page.Page - 1, page.PerPage, total);
 
-            return new Operation<IPage<TObject>>(slice);
-        }
+			return new Operation<IPage<TObject>>(slice);
+		}
 
-        public async Task<Operation<TObject>> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null)
-        {
-            _db.SetTypeInfo(typeof(TObject));
+		public async Task<Operation<TObject>> GetAsync(long id, FieldOptions fields = null,
+			ProjectionOptions projection = null)
+		{
+			_db.SetTypeInfo(typeof(TObject));
 
-            var getById = FilterOptions.FromType<TObject>(x => x.Id);
-            getById.Fields[0].Value = id;
+			var getById = FilterOptions.FromType<TObject>(x => x.Id);
+			getById.Fields[0].Value = id;
 
-            var sql = _dialect.Build<TObject>(fields: fields, filter: getById, projections: projection);
-            var data = await _db.Current.QuerySingleOrDefaultAsync<TObject>(sql, new { id });
-            return new Operation<TObject>(data);
-        }
+			var sql = _dialect.Build<TObject>(fields: fields, filter: getById, projections: projection);
+			var data = await _db.Current.QuerySingleOrDefaultAsync<TObject>(sql, new {id});
+			return new Operation<TObject>(data);
+		}
 
-        public Task<Operation<IStream<TObject>>> GetAsync(SegmentOptions segment, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
-        {
-            _db.SetTypeInfo(typeof(TObject));
-            throw new NotImplementedException("Segmentation not available.");
-        }
-    }
+		public Task<Operation<IStream<TObject>>> GetAsync(SegmentOptions segment, FieldOptions fields = null,
+			FilterOptions filter = null, ProjectionOptions projection = null)
+		{
+			_db.SetTypeInfo(typeof(TObject));
+			throw new NotImplementedException("Segmentation not available.");
+		}
+	}
 
-    public class SqlObjectGetRepository : IObjectGetRepository
-    {
-        private readonly IDataConnection _db;
-        private readonly ISqlDialect _dialect;
-        private readonly IOptionsMonitor<QueryOptions> _options;
+	public class SqlObjectGetRepository : IObjectGetRepository
+	{
+		private readonly IDataConnection _db;
+		private readonly ISqlDialect _dialect;
+		private readonly IOptionsMonitor<QueryOptions> _options;
 
-        public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect, IOptionsMonitor<QueryOptions> options)
-        {
-            _db = db;
-            _dialect = dialect;
-            _options = options;
-        }
+		public SqlObjectGetRepository(IDataConnection<RuntimeBuilder> db, ISqlDialect dialect,
+			IOptionsMonitor<QueryOptions> options)
+		{
+			_db = db;
+			_dialect = dialect;
+			_options = options;
+		}
 
-        public async Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null,
-            FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
-        {
-            var descriptor = SimpleDataDescriptor.Create(type);
-            _db.SetTypeInfo(type);
+		public async Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null,
+			PageOptions page = null,
+			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
+		{
+			var descriptor = SimpleDataDescriptor.Create(type);
+			_db.SetTypeInfo(type);
 
-            if (sort == null || sort == SortOptions.Empty)
-                sort = GetDefaultSortOptions(descriptor);
+			if (sort == null || sort == SortOptions.Empty)
+				sort = GetDefaultSortOptions(descriptor);
 
-            if (page == null || page == PageOptions.Empty)
-                page = GetDefaultPageOptions();
+			if (page == null || page == PageOptions.Empty)
+				page = GetDefaultPageOptions();
 
-            var sql = _dialect.Build(type, sort, fields, filter, projection);
-            var paged = PageBuilder.Page(_dialect, sql);
-            var data = (await _db.Current.QueryAsync<IObject>(paged, new { page.Page, page.PerPage })).AsList();
-            var total = await _db.Current.ExecuteScalarAsync<long>(_dialect.Count(descriptor, filter?.Fields));
-            var slice = new Page<IObject>(data, data.Count, page.Page - 1, page.PerPage, total);
+			var sql = _dialect.Build(type, sort, fields, filter, projection);
+			var paged = PageBuilder.Page(_dialect, sql);
+			var data = (await _db.Current.QueryAsync<IObject>(paged, new {page.Page, page.PerPage})).AsList();
+			var total = await _db.Current.ExecuteScalarAsync<long>(_dialect.Count(descriptor, filter?.Fields));
+			var slice = new Page<IObject>(data, data.Count, page.Page - 1, page.PerPage, total);
 
-            return new Operation<IPage<IObject>>(slice);
-        }
+			return new Operation<IPage<IObject>>(slice);
+		}
 
-        public async Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null, ProjectionOptions projection = null)
-        {
-            var descriptor = SimpleDataDescriptor.Create(type);
-            _db.SetTypeInfo(type);
+		public async Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null,
+			ProjectionOptions projection = null)
+		{
+			var descriptor = SimpleDataDescriptor.Create(type);
+			_db.SetTypeInfo(type);
 
-            var getById = GetDefaultFilterOptions(id, descriptor);
-            getById.Fields[0].Value = id;
+			var getById = GetDefaultFilterOptions(id, descriptor);
+			getById.Fields[0].Value = id;
 
-            var sql = _dialect.Build(type, fields: fields, filter: getById, projections: projection);
-            var data = await _db.Current.QuerySingleOrDefaultAsync<IObject>(sql, new { id });
-            return new Operation<IObject>(data);
-        }
+			var sql = _dialect.Build(type, fields: fields, filter: getById, projections: projection);
+			var data = await _db.Current.QuerySingleOrDefaultAsync<IObject>(sql, new {id});
+			return new Operation<IObject>(data);
+		}
 
-        public Task<Operation<IStream<IObject>>> GetAsync(Type type, SegmentOptions buffer = null, FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
-        {
-            var descriptor = SimpleDataDescriptor.Create(type);
-            _db.SetTypeInfo(type);
-            throw new NotImplementedException("Segmentation not available.");
-        }
+		public Task<Operation<IStream<IObject>>> GetAsync(Type type, SegmentOptions buffer = null,
+			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null)
+		{
+			var descriptor = SimpleDataDescriptor.Create(type);
+			_db.SetTypeInfo(type);
+			throw new NotImplementedException("Segmentation not available.");
+		}
 
-        private static SortOptions GetDefaultSortOptions(IDataDescriptor descriptor)
-        {
-            return new SortOptions { Fields = { new Sort { Field = descriptor.Id.ColumnName, Descending = false } } };
-        }
+		private static SortOptions GetDefaultSortOptions(IDataDescriptor descriptor)
+		{
+			return new SortOptions {Fields = {new Sort {Field = descriptor.Id.ColumnName, Descending = false}}};
+		}
 
-        private PageOptions GetDefaultPageOptions()
-        {
-            return new PageOptions { Page = 1, PerPage = _options.CurrentValue.PerPageDefault };
-        }
+		private PageOptions GetDefaultPageOptions()
+		{
+			return new PageOptions {Page = 1, PerPage = _options.CurrentValue.PerPageDefault};
+		}
 
-        private static FilterOptions GetDefaultFilterOptions(long id, IDataDescriptor descriptor)
-        {
-            var getById = new FilterOptions
-            {
-                Fields = new List<Filter>
-                {
-                    new Filter
-                    {
-                        Field = descriptor.Id.ColumnName,
-                        Operator = FilterOperator.Equal,
-                        Type = FilterType.Scalar,
-                        Value = id
-                    }
-                }
-            };
-            return getById;
-        }
-    }
+		private static FilterOptions GetDefaultFilterOptions(long id, IDataDescriptor descriptor)
+		{
+			var getById = new FilterOptions
+			{
+				Fields = new List<Filter>
+				{
+					new Filter
+					{
+						Field = descriptor.Id.ColumnName,
+						Operator = FilterOperator.Equal,
+						Type = FilterType.Scalar,
+						Value = id
+					}
+				}
+			};
+			return getById;
+		}
+	}
 }

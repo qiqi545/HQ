@@ -21,20 +21,20 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class IdentityApplication : IdentityApplication<string>
-    {
-    }
+	public class IdentityApplication : IdentityApplication<string>
+	{
+	}
 
-    public class IdentityApplication<TKey> : IApplication<TKey>
-    {
-        [ProtectedPersonalData] public virtual string NormalizedName { get; set; }
+	public class IdentityApplication<TKey> : IApplication<TKey>
+	{
+		[ProtectedPersonalData] public virtual string NormalizedName { get; set; }
 
-        public virtual string SecurityStamp { get; set; }
+		public virtual string SecurityStamp { get; set; }
 
-        public virtual string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
+		public virtual string ConcurrencyStamp { get; set; } = Guid.NewGuid().ToString();
 
-        [PersonalData] public virtual TKey Id { get; set; }
+		[PersonalData] public virtual TKey Id { get; set; }
 
-        [ProtectedPersonalData] public virtual string Name { get; set; }
-    }
+		[ProtectedPersonalData] public virtual string Name { get; set; }
+	}
 }

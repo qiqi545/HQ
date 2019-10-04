@@ -19,10 +19,9 @@ using System.Data;
 
 namespace HQ.Data.SessionManagement
 {
-    public interface IConnectionFactory
-    {
-        string ConnectionString { get; set; }
-        IDbConnection CreateConnection();
-    }
+	public interface IConnectionFactory
+	{
+		string ConnectionString { get; set; }
+		IDbConnection CreateConnection();
+	}
 }
-

@@ -21,23 +21,23 @@ using Microsoft.Extensions.Options;
 namespace HQ.Extensions.Options
 {
 	public sealed class ValidOptionsManager<TOptions> : IValidOptions<TOptions>, IValidOptionsSnapshot<TOptions>
-        where TOptions : class, new()
-    {
+		where TOptions : class, new()
+	{
+		private readonly OptionsCache<TOptions> _cache = new OptionsCache<TOptions>();
 		private readonly IOptionsFactory<TOptions> _factory;
 		private readonly IServiceProvider _serviceProvider;
 
-        public ValidOptionsManager(IOptionsFactory<TOptions> factory, IServiceProvider serviceProvider)
-        {
-            _factory = factory;
-            _serviceProvider = serviceProvider;
-        }
-        private readonly OptionsCache<TOptions> _cache = new OptionsCache<TOptions>();
-        
+		public ValidOptionsManager(IOptionsFactory<TOptions> factory, IServiceProvider serviceProvider)
+		{
+			_factory = factory;
+			_serviceProvider = serviceProvider;
+		}
+
 		public TOptions Value => Get(Microsoft.Extensions.Options.Options.DefaultName);
 
 		public TOptions Get(string name)
-        {
-	        return _cache.GetOrAdd(name, () => _factory.Create(name)).Validate(_serviceProvider);
-        }
-    }
+		{
+			return _cache.GetOrAdd(name, () => _factory.Create(name)).Validate(_serviceProvider);
+		}
+	}
 }

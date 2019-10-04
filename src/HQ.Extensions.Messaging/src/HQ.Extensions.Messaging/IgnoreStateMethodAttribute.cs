@@ -19,8 +19,8 @@ using System;
 
 namespace HQ.Extensions.Messaging
 {
-    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    internal class IgnoreStateMethodAttribute : Attribute
-    {
-    }
+	[AttributeUsage(AttributeTargets.Method, Inherited = false)]
+	internal class IgnoreStateMethodAttribute : Attribute
+	{
+	}
 }

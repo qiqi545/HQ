@@ -21,18 +21,24 @@ using Newtonsoft.Json;
 
 namespace HQ.Common
 {
-    public interface IServerTimestampService
-    {
-        /// <summary> Retrieves the current instantaneous time, preserving time zone.</summary>
-        DateTimeZone GetCurrentZonedTime();
+	public interface IServerTimestampService
+	{
+		/// <summary> Retrieves the current instantaneous time, preserving time zone.</summary>
+		DateTimeZone GetCurrentZonedTime();
 
-        /// <summary> Retrieves the current instantaneous time, with time zone offset. This should only be used for operator-level activities that are not displayed to a user, such as transaction logs.</summary>
-        DateTimeOffset GetCurrentTime();
+		/// <summary>
+		///     Retrieves the current instantaneous time, with time zone offset. This should only be used for operator-level
+		///     activities that are not displayed to a user, such as transaction logs.
+		/// </summary>
+		DateTimeOffset GetCurrentTime();
 
-        /// <summary> Retrieves the current instantaneous tick time. This is only suitable for use as an index.</summary>
-        long GetCurrentTimestamp();
+		/// <summary> Retrieves the current instantaneous tick time. This is only suitable for use as an index.</summary>
+		long GetCurrentTimestamp();
 
-        /// <summary> Retrieves <see cref="JsonSerializerSettings" /> suitable for communicating time across systems. Note that time zone information is not included on the wire without passing it explicitly in another field.</summary>
-        JsonSerializerSettings GetDateTimeSerializerSettings();
-    }
+		/// <summary>
+		///     Retrieves <see cref="JsonSerializerSettings" /> suitable for communicating time across systems. Note that
+		///     time zone information is not included on the wire without passing it explicitly in another field.
+		/// </summary>
+		JsonSerializerSettings GetDateTimeSerializerSettings();
+	}
 }

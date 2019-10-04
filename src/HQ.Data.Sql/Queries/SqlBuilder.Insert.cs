@@ -23,36 +23,37 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    // TODO no ToList via StringBank
-    // TODO remove hashKeysRewrite
+	// TODO no ToList via StringBank
+	// TODO remove hashKeysRewrite
 
-    partial class SqlBuilder
-    {
-        public static Query Insert<T>(T entity, bool returnKeys = false)
-        {
-            return Insert(entity, GetDescriptor<T>(), returnKeys);
-        }
+	partial class SqlBuilder
+	{
+		public static Query Insert<T>(T entity, bool returnKeys = false)
+		{
+			return Insert(entity, GetDescriptor<T>(), returnKeys);
+		}
 
-        public static Query Insert<T>(T instance, IDataDescriptor descriptor, bool returnKeys = false)
-        {
-            return Insert(instance as object, descriptor, returnKeys);
-        }
+		public static Query Insert<T>(T instance, IDataDescriptor descriptor, bool returnKeys = false)
+		{
+			return Insert(instance as object, descriptor, returnKeys);
+		}
 
-        public static Query Insert(object instance, bool returnKeys = false)
-        {
-            return Insert(instance, GetDescriptor(instance.GetType()), returnKeys);
-        }
+		public static Query Insert(object instance, bool returnKeys = false)
+		{
+			return Insert(instance, GetDescriptor(instance.GetType()), returnKeys);
+		}
 
-        public static Query Insert(object instance, IDataDescriptor descriptor, bool returnKeys = false)
-        {
-            var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
-            var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns, returnKeys);
-            var hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
-            var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
-            var keys = columns.Intersect(hashKeysRewrite.Keys);
-            var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[hashKeysRewrite[key]]);
+		public static Query Insert(object instance, IDataDescriptor descriptor, bool returnKeys = false)
+		{
+			var columns = Dialect.ResolveColumnNames(descriptor, ColumnScope.Inserted).ToList();
+			var sql = Dialect.InsertInto(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, columns,
+				returnKeys);
+			var hash = ReadAccessor.Create(instance.GetType()).AsReadOnlyDictionary(instance);
+			var hashKeysRewrite = hash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
+			var keys = columns.Intersect(hashKeysRewrite.Keys);
+			var parameters = keys.ToDictionary(key => $"{Dialect.Parameter}{key}", key => hash[hashKeysRewrite[key]]);
 
-            return new Query(sql, parameters);
-        }
-    }
+			return new Query(sql, parameters);
+		}
+	}
 }

@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5,132 +22,136 @@ using System.Linq;
 
 namespace HQ.Extensions.Metrics.SplitTesting
 {
-    public class Experiment
-    { 
-        private readonly HashSet<string> _metrics;
-        private readonly object[] _alternatives;
+	public class Experiment
+	{
+		private readonly object[] _alternatives;
+		private readonly HashSet<string> _metrics;
 
-        public string Name { get; }
-        public string Description { get; set; }
-        public Func<string> Identify { get; set; }
-        public int Alternatives => _alternatives.Length;
+		private readonly IDictionary<string, Participant> _participants;
 
-        public int? Outcome { get; set; }
-        public DateTimeOffset? ConcludedAt { get; set; }
-        public Func<Experiment, bool> Conclude { get; set; }
-        public Func<Experiment, int> Choose { get; set; }
+		protected internal Experiment(ICohortIdentifier identifier, string name, string description,
+			object[] alternatives = null, params string[] metrics)
+		{
+			Name = name;
+			Description = description;
 
-        private readonly IDictionary<string, Participant> _participants;
-        public IEnumerable<Participant> Participants => _participants.Values;
+			_alternatives = alternatives ?? new object[] {true, false};
+			_metrics = new HashSet<string>(metrics);
 
-        internal IDictionary<int, int> Conversions { get; }
+			Identify = identifier.Identify;
+			Conclude = experiment => false;
+			Choose = HighestDistinctConvertingAlternative();
 
-        protected internal Experiment(ICohortIdentifier identifier, string name, string description, object[] alternatives = null, params string[] metrics)
-        {
-            Name = name;
-            Description = description;
+			_participants = new ConcurrentDictionary<string, Participant>();
 
-            _alternatives = alternatives ?? new object[] { true, false };
-            _metrics = new HashSet<string>(metrics);
+			Conversions = new ConcurrentDictionary<int, int>();
+			for (var i = 1; i <= Alternatives; i++)
+			{
+				Conversions.Add(i, 0);
+			}
+		}
 
-            Identify = identifier.Identify;
-            Conclude = experiment => false;
-            Choose = HighestDistinctConvertingAlternative();
+		public string Name { get; }
+		public string Description { get; set; }
+		public Func<string> Identify { get; set; }
+		public int Alternatives => _alternatives.Length;
 
-            _participants = new ConcurrentDictionary<string, Participant>();
+		public int? Outcome { get; set; }
+		public DateTimeOffset? ConcludedAt { get; set; }
+		public Func<Experiment, bool> Conclude { get; set; }
+		public Func<Experiment, int> Choose { get; set; }
+		public IEnumerable<Participant> Participants => _participants.Values;
 
-            Conversions = new ConcurrentDictionary<int, int>();
-            for (var i = 1; i <= Alternatives; i++)
-            {
-                Conversions.Add(i, 0);
-            }
-        }
+		internal IDictionary<int, int> Conversions { get; }
 
-        internal bool HasMetric(string metric)
-        {
-            return _metrics.Contains(metric);
-        }
+		public object CurrentAlternative => _alternatives[Alternative - 1];
 
-        private Func<Experiment, int> HighestDistinctConvertingAlternative()
-        {
-            return experiment =>
-            {
-                if (_participants.Count == 0)
-                {
-                    return 1;
-                }
-                var hash = new Dictionary<int, int>();
-                foreach (var participant in _participants.Values)
-                {
-                    if (!participant.Shown.HasValue)
-                    {
-                        continue;
-                    }
+		public Participant CurrentParticipant => EnsureParticipant(Identify());
 
-                    if (!hash.TryGetValue(participant.Shown.Value, out var alternative))
-                    {
-                        hash.Add(alternative, 1);
-                    }
-                    else
-                    {
-                        hash[alternative]++;
-                    }
-                }
-                var winner = hash.First();
-                foreach (var alternative in hash)
-                {
-                    if (alternative.Value > winner.Value)
-                    {
-                        winner = alternative;
-                    }
-                }
-                return winner.Key;
-            };
-        }
+		internal int Alternative
+		{
+			get
+			{
+				if (Outcome.HasValue)
+				{
+					return Outcome.Value;
+				}
 
-        public object CurrentAlternative => _alternatives[Alternative - 1];
+				var identity = Identify();
 
-        public Participant CurrentParticipant => EnsureParticipant(Identify());
+				var participant = EnsureParticipant(identity);
 
-        internal int Alternative
-        {
-            get
-            {
-                if (Outcome.HasValue)
-                {
-                    return Outcome.Value;
-                }
+				if (participant.Shown.HasValue)
+				{
+					return participant.Shown.Value;
+				}
 
-                var identity = Identify();
+				var alternative = Audience.Split.Value(identity, Alternatives);
+				participant.Shown = alternative;
 
-                var participant = EnsureParticipant(identity);
+				if (Conclude(this))
+				{
+					ConcludedAt = DateTime.Now;
+					Outcome = Choose(this);
+				}
 
-                if (participant.Shown.HasValue)
-                {
-                    return participant.Shown.Value;
-                }
+				return alternative;
+			}
+		}
 
-                var alternative = Audience.Split.Value(identity, Alternatives);
-                participant.Shown = alternative;
+		internal bool HasMetric(string metric)
+		{
+			return _metrics.Contains(metric);
+		}
 
-                if (Conclude(this))
-                {
-                    ConcludedAt = DateTime.Now;
-                    Outcome = Choose(this);
-                }
+		private Func<Experiment, int> HighestDistinctConvertingAlternative()
+		{
+			return experiment =>
+			{
+				if (_participants.Count == 0)
+				{
+					return 1;
+				}
 
-                return alternative;
-            }
-        }
+				var hash = new Dictionary<int, int>();
+				foreach (var participant in _participants.Values)
+				{
+					if (!participant.Shown.HasValue)
+					{
+						continue;
+					}
 
-        private Participant EnsureParticipant(string identity)
-        {
-            if (_participants.TryGetValue(identity, out var participant))
-                return participant;
+					if (!hash.TryGetValue(participant.Shown.Value, out var alternative))
+					{
+						hash.Add(alternative, 1);
+					}
+					else
+					{
+						hash[alternative]++;
+					}
+				}
 
-            participant = new Participant { Identity = identity };
-            _participants.Add(identity, participant);
-            return participant;
-        }
-    }
+				var winner = hash.First();
+				foreach (var alternative in hash)
+				{
+					if (alternative.Value > winner.Value)
+					{
+						winner = alternative;
+					}
+				}
+
+				return winner.Key;
+			};
+		}
+
+		private Participant EnsureParticipant(string identity)
+		{
+			if (_participants.TryGetValue(identity, out var participant))
+				return participant;
+
+			participant = new Participant {Identity = identity};
+			_participants.Add(identity, participant);
+			return participant;
+		}
+	}
 }

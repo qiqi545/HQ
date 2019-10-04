@@ -38,15 +38,18 @@ namespace HQ.Integration.DocumentDb
 {
 	public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
 	{
+		// ReSharper disable once StaticMemberInGenericType
+		private static readonly RequestOptions None = new RequestOptions();
+		private readonly DocumentClient _client;
+		private readonly ISafeLogger<DocumentDbRepository<T>> _logger;
+		private readonly IOptionsMonitor<DocumentDbOptions> _options;
 		private readonly ITypeReadAccessor _reads;
-		private readonly ITypeWriteAccessor _writes;
 
 		private readonly string _slot;
-		private readonly DocumentClient _client;
-		private readonly IOptionsMonitor<DocumentDbOptions> _options;
-		private readonly ISafeLogger<DocumentDbRepository<T>> _logger;
+		private readonly ITypeWriteAccessor _writes;
 
-		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<T>> logger)
+		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options,
+			ISafeLogger<DocumentDbRepository<T>> logger)
 		{
 			_reads = ReadAccessor.Create(typeof(T));
 			_writes = WriteAccessor.Create(typeof(T));
@@ -61,7 +64,9 @@ namespace HQ.Integration.DocumentDb
 			CreateCollectionIfNotExistsAsync().Wait();
 		}
 
-		private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
+		private Uri CollectionUri =>
+			UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
+
 		private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
 		private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
 
@@ -91,14 +96,16 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
-		public Task<long> CountAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public Task<long> CountAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var queryable = CreateDocumentQuery();
 			var query = predicate != null ? queryable.Where(predicate).LongCount() : queryable.LongCount();
 			return Task.FromResult(query);
 		}
 
-		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection, CancellationToken cancellationToken = default)
+		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection,
+			CancellationToken cancellationToken = default)
 		{
 			var queryable = projection(CreateDocumentQuery());
 
@@ -107,7 +114,8 @@ namespace HQ.Integration.DocumentDb
 			return result;
 		}
 
-		public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public async Task<IEnumerable<T>> RetrieveAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var queryable = CreateDocumentQuery();
 
@@ -116,28 +124,32 @@ namespace HQ.Integration.DocumentDb
 			return await GetResultsAsync(query, cancellationToken);
 		}
 
-		public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public async Task<T> RetrieveSingleAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.Single();
 		}
 
-		public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public async Task<T> RetrieveSingleOrDefaultAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.SingleOrDefault();
 		}
 
-		public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public async Task<T> RetrieveFirstAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var results = await RetrieveAsync(predicate, cancellationToken);
 
 			return results.First();
 		}
 
-		public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null, CancellationToken cancellationToken = default)
+		public async Task<T> RetrieveFirstOrDefaultAsync(Expression<Func<T, bool>> predicate = null,
+			CancellationToken cancellationToken = default)
 		{
 			var results = await RetrieveAsync(predicate, cancellationToken);
 
@@ -153,7 +165,8 @@ namespace HQ.Integration.DocumentDb
 		public async Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default)
 		{
 			var options = GetRequestOptions(item.Id);
-			var response = await _client.UpsertDocumentAsync(CollectionUri, item, options, cancellationToken: cancellationToken);
+			var response =
+				await _client.UpsertDocumentAsync(CollectionUri, item, options, cancellationToken: cancellationToken);
 			return response;
 		}
 
@@ -173,15 +186,12 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
-		// ReSharper disable once StaticMemberInGenericType
-		private static readonly RequestOptions None = new RequestOptions();
-
 		private static RequestOptions GetRequestOptions(string partitionKey)
 		{
 			if (string.IsNullOrWhiteSpace(partitionKey))
 				return None;
 
-			var options = new RequestOptions { PartitionKey = new PartitionKey(partitionKey) };
+			var options = new RequestOptions {PartitionKey = new PartitionKey(partitionKey)};
 			return options;
 		}
 
@@ -248,7 +258,7 @@ namespace HQ.Integration.DocumentDb
 			{
 				if (e.StatusCode == HttpStatusCode.NotFound)
 				{
-					await _client.CreateDatabaseAsync(new Database { Id = _options.Get(_slot).DatabaseId });
+					await _client.CreateDatabaseAsync(new Database {Id = _options.Get(_slot).DatabaseId});
 				}
 				else
 				{
@@ -268,8 +278,8 @@ namespace HQ.Integration.DocumentDb
 				if (e.StatusCode == HttpStatusCode.NotFound)
 				{
 					await _client.CreateDocumentCollectionAsync(DatabaseUri,
-						new DocumentCollection { Id = _options.Get(_slot).CollectionId },
-						new RequestOptions { OfferThroughput = _options.Get(_slot).OfferThroughput });
+						new DocumentCollection {Id = _options.Get(_slot).CollectionId},
+						new RequestOptions {OfferThroughput = _options.Get(_slot).OfferThroughput});
 				}
 				else
 				{
@@ -308,6 +318,7 @@ namespace HQ.Integration.DocumentDb
 				{
 					results.AddRange(await query.ExecuteNextAsync<T>(cancellationToken));
 				}
+
 				return results;
 			}
 			catch (Exception e)

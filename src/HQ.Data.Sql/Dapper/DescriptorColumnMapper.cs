@@ -23,73 +23,74 @@ using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Dapper
 {
-    public class DescriptorColumnMapper : SqlMapper.ITypeMap
-    {
-        private readonly IDictionary<string, PropertyToColumnMemberMap> _memberMap;
-        private readonly Type _type;
+	public class DescriptorColumnMapper : SqlMapper.ITypeMap
+	{
+		private readonly IDictionary<string, PropertyToColumnMemberMap> _memberMap;
+		private readonly Type _type;
 
-        public static void AddTypeMap<T>(IEqualityComparer<string> comparer)
-        {
-            var descriptor = SimpleDataDescriptor.Create<T>();
-            SqlMapper.SetTypeMap(typeof(T), new DescriptorColumnMapper(typeof(T), descriptor.All, comparer));
-        }
+		public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns,
+			IEqualityComparer<string> comparer)
+		{
+			_type = type;
+			_memberMap = new Dictionary<string, PropertyToColumnMemberMap>(comparer);
+			foreach (var column in columns)
+				_memberMap.Add(column.ColumnName, new PropertyToColumnMemberMap(column));
+		}
 
-        public DescriptorColumnMapper(Type type, IEnumerable<PropertyToColumn> columns, IEqualityComparer<string> comparer)
-        {
-            _type = type;
-            _memberMap = new Dictionary<string, PropertyToColumnMemberMap>(comparer);
-            foreach (var column in columns)
-                _memberMap.Add(column.ColumnName, new PropertyToColumnMemberMap(column));
-        }
+		public SqlMapper.IMemberMap GetMember(string columnName)
+		{
+			_memberMap.TryGetValue(columnName, out var value);
+			return value;
+		}
 
-        public SqlMapper.IMemberMap GetMember(string columnName)
-        {
-            _memberMap.TryGetValue(columnName, out var value);
-            return value;
-        }
+		public static void AddTypeMap<T>(IEqualityComparer<string> comparer)
+		{
+			var descriptor = SimpleDataDescriptor.Create<T>();
+			SqlMapper.SetTypeMap(typeof(T), new DescriptorColumnMapper(typeof(T), descriptor.All, comparer));
+		}
 
-        private class PropertyToColumnMemberMap : SqlMapper.IMemberMap
-        {
-            private readonly PropertyToColumn _propertyToColumn;
-            private readonly PropertyInfo _underlyingProperty;
+		private class PropertyToColumnMemberMap : SqlMapper.IMemberMap
+		{
+			private readonly PropertyToColumn _propertyToColumn;
+			private readonly PropertyInfo _underlyingProperty;
 
-            public PropertyToColumnMemberMap(PropertyToColumn propertyToColumn)
-            {
-                _propertyToColumn = propertyToColumn;
-                _underlyingProperty = propertyToColumn.Property.Info;
-            }
+			public PropertyToColumnMemberMap(PropertyToColumn propertyToColumn)
+			{
+				_propertyToColumn = propertyToColumn;
+				_underlyingProperty = propertyToColumn.Property.Info;
+			}
 
-            PropertyInfo SqlMapper.IMemberMap.Property => _underlyingProperty;
-            Type SqlMapper.IMemberMap.MemberType => _underlyingProperty.PropertyType;
+			PropertyInfo SqlMapper.IMemberMap.Property => _underlyingProperty;
+			Type SqlMapper.IMemberMap.MemberType => _underlyingProperty.PropertyType;
 
-            #region Unused
+			#region Unused
 
-            public string ColumnName => _propertyToColumn.ColumnName;
+			public string ColumnName => _propertyToColumn.ColumnName;
 
-            FieldInfo SqlMapper.IMemberMap.Field => null;
+			FieldInfo SqlMapper.IMemberMap.Field => null;
 
-            ParameterInfo SqlMapper.IMemberMap.Parameter => null;
+			ParameterInfo SqlMapper.IMemberMap.Parameter => null;
 
-            #endregion
-        }
+			#endregion
+		}
 
-        #region Unused
+		#region Unused
 
-        public ConstructorInfo FindConstructor(string[] names, Type[] types)
-        {
-            return _type.GetConstructor(types) ?? _type.GetConstructor(Type.EmptyTypes);
-        }
+		public ConstructorInfo FindConstructor(string[] names, Type[] types)
+		{
+			return _type.GetConstructor(types) ?? _type.GetConstructor(Type.EmptyTypes);
+		}
 
-        public ConstructorInfo FindExplicitConstructor()
-        {
-            return _type.GetConstructor(new Type[0]);
-        }
+		public ConstructorInfo FindExplicitConstructor()
+		{
+			return _type.GetConstructor(new Type[0]);
+		}
 
-        public SqlMapper.IMemberMap GetConstructorParameter(ConstructorInfo constructor, string columnName)
-        {
-            return null;
-        }
+		public SqlMapper.IMemberMap GetConstructorParameter(ConstructorInfo constructor, string columnName)
+		{
+			return null;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

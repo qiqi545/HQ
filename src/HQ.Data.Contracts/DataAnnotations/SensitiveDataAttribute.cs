@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using HQ.Data.Contracts.Attributes;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {

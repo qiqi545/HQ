@@ -24,30 +24,30 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Operations
 {
-    /// <summary>
-    ///     Fails startup if health checks fail. This is a fat canary.
-    /// </summary>
-    public class HealthCheckStartupFilter : IStartupFilter
-    {
-        private readonly IOptionsMonitor<HealthCheckOptions> _options;
-        private readonly HealthCheckService _service;
+	/// <summary>
+	///     Fails startup if health checks fail. This is a fat canary.
+	/// </summary>
+	public class HealthCheckStartupFilter : IStartupFilter
+	{
+		private readonly IOptionsMonitor<HealthCheckOptions> _options;
+		private readonly HealthCheckService _service;
 
-        public HealthCheckStartupFilter(HealthCheckService service, IOptionsMonitor<HealthCheckOptions> options)
-        {
-            _options = options;
-            _service = service;
-        }
+		public HealthCheckStartupFilter(HealthCheckService service, IOptionsMonitor<HealthCheckOptions> options)
+		{
+			_options = options;
+			_service = service;
+		}
 
-        public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
-        {
-            var report = _service.CheckHealthAsync(r => r.Tags.Contains("startup")).GetAwaiter().GetResult();
+		public Action<IApplicationBuilder> Configure(Action<IApplicationBuilder> next)
+		{
+			var report = _service.CheckHealthAsync(r => r.Tags.Contains("startup")).GetAwaiter().GetResult();
 
-            if (report.Status == HealthStatus.Unhealthy)
-            {
-                throw new Exception("Application failed to start due to failing startup health checks.");
-            }
+			if (report.Status == HealthStatus.Unhealthy)
+			{
+				throw new Exception("Application failed to start due to failing startup health checks.");
+			}
 
-            return next;
-        }
-    }
+			return next;
+		}
+	}
 }

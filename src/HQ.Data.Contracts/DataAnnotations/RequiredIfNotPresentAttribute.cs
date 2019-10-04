@@ -33,19 +33,20 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 		public bool AllowEmptyStrings { get; }
 
-		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings, ScriptOptions options)
+		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings,
+			ScriptOptions options)
 		{
 			var handler = Snippet.CreateMethod("public static bool Validate(object value)" +
-			                                   $"{{ " +
-			                                   $"   var accessor = ReadAccessor.Create(value); " +
+			                                   "{ " +
+			                                   "   var accessor = ReadAccessor.Create(value); " +
 			                                   $"   if(accessor.TryGetValue(value, \"{propertyOrFieldName}\", out var propertyOrField))" +
-			                                   $"   {{ " +
+			                                   "   { " +
 			                                   $"       var attribute = new RequiredAttribute {{ AllowEmptyStrings = {(allowEmptyStrings ? "true" : "false")} }};" +
-			                                   $"       var present = attribute.IsValid(propertyOrField); " +
-			                                   $"       return present ? attribute.IsValid(value) : true;" +
-			                                   $"   }}" +
-			                                   $"   return false;" +
-			                                   $"}}", options);
+			                                   "       var present = attribute.IsValid(propertyOrField); " +
+			                                   "       return present ? attribute.IsValid(value) : true;" +
+			                                   "   }" +
+			                                   "   return false;" +
+			                                   "}", options);
 			return handler;
 		}
 	}

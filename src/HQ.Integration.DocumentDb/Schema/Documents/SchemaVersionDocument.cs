@@ -22,15 +22,10 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 {
 	public class SchemaVersionDocument : DocumentBase<SchemaVersionDocument>
 	{
-		public ulong Fingerprint { get; set; }
-		public string ApplicationId { get; set; }
-		public SchemaType Type { get; set; }
-		public string Namespace { get; set; }
-		public string Name { get; set; }
-		public Data.Contracts.Schema.Models.Schema Data { get; set; }
-		public int Revision { get; set; }
-
-		public SchemaVersionDocument() { /* required for serialization */}
+		public SchemaVersionDocument()
+		{
+			/* required for serialization */
+		}
 
 		public SchemaVersionDocument(SchemaVersion model)
 		{
@@ -42,6 +37,14 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 			Data = model.Data;
 			Revision = model.Revision;
 		}
+
+		public ulong Fingerprint { get; set; }
+		public string ApplicationId { get; set; }
+		public SchemaType Type { get; set; }
+		public string Namespace { get; set; }
+		public string Name { get; set; }
+		public Data.Contracts.Schema.Models.Schema Data { get; set; }
+		public int Revision { get; set; }
 
 		[JsonIgnore]
 		public SchemaVersion Model => new SchemaVersion

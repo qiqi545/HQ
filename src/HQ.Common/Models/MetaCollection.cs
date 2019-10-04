@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System.Collections.Generic;
@@ -21,11 +23,11 @@ namespace HQ.Common.Models
 	[DebuggerDisplay("Collection: ({item.Count} items)")]
 	public class MetaCollection
 	{
-		public dynamic info;
 		public string auth;
-		public dynamic protocolProfileBehavior;
-		public List<MetaItem> item = new List<MetaItem>();
 		public List<dynamic> @event = new List<dynamic>();
+		public dynamic info;
+		public List<MetaItem> item = new List<MetaItem>();
+		public dynamic protocolProfileBehavior;
 		public List<dynamic> variable = new List<dynamic>();
 
 		public bool TryGetFolder(string name, out MetaFolder folder)

@@ -50,7 +50,7 @@ namespace HQ.Integration.SqlServer.Runtime
 		}
 
 		public static RuntimeBuilder AddSqlServerRuntime(this RuntimeBuilder builder,
-			string connectionString, 
+			string connectionString,
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqlServerOptions> configureDatabase = null)
 		{
@@ -72,7 +72,8 @@ namespace HQ.Integration.SqlServer.Runtime
 			builder.Services.AddMetrics();
 			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
 			builder.Services.TryAddSingleton(dialect);
-			builder.Services.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
+			builder.Services
+				.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 

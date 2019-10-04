@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -26,76 +28,76 @@ using HQ.Platform.Identity.Models;
 
 namespace HQ.Platform.Identity.Services
 {
-    public class ApplicationService<TApplication, TUser, TKey> : IApplicationService<TApplication>
-        where TApplication : IdentityApplication<TKey>
-        where TUser : IdentityUserExtended<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly IQueryableProvider<TApplication> _queryableProvider;
-        private readonly ApplicationManager<TApplication, TUser, TKey> _applicationManager;
+	public class ApplicationService<TApplication, TUser, TKey> : IApplicationService<TApplication>
+		where TApplication : IdentityApplication<TKey>
+		where TUser : IdentityUserExtended<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		private readonly ApplicationManager<TApplication, TUser, TKey> _applicationManager;
+		private readonly IQueryableProvider<TApplication> _queryableProvider;
 
-        public ApplicationService(ApplicationManager<TApplication, TUser, TKey> applicationManager,
-            IQueryableProvider<TApplication> queryableProvider)
-        {
-            _applicationManager = applicationManager;
-            _queryableProvider = queryableProvider;
-        }
+		public ApplicationService(ApplicationManager<TApplication, TUser, TKey> applicationManager,
+			IQueryableProvider<TApplication> queryableProvider)
+		{
+			_applicationManager = applicationManager;
+			_queryableProvider = queryableProvider;
+		}
 
-        public IQueryable<TApplication> Applications => _applicationManager.Applications;
+		public IQueryable<TApplication> Applications => _applicationManager.Applications;
 
-        public async Task<Operation<int>> GetCountAsync()
-        {
-            var result = await _applicationManager.GetCountAsync();
-            var operation = new Operation<int>(result);
-            return operation;
-        }
+		public async Task<Operation<int>> GetCountAsync()
+		{
+			var result = await _applicationManager.GetCountAsync();
+			var operation = new Operation<int>(result);
+			return operation;
+		}
 
-        public Task<Operation<IEnumerable<TApplication>>> GetAsync()
-        {
-            var all = _queryableProvider.SafeAll ?? Applications;
-            return Task.FromResult(new Operation<IEnumerable<TApplication>>(all));
-        }
+		public Task<Operation<IEnumerable<TApplication>>> GetAsync()
+		{
+			var all = _queryableProvider.SafeAll ?? Applications;
+			return Task.FromResult(new Operation<IEnumerable<TApplication>>(all));
+		}
 
-        public async Task<Operation<TApplication>> CreateAsync(CreateApplicationModel model)
-        {
-            var application = (TApplication)FormatterServices.GetUninitializedObject(typeof(TApplication));
-            application.Name = model.Name;
-            application.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+		public async Task<Operation<TApplication>> CreateAsync(CreateApplicationModel model)
+		{
+			var application = (TApplication) FormatterServices.GetUninitializedObject(typeof(TApplication));
+			application.Name = model.Name;
+			application.ConcurrencyStamp = model.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var result = await _applicationManager.CreateAsync(application);
-            return result.ToOperation(application);
-        }
+			var result = await _applicationManager.CreateAsync(application);
+			return result.ToOperation(application);
+		}
 
-        public async Task<Operation> UpdateAsync(TApplication application)
-        {
-            var result = await _applicationManager.UpdateAsync(application);
-            return result.ToOperation();
-        }
+		public async Task<Operation> UpdateAsync(TApplication application)
+		{
+			var result = await _applicationManager.UpdateAsync(application);
+			return result.ToOperation();
+		}
 
-        public async Task<Operation> DeleteAsync(string id)
-        {
-            var operation = await FindByIdAsync(id);
-            if (!operation.Succeeded)
-            {
-                return operation;
-            }
+		public async Task<Operation> DeleteAsync(string id)
+		{
+			var operation = await FindByIdAsync(id);
+			if (!operation.Succeeded)
+			{
+				return operation;
+			}
 
-            var deleted = await _applicationManager.DeleteAsync(operation.Data);
-            return deleted.ToOperation();
-        }
-        
-        public async Task<Operation<TApplication>> FindByIdAsync(string id)
-        {
-            var application = await _applicationManager.FindByIdAsync(id);
-            return application == null
-                ? new Operation<TApplication>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ApplicationNotFound,
-                    HttpStatusCode.NotFound))
-                : new Operation<TApplication>(application);
-        }
+			var deleted = await _applicationManager.DeleteAsync(operation.Data);
+			return deleted.ToOperation();
+		}
 
-        public async Task<Operation<TApplication>> FindByNameAsync(string name)
-        {
-            return new Operation<TApplication>(await _applicationManager.FindByNameAsync(name));
-        }
-    }
+		public async Task<Operation<TApplication>> FindByIdAsync(string id)
+		{
+			var application = await _applicationManager.FindByIdAsync(id);
+			return application == null
+				? new Operation<TApplication>(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ApplicationNotFound,
+					HttpStatusCode.NotFound))
+				: new Operation<TApplication>(application);
+		}
+
+		public async Task<Operation<TApplication>> FindByNameAsync(string name)
+		{
+			return new Operation<TApplication>(await _applicationManager.FindByNameAsync(name));
+		}
+	}
 }

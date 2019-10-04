@@ -23,7 +23,7 @@ using System.Threading.Tasks;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
-{ 
+{
 	public sealed class DocumentDbConnection : DbConnection
 	{
 		private readonly DocumentDbConnectionStringBuilder _builder = new DocumentDbConnectionStringBuilder();

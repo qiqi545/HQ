@@ -27,29 +27,31 @@ using Microsoft.Extensions.Hosting;
 
 namespace HQ.Extensions.Scheduling
 {
-    public static class Add
-    {
-        public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services, IConfiguration configuration)
-        {
-            return services.AddBackgroundTasks(configuration.Bind);
-        }
+	public static class Add
+	{
+		public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services,
+			IConfiguration configuration)
+		{
+			return services.AddBackgroundTasks(configuration.Bind);
+		}
 
-        public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services, Action<BackgroundTaskOptions> configureAction = null)
-        {
-            if (configureAction != null)
-                services.Configure(configureAction);
+		public static BackgroundTaskBuilder AddBackgroundTasks(this IServiceCollection services,
+			Action<BackgroundTaskOptions> configureAction = null)
+		{
+			if (configureAction != null)
+				services.Configure(configureAction);
 
-            services.AddLocalTimestamps();
-            services.AddTypeDiscovery();
-            services.AddSafeLogging();
+			services.AddLocalTimestamps();
+			services.AddTypeDiscovery();
+			services.AddSafeLogging();
 
 			services.TryAddSingleton<IBackgroundTaskStore, InMemoryBackgroundTaskStore>();
-            services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
-            services.TryAddSingleton<BackgroundTaskHost>();
+			services.TryAddSingleton<IBackgroundTaskSerializer, JsonBackgroundTaskSerializer>();
+			services.TryAddSingleton<BackgroundTaskHost>();
 
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BackgroundTaskService>());
+			services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BackgroundTaskService>());
 
-            return new BackgroundTaskBuilder(services);
-        }
-    }
+			return new BackgroundTaskBuilder(services);
+		}
+	}
 }

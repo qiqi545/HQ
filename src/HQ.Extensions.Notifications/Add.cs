@@ -17,10 +17,10 @@
 
 using System;
 using System.IO;
-using HQ.Extensions.Options;
 using HQ.Extensions.Notifications.Configuration;
 using HQ.Extensions.Notifications.Email.Models;
 using HQ.Extensions.Notifications.Email.Providers;
+using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -33,7 +33,8 @@ namespace HQ.Extensions.Notifications
 			return services.AddEmailNotifications(config.FastBind);
 		}
 
-		public static IServiceCollection AddEmailNotifications(this IServiceCollection services, Action<EmailOptions> configureAction = null)
+		public static IServiceCollection AddEmailNotifications(this IServiceCollection services,
+			Action<EmailOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				services.Configure(configureAction);

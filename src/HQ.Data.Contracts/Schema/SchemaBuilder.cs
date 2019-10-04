@@ -21,11 +21,8 @@ namespace HQ.Data.Contracts.Schema
 {
 	public class SchemaBuilder
 	{
-		public IServiceCollection Services { get; }
+		public SchemaBuilder(IServiceCollection services) => Services = services;
 
-		public SchemaBuilder(IServiceCollection services)
-		{
-			Services = services;
-		}
+		public IServiceCollection Services { get; }
 	}
 }

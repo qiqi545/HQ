@@ -1,10 +1,26 @@
-﻿using System;
+﻿#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Configuration;
@@ -18,6 +34,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 
+#if NETCOREAPP2_2
+using Morcatko.AspNetCore.JsonMergePatch;
+#else
+using HQ.Common.AspNetCore.MergePatch;
+#endif
+
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {
 	[ApiExplorerSettings(IgnoreApi = true)]
@@ -25,10 +47,6 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
 	public class RestController<T> : DataController, IObjectController<T> where T : class, IObject
 	{
-		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
-		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
-		private readonly IObjectRepository<T> _repository;
-
 		// ReSharper disable once StaticMemberInGenericType
 		private static readonly Lazy<FieldOptions> IdField = new Lazy<FieldOptions>(() =>
 		{
@@ -37,26 +55,97 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			return fields;
 		});
 
-		public Type ObjectType => typeof(T);
+		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
+		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
+		private readonly IObjectRepository<T> _repository;
 
-		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions, IOptionsMonitor<ApiOptions> apiOptions)
+		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions,
+			IOptionsMonitor<ApiOptions> apiOptions)
 		{
 			_repository = repository;
 			_queryOptions = queryOptions;
 			_apiOptions = apiOptions;
 		}
 
+		public Type ObjectType => typeof(T);
+
+		private async Task<IActionResult> SaveAsync(T @object)
+		{
+			if (!Valid(@object, out var error))
+				return error;
+
+			var operation = await _repository.SaveAsync(@object);
+			return operation.ToResult(body =>
+			{
+				// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
+				if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString()
+					    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
+				{
+					body = null;
+					Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
+				}
+
+				switch (operation.Data)
+				{
+					case ObjectSave.NotFound:
+						return NotFound();
+					case ObjectSave.NoChanges:
+						return NotModified();
+					case ObjectSave.Updated:
+						return Ok(body);
+					case ObjectSave.Created:
+						return Created(new Uri($"{Request.Path}/{@object.Id}", UriKind.Relative), body);
+					default:
+						throw new ArgumentOutOfRangeException();
+				}
+			});
+		}
+
+		private async Task<IActionResult> SaveAsync([FromBody] IEnumerable<T> objects, long startingAt,
+			int? count = null, BatchSaveStrategy strategy = BatchSaveStrategy.Insert)
+		{
+			var errors = new List<Error>();
+			objects = objects.Where(x =>
+			{
+				if (TryValidateModel(x, $"{x.Id}"))
+					return true;
+				errors.Add(ConvertModelStateToError());
+				return false;
+			});
+
+			var result = await _repository.SaveAsync(objects, strategy, startingAt, count);
+			foreach (var error in errors)
+				result.Errors.Add(error);
+
+			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
+			if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString()
+				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
+			{
+				Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
+				return Ok();
+			}
+
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, result.Errors,
+				out var body);
+			return Ok(body);
+		}
+
 		#region GET
 
 		[VersionSelector]
-		[HttpGet("X"), HttpGet("X.{format}"), ResourceFilter, FormatFilter]
+		[HttpGet("X")]
+		[HttpGet("X.{format}")]
+		[ResourceFilter]
+		[FormatFilter]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedCollectionBody<IPage<IObject>>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeCollectionBody<IPage<IObject>>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedCollectionBody<IStream<IObject>>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeCollectionBody<IStream<IObject>>))]
-		public async Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields, FilterOptions filter, ProjectionOptions projection, SegmentOptions segment, [FromQuery] string query = null)
+		public async Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream,
+			FieldOptions fields, FilterOptions filter, ProjectionOptions projection, SegmentOptions segment,
+			[FromQuery] string query = null)
 		{
 			// ReSharper disable once PossibleMultipleEnumeration
 			if (segment.Ids != null && (segment.Count > 0 || segment.Ids.Any()))
@@ -75,12 +164,17 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpGet("X/{id}"), HttpGet("X/{id}.{format}"), FieldsFilter, ProjectionFilter, FormatFilter]
+		[HttpGet("X/{id}")]
+		[HttpGet("X/{id}.{format}")]
+		[FieldsFilter]
+		[ProjectionFilter]
+		[FormatFilter]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<IObject>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<IObject>))]
-		public async Task<IActionResult> GetAsync([FromRoute, BindRequired] long id, FieldOptions fields, ProjectionOptions projections)
+		public async Task<IActionResult> GetAsync([FromRoute] [BindRequired] long id, FieldOptions fields,
+			ProjectionOptions projections)
 		{
 			var @object = await _repository.GetAsync(id, fields);
 			if (@object?.Data == null)
@@ -109,24 +203,29 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 					// https://tools.ietf.org/html/rfc7231#section-4.3.3
 					return SeeOther($"{Request.Path}/{@object.Id}");
 				}
-				var error = new Error(ErrorEvents.InvalidRequest, "Cannot create an object with a pre-specified identifier.", HttpStatusCode.Forbidden);
+
+				var error = new Error(ErrorEvents.InvalidRequest,
+					"Cannot create an object with a pre-specified identifier.", HttpStatusCode.Forbidden);
 				return new ErrorResult(error);
 			}
+
 			return await SaveAsync(@object);
 		}
 
 		[VersionSelector]
 		[HttpPost("X/batch")]
-		[ProducesResponseType((int) 422 /*HttpStatusCode.UnprocessableEntity*/)]
+		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public async Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null)
+		public async Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave, 422 /*HttpStatusCode.UnprocessableEntity*/));
+				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+					422 /*HttpStatusCode.UnprocessableEntity*/));
 			// ReSharper disable once PossibleMultipleEnumeration
-			return await SaveAsync(objects, startingAt, count, BatchSaveStrategy.Insert);
+			return await SaveAsync(objects, startingAt, count);
 		}
 
 		#endregion
@@ -135,15 +234,16 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPut("X/{id}")]
-		[ProducesResponseType((int) 422 /*HttpStatusCode.UnprocessableEntity*/)]
+		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(IObject))]
-		public async Task<IActionResult> PutAsync([FromRoute, BindRequired] long id, T @object)
+		public async Task<IActionResult> PutAsync([FromRoute] [BindRequired] long id, T @object)
 		{
 			if (@object == null)
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave, 422 /*HttpStatusCode.UnprocessableEntity*/));
+				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+					422 /*HttpStatusCode.UnprocessableEntity*/));
 			var existing = await _repository.GetAsync(id);
 			if (existing == null)
 				return NotFound();
@@ -153,14 +253,16 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPut("X")]
-		[ProducesResponseType((int) 422 /*HttpStatusCode.UnprocessableEntity*/)]
+		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public async Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null)
+		public async Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave, 422 /*HttpStatusCode.UnprocessableEntity*/));
+				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+					422 /*HttpStatusCode.UnprocessableEntity*/));
 			return await SaveAsync(objects, startingAt, count, BatchSaveStrategy.Upsert);
 		}
 
@@ -177,7 +279,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<IObject>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<IObject>))]
-		public async Task<IActionResult> PatchAsync([FromRoute, BindRequired] long id, JsonPatchDocument<T> patch)
+		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] long id, JsonPatchDocument<T> patch)
 		{
 			if (!Valid(patch, out var error))
 				return error;
@@ -199,7 +301,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<Task>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<Task>))]
-		public async Task<IActionResult> PatchAsync([FromRoute, BindRequired] long id, JsonMergePatchDocument<T> patch)
+		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] long id, JsonMergePatchDocument<T> patch)
 		{
 			if (!Valid(patch, out var error))
 				return error;
@@ -214,14 +316,16 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPatch("X")]
-		[ProducesResponseType((int) 422 /*HttpStatusCode.UnprocessableEntity*/)]
+		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public virtual async Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null)
+		public virtual async Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave, 422 /*HttpStatusCode.UnprocessableEntity*/));
+				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+					422 /*HttpStatusCode.UnprocessableEntity*/));
 			return await SaveAsync(objects, startingAt, count, BatchSaveStrategy.Update);
 		}
 
@@ -230,13 +334,15 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region DELETE
 
 		[VersionSelector]
-		[HttpDelete("X"), FilterFilter]
+		[HttpDelete("X")]
+		[FilterFilter]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		public virtual async Task<IActionResult> DeleteAsync(FilterOptions filter)
 		{
-			var toDelete = await _repository.GetAsync(null, SortOptions.Empty, PageOptions.Empty, FieldOptions.Empty, filter, ProjectionOptions.Empty);
+			var toDelete = await _repository.GetAsync(null, SortOptions.Empty, PageOptions.Empty, FieldOptions.Empty,
+				filter, ProjectionOptions.Empty);
 			if (toDelete?.Data == null)
 				return NotFound();
 
@@ -249,7 +355,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.Gone)]
 		[ProducesResponseType((int) HttpStatusCode.NoContent)]
-		public virtual async Task<IActionResult> DeleteAsync([FromRoute, BindRequired] long id)
+		public virtual async Task<IActionResult> DeleteAsync([FromRoute] [BindRequired] long id)
 		{
 			var toDelete = await _repository.GetAsync(id, FieldOptions.Empty, ProjectionOptions.Empty);
 			if (toDelete?.Data == null)
@@ -278,7 +384,8 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		public virtual async Task<IActionResult> DeleteAsync(SegmentOptions segment)
 		{
-			var toDelete = await _repository.GetAsync(segment, FieldOptions.Empty, FilterOptions.Empty, ProjectionOptions.Empty);
+			var toDelete = await _repository.GetAsync(segment, FieldOptions.Empty, FilterOptions.Empty,
+				ProjectionOptions.Empty);
 			if (toDelete == null)
 				return NotFound();
 
@@ -287,62 +394,5 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		#endregion
-
-		private async Task<IActionResult> SaveAsync(T @object)
-		{
-			if (!Valid(@object, out var error))
-				return error;
-
-			var operation = await _repository.SaveAsync(@object);
-			return operation.ToResult(body =>
-			{
-				// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-				if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString().ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
-				{
-					body = null;
-					Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
-				}
-
-				switch (operation.Data)
-				{
-					case ObjectSave.NotFound:
-						return NotFound();
-					case ObjectSave.NoChanges:
-						return NotModified();
-					case ObjectSave.Updated:
-						return Ok(body);
-					case ObjectSave.Created:
-						return Created(new Uri($"{Request.Path}/{@object.Id}", UriKind.Relative), body);
-					default:
-						throw new ArgumentOutOfRangeException();
-				}
-			});
-		}
-
-		private async Task<IActionResult> SaveAsync([FromBody] IEnumerable<T> objects, long startingAt, int? count = null, BatchSaveStrategy strategy = BatchSaveStrategy.Insert)
-		{
-			var errors = new List<Error>();
-			objects = objects.Where(x =>
-			{
-				if (TryValidateModel(x, $"{x.Id}"))
-					return true;
-				errors.Add(ConvertModelStateToError());
-				return false;
-			});
-
-			var result = await _repository.SaveAsync(objects, strategy, startingAt, count);
-			foreach (var error in errors)
-				result.Errors.Add(error);
-
-			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-			if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString().ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
-			{
-				Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
-				return Ok();
-			}
-
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, result.Errors, out var body);
-			return Ok(body);
-		}
 	}
 }

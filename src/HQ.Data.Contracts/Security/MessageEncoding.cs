@@ -20,7 +20,7 @@ using System.Text;
 namespace HQ.Data.Contracts.Security
 {
 	internal static class MessageEncoding
-    {
-        public static Encoding Current = new UTF8Encoding(false, true);
-    }
+	{
+		public static Encoding Current = new UTF8Encoding(false, true);
+	}
 }

@@ -21,13 +21,13 @@ namespace HQ.Platform.Api.Configuration
 {
 	public class RuntimeOptions : FeatureToggle, IProtectedFeature, IComponentOptions
 	{
-		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
-		public string RootPath { get; set; } = "/api";
 		public bool CreateIfNotExists { get; set; } = true;
 		public bool MigrateOnStartup { get; set; } = true;
 		public bool EnableRest { get; set; } = true;
 		public bool EnableGraphQl { get; set; } = true;
 		public string[] Exclusions { get; set; } = new string[0];
+		public string RootPath { get; set; } = "/api";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; set; } = Constants.Security.Policies.ManageObjects;
 	}
 }

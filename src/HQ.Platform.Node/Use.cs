@@ -15,6 +15,11 @@
 
 #endregion
 
+#if NETCOREAPP2_2
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#else
+using Microsoft.Extensions.Hosting;
+#endif
 using System;
 using HQ.Common;
 using HQ.Extensions.Logging;
@@ -27,28 +32,23 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.Extensions.Hosting;
-#endif
-
 namespace HQ.Platform.Node
 {
-    public static class Use
-    {
-        public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env, ISafeLogger logger = null,
+	public static class Use
+	{
+		public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env,
+			ISafeLogger logger = null,
 #if NETCOREAPP2_2
 			Action<IRouteBuilder> configureRoutes = null
 #else
 			Action<IEndpointRouteBuilder> configureRoutes = null
 #endif
-			)
+		)
 		{
-            Bootstrap.EnsureInitialized();
+			Bootstrap.EnsureInitialized();
 
-            if (env.IsDevelopment())
-	            app.UseDeveloperExceptionPage();
+			if (env.IsDevelopment())
+				app.UseDeveloperExceptionPage();
 
 			app.UseTraceContext();
 
@@ -61,12 +61,12 @@ namespace HQ.Platform.Node
 #endif
 
 			app.UseSecurityPolicies();
-            app.UseVersioning();
+			app.UseVersioning();
 			app.UseOperationsApi();
-            app.UsePlatformApi();
-            app.UseConfigurationApi();
-            app.UseMetaApi();
-            app.UseMultiTenancy<IdentityTenant, string>();
+			app.UsePlatformApi();
+			app.UseConfigurationApi();
+			app.UseMetaApi();
+			app.UseMultiTenancy<IdentityTenant, string>();
 
 #if NETCOREAPP2_2
 			app.UseStaticFiles();
@@ -85,21 +85,21 @@ namespace HQ.Platform.Node
 #else
 			app.UseStaticFiles();
 			app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                try
-	            {
-		            configureRoutes?.Invoke(endpoints);
+			app.UseEndpoints(endpoints =>
+			{
+				try
+				{
+					configureRoutes?.Invoke(endpoints);
 					endpoints.MapControllers();
 				}
-	            catch (Exception e)
-	            {
-		            logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
-		            throw;
-	            }
-            });
+				catch (Exception e)
+				{
+					logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
+					throw;
+				}
+			});
 #endif
 			return app;
-        }
-    }
+		}
+	}
 }

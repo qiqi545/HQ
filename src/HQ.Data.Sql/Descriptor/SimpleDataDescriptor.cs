@@ -28,169 +28,169 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Descriptor
 {
-    public class SimpleDataDescriptor : IDataDescriptor
-    {
-        private static readonly Hashtable Descriptors = new Hashtable();
+	public class SimpleDataDescriptor : IDataDescriptor
+	{
+		private static readonly Hashtable Descriptors = new Hashtable();
 
-        protected SimpleDataDescriptor(Type type)
-        {
-            Types = new[] {type};
+		protected SimpleDataDescriptor(Type type)
+		{
+			Types = new[] {type};
 
-            ResolveTableInfo(this, type);
+			ResolveTableInfo(this, type);
 
-            All = new List<PropertyToColumn>();
-            Keys = new List<PropertyToColumn>();
-            Inserted = new List<PropertyToColumn>();
-            Updated = new List<PropertyToColumn>();
-            Computed = new List<PropertyToColumn>();
+			All = new List<PropertyToColumn>();
+			Keys = new List<PropertyToColumn>();
+			Inserted = new List<PropertyToColumn>();
+			Updated = new List<PropertyToColumn>();
+			Computed = new List<PropertyToColumn>();
 
-            var reads = ReadAccessor.Create(type);
-            var writes = WriteAccessor.Create(type);
+			var reads = ReadAccessor.Create(type);
+			var writes = WriteAccessor.Create(type);
 
-            var descriptors = TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>();
-            var accessors = descriptors
-                .Select(property => new PropertyAccessor(reads, writes, property.Name))
-                .ToList();
+			var descriptors = TypeDescriptor.GetProperties(type).Cast<PropertyDescriptor>();
+			var accessors = descriptors
+				.Select(property => new PropertyAccessor(reads, writes, property.Name))
+				.ToList();
 
-            foreach (var property in accessors)
-            {
-                if (Exists(property) || property.HasAttribute<NotMappedAttribute>())
-                    continue;
+			foreach (var property in accessors)
+			{
+				if (Exists(property) || property.HasAttribute<NotMappedAttribute>())
+					continue;
 
-                var column = new PropertyToColumn(property);
+				var column = new PropertyToColumn(property);
 
-                All.Add(column);
+				All.Add(column);
 
-                if (property.HasAttribute<KeyAttribute>())
-                {
-                    column.IsKey = true;
-                    Keys.Add(column);
-                }
+				if (property.HasAttribute<KeyAttribute>())
+				{
+					column.IsKey = true;
+					Keys.Add(column);
+				}
 
-                if (property.HasAttribute<OneToManyAttribute>())
-                {
-                    column.IsComputed = true;
-                    Computed.Add(column);
-                }
+				if (property.HasAttribute<OneToManyAttribute>())
+				{
+					column.IsComputed = true;
+					Computed.Add(column);
+				}
 
-                if (property.GetAttribute<DatabaseGeneratedAttribute>() is DatabaseGeneratedAttribute generated)
-                {
-                    switch (generated.DatabaseGeneratedOption)
-                    {
-                        case DatabaseGeneratedOption.Computed:
-                        {
-                            column.IsComputed = true;
-                            Computed.Add(column);
-                            break;
-                        }
-                        case DatabaseGeneratedOption.Identity:
-                        {
-                            column.IsComputed = true;
-                            column.IsIdentity = true;
-                            Computed.Add(column);
-                            break;
-                        }
-                        case DatabaseGeneratedOption.None:
-                        {
-                            Inserted.Add(column);
-                            Updated.Add(column);
-                            break;
-                        }
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-                else
-                {
-                    Inserted.Add(column);
-                    Updated.Add(column);
-                }
-            }
+				if (property.GetAttribute<DatabaseGeneratedAttribute>() is DatabaseGeneratedAttribute generated)
+				{
+					switch (generated.DatabaseGeneratedOption)
+					{
+						case DatabaseGeneratedOption.Computed:
+						{
+							column.IsComputed = true;
+							Computed.Add(column);
+							break;
+						}
+						case DatabaseGeneratedOption.Identity:
+						{
+							column.IsComputed = true;
+							column.IsIdentity = true;
+							Computed.Add(column);
+							break;
+						}
+						case DatabaseGeneratedOption.None:
+						{
+							Inserted.Add(column);
+							Updated.Add(column);
+							break;
+						}
+						default:
+							throw new ArgumentOutOfRangeException();
+					}
+				}
+				else
+				{
+					Inserted.Add(column);
+					Updated.Add(column);
+				}
+			}
 
-            if (Keys.Count == 0)
-            {
-                // try to add an exact match key
-                var defaultKey = All.FirstOrDefault(x => x.ColumnName.Equals("Id", StringComparison.OrdinalIgnoreCase));
-                if (defaultKey != null)
-                    Keys.Add(defaultKey);
-            }
-        }
+			if (Keys.Count == 0)
+			{
+				// try to add an exact match key
+				var defaultKey = All.FirstOrDefault(x => x.ColumnName.Equals("Id", StringComparison.OrdinalIgnoreCase));
+				if (defaultKey != null)
+					Keys.Add(defaultKey);
+			}
+		}
 
-        public static Func<string, string> TableNameConvention { get; set; }
+		public static Func<string, string> TableNameConvention { get; set; }
 
-        public IList<Type> Types { get; }
-        public Type Type => MaybeGetSingleType();
+		public IList<Type> Types { get; }
+		public Type Type => MaybeGetSingleType();
 
-        public string Schema { get; set; }
-        public string Table { get; set; }
+		public string Schema { get; set; }
+		public string Table { get; set; }
 
-        public IList<PropertyToColumn> All { get; }
-        public IList<PropertyToColumn> Keys { get; }
-        public IList<PropertyToColumn> Inserted { get; }
-        public IList<PropertyToColumn> Updated { get; }
-        public IList<PropertyToColumn> Computed { get; }
+		public IList<PropertyToColumn> All { get; }
+		public IList<PropertyToColumn> Keys { get; }
+		public IList<PropertyToColumn> Inserted { get; }
+		public IList<PropertyToColumn> Updated { get; }
+		public IList<PropertyToColumn> Computed { get; }
 
-        public PropertyToColumn Id => MaybeGetSingleId();
+		public PropertyToColumn Id => MaybeGetSingleId();
 
-        public PropertyToColumn Timestamp => MaybeGetTimestamp();
+		public PropertyToColumn Timestamp => MaybeGetTimestamp();
 
-        private PropertyToColumn MaybeGetTimestamp()
-        {
-            return Inserted.SingleOrDefault(x => x.IsTimestamp);
-        }
+		private PropertyToColumn MaybeGetTimestamp()
+		{
+			return Inserted.SingleOrDefault(x => x.IsTimestamp);
+		}
 
-        public static SimpleDataDescriptor Create<T>()
-        {
-            return Create(typeof(T));
-        }
+		public static SimpleDataDescriptor Create<T>()
+		{
+			return Create(typeof(T));
+		}
 
-        public static SimpleDataDescriptor Create(Type type)
-        {
-            lock (Descriptors)
-            {
-                var obj = (SimpleDataDescriptor) Descriptors[type];
-                if (obj != null) return obj;
+		public static SimpleDataDescriptor Create(Type type)
+		{
+			lock (Descriptors)
+			{
+				var obj = (SimpleDataDescriptor) Descriptors[type];
+				if (obj != null) return obj;
 
-                obj = (SimpleDataDescriptor) Descriptors[type];
-                if (obj != null) return obj;
+				obj = (SimpleDataDescriptor) Descriptors[type];
+				if (obj != null) return obj;
 
-                obj = new SimpleDataDescriptor(type);
-                Descriptors[type] = obj;
-                return obj;
-            }
-        }
+				obj = new SimpleDataDescriptor(type);
+				Descriptors[type] = obj;
+				return obj;
+			}
+		}
 
-        private Type MaybeGetSingleType()
-        {
-            if (Types == null || Types.Count != 1)
-                return null;
-            return Types[0];
-        }
+		private Type MaybeGetSingleType()
+		{
+			if (Types == null || Types.Count != 1)
+				return null;
+			return Types[0];
+		}
 
-        private PropertyToColumn MaybeGetSingleId()
-        {
-            if (Keys == null || Keys.Count != 1)
-                return null;
-            return Keys[0];
-        }
+		private PropertyToColumn MaybeGetSingleId()
+		{
+			if (Keys == null || Keys.Count != 1)
+				return null;
+			return Keys[0];
+		}
 
-        private static void ResolveTableInfo(SimpleDataDescriptor descriptor, Type type)
-        {
-            var tableAttributes = type.GetCustomAttributes(typeof(TableAttribute), true);
-            if (tableAttributes.Length > 0 && tableAttributes[0] is TableAttribute attribute)
-            {
-                descriptor.Table = TableNameConvention?.Invoke(attribute.Name) ?? attribute.Name;
-                descriptor.Schema = attribute.Schema;
-            }
-            else
-            {
-                descriptor.Table = TableNameConvention?.Invoke(type.GetNonGenericName()) ?? type.GetNonGenericName();
-            }
-        }
+		private static void ResolveTableInfo(SimpleDataDescriptor descriptor, Type type)
+		{
+			var tableAttributes = type.GetCustomAttributes(typeof(TableAttribute), true);
+			if (tableAttributes.Length > 0 && tableAttributes[0] is TableAttribute attribute)
+			{
+				descriptor.Table = TableNameConvention?.Invoke(attribute.Name) ?? attribute.Name;
+				descriptor.Schema = attribute.Schema;
+			}
+			else
+			{
+				descriptor.Table = TableNameConvention?.Invoke(type.GetNonGenericName()) ?? type.GetNonGenericName();
+			}
+		}
 
-        private bool Exists(PropertyAccessor accessor)
-        {
-            return All.Any(p => p.Property.Name.Equals(accessor.Name, StringComparison.OrdinalIgnoreCase));
-        }
-    }
+		private bool Exists(PropertyAccessor accessor)
+		{
+			return All.Any(p => p.Property.Name.Equals(accessor.Name, StringComparison.OrdinalIgnoreCase));
+		}
+	}
 }

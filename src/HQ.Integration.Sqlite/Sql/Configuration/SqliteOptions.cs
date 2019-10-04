@@ -17,5 +17,7 @@
 
 namespace HQ.Integration.Sqlite.Sql.Configuration
 {
-    public class SqliteOptions { }
+	public class SqliteOptions
+	{
+	}
 }

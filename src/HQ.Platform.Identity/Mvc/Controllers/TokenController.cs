@@ -47,17 +47,18 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
-	public class TokenController<TUser, TTenant, TApplication, TKey> : DataController, IDynamicComponentEnabled<TokensComponent>
+	public class TokenController<TUser, TTenant, TApplication, TKey> : DataController,
+		IDynamicComponentEnabled<TokensComponent>
 		where TUser : IdentityUserExtended<TKey>
 		where TTenant : IdentityTenant<TKey>
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
 	{
 		private readonly IHttpContextAccessor _http;
+		private readonly ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
 		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
 		private readonly ISignInService<TUser, TTenant, TApplication, TKey> _signInService;
-		private readonly ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
 		public TokenController(
 			IHttpContextAccessor http,
@@ -98,10 +99,13 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 		[HttpPost]
 		public async Task<IActionResult> IssueToken(
 			[FromBody] BearerTokenRequest model,
-			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)] string application,
-			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)] string tenant,
-			[FromHeader(Name = Constants.Versioning.VersionHeader)] string version
-			)
+			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]
+			string application,
+			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)]
+			string tenant,
+			[FromHeader(Name = Constants.Versioning.VersionHeader)]
+			string version
+		)
 		{
 			if (!ValidModelState(out var error))
 			{

@@ -20,14 +20,13 @@ using System.Data;
 
 namespace HQ.Data.SessionManagement
 {
-    public class ProxyConnectionFactory : ConnectionFactory
-    {
-        public Func<string, IDbConnection> Proxy { get; set; }
+	public class ProxyConnectionFactory : ConnectionFactory
+	{
+		public Func<string, IDbConnection> Proxy { get; set; }
 
-        public override IDbConnection CreateConnection()
-        {
-            return Proxy(ConnectionString);
-        }
-    }
+		public override IDbConnection CreateConnection()
+		{
+			return Proxy(ConnectionString);
+		}
+	}
 }
-

@@ -17,11 +17,11 @@
 
 namespace HQ.Extensions.Caching
 {
-    public interface ICacheManager
-    {
-        int Count { get; }
-        long? SizeLimitBytes { get; set; }
-        long SizeBytes { get; set; }
-        void Clear();
-    }
+	public interface ICacheManager
+	{
+		int Count { get; }
+		long? SizeLimitBytes { get; set; }
+		long SizeBytes { get; set; }
+		void Clear();
+	}
 }

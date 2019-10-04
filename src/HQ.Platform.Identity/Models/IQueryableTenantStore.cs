@@ -20,8 +20,8 @@ using System.Linq;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IQueryableTenantStore<TTenant> : ITenantStore<TTenant>, IDisposable where TTenant : class
-    {
-        IQueryable<TTenant> Tenants { get; }
-    }
+	public interface IQueryableTenantStore<TTenant> : ITenantStore<TTenant>, IDisposable where TTenant : class
+	{
+		IQueryable<TTenant> Tenants { get; }
+	}
 }

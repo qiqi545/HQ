@@ -21,33 +21,33 @@ using System.Text;
 
 namespace HQ.Data.Streaming.Fields
 {
-    [DebuggerDisplay("{" + nameof(DisplayName) + "}")]
-    public readonly ref struct StringField
-    {
-        public bool Initialized => _buffer != null;
-        public string Value => RawValue;
-        public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
-        public int Length => _buffer.Length;
+	[DebuggerDisplay("{" + nameof(DisplayName) + "}")]
+	public readonly ref struct StringField
+	{
+		public bool Initialized => _buffer != null;
+		public string Value => RawValue;
+		public string RawValue => Initialized ? _encoding.GetString(_buffer) : default;
+		public int Length => _buffer.Length;
 
-        private readonly unsafe byte* _start;
-        private readonly int _length;
-        private readonly Encoding _encoding;
-        private readonly ReadOnlySpan<byte> _buffer;
+		private readonly unsafe byte* _start;
+		private readonly int _length;
+		private readonly Encoding _encoding;
+		private readonly ReadOnlySpan<byte> _buffer;
 
-        public unsafe StringField(byte* start, int length, Encoding encoding)
-        {
-            _buffer = new ReadOnlySpan<byte>(start, length);
-            _start = start;
-            _length = length;
-            _encoding = encoding;
-        }
+		public unsafe StringField(byte* start, int length, Encoding encoding)
+		{
+			_buffer = new ReadOnlySpan<byte>(start, length);
+			_start = start;
+			_length = length;
+			_encoding = encoding;
+		}
 
-        public unsafe StringField AddLength(int length)
-        {
-            return new StringField(_start, _length + length, _encoding);
-        }
+		public unsafe StringField AddLength(int length)
+		{
+			return new StringField(_start, _length + length, _encoding);
+		}
 
-        public string DisplayName =>
-            $"{nameof(StringField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
-    }
+		public string DisplayName =>
+			$"{nameof(StringField).Replace("Field", string.Empty)}: {Value} ({RawValue ?? "<NULL>"}:{_encoding.BodyName})";
+	}
 }

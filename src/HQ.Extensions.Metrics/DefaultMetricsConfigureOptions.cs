@@ -20,19 +20,19 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics
 {
-    internal class DefaultMetricsConfigureOptions : ConfigureOptions<MetricsOptions>
-    {
-        public DefaultMetricsConfigureOptions() : base(DefaultOptionsBuilder())
-        {
-        }
+	internal class DefaultMetricsConfigureOptions : ConfigureOptions<MetricsOptions>
+	{
+		public DefaultMetricsConfigureOptions() : base(DefaultOptionsBuilder())
+		{
+		}
 
-        private static Action<MetricsOptions> DefaultOptionsBuilder()
-        {
-            return options =>
-            {
-                options.SampleTimeoutSeconds = 5;
-                options.TypeFilter = MetricType.None;
-            };
-        }
-    }
+		private static Action<MetricsOptions> DefaultOptionsBuilder()
+		{
+			return options =>
+			{
+				options.SampleTimeoutSeconds = 5;
+				options.TypeFilter = MetricType.None;
+			};
+		}
+	}
 }

@@ -25,64 +25,64 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserAuthenticatorKeyStore<TUser>
-    {
-        public virtual async Task SetAuthenticatorKeyAsync(TUser user, string key, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+	partial class UserStore<TUser, TKey, TRole> : IUserAuthenticatorKeyStore<TUser>
+	{
+		public virtual async Task SetAuthenticatorKeyAsync(TUser user, string key, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
+			_connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 
-            var exists = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
-            {
-                TenantId = _tenantId,
-                UserId = user.Id,
-                Name = "AuthenticatorKey",
-                LoginProvider = "[AspNetUserStore]"
-            });
+			var exists = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
+			{
+				TenantId = _tenantId,
+				UserId = user.Id,
+				Name = "AuthenticatorKey",
+				LoginProvider = "[AspNetUserStore]"
+			});
 
-            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(exists.Sql,
-                exists.Parameters);
+			var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(exists.Sql,
+				exists.Parameters);
 
-            if (string.IsNullOrWhiteSpace(token.Value))
-            {
-                token = new AspNetUserTokens<TKey>
-                {
-                    TenantId = _tenantId,
-                    UserId = user.Id,
-                    LoginProvider = "[AspNetUserStore]",
-                    Name = "AuthenticatorKey",
-                    Value = key
-                };
-                var query = SqlBuilder.Insert(token);
-                await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            }
-            else
-            {
-                var query = SqlBuilder.Update(token, new {UserId = user.Id, TenantId = _tenantId});
-                await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            }
-        }
+			if (string.IsNullOrWhiteSpace(token.Value))
+			{
+				token = new AspNetUserTokens<TKey>
+				{
+					TenantId = _tenantId,
+					UserId = user.Id,
+					LoginProvider = "[AspNetUserStore]",
+					Name = "AuthenticatorKey",
+					Value = key
+				};
+				var query = SqlBuilder.Insert(token);
+				await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			}
+			else
+			{
+				var query = SqlBuilder.Update(token, new {UserId = user.Id, TenantId = _tenantId});
+				await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			}
+		}
 
-        public async Task<string> GetAuthenticatorKeyAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task<string> GetAuthenticatorKeyAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
-            {
-                TenantId = _tenantId,
-                UserId = user.Id,
-                Name = "AuthenticatorKey",
-                LoginProvider = "[AspNetUserStore]"
-            });
-            _connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
+			var query = SqlBuilder.Select<AspNetUserTokens<TKey>>(new
+			{
+				TenantId = _tenantId,
+				UserId = user.Id,
+				Name = "AuthenticatorKey",
+				LoginProvider = "[AspNetUserStore]"
+			});
+			_connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 
-            var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
-                query.Parameters);
+			var token = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserTokens<TKey>>(query.Sql,
+				query.Parameters);
 
-            return token.Value;
-        }
-    }
+			return token.Value;
+		}
+	}
 }

@@ -21,16 +21,16 @@ using HQ.Extensions.Caching.AspNetCore.Mvc;
 
 namespace HQ.Platform.Api.Models
 {
-    public class WeakETagGenerator : IETagGenerator
-    {
-        public string GenerateFromBuffer(byte[] data)
-        {
-            using (var md5 = MD5.Create())
-            {
-                var hash = md5.ComputeHash(data);
-                var hex = BitConverter.ToString(hash);
-                return $"W/\"{hex.Replace("-", "")}\"";
-            }
-        }
-    }
+	public class WeakETagGenerator : IETagGenerator
+	{
+		public string GenerateFromBuffer(byte[] data)
+		{
+			using (var md5 = MD5.Create())
+			{
+				var hash = md5.ComputeHash(data);
+				var hex = BitConverter.ToString(hash);
+				return $"W/\"{hex.Replace("-", "")}\"";
+			}
+		}
+	}
 }

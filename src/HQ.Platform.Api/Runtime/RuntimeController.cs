@@ -1,4 +1,4 @@
-#region 
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -27,7 +27,6 @@ using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Attributes;
-using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Versioning;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Platform.Api.Configuration;
@@ -49,12 +48,13 @@ namespace HQ.Platform.Api.Runtime
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	public class RuntimeController : DataController, IDynamicComponentEnabled<RuntimeComponent>
 	{
-		private readonly ITypeResolver _typeResolver;
 		private readonly IObjectGetRepository _repository;
 
 		private readonly IOptionsMonitor<RuntimeOptions> _runtimeOptions;
+		private readonly ITypeResolver _typeResolver;
 
-		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository, IOptionsMonitor<RuntimeOptions> runtimeOptions)
+		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository,
+			IOptionsMonitor<RuntimeOptions> runtimeOptions)
 		{
 			_typeResolver = typeResolver;
 			_repository = repository;
@@ -76,7 +76,7 @@ namespace HQ.Platform.Api.Runtime
 			availableTypes = availableTypes.Concat(_typeResolver.FindByInterface<IObject>().Select(x => x.Name));
 
 			// FIXME: filter out exclusions
-			return Ok(new { Data = availableTypes });
+			return Ok(new {Data = availableTypes});
 		}
 
 		#region GET
@@ -87,14 +87,15 @@ namespace HQ.Platform.Api.Runtime
 		[FormatFilter]
 		[HttpGet("{objectType}")]
 		[HttpGet("{objectType}.{format}")]
-		public async Task<IActionResult> GetAsync([FromRoute, BindRequired] string objectType)
+		public async Task<IActionResult> GetAsync([FromRoute] [BindRequired] string objectType)
 		{
 			var type = _typeResolver.FindFirstByName(objectType); // FIXME: allow pluralized type names
 			if (type == null || !typeof(IObject).IsAssignableFrom(type))
 				return NotFound();
 
 			if (!(HttpContext.Items[nameof(QueryContextProviderSelectorAttribute)] is IQueryContextProvider provider))
-				return InternalServerError(ErrorEvents.PlatformError, "Did not correctly resolve query context provider");
+				return InternalServerError(ErrorEvents.PlatformError,
+					"Did not correctly resolve query context provider");
 
 			var contexts = provider.Parse(type, User, Request.GetEncodedPathAndQuery());
 			var results = new List<object>();

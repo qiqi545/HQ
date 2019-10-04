@@ -17,10 +17,15 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore.MergePatch;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+
+#if NETCOREAPP2_2
+using Morcatko.AspNetCore.JsonMergePatch;
+#else
+using HQ.Common.AspNetCore.MergePatch;
+#endif
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
 {

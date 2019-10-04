@@ -20,11 +20,11 @@ using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 namespace HQ.Integration.Azure
 {
-    public class AzureOptions : ICloudOptions
-    {
-        public string SubscriptionId { get; set; }
+	public class AzureOptions : ICloudOptions
+	{
+		public string SubscriptionId { get; set; }
 
-        public ApplicationInsightsServiceOptions ApplicationInsights { get; set; } =
-            new ApplicationInsightsServiceOptions();
-    }
+		public ApplicationInsightsServiceOptions ApplicationInsights { get; set; } =
+			new ApplicationInsightsServiceOptions();
+	}
 }

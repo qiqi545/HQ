@@ -19,28 +19,28 @@ using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class CorsOptions : FeatureToggle
-    {
-        public string[] Origins { get; set; }
-        public string[] Methods { get; set; }
-        public string[] Headers { get; set; }
-        public string[] ExposedHeaders { get; set; }
-        public bool AllowCredentials { get; set; } = true;
-        public bool AllowOriginWildcards { get; set; } = true;
-        public int? PreflightMaxAgeSeconds { get; set; } = null;
+	public class CorsOptions : FeatureToggle
+	{
+		public CorsOptions() : this(false) { }
 
-        public CorsOptions() : this(false) { }
+		public CorsOptions(bool forBinding)
+		{
+			// IConfiguration.Bind adds to existing arrays...
+			if (forBinding)
+				return;
 
-        public CorsOptions(bool forBinding)
-        {
-            // IConfiguration.Bind adds to existing arrays...
-            if (forBinding)
-                return;
+			Origins = new[] {"*"};
+			Methods = new[] {"*"};
+			Headers = new[] {"*"};
+			ExposedHeaders = new string[] { };
+		}
 
-            Origins = new[] { "*" };
-            Methods = new[] { "*" };
-            Headers = new[] { "*" };
-            ExposedHeaders = new string[] { };
-        }
-    }
+		public string[] Origins { get; set; }
+		public string[] Methods { get; set; }
+		public string[] Headers { get; set; }
+		public string[] ExposedHeaders { get; set; }
+		public bool AllowCredentials { get; set; } = true;
+		public bool AllowOriginWildcards { get; set; } = true;
+		public int? PreflightMaxAgeSeconds { get; set; } = null;
+	}
 }

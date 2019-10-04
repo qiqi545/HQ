@@ -20,9 +20,9 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Hooks
 {
-    // ReSharper disable once InconsistentNaming
-    public interface Success : Method
-    {
-        Task SuccessAsync(ExecutionContext context);
-    }
+	// ReSharper disable once InconsistentNaming
+	public interface Success : Method
+	{
+		Task SuccessAsync(ExecutionContext context);
+	}
 }

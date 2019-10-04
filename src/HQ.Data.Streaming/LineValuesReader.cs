@@ -21,64 +21,64 @@ using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming
 {
-    public static class LineValuesReader
-    {
-        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-            string separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
-        {
-            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
-        }
+	public static class LineValuesReader
+	{
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
+			string separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
+		{
+			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
+		}
 
-        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-            byte[] separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
-        {
-            ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue, metrics);
-        }
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
+			byte[] separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
+		{
+			ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue, metrics);
+		}
 
-        public static void ReadValues(long lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
-            NewValueAsSpan newValue, IMetricsHost metrics = null)
-        {
-            var position = 0;
-            while (true)
-            {
-                var next = line.IndexOf(separator);
-                if (next == -1)
-                {
-                    newValue?.Invoke(lineNumber, position, line, encoding, metrics);
-                    break;
-                }
+		public static void ReadValues(long lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
+			NewValueAsSpan newValue, IMetricsHost metrics = null)
+		{
+			var position = 0;
+			while (true)
+			{
+				var next = line.IndexOf(separator);
+				if (next == -1)
+				{
+					newValue?.Invoke(lineNumber, position, line, encoding, metrics);
+					break;
+				}
 
-                newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding, metrics);
-                line = line.Slice(next + separator.Length);
-                position += next + separator.Length;
-            }
-        }
+				newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding, metrics);
+				line = line.Slice(next + separator.Length);
+				position += next + separator.Length;
+			}
+		}
 
-        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-            string separator, NewValue newValue, IMetricsHost metrics = null)
-        {
-            ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
-        }
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
+			string separator, NewValue newValue, IMetricsHost metrics = null)
+		{
+			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
+		}
 
-        public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-            byte[] separator, NewValue newValue, IMetricsHost metrics = null)
-        {
-            var position = 0;
-            while (true)
-            {
-                var line = new ReadOnlySpan<byte>(start, length);
-                var next = line.IndexOf(separator);
-                if (next == -1)
-                {
-                    newValue?.Invoke(lineNumber, position, start, length, encoding, metrics);
-                    break;
-                }
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
+			byte[] separator, NewValue newValue, IMetricsHost metrics = null)
+		{
+			var position = 0;
+			while (true)
+			{
+				var line = new ReadOnlySpan<byte>(start, length);
+				var next = line.IndexOf(separator);
+				if (next == -1)
+				{
+					newValue?.Invoke(lineNumber, position, start, length, encoding, metrics);
+					break;
+				}
 
-                newValue?.Invoke(lineNumber, position, start, next, encoding, metrics);
-                var consumed = next + separator.Length;
-                start += consumed;
-                position += consumed;
-            }
-        }
-    }
+				newValue?.Invoke(lineNumber, position, start, next, encoding, metrics);
+				var consumed = next + separator.Length;
+				start += consumed;
+				position += consumed;
+			}
+		}
+	}
 }

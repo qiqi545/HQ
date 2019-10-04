@@ -65,6 +65,7 @@ namespace HQ.Common
 						all = false;
 						break;
 					}
+
 					if (all)
 						s.Add(n);
 				}
@@ -85,7 +86,7 @@ namespace HQ.Common
 					//     insert m into S
 
 					// for each node m with an edge e from n to m do
-					for (int j = edges.Count - 1; j >= 0; j--)
+					for (var j = edges.Count - 1; j >= 0; j--)
 					{
 						var e = edges[j];
 

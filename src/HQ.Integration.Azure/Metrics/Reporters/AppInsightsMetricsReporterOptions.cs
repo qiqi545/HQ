@@ -20,13 +20,13 @@ using Constants = HQ.Extensions.Metrics.Constants;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {
-    public class AppInsightsMetricsReporterOptions : FeatureToggle
-    {
-        public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
-        public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
+	public class AppInsightsMetricsReporterOptions : FeatureToggle
+	{
+		public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
+		public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
 
-        public bool PublishHealthy { get; set; } = false;
-        public bool PublishHealthChecks { get; set; } = true;
-        public bool PublishMetrics { get; set; } = true;
-    }
+		public bool PublishHealthy { get; set; } = false;
+		public bool PublishHealthChecks { get; set; } = true;
+		public bool PublishMetrics { get; set; } = true;
+	}
 }

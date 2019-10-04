@@ -87,7 +87,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 			{
 				var groupName = descriptionGroup.GroupName;
 				var orderedActions = descriptionGroup.Items.OrderBy(x => x.RelativePath).ThenBy(x => x.HttpMethod);
-				
+
 				foreach (var description in orderedActions)
 				{
 					var controllerDescriptor = (ControllerActionDescriptor) description.ActionDescriptor;
@@ -180,16 +180,14 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
 				var folderExists = collection.TryGetFolder(category.Name, out var categoryFolder);
 				if (!folderExists)
-				{ 
+				{
 					categoryFolder = new MetaFolder
 					{
 						name = category.Name,
 						description =
 							new MetaDescription
 							{
-								content = category.Description,
-								type = category.DescriptionMediaType,
-								version = null
+								content = category.Description, type = category.DescriptionMediaType, version = null
 							},
 						variable = new List<dynamic>(),
 						item = new List<MetaItem>(),
@@ -221,18 +219,21 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
 					foreach (var item in objectGroup.item)
 					{
-						item.request.url.query = item.request.url.query ?? (item.request.url.query = new List<MetaParameter>());
+						item.request.url.query =
+							item.request.url.query ?? (item.request.url.query = new List<MetaParameter>());
 						item.request.url.query.Add(new MetaParameter
 						{
 							key = _versionProvider.VersionParameter,
 							value = revisionName,
 							description = "Sets the version revision number for this API request."
 							// MetaDescription.PlainText("Sets the version revision number for this API request.")
-						});}
+						});
+					}
 			}
 		}
 
-		private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description, IServiceProvider serviceProvider)
+		private MetaItem CreateOperationMetaItem(string baseUri, ApiDescription description,
+			IServiceProvider serviceProvider)
 		{
 			var relativePath = Uri.UnescapeDataString(description.RelativePath ?? string.Empty);
 			var url = $"{baseUri}/{relativePath}";
@@ -270,7 +271,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 			{
 				id = Guid.NewGuid(),
 				name = relativePath,
-				description = new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
+				description =
+					new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
 				variable = new List<dynamic>(),
 				@event = new List<dynamic>(),
 				request = operation,
@@ -304,23 +306,26 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 					item.request.body = new
 					{
 						mode = "raw",
-						raw = "{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
+						raw =
+							"{\r\n\t\"IdentityType\": \"Username\",\r\n\t\"Identity\": \"\",\r\n\t\"Password\": \"\"\r\n}"
 					};
 				}
 
 				//
 				// Body Definition (roots only):
-				if (bodyParameter != null && bodyParameter.Type != null && !typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
+				if (bodyParameter != null && bodyParameter.Type != null &&
+				    !typeof(IEnumerable).IsAssignableFrom(bodyParameter.Type))
 					item.request.body = new
 					{
 						mode = "raw",
-						raw = JsonConvert.SerializeObject(FormatterServices.GetUninitializedObject(bodyParameter.Type))
+						raw = JsonConvert.SerializeObject(
+							FormatterServices.GetUninitializedObject(bodyParameter.Type))
 					};
 			}
 
 			//
 			// Bearer:
-			if (item.request?.auth != null && 
+			if (item.request?.auth != null &&
 			    (item.request.auth.Equals("bearer", StringComparison.OrdinalIgnoreCase) ||
 			     item.request.auth.Equals("platformbearer", StringComparison.OrdinalIgnoreCase)))
 				item.request.header.Add(new MetaParameter
@@ -358,7 +363,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
 			return !string.IsNullOrWhiteSpace(authorize.AuthenticationSchemes)
 				? authorize.AuthenticationSchemes.ToLowerInvariant()
-				: (_authenticationOptions.CurrentValue.DefaultChallengeScheme ?? _authenticationOptions.CurrentValue.DefaultScheme)
+				: (_authenticationOptions.CurrentValue.DefaultChallengeScheme ??
+				   _authenticationOptions.CurrentValue.DefaultScheme)
 				.ToLowerInvariant();
 		}
 
@@ -382,8 +388,10 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 					return false; // requires an installed component that isn't present
 			}
 
-			var attribute = !Attribute.IsDefined(controllerType, typeof(DynamicControllerAttribute)) ? null
-				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute), true);
+			var attribute = !Attribute.IsDefined(controllerType, typeof(DynamicControllerAttribute))
+				? null
+				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute),
+					true);
 
 			if (attribute == null)
 				return true;
@@ -396,7 +404,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 		{
 			if (!Attribute.IsDefined(controllerType, typeof(MetaDescriptionAttribute)))
 				return null;
-			var description = (MetaDescriptionAttribute) controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
+			var description =
+				(MetaDescriptionAttribute) controllerType.GetCustomAttribute(typeof(MetaDescriptionAttribute), true);
 			return description;
 		}
 
@@ -407,7 +416,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 			if (!Attribute.IsDefined(controllerType, typeof(DisplayNameAttribute)))
 				return controllerTypeName.Replace(nameof(Controller), string.Empty);
 
-			var description = (DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
+			var description =
+				(DisplayNameAttribute) controllerType.GetCustomAttribute(typeof(DisplayNameAttribute), true);
 			return description.DisplayName;
 		}
 	}

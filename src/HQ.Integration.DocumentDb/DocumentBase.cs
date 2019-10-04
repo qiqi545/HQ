@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -19,24 +21,23 @@ using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb
 {
-    public abstract class DocumentBase<T> : IDocument
-    {
-        [JsonProperty("id")]
-        public string Id { get; set; }
+	public abstract class DocumentBase<T> : IDocument
+	{
+		[JsonConverter(typeof(UnixDateTimeConverter))]
+		[JsonProperty(PropertyName = "_ts")]
+		public virtual DateTime Timestamp { get; internal set; }
 
-        [JsonProperty("documentType")]
-        public string DocumentType
-        {
-            get => typeof(T).Name;
-            set
-            {
-                if (value != typeof(T).Name)
-                    throw new InvalidOperationException();
-            }
-        }
-        
-        [JsonConverter(typeof(UnixDateTimeConverter))]
-        [JsonProperty(PropertyName = "_ts")]
-        public virtual DateTime Timestamp { get; internal set; }
-    }
+		[JsonProperty("id")] public string Id { get; set; }
+
+		[JsonProperty("documentType")]
+		public string DocumentType
+		{
+			get => typeof(T).Name;
+			set
+			{
+				if (value != typeof(T).Name)
+					throw new InvalidOperationException();
+			}
+		}
+	}
 }

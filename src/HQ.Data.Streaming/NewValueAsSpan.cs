@@ -21,6 +21,6 @@ using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming
 {
-    public delegate void NewValueAsSpan(long lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding,
-        IMetricsHost metrics);
+	public delegate void NewValueAsSpan(long lineNumber, int index, ReadOnlySpan<byte> value, Encoding encoding,
+		IMetricsHost metrics);
 }

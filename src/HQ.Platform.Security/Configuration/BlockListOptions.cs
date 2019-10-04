@@ -19,10 +19,10 @@ using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class BlockListOptions : FeatureToggle
-    {
-        private static readonly string[] Empty = new string[0];
-        public string[] PasswordBlockList { get; set; } = Empty;
-        public string[] UsernameBlockList { get; set; } = Empty;
-    }
+	public class BlockListOptions : FeatureToggle
+	{
+		private static readonly string[] Empty = new string[0];
+		public string[] PasswordBlockList { get; set; } = Empty;
+		public string[] UsernameBlockList { get; set; } = Empty;
+	}
 }

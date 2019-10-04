@@ -19,13 +19,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling
 {
-    public class BackgroundTaskBuilder
-    {
-        public IServiceCollection Services { get; }
+	public class BackgroundTaskBuilder
+	{
+		public BackgroundTaskBuilder(IServiceCollection services) => Services = services;
 
-        public BackgroundTaskBuilder(IServiceCollection services)
-        {
-            Services = services;
-        }
-    }
+		public IServiceCollection Services { get; }
+	}
 }

@@ -23,16 +23,15 @@ using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Models
 {
-    [DataContract]
-    [KnownType(nameof(GetKnownTypes))]
-    public class Envelope
-    {
-        private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
-
-        [DataMember] public IList<Error> Errors;
-        [DataMember] public bool HasErrors;
-        [DataMember] public int Status;
-        [DataMember] public IHeaderDictionary Headers;
-        [DataMember] public PagingInfo Paging;
-    }
+	[DataContract]
+	[KnownType(nameof(GetKnownTypes))]
+	public class Envelope
+	{
+		[DataMember] public IList<Error> Errors;
+		[DataMember] public bool HasErrors;
+		[DataMember] public IHeaderDictionary Headers;
+		[DataMember] public PagingInfo Paging;
+		[DataMember] public int Status;
+		private static IEnumerable<Type> GetKnownTypes() { return KnownTypesContext.GetKnownTypes(); }
+	}
 }

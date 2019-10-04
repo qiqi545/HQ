@@ -19,9 +19,9 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts.Security
 {
-    public interface IKeygenStore
-    {
-        Task<byte[]> AcquireKeyAsync(KeyType keyType);
-        Task<byte[]> AcquireNonceAsync(byte[] key);
-    }
+	public interface IKeygenStore
+	{
+		Task<byte[]> AcquireKeyAsync(KeyType keyType);
+		Task<byte[]> AcquireNonceAsync(byte[] key);
+	}
 }

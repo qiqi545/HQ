@@ -17,5 +17,5 @@
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public delegate object Handler(object target, object[] parameters);
+	public delegate object Handler(object target, object[] parameters);
 }

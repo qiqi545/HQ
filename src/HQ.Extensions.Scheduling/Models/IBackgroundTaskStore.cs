@@ -20,17 +20,17 @@ using System.Threading.Tasks;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public interface IBackgroundTaskStore
-    {
-        Task<BackgroundTask> GetByIdAsync(int id);
+	public interface IBackgroundTaskStore
+	{
+		Task<BackgroundTask> GetByIdAsync(int id);
 
-        Task<IEnumerable<BackgroundTask>> GetAllAsync();
-        Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags);
-        Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags);
-        Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync();
+		Task<IEnumerable<BackgroundTask>> GetAllAsync();
+		Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags);
+		Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags);
+		Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync();
 
-        Task<bool> SaveAsync(BackgroundTask task);
-        Task<bool> DeleteAsync(BackgroundTask task);
-        Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead);
-    }
+		Task<bool> SaveAsync(BackgroundTask task);
+		Task<bool> DeleteAsync(BackgroundTask task);
+		Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead);
+	}
 }

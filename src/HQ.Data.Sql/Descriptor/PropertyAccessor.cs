@@ -22,45 +22,45 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Descriptor
 {
-    public class PropertyAccessor
-    {
-        private readonly ITypeReadAccessor _reads;
-        private readonly ITypeWriteAccessor _writes;
+	public class PropertyAccessor
+	{
+		private readonly ITypeReadAccessor _reads;
+		private readonly ITypeWriteAccessor _writes;
 
-        public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, string name)
-        {
-            var members = AccessorMembers.Create(reads.Type, AccessorMemberTypes.Properties, AccessorMemberScope.All);
-            Info = members.PropertyInfo.Single(m => m.Name == name);
+		public PropertyAccessor(ITypeReadAccessor reads, ITypeWriteAccessor writes, string name)
+		{
+			var members = AccessorMembers.Create(reads.Type, AccessorMemberTypes.Properties);
+			Info = members.PropertyInfo.Single(m => m.Name == name);
 
-            Type = Info.PropertyType;
-            Name = name;
+			Type = Info.PropertyType;
+			Name = name;
 
-            _reads = reads;
-            _writes = writes;
-        }
+			_reads = reads;
+			_writes = writes;
+		}
 
-        public string Name { get; set; }
-        public Type Type { get; set; }
-        public PropertyInfo Info { get; set; }
+		public string Name { get; set; }
+		public Type Type { get; set; }
+		public PropertyInfo Info { get; set; }
 
-        public bool HasAttribute<T>() where T : Attribute
-        {
-            return Attribute.IsDefined(Info, typeof(T));
-        }
+		public bool HasAttribute<T>() where T : Attribute
+		{
+			return Attribute.IsDefined(Info, typeof(T));
+		}
 
-        public Attribute GetAttribute<T>() where T : Attribute
-        {
-            return Info.GetCustomAttribute(typeof(T), true);
-        }
+		public Attribute GetAttribute<T>() where T : Attribute
+		{
+			return Info.GetCustomAttribute(typeof(T), true);
+		}
 
-        public object Get(object instance)
-        {
-            return _reads[instance, Name];
-        }
+		public object Get(object instance)
+		{
+			return _reads[instance, Name];
+		}
 
-        public void Set(object instance, object value)
-        {
-            _writes[instance, Name] = value;
-        }
-    }
+		public void Set(object instance, object value)
+		{
+			_writes[instance, Name] = value;
+		}
+	}
 }

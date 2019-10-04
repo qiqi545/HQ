@@ -17,28 +17,28 @@
 
 using System.Collections.Generic;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class FilterFilterAttribute : StaticFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            Execute(context);
-        }
+	public class FilterFilterAttribute : StaticFilterAttribute
+	{
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			Execute(context);
+		}
 
-        public static void Execute(ActionExecutingContext context)
-        {
-            Execute<RestFilterFilter>(context, filter => filter.Options.FilterOperator, c => c.Filters);
-        }
+		public static void Execute(ActionExecutingContext context)
+		{
+			Execute<RestFilterFilter>(context, filter => filter.Options.FilterOperator, c => c.Filters);
+		}
 
-        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs, QueryContext qc)
-        {
-            Execute<RestFilterFilter>(context, filter => filter.Options.FilterOperator, c => c.Filters, qs, qc);
-        }
-    }
+		public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
+			QueryContext qc)
+		{
+			Execute<RestFilterFilter>(context, filter => filter.Options.FilterOperator, c => c.Filters, qs, qc);
+		}
+	}
 }

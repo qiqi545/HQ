@@ -23,6 +23,6 @@ namespace HQ.Platform.Api.Schemas
 {
 	public class SchemaComponent : DynamicComponent
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] { typeof(SchemaController) };
+		public override IEnumerable<Type> ControllerTypes => new[] {typeof(SchemaController)};
 	}
 }

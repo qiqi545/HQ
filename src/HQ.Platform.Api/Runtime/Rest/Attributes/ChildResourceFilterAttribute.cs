@@ -19,7 +19,6 @@ using System.Reflection;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
@@ -27,55 +26,52 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class ChildResourceFilterAttribute : ActionFilterAttribute
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class ChildResourceFilterAttribute : ActionFilterAttribute
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public ChildResourceFilterAttribute(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public ChildResourceFilterAttribute(IOptions<QueryOptions> options) => _options = options;
 
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            if (!(context.Controller is IObjectController controller))
-            {
-                return;
-            }
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			if (!(context.Controller is IObjectController controller))
+			{
+				return;
+			}
 
-            var resourceType = context.ActionDescriptor is ControllerActionDescriptor descriptor
-                ? descriptor.MethodInfo.GetCustomAttribute(typeof(ObjectTypeAttribute)) is ObjectTypeAttribute
-                    objectTypeAttribute ? objectTypeAttribute.Type : controller.ObjectType
-                : controller.ObjectType;
+			var resourceType = context.ActionDescriptor is ControllerActionDescriptor descriptor
+				? descriptor.MethodInfo.GetCustomAttribute(typeof(ObjectTypeAttribute)) is ObjectTypeAttribute
+					objectTypeAttribute ? objectTypeAttribute.Type : controller.ObjectType
+				: controller.ObjectType;
 
-            var qc = new QueryContext(context.HttpContext.User) {Type = resourceType};
+			var qc = new QueryContext(context.HttpContext.User) {Type = resourceType};
 
-            var qs = QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value);
+			var qs = QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value);
 
-            if (context.Result == null)
-            {
-                PageFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.Result == null)
+			{
+				PageFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.Result == null)
-            {
-                SortFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.Result == null)
+			{
+				SortFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.Result == null)
-            {
-                FieldsFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.Result == null)
+			{
+				FieldsFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.Result == null)
-            {
-                FilterFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.Result == null)
+			{
+				FilterFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.Result == null)
-            {
-                ProjectionFilterAttribute.Execute(context, qs, qc);
-            }
-        }
-    }
+			if (context.Result == null)
+			{
+				ProjectionFilterAttribute.Execute(context, qs, qc);
+			}
+		}
+	}
 }

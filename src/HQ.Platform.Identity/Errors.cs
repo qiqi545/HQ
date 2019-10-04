@@ -17,7 +17,7 @@
 
 namespace HQ.Platform.Identity
 {
-    internal static class Errors
-    {
-    }
+	internal static class Errors
+	{
+	}
 }

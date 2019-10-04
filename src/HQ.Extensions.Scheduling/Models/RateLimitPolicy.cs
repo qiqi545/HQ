@@ -20,13 +20,13 @@ using HQ.Extensions.Scheduling.Internal;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    /// <summary>
-    ///     A rate limit policy, for use with <see cref="PushQueue{T}" />
-    /// </summary>
-    public class RateLimitPolicy
-    {
-        public bool Enabled { get; set; }
-        public int Occurrences { get; set; }
-        public TimeSpan TimeUnit { get; set; }
-    }
+	/// <summary>
+	///     A rate limit policy, for use with <see cref="PushQueue{T}" />
+	/// </summary>
+	public class RateLimitPolicy
+	{
+		public bool Enabled { get; set; }
+		public int Occurrences { get; set; }
+		public TimeSpan TimeUnit { get; set; }
+	}
 }

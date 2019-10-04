@@ -20,8 +20,8 @@ using System.Threading.Tasks;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsReporter : IDisposable
-    {
-        Task InitializeAsync();
-    }
+	public interface IMetricsReporter : IDisposable
+	{
+		Task InitializeAsync();
+	}
 }

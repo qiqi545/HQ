@@ -17,10 +17,10 @@
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Models
 {
-    public enum IdentityType
-    {
-        Username,
-        Email,
-        PhoneNumber
-    }
+	public enum IdentityType
+	{
+		Username,
+		Email,
+		PhoneNumber
+	}
 }

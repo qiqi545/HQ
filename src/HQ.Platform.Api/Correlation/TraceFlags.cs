@@ -19,10 +19,10 @@ using System;
 
 namespace HQ.Platform.Api.Correlation
 {
-    [Flags]
-    public enum TraceFlags : byte
-    {
-        None = 0,
-        Recorded = 1 << 0
-    }
+	[Flags]
+	public enum TraceFlags : byte
+	{
+		None = 0,
+		Recorded = 1 << 0
+	}
 }

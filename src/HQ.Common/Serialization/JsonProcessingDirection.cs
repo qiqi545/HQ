@@ -17,9 +17,9 @@
 
 namespace HQ.Common.Serialization
 {
-    public enum JsonProcessingDirection
-    {
-        Input,
-        Output
-    }
+	public enum JsonProcessingDirection
+	{
+		Input,
+		Output
+	}
 }

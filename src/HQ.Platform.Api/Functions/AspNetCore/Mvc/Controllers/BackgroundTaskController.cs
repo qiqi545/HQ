@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,13 +12,13 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
@@ -39,170 +40,177 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 	[DynamicAuthorize(typeof(BackgroundTaskOptions))]
 	[DynamicController(typeof(BackgroundTaskOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
-    [MetaDescription("Manages background tasks.")]
-    [DisplayName("Background Tasks")]
+	[MetaDescription("Manages background tasks.")]
+	[DisplayName("Background Tasks")]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	public class BackgroundTaskController : DataController
-    {
-        private readonly BackgroundTaskHost _host;
+	{
+		private readonly BackgroundTaskHost _host;
+		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 
-        private readonly IBackgroundTaskStore _store;
-        private readonly ITypeResolver _typeResolver;
-        private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
+		private readonly IBackgroundTaskStore _store;
+		private readonly ITypeResolver _typeResolver;
 
-        public BackgroundTaskController(IBackgroundTaskStore store, ITypeResolver typeResolver, BackgroundTaskHost host, IOptionsMonitor<BackgroundTaskOptions> options)
-        {
-            _store = store;
-            _typeResolver = typeResolver;
-            _host = host;
-            _options = options;
-        }
+		public BackgroundTaskController(IBackgroundTaskStore store, ITypeResolver typeResolver, BackgroundTaskHost host,
+			IOptionsMonitor<BackgroundTaskOptions> options)
+		{
+			_store = store;
+			_typeResolver = typeResolver;
+			_host = host;
+			_options = options;
+		}
 
 		[FeatureSelector]
-        [HttpOptions]
-        public IActionResult GetOptions()
-        {
+		[HttpOptions]
+		public IActionResult GetOptions()
+		{
 			var typesWithPerformMethod = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync));
-			
-	        var taskTypeNames = typesWithPerformMethod
-                .Where(x => !x.IsInterface && !x.IsAbstract)
-                .Select(x => x.Name);
 
-            return Ok(new BackgroundTaskOptionsView
-            {
-	            Options = _options.CurrentValue,
-	            TaskTypes = taskTypeNames
-            });
-        }
+			var taskTypeNames = typesWithPerformMethod
+				.Where(x => !x.IsInterface && !x.IsAbstract)
+				.Select(x => x.Name);
 
-        [FeatureSelector]
+			return Ok(new BackgroundTaskOptionsView {Options = _options.CurrentValue, TaskTypes = taskTypeNames});
+		}
+
+		[FeatureSelector]
 		[HttpGet]
-        public async Task<IActionResult> GetBackgroundTasks()
-        {
-            return Ok(await _store.GetAllAsync());
-        }
+		public async Task<IActionResult> GetBackgroundTasks()
+		{
+			return Ok(await _store.GetAllAsync());
+		}
 
-        [FeatureSelector]
-		[HttpGet, MustHaveQueryParameters("tags")]
-        public async Task<IActionResult> GetBackgroundTasksByTag([FromQuery] string tags)
-        {
-	        var tasks = await _store.GetByAnyTagsAsync(tags.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries));
-			
+		[FeatureSelector]
+		[HttpGet]
+		[MustHaveQueryParameters("tags")]
+		public async Task<IActionResult> GetBackgroundTasksByTag([FromQuery] string tags)
+		{
+			var tasks = await _store.GetByAnyTagsAsync(tags.Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries));
+
 			return Ok(tasks);
-        }
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("{id}")]
-        public async Task<IActionResult> GetBackgroundTaskById(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-                return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
+		public async Task<IActionResult> GetBackgroundTaskById(string id)
+		{
+			if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
+				return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
-            var task = await _store.GetByIdAsync(taskId);
-            if (task == null)
-                return NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
+			var task = await _store.GetByIdAsync(taskId);
+			if (task == null)
+				return NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
 
-            return Ok(task);
-        }
+			return Ok(task);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("secondly/{seconds?}")]
-        [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N second(s).")]
-        public async Task<IActionResult> CreateSecondlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int seconds = 0)
-        {
-            model.Expression = CronTemplates.Secondly(seconds);
+		[MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N second(s).")]
+		public async Task<IActionResult> CreateSecondlyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
+			[FromRoute] int seconds = 0)
+		{
+			model.Expression = CronTemplates.Secondly(seconds);
 
-            return await CreateBackgroundTask(model);
-        }
+			return await CreateBackgroundTask(model);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("minutely/{minutes?}/{atSecond?}")]
-        [MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N minute(s).")]
-        public async Task<IActionResult> CreateMinutelyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int minutes = 0, [FromRoute] int atSecond = 0)
-        {
-            model.Expression = CronTemplates.Minutely(minutes, atSecond);
+		[MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N minute(s).")]
+		public async Task<IActionResult> CreateMinutelyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
+			[FromRoute] int minutes = 0, [FromRoute] int atSecond = 0)
+		{
+			model.Expression = CronTemplates.Minutely(minutes, atSecond);
 
-            return await CreateBackgroundTask(model);
-        }
+			return await CreateBackgroundTask(model);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("daily/{atHour?}/{atMinute?}/{atSecond?}")]
-        [MetaDescription("Creates a daily repeating background task.")]
-        public async Task<IActionResult> CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
-        {
-            model.Expression = CronTemplates.Daily(atHour, atMinute, atSecond);
+		[MetaDescription("Creates a daily repeating background task.")]
+		public async Task<IActionResult> CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
+			[FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
+		{
+			model.Expression = CronTemplates.Daily(atHour, atMinute, atSecond);
 
-            return await CreateBackgroundTask(model);
-        }
+			return await CreateBackgroundTask(model);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}/{atSecond?}")]
-        [MetaDescription("Creates a weekly repeating background task.")]
-        public async Task<IActionResult> CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
-        {
-            model.Expression = CronTemplates.Weekly(dayOfWeek, atHour, atMinute, atSecond);
+		[MetaDescription("Creates a weekly repeating background task.")]
+		public async Task<IActionResult> CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
+			[FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0,
+			[FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
+		{
+			model.Expression = CronTemplates.Weekly(dayOfWeek, atHour, atMinute, atSecond);
 
-            return await CreateBackgroundTask(model);
-        }
+			return await CreateBackgroundTask(model);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}/{atSecond?}")]
-        [MetaDescription("Creates a monthly repeating background task.")]
-        public async Task<IActionResult> CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model, [FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
-        {
-            model.Expression = CronTemplates.Monthly(atDay, atHour, atMinute, atSecond);
+		[MetaDescription("Creates a monthly repeating background task.")]
+		public async Task<IActionResult> CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
+			[FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0,
+			[FromRoute] int atSecond = 0)
+		{
+			model.Expression = CronTemplates.Monthly(atDay, atHour, atMinute, atSecond);
 
-            return await CreateBackgroundTask(model);
-        }
+			return await CreateBackgroundTask(model);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost]
-        [MetaDescription("Creates a background task.")]
-        public async Task<IActionResult> CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
-        {
-            if (!Valid(model, out var error))
-                return error;
+		[MetaDescription("Creates a background task.")]
+		public async Task<IActionResult> CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
+		{
+			if (!Valid(model, out var error))
+				return error;
 
-            if (!string.IsNullOrWhiteSpace(model.TaskType))
-            {
-                var type = _typeResolver.FindByFullName(model.TaskType) ?? _typeResolver.FindFirstByName(model.TaskType);
-                if (type == null)
-                    return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}", model.TaskType);
+			if (!string.IsNullOrWhiteSpace(model.TaskType))
+			{
+				var type = _typeResolver.FindByFullName(model.TaskType) ??
+				           _typeResolver.FindFirstByName(model.TaskType);
+				if (type == null)
+					return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}",
+						model.TaskType);
 
-                var (success, task) = await _host.TryScheduleTaskAsync(type, model.Data, t =>
-                {
-	                if (model.Tags?.Length > 0)
-		                t.Tags.AddRange(model.Tags);
+				var (success, task) = await _host.TryScheduleTaskAsync(type, model.Data, t =>
+				{
+					if (model.Tags?.Length > 0)
+						t.Tags.AddRange(model.Tags);
 
-	                if (!string.IsNullOrWhiteSpace(model.Expression))
-		                t.Expression = model.Expression;
-                });
+					if (!string.IsNullOrWhiteSpace(model.Expression))
+						t.Expression = model.Expression;
+				});
 
-                if (!success)
-                {
-                    return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
-                }
+				if (!success)
+				{
+					return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
+				}
 
-                return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
-            }
+				return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
+			}
 
-            return NotImplemented();
-        }
+			return NotImplemented();
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpDelete("{id}")]
-        [MetaDescription("Deletes a background task.")]
+		[MetaDescription("Deletes a background task.")]
 		public async Task<IActionResult> DeleteBackgroundTask(string id)
-        {
-            if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-                return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
+		{
+			if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
+				return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
-            var task = await _store.GetByIdAsync(taskId);
-            if (task == null)
-                return NotFound();
+			var task = await _store.GetByIdAsync(taskId);
+			if (task == null)
+				return NotFound();
 
-            await _store.DeleteAsync(task);
-            return NoContent();
-        }
-    }
+			await _store.DeleteAsync(task);
+			return NoContent();
+		}
+	}
 }

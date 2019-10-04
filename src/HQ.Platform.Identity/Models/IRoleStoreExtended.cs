@@ -23,10 +23,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
-    {
-        CancellationToken CancellationToken { get; }
-        Task<int> GetCountAsync(CancellationToken cancellationToken);
-        Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = default);
-    }
+	public interface IRoleStoreExtended<TRole> : IRoleStore<TRole> where TRole : class
+	{
+		CancellationToken CancellationToken { get; }
+		Task<int> GetCountAsync(CancellationToken cancellationToken);
+		Task<IList<Claim>> GetAllRoleClaimsAsync(CancellationToken cancellationToken = default);
+	}
 }

@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System.IO;
@@ -20,34 +22,35 @@ using Microsoft.Extensions.FileProviders;
 
 namespace HQ.Integration.Sqlite.Options
 {
-    public class SqliteConfigurationSource : IConfigurationSource
-    {
-        public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.Initialize)
-        {
-	        SaveConfig = saveConfig;
-            ConfigSeed = configSeed;
-            DataFilePath = dataFilePath;
-            DataDirectoryPath = new FileInfo(DataFilePath).Directory?.FullName;
-            DataFileName = Path.GetFileName(DataFilePath);
-            SeedStrategy = strategy;
-        }
+	public class SqliteConfigurationSource : IConfigurationSource
+	{
+		public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig,
+			IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.Initialize)
+		{
+			SaveConfig = saveConfig;
+			ConfigSeed = configSeed;
+			DataFilePath = dataFilePath;
+			DataDirectoryPath = new FileInfo(DataFilePath).Directory?.FullName;
+			DataFileName = Path.GetFileName(DataFilePath);
+			SeedStrategy = strategy;
+		}
 
 		public SaveConfigurationOptions SaveConfig { get; }
-        public string DataFilePath { get; }
-        public string DataDirectoryPath { get; }
-        public string DataFileName { get; }
-        public bool ReloadOnChange { get; set; }
+		public string DataFilePath { get; }
+		public string DataDirectoryPath { get; }
+		public string DataFileName { get; }
+		public bool ReloadOnChange { get; set; }
 
-        public IConfiguration ConfigSeed { get; set; }
-        public SeedStrategy SeedStrategy { get; set; }
-        public IFileProvider FileProvider { get; set; }
+		public IConfiguration ConfigSeed { get; set; }
+		public SeedStrategy SeedStrategy { get; set; }
+		public IFileProvider FileProvider { get; set; }
 
-        public IConfigurationProvider Build(IConfigurationBuilder builder)
-        {
-            if (DataDirectoryPath != null)
-                Directory.CreateDirectory(DataDirectoryPath);
-            SqliteConfigurationHelper.MigrateToLatest(DataFilePath, SaveConfig, ConfigSeed, SeedStrategy);
-            return new SqliteConfigurationProvider(this);
-        }
-    }
+		public IConfigurationProvider Build(IConfigurationBuilder builder)
+		{
+			if (DataDirectoryPath != null)
+				Directory.CreateDirectory(DataDirectoryPath);
+			SqliteConfigurationHelper.MigrateToLatest(DataFilePath, SaveConfig, ConfigSeed, SeedStrategy);
+			return new SqliteConfigurationProvider(this);
+		}
+	}
 }

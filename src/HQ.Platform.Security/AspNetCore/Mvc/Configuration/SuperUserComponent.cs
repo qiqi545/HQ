@@ -22,8 +22,8 @@ using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Configuration
 {
-    public class SuperUserComponent : DynamicComponent
-    {
-        public override IEnumerable<Type> ControllerTypes => new[] { typeof(SuperUserTokenController) };
-    }
+	public class SuperUserComponent : DynamicComponent
+	{
+		public override IEnumerable<Type> ControllerTypes => new[] {typeof(SuperUserTokenController)};
+	}
 }

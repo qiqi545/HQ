@@ -20,12 +20,11 @@ using System.Data;
 
 namespace HQ.Data.SessionManagement
 {
-    public class DataConnection<T> : DataConnection, IDataConnection<T>
-    {
-        public DataConnection(DataContext current, IServiceProvider serviceProvider,
-            Action<IDbCommand, Type, IServiceProvider> onCommand) : base(current, serviceProvider, onCommand)
-        {
-        }
-    }
+	public class DataConnection<T> : DataConnection, IDataConnection<T>
+	{
+		public DataConnection(DataContext current, IServiceProvider serviceProvider,
+			Action<IDbCommand, Type, IServiceProvider> onCommand) : base(current, serviceProvider, onCommand)
+		{
+		}
+	}
 }
-

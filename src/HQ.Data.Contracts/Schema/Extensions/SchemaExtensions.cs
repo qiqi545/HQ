@@ -20,20 +20,20 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.Schema.Extensions
 {
-    public static class SchemaExtensions
-    {
-        public static string FullTypeString(this Models.Schema schema, string ns = null)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
-                sb.Append('.').Append(schema.TypeString());
-            });
-        }
+	public static class SchemaExtensions
+	{
+		public static string FullTypeString(this Models.Schema schema, string ns = null)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append(ns ?? schema?.Namespace ?? Constants.Schemas.DefaultNamespace);
+				sb.Append('.').Append(schema.TypeString());
+			});
+		}
 
-        public static string TypeString(this Models.Schema schema)
-        {
-            return $"{schema.Name.Identifier()}";
-        }
-    }
+		public static string TypeString(this Models.Schema schema)
+		{
+			return $"{schema.Name.Identifier()}";
+		}
+	}
 }

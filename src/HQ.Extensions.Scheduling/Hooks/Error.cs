@@ -21,9 +21,9 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Extensions.Scheduling.Hooks
 {
-    // ReSharper disable once InconsistentNaming
-    public interface Error : Method
-    {
-        Task ErrorAsync(ExecutionContext context, Exception error);
-    }
+	// ReSharper disable once InconsistentNaming
+	public interface Error : Method
+	{
+		Task ErrorAsync(ExecutionContext context, Exception error);
+	}
 }

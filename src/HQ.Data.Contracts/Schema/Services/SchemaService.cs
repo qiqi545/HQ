@@ -31,7 +31,7 @@ namespace HQ.Data.Contracts.Schema.Services
 	{
 		private readonly IApplicationVersionStore _applications;
 		private readonly ISchemaVersionStore _schemas;
-		
+
 		public SchemaService(IApplicationVersionStore applications, ISchemaVersionStore schemas)
 		{
 			_applications = applications;
@@ -85,10 +85,7 @@ namespace HQ.Data.Contracts.Schema.Services
 			var version = new ApplicationVersion
 			{
 				ApplicationId = applicationId,
-				Fingerprint = ValueHash.ComputeHash(new
-				{
-					Fingerprints = hashes
-				}),
+				Fingerprint = ValueHash.ComputeHash(new {Fingerprints = hashes}),
 				Manifest = manifest
 			};
 			return version;
@@ -111,7 +108,7 @@ namespace HQ.Data.Contracts.Schema.Services
 					continue;
 
 				// if we have the inverse of this already, don't add it as an edge
-				bool isInverse = false;
+				var isInverse = false;
 				foreach (var edge in edges)
 				{
 					if (edge.Item1 == dependsOn)

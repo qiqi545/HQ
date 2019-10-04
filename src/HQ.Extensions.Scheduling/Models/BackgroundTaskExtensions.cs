@@ -19,17 +19,17 @@ using System;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public static class BackgroundTaskExtensions
-    {
-        public static void RepeatIndefinitely(this BackgroundTask task, string expression)
-        {
-            task.Expression = expression;
-        }
+	public static class BackgroundTaskExtensions
+	{
+		public static void RepeatIndefinitely(this BackgroundTask task, string expression)
+		{
+			task.Expression = expression;
+		}
 
-        public static void RepeatUntil(this BackgroundTask task, string expression, DateTimeOffset end)
-        {
-            task.Expression = expression;
-            task.End = end;
-        }
-    }
+		public static void RepeatUntil(this BackgroundTask task, string expression, DateTimeOffset end)
+		{
+			task.Expression = expression;
+			task.End = end;
+		}
+	}
 }

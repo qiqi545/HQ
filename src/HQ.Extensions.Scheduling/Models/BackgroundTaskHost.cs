@@ -41,21 +41,23 @@ namespace HQ.Extensions.Scheduling.Models
 		private static readonly IDictionary<Type, HandlerHooks> MethodCache =
 			new ConcurrentDictionary<Type, HandlerHooks>();
 
-		private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
-		private readonly ConcurrentDictionary<object, HandlerHooks> _pending;
-		private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
+		private static readonly Exception ExceededRuntimeException = new Exception(ErrorStrings.ExceededRuntime);
 
 		private readonly IServiceProvider _backgroundServices;
-		private readonly IServerTimestampService _timestamps;
-		private readonly ITypeResolver _typeResolver;
 
-		private CancellationTokenSource _cancel;
-		private QueuedTaskScheduler _scheduler;
-		private PushQueue<IEnumerable<BackgroundTask>> _background;
-		private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
+		private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
 
 		private readonly ISafeLogger<BackgroundTaskHost> _logger;
 		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
+		private readonly ConcurrentDictionary<object, HandlerHooks> _pending;
+		private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
+		private readonly IServerTimestampService _timestamps;
+		private readonly ITypeResolver _typeResolver;
+		private PushQueue<IEnumerable<BackgroundTask>> _background;
+
+		private CancellationTokenSource _cancel;
+		private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
+		private QueuedTaskScheduler _scheduler;
 
 		public BackgroundTaskHost(
 			IServiceProvider backgroundServices,
@@ -176,12 +178,11 @@ namespace HQ.Extensions.Scheduling.Models
 
 		public void Stop(CancellationToken cancellationToken = default, bool immediate = false)
 		{
-			_logger.Info(()=> "Stopping background task host");
+			_logger.Info(() => "Stopping background task host");
 
 			var options = new ParallelOptions
 			{
-				CancellationToken = cancellationToken,
-				MaxDegreeOfParallelism = ResolveConcurrency()
+				CancellationToken = cancellationToken, MaxDegreeOfParallelism = ResolveConcurrency()
 			};
 
 			var context = ProvisionExecutionContext(cancellationToken);
@@ -209,6 +210,7 @@ namespace HQ.Extensions.Scheduling.Models
 					kv.AddOrUpdate(entry.Key, entry.Value);
 				}
 			}
+
 			var context = new ExecutionContext(_backgroundServices, kv, cancellationToken);
 			return context;
 		}
@@ -224,8 +226,6 @@ namespace HQ.Extensions.Scheduling.Models
 			// We could have been shutting down, which is not materially different than if we had succeeded, so we should process these
 			return WithPendingTasks(tasks);
 		}
-
-		private static readonly Exception ExceededRuntimeException = new Exception(ErrorStrings.ExceededRuntime);
 
 		private bool WithHangingTasks(IEnumerable<BackgroundTask> tasks)
 		{
@@ -284,11 +284,11 @@ namespace HQ.Extensions.Scheduling.Models
 				subjects.Add(started, task);
 			}
 
-			Parallel.ForEach(pendingTasks, new ParallelOptions { MaxDegreeOfParallelism = ResolveConcurrency() },
+			Parallel.ForEach(pendingTasks, new ParallelOptions {MaxDegreeOfParallelism = ResolveConcurrency()},
 				performer =>
 				{
 					var task = subjects[performer.Key];
-					if (Task.WaitAll(new[] { performer.Key }, task.MaximumRuntime.GetValueOrDefault()))
+					if (Task.WaitAll(new[] {performer.Key}, task.MaximumRuntime.GetValueOrDefault()))
 					{
 						return;
 					}
@@ -320,7 +320,8 @@ namespace HQ.Extensions.Scheduling.Models
 			var success = await PerformAsync(task);
 			if (!success.Item1)
 			{
-				task.RunAt = _timestamps.GetCurrentTime() + _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
+				task.RunAt = _timestamps.GetCurrentTime() +
+				             _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
 			}
 
 			return success;
@@ -342,7 +343,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 					if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
 					{
-						_logger.Debug(()=> "Deleting task {Id} on failure", task.Id);
+						_logger.Debug(() => "Deleting task {Id} on failure", task.Id);
 						await Store.DeleteAsync(task);
 						deleted = true;
 					}
@@ -384,7 +385,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private async Task CloneTaskAtNextOccurrence(BackgroundTask task)
 		{
-			_logger.Debug(()=> "Repeating recurring task {Id}", task.Id);
+			_logger.Debug(() => "Repeating recurring task {Id}", task.Id);
 
 			var nextOccurrence = task.NextOccurrence;
 
@@ -415,9 +416,9 @@ namespace HQ.Extensions.Scheduling.Models
 			if (!task.SucceededAt.HasValue && !task.FailedAt.HasValue || task.NextOccurrence == null)
 				return false;
 
-			return (success && task.ContinueOnSuccess) ||
-			       (!success && task.ContinueOnFailure) ||
-			       (exception != null && task.ContinueOnError);
+			return success && task.ContinueOnSuccess ||
+			       !success && task.ContinueOnFailure ||
+			       exception != null && task.ContinueOnError;
 		}
 
 		private async Task<(bool, Exception)> PerformAsync(BackgroundTask task)

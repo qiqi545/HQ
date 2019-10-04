@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +24,6 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
@@ -18,6 +34,7 @@ using HQ.Data.Contracts.Schema.Models;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+
 #if NETCOREAPP2_2
 using Swashbuckle.AspNetCore.Swagger;
 #endif
@@ -40,7 +57,7 @@ namespace HQ.Platform.Operations.Controllers
 #endif
 		private readonly ISchemaVersionStore _schemaStore;
 		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
-		
+
 		private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
 		public MetaController(
@@ -57,7 +74,7 @@ namespace HQ.Platform.Operations.Controllers
 			IOptionsMonitor<SwaggerOptions> swaggerOptions,
 #endif
 			IOptionsMonitor<SchemaOptions> schemaOptions
-			)
+		)
 		{
 			_providers = providers;
 			_schemaStore = schemaStore;
@@ -69,17 +86,18 @@ namespace HQ.Platform.Operations.Controllers
 #endif
 			_schemaOptions = schemaOptions;
 		}
-		
+
 		[FeatureSelector]
 		[HttpOptions("")]
 		public IActionResult Options()
 		{
-			return Ok(new { data = new[] { "postman", "swagger" } });
+			return Ok(new {data = new[] {"postman", "swagger"}});
 		}
 
 		[FeatureSelector]
 		[HttpGet("postman")]
-		public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")] string version = "2.1.0")
+		public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")]
+			string version = "2.1.0")
 		{
 			if (string.IsNullOrWhiteSpace(version))
 				return BadRequest();
@@ -89,7 +107,9 @@ namespace HQ.Platform.Operations.Controllers
 			var baseUri = $"{(Request.IsHttps ? "https" : "http")}://{Request.Host}";
 			var apiName = ResolveApplicationId();
 			var apiVersion = (await _schemaStore.GetByApplicationId(apiName)).FirstOrDefault()?.Revision ?? 0;
-			var apiVersionString = apiVersion == 0 ? Assembly.GetExecutingAssembly().GetName().Version?.ToString() : apiVersion.ToString();
+			var apiVersionString = apiVersion == 0
+				? Assembly.GetExecutingAssembly().GetName().Version?.ToString()
+				: apiVersion.ToString();
 
 			// we want a stable ID so the collection doesn't clone in the user's client
 			Guid collectionId;
@@ -107,12 +127,7 @@ namespace HQ.Platform.Operations.Controllers
 				{
 					name = apiName,
 					_postman_id = collectionId,
-					description = new
-					{
-						content = "",
-						type = "text/markdown",
-						version = apiVersionString
-					},
+					description = new {content = "", type = "text/markdown", version = apiVersionString},
 					version = apiVersionString,
 					schema = "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 				},
@@ -141,9 +156,9 @@ namespace HQ.Platform.Operations.Controllers
 
 		private string ResolveApplicationId()
 		{
-			return _metaOptions.CurrentValue.ApplicationId ??		// static app identifier
-			       _schemaOptions.CurrentValue.ApplicationId ??		// schema app identifier
-			       Assembly.GetExecutingAssembly().GetName().Name;	// fallback
+			return _metaOptions.CurrentValue.ApplicationId ?? // static app identifier
+			       _schemaOptions.CurrentValue.ApplicationId ?? // schema app identifier
+			       Assembly.GetExecutingAssembly().GetName().Name; // fallback
 		}
 
 		private void ReplaceHostRecursive(MetaItem item)
@@ -158,7 +173,8 @@ namespace HQ.Platform.Operations.Controllers
 
 			if (item.request?.url != null)
 			{
-				item.request.url.host = _metaOptions.CurrentValue.Host.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
+				item.request.url.host =
+					_metaOptions.CurrentValue.Host.Split(new[] {"/"}, StringSplitOptions.RemoveEmptyEntries);
 				item.request.url.protocol = null; // covered by host string
 				item.request.url.port = null; // covered by host string
 			}
@@ -166,7 +182,8 @@ namespace HQ.Platform.Operations.Controllers
 
 		[FeatureSelector]
 		[HttpGet("swagger")]
-		public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")] string version = "2.0")
+		public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")]
+			string version = "2.0")
 		{
 			return StatusCode((int) HttpStatusCode.NotImplemented);
 

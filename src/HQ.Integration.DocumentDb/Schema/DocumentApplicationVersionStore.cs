@@ -29,11 +29,10 @@ namespace HQ.Integration.DocumentDb.Schema
 	{
 		private readonly IDocumentDbRepository<ApplicationVersionDocument> _repository;
 
-		public DocumentApplicationVersionStore(IOptionsMonitor<DocumentDbOptions> options, ISafeLogger<DocumentDbRepository<ApplicationVersionDocument>> logger)
-		{
+		public DocumentApplicationVersionStore(IOptionsMonitor<DocumentDbOptions> options,
+			ISafeLogger<DocumentDbRepository<ApplicationVersionDocument>> logger) =>
 			_repository = new DocumentDbRepository<ApplicationVersionDocument>(
 				Constants.ConnectionSlots.Schema, options, logger);
-		}
 
 		public async Task CreateAsync(ApplicationVersion model)
 		{

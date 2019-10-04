@@ -17,28 +17,29 @@
 
 using System.Collections.Generic;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class ProjectionFilterAttribute : StaticFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            Execute(context);
-        }
+	public class ProjectionFilterAttribute : StaticFilterAttribute
+	{
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			Execute(context);
+		}
 
-        public static void Execute(ActionExecutingContext context)
-        {
-            Execute<RestProjectionFilter>(context, filter => filter.Options.ProjectionOperator, c => c.Projections);
-        }
+		public static void Execute(ActionExecutingContext context)
+		{
+			Execute<RestProjectionFilter>(context, filter => filter.Options.ProjectionOperator, c => c.Projections);
+		}
 
-        public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs, QueryContext qc)
-        {
-            Execute<RestProjectionFilter>(context, filter => filter.Options.ProjectionOperator, c => c.Projections, qs, qc);
-        }
-    }
+		public static void Execute(ActionExecutingContext context, IDictionary<string, StringValues> qs,
+			QueryContext qc)
+		{
+			Execute<RestProjectionFilter>(context, filter => filter.Options.ProjectionOperator, c => c.Projections, qs,
+				qc);
+		}
+	}
 }

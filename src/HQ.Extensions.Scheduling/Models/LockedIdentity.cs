@@ -19,11 +19,11 @@ using System;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class LockedIdentity
-    {
-        public static string Get()
-        {
-            return Environment.UserName ?? Environment.MachineName;
-        }
-    }
+	public class LockedIdentity
+	{
+		public static string Get()
+		{
+			return Environment.UserName ?? Environment.MachineName;
+		}
+	}
 }

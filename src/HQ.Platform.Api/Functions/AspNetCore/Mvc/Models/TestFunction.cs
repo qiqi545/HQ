@@ -24,60 +24,57 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
-    [Description("A test function for diagnostic purposes.")]
-    public class TestFunction : Before, Handler, After, Success, Failure, Halt, Error
-    {
-        private readonly ISafeLogger<TestFunction> _logger;
+	[Description("A test function for diagnostic purposes.")]
+	public class TestFunction : Before, Handler, After, Success, Failure, Halt, Error
+	{
+		private readonly ISafeLogger<TestFunction> _logger;
 
-        public TestFunction(ISafeLogger<TestFunction> logger)
-        {
-            _logger = logger;
-        }
+		public TestFunction(ISafeLogger<TestFunction> logger) => _logger = logger;
 
-        public Task AfterAsync(ExecutionContext context)
-        {
-            _logger.Debug(() => $"{nameof(After)} executed.");
-            return Task.CompletedTask;
-        }
+		public Task AfterAsync(ExecutionContext context)
+		{
+			_logger.Debug(() => $"{nameof(After)} executed.");
+			return Task.CompletedTask;
+		}
 
-        public Task BeforeAsync(ExecutionContext context)
-        {
-            _logger.Debug(() => $"{nameof(BeforeAsync)} executed.");
-            return Task.CompletedTask;
-        }
+		public Task BeforeAsync(ExecutionContext context)
+		{
+			_logger.Debug(() => $"{nameof(BeforeAsync)} executed.");
+			return Task.CompletedTask;
+		}
 
-        public Task FailureAsync(ExecutionContext context)
-        {
-            _logger.Debug(() => $"{nameof(FailureAsync)} executed.");
-            return Task.CompletedTask;
-        }
+		public Task ErrorAsync(ExecutionContext context, Exception error)
+		{
+			_logger.Debug(() => $"{nameof(Error)} executed with error {error.Message}");
+			return Task.CompletedTask;
+		}
 
-        public Task HaltAsync(ExecutionContext context, bool immediate)
-        {
-            _logger.Debug(() => $"{nameof(Halt)} executed{(immediate ? " immediately" : "")}.");
-            return Task.CompletedTask;
-        }
+		public Task FailureAsync(ExecutionContext context)
+		{
+			_logger.Debug(() => $"{nameof(FailureAsync)} executed.");
+			return Task.CompletedTask;
+		}
 
-        public Task PerformAsync(ExecutionContext context)
-        {
+		public Task HaltAsync(ExecutionContext context, bool immediate)
+		{
+			_logger.Debug(() => $"{nameof(Halt)} executed{(immediate ? " immediately" : "")}.");
+			return Task.CompletedTask;
+		}
+
+		public Task PerformAsync(ExecutionContext context)
+		{
 			_logger.Debug(() => $"{nameof(PerformAsync)} executed.");
 			if (context.TryGetData("Success", out var succeed) && succeed)
 				context.Succeed();
 			else
 				context.Fail();
 			return Task.CompletedTask;
-        }
+		}
 
-        public Task SuccessAsync(ExecutionContext context)
-        {
+		public Task SuccessAsync(ExecutionContext context)
+		{
 			_logger.Debug(() => $"{nameof(SuccessAsync)} executed.");
-            return Task.CompletedTask;
-        }
-
-        public Task ErrorAsync(ExecutionContext context, Exception error)
-        {
-            _logger.Debug(() => $"{nameof(Error)} executed with error {error.Message}");
-            return Task.CompletedTask;
-        }
-    }
+			return Task.CompletedTask;
+		}
+	}
 }

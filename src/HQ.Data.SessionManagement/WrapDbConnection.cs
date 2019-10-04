@@ -22,73 +22,73 @@ using ImpromptuInterface;
 
 namespace HQ.Data.SessionManagement
 {
-    public class WrapDbConnection : DbConnection
-    {
-        private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly Type _type;
-        private readonly IRetainLastInsertedId _maybeRetains;
+	public class WrapDbConnection : DbConnection
+	{
+		private readonly IRetainLastInsertedId _maybeRetains;
+		private readonly Action<IDbCommand, Type, IServiceProvider> _onCommand;
+		private readonly IServiceProvider _serviceProvider;
+		private readonly Type _type;
 
-        public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider,
-            Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
-        {
-            Inner = inner;
-            _serviceProvider = serviceProvider;
-            _onCommand = onCommand;
-            _type = type;
+		public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider,
+			Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
+		{
+			Inner = inner;
+			_serviceProvider = serviceProvider;
+			_onCommand = onCommand;
+			_type = type;
 
-            try
-            {
-                _maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
-                _maybeRetains.GetLastInsertedId();
-            }
-            catch
-            {
-                _maybeRetains = null;
-            }
-        }
+			try
+			{
+				_maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
+				_maybeRetains.GetLastInsertedId();
+			}
+			catch
+			{
+				_maybeRetains = null;
+			}
+		}
 
-        public DbConnection Inner { get; }
+		public DbConnection Inner { get; }
 
-        public object LastInsertedId => _maybeRetains is IRetainLastInsertedId retainer ? retainer.GetLastInsertedId() : null;
+		public object LastInsertedId =>
+			_maybeRetains is IRetainLastInsertedId retainer ? retainer.GetLastInsertedId() : null;
 
-        public override string ConnectionString
-        {
-            get => Inner.ConnectionString;
-            set => Inner.ConnectionString = value;
-        }
+		public override string ConnectionString
+		{
+			get => Inner.ConnectionString;
+			set => Inner.ConnectionString = value;
+		}
 
-        public override string Database => Inner.Database;
-        public override ConnectionState State => Inner.State;
-        public override string DataSource => Inner.DataSource;
-        public override string ServerVersion => Inner.ServerVersion;
-        
-        protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
-        {
-            return Inner.BeginTransaction(isolationLevel);
-        }
+		public override string Database => Inner.Database;
+		public override ConnectionState State => Inner.State;
+		public override string DataSource => Inner.DataSource;
+		public override string ServerVersion => Inner.ServerVersion;
 
-        public override void Close()
-        {
-            Inner.Close();
-        }
+		protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
+		{
+			return Inner.BeginTransaction(isolationLevel);
+		}
 
-        public override void Open()
-        {
-            Inner.Open();
-        }
+		public override void Close()
+		{
+			Inner.Close();
+		}
 
-        protected override DbCommand CreateDbCommand()
-        {
-            var command = Inner.CreateCommand();
-            _onCommand?.Invoke(command, _type, _serviceProvider);
-            return new WrapDbCommand(command);
-        }
+		public override void Open()
+		{
+			Inner.Open();
+		}
 
-        public override void ChangeDatabase(string databaseName)
-        {
-            Inner.ChangeDatabase(databaseName);
-        }
-    }
+		protected override DbCommand CreateDbCommand()
+		{
+			var command = Inner.CreateCommand();
+			_onCommand?.Invoke(command, _type, _serviceProvider);
+			return new WrapDbCommand(command);
+		}
+
+		public override void ChangeDatabase(string databaseName)
+		{
+			Inner.ChangeDatabase(databaseName);
+		}
+	}
 }
-

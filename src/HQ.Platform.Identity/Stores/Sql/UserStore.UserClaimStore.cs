@@ -31,155 +31,160 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserClaimStore<TUser>
-    {
-        public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+	partial class UserStore<TUser, TKey, TRole> : IUserClaimStore<TUser>
+	{
+		public async Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var claims = new List<Claim>();
+			var claims = new List<Claim>();
 
-            if (SupportsSuperUser && user.NormalizedUserName == _lookupNormalizer.MaybeNormalizeName(_superUser.Value.Username))
-            {
-                var superUser = CreateSuperUserInstance();
-                claims.TryAddClaim(_security.Value.Claims.UserIdClaim, $"{superUser.Id}");
-                claims.TryAddClaim(_security.Value.Claims.UserNameClaim, superUser.UserName);
-                claims.TryAddClaim(_security.Value.Claims.EmailClaim, superUser.Email, ClaimValueTypes.Email);
-                claims.TryAddClaim(_security.Value.Claims.RoleClaim, ClaimValues.SuperUser, ClaimValueTypes.Email);
-                return claims;
-            }
+			if (SupportsSuperUser && user.NormalizedUserName ==
+			    _lookupNormalizer.MaybeNormalizeName(_superUser.Value.Username))
+			{
+				var superUser = CreateSuperUserInstance();
+				claims.TryAddClaim(_security.Value.Claims.UserIdClaim, $"{superUser.Id}");
+				claims.TryAddClaim(_security.Value.Claims.UserNameClaim, superUser.UserName);
+				claims.TryAddClaim(_security.Value.Claims.EmailClaim, superUser.Email, ClaimValueTypes.Email);
+				claims.TryAddClaim(_security.Value.Claims.RoleClaim, ClaimValues.SuperUser, ClaimValueTypes.Email);
+				return claims;
+			}
 
-            var id = user.Id == null ? string.Empty : $"{user.Id}";
+			var id = user.Id == null ? string.Empty : $"{user.Id}";
 
 			if (_tenantId != null && !_tenantId.Equals(default))
 			{
-                claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
-            }
-            if (_applicationId != null && !_applicationId.Equals(default))
-            {
-                claims.TryAddClaim(_security.Value.Claims.ApplicationIdClaim, $"{_applicationId}");
-            }
-            if (!string.IsNullOrWhiteSpace(_tenantName))
-            {
-                claims.TryAddClaim(_security.Value.Claims.TenantNameClaim, _tenantName);
-            }
-            if (!string.IsNullOrWhiteSpace(_applicationName))
-            {
-                claims.TryAddClaim(_security.Value.Claims.ApplicationNameClaim, _applicationName);
-            }
+				claims.TryAddClaim(_security.Value.Claims.TenantIdClaim, $"{_tenantId}");
+			}
 
-            claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
-            claims.TryAddClaim(_security.Value.Claims.UserNameClaim, user.UserName);
-            claims.TryAddClaim(_security.Value.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
-            claims.AddRange(await GetUserClaimsAsync(user));
+			if (_applicationId != null && !_applicationId.Equals(default))
+			{
+				claims.TryAddClaim(_security.Value.Claims.ApplicationIdClaim, $"{_applicationId}");
+			}
 
-            var roleNames = await GetRolesAsync(user, cancellationToken);
+			if (!string.IsNullOrWhiteSpace(_tenantName))
+			{
+				claims.TryAddClaim(_security.Value.Claims.TenantNameClaim, _tenantName);
+			}
 
-            foreach (var roleName in roleNames)
-            {
-                var role = await _roles.FindByNameAsync(roleName);
-                if (role == null)
-                {
-                    continue;
-                }
+			if (!string.IsNullOrWhiteSpace(_applicationName))
+			{
+				claims.TryAddClaim(_security.Value.Claims.ApplicationNameClaim, _applicationName);
+			}
 
-                claims.Add(new Claim(_security.Value.Claims.RoleClaim, roleName));
+			claims.TryAddClaim(_security.Value.Claims.UserIdClaim, id);
+			claims.TryAddClaim(_security.Value.Claims.UserNameClaim, user.UserName);
+			claims.TryAddClaim(_security.Value.Claims.EmailClaim, user.Email, ClaimValueTypes.Email);
+			claims.AddRange(await GetUserClaimsAsync(user));
 
-                var roleClaims = await _roles.GetClaimsAsync(role);
-                if (!roleClaims.Any())
-                {
-                    continue;
-                }
+			var roleNames = await GetRolesAsync(user, cancellationToken);
 
-                foreach (var claim in roleClaims)
-                {
-                    claims.Add(claim);
-                }
-            }
+			foreach (var roleName in roleNames)
+			{
+				var role = await _roles.FindByNameAsync(roleName);
+				if (role == null)
+				{
+					continue;
+				}
 
-            return claims;
-        }
+				claims.Add(new Claim(_security.Value.Claims.RoleClaim, roleName));
 
-        public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+				var roleClaims = await _roles.GetClaimsAsync(role);
+				if (!roleClaims.Any())
+				{
+					continue;
+				}
 
-            foreach (var claim in claims)
-            {
-                var query = SqlBuilder.Insert(new AspNetUserClaims<TKey>
-                {
-                    TenantId = _tenantId, UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value
-                });
+				foreach (var claim in roleClaims)
+				{
+					claims.Add(claim);
+				}
+			}
 
-                _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
-                await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            }
-        }
+			return claims;
+		}
 
-        public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string sql = "UPDATE AspNetUserClaims " +
-                               "SET ClaimType = @NewClaimType, " +
-                               "    ClaimValue = @NewClaimValue " +
-                               "WHERE UserId = @UserId " +
-                               "AND ClaimType = @ClaimType " +
-                               "AND ClaimValue = @ClaimValue " +
-                               "AND TenantId = @TenantId";
+			foreach (var claim in claims)
+			{
+				var query = SqlBuilder.Insert(new AspNetUserClaims<TKey>
+				{
+					TenantId = _tenantId, UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value
+				});
 
-            await _connection.Current.ExecuteAsync(sql, new
-            {
-                TenantId = _tenantId,
-                NewClaimType = newClaim.Type,
-                NewClaimValue = newClaim.Value,
-                UserId = user.Id,
-                ClaimType = claim.Type,
-                ClaimValue = claim.Value
-            });
-        }
+				_connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
+				await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			}
+		}
 
-        public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task ReplaceClaimAsync(TUser user, Claim claim, Claim newClaim,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var claim in claims)
-            {
-                var query = SqlBuilder.Delete<AspNetUserClaims<TKey>>(new
-                {
-                    UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value, TenantId = _tenantId
-                });
+			const string sql = "UPDATE AspNetUserClaims " +
+			                   "SET ClaimType = @NewClaimType, " +
+			                   "    ClaimValue = @NewClaimValue " +
+			                   "WHERE UserId = @UserId " +
+			                   "AND ClaimType = @ClaimType " +
+			                   "AND ClaimValue = @ClaimValue " +
+			                   "AND TenantId = @TenantId";
 
-                _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
-                var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-                Debug.Assert(deleted == 1);
-            }
-        }
+			await _connection.Current.ExecuteAsync(sql,
+				new
+				{
+					TenantId = _tenantId,
+					NewClaimType = newClaim.Type,
+					NewClaimValue = newClaim.Value,
+					UserId = user.Id,
+					ClaimType = claim.Type,
+					ClaimValue = claim.Value
+				});
+		}
 
-        public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public async Task RemoveClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            const string sql = "SELECT u.* FROM AspNetUsers u" +
-                               "INNER JOIN AspNetUserClaims uc ON uc.UserId = u.Id " +
-                               "WHERE uc.ClaimType = @ClaimType " +
-                               "AND uc.ClaimValue = @ClaimValue " +
-                               "AND uc.TenantId = @TenantId";
+			foreach (var claim in claims)
+			{
+				var query = SqlBuilder.Delete<AspNetUserClaims<TKey>>(new
+				{
+					UserId = user.Id, ClaimType = claim.Type, ClaimValue = claim.Value, TenantId = _tenantId
+				});
 
-            var users = await _connection.Current.QueryAsync<TUser>(sql,
-                new {TenantId = _tenantId, ClaimType = claim.Type, ClaimValue = claim.Value});
+				_connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
+				var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+				Debug.Assert(deleted == 1);
+			}
+		}
 
-            return users.AsList();
-        }
+		public async Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        private async Task<IList<Claim>> GetUserClaimsAsync(TUser user)
-        {
-            var query = SqlBuilder.Select<AspNetUserClaims<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
+			const string sql = "SELECT u.* FROM AspNetUsers u" +
+			                   "INNER JOIN AspNetUserClaims uc ON uc.UserId = u.Id " +
+			                   "WHERE uc.ClaimType = @ClaimType " +
+			                   "AND uc.ClaimValue = @ClaimValue " +
+			                   "AND uc.TenantId = @TenantId";
 
-            var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
-            return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
-        }
-    }
+			var users = await _connection.Current.QueryAsync<TUser>(sql,
+				new {TenantId = _tenantId, ClaimType = claim.Type, ClaimValue = claim.Value});
+
+			return users.AsList();
+		}
+
+		private async Task<IList<Claim>> GetUserClaimsAsync(TUser user)
+		{
+			var query = SqlBuilder.Select<AspNetUserClaims<TKey>>(new {UserId = user.Id, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(AspNetUserClaims<TKey>));
+
+			var claims = await _connection.Current.QueryAsync<AspNetUserClaims<TKey>>(query.Sql, query.Parameters);
+			return claims.Select(x => new Claim(x.ClaimType, x.ClaimValue)).AsList();
+		}
+	}
 }

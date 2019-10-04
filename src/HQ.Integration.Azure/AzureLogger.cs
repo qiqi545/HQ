@@ -21,17 +21,17 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Integration.Azure
 {
-    public class AzureLogger : ICloudLogger<AzureOptions>
-    {
-        public void AddCloudLogger(ILoggingBuilder builder, AzureOptions options)
-        {
-            Trace.TraceInformation("Adding Application Insights Logging");
+	public class AzureLogger : ICloudLogger<AzureOptions>
+	{
+		public void AddCloudLogger(ILoggingBuilder builder, AzureOptions options)
+		{
+			Trace.TraceInformation("Adding Application Insights Logging");
 
-            builder.AddApplicationInsights(o =>
-            {
-                o.IncludeScopes = true;
-                o.TrackExceptionsAsExceptionTelemetry = true;
-            });
-        }
-    }
+			builder.AddApplicationInsights(o =>
+			{
+				o.IncludeScopes = true;
+				o.TrackExceptionsAsExceptionTelemetry = true;
+			});
+		}
+	}
 }

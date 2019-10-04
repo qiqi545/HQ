@@ -42,8 +42,6 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 			_segments = segments;
 		}
 
-		public IServiceProvider ServiceProvider { get; set; }
-
 		public string Roles { get; set; }
 		public string AuthenticationSchemes { get; set; }
 
@@ -57,6 +55,8 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 			}
 			set => throw new NotSupportedException("Dynamic authorization does not support directly setting policy.");
 		}
+
+		public IServiceProvider ServiceProvider { get; set; }
 
 		public void Resolve(IServiceProvider serviceProvider)
 		{
@@ -108,7 +108,8 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 				var s = schemeProvider.GetSchemeAsync(scheme).GetAwaiter().GetResult();
 				if (s != null)
 					continue;
-				schemeProvider.AddScheme(new AuthenticationScheme(scheme, "Unregistered scheme proxy.", typeof(UnregisteredAuthenticationHandler)));
+				schemeProvider.AddScheme(new AuthenticationScheme(scheme, "Unregistered scheme proxy.",
+					typeof(UnregisteredAuthenticationHandler)));
 			}
 		}
 
@@ -120,9 +121,9 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 				var key = member.Name;
 
 				if (_segments.Length < segmentIndex + 1 ||
-					_segments[segmentIndex] != key ||
-					!member.CanRead ||
-					!reads.TryGetValue(currentValue, key, out var segment))
+				    _segments[segmentIndex] != key ||
+				    !member.CanRead ||
+				    !reads.TryGetValue(currentValue, key, out var segment))
 					continue;
 
 				if (segment is IProtectedFeatureScheme featureScheme)
@@ -141,8 +142,8 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 		}
 
 		/// <summary>
-		/// Fills in for a declared, but not registered, authentication scheme handler.
-		/// Prevents a runtime exception when schemes may be missing since they are declared as optional.
+		///     Fills in for a declared, but not registered, authentication scheme handler.
+		///     Prevents a runtime exception when schemes may be missing since they are declared as optional.
 		/// </summary>
 		internal sealed class UnregisteredAuthenticationHandler : IAuthenticationHandler
 		{

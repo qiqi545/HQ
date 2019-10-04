@@ -19,8 +19,8 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class ResourceRewritingOptions : FeatureToggle
-    {
-        public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
-    }
+	public class ResourceRewritingOptions : FeatureToggle
+	{
+		public string ActionHeader { get; set; } = Constants.HttpHeaders.Action;
+	}
 }

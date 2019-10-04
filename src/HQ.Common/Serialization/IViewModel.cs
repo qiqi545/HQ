@@ -17,7 +17,7 @@
 
 namespace HQ.Common.Serialization
 {
-    public interface IViewModel
-    {
-    }
+	public interface IViewModel
+	{
+	}
 }

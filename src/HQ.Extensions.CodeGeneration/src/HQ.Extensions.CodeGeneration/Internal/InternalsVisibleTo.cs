@@ -22,5 +22,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Extensions.CodeGeneration.Internal
 {
-    internal class InternalsVisibleTo { }
+	internal class InternalsVisibleTo
+	{
+	}
 }

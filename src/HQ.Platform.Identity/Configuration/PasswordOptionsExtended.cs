@@ -19,23 +19,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class PasswordOptionsExtended : PasswordOptions
-    {
-        public PasswordOptionsExtended()
-        {
-        }
+	public class PasswordOptionsExtended : PasswordOptions
+	{
+		public PasswordOptionsExtended()
+		{
+		}
 
-        public PasswordOptionsExtended(PasswordOptions inner)
-        {
-            RequireDigit = inner.RequireDigit;
-            RequireLowercase = inner.RequireLowercase;
-            RequireNonAlphanumeric = inner.RequireNonAlphanumeric;
-            RequireUppercase = inner.RequireUppercase;
-            RequiredLength = inner.RequiredLength;
-            RequiredUniqueChars = inner.RequiredUniqueChars;
-        }
+		public PasswordOptionsExtended(PasswordOptions inner)
+		{
+			RequireDigit = inner.RequireDigit;
+			RequireLowercase = inner.RequireLowercase;
+			RequireNonAlphanumeric = inner.RequireNonAlphanumeric;
+			RequireUppercase = inner.RequireUppercase;
+			RequiredLength = inner.RequiredLength;
+			RequiredUniqueChars = inner.RequiredUniqueChars;
+		}
 
-        public PasswordHashStrategy HashStrategy { get; set; } = PasswordHashStrategy.Pbkdf2;
-        public bool RequireUniquePassword { get; set; }
-    }
+		public PasswordHashStrategy HashStrategy { get; set; } = PasswordHashStrategy.Pbkdf2;
+		public bool RequireUniquePassword { get; set; }
+	}
 }

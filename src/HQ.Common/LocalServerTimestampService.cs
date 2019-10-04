@@ -21,11 +21,26 @@ using Newtonsoft.Json;
 
 namespace HQ.Common
 {
-    public class LocalServerTimestampService : IServerTimestampService
-    {
-        public DateTimeZone GetCurrentZonedTime() => new DateTimeZone(GetCurrentTime(), TimeZoneInfo.Local);
-        public DateTimeOffset GetCurrentTime() => DateTimeOffset.Now;
-        public long GetCurrentTimestamp() => GetCurrentTime().Ticks;
-        public JsonSerializerSettings GetDateTimeSerializerSettings() => Bootstrap.CreateDefaultJsonSerializerSettings();
-    }
+	public class LocalServerTimestampService : IServerTimestampService
+	{
+		public DateTimeZone GetCurrentZonedTime()
+		{
+			return new DateTimeZone(GetCurrentTime(), TimeZoneInfo.Local);
+		}
+
+		public DateTimeOffset GetCurrentTime()
+		{
+			return DateTimeOffset.Now;
+		}
+
+		public long GetCurrentTimestamp()
+		{
+			return GetCurrentTime().Ticks;
+		}
+
+		public JsonSerializerSettings GetDateTimeSerializerSettings()
+		{
+			return Bootstrap.CreateDefaultJsonSerializerSettings();
+		}
+	}
 }

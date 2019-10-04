@@ -23,14 +23,14 @@ using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Dapper
 {
-    partial class DapperExtensions
-    {
-        public static int Delete<T>(this IDbConnection connection, dynamic where = null,
-            IDbTransaction transaction = null, int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn)
-            where T : class
-        {
-            Query query = SqlBuilder.Delete<T>(where);
-            return connection.Execute(query.Sql, query.Parameters.Prepare(), transaction, commandTimeout);
-        }
-    }
+	partial class DapperExtensions
+	{
+		public static int Delete<T>(this IDbConnection connection, dynamic where = null,
+			IDbTransaction transaction = null, int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn)
+			where T : class
+		{
+			Query query = SqlBuilder.Delete<T>(where);
+			return connection.Execute(query.Sql, query.Parameters.Prepare(), transaction, commandTimeout);
+		}
+	}
 }

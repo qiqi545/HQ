@@ -28,109 +28,110 @@ using Newtonsoft.Json;
 
 namespace HQ.Extensions.Caching.AspNetCore.Mvc
 {
-    public class HttpCacheFilterAttribute : ActionFilterAttribute
-    {
-        private readonly IHttpCache _cache;
-        private readonly IETagGenerator _generator;
-        private readonly JsonSerializerSettings _settings;
+	public class HttpCacheFilterAttribute : ActionFilterAttribute
+	{
+		private readonly IHttpCache _cache;
+		private readonly IETagGenerator _generator;
+		private readonly JsonSerializerSettings _settings;
 
-        public HttpCacheFilterAttribute(IETagGenerator generator, IHttpCache cache, JsonSerializerSettings settings)
-        {
-            _generator = generator;
-            _cache = cache;
-            _settings = settings;
-        }
+		public HttpCacheFilterAttribute(IETagGenerator generator, IHttpCache cache, JsonSerializerSettings settings)
+		{
+			_generator = generator;
+			_cache = cache;
+			_settings = settings;
+		}
 
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            var request = context.HttpContext.Request;
-            if (request.Method == Constants.HttpVerbs.Get)
-            {
-                HandleSafeRequests(context, request);
-            }
-            else
-            {
-                HandleUnsafeRequests(context, request);
-            }
-        }
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			var request = context.HttpContext.Request;
+			if (request.Method == Constants.HttpVerbs.Get)
+			{
+				HandleSafeRequests(context, request);
+			}
+			else
+			{
+				HandleUnsafeRequests(context, request);
+			}
+		}
 
-        private void HandleUnsafeRequests(ActionExecutingContext context, HttpRequest request)
-        {
-            var key = request.GetDisplayUrl();
+		private void HandleUnsafeRequests(ActionExecutingContext context, HttpRequest request)
+		{
+			var key = request.GetDisplayUrl();
 
-            if (IfMatchFailed(request, key) || UnmodifiedSinceFailed(request, key))
-            {
-                context.Result = new StatusCodeResult((int) HttpStatusCode.PreconditionFailed);
-            }
-        }
+			if (IfMatchFailed(request, key) || UnmodifiedSinceFailed(request, key))
+			{
+				context.Result = new StatusCodeResult((int) HttpStatusCode.PreconditionFailed);
+			}
+		}
 
-        private void HandleSafeRequests(ActionExecutingContext context, HttpRequest request)
-        {
-            var key = request.GetDisplayUrl();
+		private void HandleSafeRequests(ActionExecutingContext context, HttpRequest request)
+		{
+			var key = request.GetDisplayUrl();
 
-            if (NoneMatch(request, key) || NotModifiedSince(request, key))
-            {
-                context.Result = new StatusCodeResult((int) HttpStatusCode.NotModified);
-            }
-        }
+			if (NoneMatch(request, key) || NotModifiedSince(request, key))
+			{
+				context.Result = new StatusCodeResult((int) HttpStatusCode.NotModified);
+			}
+		}
 
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            base.OnActionExecuted(context);
+		public override void OnActionExecuted(ActionExecutedContext context)
+		{
+			base.OnActionExecuted(context);
 
-            MaybeCacheObject(context);
-        }
+			MaybeCacheObject(context);
+		}
 
-        private void MaybeCacheObject(ActionExecutedContext context)
-        {
-            if (!(context.Result is OkObjectResult result))
-            {
-                return;
-            }
+		private void MaybeCacheObject(ActionExecutedContext context)
+		{
+			if (!(context.Result is OkObjectResult result))
+			{
+				return;
+			}
 
-            var cacheKey = context.HttpContext.Request.GetDisplayUrl();
-            var json = JsonConvert.SerializeObject(result.Value, _settings);
-            var etag = _generator.GenerateFromBuffer(Encoding.UTF8.GetBytes(json));
-            context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.ETag, new[] {etag});
-            _cache.Save(cacheKey, etag);
+			var cacheKey = context.HttpContext.Request.GetDisplayUrl();
+			var json = JsonConvert.SerializeObject(result.Value, _settings);
+			var etag = _generator.GenerateFromBuffer(Encoding.UTF8.GetBytes(json));
+			context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.ETag, new[] {etag});
+			_cache.Save(cacheKey, etag);
 
-            if (result.Value is IObject resource)
-            {
-                var lastModifiedDate = resource.CreatedAt;
-                context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified, lastModifiedDate.ToString("R"));
-                _cache.Save(cacheKey, lastModifiedDate);
-            }
-        }
+			if (result.Value is IObject resource)
+			{
+				var lastModifiedDate = resource.CreatedAt;
+				context.HttpContext.Response.Headers.Add(Constants.HttpHeaders.LastModified,
+					lastModifiedDate.ToString("R"));
+				_cache.Save(cacheKey, lastModifiedDate);
+			}
+		}
 
-        #region State Probes
+		#region State Probes
 
-        private bool NoneMatch(HttpRequest request, string key)
-        {
-            return request.Headers.TryGetValue(Constants.HttpHeaders.IfNoneMatch, out var ifNoneMatch) &&
-                   _cache.TryGetETag(key, out var etag) && ifNoneMatch == etag;
-        }
+		private bool NoneMatch(HttpRequest request, string key)
+		{
+			return request.Headers.TryGetValue(Constants.HttpHeaders.IfNoneMatch, out var ifNoneMatch) &&
+			       _cache.TryGetETag(key, out var etag) && ifNoneMatch == etag;
+		}
 
-        private bool IfMatchFailed(HttpRequest request, string key)
-        {
-            return request.Headers.TryGetValue(Constants.HttpHeaders.IfMatch, out var ifMatch) &&
-                   _cache.TryGetETag(key, out var etag) && ifMatch != etag;
-        }
+		private bool IfMatchFailed(HttpRequest request, string key)
+		{
+			return request.Headers.TryGetValue(Constants.HttpHeaders.IfMatch, out var ifMatch) &&
+			       _cache.TryGetETag(key, out var etag) && ifMatch != etag;
+		}
 
-        private bool UnmodifiedSinceFailed(HttpRequest request, string key)
-        {
-            return request.Headers.TryGetValue(Constants.HttpHeaders.IfUnmodifiedSince, out var ifUnmodifiedSince) &&
-                   DateTimeOffset.TryParse(ifUnmodifiedSince, out var ifUnmodifiedSinceDate) &&
-                   _cache.TryGetLastModified(key, out var lastModifiedDate) && lastModifiedDate > ifUnmodifiedSinceDate;
-        }
+		private bool UnmodifiedSinceFailed(HttpRequest request, string key)
+		{
+			return request.Headers.TryGetValue(Constants.HttpHeaders.IfUnmodifiedSince, out var ifUnmodifiedSince) &&
+			       DateTimeOffset.TryParse(ifUnmodifiedSince, out var ifUnmodifiedSinceDate) &&
+			       _cache.TryGetLastModified(key, out var lastModifiedDate) && lastModifiedDate > ifUnmodifiedSinceDate;
+		}
 
-        private bool NotModifiedSince(HttpRequest request, string key)
-        {
-            return request.Headers.TryGetValue(Constants.HttpHeaders.IfModifiedSince, out var ifModifiedSince) &&
-                   DateTimeOffset.TryParse(ifModifiedSince, out var ifModifiedSinceDate)
-                   && _cache.TryGetLastModified(key, out var lastModifiedDate) &&
-                   lastModifiedDate <= ifModifiedSinceDate;
-        }
+		private bool NotModifiedSince(HttpRequest request, string key)
+		{
+			return request.Headers.TryGetValue(Constants.HttpHeaders.IfModifiedSince, out var ifModifiedSince) &&
+			       DateTimeOffset.TryParse(ifModifiedSince, out var ifModifiedSinceDate)
+			       && _cache.TryGetLastModified(key, out var lastModifiedDate) &&
+			       lastModifiedDate <= ifModifiedSinceDate;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

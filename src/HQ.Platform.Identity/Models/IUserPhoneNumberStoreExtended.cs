@@ -22,11 +22,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IUserPhoneNumberStoreExtended<TUser> :
-        IUserStoreExtended<TUser>,
-        IUserPhoneNumberStore<TUser> where TUser : class
-    {
-        Task<TUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
-        Task<IEnumerable<TUser>> FindAllByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
-    }
+	public interface IUserPhoneNumberStoreExtended<TUser> :
+		IUserStoreExtended<TUser>,
+		IUserPhoneNumberStore<TUser> where TUser : class
+	{
+		Task<TUser> FindByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
+		Task<IEnumerable<TUser>> FindAllByPhoneNumberAsync(string phoneNumber, CancellationToken cancellationToken);
+	}
 }

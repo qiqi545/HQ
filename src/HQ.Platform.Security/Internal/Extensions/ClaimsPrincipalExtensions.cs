@@ -23,47 +23,47 @@ using System.Security.Claims;
 namespace HQ.Platform.Security.Internal.Extensions
 {
 	public static class ClaimsPrincipalExtensions
-    {
-        public static IDictionary<string, object> Claims(this ClaimsPrincipal user)
-        {
-            IDictionary<string, object> result = new ExpandoObject();
+	{
+		public static IDictionary<string, object> Claims(this ClaimsPrincipal user)
+		{
+			IDictionary<string, object> result = new ExpandoObject();
 
-            if (user?.Identity == null || !user.Identity.IsAuthenticated)
-            {
-                return (ExpandoObject) result;
-            }
+			if (user?.Identity == null || !user.Identity.IsAuthenticated)
+			{
+				return (ExpandoObject) result;
+			}
 
-            var claims = user.ClaimsList();
+			var claims = user.ClaimsList();
 
-            foreach (var claim in claims)
-            {
-                if (claim.Value.Count == 1)
-                {
-                    result.Add(claim.Key, claim.Value[0]);
-                }
-                else
-                {
-                    result.Add(claim.Key, claim.Value);
-                }
-            }
+			foreach (var claim in claims)
+			{
+				if (claim.Value.Count == 1)
+				{
+					result.Add(claim.Key, claim.Value[0]);
+				}
+				else
+				{
+					result.Add(claim.Key, claim.Value);
+				}
+			}
 
-            return (ExpandoObject) result;
-        }
+			return (ExpandoObject) result;
+		}
 
-        private static IDictionary<string, IList<string>> ClaimsList(this ClaimsPrincipal user)
-        {
-            IDictionary<string, IList<string>> claims = new Dictionary<string, IList<string>>();
-            foreach (var claim in user?.Claims ?? Enumerable.Empty<Claim>())
-            {
-                if (!claims.TryGetValue(claim.Type, out var list))
-                {
-                    claims.Add(claim.Type, list = new List<string>());
-                }
+		private static IDictionary<string, IList<string>> ClaimsList(this ClaimsPrincipal user)
+		{
+			IDictionary<string, IList<string>> claims = new Dictionary<string, IList<string>>();
+			foreach (var claim in user?.Claims ?? Enumerable.Empty<Claim>())
+			{
+				if (!claims.TryGetValue(claim.Type, out var list))
+				{
+					claims.Add(claim.Type, list = new List<string>());
+				}
 
-                list.Add(claim.Value);
-            }
+				list.Add(claim.Value);
+			}
 
-            return claims;
-        }
-    }
+			return claims;
+		}
+	}
 }

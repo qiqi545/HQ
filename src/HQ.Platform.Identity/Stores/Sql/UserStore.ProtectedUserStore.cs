@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IProtectedUserStore<TUser>
-    {
-    }
+	partial class UserStore<TUser, TKey, TRole> : IProtectedUserStore<TUser>
+	{
+	}
 }

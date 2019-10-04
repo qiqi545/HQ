@@ -20,9 +20,9 @@ using System.Threading.Tasks;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ITenantSecurityStampStore<TTenant> : ITenantStore<TTenant> where TTenant : class
-    {
-        Task SetSecurityStampAsync(TTenant tenant, string stamp, CancellationToken cancellationToken);
-        Task<string> GetSecurityStampAsync(TTenant tenant, CancellationToken cancellationToken);
-    }
+	public interface ITenantSecurityStampStore<TTenant> : ITenantStore<TTenant> where TTenant : class
+	{
+		Task SetSecurityStampAsync(TTenant tenant, string stamp, CancellationToken cancellationToken);
+		Task<string> GetSecurityStampAsync(TTenant tenant, CancellationToken cancellationToken);
+	}
 }

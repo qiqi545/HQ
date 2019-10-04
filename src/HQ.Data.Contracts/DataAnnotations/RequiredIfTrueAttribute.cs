@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System.ComponentModel.DataAnnotations;
@@ -30,17 +32,18 @@ namespace HQ.Data.Contracts.DataAnnotations
 
 		protected override ValidationResult IsValid(object value, ValidationContext validationContext)
 		{
-			var accessor = ReadAccessor.Create(validationContext.ObjectInstance, AccessorMemberTypes.Fields | AccessorMemberTypes.Properties, out var members);
+			var accessor = ReadAccessor.Create(validationContext.ObjectInstance,
+				AccessorMemberTypes.Fields | AccessorMemberTypes.Properties, out var members);
 			if (!members.TryGetValue(_propertyOrFieldName, out _))
 				return ValidationResult.Success; // user error
 
-			if(!accessor.TryGetValue(validationContext.ObjectInstance, _propertyOrFieldName, out var propertyOrField))
+			if (!accessor.TryGetValue(validationContext.ObjectInstance, _propertyOrFieldName, out var propertyOrField))
 				return ValidationResult.Success; // user error
 
 			if (!(propertyOrField is bool flag))
 				return ValidationResult.Success; // user error
 
-			if(!flag)
+			if (!flag)
 				return ValidationResult.Success; // not required
 
 			var attribute = new RequiredAttribute();
@@ -51,7 +54,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 		{
 			var errorMessage = FormatErrorMessage(validationContext.DisplayName);
 
-			return new ValidationResult(errorMessage, new[] { validationContext.MemberName });
+			return new ValidationResult(errorMessage, new[] {validationContext.MemberName});
 		}
 	}
 }

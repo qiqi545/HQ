@@ -31,89 +31,138 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {
-    public class SqlServerBackgroundTaskStore : IBackgroundTaskStore
-    {
-        private static readonly List<string> NoTags = new List<string>();
-        private readonly string _schema;
-        private readonly string _tablePrefix;
-        
-        private readonly IDataConnection _db;
-        private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
+	public class SqlServerBackgroundTaskStore : IBackgroundTaskStore
+	{
+		private static readonly List<string> NoTags = new List<string>();
 
-        public SqlServerBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db, string schema = "dbo", string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
-        {
-            _db = db;
-            _schema = schema;
-            _tablePrefix = tablePrefix;
-            _logger = logger;
-        }
+		private readonly IDataConnection _db;
+		private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
+		private readonly string _schema;
+		private readonly string _tablePrefix;
 
-        internal string TaskTable => $"[{_schema}].[{_tablePrefix}]";
-        internal string TagTable => $"[{_schema}].[{_tablePrefix}_Tag]";
-        internal string TagsTable => $"[{_schema}].[{_tablePrefix}_Tags]";
+		public SqlServerBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db, string schema = "dbo",
+			string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
+		{
+			_db = db;
+			_schema = schema;
+			_tablePrefix = tablePrefix;
+			_logger = logger;
+		}
 
-        private IDbTransaction BeginTransaction(SqlConnection db, out bool owner)
-        {
-            if (_db.Transaction != null)
-            {
-                _logger?.Debug(() => "Transaction is already initiated; we are not the owner.");
-                owner = false;
-                return _db.Transaction;
-            }
-            _logger?.Debug(() => "Owner-initiated transaction occurred.");
-            var transaction = db.BeginTransaction(IsolationLevel.Serializable);
-            _db.Transaction = transaction;
-            owner = true;
-            return transaction;
-        }
+		internal string TaskTable => $"[{_schema}].[{_tablePrefix}]";
+		internal string TagTable => $"[{_schema}].[{_tablePrefix}_Tag]";
+		internal string TagsTable => $"[{_schema}].[{_tablePrefix}_Tags]";
 
-        private void CommitTransaction(IDbTransaction t)
-        {
-            t.Commit();
-            _db.Transaction = null;
-            _logger?.Debug(() => "Owner-committed transaction occurred.");
-        }
+		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out _);
+			return await GetByAnyTagsWithTagsAsync(tags, _db.Current, t);
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out _);
-            return await GetByAnyTagsWithTagsAsync(tags, _db.Current, t);
-        }
+		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out _);
+			return await GetByAllTagsWithTagsAsync(tags, db, t);
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out _);
-            return await GetByAllTagsWithTagsAsync(tags, db, t);
-        }
-        
-        public Task<BackgroundTask> GetByIdAsync(int id)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out _);
-            var task = GetByIdWithTagsAsync(id, db, t);
-            return task;
-        }
+		public Task<BackgroundTask> GetByIdAsync(int id)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out _);
+			var task = GetByIdWithTagsAsync(id, db, t);
+			return task;
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out _);
-            var locked = await GetLockedTasksWithTagsAsync(db, t);
-            return locked.Where(st => st.RunningOvertime);
-        }
+		public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out _);
+			var locked = await GetLockedTasksWithTagsAsync(db, t);
+			return locked.Where(st => st.RunningOvertime);
+		}
 
-        public Task<IEnumerable<BackgroundTask>> GetAllAsync()
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection) db, out _);
-            return GetAllWithTagsAsync(db, t);
-        }
+		public Task<IEnumerable<BackgroundTask>> GetAllAsync()
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out _);
+			return GetAllWithTagsAsync(db, t);
+		}
 
-        private async Task<IEnumerable<BackgroundTask>> GetLockedTasksWithTagsAsync(IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		public async Task<bool> SaveAsync(BackgroundTask task)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out var owner);
+			if (task.Id == 0)
+				await InsertBackgroundTaskAsync(task, db, t);
+			else
+				await UpdateBackgroundTaskAsync(task, db, t);
+
+			await UpdateTagMapping(task, db, t);
+
+			if (owner)
+				CommitTransaction(t);
+			return true;
+		}
+
+		public async Task<bool> DeleteAsync(BackgroundTask task)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out var owner);
+			var sql = $@"
+-- Primary relationship:
+DELETE FROM {TagsTable} WHERE BackgroundTaskId = @Id;
+DELETE FROM {TaskTable} WHERE Id = @Id;
+
+-- Remove any orphaned tags:
+DELETE FROM {TagTable}
+WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
+";
+			await db.ExecuteAsync(sql, task, t);
+			if (owner)
+				CommitTransaction(t);
+			return true;
+		}
+
+		public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
+		{
+			var db = _db.Current;
+			var t = BeginTransaction((SqlConnection) db, out var owner);
+			var tasks = await GetUnlockedTasksWithTags(readAhead, db, t);
+			if (tasks.Any())
+				await LockTasksAsync(tasks, db, t);
+			if (owner)
+				CommitTransaction(t);
+			return tasks;
+		}
+
+		private IDbTransaction BeginTransaction(SqlConnection db, out bool owner)
+		{
+			if (_db.Transaction != null)
+			{
+				_logger?.Debug(() => "Transaction is already initiated; we are not the owner.");
+				owner = false;
+				return _db.Transaction;
+			}
+
+			_logger?.Debug(() => "Owner-initiated transaction occurred.");
+			var transaction = db.BeginTransaction(IsolationLevel.Serializable);
+			_db.Transaction = transaction;
+			owner = true;
+			return transaction;
+		}
+
+		private void CommitTransaction(IDbTransaction t)
+		{
+			t.Commit();
+			_db.Transaction = null;
+			_logger?.Debug(() => "Owner-committed transaction occurred.");
+		}
+
+		private async Task<IEnumerable<BackgroundTask>> GetLockedTasksWithTagsAsync(IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
@@ -122,13 +171,14 @@ WHERE
 ORDER BY
     {TagTable}.Name ASC    
 ";
-            return await QueryWithSplitOnTagsAsync(db, t, sql);
-        }
+			return await QueryWithSplitOnTagsAsync(db, t, sql);
+		}
 
-        private async Task<IEnumerable<BackgroundTask>> GetUnlockedTasksWithTags(int readAhead, IDbConnection db, IDbTransaction t)
-        {
-            // None locked, failed or succeeded, must be due, ordered by due time then priority
-            var sql = $@"
+		private async Task<IEnumerable<BackgroundTask>> GetUnlockedTasksWithTags(int readAhead, IDbConnection db,
+			IDbTransaction t)
+		{
+			// None locked, failed or succeeded, must be due, ordered by due time then priority
+			var sql = $@"
 SELECT TOP {{0}} st.* FROM {TaskTable} st
 WHERE
     st.[LockedAt] IS NULL 
@@ -142,60 +192,61 @@ ORDER BY
     st.[RunAt], 
     st.[Priority] ASC
 ";
-            var matchSql = string.Format(sql, readAhead);
+			var matchSql = string.Format(sql, readAhead);
 
-            var matches = await db.QueryAsync<BackgroundTask>(matchSql, transaction: t);
+			var matches = await db.QueryAsync<BackgroundTask>(matchSql, transaction: t);
 
-            if (!matches.Any())
-                return matches;
+			if (!matches.Any())
+				return matches;
 
-            var fetchSql = $@"
+			var fetchSql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 WHERE {TaskTable}.Id IN @Ids
 ORDER BY {TagTable}.Name ASC
 ";
-            var ids = matches.Select(m => m.Id);
+			var ids = matches.Select(m => m.Id);
 
-            return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new { Ids = ids });
-        }
+			return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new {Ids = ids});
+		}
 
-        private async Task<BackgroundTask> GetByIdWithTagsAsync(int id, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		private async Task<BackgroundTask> GetByIdWithTagsAsync(int id, IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 WHERE {TaskTable}.Id = @Id
 ORDER BY {TagTable}.Name ASC
 ";
-            BackgroundTask task = null;
-            await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
-            {
-                task = task ?? s;
-                if (tag != null)
-                    task.Tags.Add(tag);
-                return task;
-            }, new { Id = id }, splitOn: "Name", transaction: t);
+			BackgroundTask task = null;
+			await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
+			{
+				task = task ?? s;
+				if (tag != null)
+					task.Tags.Add(tag);
+				return task;
+			}, new {Id = id}, splitOn: "Name", transaction: t);
 
-            return task;
-        }
+			return task;
+		}
 
-        private async Task<IEnumerable<BackgroundTask>> GetAllWithTagsAsync(IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		private async Task<IEnumerable<BackgroundTask>> GetAllWithTagsAsync(IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 ORDER BY {TagTable}.Name ASC
 ";
-            return await QueryWithSplitOnTagsAsync(db, t, sql);
-        }
+			return await QueryWithSplitOnTagsAsync(db, t, sql);
+		}
 
-        private async Task<IEnumerable<BackgroundTask>> GetByAnyTagsWithTagsAsync(IEnumerable tags, IDbConnection db, IDbTransaction t)
-        {
-            var matchSql = $@"
+		private async Task<IEnumerable<BackgroundTask>> GetByAnyTagsWithTagsAsync(IEnumerable tags, IDbConnection db,
+			IDbTransaction t)
+		{
+			var matchSql = $@"
 SELECT st.*
 FROM {TagsTable} stt, {TaskTable} st, {TagTable} t
 WHERE stt.TagId = t.Id
@@ -206,26 +257,27 @@ st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumA
 st.Id, st.LastError, st.FailedAt, st.SucceededAt, st.LockedAt, st.LockedBy, st.CreatedAt,
 t.Name
 ";
-            var matches = db.Query<BackgroundTask>(matchSql, new { Tags = tags }, t).ToList();
+			var matches = db.Query<BackgroundTask>(matchSql, new {Tags = tags}, t).ToList();
 
-            if (!matches.Any())
-                return matches;
+			if (!matches.Any())
+				return matches;
 
-            var fetchSql = $@"
+			var fetchSql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 WHERE {TaskTable}.Id IN @Ids
 ORDER BY {TagTable}.Name ASC
 ";
-            var ids = matches.Select(m => m.Id);
+			var ids = matches.Select(m => m.Id);
 
-            return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new { Ids = ids });
-        }
+			return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new {Ids = ids});
+		}
 
-        private async Task<IEnumerable<BackgroundTask>> GetByAllTagsWithTagsAsync(IReadOnlyCollection<string> tags, IDbConnection db, IDbTransaction t)
-        {
-            var matchSql = $@"
+		private async Task<IEnumerable<BackgroundTask>> GetByAllTagsWithTagsAsync(IReadOnlyCollection<string> tags,
+			IDbConnection db, IDbTransaction t)
+		{
+			var matchSql = $@"
 SELECT st.*
 FROM {TagsTable} stt, {TaskTable} st, {TagTable} t
 WHERE stt.TagId = t.Id
@@ -236,78 +288,44 @@ st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumA
 st.Id, st.LastError, st.FailedAt, st.SucceededAt, st.LockedAt, st.LockedBy, st.CreatedAt
 HAVING COUNT (st.Id) = @Count
 ";
-            var matches = db.Query<BackgroundTask>(matchSql, new { Tags = tags, tags.Count }, t).ToList();
+			var matches = db.Query<BackgroundTask>(matchSql, new {Tags = tags, tags.Count}, t).ToList();
 
-            if (!matches.Any())
-                return matches;
+			if (!matches.Any())
+				return matches;
 
-            var fetchSql = $@"
+			var fetchSql = $@"
 SELECT {TaskTable}.*, {TagTable}.Name FROM {TaskTable}
 LEFT JOIN {TagsTable} ON {TagsTable}.BackgroundTaskId = {TaskTable}.Id
 LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 WHERE {TaskTable}.Id IN @Ids
 ORDER BY {TagTable}.Name ASC
 ";
-            var ids = matches.Select(m => m.Id);
+			var ids = matches.Select(m => m.Id);
 
-            return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new { Ids = ids });
-        }
+			return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new {Ids = ids});
+		}
 
-        private static async Task<IEnumerable<BackgroundTask>> QueryWithSplitOnTagsAsync(IDbConnection db, IDbTransaction t, string sql, object data = null)
-        {
-            var lookup = new Dictionary<int, BackgroundTask>();
+		private static async Task<IEnumerable<BackgroundTask>> QueryWithSplitOnTagsAsync(IDbConnection db,
+			IDbTransaction t, string sql, object data = null)
+		{
+			var lookup = new Dictionary<int, BackgroundTask>();
 
-            await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
-            {
-                if (!lookup.TryGetValue(s.Id, out var task))
-                    lookup.Add(s.Id, task = s);
-                if (tag != null)
-                    task.Tags.Add(tag);
-                return task;
-            }, data, splitOn: "Name", transaction: t);
+			await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
+			{
+				if (!lookup.TryGetValue(s.Id, out var task))
+					lookup.Add(s.Id, task = s);
+				if (tag != null)
+					task.Tags.Add(tag);
+				return task;
+			}, data, splitOn: "Name", transaction: t);
 
-            var result = lookup.Values.ToList();
-            return result;
-        }
+			var result = lookup.Values.ToList();
+			return result;
+		}
 
-        public async Task<bool> SaveAsync(BackgroundTask task)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection)db, out var owner);
-            if (task.Id == 0)
-                await InsertBackgroundTaskAsync(task, db, t);
-            else
-                await UpdateBackgroundTaskAsync(task, db, t);
-
-            await UpdateTagMapping(task, db, t);
-
-            if (owner)
-                CommitTransaction(t);
-            return true;
-        }
-
-        public async Task<bool> DeleteAsync(BackgroundTask task)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection)db, out var owner);
-            var sql = $@"
--- Primary relationship:
-DELETE FROM {TagsTable} WHERE BackgroundTaskId = @Id;
-DELETE FROM {TaskTable} WHERE Id = @Id;
-
--- Remove any orphaned tags:
-DELETE FROM {TagTable}
-WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
-";
-            await db.ExecuteAsync(sql, task, t);
-            if (owner)
-                CommitTransaction(t);
-            return true;
-        }
-
-        private async Task UpdateBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		private async Task UpdateBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 UPDATE {TaskTable} 
 SET 
     Priority = @Priority, 
@@ -333,12 +351,12 @@ SET
 WHERE 
     Id = @Id
 ";
-            await db.ExecuteAsync(sql, task, t);
-        }
+			await db.ExecuteAsync(sql, task, t);
+		}
 
-        private async Task InsertBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		private async Task InsertBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 INSERT INTO {TaskTable} 
     (Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError, [Data]) 
 VALUES
@@ -346,25 +364,15 @@ VALUES
 
 SELECT MAX(Id) FROM {TaskTable};
 ";
-            task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
-            task.CreatedAt = (await db.QueryAsync<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t)).Single();
-        }
+			task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
+			task.CreatedAt =
+				(await db.QueryAsync<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t))
+				.Single();
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
-        {
-            var db = _db.Current;
-            var t = BeginTransaction((SqlConnection)db, out var owner);
-            var tasks = await GetUnlockedTasksWithTags(readAhead, db, t);
-            if (tasks.Any())
-                await LockTasksAsync(tasks, db, t);
-            if (owner)
-                CommitTransaction(t);
-            return tasks;
-        }
-
-        private async Task LockTasksAsync(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
-        {
-            var sql = $@"
+		private async Task LockTasksAsync(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
+		{
+			var sql = $@"
 UPDATE {TaskTable}  
 SET 
     LockedAt = @Now, 
@@ -372,41 +380,36 @@ SET
 WHERE Id IN 
     @Ids
 ";
-            var now = DateTime.Now;
-            var user = LockedIdentity.Get();
+			var now = DateTime.Now;
+			var user = LockedIdentity.Get();
 
-            await db.ExecuteAsync(sql, new
-            {
-                Now = now,
-                Ids = tasks.Select(task => task.Id),
-                User = user
-            }, t);
+			await db.ExecuteAsync(sql, new {Now = now, Ids = tasks.Select(task => task.Id), User = user}, t);
 
-            foreach (var task in tasks)
-            {
-                task.LockedAt = now;
-                task.LockedBy = user;
-            }
-        }
+			foreach (var task in tasks)
+			{
+				task.LockedAt = now;
+				task.LockedBy = user;
+			}
+		}
 
-        private async Task UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)
-        {
-            var source = task.Tags ?? NoTags;
+		private async Task UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		{
+			var source = task.Tags ?? NoTags;
 
-            if (source == NoTags || source.Count == 0)
-            {
-                await db.ExecuteAsync($"DELETE FROM {TagsTable} WHERE [BackgroundTaskId] = @Id", task, t);
-                return;
-            }
+			if (source == NoTags || source.Count == 0)
+			{
+				await db.ExecuteAsync($"DELETE FROM {TagsTable} WHERE [BackgroundTaskId] = @Id", task, t);
+				return;
+			}
 
-            // normalize for storage
-            var normalized = source.Select(st => st.Trim().Replace(" ", "-").Replace("'", "\""));
+			// normalize for storage
+			var normalized = source.Select(st => st.Trim().Replace(" ", "-").Replace("'", "\""));
 
-            // values = VALUES @Tags
-            // sql server only permits 1000 values per statement
-            foreach (var tags in normalized.Split(1000))
-            {
-                var upsertSql = $@"
+			// values = VALUES @Tags
+			// sql server only permits 1000 values per statement
+			foreach (var tags in normalized.Split(1000))
+			{
+				var upsertSql = $@"
 -- upsert tags
 MERGE {TagTable}
 USING (VALUES {{0}}) AS Pending (Name) 
@@ -429,10 +432,10 @@ WHEN NOT MATCHED THEN
     INSERT (BackgroundTaskId,TagId) VALUES (Pending.BackgroundTaskId, Pending.TagId)
 ;
 ";
-                var values = tags.Select(tag => $"('{tag}')");
-                var sql = string.Format(upsertSql, string.Join(",", values));
-                await db.ExecuteAsync(sql, new { BackgroundTaskId = task.Id, Tags = tags }, t);
-            }
-        }
-    }
+				var values = tags.Select(tag => $"('{tag}')");
+				var sql = string.Format(upsertSql, string.Join(",", values));
+				await db.ExecuteAsync(sql, new {BackgroundTaskId = task.Id, Tags = tags}, t);
+			}
+		}
+	}
 }

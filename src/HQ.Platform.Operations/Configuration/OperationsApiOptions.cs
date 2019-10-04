@@ -22,43 +22,43 @@ using Constants = HQ.Common.Constants;
 namespace HQ.Platform.Operations.Configuration
 {
 	public class OperationsApiOptions : IProtectedFeature
-    {
-        public string RootPath { get; set; } = "/ops";
+	{
+		public string RootPath { get; set; } = "/ops";
 
-        public bool EnableRouteDebugging { get; set; } = true;
-        public string RouteDebuggingPath { get; set; } = "/routes";
+		public bool EnableRouteDebugging { get; set; } = true;
+		public string RouteDebuggingPath { get; set; } = "/routes";
 
-        public bool EnableEnvironmentEndpoint { get; set; } = true;
-        public string EnvironmentEndpointPath { get; set; } = "/env";
+		public bool EnableEnvironmentEndpoint { get; set; } = true;
+		public string EnvironmentEndpointPath { get; set; } = "/env";
 
-        public bool EnableOptionsDebugging { get; set; } = true;
-        public string OptionsDebuggingPath { get; set; } = "/options";
+		public bool EnableOptionsDebugging { get; set; } = true;
+		public string OptionsDebuggingPath { get; set; } = "/options";
 
-        public bool EnableServicesDebugging { get; set; } = true;
-        public string ServicesDebuggingPath { get; set; } = "/services";
+		public bool EnableServicesDebugging { get; set; } = true;
+		public string ServicesDebuggingPath { get; set; } = "/services";
 
-        public bool EnableHostedServicesDebugging { get; set; } = true;
-        public string HostedServicesDebuggingPath { get; set; } = "/hostedServices";
+		public bool EnableHostedServicesDebugging { get; set; } = true;
+		public string HostedServicesDebuggingPath { get; set; } = "/hostedServices";
 
-        public bool EnableFeatureDebugging { get; set; } = true;
-        public string FeatureDebuggingPath { get; set; } = "/features";
+		public bool EnableFeatureDebugging { get; set; } = true;
+		public string FeatureDebuggingPath { get; set; } = "/features";
 
-        public bool EnableCacheDebugging { get; set; } = true;
-        public string CacheDebuggingPath { get; set; } = "/caches";
+		public bool EnableCacheDebugging { get; set; } = true;
+		public string CacheDebuggingPath { get; set; } = "/caches";
 
-        public bool EnableRequestProfiling { get; set; } = true;
-        public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
+		public bool EnableRequestProfiling { get; set; } = true;
+		public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
 
-        public bool EnableHealthChecksEndpoints { get; set; } = true;
-        public string HealthCheckLivePath { get; set; } = "/ping";
-        public string HealthChecksPath { get; set; } = "/health";
+		public bool EnableHealthChecksEndpoints { get; set; } = true;
+		public string HealthCheckLivePath { get; set; } = "/ping";
+		public string HealthChecksPath { get; set; } = "/health";
 
-        public bool EnableMetricsEndpoint { get; set; } = true;
-        public string MetricsEndpointPath { get; set; } = "/metrics";
+		public bool EnableMetricsEndpoint { get; set; } = true;
+		public string MetricsEndpointPath { get; set; } = "/metrics";
 
-        public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
+		public MetricsOptions MetricsOptions { get; set; } = new MetricsOptions();
 
-        public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; set; } = Constants.Security.Policies.AccessOperations;
-    }
+	}
 }

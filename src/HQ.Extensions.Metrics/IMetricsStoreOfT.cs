@@ -20,9 +20,9 @@ using HQ.Data.Contracts.Runtime;
 
 namespace HQ.Extensions.Metrics
 {
-    public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
-        where TFilter : IMetric
-    {
-        IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
-    }
+	public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
+		where TFilter : IMetric
+	{
+		IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
+	}
 }

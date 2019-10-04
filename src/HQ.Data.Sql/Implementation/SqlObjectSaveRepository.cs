@@ -30,14 +30,16 @@ using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Implementation
 {
-	public class SqlObjectSaveRepository<TObject, TBatchOptions> : IObjectSaveRepository<TObject> where TObject : IObject
+	public class SqlObjectSaveRepository<TObject, TBatchOptions> : IObjectSaveRepository<TObject>
+		where TObject : IObject
 	{
-		private readonly IDataConnection _db;
 		private readonly IDataBatchOperation<TBatchOptions> _copy;
-		private readonly IServerTimestampService _timestamps;
+		private readonly IDataConnection _db;
 		private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
+		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TBatchOptions> batching, IServerTimestampService timestamps)
+		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TBatchOptions> batching,
+			IServerTimestampService timestamps)
 		{
 			_db = db;
 			_copy = batching;
@@ -66,7 +68,8 @@ namespace HQ.Data.Sql.Implementation
 			return Operation.FromResult(ObjectSave.Updated);
 		}
 
-		public async Task<Operation> SaveAsync(IEnumerable<TObject> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null)
+		public async Task<Operation> SaveAsync(IEnumerable<TObject> objects, BatchSaveStrategy strategy,
+			long startingAt = 0, int? count = null)
 		{
 			_db.SetTypeInfo(typeof(TObject));
 			await _db.Current.CopyAsync(_copy, _descriptor, objects, strategy, startingAt, count);
@@ -76,11 +79,12 @@ namespace HQ.Data.Sql.Implementation
 
 	public class SqlObjectSaveRepository<TOptions> : IObjectSaveRepository
 	{
-		private readonly IDataConnection _db;
 		private readonly IDataBatchOperation<TOptions> _copy;
+		private readonly IDataConnection _db;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TOptions> batching, IServerTimestampService timestamps)
+		public SqlObjectSaveRepository(IDataConnection<RuntimeBuilder> db, IDataBatchOperation<TOptions> batching,
+			IServerTimestampService timestamps)
 		{
 			_db = db;
 			_copy = batching;
@@ -111,7 +115,8 @@ namespace HQ.Data.Sql.Implementation
 			return Operation.FromResult(ObjectSave.Updated);
 		}
 
-		public async Task<Operation> SaveAsync(Type type, IEnumerable<IObject> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null)
+		public async Task<Operation> SaveAsync(Type type, IEnumerable<IObject> objects, BatchSaveStrategy strategy,
+			long startingAt = 0, int? count = null)
 		{
 			var descriptor = SimpleDataDescriptor.Create(type);
 			_db.SetTypeInfo(type);

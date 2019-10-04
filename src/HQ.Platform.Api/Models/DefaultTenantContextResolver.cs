@@ -27,54 +27,54 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Models
 {
-    public class DefaultTenantContextResolver<TTenant> : ITenantContextResolver<TTenant> where TTenant : class
-    {
-        private readonly ILogger _logger;
-        private readonly IOptions<MultiTenancyOptions> _options;
-        private readonly ICache _tenantCache;
-        private readonly ITenantContextStore<TTenant> _tenantContextStore;
+	public class DefaultTenantContextResolver<TTenant> : ITenantContextResolver<TTenant> where TTenant : class
+	{
+		private readonly ILogger _logger;
+		private readonly IOptions<MultiTenancyOptions> _options;
+		private readonly ICache _tenantCache;
+		private readonly ITenantContextStore<TTenant> _tenantContextStore;
 
-        public DefaultTenantContextResolver(ICache tenantCache, ITenantContextStore<TTenant> tenantContextStore,
-            IOptions<MultiTenancyOptions> options, ILogger<ITenantContextResolver<TTenant>> logger)
-        {
-            _tenantCache = tenantCache;
-            _tenantContextStore = tenantContextStore;
-            _options = options;
-            _logger = logger;
-        }
+		public DefaultTenantContextResolver(ICache tenantCache, ITenantContextStore<TTenant> tenantContextStore,
+			IOptions<MultiTenancyOptions> options, ILogger<ITenantContextResolver<TTenant>> logger)
+		{
+			_tenantCache = tenantCache;
+			_tenantContextStore = tenantContextStore;
+			_options = options;
+			_logger = logger;
+		}
 
-        public async Task<TenantContext<TTenant>> ResolveAsync(HttpContext http)
-        {
-            if (string.IsNullOrWhiteSpace(_options.Value.TenantHeader) ||
-                !http.Request.Headers.TryGetValue(_options.Value.TenantHeader, out var tenantKey))
-            {
-                tenantKey = http?.Request?.Host.Value.ToUpperInvariant();
-            }
+		public async Task<TenantContext<TTenant>> ResolveAsync(HttpContext http)
+		{
+			if (string.IsNullOrWhiteSpace(_options.Value.TenantHeader) ||
+			    !http.Request.Headers.TryGetValue(_options.Value.TenantHeader, out var tenantKey))
+			{
+				tenantKey = http?.Request?.Host.Value.ToUpperInvariant();
+			}
 
-            var useCache = _options.Value.TenantLifetimeSeconds.HasValue;
-            if (!useCache)
-            {
-                return await _tenantContextStore.FindByKeyAsync(tenantKey);
-            }
+			var useCache = _options.Value.TenantLifetimeSeconds.HasValue;
+			if (!useCache)
+			{
+				return await _tenantContextStore.FindByKeyAsync(tenantKey);
+			}
 
-            if (_tenantCache.Get($"{Constants.ContextKeys.Tenant}:{tenantKey}") is TenantContext<TTenant> tenantContext)
-            {
-                return tenantContext;
-            }
+			if (_tenantCache.Get($"{Constants.ContextKeys.Tenant}:{tenantKey}") is TenantContext<TTenant> tenantContext)
+			{
+				return tenantContext;
+			}
 
-            tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey);
-            if (tenantContext == null)
-            {
-                return null;
-            }
+			tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey);
+			if (tenantContext == null)
+			{
+				return null;
+			}
 
-            foreach (var identifier in tenantContext.Identifiers ?? Enumerable.Empty<string>())
-            {
-                _tenantCache.Set($"{Constants.ContextKeys.Tenant}:{identifier}", tenantContext,
-                    TimeSpan.FromSeconds(_options.Value.TenantLifetimeSeconds.Value));
-            }
+			foreach (var identifier in tenantContext.Identifiers ?? Enumerable.Empty<string>())
+			{
+				_tenantCache.Set($"{Constants.ContextKeys.Tenant}:{identifier}", tenantContext,
+					TimeSpan.FromSeconds(_options.Value.TenantLifetimeSeconds.Value));
+			}
 
-            return tenantContext;
-        }
-    }
+			return tenantContext;
+		}
+	}
 }

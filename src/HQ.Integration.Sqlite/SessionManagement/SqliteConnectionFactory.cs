@@ -21,11 +21,11 @@ using Microsoft.Data.Sqlite;
 
 namespace HQ.Integration.Sqlite.SessionManagement
 {
-    public class SqliteConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new SqliteConnection(ConnectionString);
-        }
-    }
+	public class SqliteConnectionFactory : ConnectionFactory
+	{
+		public override IDbConnection CreateConnection()
+		{
+			return new SqliteConnection(ConnectionString);
+		}
+	}
 }

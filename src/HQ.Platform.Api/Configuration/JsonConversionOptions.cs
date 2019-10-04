@@ -25,46 +25,48 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class JsonConversionOptions : FeatureToggle, IMetaParameterProvider
-    {
-	    public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
-        public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
-        public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;
-        public string PrettyPrintOperator { get; set; } = Constants.QueryStrings.PrettyPrint;
+	public class JsonConversionOptions : FeatureToggle, IMetaParameterProvider
+	{
+		public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
+		public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
+		public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;
+		public string PrettyPrintOperator { get; set; } = Constants.QueryStrings.PrettyPrint;
 
-        public void Enrich(string url, MetaOperation operation, IServiceProvider serviceProvider)
-        {
-	        if (operation.url == null)
-		        operation.url = MetaUrl.FromRaw(url);
+		public void Enrich(string url, MetaOperation operation, IServiceProvider serviceProvider)
+		{
+			if (operation.url == null)
+				operation.url = MetaUrl.FromRaw(url);
 
 			if (Enabled)
-	        {
-		        var transforms = serviceProvider.GetServices<ITextTransform>();
-		        var cases = transforms.Select(x => x.Name.ToLowerInvariant()).ToList();
+			{
+				var transforms = serviceProvider.GetServices<ITextTransform>();
+				var cases = transforms.Select(x => x.Name.ToLowerInvariant()).ToList();
 
-		        var multiCaseParameter = new MetaParameter
-		        {
-			        key = MultiCaseOperator,
-			        value = cases.FirstOrDefault() ?? string.Empty,
-			        description = $"Transforms responses to alternative cases. Valid values are: {string.Join(", ", cases)}.",
-			        disabled = true
-		        };
+				var multiCaseParameter = new MetaParameter
+				{
+					key = MultiCaseOperator,
+					value = cases.FirstOrDefault() ?? string.Empty,
+					description =
+						$"Transforms responses to alternative cases. Valid values are: {string.Join(", ", cases)}.",
+					disabled = true
+				};
 
 				var envelopeParameter = new MetaParameter
-		        {
-			        key = EnvelopeOperator,
-			        value = "1",
-			        description = "Transforms responses to include more information in the payload for constrained clients.",
-			        disabled = true
-		        };
+				{
+					key = EnvelopeOperator,
+					value = "1",
+					description =
+						"Transforms responses to include more information in the payload for constrained clients.",
+					disabled = true
+				};
 
 				var prettyPrintParameter = new MetaParameter
-		        {
-			        key = PrettyPrintOperator,
-			        value = "1",
-			        description = "Enhances readability of responses by adding whitespace and nesting.",
-			        disabled = true
-		        };
+				{
+					key = PrettyPrintOperator,
+					value = "1",
+					description = "Enhances readability of responses by adding whitespace and nesting.",
+					disabled = true
+				};
 
 				var trimParameter = new MetaParameter
 				{
@@ -75,14 +77,11 @@ namespace HQ.Platform.Api.Configuration
 				};
 
 				operation.url.query = operation.url.query ?? (operation.url.query = new List<MetaParameter>());
-				operation.url.query.AddRange(new []
+				operation.url.query.AddRange(new[]
 				{
-					multiCaseParameter,
-					envelopeParameter,
-					trimParameter,
-					prettyPrintParameter
+					multiCaseParameter, envelopeParameter, trimParameter, prettyPrintParameter
 				});
-	        }
-        }
-    }
+			}
+		}
+	}
 }

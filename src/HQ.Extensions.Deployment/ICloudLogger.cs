@@ -19,8 +19,8 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Deployment
 {
-    public interface ICloudLogger<in T> where T : ICloudOptions
-    {
-        void AddCloudLogger(ILoggingBuilder builder, T options);
-    }
+	public interface ICloudLogger<in T> where T : ICloudOptions
+	{
+		void AddCloudLogger(ILoggingBuilder builder, T options);
+	}
 }

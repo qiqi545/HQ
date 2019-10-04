@@ -23,29 +23,30 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Queries
 {
-    public static class ObjectQueryBuilder
-    {
-        public static string Build<T>(this ISqlDialect dialect, SortOptions sort = null, FieldOptions fields = null,
-            FilterOptions filter = null, ProjectionOptions projections = null)
-        {
-            return Build(dialect, typeof(T), sort, fields, filter, projections);
-        }
+	public static class ObjectQueryBuilder
+	{
+		public static string Build<T>(this ISqlDialect dialect, SortOptions sort = null, FieldOptions fields = null,
+			FilterOptions filter = null, ProjectionOptions projections = null)
+		{
+			return Build(dialect, typeof(T), sort, fields, filter, projections);
+		}
 
-        public static string Build(this ISqlDialect dialect, Type type, SortOptions sort = null, FieldOptions fields = null,
-            FilterOptions filter = null, ProjectionOptions projections = null)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                // SELECT * FROM ...
-                sb.Append(dialect.Select(type, fields, projections));
+		public static string Build(this ISqlDialect dialect, Type type, SortOptions sort = null,
+			FieldOptions fields = null,
+			FilterOptions filter = null, ProjectionOptions projections = null)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				// SELECT * FROM ...
+				sb.Append(dialect.Select(type, fields, projections));
 
-                // WHERE ...
-                if (filter?.Fields.Count > 0) sb.Append($" {dialect.Where(filter)}");
+				// WHERE ...
+				if (filter?.Fields.Count > 0) sb.Append($" {dialect.Where(filter)}");
 
-                // ORDER BY ...
-                if (sort?.Fields.Count > 0)
-                    sb.Append($" {SortingBuilder.OrderBy(dialect, sort)}");
-            });
-        }
-    }
+				// ORDER BY ...
+				if (sort?.Fields.Count > 0)
+					sb.Append($" {SortingBuilder.OrderBy(dialect, sort)}");
+			});
+		}
+	}
 }

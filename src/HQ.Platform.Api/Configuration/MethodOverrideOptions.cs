@@ -19,11 +19,13 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class MethodOverrideOptions : FeatureToggle
-    {
-        public string MethodOverrideHeader { get; set; } = Constants.HttpHeaders.MethodOverride;
+	public class MethodOverrideOptions : FeatureToggle
+	{
+		public string MethodOverrideHeader { get; set; } = Constants.HttpHeaders.MethodOverride;
 
-        public string[] AllowedMethodOverrides { get; set; } =
-            {Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put};
-    }
+		public string[] AllowedMethodOverrides { get; set; } =
+		{
+			Constants.HttpVerbs.Delete, Constants.HttpVerbs.Head, Constants.HttpVerbs.Put
+		};
+	}
 }

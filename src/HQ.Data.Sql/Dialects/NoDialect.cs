@@ -21,46 +21,46 @@ using HQ.Data.Sql.Helpers;
 
 namespace HQ.Data.Sql.Dialects
 {
-    public class NoDialect : SqlDialect
-    {
-        public static readonly NoDialect Default = new NoDialect();
+	public class NoDialect : SqlDialect
+	{
+		public static readonly NoDialect Default = new NoDialect();
 
-        public NoDialect(char? startIdentifier = null, char? endIdentifier = null, char? separator = null,
-            char? parameter = '@', char? quote = '\'')
-        {
-            StartIdentifier = startIdentifier;
-            EndIdentifier = endIdentifier;
-            Separator = separator;
-            Parameter = parameter;
-            Quote = quote;
-        }
+		public NoDialect(char? startIdentifier = null, char? endIdentifier = null, char? separator = null,
+			char? parameter = '@', char? quote = '\'')
+		{
+			StartIdentifier = startIdentifier;
+			EndIdentifier = endIdentifier;
+			Separator = separator;
+			Parameter = parameter;
+			Quote = quote;
+		}
 
-        public override char? StartIdentifier { get; }
-        public override char? EndIdentifier { get; }
-        public override char? Separator { get; }
-        public override char? Parameter { get; }
-        public override char? Quote { get; }
+		public override char? StartIdentifier { get; }
+		public override char? EndIdentifier { get; }
+		public override char? Separator { get; }
+		public override char? Parameter { get; }
+		public override char? Quote { get; }
 
-        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
-        {
-            sql = null;
-            return false;
-        }
+		public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
+		{
+			sql = null;
+			return false;
+		}
 
-        public override void Page(string sql, StringBuilder sb)
-        {
-            PagingHelper.SplitSql(sql, out var parts);
+		public override void Page(string sql, StringBuilder sb)
+		{
+			PagingHelper.SplitSql(sql, out var parts);
 
-            var orderBy = parts.SqlOrderBy ?? " ";
+			var orderBy = parts.SqlOrderBy ?? " ";
 
-            var selectClause = parts.SqlOrderBy == null
-                ? parts.SqlSelectRemoved
-                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+			var selectClause = parts.SqlOrderBy == null
+				? parts.SqlSelectRemoved
+				: parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
 
-            sb.Append("SELECT ").Append(selectClause)
-                .Append(orderBy)
-                .Append(" LIMIT ").AppendParameter(this, "PerPage")
-                .Append(" OFFSET ").AppendParameter(this, "Page");
-        }
-    }
+			sb.Append("SELECT ").Append(selectClause)
+				.Append(orderBy)
+				.Append(" LIMIT ").AppendParameter(this, "PerPage")
+				.Append(" OFFSET ").AppendParameter(this, "Page");
+		}
+	}
 }

@@ -20,25 +20,25 @@ using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class VersioningOptions : FeatureToggle
-    {
-        public bool RequireExplicitVersion { get; set; } = false;
-        public int ExplicitVersionRequiredStatusCode = (int) HttpStatusCode.NotFound;
+	public class VersioningOptions : FeatureToggle
+	{
+		public int ExplicitVersionRequiredStatusCode = (int) HttpStatusCode.NotFound;
+		public bool RequireExplicitVersion { get; set; } = false;
 
-        public bool EnableVersionHeader { get; set; } = false;
-        public string VersionHeader { get; set; } = Constants.Versioning.VersionHeader;
+		public bool EnableVersionHeader { get; set; } = false;
+		public string VersionHeader { get; set; } = Constants.Versioning.VersionHeader;
 
-        public bool EnableVersionParameter { get; set; } = true;
-        public string VersionParameter { get; set; } = Constants.Versioning.VersionParameter;
+		public bool EnableVersionParameter { get; set; } = true;
+		public string VersionParameter { get; set; } = Constants.Versioning.VersionParameter;
 
-        public bool EnableVersionPath { get; set; } = true;
-        public string VersionPathPrefix { get; set; } = Constants.Versioning.VersionPathPrefix;
+		public bool EnableVersionPath { get; set; } = true;
+		public string VersionPathPrefix { get; set; } = Constants.Versioning.VersionPathPrefix;
 
-        public bool EnableUserVersions { get; set; } = true;
-        public string UserVersionClaim { get; set; } = Constants.Versioning.UserVersionClaim;
+		public bool EnableUserVersions { get; set; } = true;
+		public string UserVersionClaim { get; set; } = Constants.Versioning.UserVersionClaim;
 
-        public int? VersionLifetimeSeconds { get; set; } = 180;
+		public int? VersionLifetimeSeconds { get; set; } = 180;
 
-        public string[] VersionAgnosticPaths { get; set; } = {"/"};
-    }
+		public string[] VersionAgnosticPaths { get; set; } = {"/"};
+	}
 }

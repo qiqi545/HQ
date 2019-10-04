@@ -22,88 +22,104 @@ using System.Reflection;
 
 namespace HQ.Common
 {
-    public static class TypeExtensions
-    {
-        private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
-        {
-            typeof(sbyte), typeof(sbyte?), typeof(byte), typeof(byte?),
-            typeof(ushort), typeof(ushort?), typeof(short), typeof(short?),
-            typeof(uint), typeof(uint?), typeof(int), typeof(int?),
-            typeof(ulong), typeof(ulong?), typeof(long), typeof(long?)
-        };
+	public static class TypeExtensions
+	{
+		private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
+		{
+			typeof(sbyte),
+			typeof(sbyte?),
+			typeof(byte),
+			typeof(byte?),
+			typeof(ushort),
+			typeof(ushort?),
+			typeof(short),
+			typeof(short?),
+			typeof(uint),
+			typeof(uint?),
+			typeof(int),
+			typeof(int?),
+			typeof(ulong),
+			typeof(ulong?),
+			typeof(long),
+			typeof(long?)
+		};
 
-        private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
-        {
-            typeof(float), typeof(double), typeof(decimal), typeof(Complex), typeof(BigInteger)
-        };
+		private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
+		{
+			typeof(float),
+			typeof(double),
+			typeof(decimal),
+			typeof(Complex),
+			typeof(BigInteger)
+		};
 
-        public static string GetNonGenericName(this Type type)
-        {
-            if (type == null)
-                return null;
-            var name = type.Name;
-            var index = name.IndexOf('`');
-            return index == -1 ? name : name.Substring(0, index);
-        }
+		public static string GetNonGenericName(this Type type)
+		{
+			if (type == null)
+				return null;
+			var name = type.Name;
+			var index = name.IndexOf('`');
+			return index == -1 ? name : name.Substring(0, index);
+		}
 
-        public static bool IsInteger(this Type type)
-        {
-            return IntegerTypes.Contains(type);
-        }
+		public static bool IsInteger(this Type type)
+		{
+			return IntegerTypes.Contains(type);
+		}
 
-        public static bool IsNumeric(this Type type)
-        {
-            return RealNumberTypes.Contains(type) || type.IsInteger();
-        }
+		public static bool IsNumeric(this Type type)
+		{
+			return RealNumberTypes.Contains(type) || type.IsInteger();
+		}
 
-        public static bool IsTruthy(this Type type)
-        {
-            return type == typeof(bool) || type == typeof(bool?);
-        }
+		public static bool IsTruthy(this Type type)
+		{
+			return type == typeof(bool) || type == typeof(bool?);
+		}
 
-        public static bool ImplementsGeneric(this Type type, Type generic)
-        {
-            while (true)
-            {
-                if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
-                    return true;
+		public static bool ImplementsGeneric(this Type type, Type generic)
+		{
+			while (true)
+			{
+				if (type.IsConstructedGenericType && type.GetGenericTypeDefinition() == generic)
+					return true;
 
-                var interfaces = type.GetTypeInfo().ImplementedInterfaces;
+				var interfaces = type.GetTypeInfo().ImplementedInterfaces;
 
-                foreach (var @interface in interfaces)
-                {
-                    if (@interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic)
-                        return true;
-                }
+				foreach (var @interface in interfaces)
+				{
+					if (@interface.IsConstructedGenericType && @interface.GetGenericTypeDefinition() == generic)
+						return true;
+				}
 
-                if (type.BaseType == null)
-                    return false;
+				if (type.BaseType == null)
+					return false;
 
-                type = type.BaseType;
-            }
-        }
+				type = type.BaseType;
+			}
+		}
 
 
+		public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType)
+		{
+			return GetImplementationsOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());
+		}
 
-        public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType)
-        {
-            return GetImplementationsOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());
-        }
+		public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType,
+			IEnumerable<Assembly> assemblies)
+		{
+			if (!openGenericType.IsGenericType)
+				throw new ArgumentException("The provided type is not an open generic type", nameof(openGenericType));
 
-        public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType, IEnumerable<Assembly> assemblies)
-        {
-            if (!openGenericType.IsGenericType)
-                throw new ArgumentException("The provided type is not an open generic type", nameof(openGenericType));
-
-            foreach (var assembly in assemblies)
-            {
-                foreach (var at in assembly.GetTypes())
-                {
-	                foreach (var t in GetImplementationsOfOpenGeneric(openGenericType, at))
-		                yield return t;
-                }
-            }
-        }
+			foreach (var assembly in assemblies)
+			{
+				foreach (var at in assembly.GetTypes())
+				{
+					foreach (var t in GetImplementationsOfOpenGeneric(openGenericType, at))
+						yield return t;
+				}
+			}
+		}
 
 		public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType, Type type)
 		{
@@ -124,5 +140,5 @@ namespace HQ.Common
 				}
 			}
 		}
-    }
+	}
 }

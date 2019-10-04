@@ -17,7 +17,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Reflection;
 using HQ.Extensions.Logging;
 using Microsoft.AspNetCore;
@@ -32,25 +31,25 @@ using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace HQ.Platform.Node
 {
-    public static class Server
-    {
-	    public static void Start(string[] args, 
-	        Action<IServiceCollection> configureServices = null,
+	public static class Server
+	{
+		public static void Start(string[] args,
+			Action<IServiceCollection> configureServices = null,
 			Action<IApplicationBuilder, IWebHostEnvironment> configure = null,
 #if NETCOREAPP2_2
 			Action<IRouteBuilder> routes = null
 #else
 			Action<IEndpointRouteBuilder> routes = null
 #endif
-			)
-        {
-            Masthead();
+		)
+		{
+			Masthead();
 
 			// https://github.com/aspnet/AspNetCore/issues/11921
 			var appName = Assembly.GetCallingAssembly().GetName().Name;
 
 			Execute(args, () =>
-            {
+			{
 				var builder = WebHost.CreateDefaultBuilder(args);
 
 				builder.ConfigureHq(args, appName, true);
@@ -60,13 +59,13 @@ namespace HQ.Platform.Node
 #endif
 
 				builder.ConfigureServices((context, services) =>
-                {
+				{
 #if NETCOREAPP2_2
-					env = context.HostingEnvironment;	
+					env = context.HostingEnvironment;
 #endif
-	                configureServices?.Invoke(services);
+					configureServices?.Invoke(services);
 					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
-	                services.AddHq(context.HostingEnvironment, context.Configuration, logger);
+					services.AddHq(context.HostingEnvironment, context.Configuration, logger);
 				});
 
 #if NETCOREAPP2_2
@@ -77,8 +76,8 @@ namespace HQ.Platform.Node
 					configure?.Invoke(app, env);
 				});
 #else
-	            builder.UseStaticWebAssets(); // required for component static files visibility
-	            builder.Configure((context, app) =>
+				builder.UseStaticWebAssets(); // required for component static files visibility
+				builder.Configure((context, app) =>
 				{
 					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
 					app.UseHq(context.HostingEnvironment, logger, routes);
@@ -87,19 +86,16 @@ namespace HQ.Platform.Node
 #endif
 
 				var host = builder.Build();
-                host.Run();
-            });
-        }
-
-	    // ReSharper disable once ClassNeverInstantiated.Local
-	    private class Startup { }
+				host.Run();
+			});
+		}
 
 		public static void Masthead()
-        {
-            // Credit: http://patorjk.com/software/taag/
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine(@"
+		{
+			// Credit: http://patorjk.com/software/taag/
+			var color = Console.ForegroundColor;
+			Console.ForegroundColor = ConsoleColor.DarkMagenta;
+			Console.WriteLine(@"
  __   __  _______        ___   _______ 
 |  | |  ||       |      |   | |       |
 |  |_|  ||   _   |      |   | |   _   |
@@ -108,35 +104,40 @@ namespace HQ.Platform.Node
 |   _   ||      | |   | |   | |       |
 |__| |__||____||_||___| |___| |_______|
 ");
-            Console.ForegroundColor = color;
-        }
+			Console.ForegroundColor = color;
+		}
 
-        internal static void Execute(string[] args, Action action)
-        {
-            try
-            {
-                Console.WriteLine(args == null || args.Length == 0
-                    ? "HQ started."
-                    : $"HQ started with args: {string.Join(" ", args)}");
+		internal static void Execute(string[] args, Action action)
+		{
+			try
+			{
+				Console.WriteLine(args == null || args.Length == 0
+					? "HQ started."
+					: $"HQ started with args: {string.Join(" ", args)}");
 
-                action?.Invoke();
+				action?.Invoke();
 
-                Console.WriteLine("HQ stopped normally.");
-            }
-            catch (Exception exception)
-            {
-                Console.Error.WriteLine("HQ stopped unexpectedly. Error: {0}", exception);
+				Console.WriteLine("HQ stopped normally.");
+			}
+			catch (Exception exception)
+			{
+				Console.Error.WriteLine("HQ stopped unexpectedly. Error: {0}", exception);
 
-                if (Debugger.IsAttached)
-                {
-                    Debugger.Break();
-                }
-                else if (Environment.UserInteractive)
-                {
-                    Console.WriteLine("Press any key to quit.");
-                    Console.ReadKey();
-                }
-            }
-        }
-    }
+				if (Debugger.IsAttached)
+				{
+					Debugger.Break();
+				}
+				else if (Environment.UserInteractive)
+				{
+					Console.WriteLine("Press any key to quit.");
+					Console.ReadKey();
+				}
+			}
+		}
+
+		// ReSharper disable once ClassNeverInstantiated.Local
+		private class Startup
+		{
+		}
+	}
 }

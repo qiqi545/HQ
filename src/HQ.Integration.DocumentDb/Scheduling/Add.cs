@@ -17,8 +17,6 @@
 
 using System;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Scheduling;
@@ -34,71 +32,76 @@ using Constants = HQ.Common.Constants;
 
 namespace HQ.Integration.DocumentDb.Scheduling
 {
-    public static class Add
-    {
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, IConfiguration configuration = null)
-        {
-            return builder.AddDocumentDbBackgroundTaskStore(configuration.Bind);
-        }
-
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, string connectionString)
-        {
-	        return builder.AddDocumentDbBackgroundTaskStore(o => { DefaultDbOptions(connectionString, o); });
-        }
-        private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
-        {
-	        var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
-
-	        o.AccountKey = connectionStringBuilder.AccountKey;
-	        o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
-	        o.CollectionId = connectionStringBuilder.DefaultCollection ?? "BackgroundTasks";
-	        o.DatabaseId = connectionStringBuilder.Database ?? "Default";
-
-	        o.SharedCollection = true; // Sequence, Document, etc.
-	        o.PartitionKeyPaths = new[] { "id" };
+	public static class Add
+	{
+		public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder,
+			IConfiguration configuration = null)
+		{
+			return builder.AddDocumentDbBackgroundTaskStore(configuration.Bind);
 		}
 
-        public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder, Action<DocumentDbOptions> configureAction = null)
-        {
-            Bootstrap.SetDefaultJsonSettings();
+		public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder,
+			string connectionString)
+		{
+			return builder.AddDocumentDbBackgroundTaskStore(o => { DefaultDbOptions(connectionString, o); });
+		}
 
-            const string slot = Constants.ConnectionSlots.BackgroundTasks;
+		private static void DefaultDbOptions(string connectionString, DocumentDbOptions o)
+		{
+			var connectionStringBuilder = new DocumentDbConnectionStringBuilder(connectionString);
+
+			o.AccountKey = connectionStringBuilder.AccountKey;
+			o.AccountEndpoint = connectionStringBuilder.AccountEndpoint;
+			o.CollectionId = connectionStringBuilder.DefaultCollection ?? "BackgroundTasks";
+			o.DatabaseId = connectionStringBuilder.Database ?? "Default";
+
+			o.SharedCollection = true; // Sequence, Document, etc.
+			o.PartitionKeyPaths = new[] {"id"};
+		}
+
+		public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder,
+			Action<DocumentDbOptions> configureAction = null)
+		{
+			Bootstrap.SetDefaultJsonSettings();
+
+			const string slot = Constants.ConnectionSlots.BackgroundTasks;
 
 			if (configureAction != null)
-	            builder.Services.Configure(slot, configureAction);
+				builder.Services.Configure(slot, configureAction);
 
 			builder.Services.AddLocalTimestamps();
 			builder.Services.AddMetrics();
-			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r => new DocumentDbRepository<BackgroundTaskDocument>(slot, 
-				r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>(),
-				r.GetService<ISafeLogger<DocumentDbRepository<BackgroundTaskDocument>>>()
+			builder.Services.AddSingleton<IDocumentDbRepository<BackgroundTaskDocument>>(r =>
+				new DocumentDbRepository<BackgroundTaskDocument>(slot,
+					r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>(),
+					r.GetService<ISafeLogger<DocumentDbRepository<BackgroundTaskDocument>>>()
 				));
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
-			
-            var serviceProvider = builder.Services.BuildServiceProvider();
-            var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
 
-            var dbOptions = new DocumentDbOptions();
-            configureAction?.Invoke(dbOptions);
+			var serviceProvider = builder.Services.BuildServiceProvider();
+			var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
 
-            MigrateToLatest(options.Value, dbOptions);
+			var dbOptions = new DocumentDbOptions();
+			configureAction?.Invoke(dbOptions);
 
-            return builder;
-        }
+			MigrateToLatest(options.Value, dbOptions);
 
-        private static void MigrateToLatest(BackgroundTaskOptions taskOptions, DocumentDbOptions dbOptions)
-        {
-            var runner = new DocumentDbMigrationRunner(dbOptions);
+			return builder;
+		}
 
-            if (taskOptions.Store.CreateIfNotExists)
-            {
-                runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
-            }
+		private static void MigrateToLatest(BackgroundTaskOptions taskOptions, DocumentDbOptions dbOptions)
+		{
+			var runner = new DocumentDbMigrationRunner(dbOptions);
 
-            if (taskOptions.Store.MigrateOnStartup)
-            {
-	            runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
-            }
-        }
-    }
+			if (taskOptions.Store.CreateIfNotExists)
+			{
+				runner.CreateDatabaseIfNotExistsAsync().GetAwaiter().GetResult();
+			}
+
+			if (taskOptions.Store.MigrateOnStartup)
+			{
+				runner.CreateCollectionIfNotExistsAsync().GetAwaiter().GetResult();
+			}
+		}
+	}
 }

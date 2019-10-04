@@ -19,8 +19,8 @@ using System.Threading.Tasks;
 
 namespace HQ.Platform.Api.Models
 {
-    public interface IApplicationContextStore<TApplication> where TApplication : class
-    {
-        Task<ApplicationContext<TApplication>> FindByKeyAsync(string applicationKey);
-    }
+	public interface IApplicationContextStore<TApplication> where TApplication : class
+	{
+		Task<ApplicationContext<TApplication>> FindByKeyAsync(string applicationKey);
+	}
 }

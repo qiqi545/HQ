@@ -17,8 +17,8 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public class MergeInstruction
-    {
-        private MergeInstructionType Type { get; set; }
-    }
+	public class MergeInstruction
+	{
+		private MergeInstructionType Type { get; set; }
+	}
 }

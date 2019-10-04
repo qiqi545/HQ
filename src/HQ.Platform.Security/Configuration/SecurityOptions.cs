@@ -21,27 +21,22 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace HQ.Platform.Security.Configuration
 {
-    public class SecurityOptions
-    {
-        public ClaimOptions Claims { get; set; } = new ClaimOptions();
-        public TokenOptions Tokens { get; set; } = new TokenOptions();
-        public HttpsOptions Https { get; set; } = new HttpsOptions();
-        public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
-        public WebServerOptions WebServer { get; set; } = new WebServerOptions();
-        public CorsOptions Cors { get; set; }
-        public CookieOptions Cookies { get; set; } = new CookieOptions();
+	public class SecurityOptions
+	{
+		public SecurityOptions() : this(false) { }
 
-		[NotMapped, IgnoreDataMember]
-		internal SigningCredentials Signing { get; set; }
+		public SecurityOptions(bool forBinding = false) => Cors = new CorsOptions(forBinding);
 
-		[NotMapped, IgnoreDataMember]
-		internal EncryptingCredentials Encrypting { get; set; }
+		public ClaimOptions Claims { get; set; } = new ClaimOptions();
+		public TokenOptions Tokens { get; set; } = new TokenOptions();
+		public HttpsOptions Https { get; set; } = new HttpsOptions();
+		public BlockListOptions BlockLists { get; set; } = new BlockListOptions();
+		public WebServerOptions WebServer { get; set; } = new WebServerOptions();
+		public CorsOptions Cors { get; set; }
+		public CookieOptions Cookies { get; set; } = new CookieOptions();
 
-        public SecurityOptions() : this(false) { }
+		[NotMapped] [IgnoreDataMember] internal SigningCredentials Signing { get; set; }
 
-        public SecurityOptions(bool forBinding = false)
-        {
-            Cors = new CorsOptions(forBinding);
-        }
-    }
+		[NotMapped] [IgnoreDataMember] internal EncryptingCredentials Encrypting { get; set; }
+	}
 }

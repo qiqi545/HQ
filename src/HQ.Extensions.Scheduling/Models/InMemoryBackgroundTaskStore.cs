@@ -23,116 +23,117 @@ using HQ.Common;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class InMemoryBackgroundTaskStore : IBackgroundTaskStore
-    {
-        private readonly IServerTimestampService _timestamps;
-        private static int _identity;
+	public class InMemoryBackgroundTaskStore : IBackgroundTaskStore
+	{
+		private static int _identity;
 
-        private readonly IDictionary<int, HashSet<BackgroundTask>> _tasks;
+		private readonly IDictionary<int, HashSet<BackgroundTask>> _tasks;
+		private readonly IServerTimestampService _timestamps;
 
-        public InMemoryBackgroundTaskStore(IServerTimestampService timestamps)
-        {
-            _timestamps = timestamps;
-            _tasks = new ConcurrentDictionary<int, HashSet<BackgroundTask>>();
-        }
+		public InMemoryBackgroundTaskStore(IServerTimestampService timestamps)
+		{
+			_timestamps = timestamps;
+			_tasks = new ConcurrentDictionary<int, HashSet<BackgroundTask>>();
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
-        {
-            var all = await GetAllAsync();
+		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
+		{
+			var all = await GetAllAsync();
 
-            var query = all.Where(a => { return tags.Any(tag => a.Tags.Contains(tag)); });
+			var query = all.Where(a => { return tags.Any(tag => a.Tags.Contains(tag)); });
 
-            return query.ToList();
-        }
+			return query.ToList();
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
-        {
-            var all = await GetAllAsync();
+		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
+		{
+			var all = await GetAllAsync();
 
-            var query = all.Where(a => { return tags.All(tag => a.Tags.Contains(tag)); });
+			var query = all.Where(a => { return tags.All(tag => a.Tags.Contains(tag)); });
 
-            return query.ToList();
-        }
+			return query.ToList();
+		}
 
-        public Task<bool> SaveAsync(BackgroundTask task)
-        {
-            if (!_tasks.TryGetValue(task.Priority, out var tasks))
-            {
-                task.CreatedAt = _timestamps.GetCurrentTime();
-                _tasks.Add(task.Priority, tasks = new HashSet<BackgroundTask>());
-            }
+		public Task<bool> SaveAsync(BackgroundTask task)
+		{
+			if (!_tasks.TryGetValue(task.Priority, out var tasks))
+			{
+				task.CreatedAt = _timestamps.GetCurrentTime();
+				_tasks.Add(task.Priority, tasks = new HashSet<BackgroundTask>());
+			}
 
-            if (tasks.All(t => t.Id != task.Id))
-            {
-                tasks.Add(task);
-                task.Id = ++_identity;
-                return Task.FromResult(true);
-            }
+			if (tasks.All(t => t.Id != task.Id))
+			{
+				tasks.Add(task);
+				task.Id = ++_identity;
+				return Task.FromResult(true);
+			}
 
-            return Task.FromResult(false);
-        }
+			return Task.FromResult(false);
+		}
 
-        public Task<bool> DeleteAsync(BackgroundTask task)
-        {
-            if (_tasks.TryGetValue(task.Priority, out var tasks))
-            {
-                tasks.Remove(task);
-                return Task.FromResult(true);
-            }
-            return Task.FromResult(false);
-        }
+		public Task<bool> DeleteAsync(BackgroundTask task)
+		{
+			if (_tasks.TryGetValue(task.Priority, out var tasks))
+			{
+				tasks.Remove(task);
+				return Task.FromResult(true);
+			}
 
-        public Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
-        {
-            var all = _tasks.SelectMany(t => t.Value);
+			return Task.FromResult(false);
+		}
 
-            // None locked, failed or succeeded, must be due, ordered by due time then priority
-            var now = _timestamps.GetCurrentTime();
+		public Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
+		{
+			var all = _tasks.SelectMany(t => t.Value);
 
-            var query = all
-                .Where(t => !t.FailedAt.HasValue && !t.SucceededAt.HasValue && !t.LockedAt.HasValue)
-                .Where(t => t.RunAt <= now)
-                .OrderBy(t => t.RunAt)
-                .ThenBy(t => t.Priority)
-                .MaybeList();
+			// None locked, failed or succeeded, must be due, ordered by due time then priority
+			var now = _timestamps.GetCurrentTime();
 
-            var tasks = (query.Count > readAhead ? query.Take(readAhead) : query).MaybeList();
+			var query = all
+				.Where(t => !t.FailedAt.HasValue && !t.SucceededAt.HasValue && !t.LockedAt.HasValue)
+				.Where(t => t.RunAt <= now)
+				.OrderBy(t => t.RunAt)
+				.ThenBy(t => t.Priority)
+				.MaybeList();
 
-            // Lock tasks:
-            if (tasks.Any())
-            {
-                foreach (var scheduledTask in tasks)
-                {
-                    scheduledTask.LockedAt = now;
-                    scheduledTask.LockedBy = LockedIdentity.Get();
-                }
-            }
+			var tasks = (query.Count > readAhead ? query.Take(readAhead) : query).MaybeList();
 
-            return Task.FromResult(tasks.AsEnumerable());
-        }
+			// Lock tasks:
+			if (tasks.Any())
+			{
+				foreach (var scheduledTask in tasks)
+				{
+					scheduledTask.LockedAt = now;
+					scheduledTask.LockedBy = LockedIdentity.Get();
+				}
+			}
 
-        public Task<BackgroundTask> GetByIdAsync(int id)
-        {
-            return Task.FromResult(_tasks.SelectMany(t => t.Value).SingleOrDefault(t => t.Id == id));
-        }
+			return Task.FromResult(tasks.AsEnumerable());
+		}
 
-        public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
-        {
-            var tasks = await GetAllAsync();
+		public Task<BackgroundTask> GetByIdAsync(int id)
+		{
+			return Task.FromResult(_tasks.SelectMany(t => t.Value).SingleOrDefault(t => t.Id == id));
+		}
 
-            return tasks.Where(t => t.RunningOvertime).ToList();
-        }
+		public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
+		{
+			var tasks = await GetAllAsync();
 
-        public Task<IEnumerable<BackgroundTask>> GetAllAsync()
-        {
-            IEnumerable<BackgroundTask> all = _tasks.SelectMany(t => t.Value).OrderBy(t => t.Priority);
+			return tasks.Where(t => t.RunningOvertime).ToList();
+		}
 
-            return Task.FromResult(all);
-        }
+		public Task<IEnumerable<BackgroundTask>> GetAllAsync()
+		{
+			IEnumerable<BackgroundTask> all = _tasks.SelectMany(t => t.Value).OrderBy(t => t.Priority);
 
-        public void Clear()
-        {
-	        _tasks.Clear();
-        }
-    }
+			return Task.FromResult(all);
+		}
+
+		public void Clear()
+		{
+			_tasks.Clear();
+		}
+	}
 }

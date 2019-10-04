@@ -25,175 +25,175 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class UpdateBuilder
-    {
-        public const string SetSuffix = "_set";
+	public static class UpdateBuilder
+	{
+		public const string SetSuffix = "_set";
 
-        public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
-            List<string> keys, string setSuffix = SetSuffix)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
+		public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
+			List<string> keys, string setSuffix = SetSuffix)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, column).Append(setSuffix);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column).Append(" = ").AppendParameter(d, column).Append(setSuffix);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.AppendWhereClause(d, keys);
-            });
-        }
+				sb.AppendWhereClause(d, keys);
+			});
+		}
 
-        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<string> columns, List<string> keys, string setSuffix = SetSuffix)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeUpdate(descriptor, sb))
-                    return;
+		public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<string> columns, List<string> keys, string setSuffix = SetSuffix)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeUpdate(descriptor, sb))
+					return;
 
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
 
-                if (!d.BeforeUpdateColumns(descriptor, sb, columns))
-                    return;
+				if (!d.BeforeUpdateColumns(descriptor, sb, columns))
+					return;
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, column).Append(setSuffix);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column).Append(" = ").AppendParameter(d, column).Append(setSuffix);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                if (!d.BeforeWhere(descriptor, sb, keys))
-                    return;
+				if (!d.BeforeWhere(descriptor, sb, keys))
+					return;
 
-                sb.AppendWhereClause(descriptor, d, keys);
+				sb.AppendWhereClause(descriptor, d, keys);
 
-                d.AfterWhere(descriptor, sb, keys);
-            });
-        }
+				d.AfterWhere(descriptor, sb, keys);
+			});
+		}
 
-        public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
-            List<string> keys, List<string> setParameters, List<string> whereParameters, string setSuffix = SetSuffix)
-        {
-            Debug.Assert(columns != null);
-            Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
+		public static string Update(this ISqlDialect d, string table, string schema, List<string> columns,
+			List<string> keys, List<string> setParameters, List<string> whereParameters, string setSuffix = SetSuffix)
+		{
+			Debug.Assert(columns != null);
+			Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
 
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column).Append(" = ").AppendParameter(d, setParameters[i]).Append(setSuffix);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column).Append(" = ").AppendParameter(d, setParameters[i]).Append(setSuffix);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.AppendWhereClause(d, keys, whereParameters);
-            });
-        }
+				sb.AppendWhereClause(d, keys, whereParameters);
+			});
+		}
 
-        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<string> columns, List<string> keys, List<string> setParameters, List<string> whereParameters,
-            string setSuffix = SetSuffix)
-        {
-            Debug.Assert(columns != null);
-            Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
+		public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<string> columns, List<string> keys, List<string> setParameters, List<string> whereParameters,
+			string setSuffix = SetSuffix)
+		{
+			Debug.Assert(columns != null);
+			Debug.Assert(columns.Count == setParameters?.Count && columns.Count >= whereParameters?.Count);
 
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeUpdate(descriptor, sb))
-                    return;
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeUpdate(descriptor, sb))
+					return;
 
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
 
-                if (!d.BeforeUpdateColumns(descriptor, sb, columns))
-                    return;
+				if (!d.BeforeUpdateColumns(descriptor, sb, columns))
+					return;
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column).Append(" = ");
-                    sb.AppendParameter(d, setParameters[i] + setSuffix);
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column).Append(" = ");
+					sb.AppendParameter(d, setParameters[i] + setSuffix);
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                if (whereParameters.Count > 0)
-                {
-                    if (!d.BeforeWhere(descriptor, sb, keys, whereParameters))
-                        return;
-                    sb.AppendWhereClause(d, keys, whereParameters);
-                    d.AfterWhere(descriptor, sb, keys);
-                }
-            });
-        }
+				if (whereParameters.Count > 0)
+				{
+					if (!d.BeforeWhere(descriptor, sb, keys, whereParameters))
+						return;
+					sb.AppendWhereClause(d, keys, whereParameters);
+					d.AfterWhere(descriptor, sb, keys);
+				}
+			});
+		}
 
-        public static string Update(this ISqlDialect d, string table, string schema, List<PropertyToColumn> columns,
-            List<string> keys, string setSuffix = SetSuffix)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column.ColumnName).Append(" = ")
-                        .AppendParameter(d, column.ColumnName)
-                        .Append(setSuffix);
+		public static string Update(this ISqlDialect d, string table, string schema, List<PropertyToColumn> columns,
+			List<string> keys, string setSuffix = SetSuffix)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column.ColumnName).Append(" = ")
+						.AppendParameter(d, column.ColumnName)
+						.Append(setSuffix);
 
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                sb.AppendWhereClause(d, keys);
-            });
-        }
+				sb.AppendWhereClause(d, keys);
+			});
+		}
 
-        public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
-            List<PropertyToColumn> columns, List<string> keys, string setSuffix = SetSuffix)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (!d.BeforeUpdate(descriptor, sb))
-                    return;
+		public static string Update(this ISqlDialect d, IDataDescriptor descriptor, string table, string schema,
+			List<PropertyToColumn> columns, List<string> keys, string setSuffix = SetSuffix)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (!d.BeforeUpdate(descriptor, sb))
+					return;
 
-                sb.Append("UPDATE ");
-                sb.AppendTable(d, table, schema).Append(" SET ");
+				sb.Append("UPDATE ");
+				sb.AppendTable(d, table, schema).Append(" SET ");
 
-                if (!d.BeforeUpdateColumns(descriptor, sb, columns.Select(x => x.ColumnName).ToList()))
-                    return;
+				if (!d.BeforeUpdateColumns(descriptor, sb, columns.Select(x => x.ColumnName).ToList()))
+					return;
 
-                for (var i = 0; i < columns.Count; i++)
-                {
-                    var column = columns[i];
-                    sb.AppendName(d, column.ColumnName).Append(" = ")
-                        .AppendParameter(d, column.ColumnName)
-                        .Append(setSuffix);
+				for (var i = 0; i < columns.Count; i++)
+				{
+					var column = columns[i];
+					sb.AppendName(d, column.ColumnName).Append(" = ")
+						.AppendParameter(d, column.ColumnName)
+						.Append(setSuffix);
 
-                    if (i < columns.Count - 1)
-                        sb.Append(", ");
-                }
+					if (i < columns.Count - 1)
+						sb.Append(", ");
+				}
 
-                if (!d.BeforeWhere(descriptor, sb, keys))
-                    return;
+				if (!d.BeforeWhere(descriptor, sb, keys))
+					return;
 
-                sb.AppendWhereClause(d, keys);
+				sb.AppendWhereClause(d, keys);
 
-                d.AfterWhere(descriptor, sb, keys);
-            });
-        }
-    }
+				d.AfterWhere(descriptor, sb, keys);
+			});
+		}
+	}
 }

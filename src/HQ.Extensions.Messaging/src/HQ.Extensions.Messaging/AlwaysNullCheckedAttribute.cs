@@ -19,8 +19,8 @@ using System;
 
 namespace HQ.Extensions.Messaging
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    public sealed class AlwaysNullCheckedAttribute : Attribute
-    {
-    }
+	[AttributeUsage(AttributeTargets.Field)]
+	public sealed class AlwaysNullCheckedAttribute : Attribute
+	{
+	}
 }

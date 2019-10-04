@@ -20,28 +20,28 @@ using TypeKitchen;
 
 namespace HQ.Platform.Api.Models
 {
-    internal class CamelCase : ITextTransform
-    {
-        public string Name => "Camel";
+	internal class CamelCase : ITextTransform
+	{
+		public string Name => "Camel";
 
-        public string Transform(string input)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                if (input == null)
-                {
-                    return;
-                }
+		public string Transform(string input)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb =>
+			{
+				if (input == null)
+				{
+					return;
+				}
 
-                sb.Append(input);
+				sb.Append(input);
 
-                if (string.IsNullOrWhiteSpace(input) || char.IsLower(input[0]))
-                {
-                    return;
-                }
+				if (string.IsNullOrWhiteSpace(input) || char.IsLower(input[0]))
+				{
+					return;
+				}
 
-                sb[0] = char.ToLowerInvariant(sb[0]);
-            });
-        }
-    }
+				sb[0] = char.ToLowerInvariant(sb[0]);
+			});
+		}
+	}
 }

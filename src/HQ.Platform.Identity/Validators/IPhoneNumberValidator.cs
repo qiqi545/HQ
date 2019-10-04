@@ -17,7 +17,7 @@
 
 namespace HQ.Platform.Identity.Validators
 {
-    public interface IPhoneNumberValidator<TUser> : IValidator<TUser> where TUser : class
-    {
-    }
+	public interface IPhoneNumberValidator<TUser> : IValidator<TUser> where TUser : class
+	{
+	}
 }

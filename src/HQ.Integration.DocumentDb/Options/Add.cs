@@ -20,29 +20,37 @@ using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Microsoft.Extensions.Configuration;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Integration.DocumentDb.Options
 {
-    public static class Add
-    {
-	    public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
-	    {
-		    return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions.FastBind, reloadOnChange, configSeed);
-	    }
-
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed = null, Action<SaveConfigurationOptions> configureOptions = null)
+	public static class Add
+	{
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString,
+			IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
-			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions, reloadOnChange, configSeed);
+			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions.FastBind,
+				reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, Action<DocumentDbOptions> configureDatabase, Action<SaveConfigurationOptions> configureOptions = null, bool reloadOnChange = false, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString,
+			bool reloadOnChange = false, IConfiguration configSeed = null,
+			Action<SaveConfigurationOptions> configureOptions = null)
+		{
+			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions,
+				reloadOnChange, configSeed);
+		}
+
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder,
+			Action<DocumentDbOptions> configureDatabase, Action<SaveConfigurationOptions> configureOptions = null,
+			bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
 			var dbConfig = new DocumentDbOptions();
 			configureDatabase?.Invoke(dbConfig);
 
 			var saveConfig = new SaveConfigurationOptions();
 			configureOptions?.Invoke(saveConfig);
-			
+
 			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed)
 			{
 				ReloadOnChange = reloadOnChange
@@ -58,10 +66,10 @@ namespace HQ.Integration.DocumentDb.Options
 			o.AccountKey ??= connectionStringBuilder.AccountKey;
 			o.AccountEndpoint ??= connectionStringBuilder.AccountEndpoint;
 			o.DatabaseId ??= connectionStringBuilder.Database;
-			o.CollectionId ??= connectionStringBuilder.DefaultCollection ?? Common.Constants.Options.DefaultCollection;
+			o.CollectionId ??= connectionStringBuilder.DefaultCollection ?? Constants.Options.DefaultCollection;
 
 			o.SharedCollection = false;
-			o.PartitionKeyPaths = connectionStringBuilder.PartitionKeyPaths ?? new[] { "id" };
+			o.PartitionKeyPaths = connectionStringBuilder.PartitionKeyPaths ?? new[] {"id"};
 		}
 	}
 }

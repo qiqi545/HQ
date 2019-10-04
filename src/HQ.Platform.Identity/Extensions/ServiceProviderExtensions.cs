@@ -22,75 +22,75 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Extensions
 {
-    public static class ServiceProviderExtensions
-    {
-        public static bool TryGetTenantId<TKey>(this IServiceProvider services, out TKey tenantId)
-        {
-            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims != null)
-            {
-                return services.TryGetClaim(security.Value.Claims.TenantIdClaim, out tenantId);
-            }
+	public static class ServiceProviderExtensions
+	{
+		public static bool TryGetTenantId<TKey>(this IServiceProvider services, out TKey tenantId)
+		{
+			var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+			if (security?.Value?.Claims != null)
+			{
+				return services.TryGetClaim(security.Value.Claims.TenantIdClaim, out tenantId);
+			}
 
-            tenantId = default;
-            return false;
-        }
+			tenantId = default;
+			return false;
+		}
 
-        public static bool TryGetTenantName(this IServiceProvider services, out string tenantName)
-        {
-            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims != null)
-            {
-                return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
-            }
+		public static bool TryGetTenantName(this IServiceProvider services, out string tenantName)
+		{
+			var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+			if (security?.Value?.Claims != null)
+			{
+				return services.TryGetClaim(security.Value.Claims.TenantNameClaim, out tenantName);
+			}
 
-            tenantName = default;
-            return false;
-        }
+			tenantName = default;
+			return false;
+		}
 
-        public static bool TryGetApplicationId<TKey>(this IServiceProvider services, out TKey applicationId)
-        {
-            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims != null)
-            {
-                return services.TryGetClaim(security.Value.Claims.ApplicationIdClaim, out applicationId);
-            }
+		public static bool TryGetApplicationId<TKey>(this IServiceProvider services, out TKey applicationId)
+		{
+			var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+			if (security?.Value?.Claims != null)
+			{
+				return services.TryGetClaim(security.Value.Claims.ApplicationIdClaim, out applicationId);
+			}
 
-            applicationId = default;
-            return false;
-        }
+			applicationId = default;
+			return false;
+		}
 
-        public static bool TryGetApplicationName(this IServiceProvider services, out string applicationName)
-        {
-            var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
-            if (security?.Value?.Claims != null)
-            {
-                return services.TryGetClaim(security.Value.Claims.ApplicationNameClaim, out applicationName);
-            }
+		public static bool TryGetApplicationName(this IServiceProvider services, out string applicationName)
+		{
+			var security = services?.GetService(typeof(IOptions<SecurityOptions>)) as IOptions<SecurityOptions>;
+			if (security?.Value?.Claims != null)
+			{
+				return services.TryGetClaim(security.Value.Claims.ApplicationNameClaim, out applicationName);
+			}
 
-            applicationName = default;
-            return false;
-        }
+			applicationName = default;
+			return false;
+		}
 
-        public static bool TryGetClaim<TKey>(this IServiceProvider services, string type, out TKey value)
-        {
-            var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
-            var user = accessor?.HttpContext?.User;
-            if (user == null || !user.Identity.IsAuthenticated)
-            {
-                value = default;
-                return false;
-            }
+		public static bool TryGetClaim<TKey>(this IServiceProvider services, string type, out TKey value)
+		{
+			var accessor = services?.GetService(typeof(IHttpContextAccessor)) as IHttpContextAccessor;
+			var user = accessor?.HttpContext?.User;
+			if (user == null || !user.Identity.IsAuthenticated)
+			{
+				value = default;
+				return false;
+			}
 
-            var claim = user.FindFirst(type);
-            if (claim == null)
-            {
-                value = default;
-                return false;
-            }
+			var claim = user.FindFirst(type);
+			if (claim == null)
+			{
+				value = default;
+				return false;
+			}
 
-            value = (TKey) Convert.ChangeType(claim.Value, typeof(TKey));
-            return true;
-        }
-    }
+			value = (TKey) Convert.ChangeType(claim.Value, typeof(TKey));
+			return true;
+		}
+	}
 }

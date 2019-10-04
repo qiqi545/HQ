@@ -16,7 +16,6 @@
 #endregion
 
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
@@ -45,6 +44,7 @@ namespace HQ.Platform.Api.Runtime
 					}
 				}
 			}
+
 			return false;
 		}
 	}

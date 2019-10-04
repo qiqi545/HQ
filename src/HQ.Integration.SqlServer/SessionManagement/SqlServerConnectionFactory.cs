@@ -21,11 +21,11 @@ using HQ.Data.SessionManagement;
 
 namespace HQ.Integration.SqlServer.SessionManagement
 {
-    public class SqlServerConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new SqlConnection(ConnectionString);
-        }
-    }
+	public class SqlServerConnectionFactory : ConnectionFactory
+	{
+		public override IDbConnection CreateConnection()
+		{
+			return new SqlConnection(ConnectionString);
+		}
+	}
 }

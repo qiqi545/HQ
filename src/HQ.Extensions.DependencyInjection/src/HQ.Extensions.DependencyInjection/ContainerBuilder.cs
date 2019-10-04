@@ -23,13 +23,13 @@ namespace HQ.Extensions.DependencyInjection
 	{
 		private readonly DependencyContainer _container;
 
-		public IServiceCollection Services { get; }
-
 		public ContainerBuilder(IServiceCollection services, DependencyContainer container)
 		{
 			_container = container;
 			Services = services;
 		}
+
+		public IServiceCollection Services { get; }
 
 		public bool AddExtension<T>(T extension) where T : IResolverExtension
 		{

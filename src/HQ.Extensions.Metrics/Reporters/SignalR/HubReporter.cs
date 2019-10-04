@@ -23,28 +23,28 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Metrics.Reporters.SignalR
 {
-    public sealed class HubReporter<T> : IMetricsReporter where T : Hub
-    {
-        private readonly ILogger _logger;
-        private readonly IOptions<HubReporterOptions> _options;
-        private readonly IMetricsRegistry _registry;
+	public sealed class HubReporter<T> : IMetricsReporter where T : Hub
+	{
+		private readonly ILogger _logger;
+		private readonly IOptions<HubReporterOptions> _options;
+		private readonly IMetricsRegistry _registry;
 
-        public HubReporter(IMetricsRegistry registry, ILoggerFactory loggerFactory,
-            IOptions<HubReporterOptions> options)
-        {
-            _registry = registry;
-            _options = options;
-            _logger = loggerFactory.CreateLogger(options.Value.CategoryName);
-        }
+		public HubReporter(IMetricsRegistry registry, ILoggerFactory loggerFactory,
+			IOptions<HubReporterOptions> options)
+		{
+			_registry = registry;
+			_options = options;
+			_logger = loggerFactory.CreateLogger(options.Value.CategoryName);
+		}
 
-        public Task InitializeAsync()
-        {
-            throw new NotImplementedException();
-        }
+		public Task InitializeAsync()
+		{
+			throw new NotImplementedException();
+		}
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public void Dispose()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

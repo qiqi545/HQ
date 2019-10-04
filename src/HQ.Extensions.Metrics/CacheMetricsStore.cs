@@ -21,44 +21,40 @@ using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {
-    public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
-    {
-        private readonly ICache _cache;
+	public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
+	{
+		private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
+			ImmutableDictionary.Create<MetricName, IMetric>();
 
-        private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
-            ImmutableDictionary.Create<MetricName, IMetric>();
+		private readonly ICache _cache;
 
-        public CacheMetricsStore(ICache cache) : base(cache, Common.Constants.Categories.Metrics)
-        {
-            _cache = cache;
-        }
+		public CacheMetricsStore(ICache cache) : base(cache, Common.Constants.Categories.Metrics) => _cache = cache;
 
-        public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
-        {
-            if (typeFilter.HasFlagFast(MetricType.All))
-            {
-                return NoSample;
-            }
+		public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
+		{
+			if (typeFilter.HasFlagFast(MetricType.All))
+			{
+				return NoSample;
+			}
 
-            var filtered = new Dictionary<MetricName, IMetric>();
-            foreach (var entry in _cache.Get<List<MetricName>>(Common.Constants.Categories.Metrics))
-            {
-                switch (entry.Class.Name)
-                {
-                    case nameof(GaugeMetric) when typeFilter.HasFlagFast(MetricType.Gauge):
-                    case nameof(CounterMetric) when typeFilter.HasFlagFast(MetricType.Counter):
-                    case nameof(MeterMetric) when typeFilter.HasFlagFast(MetricType.Meter):
-                    case nameof(HistogramMetric) when typeFilter.HasFlagFast(MetricType.Histogram):
-                    case nameof(TimerMetric) when typeFilter.HasFlagFast(MetricType.Timer):
-                        continue;
-                    default:
-                        filtered.Add(entry, _cache.Get<IMetric>(entry.CacheKey));
-                        break;
-                }
-            }
+			var filtered = new Dictionary<MetricName, IMetric>();
+			foreach (var entry in _cache.Get<List<MetricName>>(Common.Constants.Categories.Metrics))
+			{
+				switch (entry.Class.Name)
+				{
+					case nameof(GaugeMetric) when typeFilter.HasFlagFast(MetricType.Gauge):
+					case nameof(CounterMetric) when typeFilter.HasFlagFast(MetricType.Counter):
+					case nameof(MeterMetric) when typeFilter.HasFlagFast(MetricType.Meter):
+					case nameof(HistogramMetric) when typeFilter.HasFlagFast(MetricType.Histogram):
+					case nameof(TimerMetric) when typeFilter.HasFlagFast(MetricType.Timer):
+						continue;
+					default:
+						filtered.Add(entry, _cache.Get<IMetric>(entry.CacheKey));
+						break;
+				}
+			}
 
-            return filtered.ToImmutableDictionary();
-        }
-    }
+			return filtered.ToImmutableDictionary();
+		}
+	}
 }
-

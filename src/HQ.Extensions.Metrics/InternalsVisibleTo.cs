@@ -25,7 +25,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Extensions.Metrics
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

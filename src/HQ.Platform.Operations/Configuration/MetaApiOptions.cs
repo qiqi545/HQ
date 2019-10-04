@@ -21,10 +21,10 @@ namespace HQ.Platform.Operations.Configuration
 {
 	public class MetaApiOptions : FeatureToggle, IProtectedFeature, IComponentOptions
 	{
-		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
-		public string Policy { get; set; } = Constants.Security.Policies.AccessMeta;
-		public string RootPath { get; set; } = "/ops";
 		public string Host { get; set; } = "{{web-host}}";
 		public string ApplicationId { get; set; } = Constants.Schemas.DefaultApplicationId;
+		public string RootPath { get; set; } = "/ops";
+		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
+		public string Policy { get; set; } = Constants.Security.Policies.AccessMeta;
 	}
 }

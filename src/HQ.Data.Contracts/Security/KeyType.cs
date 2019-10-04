@@ -17,9 +17,9 @@
 
 namespace HQ.Data.Contracts.Security
 {
-    public enum KeyType
-    {
-        OneTimePassword,
-        PrivateKey
-    }
+	public enum KeyType
+	{
+		OneTimePassword,
+		PrivateKey
+	}
 }

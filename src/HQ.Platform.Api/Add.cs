@@ -57,144 +57,156 @@ using Newtonsoft.Json;
 namespace HQ.Platform.Api
 {
 	public static class Add
-    {
-        public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
-        {
-            return services.AddPlatformApi(config.FastBind);
-        }
+	{
+		public static IServiceCollection AddPlatformApi(this IServiceCollection services, IConfiguration config)
+		{
+			return services.AddPlatformApi(config.FastBind);
+		}
 
-        public static IServiceCollection AddPlatformApi(this IServiceCollection services, Action<ApiOptions> configureAction = null)
-        {
-            Bootstrap.EnsureInitialized();
+		public static IServiceCollection AddPlatformApi(this IServiceCollection services,
+			Action<ApiOptions> configureAction = null)
+		{
+			Bootstrap.EnsureInitialized();
 
-            services.Configure(configureAction);
+			services.Configure(configureAction);
 
-            services.AddForwardedHeaders();
-            services.AddHttpCaching();
-            services.AddCanonicalRoutes();
-            services.AddGzipCompression();
-            services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
-            services.AddOptions<RouteOptions>().Configure<IOptions<ApiOptions>>((o, x) =>
-            {
-                o.AppendTrailingSlash = x.Value.CanonicalRoutes.AppendTrailingSlash;
-                o.LowercaseUrls = x.Value.CanonicalRoutes.LowercaseUrls;
-                o.LowercaseQueryStrings = x.Value.CanonicalRoutes.LowercaseQueryStrings;
-            });
-            services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
-            services.AddSingleton(r => JsonConvert.DefaultSettings());
+			services.AddForwardedHeaders();
+			services.AddHttpCaching();
+			services.AddCanonicalRoutes();
+			services.AddGzipCompression();
+			services.AddSingleton<IEnumerable<ITextTransform>>(r =>
+				new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
+			services.AddOptions<RouteOptions>().Configure<IOptions<ApiOptions>>((o, x) =>
+			{
+				o.AppendTrailingSlash = x.Value.CanonicalRoutes.AppendTrailingSlash;
+				o.LowercaseUrls = x.Value.CanonicalRoutes.LowercaseUrls;
+				o.LowercaseQueryStrings = x.Value.CanonicalRoutes.LowercaseQueryStrings;
+			});
+			services.AddSingleton<IConfigureOptions<MvcOptions>, PlatformApiMvcConfiguration>();
+			services.AddSingleton(r => JsonConvert.DefaultSettings());
 
-            services.Replace(ServiceDescriptor.Singleton<IMetaVersionProvider, PlatformMetaVersionProvider>());
-            services.AddScoped<IMetaParameterProvider>(r => r.GetRequiredService<IOptionsMonitor<ApiOptions>>().CurrentValue.JsonConversion);
+			services.Replace(ServiceDescriptor.Singleton<IMetaVersionProvider, PlatformMetaVersionProvider>());
+			services.AddScoped<IMetaParameterProvider>(r =>
+				r.GetRequiredService<IOptionsMonitor<ApiOptions>>().CurrentValue.JsonConversion);
 			return services;
-        }
+		}
 
-        internal static IServiceCollection AddForwardedHeaders(this IServiceCollection services)
-        {
-            services.Configure<ForwardedHeadersOptions>(options =>
-            {
-                // Needed for proxy, cohort analysis, domain-based multi-tenancy, etc.
-                options.ForwardedHeaders =
-                    ForwardedHeaders.XForwardedFor |        // context.Connection.RemoteIpAddress
-                    ForwardedHeaders.XForwardedProto |      // context.Request.Scheme
-                    ForwardedHeaders.XForwardedHost;        // context.Request.Host
-            });
-            return services;
-        }
+		internal static IServiceCollection AddForwardedHeaders(this IServiceCollection services)
+		{
+			services.Configure<ForwardedHeadersOptions>(options =>
+			{
+				// Needed for proxy, cohort analysis, domain-based multi-tenancy, etc.
+				options.ForwardedHeaders =
+					ForwardedHeaders.XForwardedFor | // context.Connection.RemoteIpAddress
+					ForwardedHeaders.XForwardedProto | // context.Request.Scheme
+					ForwardedHeaders.XForwardedHost; // context.Request.Host
+			});
+			return services;
+		}
 
-        internal static IServiceCollection AddHttpCaching(this IServiceCollection services)
-        {
-            services.TryAddSingleton<IHttpCache, InProcessHttpCache>();
-            services.TryAddSingleton<IETagGenerator, WeakETagGenerator>();
-            services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(), r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
-            return services;
-        }
+		internal static IServiceCollection AddHttpCaching(this IServiceCollection services)
+		{
+			services.TryAddSingleton<IHttpCache, InProcessHttpCache>();
+			services.TryAddSingleton<IETagGenerator, WeakETagGenerator>();
+			services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(),
+				r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
+			return services;
+		}
 
-        internal static IServiceCollection AddCanonicalRoutes(this IServiceCollection services)
-        {
-            services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<ApiOptions>>()));
-            return services;
-        }
+		internal static IServiceCollection AddCanonicalRoutes(this IServiceCollection services)
+		{
+			services.AddSingleton(r => new CanonicalRoutesResourceFilter(r.GetRequiredService<IOptions<ApiOptions>>()));
+			return services;
+		}
 
-        internal static IServiceCollection AddGzipCompression(this IServiceCollection services)
-        {
-            services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
-            services.AddResponseCompression(options =>
-            {
-                options.EnableForHttps = false;
-                options.Providers.Add<GzipCompressionProvider>();
-            });
-            return services;
-        }
-		
-        #region Versioning
+		internal static IServiceCollection AddGzipCompression(this IServiceCollection services)
+		{
+			services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
+			services.AddResponseCompression(options =>
+			{
+				options.EnableForHttps = false;
+				options.Providers.Add<GzipCompressionProvider>();
+			});
+			return services;
+		}
 
-        public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
-        {
-            return services.AddVersioning(config.FastBind);
-        }
+		#region Versioning
 
-        public static IServiceCollection AddVersioning(this IServiceCollection services, Action<VersioningOptions> configureAction = null)
-        {
-            return services.AddVersioning<DefaultVersionContextResolver>(configureAction);
-        }
+		public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
+		{
+			return services.AddVersioning(config.FastBind);
+		}
 
-        public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, IConfiguration config)
-            where TVersionResolver : class, IVersionContextResolver
-        {
-            return services.AddVersioning<TVersionResolver>(config.FastBind);
-        }
+		public static IServiceCollection AddVersioning(this IServiceCollection services,
+			Action<VersioningOptions> configureAction = null)
+		{
+			return services.AddVersioning<DefaultVersionContextResolver>(configureAction);
+		}
 
-        public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services, Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
-        {
-	        services.AddHttpContextAccessor();
+		public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services,
+			IConfiguration config)
+			where TVersionResolver : class, IVersionContextResolver
+		{
+			return services.AddVersioning<TVersionResolver>(config.FastBind);
+		}
 
-            if (configureAction != null)
+		public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services,
+			Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
+		{
+			services.AddHttpContextAccessor();
+
+			if (configureAction != null)
 				services.Configure(configureAction);
 
 			services.AddInProcessCache();
-            services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
-            services.AddScoped<IVersionContextResolver, TVersionResolver>();
-            services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
-            return services;
-        }
+			services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
+			services.AddScoped<IVersionContextResolver, TVersionResolver>();
+			services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
+			return services;
+		}
 
-        #endregion
+		#endregion
 
-        #region Multi-Tenancy
+		#region Multi-Tenancy
 
-        public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
-            IConfiguration config)
-            where TTenant : class, new()
-            where TApplication : class, new()
-        {
-            return services.AddMultiTenancy<TTenant, TApplication>(config.FastBind);
-        }
+		public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
+			IConfiguration config)
+			where TTenant : class, new()
+			where TApplication : class, new()
+		{
+			return services.AddMultiTenancy<TTenant, TApplication>(config.FastBind);
+		}
 
-        public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
-            Action<MultiTenancyOptions> configureAction = null)
-            where TTenant : class, new()
-            where TApplication : class, new()
-        {
-            return services.AddMultiTenancy<DefaultTenantContextResolver<TTenant>, TTenant, DefaultApplicationContextResolver<TApplication>, TApplication>(configureAction);
-        }
+		public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
+			Action<MultiTenancyOptions> configureAction = null)
+			where TTenant : class, new()
+			where TApplication : class, new()
+		{
+			return services
+				.AddMultiTenancy<DefaultTenantContextResolver<TTenant>, TTenant,
+					DefaultApplicationContextResolver<TApplication>, TApplication>(configureAction);
+		}
 
-        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(this IServiceCollection services,
-            IConfiguration config)
-            where TTenantResolver : class, ITenantContextResolver<TTenant>
-            where TTenant : class, new()
-            where TApplicationResolver : class, IApplicationContextResolver<TApplication>
-            where TApplication : class, new()
-        {
-            return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(config.FastBind);
-        }
+		public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
+			this IServiceCollection services,
+			IConfiguration config)
+			where TTenantResolver : class, ITenantContextResolver<TTenant>
+			where TTenant : class, new()
+			where TApplicationResolver : class, IApplicationContextResolver<TApplication>
+			where TApplication : class, new()
+		{
+			return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
+				config.FastBind);
+		}
 
-        public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(this IServiceCollection services,
-            Action<MultiTenancyOptions> configureAction = null)
-            where TTenantResolver : class, ITenantContextResolver<TTenant>
-            where TTenant : class, new()
-            where TApplicationResolver : class, IApplicationContextResolver<TApplication>
-            where TApplication : class, new()
-        {
+		public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
+			this IServiceCollection services,
+			Action<MultiTenancyOptions> configureAction = null)
+			where TTenantResolver : class, ITenantContextResolver<TTenant>
+			where TTenant : class, new()
+			where TApplicationResolver : class, IApplicationContextResolver<TApplication>
+			where TApplication : class, new()
+		{
 			services.AddHttpContextAccessor();
 
 			if (configureAction != null)
@@ -202,16 +214,19 @@ namespace HQ.Platform.Api
 
 			services.AddInProcessCache();
 
-            services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
-            services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());
-            services.AddScoped<ITenantContext<TTenant>>(r => new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
+			services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
+			services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());
+			services.AddScoped<ITenantContext<TTenant>>(r =>
+				new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
 
-            services.AddScoped<IApplicationContextResolver<TApplication>, TApplicationResolver>();
-            services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetApplicationContext<TApplication>());
-            services.AddScoped<IApplicationContext<TApplication>>(r => new ApplicationContextWrapper<TApplication>(r.GetService<TApplication>()));
+			services.AddScoped<IApplicationContextResolver<TApplication>, TApplicationResolver>();
+			services.AddScoped(r =>
+				r.GetService<IHttpContextAccessor>()?.HttpContext?.GetApplicationContext<TApplication>());
+			services.AddScoped<IApplicationContext<TApplication>>(r =>
+				new ApplicationContextWrapper<TApplication>(r.GetService<TApplication>()));
 
-            return services;
-        }
+			return services;
+		}
 
 		#endregion
 
@@ -222,7 +237,8 @@ namespace HQ.Platform.Api
 			return services.AddSchemaApi(config.FastBind);
 		}
 
-		public static IServiceCollection AddSchemaApi(this IServiceCollection services, Action<SchemaOptions> configureAction = null)
+		public static IServiceCollection AddSchemaApi(this IServiceCollection services,
+			Action<SchemaOptions> configureAction = null)
 		{
 			var mvcBuilder = services.AddMvcCommon();
 			mvcBuilder.AddSchemaApi(configureAction);
@@ -235,7 +251,8 @@ namespace HQ.Platform.Api
 			return mvcBuilder;
 		}
 
-		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, Action<SchemaOptions> configureAction = null)
+		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder,
+			Action<SchemaOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -259,7 +276,8 @@ namespace HQ.Platform.Api
 			return services.AddRuntimeApi(config.FastBind);
 		}
 
-		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services, Action<RuntimeOptions> configureAction = null)
+		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services,
+			Action<RuntimeOptions> configureAction = null)
 		{
 			var mvcBuilder = services.AddMvcCommon();
 			mvcBuilder.AddRuntimeApi(configureAction);
@@ -271,7 +289,8 @@ namespace HQ.Platform.Api
 			return mvcBuilder.AddRuntimeApi(config.FastBind);
 		}
 
-		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, Action<RuntimeOptions> configureAction = null)
+		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder,
+			Action<RuntimeOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -298,7 +317,9 @@ namespace HQ.Platform.Api
 				builder.Services.AddHttpContextAccessor();
 
 			var extensions = new[] {new HttpAccessorExtension()};
-			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, extensions, onConnection, onCommand).AddAspNetCore();
+			builder.Services
+				.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, extensions, onConnection,
+					onCommand).AddAspNetCore();
 			builder.Services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
 
 			return builder;

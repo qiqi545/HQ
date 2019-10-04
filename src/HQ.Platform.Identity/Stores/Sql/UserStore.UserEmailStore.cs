@@ -26,83 +26,83 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class UserStore<TUser, TKey, TRole> : IUserEmailStoreExtended<TUser>, IUserEmailStore<TUser>
-    {
-        public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.Email = email;
-            return Task.CompletedTask;
-        }
+	public partial class UserStore<TUser, TKey, TRole> : IUserEmailStoreExtended<TUser>, IUserEmailStore<TUser>
+	{
+		public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.Email = email;
+			return Task.CompletedTask;
+		}
 
-        public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.Email);
-        }
+		public Task<string> GetEmailAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.Email);
+		}
 
-        public Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user.EmailConfirmed);
-        }
+		public Task<bool> GetEmailConfirmedAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user.EmailConfirmed);
+		}
 
-        public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.EmailConfirmed = confirmed;
-            return Task.CompletedTask;
-        }
+		public Task SetEmailConfirmedAsync(TUser user, bool confirmed, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.EmailConfirmed = confirmed;
+			return Task.CompletedTask;
+		}
 
-        public async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Email))
-            {
-                return CreateSuperUserInstance();
-            }
+		public async Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Email))
+			{
+				return CreateSuperUserInstance();
+			}
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail, TenantId = _tenantId});
-            _connection.SetTypeInfo(typeof(TUser));
-            var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
-            return user;
-        }
+			var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail, TenantId = _tenantId});
+			_connection.SetTypeInfo(typeof(TUser));
+			var user = await _connection.Current.QuerySingleOrDefaultAsync<TUser>(query.Sql, query.Parameters);
+			return user;
+		}
 
-        public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user.NormalizedEmail);
-        }
+		public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user.NormalizedEmail);
+		}
 
-        public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.NormalizedEmail = normalizedEmail;
-            return Task.FromResult<object>(null);
-        }
+		public Task SetNormalizedEmailAsync(TUser user, string normalizedEmail, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.NormalizedEmail = normalizedEmail;
+			return Task.FromResult<object>(null);
+		}
 
-        public async Task<IEnumerable<TUser>> FindAllByEmailAsync(string normalizedEmail,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Email))
-            {
-                return new[] {CreateSuperUserInstance()};
-            }
+		public async Task<IEnumerable<TUser>> FindAllByEmailAsync(string normalizedEmail,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			if (SupportsSuperUser && normalizedEmail == _lookupNormalizer.MaybeNormalizeName(_superUser?.Value?.Email))
+			{
+				return new[] {CreateSuperUserInstance()};
+			}
 
-            var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail});
-            _connection.SetTypeInfo(typeof(TUser));
-            var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
-            return users;
-        }
+			var query = SqlBuilder.Select<TUser>(new {NormalizedEmail = normalizedEmail});
+			_connection.SetTypeInfo(typeof(TUser));
+			var users = await _connection.Current.QueryAsync<TUser>(query.Sql, query.Parameters);
+			return users;
+		}
 
-        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var query = SqlBuilder.Count<TUser>();
-            _connection.SetTypeInfo(typeof(TUser));
-            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
-            return count;
-        }
-    }
+		public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Count<TUser>();
+			_connection.SetTypeInfo(typeof(TUser));
+			var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+			return count;
+		}
+	}
 }

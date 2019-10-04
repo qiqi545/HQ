@@ -25,7 +25,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Data.Sql
 {
-    internal sealed class InternalsVisibleTo
-    {
-    }
+	internal sealed class InternalsVisibleTo
+	{
+	}
 }

@@ -41,151 +41,157 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.SqlServer.Identity
 {
-    public static class Add
-    {
-	    public static IdentityBuilder AddSqlServerIdentityStore(
-		    this IdentityBuilder identityBuilder,
-		    string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-		    IConfiguration databaseConfig = null)
-	    {
-		    return identityBuilder.AddSqlServerIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, scope,
-			    databaseConfig);
-	    }
+	public static class Add
+	{
+		public static IdentityBuilder AddSqlServerIdentityStore(
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+		{
+			return identityBuilder
+				.AddSqlServerIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+					IdentityApplication>(connectionString, scope,
+					databaseConfig);
+		}
 
 		public static IdentityBuilder AddSqlServerIdentityStore<TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
-            where TUser : IdentityUserExtended<string>
-            where TRole : IdentityRoleExtended<string>
-            where TTenant : IdentityTenant<string>
-            where TApplication : IdentityApplication<string>
-        {
-            return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString, scope,
-                databaseConfig);
-        }
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+			where TUser : IdentityUserExtended<string>
+			where TRole : IdentityRoleExtended<string>
+			where TTenant : IdentityTenant<string>
+			where TApplication : IdentityApplication<string>
+		{
+			return identityBuilder.AddSqlServerIdentityStore<string, TUser, TRole, TTenant, TApplication>(
+				connectionString, scope,
+				databaseConfig);
+		}
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var configureDatabase =
-                databaseConfig != null ? databaseConfig.FastBind : (Action<SqlServerOptions>) null;
+		public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+			where TKey : IEquatable<TKey>
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+		{
+			var configureDatabase =
+				databaseConfig != null ? databaseConfig.FastBind : (Action<SqlServerOptions>) null;
 
-            return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder, connectionString, scope,
-                configureDatabase);
-        }
+			return AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder,
+				connectionString, scope,
+				configureDatabase);
+		}
 
-        public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString,
-            ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<SqlServerOptions> configureDatabase = null)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var services = identityBuilder.Services;
+		public static IdentityBuilder AddSqlServerIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+			this IdentityBuilder identityBuilder,
+			string connectionString,
+			ConnectionScope scope = ConnectionScope.ByRequest,
+			Action<SqlServerOptions> configureDatabase = null)
+			where TKey : IEquatable<TKey>
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+		{
+			var services = identityBuilder.Services;
 
-            services.AddSingleton<ITypeRegistry, TypeRegistry>();
+			services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            var builder = new SqlConnectionStringBuilder(connectionString);
+			var builder = new SqlConnectionStringBuilder(connectionString);
 
-            void ConfigureAction(SqlServerOptions o)
-            {
-                configureDatabase?.Invoke(o);
-            }
+			void ConfigureAction(SqlServerOptions o)
+			{
+				configureDatabase?.Invoke(o);
+			}
 
-            identityBuilder.Services.Configure<SqlServerOptions>(ConfigureAction);
+			identityBuilder.Services.Configure<SqlServerOptions>(ConfigureAction);
 
-            var dialect = new SqlServerDialect();
-            identityBuilder.AddSqlIdentityStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString,
-                scope, OnCommand<TKey>(), OnConnection);
+			var dialect = new SqlServerDialect();
+			identityBuilder.AddSqlIdentityStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
+				connectionString,
+				scope, OnCommand<TKey>(), OnConnection);
 
-            SqlBuilder.Dialect = dialect;
+			SqlBuilder.Dialect = dialect;
 
-            SimpleDataDescriptor.TableNameConvention = s =>
-            {
-                switch (s)
-                {
-                    case nameof(IdentityRoleExtended):
-                        return "AspNetRoles";
-                    case nameof(IdentityUserExtended):
-                        return "AspNetUsers";
-                    case nameof(IdentityTenant):
-                        return "AspNetTenants";
-                    case nameof(IdentityApplication):
-                        return "AspNetApplications";
-                    default:
-                        return s;
-                }
-            };
+			SimpleDataDescriptor.TableNameConvention = s =>
+			{
+				switch (s)
+				{
+					case nameof(IdentityRoleExtended):
+						return "AspNetRoles";
+					case nameof(IdentityUserExtended):
+						return "AspNetUsers";
+					case nameof(IdentityTenant):
+						return "AspNetTenants";
+					case nameof(IdentityApplication):
+						return "AspNetApplications";
+					default:
+						return s;
+				}
+			};
 
-            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
-            services.AddMetrics();
-            services.TryAddSingleton<ISqlDialect>(dialect);
-            services.TryAddSingleton(dialect);
+			services.AddMetrics();
+			services.TryAddSingleton<ISqlDialect>(dialect);
+			services.TryAddSingleton(dialect);
 
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
-            identityBuilder.Services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
+			identityBuilder.Services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
+			identityBuilder.Services
+				.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
 
-            var options = new SqlServerOptions();
-            ConfigureAction(options);
+			var options = new SqlServerOptions();
+			ConfigureAction(options);
 
-            var serviceProvider = services.BuildServiceProvider();
-            var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
+			var serviceProvider = services.BuildServiceProvider();
+			var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
-            MigrateToLatest<TKey>(connectionString, identityOptions, options);
+			MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
-            return identityBuilder;
-        }
+			return identityBuilder;
+		}
 
-        private static void OnConnection(IDbConnection c, IServiceProvider r)
-        {
-            if (c is SqlConnection connection)
-            {
-            }
-        }
+		private static void OnConnection(IDbConnection c, IServiceProvider r)
+		{
+			if (c is SqlConnection connection)
+			{
+			}
+		}
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
-            where TKey : IEquatable<TKey>
-        {
-            return (c, t, r) =>
-            {
-                if (c is SqlServerOptions command)
-                {
-                }
-            };
-        }
+		private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
+			where TKey : IEquatable<TKey>
+		{
+			return (c, t, r) =>
+			{
+				if (c is SqlServerOptions command)
+				{
+				}
+			};
+		}
 
-        private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
-            SqlServerOptions options) where TKey : IEquatable<TKey>
-        {
-            var runner = new MigrationRunner(connectionString, options);
+		private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,
+			SqlServerOptions options) where TKey : IEquatable<TKey>
+		{
+			var runner = new MigrationRunner(connectionString, options);
 
-            if (identityOptions.Stores.CreateIfNotExists)
-            {
-                runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
-            }
+			if (identityOptions.Stores.CreateIfNotExists)
+			{
+				runner.CreateDatabaseIfNotExistsAsync(CancellationToken.None).Wait();
+			}
 
-            if (identityOptions.Stores.MigrateOnStartup)
-            {
-                runner.MigrateUp(CancellationToken.None);
-            }
-        }
-    }
+			if (identityOptions.Stores.MigrateOnStartup)
+			{
+				runner.MigrateUp(CancellationToken.None);
+			}
+		}
+	}
 }

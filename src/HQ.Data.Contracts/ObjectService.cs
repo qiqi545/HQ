@@ -22,9 +22,9 @@ namespace HQ.Data.Contracts
 {
 	public class ObjectService<T> : IObjectService<T> where T : IObject
 	{
+		private readonly IObjectDeleteService<T> _deletes;
 		private readonly IObjectGetService<T> _gets;
 		private readonly IObjectSaveService<T> _saves;
-		private readonly IObjectDeleteService<T> _deletes;
 
 		public ObjectService(IObjectGetService<T> gets, IObjectSaveService<T> saves, IObjectDeleteService<T> deletes)
 		{
@@ -35,7 +35,8 @@ namespace HQ.Data.Contracts
 
 		#region Reads
 
-		public async Task<IPage<T>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null, FieldOptions fields = null,
+		public async Task<IPage<T>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null,
+			FieldOptions fields = null,
 			FilterOptions filter = null, ProjectionOptions projection = null)
 		{
 			return await _gets.GetAsync(query, sort, page, fields, filter, projection);
@@ -46,7 +47,8 @@ namespace HQ.Data.Contracts
 			return await _gets.GetAsync(id, fields, projection);
 		}
 
-		public async Task<IStream<T>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null, FilterOptions filter = null,
+		public async Task<IStream<T>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null,
+			FilterOptions filter = null,
 			ProjectionOptions projection = null)
 		{
 			return await _gets.GetAsync(segment, fields, filter, projection);
@@ -66,7 +68,8 @@ namespace HQ.Data.Contracts
 			return await _saves.SaveAsync(@object, fields);
 		}
 
-		public async Task SaveAsync(IEnumerable<T> objects, BatchSaveStrategy strategy, long startingAt = 0, int? count = null)
+		public async Task SaveAsync(IEnumerable<T> objects, BatchSaveStrategy strategy, long startingAt = 0,
+			int? count = null)
 		{
 			await _saves.SaveAsync(objects, strategy, startingAt, count);
 		}

@@ -16,7 +16,6 @@
 #endregion
 
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Attributes;
 using HQ.Platform.Api.Runtime.Rest.Filters;
 using HQ.Platform.Api.Runtime.Rest.Models;
@@ -25,37 +24,39 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Api.Runtime.Rest
 {
-    public static class Add
-    {
-        public static void AddRestRuntime(this IServiceCollection services)
-        {
-	        services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, RestQueryContextProvider>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IMutationContextProvider, RestMutationContextProvider>());
-            
-            services.TryAddSingleton<RestFieldsFilter>();
-            services.TryAddSingleton<RestFilterFilter>();
-            services.TryAddSingleton<RestPageFilter>();
-            services.TryAddSingleton<RestStreamFilter>();
-            services.TryAddSingleton<RestProjectionFilter>();
-            services.TryAddSingleton<RestSearchFilter>();
-            services.TryAddSingleton<RestSortFilter>();
-            services.TryAddSingleton<RestSegmentFilter>();
+	public static class Add
+	{
+		public static void AddRestRuntime(this IServiceCollection services)
+		{
+			services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, RestQueryContextProvider>());
+			services.TryAddEnumerable(
+				ServiceDescriptor.Singleton<IMutationContextProvider, RestMutationContextProvider>());
+
+			services.TryAddSingleton<RestFieldsFilter>();
+			services.TryAddSingleton<RestFilterFilter>();
+			services.TryAddSingleton<RestPageFilter>();
+			services.TryAddSingleton<RestStreamFilter>();
+			services.TryAddSingleton<RestProjectionFilter>();
+			services.TryAddSingleton<RestSearchFilter>();
+			services.TryAddSingleton<RestSortFilter>();
+			services.TryAddSingleton<RestSegmentFilter>();
 
 			TryAddFilter<RestFieldsFilter>(services);
-            TryAddFilter<RestFilterFilter>(services);
-            TryAddFilter<RestPageFilter>(services);
-            TryAddFilter<RestStreamFilter>(services);
-            TryAddFilter<RestProjectionFilter>(services);
-            TryAddFilter<RestSearchFilter>(services);
-            TryAddFilter<RestSortFilter>(services);
-            TryAddFilter<RestSegmentFilter>(services);
+			TryAddFilter<RestFilterFilter>(services);
+			TryAddFilter<RestPageFilter>(services);
+			TryAddFilter<RestStreamFilter>(services);
+			TryAddFilter<RestProjectionFilter>(services);
+			TryAddFilter<RestSearchFilter>(services);
+			TryAddFilter<RestSortFilter>(services);
+			TryAddFilter<RestSegmentFilter>(services);
 
-            services.TryAddSingleton<ChildResourceFilterAttribute>();
+			services.TryAddSingleton<ChildResourceFilterAttribute>();
 		}
 
-        private static void TryAddFilter<TFilter>(IServiceCollection services) where TFilter : class, IRestFilter
-        {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IRestFilter, TFilter>(r => r.GetRequiredService<TFilter>()));
-        }
+		private static void TryAddFilter<TFilter>(IServiceCollection services) where TFilter : class, IRestFilter
+		{
+			services.TryAddEnumerable(
+				ServiceDescriptor.Singleton<IRestFilter, TFilter>(r => r.GetRequiredService<TFilter>()));
+		}
 	}
 }

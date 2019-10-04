@@ -20,55 +20,55 @@ using System.Reflection;
 
 namespace HQ.Extensions.CodeGeneration
 {
-    public abstract class MethodInvokerBase : IMethodInvoker
-    {
-        public object InvokeMethod(Type serviceType, string name)
-        {
-            var implementation = ResolveType(serviceType);
-            if (implementation == null)
-                return null;
+	public abstract class MethodInvokerBase : IMethodInvoker
+	{
+		public object InvokeMethod(Type serviceType, string name)
+		{
+			var implementation = ResolveType(serviceType);
+			if (implementation == null)
+				return null;
 
-            var method = MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
-            if (method == null)
-	            return null;
+			var method = MethodFactory.Default.GetOrCacheMethodForTypeAndName(serviceType, name);
+			if (method == null)
+				return null;
 
-            var parameters = MethodFactory.Default.GetOrCacheParametersForMethod(method);
+			var parameters = MethodFactory.Default.GetOrCacheParametersForMethod(method);
 
-            var args = new object[parameters.Length];
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                var arg = ResolveType(parameters[i].ParameterType);
-                if (arg == null)
-                    return null;
-                args[i] = arg;
-            }
+			var args = new object[parameters.Length];
+			for (var i = 0; i < parameters.Length; i++)
+			{
+				var arg = ResolveType(parameters[i].ParameterType);
+				if (arg == null)
+					return null;
+				args[i] = arg;
+			}
 
-            var handler =
-                HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method,
-                    BuildStrategyFor(method, parameters));
+			var handler =
+				HandlerFactory.Default.GetOrCacheHandlerFromMethod(serviceType, method,
+					BuildStrategyFor(method, parameters));
 
-            return handler?.Invoke(implementation, args);
-        }
+			return handler?.Invoke(implementation, args);
+		}
 
-        public object InvokeMethod<T>(string name) where T : class
-        {
-            return InvokeMethod(typeof(T), name);
-        }
+		public object InvokeMethod<T>(string name) where T : class
+		{
+			return InvokeMethod(typeof(T), name);
+		}
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
 
-        public abstract object ResolveType(Type serviceType);
-        public abstract DelegateBuildStrategy BuildStrategyFor(MethodInfo method, ParameterInfo[] parameters);
+		public abstract object ResolveType(Type serviceType);
+		public abstract DelegateBuildStrategy BuildStrategyFor(MethodInfo method, ParameterInfo[] parameters);
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-            }
-        }
-    }
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+			}
+		}
+	}
 }

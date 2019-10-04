@@ -22,51 +22,51 @@ using HQ.Data.Sql.Helpers;
 
 namespace HQ.Integration.SqlServer.Sql
 {
-    public class SqlServerDialect : SqlDialect
-    {
-        public override char? StartIdentifier => '[';
-        public override char? EndIdentifier => ']';
-        public override char? Separator => '.';
-        public override char? Parameter => '@';
-        public override char? Quote => '\'';
+	public class SqlServerDialect : SqlDialect
+	{
+		public override char? StartIdentifier => '[';
+		public override char? EndIdentifier => ']';
+		public override char? Separator => '.';
+		public override char? Parameter => '@';
+		public override char? Quote => '\'';
 
-        public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
-        {
-            switch (location)
-            {
-                case FetchInsertedKeyLocation.BeforeValues:
-                    sql = "OUTPUT Inserted.Id";
-                    return true;
-                default:
-                    sql = null;
-                    return false;
-            }
-        }
+		public override bool TryFetchInsertedKey(FetchInsertedKeyLocation location, out string sql)
+		{
+			switch (location)
+			{
+				case FetchInsertedKeyLocation.BeforeValues:
+					sql = "OUTPUT Inserted.Id";
+					return true;
+				default:
+					sql = null;
+					return false;
+			}
+		}
 
-        public override void Page(string sql, StringBuilder sb)
-        {
-            // choosing performance strategy based on:
-            // https://sqlperformance.com/2015/01/t-sql-queries/pagination-with-offset-fetch
+		public override void Page(string sql, StringBuilder sb)
+		{
+			// choosing performance strategy based on:
+			// https://sqlperformance.com/2015/01/t-sql-queries/pagination-with-offset-fetch
 
-            PagingHelper.SplitSql(sql, out var parts);
+			PagingHelper.SplitSql(sql, out var parts);
 
-            var orderBy = parts.SqlOrderBy ?? "";
+			var orderBy = parts.SqlOrderBy ?? "";
 
-            var selectClause = parts.SqlOrderBy == null
-                ? parts.SqlSelectRemoved
-                : parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
+			var selectClause = parts.SqlOrderBy == null
+				? parts.SqlSelectRemoved
+				: parts.SqlSelectRemoved.Replace(parts.SqlOrderBy, string.Empty);
 
-            sb.Append(@";WITH pages AS ( SELECT Id FROM ")
-                .Append(parts.SqlFrom)
-                .Append(" ORDER BY ")
-                .Append(StartIdentifier).Append("Id").Append(EndIdentifier)
-                .Append(" OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) ");
+			sb.Append(@";WITH pages AS ( SELECT Id FROM ")
+				.Append(parts.SqlFrom)
+				.Append(" ORDER BY ")
+				.Append(StartIdentifier).Append("Id").Append(EndIdentifier)
+				.Append(" OFFSET @PerPage * (@Page - 1) ROWS FETCH NEXT @PerPage ROWS ONLY ) ");
 
-            sb.Append("SELECT ").Append(selectClause).Append(' ')
-                .Append(parts.SqlSelectRemoved.Contains("WHERE") ? "AND" : "WHERE")
-                .Append(" EXISTS (SELECT 1 FROM pages WHERE pages.Id = ").Append(Constants.Sql.ParentAlias).Append('.')
-                .Append("Id").Append(")")
-                .Append(orderBy);
-        }
-    }
+			sb.Append("SELECT ").Append(selectClause).Append(' ')
+				.Append(parts.SqlSelectRemoved.Contains("WHERE") ? "AND" : "WHERE")
+				.Append(" EXISTS (SELECT 1 FROM pages WHERE pages.Id = ").Append(Constants.Sql.ParentAlias).Append('.')
+				.Append("Id").Append(")")
+				.Append(orderBy);
+		}
+	}
 }

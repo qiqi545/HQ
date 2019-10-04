@@ -22,52 +22,52 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserLockoutStore<TUser>
-    {
-        public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user?.LockoutEnd);
-        }
+	partial class UserStore<TUser, TKey, TRole> : IUserLockoutStore<TUser>
+	{
+		public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user?.LockoutEnd);
+		}
 
-        public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.LockoutEnd = lockoutEnd?.UtcDateTime;
-            return Task.CompletedTask;
-        }
+		public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.LockoutEnd = lockoutEnd?.UtcDateTime;
+			return Task.CompletedTask;
+		}
 
-        public Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.AccessFailedCount++;
-            return Task.FromResult(user.AccessFailedCount);
-        }
+		public Task<int> IncrementAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.AccessFailedCount++;
+			return Task.FromResult(user.AccessFailedCount);
+		}
 
-        public Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.AccessFailedCount = 0;
-            return Task.CompletedTask;
-        }
+		public Task ResetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.AccessFailedCount = 0;
+			return Task.CompletedTask;
+		}
 
-        public Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user.AccessFailedCount);
-        }
+		public Task<int> GetAccessFailedCountAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user.AccessFailedCount);
+		}
 
-        public Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user.LockoutEnabled);
-        }
+		public Task<bool> GetLockoutEnabledAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user.LockoutEnabled);
+		}
 
-        public Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.LockoutEnabled = enabled;
-            return Task.CompletedTask;
-        }
-    }
+		public Task SetLockoutEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.LockoutEnabled = enabled;
+			return Task.CompletedTask;
+		}
+	}
 }

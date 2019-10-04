@@ -47,7 +47,8 @@ namespace HQ.Platform.Api.Models
 			if (!versionContext.Map.ContainsKey(controllerActionDescriptor.ControllerName))
 				return true; // out of scope: the version tree doesn't make a determination about this action
 
-			if (!(controllerActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is FingerprintAttribute) is FingerprintAttribute fingerprint))
+			if (!(controllerActionDescriptor.EndpointMetadata.FirstOrDefault(x => x is FingerprintAttribute) is
+				FingerprintAttribute fingerprint))
 				return true; // no identifier to make a determination
 
 			if (!versionContext.Map.TryGetValue(controllerActionDescriptor.ControllerName, out var version))

@@ -19,9 +19,9 @@ using HQ.Common;
 
 namespace HQ.Platform.Identity.Configuration
 {
-    public class IdentityApiOptions : FeatureToggle, IComponentOptions
-    {
-        public string RootPath { get; set; } = "auth";
+	public class IdentityApiOptions : FeatureToggle, IComponentOptions
+	{
 		public IdentityApiPolicies Policies { get; set; } = new IdentityApiPolicies();
-    }
+		public string RootPath { get; set; } = "auth";
+	}
 }

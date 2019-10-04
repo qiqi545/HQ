@@ -21,11 +21,11 @@ using HQ.Integration.DocumentDb.Sql.DbProvider;
 
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
-    public class DocumentDbConnectionFactory : ConnectionFactory
-    {
-        public override IDbConnection CreateConnection()
-        {
-            return new DocumentDbConnection(ConnectionString);
-        }
-    }
+	public class DocumentDbConnectionFactory : ConnectionFactory
+	{
+		public override IDbConnection CreateConnection()
+		{
+			return new DocumentDbConnection(ConnectionString);
+		}
+	}
 }

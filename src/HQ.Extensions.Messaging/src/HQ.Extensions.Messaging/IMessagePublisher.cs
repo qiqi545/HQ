@@ -17,8 +17,8 @@
 
 namespace HQ.Extensions.Messaging
 {
-    public interface IMessagePublisher
-    {
-        bool Publish(object message);
-    }
+	public interface IMessagePublisher
+	{
+		bool Publish(object message);
+	}
 }

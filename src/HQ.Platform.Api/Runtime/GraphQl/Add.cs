@@ -16,18 +16,19 @@
 #endregion
 
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Api.Runtime.GraphQl
 {
-    public static class Add
-    {
-        public static void AddGraphQlRuntime(this IServiceCollection services)
-        {
-	        services.TryAddEnumerable(ServiceDescriptor.Singleton<IQueryContextProvider, GraphQlQueryContextProvider>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IMutationContextProvider, GraphMutationContextProvider>());
-        }
-    }
+	public static class Add
+	{
+		public static void AddGraphQlRuntime(this IServiceCollection services)
+		{
+			services.TryAddEnumerable(ServiceDescriptor
+				.Singleton<IQueryContextProvider, GraphQlQueryContextProvider>());
+			services.TryAddEnumerable(ServiceDescriptor
+				.Singleton<IMutationContextProvider, GraphMutationContextProvider>());
+		}
+	}
 }

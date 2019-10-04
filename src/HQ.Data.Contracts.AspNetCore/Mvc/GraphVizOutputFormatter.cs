@@ -88,7 +88,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 					sb.AppendLine($"digraph \"{graphName}\" {{");
 					sb.AppendLine($"\trankdir=\"{dir}\"");
 					sb.AppendLine($"\tgraph[layout=dot,label=\"{graphName}\"];");
-					sb.AppendLine($"\tnode[style=filled,shape=box];");
+					sb.AppendLine("\tnode[style=filled,shape=box];");
 
 					if (root is IEnumerable enumerable)
 						foreach (var item in enumerable)
@@ -172,7 +172,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
 			var accessor = ReadAccessor.Create(target, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
 				out var members);
-			
+
 			if (accessor.Type.HasAttribute<TopologyRootAttribute>())
 			{
 				AppendClusterEnd(cb);

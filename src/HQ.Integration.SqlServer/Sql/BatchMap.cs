@@ -20,10 +20,10 @@ using System.Data;
 
 namespace HQ.Integration.SqlServer.Sql
 {
-    public class BatchMap
-    {
-        public DataTable DataReaderTable { get; set; }
-        public List<string> DatabaseTableColumns { get; set; }
-        public List<string> SchemaTableColumns { get; set; }
-    }
+	public class BatchMap
+	{
+		public DataTable DataReaderTable { get; set; }
+		public List<string> DatabaseTableColumns { get; set; }
+		public List<string> SchemaTableColumns { get; set; }
+	}
 }

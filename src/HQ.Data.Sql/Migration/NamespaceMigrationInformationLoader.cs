@@ -23,33 +23,33 @@ using FluentMigrator.Runner.Initialization;
 
 namespace HQ.Data.Sql.Migration
 {
-    public class NamespaceMigrationInformationLoader : IMigrationInformationLoader
-    {
-        private readonly DefaultMigrationInformationLoader _inner;
-        private readonly string _namespace;
-        private readonly IFilteringMigrationSource _source;
+	public class NamespaceMigrationInformationLoader : IMigrationInformationLoader
+	{
+		private readonly DefaultMigrationInformationLoader _inner;
+		private readonly string _namespace;
+		private readonly IFilteringMigrationSource _source;
 
-        public NamespaceMigrationInformationLoader(string @namespace,
-            IFilteringMigrationSource source, DefaultMigrationInformationLoader inner)
-        {
-            _namespace = @namespace;
-            _source = source;
-            _inner = inner;
-        }
+		public NamespaceMigrationInformationLoader(string @namespace,
+			IFilteringMigrationSource source, DefaultMigrationInformationLoader inner)
+		{
+			_namespace = @namespace;
+			_source = source;
+			_inner = inner;
+		}
 
-        public SortedList<long, IMigrationInfo> LoadMigrations()
-        {
-            var migrations =
-                _source.GetMigrations(type => type.Namespace == _namespace)
-                    .Select(_inner.Conventions.GetMigrationInfoForMigration);
+		public SortedList<long, IMigrationInfo> LoadMigrations()
+		{
+			var migrations =
+				_source.GetMigrations(type => type.Namespace == _namespace)
+					.Select(_inner.Conventions.GetMigrationInfoForMigration);
 
-            var list = new SortedList<long, IMigrationInfo>();
-            foreach (var entry in migrations)
-            {
-                list.Add(entry.Version, entry);
-            }
+			var list = new SortedList<long, IMigrationInfo>();
+			foreach (var entry in migrations)
+			{
+				list.Add(entry.Version, entry);
+			}
 
-            return list;
-        }
-    }
+			return list;
+		}
+	}
 }

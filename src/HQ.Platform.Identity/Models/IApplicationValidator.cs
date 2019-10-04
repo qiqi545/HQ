@@ -21,12 +21,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IApplicationValidator<TApplication, TUser, TKey>
-        where TApplication : IdentityApplication<TKey>
-        where TUser : IdentityUserExtended<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        Task<IdentityResult> ValidateAsync(ApplicationManager<TApplication, TUser, TKey> manager,
-            TApplication application);
-    }
+	public interface IApplicationValidator<TApplication, TUser, TKey>
+		where TApplication : IdentityApplication<TKey>
+		where TUser : IdentityUserExtended<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		Task<IdentityResult> ValidateAsync(ApplicationManager<TApplication, TUser, TKey> manager,
+			TApplication application);
+	}
 }

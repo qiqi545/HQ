@@ -20,17 +20,17 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Security
 {
-    internal sealed class NoLookupProtectorKeyRing : ILookupProtectorKeyRing
-    {
-        private const string ProtectorContextKey = "None";
+	internal sealed class NoLookupProtectorKeyRing : ILookupProtectorKeyRing
+	{
+		private const string ProtectorContextKey = "None";
 
-        public IEnumerable<string> GetAllKeyIds()
-        {
-            return new[] {ProtectorContextKey};
-        }
+		public IEnumerable<string> GetAllKeyIds()
+		{
+			return new[] {ProtectorContextKey};
+		}
 
-        public string CurrentKeyId => ProtectorContextKey;
+		public string CurrentKeyId => ProtectorContextKey;
 
-        public string this[string keyId] => ProtectorContextKey;
-    }
+		public string this[string keyId] => ProtectorContextKey;
+	}
 }

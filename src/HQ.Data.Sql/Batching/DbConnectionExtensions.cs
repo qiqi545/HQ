@@ -24,30 +24,30 @@ using HQ.Data.Sql.Descriptor;
 
 namespace HQ.Data.Sql.Batching
 {
-    public static class DbConnectionExtensions
-    {
-        public static async Task CopyAsync<T, TOptions>(this IDbConnection connection,
-            IDataBatchOperation<TOptions> batch,
-            IEnumerable<T> stream, BatchSaveStrategy saveStrategy = BatchSaveStrategy.Insert, long startingAt = 0,
-            int? count = null, IDbTransaction transaction = null,
-            int? commandTimeout = null, CancellationToken cancellationToken = default)
-        {
-            await connection.CopyAsync(batch, SimpleDataDescriptor.Create<T>(), stream, saveStrategy, startingAt, count,
-                transaction, commandTimeout, cancellationToken);
-        }
+	public static class DbConnectionExtensions
+	{
+		public static async Task CopyAsync<T, TOptions>(this IDbConnection connection,
+			IDataBatchOperation<TOptions> batch,
+			IEnumerable<T> stream, BatchSaveStrategy saveStrategy = BatchSaveStrategy.Insert, long startingAt = 0,
+			int? count = null, IDbTransaction transaction = null,
+			int? commandTimeout = null, CancellationToken cancellationToken = default)
+		{
+			await connection.CopyAsync(batch, SimpleDataDescriptor.Create<T>(), stream, saveStrategy, startingAt, count,
+				transaction, commandTimeout, cancellationToken);
+		}
 
-        public static async Task CopyAsync<T, TOptions>(this IDbConnection connection,
-            IDataBatchOperation<TOptions> batch,
-            IDataDescriptor descriptor, IEnumerable<T> stream,
-            BatchSaveStrategy saveStrategy = BatchSaveStrategy.Insert, long startingAt = 0, int? count = null,
-            IDbTransaction transaction = null,
-            int? commandTimeout = null, CancellationToken cancellationToken = default)
-        {
-            var before = await batch.BeforeAsync(connection, descriptor, transaction);
-            await batch.ExecuteAsync(connection, descriptor, before.Item1, before.Item2, saveStrategy, stream,
-                startingAt, count, transaction, commandTimeout, cancellationToken);
-            await batch.AfterAsync(connection, descriptor, before.Item1, before.Item2, saveStrategy, transaction,
-                commandTimeout);
-        }
-    }
+		public static async Task CopyAsync<T, TOptions>(this IDbConnection connection,
+			IDataBatchOperation<TOptions> batch,
+			IDataDescriptor descriptor, IEnumerable<T> stream,
+			BatchSaveStrategy saveStrategy = BatchSaveStrategy.Insert, long startingAt = 0, int? count = null,
+			IDbTransaction transaction = null,
+			int? commandTimeout = null, CancellationToken cancellationToken = default)
+		{
+			var before = await batch.BeforeAsync(connection, descriptor, transaction);
+			await batch.ExecuteAsync(connection, descriptor, before.Item1, before.Item2, saveStrategy, stream,
+				startingAt, count, transaction, commandTimeout, cancellationToken);
+			await batch.AfterAsync(connection, descriptor, before.Item1, before.Item2, saveStrategy, transaction,
+				commandTimeout);
+		}
+	}
 }

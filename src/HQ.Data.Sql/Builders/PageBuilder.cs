@@ -20,11 +20,11 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class PageBuilder
-    {
-        public static string Page(ISqlDialect d, string sql)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb => { d.Page(sql, sb); });
-        }
-    }
+	public static class PageBuilder
+	{
+		public static string Page(ISqlDialect d, string sql)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb => { d.Page(sql, sb); });
+		}
+	}
 }

@@ -20,25 +20,25 @@ using System.Diagnostics;
 
 namespace HQ.Extensions.Logging
 {
-    public class ActionTraceListener : TraceListener
-    {
-        private readonly Action<string> _write;
-        private readonly Action<string> _writeLine;
+	public class ActionTraceListener : TraceListener
+	{
+		private readonly Action<string> _write;
+		private readonly Action<string> _writeLine;
 
-        public ActionTraceListener(Action<string> write, Action<string> writeLine = null)
-        {
-            _write = write;
-            _writeLine = writeLine ?? write;
-        }
+		public ActionTraceListener(Action<string> write, Action<string> writeLine = null)
+		{
+			_write = write;
+			_writeLine = writeLine ?? write;
+		}
 
-        public override void WriteLine(string value)
-        {
-            _writeLine?.Invoke(value);
-        }
+		public override void WriteLine(string value)
+		{
+			_writeLine?.Invoke(value);
+		}
 
-        public override void Write(string value)
-        {
-            _write?.Invoke(value);
-        }
-    }
+		public override void Write(string value)
+		{
+			_write?.Invoke(value);
+		}
+	}
 }

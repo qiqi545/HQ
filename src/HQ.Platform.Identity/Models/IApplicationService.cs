@@ -21,19 +21,19 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IApplicationService
-    {
-        Task<Operation<int>> GetCountAsync();
-    }
+	public interface IApplicationService
+	{
+		Task<Operation<int>> GetCountAsync();
+	}
 
-    public interface IApplicationService<TApplication> : IApplicationService
-    {
-        Task<Operation<IEnumerable<TApplication>>> GetAsync();
-        Task<Operation<TApplication>> CreateAsync(CreateApplicationModel model);
-        Task<Operation> UpdateAsync(TApplication application);
-        Task<Operation> DeleteAsync(string id);
+	public interface IApplicationService<TApplication> : IApplicationService
+	{
+		Task<Operation<IEnumerable<TApplication>>> GetAsync();
+		Task<Operation<TApplication>> CreateAsync(CreateApplicationModel model);
+		Task<Operation> UpdateAsync(TApplication application);
+		Task<Operation> DeleteAsync(string id);
 
-        Task<Operation<TApplication>> FindByIdAsync(string id);
-        Task<Operation<TApplication>> FindByNameAsync(string name);
-    }
+		Task<Operation<TApplication>> FindByIdAsync(string id);
+		Task<Operation<TApplication>> FindByNameAsync(string name);
+	}
 }

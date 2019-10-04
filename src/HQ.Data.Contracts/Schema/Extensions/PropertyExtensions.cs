@@ -19,19 +19,19 @@ using HQ.Data.Contracts.Schema.Models;
 
 namespace HQ.Data.Contracts.Schema.Extensions
 {
-    public static class PropertyExtensions
-    {
-        public static bool IsModel(this Property property)
-        {
-            return property.Type == PropertyType.Object ||
-                   property.Type == PropertyType.View ||
-                   property.Rel == PropertyRelationship.OneToMany ||
-                   property.Rel == PropertyRelationship.OneToOne;
-        }
+	public static class PropertyExtensions
+	{
+		public static bool IsModel(this Property property)
+		{
+			return property.Type == PropertyType.Object ||
+			       property.Type == PropertyType.View ||
+			       property.Rel == PropertyRelationship.OneToMany ||
+			       property.Rel == PropertyRelationship.OneToOne;
+		}
 
-        public static string Label(this Property property)
-        {
-            return property?.Name?.Label();
-        }
-    }
+		public static string Label(this Property property)
+		{
+			return property?.Name?.Label();
+		}
+	}
 }

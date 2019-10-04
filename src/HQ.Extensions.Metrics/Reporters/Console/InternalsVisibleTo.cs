@@ -21,7 +21,7 @@ using System.Runtime.CompilerServices;
 
 namespace HQ.Extensions.Metrics.Reporters.Console
 {
-    internal class InternalsVisibleTo
-    {
-    }
+	internal class InternalsVisibleTo
+	{
+	}
 }

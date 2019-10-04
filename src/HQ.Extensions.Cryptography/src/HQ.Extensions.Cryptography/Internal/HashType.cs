@@ -17,14 +17,14 @@
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal enum HashType
-    {
-        Md5,
-        Sha1,
-        Sha256,
-        Sha384,
-        Sha512,
-        Blake2B,
-        SipHash24
-    }
+	internal enum HashType
+	{
+		Md5,
+		Sha1,
+		Sha256,
+		Sha384,
+		Sha512,
+		Blake2B,
+		SipHash24
+	}
 }

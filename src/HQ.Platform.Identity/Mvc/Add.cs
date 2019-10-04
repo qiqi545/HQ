@@ -32,50 +32,55 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Mvc
 {
-    public static class Add
-    {
-	    public static IServiceCollection AddIdentityApi(this IServiceCollection services, IConfiguration apiConfig)
-	    {
-		    return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, apiConfig.FastBind);
-	    }
-
-		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, IConfiguration apiConfig)
-		    where TUser : IdentityUserExtended<TKey>
-		    where TRole : IdentityRoleExtended<TKey>
-		    where TTenant : IdentityTenant<TKey>
-		    where TApplication : IdentityApplication<TKey>
-		    where TKey : IEquatable<TKey>
+	public static class Add
+	{
+		public static IServiceCollection AddIdentityApi(this IServiceCollection services, IConfiguration apiConfig)
 		{
-		    return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.FastBind);
-	    }
-
-		public static IServiceCollection AddIdentityApi(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
-		{
-			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(services, configureApi);
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication,
+				string>(services, apiConfig.FastBind);
 		}
 
-		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
-		    where TUser : IdentityUserExtended<TKey>
-		    where TRole : IdentityRoleExtended<TKey>
-		    where TTenant : IdentityTenant<TKey>
-		    where TApplication : IdentityApplication<TKey>
-		    where TKey : IEquatable<TKey>
-	    {
-		    services.AddMvcCommon()
-			    .AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(
+			this IServiceCollection services, IConfiguration apiConfig)
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+			where TKey : IEquatable<TKey>
+		{
+			return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.FastBind);
+		}
 
-		    return services;
-	    }
+		public static IServiceCollection AddIdentityApi(this IServiceCollection services,
+			Action<IdentityApiOptions> configureApi = null)
+		{
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication,
+				string>(services, configureApi);
+		}
+
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(
+			this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+			where TKey : IEquatable<TKey>
+		{
+			services.AddMvcCommon()
+				.AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
+
+			return services;
+		}
 
 		private static void AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder,
 			Action<IdentityApiOptions> configureApi = null)
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-            where TKey : IEquatable<TKey>
-        {
-			if(configureApi != null)
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+			where TKey : IEquatable<TKey>
+		{
+			if (configureApi != null)
 				mvcBuilder.Services.Configure(configureApi);
 
 			mvcBuilder.Services.AddDynamicAuthorization();
@@ -88,7 +93,8 @@ namespace HQ.Platform.Identity.Mvc
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications,
+				ClaimValues.ManageApplications);
 
 			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
 
@@ -110,11 +116,12 @@ namespace HQ.Platform.Identity.Mvc
 					};
 				});
 			}
-        }
+		}
 
 		private static bool TokensEnabled(this IMvcBuilder mvcBuilder)
 		{
-			return mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens.Enabled;
+			return mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value
+				.Tokens.Enabled;
 		}
-    }
+	}
 }

@@ -127,7 +127,7 @@ namespace HQ.Common.AspNetCore.Mvc
 		{
 			return Task.FromResult((IActionResult) NotFound());
 		}
-		
+
 		[ApiExplorerSettings(IgnoreApi = true)]
 		[NonAction]
 		public Task<IActionResult> NotFoundResult(object value)

@@ -21,48 +21,44 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {
-    public class RestFieldsFilter : IRestFilter
-    {
-        private readonly IOptions<QueryOptions> _options;
+	public class RestFieldsFilter : IRestFilter
+	{
+		private readonly IOptions<QueryOptions> _options;
 
-        public RestFieldsFilter(IOptions<QueryOptions> options)
-        {
-            _options = options;
-        }
+		public RestFieldsFilter(IOptions<QueryOptions> options) => _options = options;
 
-        public QueryOptions Options => this._options.Value;
+		public QueryOptions Options => _options.Value;
 
-        public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
-        {
-            qs.TryGetValue(_options.Value.FieldsOperator, out var fields);
+		public void Execute(IDictionary<string, StringValues> qs, ref QueryContext context)
+		{
+			qs.TryGetValue(_options.Value.FieldsOperator, out var fields);
 
-            if (fields.Count == 0)
-            {
-                return;
-            }
+			if (fields.Count == 0)
+			{
+				return;
+			}
 
-            var options = new FieldOptions();
-            foreach (var field in fields)
-            foreach (var value in field.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
-            {
-                var v = value.Trim();
-                options.Fields.Add(v);
-            }
+			var options = new FieldOptions();
+			foreach (var field in fields)
+			foreach (var value in field.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var v = value.Trim();
+				options.Fields.Add(v);
+			}
 
-            if (!options.Validate(context.Type, _options.Value, out var errors))
-            {
-                context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
-                    HttpStatusCode.BadRequest, errors));
-            }
+			if (!options.Validate(context.Type, _options.Value, out var errors))
+			{
+				context.Errors.Add(new Error(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed,
+					HttpStatusCode.BadRequest, errors));
+			}
 
-            context.Fields = options;
-        }
-    }
+			context.Fields = options;
+		}
+	}
 }

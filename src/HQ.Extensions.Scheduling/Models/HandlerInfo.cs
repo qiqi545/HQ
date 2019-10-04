@@ -20,119 +20,119 @@ using System.Collections.Generic;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public class HandlerInfo : IEquatable<HandlerInfo>
-    {
-        public HandlerInfo( /* Required for serialization */) { }
+	public class HandlerInfo : IEquatable<HandlerInfo>
+	{
+		public HandlerInfo( /* Required for serialization */) { }
 
-        public HandlerInfo(string @namespace, string entrypoint)
-        {
-            Namespace = @namespace;
-            Entrypoint = entrypoint;
-        }
+		public HandlerInfo(string @namespace, string entrypoint)
+		{
+			Namespace = @namespace;
+			Entrypoint = entrypoint;
+		}
 
-        public string Namespace { get; set; }
-        public string Entrypoint { get; set; }
+		public string Namespace { get; set; }
+		public string Entrypoint { get; set; }
 
-        #region Equality
+		#region Equality
 
-        public bool Equals(HandlerInfo other)
-        {
-            if (ReferenceEquals(null, other))
-            {
-                return false;
-            }
+		public bool Equals(HandlerInfo other)
+		{
+			if (ReferenceEquals(null, other))
+			{
+				return false;
+			}
 
-            if (ReferenceEquals(this, other))
-            {
-                return true;
-            }
+			if (ReferenceEquals(this, other))
+			{
+				return true;
+			}
 
-            return string.Equals(Namespace, other.Namespace) && string.Equals(Entrypoint, other.Entrypoint);
-        }
+			return string.Equals(Namespace, other.Namespace) && string.Equals(Entrypoint, other.Entrypoint);
+		}
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-            {
-                return false;
-            }
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj))
+			{
+				return false;
+			}
 
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
+			if (ReferenceEquals(this, obj))
+			{
+				return true;
+			}
 
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
+			if (obj.GetType() != GetType())
+			{
+				return false;
+			}
 
-            return Equals((HandlerInfo)obj);
-        }
+			return Equals((HandlerInfo) obj);
+		}
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                var hashCode = Namespace != null ? Namespace.GetHashCode() : 0;
-                hashCode = (hashCode * 397) ^ (Entrypoint != null ? Entrypoint.GetHashCode() : 0);
-                hashCode = (hashCode * 397);
-                return hashCode;
-            }
-        }
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				var hashCode = Namespace != null ? Namespace.GetHashCode() : 0;
+				hashCode = (hashCode * 397) ^ (Entrypoint != null ? Entrypoint.GetHashCode() : 0);
+				hashCode = hashCode * 397;
+				return hashCode;
+			}
+		}
 
-        public static bool operator ==(HandlerInfo left, HandlerInfo right)
-        {
-            return Equals(left, right);
-        }
+		public static bool operator ==(HandlerInfo left, HandlerInfo right)
+		{
+			return Equals(left, right);
+		}
 
-        public static bool operator !=(HandlerInfo left, HandlerInfo right)
-        {
-            return !Equals(left, right);
-        }
+		public static bool operator !=(HandlerInfo left, HandlerInfo right)
+		{
+			return !Equals(left, right);
+		}
 
-        private sealed class NamespaceEntrypointInstanceEqualityComparer : IEqualityComparer<HandlerInfo>
-        {
-            public bool Equals(HandlerInfo x, HandlerInfo y)
-            {
-                if (ReferenceEquals(x, y))
-                {
-                    return true;
-                }
+		private sealed class NamespaceEntrypointInstanceEqualityComparer : IEqualityComparer<HandlerInfo>
+		{
+			public bool Equals(HandlerInfo x, HandlerInfo y)
+			{
+				if (ReferenceEquals(x, y))
+				{
+					return true;
+				}
 
-                if (ReferenceEquals(x, null))
-                {
-                    return false;
-                }
+				if (ReferenceEquals(x, null))
+				{
+					return false;
+				}
 
-                if (ReferenceEquals(y, null))
-                {
-                    return false;
-                }
+				if (ReferenceEquals(y, null))
+				{
+					return false;
+				}
 
-                if (x.GetType() != y.GetType())
-                {
-                    return false;
-                }
+				if (x.GetType() != y.GetType())
+				{
+					return false;
+				}
 
-                return string.Equals(x.Namespace, y.Namespace) && string.Equals(x.Entrypoint, y.Entrypoint);
-            }
+				return string.Equals(x.Namespace, y.Namespace) && string.Equals(x.Entrypoint, y.Entrypoint);
+			}
 
-            public int GetHashCode(HandlerInfo obj)
-            {
-                unchecked
-                {
-                    var hashCode = obj.Namespace != null ? obj.Namespace.GetHashCode() : 0;
-                    hashCode = (hashCode * 397) ^ (obj.Entrypoint != null ? obj.Entrypoint.GetHashCode() : 0);
-                    hashCode = (hashCode * 397);
-                    return hashCode;
-                }
-            }
-        }
+			public int GetHashCode(HandlerInfo obj)
+			{
+				unchecked
+				{
+					var hashCode = obj.Namespace != null ? obj.Namespace.GetHashCode() : 0;
+					hashCode = (hashCode * 397) ^ (obj.Entrypoint != null ? obj.Entrypoint.GetHashCode() : 0);
+					hashCode = hashCode * 397;
+					return hashCode;
+				}
+			}
+		}
 
-        public static IEqualityComparer<HandlerInfo> NamespaceEntrypointInstanceComparer { get; } =
-            new NamespaceEntrypointInstanceEqualityComparer();
+		public static IEqualityComparer<HandlerInfo> NamespaceEntrypointInstanceComparer { get; } =
+			new NamespaceEntrypointInstanceEqualityComparer();
 
-        #endregion
-    }
+		#endregion
+	}
 }

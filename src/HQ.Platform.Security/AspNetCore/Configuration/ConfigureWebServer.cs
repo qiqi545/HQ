@@ -21,23 +21,20 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Security.AspNetCore.Configuration
 {
-    internal class ConfigureWebServer : IConfigureOptions<KestrelServerOptions>
-    {
-        private readonly IOptions<SecurityOptions> _options;
+	internal class ConfigureWebServer : IConfigureOptions<KestrelServerOptions>
+	{
+		private readonly IOptions<SecurityOptions> _options;
 
-        public ConfigureWebServer(IOptions<SecurityOptions> options)
-        {
-            _options = options;
-        }
+		public ConfigureWebServer(IOptions<SecurityOptions> options) => _options = options;
 
-        public void Configure(KestrelServerOptions options)
-        {
-            options.AddServerHeader = false;
+		public void Configure(KestrelServerOptions options)
+		{
+			options.AddServerHeader = false;
 
-            // See: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-2.2
-            options.Limits.MaxConcurrentConnections = _options.Value.WebServer.MaxConcurrentConnections;
-            options.Limits.MaxConcurrentUpgradedConnections = _options.Value.WebServer.MaxConcurrentUpgradedConnections;
-            options.Limits.MaxRequestBodySize = _options.Value.WebServer.MaxRequestBodySize;
-        }
-    }
+			// See: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-2.2
+			options.Limits.MaxConcurrentConnections = _options.Value.WebServer.MaxConcurrentConnections;
+			options.Limits.MaxConcurrentUpgradedConnections = _options.Value.WebServer.MaxConcurrentUpgradedConnections;
+			options.Limits.MaxRequestBodySize = _options.Value.WebServer.MaxRequestBodySize;
+		}
+	}
 }

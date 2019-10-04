@@ -25,35 +25,31 @@ using System.Security.Permissions;
 
 namespace HQ.Extensions.Messaging
 {
-    [Serializable]
-    public class UnusedStateMethodsException : Exception
-    {
-        public UnusedStateMethodsException(ICollection<MethodInfo> stateMethods) : base(
-            "State methods were unused (probably a naming error or undefined state):\n" +
-            string.Join("\n", stateMethods))
-        {
-            StateMethods = new ReadOnlyCollection<string>(stateMethods.Select(x => x.Name).ToList());
-        }
+	[Serializable]
+	public class UnusedStateMethodsException : Exception
+	{
+		public UnusedStateMethodsException(ICollection<MethodInfo> stateMethods) : base(
+			"State methods were unused (probably a naming error or undefined state):\n" +
+			string.Join("\n", stateMethods)) =>
+			StateMethods = new ReadOnlyCollection<string>(stateMethods.Select(x => x.Name).ToList());
 
-        protected UnusedStateMethodsException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            StateMethods =
-                info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<string>)) as ReadOnlyCollection<string>;
-        }
+		protected UnusedStateMethodsException(SerializationInfo info, StreamingContext context)
+			: base(info, context) =>
+			StateMethods =
+				info.GetValue(nameof(StateMethods), typeof(ReadOnlyCollection<string>)) as ReadOnlyCollection<string>;
 
-        public ReadOnlyCollection<string> StateMethods { get; }
+		public ReadOnlyCollection<string> StateMethods { get; }
 
-        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-            {
-                throw new ArgumentNullException(nameof(info));
-            }
+		[SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+			{
+				throw new ArgumentNullException(nameof(info));
+			}
 
-            info.AddValue(nameof(StateMethods), StateMethods);
-            base.GetObjectData(info, context);
-        }
-    }
+			info.AddValue(nameof(StateMethods), StateMethods);
+			base.GetObjectData(info, context);
+		}
+	}
 }

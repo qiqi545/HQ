@@ -22,23 +22,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserAuthenticationTokenStore<TUser>
-    {
-        public Task SetTokenAsync(TUser user, string loginProvider, string name, string value,
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+	partial class UserStore<TUser, TKey, TRole> : IUserAuthenticationTokenStore<TUser>
+	{
+		public Task SetTokenAsync(TUser user, string loginProvider, string name, string value,
+			CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
 
-        public Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+		public Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
 
-        public Task<string> GetTokenAsync(TUser user, string loginProvider, string name,
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-    }
+		public Task<string> GetTokenAsync(TUser user, string loginProvider, string name,
+			CancellationToken cancellationToken)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

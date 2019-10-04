@@ -34,171 +34,173 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Mvc.Controllers
 {
-    [Route("roles")]
+	[Route("roles")]
 	[DynamicController(typeof(IdentityApiOptions))]
-	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Roles))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies),
+		nameof(IdentityApiOptions.Policies.Roles))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]
-    [DisplayName("Roles")]
-    [MetaDescription("Manages system roles.")]
-    public class RoleController<TRole, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+	[DisplayName("Roles")]
+	[MetaDescription("Manages system roles.")]
+	public class RoleController<TRole, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
 		where TRole : IdentityRoleExtended<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly IRoleService<TRole> _roleService;
+		where TKey : IEquatable<TKey>
+	{
+		private readonly IOptionsMonitor<IdentityApiOptions> _options;
+		private readonly IRoleService<TRole> _roleService;
+		private readonly IOptionsMonitor<SecurityOptions> _security;
 
-        private readonly IOptionsMonitor<IdentityApiOptions> _options;
-        private readonly IOptionsMonitor<SecurityOptions> _security;
+		public RoleController(IRoleService<TRole> roleService, IOptionsMonitor<SecurityOptions> security,
+			IOptionsMonitor<IdentityApiOptions> options)
+		{
+			_roleService = roleService;
+			_security = security;
+			_options = options;
+		}
 
-        public RoleController(IRoleService<TRole> roleService, IOptionsMonitor<SecurityOptions> security, IOptionsMonitor<IdentityApiOptions> options)
-        {
-            _roleService = roleService;
-            _security = security;
-            _options = options;
-        }
-
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("")]
-        public async Task<IActionResult> Get()
-        {
-            var roles = await _roleService.GetAsync();
-            if (roles?.Data == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> Get()
+		{
+			var roles = await _roleService.GetAsync();
+			if (roles?.Data == null)
+			{
+				return NotFound();
+			}
 
-            return Ok(roles.Data);
-        }
+			return Ok(roles.Data);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("")]
-        public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _roleService.CreateAsync(model);
+			var result = await _roleService.CreateAsync(model);
 
-            return result.Succeeded
-                ? Created($"{_options.CurrentValue.RootPath ?? string.Empty}/roles/{result.Data.Id}", result.Data)
-                : (IActionResult) BadRequest(result.Errors);
-        }
+			return result.Succeeded
+				? Created($"{_options.CurrentValue.RootPath ?? string.Empty}/roles/{result.Data.Id}", result.Data)
+				: (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromBody] TRole role)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Update([FromBody] TRole role)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _roleService.UpdateAsync(role);
-            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
-            {
-                return NotFound();
-            }
+			var result = await _roleService.UpdateAsync(role);
+			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+			{
+				return NotFound();
+			}
 
-            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
-        }
+			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Delete(string id)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _roleService.DeleteAsync(id);
-            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
-            {
-                return NotFound();
-            }
+			var result = await _roleService.DeleteAsync(id);
+			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+			{
+				return NotFound();
+			}
 
-            return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
-        }
+			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("{id}/claims")]
-        public async Task<IActionResult> GetClaims([FromRoute] string id)
-        {
-            var role = await _roleService.FindByIdAsync(id);
-            if (role?.Data == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> GetClaims([FromRoute] string id)
+		{
+			var role = await _roleService.FindByIdAsync(id);
+			if (role?.Data == null)
+			{
+				return NotFound();
+			}
 
-            var claims = await _roleService.GetClaimsAsync(role.Data);
+			var claims = await _roleService.GetClaimsAsync(role.Data);
 
-            if (claims?.Data.Count == 0)
-            {
-                return NotFound();
-            }
+			if (claims?.Data.Count == 0)
+			{
+				return NotFound();
+			}
 
-            return Ok(claims);
-        }
+			return Ok(claims);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("{id}/claims")]
-        public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
-        {
-            if (!Valid(model, out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
+		{
+			if (!Valid(model, out var error))
+			{
+				return error;
+			}
 
-            var role = await _roleService.FindByIdAsync(id);
-            if (role?.Data == null)
-            {
-                return NotFound();
-            }
+			var role = await _roleService.FindByIdAsync(id);
+			if (role?.Data == null)
+			{
+				return NotFound();
+			}
 
-            var issuer = _security.CurrentValue.Tokens.Issuer;
-            var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
-            var result = await _roleService.AddClaimAsync(role.Data, claim);
+			var issuer = _security.CurrentValue.Tokens.Issuer;
+			var claim = new Claim(model.Type, model.Value, model.ValueType ?? ClaimValueTypes.String, issuer);
+			var result = await _roleService.AddClaimAsync(role.Data, claim);
 
-            return result.Succeeded
-                ? Created($"/api/roles/{role.Data.Id}/claims", claim)
-                : (IActionResult) BadRequest(result.Errors);
-        }
+			return result.Succeeded
+				? Created($"/api/roles/{role.Data.Id}/claims", claim)
+				: (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpDelete("{id}/claims/{type}/{value}")]
-        public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type, [FromRoute] string value)
-        {
-            var user = await _roleService.FindByIdAsync(id);
-            if (user?.Data == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
+			[FromRoute] string value)
+		{
+			var user = await _roleService.FindByIdAsync(id);
+			if (user?.Data == null)
+			{
+				return NotFound();
+			}
 
-            var claims = await _roleService.GetClaimsAsync(user.Data);
+			var claims = await _roleService.GetClaimsAsync(user.Data);
 
-            var claim = claims.Data.FirstOrDefault(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
-                                                        x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
+			var claim = claims.Data.FirstOrDefault(x => x.Type.Equals(type, StringComparison.OrdinalIgnoreCase) &&
+			                                            x.Value.Equals(value, StringComparison.OrdinalIgnoreCase));
 
-            if (claim == null)
-            {
-                return NotFound();
-            }
+			if (claim == null)
+			{
+				return NotFound();
+			}
 
-            var result = await _roleService.RemoveClaimAsync(user.Data, claim);
+			var result = await _roleService.RemoveClaimAsync(user.Data, claim);
 
-            return result.Succeeded
-                ? StatusCode((int) HttpStatusCode.NoContent)
-                : (IActionResult) BadRequest(result.Errors);
-        }
+			return result.Succeeded
+				? StatusCode((int) HttpStatusCode.NoContent)
+				: (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("{id}")]
-        public async Task<TRole> FindById([FromRoute] string id)
-        {
-            var role = await _roleService.FindByIdAsync(id);
-            return role.Data;
-        }
-    }
+		public async Task<TRole> FindById([FromRoute] string id)
+		{
+			var role = await _roleService.FindByIdAsync(id);
+			return role.Data;
+		}
+	}
 }

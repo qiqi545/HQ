@@ -17,8 +17,8 @@
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectRepository<T> : IObjectGetRepository<T>, IObjectSaveRepository<T>, IObjectDeleteRepository<T> where T : IObject
+	public interface IObjectRepository<T> : IObjectGetRepository<T>, IObjectSaveRepository<T>,
+		IObjectDeleteRepository<T> where T : IObject
 	{
-
 	}
 }

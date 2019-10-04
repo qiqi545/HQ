@@ -17,12 +17,12 @@
 
 namespace HQ.Extensions.Scheduling.Models
 {
-    public enum RetryDecision
-    {
-        RetryImmediately,
-        Requeue,
-        Backlog,
-        Undeliverable,
-        Destroy
-    }
+	public enum RetryDecision
+	{
+		RetryImmediately,
+		Requeue,
+		Backlog,
+		Undeliverable,
+		Destroy
+	}
 }

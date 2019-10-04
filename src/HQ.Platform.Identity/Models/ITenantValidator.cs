@@ -21,11 +21,11 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ITenantValidator<TTenant, TUser, TKey>
-        where TTenant : IdentityTenant<TKey>
-        where TUser : IdentityUserExtended<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        Task<IdentityResult> ValidateAsync(TenantManager<TTenant, TUser, TKey> manager, TTenant tenant);
-    }
+	public interface ITenantValidator<TTenant, TUser, TKey>
+		where TTenant : IdentityTenant<TKey>
+		where TUser : IdentityUserExtended<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		Task<IdentityResult> ValidateAsync(TenantManager<TTenant, TUser, TKey> manager, TTenant tenant);
+	}
 }

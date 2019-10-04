@@ -42,146 +42,150 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.Sqlite.Identity
 {
-    public static class Add
-    {
-	    public static IdentityBuilder AddSqliteIdentityStore(
-		    this IdentityBuilder identityBuilder,
-		    string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-		    IConfiguration databaseConfig = null)
-	    {
-		    return identityBuilder.AddSqliteIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(connectionString, scope,
-			    databaseConfig);
-	    }
+	public static class Add
+	{
+		public static IdentityBuilder AddSqliteIdentityStore(
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+		{
+			return identityBuilder
+				.AddSqliteIdentityStore<string, IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
+					IdentityApplication>(connectionString, scope,
+					databaseConfig);
+		}
 
 		public static IdentityBuilder AddSqliteIdentityStore<TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
-            where TUser : IdentityUserExtended<string>
-            where TRole : IdentityRoleExtended<string>
-            where TTenant : IdentityTenant<string>
-            where TApplication : IdentityApplication<string>
-        {
-            return identityBuilder.AddSqliteIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString, scope,
-                databaseConfig);
-        }
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+			where TUser : IdentityUserExtended<string>
+			where TRole : IdentityRoleExtended<string>
+			where TTenant : IdentityTenant<string>
+			where TApplication : IdentityApplication<string>
+		{
+			return identityBuilder.AddSqliteIdentityStore<string, TUser, TRole, TTenant, TApplication>(connectionString,
+				scope,
+				databaseConfig);
+		}
 
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            IConfiguration databaseConfig = null)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var configureDatabase =
-                databaseConfig != null ? databaseConfig.FastBind : (Action<SqliteOptions>) null;
+		public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			IConfiguration databaseConfig = null)
+			where TKey : IEquatable<TKey>
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+		{
+			var configureDatabase =
+				databaseConfig != null ? databaseConfig.FastBind : (Action<SqliteOptions>) null;
 
-            return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder,
-                connectionString, scope, configureDatabase);
-        }
+			return AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(identityBuilder,
+				connectionString, scope, configureDatabase);
+		}
 
-        public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
-            this IdentityBuilder identityBuilder,
-            string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
-            Action<SqliteOptions> configureDatabase = null)
-            where TKey : IEquatable<TKey>
-            where TUser : IdentityUserExtended<TKey>
-            where TRole : IdentityRoleExtended<TKey>
-            where TTenant : IdentityTenant<TKey>
-            where TApplication : IdentityApplication<TKey>
-        {
-            var services = identityBuilder.Services;
+		public static IdentityBuilder AddSqliteIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
+			this IdentityBuilder identityBuilder,
+			string connectionString, ConnectionScope scope = ConnectionScope.ByRequest,
+			Action<SqliteOptions> configureDatabase = null)
+			where TKey : IEquatable<TKey>
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+		{
+			var services = identityBuilder.Services;
 
-            services.AddSingleton<ITypeRegistry, TypeRegistry>();
+			services.AddSingleton<ITypeRegistry, TypeRegistry>();
 
-            var builder = new SqliteConnectionStringBuilder(connectionString);
+			var builder = new SqliteConnectionStringBuilder(connectionString);
 
-            void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }
-            services.Configure<SqliteOptions>(ConfigureDatabase);
+			void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }
+			services.Configure<SqliteOptions>(ConfigureDatabase);
 
-            var serviceProvider = services.BuildServiceProvider();
+			var serviceProvider = services.BuildServiceProvider();
 
-            var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
-            configureDatabase?.Invoke(options);
+			var options = serviceProvider.GetService<IOptions<SqliteOptions>>()?.Value ?? new SqliteOptions();
+			configureDatabase?.Invoke(options);
 
-            var dialect = new SqliteDialect();
-            SqlBuilder.Dialect = dialect;
+			var dialect = new SqliteDialect();
+			SqlBuilder.Dialect = dialect;
 
-            identityBuilder.AddSqlIdentityStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(connectionString, scope, OnCommand(), OnConnection);
-            
-            SimpleDataDescriptor.TableNameConvention = s =>
-            {
-                switch (s)
-                {
-                    case nameof(IdentityRoleExtended):
-                        return "AspNetRoles";
-                    case nameof(IdentityUserExtended):
-                        return "AspNetUsers";
-                    case nameof(IdentityTenant):
-                        return "AspNetTenants";
-                    case nameof(IdentityApplication):
-                        return "AspNetApplications";
-                    default:
-                        return s;
-                }
-            };
+			identityBuilder.AddSqlIdentityStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
+				connectionString, scope, OnCommand(), OnConnection);
 
-            DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
-            DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
+			SimpleDataDescriptor.TableNameConvention = s =>
+			{
+				switch (s)
+				{
+					case nameof(IdentityRoleExtended):
+						return "AspNetRoles";
+					case nameof(IdentityUserExtended):
+						return "AspNetUsers";
+					case nameof(IdentityTenant):
+						return "AspNetTenants";
+					case nameof(IdentityApplication):
+						return "AspNetApplications";
+					default:
+						return s;
+				}
+			};
 
-            services.AddMetrics();
-            services.TryAddSingleton<ISqlDialect>(dialect);
-            services.TryAddSingleton(dialect);
+			DescriptorColumnMapper.AddTypeMap<TUser>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TRole>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TTenant>(StringComparer.Ordinal);
+			DescriptorColumnMapper.AddTypeMap<TApplication>(StringComparer.Ordinal);
 
-            services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
-            services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
-            services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
-            services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
+			services.AddMetrics();
+			services.TryAddSingleton<ISqlDialect>(dialect);
+			services.TryAddSingleton(dialect);
 
-            services.TryAddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
+			services.AddSingleton<IQueryableProvider<TUser>, NoQueryableProvider<TUser>>();
+			services.AddSingleton<IQueryableProvider<TRole>, NoQueryableProvider<TRole>>();
+			services.AddSingleton<IQueryableProvider<TTenant>, NoQueryableProvider<TTenant>>();
+			services.AddSingleton<IQueryableProvider<TApplication>, NoQueryableProvider<TApplication>>();
 
-            var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
+			services.TryAddSingleton<IDataBatchOperation<SqliteOptions>, SqliteBatchDataOperation>();
 
-            MigrateToLatest(connectionString, identityOptions);
+			var identityOptions = serviceProvider.GetRequiredService<IOptions<IdentityOptionsExtended>>().Value;
 
-            return identityBuilder;
-        }
+			MigrateToLatest(connectionString, identityOptions);
 
-        private static void OnConnection(IDbConnection c, IServiceProvider r)
-        {
-            if (c is SqliteConnection connection)
-            {
-            }
-        }
+			return identityBuilder;
+		}
 
-        private static Action<IDbCommand, Type, IServiceProvider> OnCommand()
-        {
-            return (c, t, r) =>
-            {
-                if (c is SqliteCommand command)
-                {
-                }
-            };
-        }
+		private static void OnConnection(IDbConnection c, IServiceProvider r)
+		{
+			if (c is SqliteConnection connection)
+			{
+			}
+		}
 
-        private static void MigrateToLatest(string connectionString, IdentityOptionsExtended identityOptions)
-        {
-            var runner = new SqliteMigrationRunner(connectionString);
+		private static Action<IDbCommand, Type, IServiceProvider> OnCommand()
+		{
+			return (c, t, r) =>
+			{
+				if (c is SqliteCommand command)
+				{
+				}
+			};
+		}
 
-            if (identityOptions.Stores.CreateIfNotExists)
-            {
-                runner.CreateDatabaseIfNotExists();
-            }
+		private static void MigrateToLatest(string connectionString, IdentityOptionsExtended identityOptions)
+		{
+			var runner = new SqliteMigrationRunner(connectionString);
 
-            if (identityOptions.Stores.MigrateOnStartup)
-            {
-                runner.MigrateUp(typeof(CreateIdentitySchema).Assembly, typeof(CreateIdentitySchema).Namespace);
-            }
-        }
-    }
+			if (identityOptions.Stores.CreateIfNotExists)
+			{
+				runner.CreateDatabaseIfNotExists();
+			}
+
+			if (identityOptions.Stores.MigrateOnStartup)
+			{
+				runner.MigrateUp(typeof(CreateIdentitySchema).Assembly, typeof(CreateIdentitySchema).Namespace);
+			}
+		}
+	}
 }

@@ -27,86 +27,88 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
-    public class DocumentDbQueryableProvider<T> : IQueryableProvider<T>
-    {
-	    private readonly string _slot;
+	public class DocumentDbQueryableProvider<T> : IQueryableProvider<T>
+	{
 		private readonly DocumentDbConnectionFactory _factory;
-        private readonly IMetricsHost<DocumentClient> _metrics;
-        private readonly IOptionsMonitor<DocumentDbOptions> _options;
+		private readonly IMetricsHost<DocumentClient> _metrics;
+		private readonly IOptionsMonitor<DocumentDbOptions> _options;
+		private readonly string _slot;
 
-        public DocumentDbQueryableProvider(string slot, DocumentDbConnectionFactory factory, IMetricsHost<DocumentClient> metrics,
-            IOptionsMonitor<DocumentDbOptions> options)
-        {
-	        _slot = slot;
-	        _options = options;
-            _factory = factory;
-            _metrics = metrics;
-        }
+		public DocumentDbQueryableProvider(string slot, DocumentDbConnectionFactory factory,
+			IMetricsHost<DocumentClient> metrics,
+			IOptionsMonitor<DocumentDbOptions> options)
+		{
+			_slot = slot;
+			_options = options;
+			_factory = factory;
+			_metrics = metrics;
+		}
 
-        public virtual bool IsSafe => false;
-        public virtual bool SupportsUnsafe => true;
+		public virtual bool IsSafe => false;
+		public virtual bool SupportsUnsafe => true;
 
-        /// <summary>
-        ///     CosmosDb has too many out-of-band considerations to provide a safe <see cref="IQueryable" />.
-        ///     Instead, use <see cref="SafeQueryable" /> when you want predictable data access using expression predicates.
-        /// </summary>
-        public IQueryable<T> Queryable => IsSafe
-            ? throw new NotSupportedException(
-                "Direct IQueryable access is not supported for DocumentDb. Use Queries instead.")
-            : (IQueryable<T>) null;
+		/// <summary>
+		///     CosmosDb has too many out-of-band considerations to provide a safe <see cref="IQueryable" />.
+		///     Instead, use <see cref="SafeQueryable" /> when you want predictable data access using expression predicates.
+		/// </summary>
+		public IQueryable<T> Queryable => IsSafe
+			? throw new NotSupportedException(
+				"Direct IQueryable access is not supported for DocumentDb. Use Queries instead.")
+			: (IQueryable<T>) null;
 
-        public IQueryable<T> UnsafeQueryable
-        {
-            get
-            {
-                var connection = (DocumentDbConnection) _factory.CreateConnection();
-                var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
-                return connection.Client.CreateDocumentQuery<T>(collectionUri);
-            }
-        }
+		public IQueryable<T> UnsafeQueryable
+		{
+			get
+			{
+				var connection = (DocumentDbConnection) _factory.CreateConnection();
+				var collectionUri =
+					UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
+				return connection.Client.CreateDocumentQuery<T>(collectionUri);
+			}
+		}
 
-        public ISafeQueryable<T> SafeQueryable
-        {
-            get
-            {
-                var connection = (DocumentDbConnection) _factory.CreateConnection();
-                var collectionUri =
-                    UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
-                return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
-            }
-        }
+		public ISafeQueryable<T> SafeQueryable
+		{
+			get
+			{
+				var connection = (DocumentDbConnection) _factory.CreateConnection();
+				var collectionUri =
+					UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
+				return new DocumentDbSafeQueryable<T>(connection.Client, collectionUri, _metrics);
+			}
+		}
 
-        public IEnumerable<T> SafeAll
-        {
-            get
-            {
-                var connection = (DocumentDbConnection) _factory.CreateConnection();
-                var command = connection.CreateCommand();
+		public IEnumerable<T> SafeAll
+		{
+			get
+			{
+				var connection = (DocumentDbConnection) _factory.CreateConnection();
+				var command = connection.CreateCommand();
 
-                var descriptor = SqlBuilder.GetDescriptor<T>();
-                var select = SqlBuilder.Select<T>(descriptor);
-                command.CommandText = select.Sql;
+				var descriptor = SqlBuilder.GetDescriptor<T>();
+				var select = SqlBuilder.Select<T>(descriptor);
+				command.CommandText = select.Sql;
 
-                var query = command.ToQuerySpec();
-				
-                if (command is DocumentDbCommand docDbCommand)
-                {
-                    docDbCommand.Id = descriptor.Id?.Property?.Name;
-                    docDbCommand.Type = typeof(T);
-                    docDbCommand.Collection = _options.Get(_slot).CollectionId;
-                    docDbCommand.DocumentType = descriptor.Table;
+				var query = command.ToQuerySpec();
+
+				if (command is DocumentDbCommand docDbCommand)
+				{
+					docDbCommand.Id = descriptor.Id?.Property?.Name;
+					docDbCommand.Type = typeof(T);
+					docDbCommand.Collection = _options.Get(_slot).CollectionId;
+					docDbCommand.DocumentType = descriptor.Table;
 					docDbCommand.MaybeTypeDiscriminate(query);
-                }
+				}
 
-                // IMPORTANT: This is a direct call, there is no ADO.NET pass-through here. This means that
-                // the JSON.NET serializer configuration is the only step in converting the typed document into
-                // an object (to be serialized again back to JSON in the output).
+				// IMPORTANT: This is a direct call, there is no ADO.NET pass-through here. This means that
+				// the JSON.NET serializer configuration is the only step in converting the typed document into
+				// an object (to be serialized again back to JSON in the output).
 
-                var collectionUri = UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
-                var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
-                return connection.Client.CreateDocumentQuery<T>(collectionUri, query, feedOptions);
-            }
-        }
-    }
+				var collectionUri =
+					UriFactory.CreateDocumentCollectionUri(connection.Database, _options.Get(_slot).CollectionId);
+				var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
+				return connection.Client.CreateDocumentQuery<T>(collectionUri, query, feedOptions);
+			}
+		}
+	}
 }

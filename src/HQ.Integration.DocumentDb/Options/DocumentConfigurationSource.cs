@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using HQ.Extensions.Options;
@@ -19,27 +21,29 @@ using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.DocumentDb.Options
 {
-    public class DocumentConfigurationSource : IConfigurationSource
-    {
-	    public DocumentDbOptions Options { get; }
+	public class DocumentConfigurationSource : IConfigurationSource
+	{
+		public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
+			IConfiguration configSeed = null)
+		{
+			SaveConfig = saveConfig;
+			Options = options;
+			ConfigSeed = configSeed;
+		}
 
-	    public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null)
-        {
-	        SaveConfig = saveConfig;
-	        Options = options;
-	        ConfigSeed = configSeed;
-        }
+		public DocumentDbOptions Options { get; }
 
-	    public SaveConfigurationOptions SaveConfig { get; set; }
+		public SaveConfigurationOptions SaveConfig { get; set; }
 
-	    public bool ReloadOnChange { get; set; }
+		public bool ReloadOnChange { get; set; }
 
-        public IConfiguration ConfigSeed { get; set; }
+		public IConfiguration ConfigSeed { get; set; }
 
-        public IConfigurationProvider Build(IConfigurationBuilder builder)
-        {
-	        DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed, SaveConfig?.SeedStrategy ?? SeedStrategy.None);
-            return new DocumentConfigurationProvider(this);
-        }
-    }
+		public IConfigurationProvider Build(IConfigurationBuilder builder)
+		{
+			DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed,
+				SaveConfig?.SeedStrategy ?? SeedStrategy.None);
+			return new DocumentConfigurationProvider(this);
+		}
+	}
 }

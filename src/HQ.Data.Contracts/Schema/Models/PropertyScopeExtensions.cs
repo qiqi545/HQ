@@ -17,11 +17,11 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public static class PropertyScopeExtensions
-    {
-        public static bool HasFlagFast(this PropertyScope value, PropertyScope flag)
-        {
-            return (value & flag) != 0;
-        }
-    }
+	public static class PropertyScopeExtensions
+	{
+		public static bool HasFlagFast(this PropertyScope value, PropertyScope flag)
+		{
+			return (value & flag) != 0;
+		}
+	}
 }

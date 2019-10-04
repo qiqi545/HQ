@@ -18,14 +18,13 @@
 using System.Collections.Generic;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.Extensions.Primitives;
 
 namespace HQ.Platform.Api.Runtime.Rest.Models
 {
-    public interface IRestFilter
-    {
-        QueryOptions Options { get; }
-        void Execute(IDictionary<string, StringValues> qs, ref QueryContext context);
-    }
+	public interface IRestFilter
+	{
+		QueryOptions Options { get; }
+		void Execute(IDictionary<string, StringValues> qs, ref QueryContext context);
+	}
 }

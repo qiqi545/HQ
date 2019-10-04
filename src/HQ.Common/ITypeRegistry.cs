@@ -19,10 +19,10 @@ using System;
 
 namespace HQ.Common
 {
-    public interface ITypeRegistry
-    {
-        bool Register(Type type);
-        bool TryRegister(Type type);
-        bool TryGetType(string name, out Type type);
-    }
+	public interface ITypeRegistry
+	{
+		bool Register(Type type);
+		bool TryRegister(Type type);
+		bool TryGetType(string name, out Type type);
+	}
 }

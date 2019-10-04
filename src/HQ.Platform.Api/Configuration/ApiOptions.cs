@@ -17,12 +17,12 @@
 
 namespace HQ.Platform.Api.Configuration
 {
-    public class ApiOptions
-    {
-        public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
-        public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
-        public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
-        public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
-        public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
-    }
+	public class ApiOptions
+	{
+		public RequestLimitOptions RequestLimits { get; set; } = new RequestLimitOptions();
+		public JsonConversionOptions JsonConversion { get; set; } = new JsonConversionOptions();
+		public MethodOverrideOptions MethodOverrides { get; set; } = new MethodOverrideOptions();
+		public ResourceRewritingOptions ResourceRewriting { get; set; } = new ResourceRewritingOptions();
+		public CanonicalRoutesOptions CanonicalRoutes { get; set; } = new CanonicalRoutesOptions();
+	}
 }

@@ -19,12 +19,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Platform.Identity.Models
 {
-    public class AddClaimModel
-    {
-        [Required] public string Type { get; set; }
+	public class AddClaimModel
+	{
+		[Required] public string Type { get; set; }
 
-        [Required] public string Value { get; set; }
+		[Required] public string Value { get; set; }
 
-        public string ValueType { get; set; }
-    }
+		public string ValueType { get; set; }
+	}
 }

@@ -24,7 +24,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 	public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
 	{
 		Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
-			FilterOptions filter, ProjectionOptions projection, SegmentOptions segment, [FromQuery] string query = null);
+			FilterOptions filter, ProjectionOptions projection, SegmentOptions segment,
+			[FromQuery] string query = null);
 
 		Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
 	}

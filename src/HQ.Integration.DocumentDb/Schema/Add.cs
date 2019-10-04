@@ -32,7 +32,8 @@ namespace HQ.Integration.DocumentDb.Schema
 {
 	public static class Add
 	{
-		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder, IConfiguration configuration = null)
+		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder,
+			IConfiguration configuration = null)
 		{
 			return builder.AddDocumentDbSchemaStores(configuration.Bind);
 		}
@@ -55,7 +56,8 @@ namespace HQ.Integration.DocumentDb.Schema
 			o.PartitionKeyPaths = new[] {"id"};
 		}
 
-		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder, Action<DocumentDbOptions> configureAction = null)
+		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder,
+			Action<DocumentDbOptions> configureAction = null)
 		{
 			Bootstrap.SetDefaultJsonSettings();
 

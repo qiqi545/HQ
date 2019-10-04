@@ -19,5 +19,5 @@ using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming
 {
-    public delegate void NewLineAsString(long lineNumber, string value, IMetricsHost metrics);
+	public delegate void NewLineAsString(long lineNumber, string value, IMetricsHost metrics);
 }

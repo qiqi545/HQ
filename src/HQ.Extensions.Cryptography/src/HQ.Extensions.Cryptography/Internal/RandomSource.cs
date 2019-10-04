@@ -17,10 +17,10 @@
 
 namespace HQ.Extensions.Cryptography.Internal
 {
-    internal enum RandomSource
-    {
-        SystemNet,
-        SodiumCore,
-        NSec
-    }
+	internal enum RandomSource
+	{
+		SystemNet,
+		SodiumCore,
+		NSec
+	}
 }

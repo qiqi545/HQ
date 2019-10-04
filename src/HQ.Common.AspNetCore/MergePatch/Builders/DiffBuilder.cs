@@ -1,3 +1,20 @@
+#region LICENSE
+
+// Unless explicitly acquired and licensed from Licensor under another
+// license, the contents of this file are subject to the Reciprocal Public
+// License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
+// and You may not copy or use this file in either source code or executable
+// form, except in compliance with the terms and conditions of the RPL.
+// 
+// All software distributed under the RPL is provided strictly on an "AS
+// IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED, AND
+// LICENSOR HEREBY DISCLAIMS ALL SUCH WARRANTIES, INCLUDING WITHOUT
+// LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+// PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
+// language governing rights and limitations under the RPL.
+
+#endregion
+
 using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
@@ -8,41 +25,42 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 	public static class DiffBuilder
 	{
 		public static JObject Build<TModel>(TModel original, TModel patched) where TModel : class
-			=> Build(JObject.FromObject(original), JObject.FromObject(patched));
+		{
+			return Build(JObject.FromObject(original), JObject.FromObject(patched));
+		}
 
 		public static JObject Build(JObject original, JObject patched)
-			=> (JObject)BuildDiff(original, patched);
+		{
+			return (JObject) BuildDiff(original, patched);
+		}
 
 		private static JToken BuildDiff(JToken original, JToken patched)
 		{
-			var originalIsNull = (original == null) || (original.Type == JTokenType.Null);
-			var patchedIsNull = (patched == null) || (patched.Type == JTokenType.Null);
+			var originalIsNull = original == null || original.Type == JTokenType.Null;
+			var patchedIsNull = patched == null || patched.Type == JTokenType.Null;
 
 			if (originalIsNull && patchedIsNull)
 				return null;
-			else if (originalIsNull)
+			if (originalIsNull)
 				return patched.DeepClone();
-			else if (patchedIsNull)
+			if (patchedIsNull)
 				return JValue.CreateNull();
-			else if ((original is JArray) || (patched is JArray))
+			if (original is JArray || patched is JArray)
 				return BuildArrayDiff(original as JArray, patched as JArray);
-			else
+			switch (original)
 			{
-				switch (original)
-				{
-					case JValue originalValue:
-						return BuildValueDiff(originalValue, patched as JValue);
-					case JObject originalObject:
-						return BuildObjectDiff(originalObject, patched as JObject);
-					default:
-						throw new NotImplementedException();
-				}
+				case JValue originalValue:
+					return BuildValueDiff(originalValue, patched as JValue);
+				case JObject originalObject:
+					return BuildObjectDiff(originalObject, patched as JObject);
+				default:
+					throw new NotImplementedException();
 			}
 		}
 
 		private static JToken BuildObjectDiff(JObject original, JObject patched)
 		{
-			JObject result = new JObject();
+			var result = new JObject();
 			var properties = original?.Properties() ?? patched.Properties();
 			foreach (var property in properties)
 			{
@@ -62,8 +80,8 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 
 		private static JValue BuildValueDiff(JValue original, JValue patched)
 		{
-			if (((original.Value != null) && !original.Value.Equals(patched.Value))
-				|| (patched.Value != null) && !patched.Value.Equals(original?.Value))
+			if (original.Value != null && !original.Value.Equals(patched.Value)
+			    || patched.Value != null && !patched.Value.Equals(original?.Value))
 				return patched.DeepClone() as JValue;
 
 			return null;
@@ -75,7 +93,7 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 			{
 				if (left.Count != right.Count)
 					return false;
-				for (int i = 0; i < original.Count; i++)
+				for (var i = 0; i < original.Count; i++)
 				{
 					//Hack.
 					//Array can consist of values, objects or arrays so we reuse logic to calculate diff for each item
@@ -84,13 +102,13 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 					if (diff != null)
 						return false;
 				}
+
 				return true;
 			}
 
 			if (JArrayEquals(original, patched))
 				return null;
-			else
-				return patched.DeepClone();
+			return patched.DeepClone();
 		}
 	}
 }

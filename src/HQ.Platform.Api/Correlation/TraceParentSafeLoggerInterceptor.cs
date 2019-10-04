@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -27,26 +29,23 @@ namespace HQ.Platform.Api.Correlation
 	{
 		private readonly IHttpContextAccessor _accessor;
 
-		public TraceParentSafeLoggerInterceptor(IHttpContextAccessor accessor)
-		{
-			_accessor = accessor;
-		}
+		public TraceParentSafeLoggerInterceptor(IHttpContextAccessor accessor) => _accessor = accessor;
 
 		public bool CanIntercept => _accessor?.HttpContext?.Request?.Headers != null &&
-		                            _accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent, out _);
+		                            _accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent,
+			                            out _);
 
-		public bool TryLog<TState>(ILogger inner, ref int safe, LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+		public bool TryLog<TState>(ILogger inner, ref int safe, LogLevel logLevel, EventId eventId, TState state,
+			Exception exception, Func<TState, Exception, string> formatter)
 		{
-			if (!_accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent, out var traceContext))
+			if (!_accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent,
+				out var traceContext))
 				return false;
 
 			try
 			{
 				// See: https://messagetemplates.org/
-				var data = new Dictionary<string, object>
-				{
-					{ $"@{Constants.HttpHeaders.TraceParent}", traceContext}
-				};
+				var data = new Dictionary<string, object> {{$"@{Constants.HttpHeaders.TraceParent}", traceContext}};
 
 				using (inner.BeginScope(data))
 				{

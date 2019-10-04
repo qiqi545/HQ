@@ -58,10 +58,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 
 			var query = SqlBuilder.Delete<AspNetUserLogins<TKey>>(new
 			{
-				UserId = user.Id,
-				LoginProvider = loginProvider,
-				ProviderKey = providerKey,
-				TenantId = _tenantId
+				UserId = user.Id, LoginProvider = loginProvider, ProviderKey = providerKey, TenantId = _tenantId
 			});
 
 			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
@@ -91,12 +88,11 @@ namespace HQ.Platform.Identity.Stores.Sql
 
 			var query = SqlBuilder.Select<AspNetUserLogins<TKey>>(new
 			{
-				LoginProvider = loginProvider,
-				ProviderKey = providerKey,
-				TenantId = _tenantId
+				LoginProvider = loginProvider, ProviderKey = providerKey, TenantId = _tenantId
 			});
 
-			var user = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql, query.Parameters);
+			var user = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql,
+				query.Parameters);
 			if (user == null)
 				return null;
 

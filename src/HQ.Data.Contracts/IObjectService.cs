@@ -17,13 +17,12 @@
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectService<T> : IObjectGetService<T>, IObjectSaveService<T>, IObjectDeleteService<T> where T : IObject
+	public interface IObjectService<T> : IObjectGetService<T>, IObjectSaveService<T>, IObjectDeleteService<T>
+		where T : IObject
 	{
-
 	}
 
 	public interface IObjectService : IObjectGetService, IObjectSaveService, IObjectDeleteService
 	{
-
 	}
 }

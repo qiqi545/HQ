@@ -36,8 +36,6 @@ namespace HQ.Common.AspNetCore.Mvc
 
 		public bool Enabled => Resolve(ServiceProvider);
 
-		public IServiceProvider ServiceProvider { get; set; }
-
 		public void Apply(ControllerModel controller)
 		{
 			if (!controller.ControllerType.IsGenericType)
@@ -55,6 +53,8 @@ namespace HQ.Common.AspNetCore.Mvc
 					sb.Append($"_{type.Name}");
 			});
 		}
+
+		public IServiceProvider ServiceProvider { get; set; }
 
 		public bool Resolve(IServiceProvider serviceProvider)
 		{
@@ -74,20 +74,22 @@ namespace HQ.Common.AspNetCore.Mvc
 				currentValue = WalkFeatureRecursive(0, currentValue, reads, members);
 				featureProperty = currentValue.GetType().GetProperty(nameof(IFeatureToggle.Enabled));
 			}
+
 			var enabled = featureProperty?.GetValue(currentValue);
 			return enabled is bool toggle && toggle;
 		}
 
-		private object WalkFeatureRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads, AccessorMembers members)
+		private object WalkFeatureRecursive(int segmentIndex, object currentValue, ITypeReadAccessor reads,
+			AccessorMembers members)
 		{
 			foreach (var member in members)
 			{
 				var key = member.Name;
 
 				if (_segments.Length < segmentIndex + 1 ||
-					_segments[segmentIndex] != key ||
-					!member.CanRead ||
-					!reads.TryGetValue(currentValue, key, out var segment))
+				    _segments[segmentIndex] != key ||
+				    !member.CanRead ||
+				    !reads.TryGetValue(currentValue, key, out var segment))
 					continue;
 
 				if (segment is IFeatureToggle featureToggle)

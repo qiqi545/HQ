@@ -31,13 +31,14 @@ using Constants = HQ.Data.Streaming.Internal.Constants;
 
 namespace HQ.Data.Streaming
 {
-    public static class LineReader
-    {
-	    public static string GetHeaderText<TMetadata>(string separator)
-	    {
+	public static class LineReader
+	{
+		public static string GetHeaderText<TMetadata>(string separator)
+		{
 			return Pooling.StringBuilderPool.Scoped(sb =>
 			{
-				var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberTypes.Fields, AccessorMemberScope.Public);
+				var members = AccessorMembers.Create(typeof(TMetadata), AccessorMemberTypes.Fields,
+					AccessorMemberScope.Public);
 
 				// FIXME: convert to zero-alloc
 				var columns = members
@@ -59,288 +60,6 @@ namespace HQ.Data.Streaming
 				}
 			});
 		}
-
-		#region API
-
-		public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            return CountLines(stream, encoding, Constants.Buffer, metrics, cancellationToken);
-        }
-
-        public static long CountLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, workingBuffer, null, cancellationToken, metrics);
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
-            IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                var pendingLength = 0;
-                byte[] buffer = null; // TODO convert to allocator
-
-                NewLine newLine = (lineNumber, partial, start, length, x, m) =>
-                {
-                    if (buffer == null)
-                    {
-                        buffer = new byte[Constants.ReadAheadSize * 2];
-                    }
-
-                    var target = new Span<byte>(buffer, pendingLength, length);
-                    var segment = new ReadOnlySpan<byte>(start, length);
-                    segment.CopyTo(target);
-
-                    if (partial)
-                    {
-                        pendingLength = length;
-                    }
-                    else
-                    {
-                        var line = new ReadOnlySpan<byte>(buffer, 0, length + pendingLength);
-                        onNewLine?.Invoke(lineNumber, encoding.GetString(line), m);
-                        pendingLength = 0;
-                        buffer = null;
-                    }
-                };
-                return ReadOrCountLines(stream, encoding, Constants.Buffer, newLine, cancellationToken, metrics);
-            }
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLineAsString onNewLine,
-            IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine newLine = (n, p, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
-                return ReadOrCountLines(stream, encoding, workingBuffer, newLine, cancellationToken, metrics);
-            }
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
-            IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, Constants.Buffer, onNewLine, cancellationToken, metrics);
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
-            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            return ReadOrCountLines(stream, encoding, workingBuffer, onNewLine, cancellationToken, metrics);
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
-            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
-            NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
-            }
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
-            IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
-        }
-
-        public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
-            NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
-        {
-            unsafe
-            {
-                NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
-                {
-                    LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
-                };
-                return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
-            }
-        }
-
-        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
-            string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            return StreamLines(stream, encoding, Constants.Buffer,
-                encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
-                cancellationToken);
-        }
-
-        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            return StreamLines(stream, encoding, workingBuffer,
-                encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
-                cancellationToken);
-        }
-
-        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
-            byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            return StreamLines(stream, encoding, Constants.Buffer, separator, maxWorkingMemoryBytes, metrics,
-                cancellationToken);
-        }
-
-        public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
-            byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
-            CancellationToken cancellationToken = default)
-        {
-            var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
-
-            void ReadLines(Encoding e)
-            {
-                var pendingLength = 0;
-                byte[] buffer = null; // TODO convert to allocator
-
-                try
-                {
-                    unsafe
-                    {
-                        LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
-                        {
-                            if (buffer == null)
-                            {
-                                buffer = new byte[Math.Max(length, Constants.ReadAheadSize * 2)];
-                            }
-
-                            var target = new Span<byte>(buffer, pendingLength, length);
-                            var segment = new ReadOnlySpan<byte>(start, length);
-                            segment.CopyTo(target);
-
-                            if (partial)
-                            {
-                                pendingLength = length;
-                            }
-                            else
-                            {
-                                var ctor = new LineConstructor
-                                    {lineNumber = lineNumber, length = length + pendingLength, buffer = buffer};
-
-                                if (maxWorkingMemoryBytes > 0)
-                                {
-                                    var usedBytes = queue.Count * (buffer.Length + sizeof(long) + sizeof(int));
-                                    while (usedBytes > maxWorkingMemoryBytes)
-                                    {
-                                        Task.Delay(10, cancellationToken).Wait(cancellationToken);
-                                    }
-                                }
-
-                                queue.Add(ctor, cancellationToken);
-                                pendingLength = 0;
-                                buffer = null;
-                            }
-                        }, metrics, cancellationToken);
-                    }
-                }
-                finally
-                {
-                    queue.CompleteAdding();
-                }
-            }
-
-            Task.Run(() => ReadLines(encoding), cancellationToken);
-
-            return queue.GetConsumingEnumerable();
-        }
-
-        #endregion
-
-        #region Alignment
-
-        // Derived from MimeKit's MimeParser
-        private static int ReadAhead(Stream stream, byte[] workingBytes, int minimumSize, int save, ref int from,
-            ref int to,
-            ref bool endOfStream, CancellationToken cancellationToken)
-        {
-            if (!AlignReadAheadBuffer(workingBytes, minimumSize, save, ref from, ref to, ref endOfStream,
-                out var remaining, out var start, out var end))
-            {
-                return remaining;
-            }
-
-            cancellationToken.ThrowIfCancellationRequested();
-            var read = stream.Read(workingBytes, start, end - start);
-            if (read > 0)
-            {
-                to += read;
-            }
-            else
-            {
-                endOfStream = true;
-            }
-
-            return to - from;
-        }
-
-        // Derived from MimeKit's MimeParser
-        private static bool AlignReadAheadBuffer(byte[] workingBytes, int min, int save, ref int from, ref int to,
-            ref bool endOfStream, out int remaining, out int start, out int end)
-        {
-            remaining = to - from;
-            start = Constants.ReadAheadSize;
-            end = to;
-
-            if (remaining >= min || endOfStream)
-            {
-                return false;
-            }
-
-            remaining += save;
-
-            if (remaining > 0)
-            {
-                var index = from - save;
-
-                if (index >= start)
-                {
-                    start -= Math.Min(Constants.ReadAheadSize, remaining);
-                    Buffer.BlockCopy(workingBytes, index, workingBytes, start, remaining);
-                    index = start;
-                    start += remaining;
-                }
-                else if (index > 0)
-                {
-                    var shift = Math.Min(index, end - start);
-                    Buffer.BlockCopy(workingBytes, index, workingBytes, index - shift, remaining);
-                    index -= shift;
-                    start = index + remaining;
-                }
-                else
-                {
-                    start = end;
-                }
-
-                from = index + save;
-                to = start;
-            }
-            else
-            {
-                from = start;
-                to = start;
-            }
-
-            end = workingBytes.Length - Constants.PadSize;
-            return true;
-        }
-
-		#endregion
 
 		// Derived from MimeKit's MimeParser
 		private static long ReadOrCountLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
@@ -372,8 +91,8 @@ namespace HQ.Data.Streaming
 					do
 					{
 						if (ReadAhead(stream, workingBuffer, Constants.ReadAheadSize, 2, ref from, ref to,
-								ref endOfStream,
-								cancellationToken) <= 0)
+							    ref endOfStream,
+							    cancellationToken) <= 0)
 						{
 							break;
 						}
@@ -485,6 +204,290 @@ namespace HQ.Data.Streaming
 			} while (from == to);
 
 			return i == 0 || i == preamble.Length;
+		}
+
+		#endregion
+
+		#region API
+
+		public static long CountLines(Stream stream, Encoding encoding, IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			return CountLines(stream, encoding, Constants.Buffer, metrics, cancellationToken);
+		}
+
+		public static long CountLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			return ReadOrCountLines(stream, encoding, workingBuffer, null, cancellationToken, metrics);
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, NewLineAsString onNewLine,
+			IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			unsafe
+			{
+				var pendingLength = 0;
+				byte[] buffer = null; // TODO convert to allocator
+
+				NewLine newLine = (lineNumber, partial, start, length, x, m) =>
+				{
+					if (buffer == null)
+					{
+						buffer = new byte[Constants.ReadAheadSize * 2];
+					}
+
+					var target = new Span<byte>(buffer, pendingLength, length);
+					var segment = new ReadOnlySpan<byte>(start, length);
+					segment.CopyTo(target);
+
+					if (partial)
+					{
+						pendingLength = length;
+					}
+					else
+					{
+						var line = new ReadOnlySpan<byte>(buffer, 0, length + pendingLength);
+						onNewLine?.Invoke(lineNumber, encoding.GetString(line), m);
+						pendingLength = 0;
+						buffer = null;
+					}
+				};
+				return ReadOrCountLines(stream, encoding, Constants.Buffer, newLine, cancellationToken, metrics);
+			}
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLineAsString onNewLine,
+			IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			unsafe
+			{
+				NewLine newLine = (n, p, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+				return ReadOrCountLines(stream, encoding, workingBuffer, newLine, cancellationToken, metrics);
+			}
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, NewLine onNewLine,
+			IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			return ReadOrCountLines(stream, encoding, Constants.Buffer, onNewLine, cancellationToken, metrics);
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, NewLine onNewLine,
+			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			return ReadOrCountLines(stream, encoding, workingBuffer, onNewLine, cancellationToken, metrics);
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValue onNewValue,
+			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
+			NewValue onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			unsafe
+			{
+				NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
+				{
+					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+				};
+				return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
+			}
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, string separator, NewValueAsSpan onNewValue,
+			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			return ReadLines(stream, encoding, Constants.Buffer, separator, onNewValue, metrics, cancellationToken);
+		}
+
+		public static long ReadLines(Stream stream, Encoding encoding, byte[] workingBuffer, string separator,
+			NewValueAsSpan onNewValue, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		{
+			unsafe
+			{
+				NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
+				{
+					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+				};
+				return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
+			}
+		}
+
+		public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
+			string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			return StreamLines(stream, encoding, Constants.Buffer,
+				encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
+				cancellationToken);
+		}
+
+		public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+			string separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			return StreamLines(stream, encoding, workingBuffer,
+				encoding.GetSeparatorBuffer(separator ?? Environment.NewLine), maxWorkingMemoryBytes, metrics,
+				cancellationToken);
+		}
+
+		public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding,
+			byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			return StreamLines(stream, encoding, Constants.Buffer, separator, maxWorkingMemoryBytes, metrics,
+				cancellationToken);
+		}
+
+		public static IEnumerable<LineConstructor> StreamLines(Stream stream, Encoding encoding, byte[] workingBuffer,
+			byte[] separator, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null,
+			CancellationToken cancellationToken = default)
+		{
+			var queue = new BlockingCollection<LineConstructor>(new ConcurrentQueue<LineConstructor>());
+
+			void ReadLines(Encoding e)
+			{
+				var pendingLength = 0;
+				byte[] buffer = null; // TODO convert to allocator
+
+				try
+				{
+					unsafe
+					{
+						LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
+						{
+							if (buffer == null)
+							{
+								buffer = new byte[Math.Max(length, Constants.ReadAheadSize * 2)];
+							}
+
+							var target = new Span<byte>(buffer, pendingLength, length);
+							var segment = new ReadOnlySpan<byte>(start, length);
+							segment.CopyTo(target);
+
+							if (partial)
+							{
+								pendingLength = length;
+							}
+							else
+							{
+								var ctor = new LineConstructor
+								{
+									lineNumber = lineNumber, length = length + pendingLength, buffer = buffer
+								};
+
+								if (maxWorkingMemoryBytes > 0)
+								{
+									var usedBytes = queue.Count * (buffer.Length + sizeof(long) + sizeof(int));
+									while (usedBytes > maxWorkingMemoryBytes)
+									{
+										Task.Delay(10, cancellationToken).Wait(cancellationToken);
+									}
+								}
+
+								queue.Add(ctor, cancellationToken);
+								pendingLength = 0;
+								buffer = null;
+							}
+						}, metrics, cancellationToken);
+					}
+				}
+				finally
+				{
+					queue.CompleteAdding();
+				}
+			}
+
+			Task.Run(() => ReadLines(encoding), cancellationToken);
+
+			return queue.GetConsumingEnumerable();
+		}
+
+		#endregion
+
+		#region Alignment
+
+		// Derived from MimeKit's MimeParser
+		private static int ReadAhead(Stream stream, byte[] workingBytes, int minimumSize, int save, ref int from,
+			ref int to,
+			ref bool endOfStream, CancellationToken cancellationToken)
+		{
+			if (!AlignReadAheadBuffer(workingBytes, minimumSize, save, ref from, ref to, ref endOfStream,
+				out var remaining, out var start, out var end))
+			{
+				return remaining;
+			}
+
+			cancellationToken.ThrowIfCancellationRequested();
+			var read = stream.Read(workingBytes, start, end - start);
+			if (read > 0)
+			{
+				to += read;
+			}
+			else
+			{
+				endOfStream = true;
+			}
+
+			return to - from;
+		}
+
+		// Derived from MimeKit's MimeParser
+		private static bool AlignReadAheadBuffer(byte[] workingBytes, int min, int save, ref int from, ref int to,
+			ref bool endOfStream, out int remaining, out int start, out int end)
+		{
+			remaining = to - from;
+			start = Constants.ReadAheadSize;
+			end = to;
+
+			if (remaining >= min || endOfStream)
+			{
+				return false;
+			}
+
+			remaining += save;
+
+			if (remaining > 0)
+			{
+				var index = from - save;
+
+				if (index >= start)
+				{
+					start -= Math.Min(Constants.ReadAheadSize, remaining);
+					Buffer.BlockCopy(workingBytes, index, workingBytes, start, remaining);
+					index = start;
+					start += remaining;
+				}
+				else if (index > 0)
+				{
+					var shift = Math.Min(index, end - start);
+					Buffer.BlockCopy(workingBytes, index, workingBytes, index - shift, remaining);
+					index -= shift;
+					start = index + remaining;
+				}
+				else
+				{
+					start = end;
+				}
+
+				from = index + save;
+				to = start;
+			}
+			else
+			{
+				from = start;
+				to = start;
+			}
+
+			end = workingBytes.Length - Constants.PadSize;
+			return true;
 		}
 
 		#endregion

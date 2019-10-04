@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -29,234 +31,238 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    public partial class ApplicationStore<TApplication, TKey> : IQueryableApplicationStore<TApplication>, IApplicationSecurityStampStore<TApplication>
-        where TApplication : IdentityApplication<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly IDataConnection _connection;
-        private readonly IQueryableProvider<TApplication> _queryable;
+	public class ApplicationStore<TApplication, TKey> : IQueryableApplicationStore<TApplication>,
+		IApplicationSecurityStampStore<TApplication>
+		where TApplication : IdentityApplication<TKey>
+		where TKey : IEquatable<TKey>
+	{
+		private readonly IDataConnection _connection;
+		private readonly IQueryableProvider<TApplication> _queryable;
 
-        public ApplicationStore(
-	        IDataConnection<IdentityBuilder> connection,
-            IQueryableProvider<TApplication> queryable,
-            IServiceProvider serviceProvider)
-        {
-            serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
-            CancellationToken = cancellationToken;
-            _connection = connection;
-            _queryable = queryable;
-        }
+		public ApplicationStore(
+			IDataConnection<IdentityBuilder> connection,
+			IQueryableProvider<TApplication> queryable,
+			IServiceProvider serviceProvider)
+		{
+			serviceProvider.TryGetRequestAbortCancellationToken(out var cancellationToken);
+			CancellationToken = cancellationToken;
+			_connection = connection;
+			_queryable = queryable;
+		}
 
-        public CancellationToken CancellationToken { get; }
+		public Task SetSecurityStampAsync(TApplication application, string stamp, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			application.SecurityStamp = stamp;
+			return Task.CompletedTask;
+		}
 
-        public IQueryable<TApplication> Applications => MaybeQueryable();
+		public Task<string> GetSecurityStampAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(application?.SecurityStamp);
+		}
 
-        public async Task<IdentityResult> CreateAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public CancellationToken CancellationToken { get; }
 
-            application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+		public IQueryable<TApplication> Applications => MaybeQueryable();
 
-            if (application.Id == null)
-            {
-                var idType = typeof(TKey);
-                var id = Guid.NewGuid();
-                if (idType == typeof(Guid))
-                {
-                    application.Id = (TKey)(object)id;
-                }
-                else if (idType == typeof(string))
-                {
-                    application.Id = (TKey)(object)$"{id}";
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
-            }
+		public async Task<IdentityResult> CreateAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var query = SqlBuilder.Insert(application);
-            _connection.SetTypeInfo(typeof(TApplication));
+			application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-            var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            Debug.Assert(inserted == 1);
+			if (application.Id == null)
+			{
+				var idType = typeof(TKey);
+				var id = Guid.NewGuid();
+				if (idType == typeof(Guid))
+				{
+					application.Id = (TKey) (object) id;
+				}
+				else if (idType == typeof(string))
+				{
+					application.Id = (TKey) (object) $"{id}";
+				}
+				else
+				{
+					throw new NotSupportedException();
+				}
+			}
 
-            if (application.Id == null && _connection.TryGetLastInsertedId(out TKey insertedId))
-            {
-                application.Id = insertedId;
-            }
+			var query = SqlBuilder.Insert(application);
+			_connection.SetTypeInfo(typeof(TApplication));
 
-            return IdentityResult.Success;
-        }
+			var inserted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(inserted == 1);
 
-        public async Task<IdentityResult> UpdateAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			if (application.Id == null && _connection.TryGetLastInsertedId(out TKey insertedId))
+			{
+				application.Id = insertedId;
+			}
 
-            application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			return IdentityResult.Success;
+		}
 
-            var query = SqlBuilder.Update(application, new { application.Id });
-            _connection.SetTypeInfo(typeof(TApplication));
+		public async Task<IdentityResult> UpdateAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-            Debug.Assert(updated == 1);
-            return IdentityResult.Success;
-        }
+			application.ConcurrencyStamp = application.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
 
-        public Task SetApplicationNameAsync(TApplication application, string name, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            application.Name = name;
-            return Task.CompletedTask;
-        }
+			var query = SqlBuilder.Update(application, new {application.Id});
+			_connection.SetTypeInfo(typeof(TApplication));
 
-        public Task SetNormalizedApplicationNameAsync(TApplication application, string normalizedName,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            application.NormalizedName = normalizedName;
-            return Task.CompletedTask;
-        }
+			var updated = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			Debug.Assert(updated == 1);
+			return IdentityResult.Success;
+		}
 
-        public async Task<IdentityResult> DeleteAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+		public Task SetApplicationNameAsync(TApplication application, string name, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			application.Name = name;
+			return Task.CompletedTask;
+		}
 
-            var query = SqlBuilder.Delete<TApplication>(new { application.Id });
-            _connection.SetTypeInfo(typeof(TApplication));
-            var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+		public Task SetNormalizedApplicationNameAsync(TApplication application, string normalizedName,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			application.NormalizedName = normalizedName;
+			return Task.CompletedTask;
+		}
 
-            Debug.Assert(deleted == 1);
-            return IdentityResult.Success;
-        }
+		public async Task<IdentityResult> DeleteAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public async Task<TApplication> FindByIdAsync(string applicationId, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Delete<TApplication>(new {application.Id});
+			_connection.SetTypeInfo(typeof(TApplication));
+			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
 
-            var id = StringToId(applicationId);
+			Debug.Assert(deleted == 1);
+			return IdentityResult.Success;
+		}
 
-            var query = SqlBuilder.Select<TApplication>(new { Id = id });
-            _connection.SetTypeInfo(typeof(TApplication));
+		public async Task<TApplication> FindByIdAsync(string applicationId, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var application = await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
-            return application;
-        }
+			var id = StringToId(applicationId);
 
-        public async Task<IEnumerable<TApplication>> FindByIdsAsync(IEnumerable<string> applicationIds,
-            CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<TApplication>(new {Id = id});
+			_connection.SetTypeInfo(typeof(TApplication));
 
-            var ids = new List<object>();
-            foreach (var tenantId in applicationIds)
-            {
-                ids.Add(StringToId(tenantId));
-            }
+			var application =
+				await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
+			return application;
+		}
 
-            var query = SqlBuilder.Select<TApplication>(new { Id = ids });
-            _connection.SetTypeInfo(typeof(TApplication));
+		public async Task<IEnumerable<TApplication>> FindByIdsAsync(IEnumerable<string> applicationIds,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-            var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
-            return applications;
-        }
+			var ids = new List<object>();
+			foreach (var tenantId in applicationIds)
+			{
+				ids.Add(StringToId(tenantId));
+			}
 
-        public async Task<TApplication> FindByNameAsync(string normalizedApplicationName, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<TApplication>(new {Id = ids});
+			_connection.SetTypeInfo(typeof(TApplication));
 
-            var query = SqlBuilder.Select<TApplication>(new { NormalizedName = normalizedApplicationName });
-            _connection.SetTypeInfo(typeof(TApplication));
+			var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
+			return applications;
+		}
 
-            var application = await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
-            return application;
-        }
+		public async Task<TApplication> FindByNameAsync(string normalizedApplicationName,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
 
-        public Task<string> GetApplicationIdAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(application?.Id?.ToString());
-        }
+			var query = SqlBuilder.Select<TApplication>(new {NormalizedName = normalizedApplicationName});
+			_connection.SetTypeInfo(typeof(TApplication));
 
-        public Task<string> GetApplicationNameAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(application?.Name);
-        }
+			var application =
+				await _connection.Current.QuerySingleOrDefaultAsync<TApplication>(query.Sql, query.Parameters);
+			return application;
+		}
 
-        public void Dispose()
-        {
-        }
+		public Task<string> GetApplicationIdAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(application?.Id?.ToString());
+		}
 
-        private static object StringToId(string applicationId)
-        {
-            var idType = typeof(TKey);
-            object id;
-            if (idType == typeof(Guid) && Guid.TryParse(applicationId, out var guid))
-            {
-                id = guid;
-            }
-            else if ((idType == typeof(short) || idType == typeof(int) || idType == typeof(long)) &&
-                     long.TryParse(applicationId, out var integer))
-            {
-                id = integer;
-            }
-            else if (idType == typeof(string))
-            {
-                id = applicationId;
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
+		public Task<string> GetApplicationNameAsync(TApplication application, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(application?.Name);
+		}
 
-            return id;
-        }
+		public void Dispose()
+		{
+		}
 
-        private IQueryable<TApplication> MaybeQueryable()
-        {
-            if (_queryable.IsSafe)
-            {
-                return _queryable.Queryable;
-            }
+		public async Task<int> GetCountAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Count<TApplication>();
+			_connection.SetTypeInfo(typeof(TApplication));
+			var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
+			return count;
+		}
 
-            if (_queryable.SupportsUnsafe)
-            {
-                return _queryable.UnsafeQueryable;
-            }
+		private static object StringToId(string applicationId)
+		{
+			var idType = typeof(TKey);
+			object id;
+			if (idType == typeof(Guid) && Guid.TryParse(applicationId, out var guid))
+			{
+				id = guid;
+			}
+			else if ((idType == typeof(short) || idType == typeof(int) || idType == typeof(long)) &&
+			         long.TryParse(applicationId, out var integer))
+			{
+				id = integer;
+			}
+			else if (idType == typeof(string))
+			{
+				id = applicationId;
+			}
+			else
+			{
+				throw new NotSupportedException();
+			}
 
-            return Task.Run(() => GetAllApplicationsAsync(CancellationToken), CancellationToken).Result.AsQueryable();
-        }
+			return id;
+		}
 
-        private async Task<IEnumerable<TApplication>> GetAllApplicationsAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var query = SqlBuilder.Select<TApplication>();
-            _connection.SetTypeInfo(typeof(TApplication));
-            var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
-            return applications;
-        }
+		private IQueryable<TApplication> MaybeQueryable()
+		{
+			if (_queryable.IsSafe)
+			{
+				return _queryable.Queryable;
+			}
 
-        public async Task<int> GetCountAsync(CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var query = SqlBuilder.Count<TApplication>();
-            _connection.SetTypeInfo(typeof(TApplication));
-            var count = await _connection.Current.ExecuteScalarAsync<int>(query.Sql, query.Parameters);
-            return count;
-        }
+			if (_queryable.SupportsUnsafe)
+			{
+				return _queryable.UnsafeQueryable;
+			}
 
-        public Task SetSecurityStampAsync(TApplication application, string stamp, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            application.SecurityStamp = stamp;
-            return Task.CompletedTask;
-        }
+			return Task.Run(() => GetAllApplicationsAsync(CancellationToken), CancellationToken).Result.AsQueryable();
+		}
 
-        public Task<string> GetSecurityStampAsync(TApplication application, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(application?.SecurityStamp);
-        }
-    }
+		private async Task<IEnumerable<TApplication>> GetAllApplicationsAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var query = SqlBuilder.Select<TApplication>();
+			_connection.SetTypeInfo(typeof(TApplication));
+			var applications = await _connection.Current.QueryAsync<TApplication>(query.Sql, query.Parameters);
+			return applications;
+		}
+	}
 }

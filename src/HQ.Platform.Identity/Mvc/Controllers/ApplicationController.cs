@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -28,118 +30,121 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Mvc.Controllers
 {
-    [Route("applications")]
-    [DynamicController(typeof(IdentityApiOptions))]
-    [DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Applications))]
+	[Route("applications")]
+	[DynamicController(typeof(IdentityApiOptions))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies),
+		nameof(IdentityApiOptions.Policies.Applications))]
 	[ApiExplorerSettings(IgnoreApi = false)]
-    [MetaCategory("Identity", "Manages application access controls.")]
-    [DisplayName("Applications")]
-    [MetaDescription("Manages system applications.")]
-    public class ApplicationController<TApplication, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+	[MetaCategory("Identity", "Manages application access controls.")]
+	[DisplayName("Applications")]
+	[MetaDescription("Manages system applications.")]
+	public class ApplicationController<TApplication, TKey> : DataController,
+		IDynamicComponentEnabled<IdentityApiComponent>
 		where TApplication : IdentityApplication<TKey>
-        where TKey : IEquatable<TKey>
-    {
-        private readonly IOptions<IdentityApiOptions> _options;
-        private readonly IApplicationService<TApplication> _applicationService;
+		where TKey : IEquatable<TKey>
+	{
+		private readonly IApplicationService<TApplication> _applicationService;
+		private readonly IOptions<IdentityApiOptions> _options;
 
-        public ApplicationController(IApplicationService<TApplication> applicationService, IOptions<IdentityApiOptions> options)
-        {
-            _applicationService = applicationService;
-            _options = options;
-        }
+		public ApplicationController(IApplicationService<TApplication> applicationService,
+			IOptions<IdentityApiOptions> options)
+		{
+			_applicationService = applicationService;
+			_options = options;
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("")]
-        public async Task<IActionResult> Get()
-        {
-            var applications = await _applicationService.GetAsync();
+		public async Task<IActionResult> Get()
+		{
+			var applications = await _applicationService.GetAsync();
 			if (applications.Data == null)
 				return NotFound();
 
 			return Ok(applications.Data);
-        }
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPost("")]
-        public async Task<IActionResult> Create([FromBody] CreateApplicationModel model)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Create([FromBody] CreateApplicationModel model)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _applicationService.CreateAsync(model);
+			var result = await _applicationService.CreateAsync(model);
 
-            return result.Succeeded
-                ? Created($"{_options.Value.RootPath ?? string.Empty}/applications/{result.Data.Id}", result.Data)
-                : (IActionResult)BadRequest(result.Errors);
-        }
+			return result.Succeeded
+				? Created($"{_options.Value.RootPath ?? string.Empty}/applications/{result.Data.Id}", result.Data)
+				: (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Delete(string id)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _applicationService.DeleteAsync(id);
-            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
-            {
-                return NotFound();
-            }
+			var result = await _applicationService.DeleteAsync(id);
+			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+			{
+				return NotFound();
+			}
 
-            return result.Succeeded ? NoContent() : (IActionResult)BadRequest(result.Errors);
-        }
+			return result.Succeeded ? NoContent() : (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpPut("{id}")]
-        public async Task<IActionResult> Update([FromBody] TApplication tenant)
-        {
-            if (!ValidModelState(out var error))
-            {
-                return error;
-            }
+		public async Task<IActionResult> Update([FromBody] TApplication tenant)
+		{
+			if (!ValidModelState(out var error))
+			{
+				return error;
+			}
 
-            var result = await _applicationService.UpdateAsync(tenant);
-            if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
-            {
-                return NotFound();
-            }
+			var result = await _applicationService.UpdateAsync(tenant);
+			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
+			{
+				return NotFound();
+			}
 
-            return result.Succeeded ? Ok() : (IActionResult)BadRequest(result.Errors);
-        }
+			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("{id}")]
-        [HttpGet("id/{id}")]
-        public async Task<IActionResult> FindById([FromRoute] string id)
-        {
-            var application = await _applicationService.FindByIdAsync(id);
-            if (application?.Data == null)
-            {
-                return NotFound();
-            }
+		[HttpGet("id/{id}")]
+		public async Task<IActionResult> FindById([FromRoute] string id)
+		{
+			var application = await _applicationService.FindByIdAsync(id);
+			if (application?.Data == null)
+			{
+				return NotFound();
+			}
 
-            return application.Succeeded
-                ? Ok(application.Data)
-                : (IActionResult)BadRequest(application.Errors);
-        }
+			return application.Succeeded
+				? Ok(application.Data)
+				: (IActionResult) BadRequest(application.Errors);
+		}
 
-        [FeatureSelector]
+		[FeatureSelector]
 		[HttpGet("name/{name}")]
-        public async Task<IActionResult> FindByUsername([FromRoute] string name)
-        {
-            var application = await _applicationService.FindByNameAsync(name);
-            if (application?.Data == null)
-            {
-                return NotFound();
-            }
+		public async Task<IActionResult> FindByUsername([FromRoute] string name)
+		{
+			var application = await _applicationService.FindByNameAsync(name);
+			if (application?.Data == null)
+			{
+				return NotFound();
+			}
 
-            return application.Succeeded
-                ? Ok(application.Data)
-                : (IActionResult)BadRequest(application.Errors);
-        }
-    }
+			return application.Succeeded
+				? Ok(application.Data)
+				: (IActionResult) BadRequest(application.Errors);
+		}
+	}
 }

@@ -17,9 +17,9 @@
 
 namespace HQ.Integration.SqlServer.Sql
 {
-    public class SqlServerPreBatchStatus
-    {
-        public string PageVerify { get; set; }
-        public string RecoveryModel { get; set; }
-    }
+	public class SqlServerPreBatchStatus
+	{
+		public string PageVerify { get; set; }
+		public string RecoveryModel { get; set; }
+	}
 }

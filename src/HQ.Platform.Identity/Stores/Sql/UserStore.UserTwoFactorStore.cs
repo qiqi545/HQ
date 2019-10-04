@@ -21,19 +21,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-    partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorStore<TUser>
-    {
-        public Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            user.TwoFactorEnabled = enabled;
-            return Task.CompletedTask;
-        }
+	partial class UserStore<TUser, TKey, TRole> : IUserTwoFactorStore<TUser>
+	{
+		public Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			user.TwoFactorEnabled = enabled;
+			return Task.CompletedTask;
+		}
 
-        public Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(user.TwoFactorEnabled);
-        }
-    }
+		public Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(user.TwoFactorEnabled);
+		}
+	}
 }

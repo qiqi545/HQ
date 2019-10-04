@@ -19,7 +19,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
-    public interface IValidOptions<out T> : IOptions<T> where T : class, new()
-    {
-    }
+	public interface IValidOptions<out T> : IOptions<T> where T : class, new()
+	{
+	}
 }

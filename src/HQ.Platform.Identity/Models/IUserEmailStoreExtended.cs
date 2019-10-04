@@ -21,8 +21,8 @@ using System.Threading.Tasks;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IUserEmailStoreExtended<TUser> : IUserStoreExtended<TUser> where TUser : class
-    {
-        Task<IEnumerable<TUser>> FindAllByEmailAsync(string normalizedEmail, CancellationToken cancellationToken);
-    }
+	public interface IUserEmailStoreExtended<TUser> : IUserStoreExtended<TUser> where TUser : class
+	{
+		Task<IEnumerable<TUser>> FindAllByEmailAsync(string normalizedEmail, CancellationToken cancellationToken);
+	}
 }

@@ -17,7 +17,7 @@
 
 namespace HQ.Integration.SqlServer.Identity
 {
-    public class SqlServerOptions
-    {
-    }
+	public class SqlServerOptions
+	{
+	}
 }

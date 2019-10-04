@@ -17,9 +17,9 @@
 
 namespace HQ.Data.Sql.Dialects
 {
-    public enum FetchInsertedKeyLocation
-    {
-        BeforeValues,
-        AfterStatement
-    }
+	public enum FetchInsertedKeyLocation
+	{
+		BeforeValues,
+		AfterStatement
+	}
 }

@@ -28,7 +28,8 @@ namespace HQ.Extensions.Options
 	{
 		public static Dictionary<string, string> Unbind(this object instance, string key)
 		{
-			var accessor = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
+			var accessor = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
+				out var members);
 			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var member in members)
@@ -56,45 +57,47 @@ namespace HQ.Extensions.Options
 						{
 							map.Add(prefix, value.ToString());
 						}
-						else switch (value)
-						{
-							case IEnumerable<string> strings:
+						else
+							switch (value)
 							{
-								var index = 0;
-								foreach (var child in strings)
+								case IEnumerable<string> strings:
 								{
-									map.Add($"{prefix}:{index}", child);
-									index++;
+									var index = 0;
+									foreach (var child in strings)
+									{
+										map.Add($"{prefix}:{index}", child);
+										index++;
+									}
+
+									break;
 								}
 
-								break;
-							}
-
-							case IEnumerable enumerable:
-							{
-								var index = 0;
-								foreach (var item in enumerable)
+								case IEnumerable enumerable:
 								{
-									foreach (var entry in item.Unbind($"{prefix}:{index}"))
+									var index = 0;
+									foreach (var item in enumerable)
+									{
+										foreach (var entry in item.Unbind($"{prefix}:{index}"))
+											map.Add(entry.Key, entry.Value);
+										index++;
+									}
+
+									break;
+								}
+
+								default:
+								{
+									foreach (var entry in value.Unbind(prefix))
 										map.Add(entry.Key, entry.Value);
-									index++;
+									break;
 								}
-
-								break;
 							}
-
-							default:
-							{
-								foreach (var entry in value.Unbind(prefix))
-									map.Add(entry.Key, entry.Value);
-								break;
-							}
-						}
 
 						break;
 					}
 				}
 			}
+
 			return map;
 		}
 

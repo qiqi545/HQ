@@ -21,8 +21,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Validators
 {
-    public interface IValidator<TUser> where TUser : class
-    {
-        Task ValidateAsync(UserManager<TUser> manager, TUser user, ICollection<IdentityError> errors);
-    }
+	public interface IValidator<TUser> where TUser : class
+	{
+		Task ValidateAsync(UserManager<TUser> manager, TUser user, ICollection<IdentityError> errors);
+	}
 }

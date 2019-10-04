@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,6 +12,7 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
 using System;
@@ -19,7 +21,6 @@ using System.Net;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
@@ -30,10 +31,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Filters
 	{
 		private readonly IOptions<QueryOptions> _options;
 
-		public RestSegmentFilter(IOptions<QueryOptions> options)
-		{
-			_options = options;
-		}
+		public RestSegmentFilter(IOptions<QueryOptions> options) => _options = options;
 
 		public QueryOptions Options => _options.Value;
 
@@ -48,7 +46,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Filters
 			var idsValue = new List<long>();
 			if (ids.Count != 0)
 			{
-				foreach(var item in ids[0].Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+				foreach (var item in ids[0].Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries))
 				{
 					if (long.TryParse(item, out var idValue))
 						idsValue.Add(idValue);

@@ -19,16 +19,13 @@ using System.Diagnostics;
 
 namespace HQ.Data.Contracts.Versioning
 {
-    [DebuggerDisplay("{" + nameof(GroupName) + "}")]
-    public struct VersionGroup
-    {
-        public string GroupName { get; }
+	[DebuggerDisplay("{" + nameof(GroupName) + "}")]
+	public struct VersionGroup
+	{
+		public string GroupName { get; }
 
-        public VersionGroup(short year, byte month, byte day) : this($"{year:D4}-{month:D2}-{day:D2}") { }
+		public VersionGroup(short year, byte month, byte day) : this($"{year:D4}-{month:D2}-{day:D2}") { }
 
-        public VersionGroup(string groupName)
-        {
-            GroupName = groupName;
-        }
-    }
+		public VersionGroup(string groupName) => GroupName = groupName;
+	}
 }

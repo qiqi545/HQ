@@ -23,23 +23,23 @@ using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Dapper
 {
-    partial class DapperExtensions
-    {
-        public static int Update<T>(this IDbConnection connection, T instance, IDbTransaction transaction = null,
-            int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn) where T : class
-        {
-            var query = SqlBuilder.Update(instance);
-            var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
-            return result;
-        }
+	partial class DapperExtensions
+	{
+		public static int Update<T>(this IDbConnection connection, T instance, IDbTransaction transaction = null,
+			int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn) where T : class
+		{
+			var query = SqlBuilder.Update(instance);
+			var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+			return result;
+		}
 
-        public static int Update<T>(this IDbConnection connection, dynamic set, dynamic where = null,
-            IDbTransaction transaction = null, int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn)
-            where T : class
-        {
-            Query query = SqlBuilder.Update<T>(set, where);
-            var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
-            return result;
-        }
-    }
+		public static int Update<T>(this IDbConnection connection, dynamic set, dynamic where = null,
+			IDbTransaction transaction = null, int? commandTimeout = null, params Expression<Func<T, object>>[] sortOn)
+			where T : class
+		{
+			Query query = SqlBuilder.Update<T>(set, where);
+			var result = connection.Execute(query.Sql, Prepare(query.Parameters), transaction, commandTimeout);
+			return result;
+		}
+	}
 }

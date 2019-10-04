@@ -19,58 +19,58 @@ using System;
 
 namespace HQ.Extensions.Caching
 {
-    public interface ICache
-    {
-        bool Set(string key, object value);
-        bool Set(string key, object value, DateTime absoluteExpiration);
-        bool Set(string key, object value, TimeSpan slidingExpiration);
-        bool Set(string key, object value, ICacheDependency dependency);
-        bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Set(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
+	public interface ICache
+	{
+		bool Set(string key, object value);
+		bool Set(string key, object value, DateTime absoluteExpiration);
+		bool Set(string key, object value, TimeSpan slidingExpiration);
+		bool Set(string key, object value, ICacheDependency dependency);
+		bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Set(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        bool Set<T>(string key, T value);
-        bool Set<T>(string key, T value, DateTime absoluteExpiration);
-        bool Set<T>(string key, T value, TimeSpan slidingExpiration);
-        bool Set<T>(string key, T value, ICacheDependency dependency);
-        bool Set<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Set<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
-        
-        bool Add(string key, object value);
-        bool Add(string key, object value, DateTime absoluteExpiration);
-        bool Add(string key, object value, TimeSpan slidingExpiration);
-        bool Add(string key, object value, ICacheDependency dependency);
-        bool Add(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Add(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
+		bool Set<T>(string key, T value);
+		bool Set<T>(string key, T value, DateTime absoluteExpiration);
+		bool Set<T>(string key, T value, TimeSpan slidingExpiration);
+		bool Set<T>(string key, T value, ICacheDependency dependency);
+		bool Set<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Set<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        bool Add<T>(string key, T value);
-        bool Add<T>(string key, T value, DateTime absoluteExpiration);
-        bool Add<T>(string key, T value, TimeSpan slidingExpiration);
-        bool Add<T>(string key, T value, ICacheDependency dependency);
-        bool Add<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Add<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
+		bool Add(string key, object value);
+		bool Add(string key, object value, DateTime absoluteExpiration);
+		bool Add(string key, object value, TimeSpan slidingExpiration);
+		bool Add(string key, object value, ICacheDependency dependency);
+		bool Add(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Add(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        bool Replace(string key, object value);
-        bool Replace(string key, object value, DateTime absoluteExpiration);
-        bool Replace(string key, object value, TimeSpan slidingExpiration);
-        bool Replace(string key, object value, ICacheDependency dependency);
-        bool Replace(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Replace(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
+		bool Add<T>(string key, T value);
+		bool Add<T>(string key, T value, DateTime absoluteExpiration);
+		bool Add<T>(string key, T value, TimeSpan slidingExpiration);
+		bool Add<T>(string key, T value, ICacheDependency dependency);
+		bool Add<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Add<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        bool Replace<T>(string key, T value);
-        bool Replace<T>(string key, T value, DateTime absoluteExpiration);
-        bool Replace<T>(string key, T value, TimeSpan slidingExpiration);
-        bool Replace<T>(string key, T value, ICacheDependency dependency);
-        bool Replace<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
-        bool Replace<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
+		bool Replace(string key, object value);
+		bool Replace(string key, object value, DateTime absoluteExpiration);
+		bool Replace(string key, object value, TimeSpan slidingExpiration);
+		bool Replace(string key, object value, ICacheDependency dependency);
+		bool Replace(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Replace(string key, object value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        object Get(string key, TimeSpan? timeout = null);
-        object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null);
-        object GetOrAdd(string key, object add = null, TimeSpan? timeout = null);
+		bool Replace<T>(string key, T value);
+		bool Replace<T>(string key, T value, DateTime absoluteExpiration);
+		bool Replace<T>(string key, T value, TimeSpan slidingExpiration);
+		bool Replace<T>(string key, T value, ICacheDependency dependency);
+		bool Replace<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency);
+		bool Replace<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency);
 
-        T Get<T>(string key, TimeSpan? timeout = null);
-        T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null);
-        T GetOrAdd<T>(string key, T add = default, TimeSpan? timeout = null);
+		object Get(string key, TimeSpan? timeout = null);
+		object GetOrAdd(string key, Func<object> add = null, TimeSpan? timeout = null);
+		object GetOrAdd(string key, object add = null, TimeSpan? timeout = null);
 
-        void Remove(string key);
-    }
+		T Get<T>(string key, TimeSpan? timeout = null);
+		T GetOrAdd<T>(string key, Func<T> add = null, TimeSpan? timeout = null);
+		T GetOrAdd<T>(string key, T add = default, TimeSpan? timeout = null);
+
+		void Remove(string key);
+	}
 }

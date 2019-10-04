@@ -23,26 +23,26 @@ using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface IRoleService
-    {
-        Task<Operation<int>> GetCountAsync();
-    }
+	public interface IRoleService
+	{
+		Task<Operation<int>> GetCountAsync();
+	}
 
-    public interface IRoleService<TRole> : IRoleService
-    { 
-        IQueryable<TRole> Roles { get; }
+	public interface IRoleService<TRole> : IRoleService
+	{
+		IQueryable<TRole> Roles { get; }
 
-        Task<Operation<IEnumerable<TRole>>> GetAsync();
-        Task<Operation<TRole>> CreateAsync(CreateRoleModel model);
-        Task<Operation> UpdateAsync(TRole role);
-        Task<Operation> DeleteAsync(string id);
+		Task<Operation<IEnumerable<TRole>>> GetAsync();
+		Task<Operation<TRole>> CreateAsync(CreateRoleModel model);
+		Task<Operation> UpdateAsync(TRole role);
+		Task<Operation> DeleteAsync(string id);
 
-        Task<Operation<TRole>> FindByIdAsync(string id);
-        Task<Operation<TRole>> FindByNameAsync(string roleName);
+		Task<Operation<TRole>> FindByIdAsync(string id);
+		Task<Operation<TRole>> FindByNameAsync(string roleName);
 
-        Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role);
-        Task<Operation<IList<Claim>>> GetAllRoleClaimsAsync();
-        Task<Operation> AddClaimAsync(TRole role, Claim claim);
-        Task<Operation> RemoveClaimAsync(TRole role, Claim claim);
-    }
+		Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role);
+		Task<Operation<IList<Claim>>> GetAllRoleClaimsAsync();
+		Task<Operation> AddClaimAsync(TRole role, Claim claim);
+		Task<Operation> RemoveClaimAsync(TRole role, Claim claim);
+	}
 }

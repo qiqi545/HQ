@@ -26,124 +26,124 @@ using TypeKitchen;
 
 namespace HQ.Data.Sql.Builders
 {
-    public static class FilterBuilder
-    {
-        public static string Where(this ISqlDialect d, FilterOptions filterOptions)
-        {
-            return d.Where(filterOptions.Fields);
-        }
+	public static class FilterBuilder
+	{
+		public static string Where(this ISqlDialect d, FilterOptions filterOptions)
+		{
+			return d.Where(filterOptions.Fields);
+		}
 
-        public static string Where(this ISqlDialect d, List<Filter> filters)
-        {
-            var clauses = string.Join(" AND ", filters.Enumerate(f => d.Where(f)));
+		public static string Where(this ISqlDialect d, List<Filter> filters)
+		{
+			var clauses = string.Join(" AND ", filters.Enumerate(f => d.Where(f)));
 
-            return clauses;
-        }
+			return clauses;
+		}
 
-        public static string Where(this ISqlDialect d, params Filter[] filters)
-        {
-            return Pooling.StringBuilderPool.Scoped(sb => { AppendWhere(sb, d, filters); });
-        }
+		public static string Where(this ISqlDialect d, params Filter[] filters)
+		{
+			return Pooling.StringBuilderPool.Scoped(sb => { AppendWhere(sb, d, filters); });
+		}
 
-        internal static void AppendWhere(StringBuilder sb, ISqlDialect d, IList<Filter> filters)
-        {
-            sb.Append("WHERE ");
+		internal static void AppendWhere(StringBuilder sb, ISqlDialect d, IList<Filter> filters)
+		{
+			sb.Append("WHERE ");
 
-            var joins = 0;
-            for (var i = 0; i < filters.Count; i++)
-            {
-                AppendFilterClause(d, sb, filters[i], ref joins);
-                if (i < filters.Count - 1)
-                    sb.Append(" AND ");
-            }
-        }
+			var joins = 0;
+			for (var i = 0; i < filters.Count; i++)
+			{
+				AppendFilterClause(d, sb, filters[i], ref joins);
+				if (i < filters.Count - 1)
+					sb.Append(" AND ");
+			}
+		}
 
-        private static void AppendFilterClause(this ISqlDialect d, StringBuilder sb, Filter f, ref int joins)
-        {
-            switch (f.Type)
-            {
-                case FilterType.Scalar:
-                    AppendFilterScalarClause(d, sb, f);
-                    break;
-                case FilterType.Join:
-                    AppendFilterJoinClause(d, sb, f, ref joins);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+		private static void AppendFilterClause(this ISqlDialect d, StringBuilder sb, Filter f, ref int joins)
+		{
+			switch (f.Type)
+			{
+				case FilterType.Scalar:
+					AppendFilterScalarClause(d, sb, f);
+					break;
+				case FilterType.Join:
+					AppendFilterJoinClause(d, sb, f, ref joins);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
 
-        private static void AppendFilterJoinClause(this ISqlDialect d, StringBuilder sb, Filter f, ref int joins)
-        {
-            sb.Append(Constants.Sql.ChildAlias).Append(joins).Append('.').AppendName(d, f.Field);
+		private static void AppendFilterJoinClause(this ISqlDialect d, StringBuilder sb, Filter f, ref int joins)
+		{
+			sb.Append(Constants.Sql.ChildAlias).Append(joins).Append('.').AppendName(d, f.Field);
 
-            var isNullCheck = f.IsNullCheck();
-            AppendOperator(sb, f, isNullCheck);
-            if (isNullCheck)
-                return;
+			var isNullCheck = f.IsNullCheck();
+			AppendOperator(sb, f, isNullCheck);
+			if (isNullCheck)
+				return;
 
-            AppendFilterValue(d, sb, f);
-        }
+			AppendFilterValue(d, sb, f);
+		}
 
-        private static void AppendFilterScalarClause(this ISqlDialect d, StringBuilder sb, Filter f)
-        {
-            sb.Append(Constants.Sql.ParentAlias).Append('.').AppendName(d, f.Field);
+		private static void AppendFilterScalarClause(this ISqlDialect d, StringBuilder sb, Filter f)
+		{
+			sb.Append(Constants.Sql.ParentAlias).Append('.').AppendName(d, f.Field);
 
-            var isNullCheck = f.IsNullCheck();
-            AppendOperator(sb, f, isNullCheck);
-            if (isNullCheck)
-                return;
+			var isNullCheck = f.IsNullCheck();
+			AppendOperator(sb, f, isNullCheck);
+			if (isNullCheck)
+				return;
 
-            AppendFilterValue(d, sb, f);
-        }
+			AppendFilterValue(d, sb, f);
+		}
 
-        private static void AppendOperator(StringBuilder sb, Filter f, bool isNullCheck)
-        {
-            switch (f.Operator)
-            {
-                case FilterOperator.Equal:
-                    sb.Append(isNullCheck ? " IS NULL" : " = ");
-                    break;
-                case FilterOperator.NotEqual:
-                    sb.Append(isNullCheck ? " IS NOT NULL" : " <> ");
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
+		private static void AppendOperator(StringBuilder sb, Filter f, bool isNullCheck)
+		{
+			switch (f.Operator)
+			{
+				case FilterOperator.Equal:
+					sb.Append(isNullCheck ? " IS NULL" : " = ");
+					break;
+				case FilterOperator.NotEqual:
+					sb.Append(isNullCheck ? " IS NOT NULL" : " <> ");
+					break;
+				default:
+					throw new NotSupportedException();
+			}
+		}
 
-        private static void AppendFilterValue(ISqlDialect d, StringBuilder sb, Filter f)
-        {
-            if (f.IsParameter(d))
-                sb.Append(f.Value);
-            else if (f.Value is string || f.Value is DateTimeOffset || f.Value is DateTime)
-                sb.AppendQuoted(d, f.Value);
-            else
-                sb.Append(f.Value);
-        }
+		private static void AppendFilterValue(ISqlDialect d, StringBuilder sb, Filter f)
+		{
+			if (f.IsParameter(d))
+				sb.Append(f.Value);
+			else if (f.Value is string || f.Value is DateTimeOffset || f.Value is DateTime)
+				sb.AppendQuoted(d, f.Value);
+			else
+				sb.Append(f.Value);
+		}
 
-        public static bool IsNullCheck(this Filter f)
-        {
-            var isNullCheck = (f.Value as string)?.Equals("NULL", StringComparison.OrdinalIgnoreCase);
-            return isNullCheck.GetValueOrDefault();
-        }
+		public static bool IsNullCheck(this Filter f)
+		{
+			var isNullCheck = (f.Value as string)?.Equals("NULL", StringComparison.OrdinalIgnoreCase);
+			return isNullCheck.GetValueOrDefault();
+		}
 
-        public static bool IsParameter(this Filter f, ISqlDialect d)
-        {
-            if (f.Value == null)
-                return false;
-            var startsWith = (f.Value as string)?.StartsWith($"{d.Parameter}");
-            return startsWith.GetValueOrDefault();
-        }
+		public static bool IsParameter(this Filter f, ISqlDialect d)
+		{
+			if (f.Value == null)
+				return false;
+			var startsWith = (f.Value as string)?.StartsWith($"{d.Parameter}");
+			return startsWith.GetValueOrDefault();
+		}
 
-        public static object EqualTo(this object clause)
-        {
-            return clause;
-        }
+		public static object EqualTo(this object clause)
+		{
+			return clause;
+		}
 
-        public static object NotEqualTo(this object clause)
-        {
-            return clause;
-        }
-    }
+		public static object NotEqualTo(this object clause)
+		{
+			return clause;
+		}
+	}
 }

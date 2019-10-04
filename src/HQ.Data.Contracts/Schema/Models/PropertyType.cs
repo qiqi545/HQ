@@ -17,47 +17,47 @@
 
 namespace HQ.Data.Contracts.Schema.Models
 {
-    public enum PropertyType : short
-    {
-        // Primitives:
-        String,
-        Boolean,
-        Byte,
-        Int32,
-        Int16,
-        Int64,
-        Single,
-        Double,
-        Decimal,
-        Date,
-        DateTime,
-        TimeSpan,
+	public enum PropertyType : short
+	{
+		// Primitives:
+		String,
+		Boolean,
+		Byte,
+		Int32,
+		Int16,
+		Int64,
+		Single,
+		Double,
+		Decimal,
+		Date,
+		DateTime,
+		TimeSpan,
 
-        // Special Types:
-        Money,
-        Email,
-        Password,
-        CreditCard,
-        Phone,
+		// Special Types:
+		Money,
+		Email,
+		Password,
+		CreditCard,
+		Phone,
 
-        // Object Types:
-        Object,
-        View,
-        Enum,
+		// Object Types:
+		Object,
+		View,
+		Enum,
 
-        // Object Type Aliases:
-        O = Object,
-        V = View,
-        E = Enum,
+		// Object Type Aliases:
+		O = Object,
+		V = View,
+		E = Enum,
 
-        // Type Aliases:
-        Bool = Boolean,
-        Short = Int16,
-        Integer = Int32,
-        Int = Int32,
-        Long = Int64,
-        Float = Single,
-        Currency = Money,
-        PhoneNumber = Phone
-    }
+		// Type Aliases:
+		Bool = Boolean,
+		Short = Int16,
+		Integer = Int32,
+		Int = Int32,
+		Long = Int64,
+		Float = Single,
+		Currency = Money,
+		PhoneNumber = Phone
+	}
 }

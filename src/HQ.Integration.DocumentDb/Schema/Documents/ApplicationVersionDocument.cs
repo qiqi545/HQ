@@ -23,11 +23,10 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 {
 	public class ApplicationVersionDocument : DocumentBase<ApplicationVersionDocument>
 	{
-		public ulong Fingerprint { get; set; }
-		public string ApplicationId { get; set; }
-		public Dictionary<string, ulong> Manifest { get; set; }
-
-		public ApplicationVersionDocument() { /* required for serialization */}
+		public ApplicationVersionDocument()
+		{
+			/* required for serialization */
+		}
 
 		public ApplicationVersionDocument(ApplicationVersion model)
 		{
@@ -36,12 +35,14 @@ namespace HQ.Integration.DocumentDb.Schema.Documents
 			Manifest = model.Manifest;
 		}
 
+		public ulong Fingerprint { get; set; }
+		public string ApplicationId { get; set; }
+		public Dictionary<string, ulong> Manifest { get; set; }
+
 		[JsonIgnore]
 		public ApplicationVersion Model => new ApplicationVersion
 		{
-			Fingerprint = Fingerprint,
-			ApplicationId = ApplicationId,
-			Manifest = Manifest
+			Fingerprint = Fingerprint, ApplicationId = ApplicationId, Manifest = Manifest
 		};
 	}
 }

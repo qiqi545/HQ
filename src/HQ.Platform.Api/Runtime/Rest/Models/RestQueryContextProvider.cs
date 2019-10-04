@@ -20,49 +20,45 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using HQ.Common;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Runtime.Rest.Models
 {
-    public class RestQueryContextProvider : IQueryContextProvider
-    {
-        private readonly IEnumerable<IRestFilter> _filters;
+	public class RestQueryContextProvider : IQueryContextProvider
+	{
+		private readonly IEnumerable<IRestFilter> _filters;
 
-        public RestQueryContextProvider(IEnumerable<IRestFilter> filters)
-        {
-            _filters = filters;
+		public RestQueryContextProvider(IEnumerable<IRestFilter> filters)
+		{
+			_filters = filters;
 
-            SupportedMediaTypes =  new List<MediaTypeHeaderValue>
-            {
-	            MediaTypeHeaderValue.Parse(Constants.MediaTypes.Json),
-	            MediaTypeHeaderValue.Parse(Constants.MediaTypes.Xml)
-            };
-        }
+			SupportedMediaTypes = new List<MediaTypeHeaderValue>
+			{
+				MediaTypeHeaderValue.Parse(Constants.MediaTypes.Json),
+				MediaTypeHeaderValue.Parse(Constants.MediaTypes.Xml)
+			};
+		}
 
-        public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
+		public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
 
-        public IEnumerable<QueryContext> Parse(Type type, HttpContext source)
-        {
-            return Parse(type, source.User, source.Request.QueryString.Value);
-        }
+		public IEnumerable<QueryContext> Parse(Type type, HttpContext source)
+		{
+			return Parse(type, source.User, source.Request.QueryString.Value);
+		}
 
-        public IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source)
-        {
-            var context = new QueryContext(user)
-            {
-                Type = type,
-            };
+		public IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source)
+		{
+			var context = new QueryContext(user) {Type = type};
 
 			var qs = QueryHelpers.ParseQuery(source);
 			foreach (var filter in _filters)
 			{
 				filter?.Execute(qs, ref context);
 			}
+
 			yield return context;
-        }
-    }
+		}
+	}
 }

@@ -22,6 +22,7 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
+using HQ.Platform.Api.Formatters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -29,35 +30,39 @@ using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
+#if NETCOREAPP2_2
+using JsonInputFormatter = HQ.Platform.Api.Formatters.JsonInputFormatter;
+using JsonOutputFormatter = HQ.Platform.Api.Formatters.JsonOutputFormatter;
 using JsonPatchInputFormatter = HQ.Platform.Api.Formatters.JsonPatchInputFormatter;
+#endif
 
 namespace HQ.Platform.Api.Configuration
 {
-    internal class PlatformApiMvcConfiguration : IConfigureOptions<MvcOptions>
-    {
-        private readonly ArrayPool<char> _charPool;
-        private readonly IEnumerable<IDynamicComponent> _components;
-        private readonly ILoggerFactory _loggerFactory;
-        private readonly ObjectPoolProvider _objectPoolProvider;
-        private readonly JsonSerializerSettings _settings;
+	internal class PlatformApiMvcConfiguration : IConfigureOptions<MvcOptions>
+	{
+		private readonly ArrayPool<char> _charPool;
+		private readonly IEnumerable<IDynamicComponent> _components;
+		private readonly ILoggerFactory _loggerFactory;
+		private readonly ObjectPoolProvider _objectPoolProvider;
+		private readonly JsonSerializerSettings _settings;
 
-        public PlatformApiMvcConfiguration(
-            ILoggerFactory loggerFactory,
-            ArrayPool<char> charPool,
-            ObjectPoolProvider objectPoolProvider,
-            JsonSerializerSettings settings,
-            IEnumerable<IDynamicComponent> components)
-        {
-            _loggerFactory = loggerFactory;
-            _charPool = charPool;
-            _objectPoolProvider = objectPoolProvider;
-            _settings = settings;
-            _components = components;
-        }
+		public PlatformApiMvcConfiguration(
+			ILoggerFactory loggerFactory,
+			ArrayPool<char> charPool,
+			ObjectPoolProvider objectPoolProvider,
+			JsonSerializerSettings settings,
+			IEnumerable<IDynamicComponent> components)
+		{
+			_loggerFactory = loggerFactory;
+			_charPool = charPool;
+			_objectPoolProvider = objectPoolProvider;
+			_settings = settings;
+			_components = components;
+		}
 
-        public void Configure(MvcOptions options)
-        {
-            var logger = _loggerFactory.CreateLogger(Constants.Loggers.Formatters);
+		public void Configure(MvcOptions options)
+		{
+			var logger = _loggerFactory.CreateLogger(Constants.Loggers.Formatters);
 
 #if NETCOREAPP2_2
 	        var jsonOptions = new MvcJsonOptions();
@@ -67,50 +72,50 @@ namespace HQ.Platform.Api.Configuration
 
 			jsonOptions.Apply(_settings);
 
-            options.InputFormatters.Clear();
-            options.OutputFormatters.Clear();
+			options.InputFormatters.Clear();
+			options.OutputFormatters.Clear();
 
-            AddJson(options, logger, jsonOptions);
-            AddXml(options);
+			AddJson(options, logger, jsonOptions);
+			AddXml(options);
 
-            options.Conventions.Add(new DynamicComponentConvention(_components));
-            options.Filters.Add(typeof(CanonicalRoutesResourceFilter));
-        }
+			options.Conventions.Add(new DynamicComponentConvention(_components));
+			options.Filters.Add(typeof(CanonicalRoutesResourceFilter));
+		}
 
-        private void AddXml(MvcOptions options)
-        {
-            if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("xml")))
-            {
-                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", Constants.MediaTypes.Xml);
-            }
+		private void AddXml(MvcOptions options)
+		{
+			if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("xml")))
+			{
+				options.FormatterMappings.SetMediaTypeMappingForFormat("xml", Constants.MediaTypes.Xml);
+			}
 
-            options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter(new XmlWriterSettings
-            {
-                Indent = true,
-                NamespaceHandling = NamespaceHandling.OmitDuplicates
-            }, _loggerFactory));
-            options.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(options));
-        }
+			options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter(
+				new XmlWriterSettings {Indent = true, NamespaceHandling = NamespaceHandling.OmitDuplicates},
+				_loggerFactory));
+			options.InputFormatters.Add(new XmlDataContractSerializerInputFormatter(options));
+		}
 
-        private void AddJson(MvcOptions options, ILogger logger,
+		private void AddJson(MvcOptions options, ILogger logger,
 #if NETCOREAPP2_2
 	        MvcJsonOptions jsonOptions
 #else
 			MvcNewtonsoftJsonOptions jsonOptions
 #endif
-			)
+		)
 		{
-            if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
+			if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
 				options.FormatterMappings.SetMediaTypeMappingForFormat("json", Constants.MediaTypes.Json);
 #if NETCOREAPP2_2
 			options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
 			options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
 			options.OutputFormatters.Add(new JsonOutputFormatter(_settings, _charPool));
 #else
-			options.InputFormatters.Add(new NewtonsoftJsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
-            options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
-            options.OutputFormatters.Add(new NewtonsoftJsonOutputFormatter(_settings, _charPool, options));
+			options.InputFormatters.Add(new NewtonsoftJsonInputFormatter(logger, _settings, _charPool,
+				_objectPoolProvider, options, jsonOptions));
+			options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider,
+				options, jsonOptions));
+			options.OutputFormatters.Add(new NewtonsoftJsonOutputFormatter(_settings, _charPool, options));
 #endif
 		}
-    }
+	}
 }

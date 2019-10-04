@@ -20,27 +20,27 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Extensions.Options
 {
-    public sealed class ValidOptionsMonitor<TOptions> : IValidOptionsMonitor<TOptions> where TOptions : class, new()
-    {
-        private readonly IOptionsMonitor<TOptions> _inner;
-        private readonly IServiceProvider _serviceProvider;
+	public sealed class ValidOptionsMonitor<TOptions> : IValidOptionsMonitor<TOptions> where TOptions : class, new()
+	{
+		private readonly IOptionsMonitor<TOptions> _inner;
+		private readonly IServiceProvider _serviceProvider;
 
-        public ValidOptionsMonitor(IOptionsMonitor<TOptions> inner, IServiceProvider serviceProvider)
-        {
-            _inner = inner;
-            _serviceProvider = serviceProvider;
-        }
+		public ValidOptionsMonitor(IOptionsMonitor<TOptions> inner, IServiceProvider serviceProvider)
+		{
+			_inner = inner;
+			_serviceProvider = serviceProvider;
+		}
 
-        public IDisposable OnChange(Action<TOptions, string> listener)
-        {
-            return _inner.OnChange(listener);
-        }
+		public IDisposable OnChange(Action<TOptions, string> listener)
+		{
+			return _inner.OnChange(listener);
+		}
 
-        public TOptions CurrentValue => Get(Microsoft.Extensions.Options.Options.DefaultName);
+		public TOptions CurrentValue => Get(Microsoft.Extensions.Options.Options.DefaultName);
 
-        public TOptions Get(string name)
-        {
-            return _inner.Get(name).Validate(_serviceProvider);
-        }
-    }
+		public TOptions Get(string name)
+		{
+			return _inner.Get(name).Validate(_serviceProvider);
+		}
+	}
 }

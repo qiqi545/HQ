@@ -23,42 +23,70 @@ using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb.Scheduling
 {
-    public class BackgroundTaskDocument : DocumentBase<BackgroundTaskDocument>
-    {
-        [JsonConstructor]
-        public BackgroundTaskDocument() { }
+	public class BackgroundTaskDocument : DocumentBase<BackgroundTaskDocument>
+	{
+		[JsonConstructor]
+		public BackgroundTaskDocument() { }
 
-        public BackgroundTaskDocument(BackgroundTask task)
-        {
-            TaskId = task.Id;
-            Priority = task.Priority;
-            Attempts = task.Attempts;
-            Handler = task.Handler;
-            RunAt = task.RunAt;
-            MaximumRuntime = task.MaximumRuntime;
-            MaximumAttempts = task.MaximumAttempts;
-            DeleteOnSuccess = task.DeleteOnSuccess;
-            DeleteOnFailure = task.DeleteOnFailure;
-            DeleteOnError = task.DeleteOnError;
-            LastError = task.LastError;
-            FailedAt = task.FailedAt;
-            SucceededAt = task.SucceededAt;
-            LockedAt = task.LockedAt;
-            LockedBy = task.LockedBy;
+		public BackgroundTaskDocument(BackgroundTask task)
+		{
+			TaskId = task.Id;
+			Priority = task.Priority;
+			Attempts = task.Attempts;
+			Handler = task.Handler;
+			RunAt = task.RunAt;
+			MaximumRuntime = task.MaximumRuntime;
+			MaximumAttempts = task.MaximumAttempts;
+			DeleteOnSuccess = task.DeleteOnSuccess;
+			DeleteOnFailure = task.DeleteOnFailure;
+			DeleteOnError = task.DeleteOnError;
+			LastError = task.LastError;
+			FailedAt = task.FailedAt;
+			SucceededAt = task.SucceededAt;
+			LockedAt = task.LockedAt;
+			LockedBy = task.LockedBy;
 
-            Expression = task.Expression;
-            Start = task.Start;
-            End = task.End;
-            ContinueOnSuccess = task.ContinueOnSuccess;
-            ContinueOnFailure = task.ContinueOnFailure;
-            ContinueOnError = task.ContinueOnError;
+			Expression = task.Expression;
+			Start = task.Start;
+			End = task.End;
+			ContinueOnSuccess = task.ContinueOnSuccess;
+			ContinueOnFailure = task.ContinueOnFailure;
+			ContinueOnError = task.ContinueOnError;
 
-            Data = task.Data;
-            Tags = task.Tags ?? new List<string>();
-        }
+			Data = task.Data;
+			Tags = task.Tags ?? new List<string>();
+		}
 
-        public static implicit operator BackgroundTask (BackgroundTaskDocument document)
-        {
+		[AutoIncrement] public int TaskId { get; set; }
+
+		public int Priority { get; set; }
+		public int Attempts { get; set; }
+		public string Handler { get; set; }
+		public DateTimeOffset RunAt { get; set; }
+		public TimeSpan? MaximumRuntime { get; set; }
+		public int? MaximumAttempts { get; set; }
+		public bool? DeleteOnSuccess { get; set; }
+		public bool? DeleteOnFailure { get; set; }
+		public bool? DeleteOnError { get; set; }
+		public string LastError { get; set; }
+		public DateTimeOffset? FailedAt { get; set; }
+		public DateTimeOffset? SucceededAt { get; set; }
+		public DateTimeOffset? LockedAt { get; set; }
+		public string LockedBy { get; set; }
+
+		public string Expression { get; set; }
+		public DateTimeOffset Start { get; set; }
+		public DateTimeOffset? End { get; set; }
+
+		public string Data { get; set; }
+
+		public bool ContinueOnSuccess { get; set; } = true;
+		public bool ContinueOnFailure { get; set; } = true;
+		public bool ContinueOnError { get; set; } = true;
+		public List<string> Tags { get; set; } = new List<string>();
+
+		public static implicit operator BackgroundTask(BackgroundTaskDocument document)
+		{
 			var task = new BackgroundTask
 			{
 				Id = document.TaskId,
@@ -85,36 +113,8 @@ namespace HQ.Integration.DocumentDb.Scheduling
 				Tags = document.Tags,
 				CreatedAt = document.Timestamp,
 				Data = document.Data
-	        };
-	        return task;
-        }
-
-        [AutoIncrement]
-        public int TaskId { get; set; }
-        public int Priority { get; set; }
-        public int Attempts { get; set; }
-        public string Handler { get; set; }
-        public DateTimeOffset RunAt { get; set; }
-        public TimeSpan? MaximumRuntime { get; set; }
-        public int? MaximumAttempts { get; set; }
-        public bool? DeleteOnSuccess { get; set; }
-        public bool? DeleteOnFailure { get; set; }
-        public bool? DeleteOnError { get; set; }
-        public string LastError { get; set; }
-        public DateTimeOffset? FailedAt { get; set; }
-        public DateTimeOffset? SucceededAt { get; set; }
-        public DateTimeOffset? LockedAt { get; set; }
-        public string LockedBy { get; set; }
-
-        public string Expression { get; set; }
-        public DateTimeOffset Start { get; set; }
-        public DateTimeOffset? End { get; set; }
-
-        public string Data { get; set; }
-
-		public bool ContinueOnSuccess { get; set; } = true;
-        public bool ContinueOnFailure { get; set; } = true;
-        public bool ContinueOnError { get; set; } = true;
-        public List<string> Tags { get; set; } = new List<string>();
-    }
+			};
+			return task;
+		}
+	}
 }

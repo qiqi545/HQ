@@ -20,5 +20,5 @@ namespace HQ.Common
 	public interface IComponentOptions
 	{
 		string RootPath { get; }
-	}	
+	}
 }

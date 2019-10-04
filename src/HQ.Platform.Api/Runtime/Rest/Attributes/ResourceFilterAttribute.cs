@@ -19,7 +19,6 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,50 +26,50 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {
-    public class ResourceFilterAttribute : ActionFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<QueryOptions>>();
+	public class ResourceFilterAttribute : ActionFilterAttribute
+	{
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			var options = context.HttpContext.RequestServices.GetRequiredService<IOptions<QueryOptions>>();
 
-            var qs = QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value);
-            var qc = new QueryContext(context.HttpContext.User);
+			var qs = QueryHelpers.ParseQuery(context.HttpContext.Request.QueryString.Value);
+			var qc = new QueryContext(context.HttpContext.User);
 
-            if (context.ActionArguments.ContainsKey(options.Value.PageOperator))
-            {
-                PageFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey(options.Value.PageOperator))
+			{
+				PageFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.ActionArguments.ContainsKey("stream"))
-            {
-                StreamFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey("stream"))
+			{
+				StreamFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.ActionArguments.ContainsKey(options.Value.SortOperator))
-            {
-                SortFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey(options.Value.SortOperator))
+			{
+				SortFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.ActionArguments.ContainsKey(options.Value.FieldsOperator))
-            {
-                FieldsFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey(options.Value.FieldsOperator))
+			{
+				FieldsFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.ActionArguments.ContainsKey(options.Value.FilterOperator))
-            {
-                FilterFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey(options.Value.FilterOperator))
+			{
+				FilterFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (context.ActionArguments.ContainsKey(options.Value.ProjectionOperator))
-            {
-                ProjectionFilterAttribute.Execute(context, qs, qc);
-            }
+			if (context.ActionArguments.ContainsKey(options.Value.ProjectionOperator))
+			{
+				ProjectionFilterAttribute.Execute(context, qs, qc);
+			}
 
-            if (qc.Errors?.Count > 0)
-            {
-                context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
-                    ErrorStrings.ValidationFailed, 422 /*HttpStatusCode.UnprocessableEntity*/, qc.Errors));
-            }
-        }
-    }
+			if (qc.Errors?.Count > 0)
+			{
+				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+					ErrorStrings.ValidationFailed, 422 /*HttpStatusCode.UnprocessableEntity*/, qc.Errors));
+			}
+		}
+	}
 }

@@ -19,50 +19,49 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
 using HQ.Data.Contracts.AspNetCore.Runtime;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace HQ.Platform.Api.Runtime.Rest.Models
 {
-    public class RestMutationContextProvider : IMutationContextProvider
-    {
-        public IEnumerable<MutationContext> Parse(HttpContext source)
-        {
-            var context = new MutationContext(source.User);
+	public class RestMutationContextProvider : IMutationContextProvider
+	{
+		public IEnumerable<MutationContext> Parse(HttpContext source)
+		{
+			var context = new MutationContext(source.User);
 
-            // context.Type = ...
+			// context.Type = ...
 
-            BuildHandleData(source.Request, context);
+			BuildHandleData(source.Request, context);
 
-            // context.Handle = ...
+			// context.Handle = ...
 
-            yield return context;
-        }
+			yield return context;
+		}
 
-        public IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source)
-        {
-            var context = new MutationContext(user);
+		public IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source)
+		{
+			var context = new MutationContext(user);
 
-            BuildHandleData(context, source);
+			BuildHandleData(context, source);
 
-            yield return context;
-        }
+			yield return context;
+		}
 
-        private static void BuildHandleData(HttpRequest source, MutationContext context)
-        {
-            using (var sr = new StreamReader(source.Body))
-            {
-                var json = sr.ReadToEnd();
+		private static void BuildHandleData(HttpRequest source, MutationContext context)
+		{
+			using (var sr = new StreamReader(source.Body))
+			{
+				var json = sr.ReadToEnd();
 
-                BuildHandleData(context, json);
-            }
-        }
+				BuildHandleData(context, json);
+			}
+		}
 
-        private static void BuildHandleData(MutationContext context, string source)
-        {
-            var body = JsonConvert.DeserializeObject(source);
-            context.Body = body;
-        }
-    }
+		private static void BuildHandleData(MutationContext context, string source)
+		{
+			var body = JsonConvert.DeserializeObject(source);
+			context.Body = body;
+		}
+	}
 }

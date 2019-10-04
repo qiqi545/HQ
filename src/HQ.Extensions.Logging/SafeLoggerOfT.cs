@@ -19,8 +19,8 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Extensions.Logging
 {
-    public class SafeLogger<TCategoryName> : SafeLogger, ISafeLogger<TCategoryName>
-    {
-        public SafeLogger(ILogger<TCategoryName> inner) : base(inner) { }
-    }
+	public class SafeLogger<TCategoryName> : SafeLogger, ISafeLogger<TCategoryName>
+	{
+		public SafeLogger(ILogger<TCategoryName> inner) : base(inner) { }
+	}
 }

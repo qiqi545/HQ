@@ -22,53 +22,50 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace HQ.Extensions.Caching
 {
-    public class DistributedHttpCache : IHttpCache
-    {
-        private readonly IDistributedCache _cache;
+	public class DistributedHttpCache : IHttpCache
+	{
+		private readonly IDistributedCache _cache;
 
-        public DistributedHttpCache(IDistributedCache cache)
-        {
-            _cache = cache;
-        }
+		public DistributedHttpCache(IDistributedCache cache) => _cache = cache;
 
-        public bool TryGetETag(string key, out string etag)
-        {
-            var buffer = _cache.Get($"{key}_{Constants.HttpHeaders.ETag}");
-            if (buffer != null)
-            {
-                etag = Encoding.UTF8.GetString(buffer);
-                return true;
-            }
+		public bool TryGetETag(string key, out string etag)
+		{
+			var buffer = _cache.Get($"{key}_{Constants.HttpHeaders.ETag}");
+			if (buffer != null)
+			{
+				etag = Encoding.UTF8.GetString(buffer);
+				return true;
+			}
 
-            etag = default;
-            return false;
-        }
+			etag = default;
+			return false;
+		}
 
-        public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
-        {
-            var buffer = _cache.Get($"{key}_{Constants.HttpHeaders.LastModified}");
-            if (buffer != null)
-            {
-                var input = Encoding.UTF8.GetString(buffer);
-                if (DateTimeOffset.TryParse(input, out lastModified))
-                {
-                    return true;
-                }
-            }
+		public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
+		{
+			var buffer = _cache.Get($"{key}_{Constants.HttpHeaders.LastModified}");
+			if (buffer != null)
+			{
+				var input = Encoding.UTF8.GetString(buffer);
+				if (DateTimeOffset.TryParse(input, out lastModified))
+				{
+					return true;
+				}
+			}
 
-            lastModified = default;
-            return false;
-        }
+			lastModified = default;
+			return false;
+		}
 
-        public void Save(string key, string etag)
-        {
-            _cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
-        }
+		public void Save(string key, string etag)
+		{
+			_cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
+		}
 
-        public void Save(string key, DateTimeOffset lastModified)
-        {
-            _cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
-                Encoding.UTF8.GetBytes(lastModified.ToString("R")));
-        }
-    }
+		public void Save(string key, DateTimeOffset lastModified)
+		{
+			_cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
+				Encoding.UTF8.GetBytes(lastModified.ToString("R")));
+		}
+	}
 }

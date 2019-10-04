@@ -22,23 +22,23 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-    public interface ITenantStore<TTenant> where TTenant : class
-    {
-        CancellationToken CancellationToken { get; }
+	public interface ITenantStore<TTenant> where TTenant : class
+	{
+		CancellationToken CancellationToken { get; }
 
-        Task<string> GetTenantIdAsync(TTenant tenant, CancellationToken cancellationToken);
-        Task<string> GetTenantNameAsync(TTenant tenant, CancellationToken cancellationToken);
-        Task<int> GetCountAsync(CancellationToken cancellationToken);
+		Task<string> GetTenantIdAsync(TTenant tenant, CancellationToken cancellationToken);
+		Task<string> GetTenantNameAsync(TTenant tenant, CancellationToken cancellationToken);
+		Task<int> GetCountAsync(CancellationToken cancellationToken);
 
-        Task<IdentityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken);
-        Task<IdentityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken);
-        Task<IdentityResult> DeleteAsync(TTenant tenant, CancellationToken cancellationToken);
+		Task<IdentityResult> CreateAsync(TTenant tenant, CancellationToken cancellationToken);
+		Task<IdentityResult> UpdateAsync(TTenant tenant, CancellationToken cancellationToken);
+		Task<IdentityResult> DeleteAsync(TTenant tenant, CancellationToken cancellationToken);
 
-        Task SetTenantNameAsync(TTenant tenant, string name, CancellationToken cancellationToken);
-        Task SetNormalizedTenantNameAsync(TTenant tenant, string normalizedName, CancellationToken cancellationToken);
+		Task SetTenantNameAsync(TTenant tenant, string name, CancellationToken cancellationToken);
+		Task SetNormalizedTenantNameAsync(TTenant tenant, string normalizedName, CancellationToken cancellationToken);
 
-        Task<TTenant> FindByIdAsync(string tenantId, CancellationToken cancellationToken);
-        Task<IEnumerable<TTenant>> FindByIdsAsync(IEnumerable<string> tenantIds, CancellationToken cancellationToken);
-        Task<TTenant> FindByNameAsync(string normalizedTenantName, CancellationToken cancellationToken);
-    }
+		Task<TTenant> FindByIdAsync(string tenantId, CancellationToken cancellationToken);
+		Task<IEnumerable<TTenant>> FindByIdsAsync(IEnumerable<string> tenantIds, CancellationToken cancellationToken);
+		Task<TTenant> FindByNameAsync(string normalizedTenantName, CancellationToken cancellationToken);
+	}
 }

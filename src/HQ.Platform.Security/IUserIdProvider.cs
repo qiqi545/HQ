@@ -17,8 +17,8 @@
 
 namespace HQ.Platform.Security
 {
-    public interface IUserIdProvider
-    {
-        string Id { get; }
-    }
+	public interface IUserIdProvider
+	{
+		string Id { get; }
+	}
 }
