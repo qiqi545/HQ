@@ -90,7 +90,7 @@
     <When Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
       <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[2.2.0]" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
@@ -116,7 +116,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.18" />
+    <PackageReference Include="TypeKitchen" Version="1.0.19" />
     <PackageReference Include="Bogus" Version="28.3.2" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />

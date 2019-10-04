@@ -177,7 +177,7 @@ namespace HQ.Extensions.Options
 			return value != null ? ConvertValue(type, value) : defaultValue;
 		}
 
-		private static void BindNonScalar(this IConfiguration configuration, object instance, BinderOptions options)
+		private static void BindNonScalar(this IConfiguration configuration, ref object instance, BinderOptions options)
 		{
 			if (instance == null)
 				return;
@@ -241,7 +241,7 @@ namespace HQ.Extensions.Options
 		private static object BindToCollection(Type typeInfo, IConfiguration config, BinderOptions options)
 		{
 			var type = typeof(List<>).MakeGenericType(typeInfo.GenericTypeArguments[0]);
-			var instance = CreateInstance(ref type, options);
+			var instance = CreateInstance(ref type);
 			BindCollection(instance, type, config, options);
 			return instance;
 		}
@@ -263,7 +263,7 @@ namespace HQ.Extensions.Options
 			{
 				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
 					typeInfo.GenericTypeArguments[1]);
-				var instance = CreateInstance(ref dictionaryType, options);
+				var instance = CreateInstance(ref dictionaryType);
 				BindDictionary(instance, dictionaryType, config, options);
 				return instance;
 			}
@@ -273,7 +273,7 @@ namespace HQ.Extensions.Options
 			{
 				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
 					typeInfo.GenericTypeArguments[1]);
-				var instance = CreateInstance(ref dictionaryType, options);
+				var instance = CreateInstance(ref dictionaryType);
 				BindDictionary(instance, collectionInterface, config, options);
 				return instance;
 			}
@@ -317,7 +317,7 @@ namespace HQ.Extensions.Options
 				instance = AttemptBindToCollectionInterfaces(type, config, options);
 				if (instance != null)
 					return instance;
-				instance = CreateInstance(ref type, options);
+				instance = CreateInstance(ref type);
 			}
 
 			// See if its a Dictionary
@@ -341,14 +341,14 @@ namespace HQ.Extensions.Options
 				// Something else
 				else
 				{
-					BindNonScalar(config, instance, options);
+					BindNonScalar(config, ref instance, options);
 				}
 			}
 
 			return instance;
 		}
 
-		private static object CreateInstance(ref Type type, BinderOptions options)
+		private static object CreateInstance(ref Type type)
 		{
 			object instance;
 
@@ -396,15 +396,7 @@ namespace HQ.Extensions.Options
 
 
 		private static readonly ITypeResolver TypeResolver = new ReflectionTypeResolver();
-		private static bool IsTypeDiscriminated(Type type)
-		{
-			var method = typeof(ITypeResolver).GetMethod(nameof(ITypeResolver.FindByParent));
-			if (method == null)
-				throw new Exception();
-			var findByParent = method.MakeGenericMethod(type);
-			var types = (IEnumerable<Type>) findByParent.Invoke(TypeResolver, new object[] {});
-			return types.Any();
-		}
+		private static bool IsTypeDiscriminated(Type type) => TypeResolver.FindByParent(type).Any();
 
 		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config,
 			BinderOptions options)
@@ -562,19 +554,6 @@ namespace HQ.Extensions.Options
 			}
 
 			return null;
-		}
-
-		private static IEnumerable<PropertyInfo> GetAllProperties(TypeInfo type)
-		{
-			var allProperties = new List<PropertyInfo>();
-
-			do
-			{
-				allProperties.AddRange(type.DeclaredProperties);
-				type = type.BaseType.GetTypeInfo();
-			} while (type != typeof(object).GetTypeInfo());
-
-			return allProperties;
 		}
 	}
 }

@@ -27,7 +27,7 @@
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.18" />
+    <PackageReference Include="TypeKitchen" Version="1.0.19" />
   </ItemGroup>
 
   <ItemGroup>
