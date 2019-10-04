@@ -1,7 +1,9 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-// Changes: Fixes issue where TypeConverter is not consulted when creating an instance, which makes polymorphism impossible in configuration.
+// Change: Fixes issue where TypeConverter is not consulted when creating an instance, which makes polymorphism impossible in configuration.
+// Change: Use TypeKitchen for faster binding
+// Change: Support polymorphism using type discrimination and use of TypeConverter
 
 using System;
 using System.Collections.Generic;
@@ -9,29 +11,32 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
+using TypeKitchen;
 
 namespace HQ.Extensions.Options
 {
 	/// <summary>
-	/// Static helper class that allows binding strongly typed objects to configuration values.
+	///     Static helper class that allows binding strongly typed objects to configuration values.
 	/// </summary>
 	public static class FastConfigurationBinder
 	{
 		/// <summary>
-		/// Attempts to bind the configuration instance to a new instance of type T.
-		/// If this configuration section has a value, that will be used.
-		/// Otherwise binding by matching property names against configuration keys recursively.
+		///     Attempts to bind the configuration instance to a new instance of type T.
+		///     If this configuration section has a value, that will be used.
+		///     Otherwise binding by matching property names against configuration keys recursively.
 		/// </summary>
 		/// <typeparam name="T">The type of the new instance to bind.</typeparam>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <returns>The new instance of T if successful, default(T) otherwise.</returns>
 		public static T Get<T>(this IConfiguration configuration)
-			=> configuration.Get<T>(_ => { });
+		{
+			return configuration.Get<T>(_ => { });
+		}
 
 		/// <summary>
-		/// Attempts to bind the configuration instance to a new instance of type T.
-		/// If this configuration section has a value, that will be used.
-		/// Otherwise binding by matching property names against configuration keys recursively.
+		///     Attempts to bind the configuration instance to a new instance of type T.
+		///     If this configuration section has a value, that will be used.
+		///     Otherwise binding by matching property names against configuration keys recursively.
 		/// </summary>
 		/// <typeparam name="T">The type of the new instance to bind.</typeparam>
 		/// <param name="configuration">The configuration instance to bind.</param>
@@ -46,20 +51,22 @@ namespace HQ.Extensions.Options
 		}
 
 		/// <summary>
-		/// Attempts to bind the configuration instance to a new instance of type T.
-		/// If this configuration section has a value, that will be used.
-		/// Otherwise binding by matching property names against configuration keys recursively.
+		///     Attempts to bind the configuration instance to a new instance of type T.
+		///     If this configuration section has a value, that will be used.
+		///     Otherwise binding by matching property names against configuration keys recursively.
 		/// </summary>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="type">The type of the new instance to bind.</param>
 		/// <returns>The new instance if successful, null otherwise.</returns>
 		public static object Get(this IConfiguration configuration, Type type)
-			=> configuration.Get(type, _ => { });
+		{
+			return configuration.Get(type, _ => { });
+		}
 
 		/// <summary>
-		/// Attempts to bind the configuration instance to a new instance of type T.
-		/// If this configuration section has a value, that will be used.
-		/// Otherwise binding by matching property names against configuration keys recursively.
+		///     Attempts to bind the configuration instance to a new instance of type T.
+		///     If this configuration section has a value, that will be used.
+		///     Otherwise binding by matching property names against configuration keys recursively.
 		/// </summary>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="type">The type of the new instance to bind.</param>
@@ -72,33 +79,41 @@ namespace HQ.Extensions.Options
 
 			var options = new BinderOptions();
 			configureOptions?.Invoke(options);
-			return BindInstance(type,  null,  configuration, options);
+			return BindInstance(type, null, configuration, options);
 		}
 
 		/// <summary>
-		/// Attempts to bind the given object instance to the configuration section specified by the key by matching property names against configuration keys recursively.
+		///     Attempts to bind the given object instance to the configuration section specified by the key by matching property
+		///     names against configuration keys recursively.
 		/// </summary>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="key">The key of the configuration section to bind.</param>
 		/// <param name="instance">The object to bind.</param>
 		public static void FastBind(this IConfiguration configuration, string key, object instance)
-			=> configuration.GetSection(key).FastBind(instance);
+		{
+			configuration.GetSection(key).FastBind(instance);
+		}
 
 		/// <summary>
-		/// Attempts to bind the given object instance to configuration values by matching property names against configuration keys recursively.
+		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
+		///     keys recursively.
 		/// </summary>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="instance">The object to bind.</param>
 		public static void FastBind(this IConfiguration configuration, object instance)
-			=> configuration.FastBind(instance, o => { });
+		{
+			configuration.FastBind(instance, o => { });
+		}
 
 		/// <summary>
-		/// Attempts to bind the given object instance to configuration values by matching property names against configuration keys recursively.
+		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
+		///     keys recursively.
 		/// </summary>
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="instance">The object to bind.</param>
 		/// <param name="configureOptions">Configures the binder options.</param>
-		public static void FastBind(this IConfiguration configuration, object instance, Action<BinderOptions> configureOptions)
+		public static void FastBind(this IConfiguration configuration, object instance,
+			Action<BinderOptions> configureOptions)
 		{
 			if (configuration == null)
 				throw new ArgumentNullException(nameof(configuration));
@@ -112,7 +127,7 @@ namespace HQ.Extensions.Options
 		}
 
 		/// <summary>
-		/// Extracts the value with the specified key and converts it to type T.
+		///     Extracts the value with the specified key and converts it to type T.
 		/// </summary>
 		/// <typeparam name="T">The type to convert the value to.</typeparam>
 		/// <param name="configuration">The configuration.</param>
@@ -124,7 +139,7 @@ namespace HQ.Extensions.Options
 		}
 
 		/// <summary>
-		/// Extracts the value with the specified key and converts it to type T.
+		///     Extracts the value with the specified key and converts it to type T.
 		/// </summary>
 		/// <typeparam name="T">The type to convert the value to.</typeparam>
 		/// <param name="configuration">The configuration.</param>
@@ -137,7 +152,7 @@ namespace HQ.Extensions.Options
 		}
 
 		/// <summary>
-		/// Extracts the value with the specified key and converts it to the specified type.
+		///     Extracts the value with the specified key and converts it to the specified type.
 		/// </summary>
 		/// <param name="configuration">The configuration.</param>
 		/// <param name="type">The type to convert the value to.</param>
@@ -145,11 +160,11 @@ namespace HQ.Extensions.Options
 		/// <returns>The converted value.</returns>
 		public static object GetValue(this IConfiguration configuration, Type type, string key)
 		{
-			return GetValue(configuration, type, key, defaultValue: null);
+			return GetValue(configuration, type, key, null);
 		}
 
 		/// <summary>
-		/// Extracts the value with the specified key and converts it to the specified type.
+		///     Extracts the value with the specified key and converts it to the specified type.
 		/// </summary>
 		/// <param name="configuration">The configuration.</param>
 		/// <param name="type">The type to convert the value to.</param>
@@ -167,38 +182,66 @@ namespace HQ.Extensions.Options
 			if (instance == null)
 				return;
 
-			foreach (var property in GetAllProperties(instance.GetType().GetTypeInfo()))
+			var scope = AccessorMemberScope.Public;
+			if (options.BindNonPublicProperties)
+				scope |= AccessorMemberScope.Private;
+
+			var type = instance.GetType();
+			var read = ReadAccessor.Create(type, AccessorMemberTypes.Properties, scope, out var members);
+			var write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
+
+			if (IsTypeDiscriminated(type))
+			{
+				// Set base properties so the converter has the right values to work with
+				SetMembers(configuration, instance, options, members, read, write);
+
+				// Give the converter a chance to change what is bound
+				var converter = TypeDescriptor.GetConverter(type);
+				if (converter.CanConvertFrom(type))
+				{
+					instance = converter.ConvertFrom(instance);
+					if (instance != null)
+					{
+						type = instance.GetType();
+						read = ReadAccessor.Create(type, AccessorMemberTypes.Properties, scope, out members);
+						write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
+					}
+				}
+			}
+
+			SetMembers(configuration, instance, options, members, read, write);
+		}
+		
+		private static void SetMembers(IConfiguration configuration, object instance, BinderOptions options,
+			AccessorMembers members, ITypeReadAccessor read, ITypeWriteAccessor write)
+		{
+			foreach (var member in members)
 			{
 				// We don't support set only, non-public, or indexer properties
-				if (property.GetMethod == null || (!options.BindNonPublicProperties && !property.GetMethod.IsPublic) ||
-				    property.GetMethod.GetParameters().Length > 0)
-				{
-					return;
-				}
+				if (!member.CanRead || member.MemberInfo is MethodInfo method && method.GetParameters().Length > 0)
+					continue;
 
-				var propertyValue = property.GetValue(instance);
-				var hasSetter = property.SetMethod != null && (property.SetMethod.IsPublic || options.BindNonPublicProperties);
-
-				if (propertyValue == null && !hasSetter)
+				var value = read[instance, member.Name];
+				if (value == null && !member.CanWrite)
 				{
 					// Property doesn't have a value and we cannot set it so there is no
 					// point in going further down the graph
-					return;
+					continue;
 				}
 
-				propertyValue = BindInstance(property.PropertyType, propertyValue, configuration.GetSection(property.Name), options);
+				var config = configuration.GetSection(member.Name);
+				value = BindInstance(member.Type, value, config, options);
+				if (value == default || !member.CanWrite)
+					continue;
 
-				if (propertyValue != null && hasSetter)
-				{
-					property.SetValue(instance, propertyValue);
-				}
+				write.TrySetValue(instance, member.Name, value);
 			}
 		}
-        
+		
 		private static object BindToCollection(Type typeInfo, IConfiguration config, BinderOptions options)
 		{
 			var type = typeof(List<>).MakeGenericType(typeInfo.GenericTypeArguments[0]);
-			var instance = CreateInstance(ref type);
+			var instance = CreateInstance(ref type, options);
 			BindCollection(instance, type, config, options);
 			return instance;
 		}
@@ -218,8 +261,9 @@ namespace HQ.Extensions.Options
 			collectionInterface = FindOpenGenericInterface(typeof(IReadOnlyDictionary<,>), type);
 			if (collectionInterface != null)
 			{
-				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0], typeInfo.GenericTypeArguments[1]);
-				var instance = CreateInstance(ref dictionaryType);
+				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
+					typeInfo.GenericTypeArguments[1]);
+				var instance = CreateInstance(ref dictionaryType, options);
 				BindDictionary(instance, dictionaryType, config, options);
 				return instance;
 			}
@@ -227,8 +271,9 @@ namespace HQ.Extensions.Options
 			collectionInterface = FindOpenGenericInterface(typeof(IDictionary<,>), type);
 			if (collectionInterface != null)
 			{
-				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0], typeInfo.GenericTypeArguments[1]);
-				var instance = CreateInstance(ref dictionaryType);
+				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
+					typeInfo.GenericTypeArguments[1]);
+				var instance = CreateInstance(ref dictionaryType, options);
 				BindDictionary(instance, collectionInterface, config, options);
 				return instance;
 			}
@@ -271,11 +316,8 @@ namespace HQ.Extensions.Options
 				// We are already done if binding to a new collection instance worked
 				instance = AttemptBindToCollectionInterfaces(type, config, options);
 				if (instance != null)
-				{
 					return instance;
-				}
-
-				instance = CreateInstance(ref type);
+				instance = CreateInstance(ref type, options);
 			}
 
 			// See if its a Dictionary
@@ -306,7 +348,7 @@ namespace HQ.Extensions.Options
 			return instance;
 		}
 
-		private static object CreateInstance(ref Type type)
+		private static object CreateInstance(ref Type type, BinderOptions options)
 		{
 			object instance;
 
@@ -338,11 +380,13 @@ namespace HQ.Extensions.Options
 				}
 			}
 
+			if (IsTypeDiscriminated(type))
+				return instance;
+
+			// Give converter a chance to change this type
 			var converter = TypeDescriptor.GetConverter(type);
 			if (!converter.CanConvertFrom(type))
 				return instance;
-
-			// Change: give TypeConverter a chance to change this type
 			instance = converter.ConvertFrom(instance);
 			if (instance != null)
 				type = instance.GetType();
@@ -350,7 +394,20 @@ namespace HQ.Extensions.Options
 			return instance;
 		}
 
-		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config, BinderOptions options)
+
+		private static readonly ITypeResolver TypeResolver = new ReflectionTypeResolver();
+		private static bool IsTypeDiscriminated(Type type)
+		{
+			var method = typeof(ITypeResolver).GetMethod(nameof(ITypeResolver.FindByParent));
+			if (method == null)
+				throw new Exception();
+			var findByParent = method.MakeGenericMethod(type);
+			var types = (IEnumerable<Type>) findByParent.Invoke(TypeResolver, new object[] {});
+			return types.Any();
+		}
+
+		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config,
+			BinderOptions options)
 		{
 			var typeInfo = dictionaryType.GetTypeInfo();
 
@@ -375,17 +432,18 @@ namespace HQ.Extensions.Options
 				if (keyType == typeof(string))
 				{
 					var key = child.Key;
-					setter.SetValue(dictionary, item, new object[] { key });
+					setter.SetValue(dictionary, item, new object[] {key});
 				}
 				else if (keyTypeIsEnum)
 				{
 					var key = Convert.ToInt32(Enum.Parse(keyType, child.Key));
-					setter.SetValue(dictionary, item, new object[] { key });
+					setter.SetValue(dictionary, item, new object[] {key});
 				}
 			}
 		}
 
-		private static void BindCollection(object collection, Type collectionType, IConfiguration config, BinderOptions options)
+		private static void BindCollection(object collection, Type collectionType, IConfiguration config,
+			BinderOptions options)
 		{
 			var typeInfo = collectionType.GetTypeInfo();
 
@@ -399,7 +457,7 @@ namespace HQ.Extensions.Options
 				{
 					var item = BindInstance(itemType, null, section, options);
 					if (item != null)
-						addMethod.Invoke(collection, new[] { item });
+						addMethod.Invoke(collection, new[] {item});
 				}
 				catch
 				{
@@ -413,7 +471,8 @@ namespace HQ.Extensions.Options
 			var children = config.GetChildren().ToArray();
 			var arrayLength = source.Length;
 			var elementType = source.GetType().GetElementType();
-			var newArray = Array.CreateInstance(elementType ?? throw new InvalidOperationException(), arrayLength + children.Length);
+			var newArray = Array.CreateInstance(elementType ?? throw new InvalidOperationException(),
+				arrayLength + children.Length);
 
 			// binding to array has to preserve already initialized arrays with values
 			if (arrayLength > 0)
@@ -462,7 +521,7 @@ namespace HQ.Extensions.Options
 				}
 
 				var converter = TypeDescriptor.GetConverter(type ?? throw new ArgumentNullException(nameof(type)));
-                if (!converter.CanConvertFrom(typeof(string)))
+				if (!converter.CanConvertFrom(typeof(string)))
 					return false;
 
 				try
@@ -485,6 +544,7 @@ namespace HQ.Extensions.Options
 			{
 				throw error;
 			}
+
 			return result;
 		}
 
@@ -512,8 +572,7 @@ namespace HQ.Extensions.Options
 			{
 				allProperties.AddRange(type.DeclaredProperties);
 				type = type.BaseType.GetTypeInfo();
-			}
-			while (type != typeof(object).GetTypeInfo());
+			} while (type != typeof(object).GetTypeInfo());
 
 			return allProperties;
 		}
