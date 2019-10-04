@@ -6,6 +6,7 @@
     <Authors>HQ.IO Corporation</Authors>
     <Copyright>© $([System.DateTime]::Now.Year) HQ.IO Corporation</Copyright>    
     <PackageIconUrl>https://raw.githubusercontent.com/hq-io/HQ/master/assets/320x320.png</PackageIconUrl>
+    <PackageIcon>320x320.png</PackageIcon>
     <PackageLicenseExpression>RPL-1.5</PackageLicenseExpression>
     <PackageProjectUrl>https://docs.hq.io/$(MSBuildProjectName)</PackageProjectUrl>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
@@ -16,6 +17,10 @@
     <LangVersion>7.3</LangVersion>
     <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\assets\320x320.png" Pack="true" Visible="false" PackagePath="/" />
+  </ItemGroup>
    
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
