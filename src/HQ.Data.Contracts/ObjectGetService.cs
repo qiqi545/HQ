@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
@@ -24,7 +25,7 @@ namespace HQ.Data.Contracts
 	///     An implementation of <see cref="IObjectGetService{T}" /> that defers access to an
 	///     <see cref="IObjectGetService{T}" />.
 	/// </summary>
-	public class ObjectGetService<TObject> : IObjectGetService<TObject> where TObject : IObject
+	public class ObjectGetService<TObject> : IObjectGetService<TObject, long> where TObject : IObject
 	{
 		private readonly IObjectGetRepository<TObject> _repository;
 
@@ -57,7 +58,7 @@ namespace HQ.Data.Contracts
 	/// <summary>
 	///     An implementation of <see cref="IObjectGetService" /> that defers access to an <see cref="IObjectGetRepository" />.
 	/// </summary>
-	public class ObjectGetService : IObjectGetService
+	public class ObjectGetService : IObjectGetService<long>
 	{
 		private readonly IObjectGetRepository _repository;
 

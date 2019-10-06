@@ -20,13 +20,13 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public class ObjectService<T> : IObjectService<T> where T : IObject
+	public class ObjectService<TObject> : IObjectService<TObject> where TObject : IObject
 	{
-		private readonly IObjectDeleteService<T> _deletes;
-		private readonly IObjectGetService<T> _gets;
-		private readonly IObjectSaveService<T> _saves;
+		private readonly IObjectDeleteService<TObject> _deletes;
+		private readonly IObjectGetService<TObject, long> _gets;
+		private readonly IObjectSaveService<TObject> _saves;
 
-		public ObjectService(IObjectGetService<T> gets, IObjectSaveService<T> saves, IObjectDeleteService<T> deletes)
+		public ObjectService(IObjectGetService<TObject, long> gets, IObjectSaveService<TObject> saves, IObjectDeleteService<TObject> deletes)
 		{
 			_gets = gets;
 			_saves = saves;
@@ -35,19 +35,19 @@ namespace HQ.Data.Contracts
 
 		#region Reads
 
-		public async Task<IPage<T>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null,
+		public async Task<IPage<TObject>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null,
 			FieldOptions fields = null,
 			FilterOptions filter = null, ProjectionOptions projection = null)
 		{
 			return await _gets.GetAsync(query, sort, page, fields, filter, projection);
 		}
 
-		public async Task<T> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null)
+		public async Task<TObject> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null)
 		{
 			return await _gets.GetAsync(id, fields, projection);
 		}
 
-		public async Task<IStream<T>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null,
+		public async Task<IStream<TObject>> GetAsync(SegmentOptions segment = null, FieldOptions fields = null,
 			FilterOptions filter = null,
 			ProjectionOptions projection = null)
 		{
@@ -58,17 +58,17 @@ namespace HQ.Data.Contracts
 
 		#region Writes
 
-		public async Task<ObjectSave> SaveAsync(T @object)
+		public async Task<ObjectSave> SaveAsync(TObject @object)
 		{
 			return await _saves.SaveAsync(@object);
 		}
 
-		public async Task<ObjectSave> SaveAsync(T @object, List<string> fields)
+		public async Task<ObjectSave> SaveAsync(TObject @object, List<string> fields)
 		{
 			return await _saves.SaveAsync(@object, fields);
 		}
 
-		public async Task SaveAsync(IEnumerable<T> objects, BatchSaveStrategy strategy, long startingAt = 0,
+		public async Task SaveAsync(IEnumerable<TObject> objects, BatchSaveStrategy strategy, long startingAt = 0,
 			int? count = null)
 		{
 			await _saves.SaveAsync(objects, strategy, startingAt, count);
@@ -83,7 +83,7 @@ namespace HQ.Data.Contracts
 			return await _deletes.DeleteAsync(id);
 		}
 
-		public async Task<ObjectDelete> DeleteAsync(T @object)
+		public async Task<ObjectDelete> DeleteAsync(TObject @object)
 		{
 			return await _deletes.DeleteAsync(@object);
 		}
@@ -93,7 +93,7 @@ namespace HQ.Data.Contracts
 			await _deletes.DeleteAsync(segment);
 		}
 
-		public async Task DeleteAsync(IEnumerable<T> objects, long startingAt = 0, int? count = null)
+		public async Task DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null)
 		{
 			await _deletes.DeleteAsync(objects, startingAt, count);
 		}

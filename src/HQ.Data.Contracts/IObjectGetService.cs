@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectGetService
+	public interface IObjectGetService<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<IPage<IObject>> GetAsync(Type type, string query = null, SortOptions sort = null, PageOptions page = null,
 			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
@@ -31,7 +31,7 @@ namespace HQ.Data.Contracts
 			FilterOptions filter = null, ProjectionOptions projection = null);
 	}
 
-	public interface IObjectGetService<TObject> where TObject : IObject
+	public interface IObjectGetService<TObject, TKey> where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<IPage<TObject>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null,
 			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
