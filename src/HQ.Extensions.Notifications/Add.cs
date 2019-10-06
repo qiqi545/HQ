@@ -45,7 +45,7 @@ namespace HQ.Extensions.Notifications
 			switch (options.Provider)
 			{
 				case nameof(DirectoryEmailProvider):
-					services.AddSingleton<IEmailProvider>(r =>
+					services.AddScoped<IEmailProvider>(r =>
 					{
 						Directory.CreateDirectory(options.ProviderKey);
 						return new DirectoryEmailProvider(options.ProviderKey);
@@ -53,18 +53,18 @@ namespace HQ.Extensions.Notifications
 					break;
 
 				case nameof(MemoryEmailProvider):
-					services.AddSingleton<IEmailProvider>(r => new MemoryEmailProvider());
+					services.AddScoped<IEmailProvider>(r => new MemoryEmailProvider());
 					break;
 
 				case nameof(PostmarkEmailProvider):
-					services.AddSingleton<IEmailProvider>(r => new PostmarkEmailProvider(options.ProviderKey));
+					services.AddScoped<IEmailProvider>(r => new PostmarkEmailProvider(options.ProviderKey));
 					break;
 
 				default:
 					throw new NotSupportedException($"No email provider named '{options.Provider}' is available.");
 			}
 
-			services.AddSingleton<IEmailService, EmailService>();
+			services.AddScoped<IEmailService, EmailService>();
 
 			return services;
 		}

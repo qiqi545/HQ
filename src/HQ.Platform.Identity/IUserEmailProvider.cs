@@ -17,7 +17,7 @@
 
 namespace HQ.Platform.Identity
 {
-	public interface IEmailProvider
+	public interface IUserEmailProvider
 	{
 		string Email { get; }
 		bool EmailConfirmed { get; }

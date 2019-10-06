@@ -28,19 +28,19 @@ namespace HQ.Platform.Identity.Filters
 {
 	public class UserDataFilterAttribute : ActionFilterAttribute
 	{
-		private readonly IUserIdProvider _id;
+		private readonly IUserIdProvider<string> _id;
 		private readonly ObjectGetService _service;
 		private readonly Type _type;
 		private FilterOptions _filter;
 
-		public UserDataFilterAttribute(Type type, ObjectGetService service, IUserIdProvider id)
+		public UserDataFilterAttribute(Type type, ObjectGetService service, IUserIdProvider<string> id)
 		{
 			_type = type;
 			_service = service;
 			_id = id;
 		}
 
-		private static FilterOptions CreateFilter(Type type, IUserIdProvider id)
+		private static FilterOptions CreateFilter(Type type, IUserIdProvider<string> id)
 		{
 			var members = AccessorMembers.Create(type, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
 			if (!members.ContainsKey("UserId"))

@@ -63,9 +63,9 @@ namespace HQ.Platform.Node
 #if NETCOREAPP2_2
 					env = context.HostingEnvironment;
 #endif
-					configureServices?.Invoke(services);
 					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
 					services.AddHq(context.HostingEnvironment, context.Configuration, logger);
+					configureServices?.Invoke(services);
 				});
 
 #if NETCOREAPP2_2

@@ -93,8 +93,7 @@ namespace HQ.Platform.Identity.Mvc
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications,
-				ClaimValues.ManageApplications);
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
 
 			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
 

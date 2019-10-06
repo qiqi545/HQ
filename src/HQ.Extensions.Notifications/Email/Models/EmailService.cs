@@ -24,10 +24,10 @@ namespace HQ.Extensions.Notifications.Email.Models
 {
 	internal sealed class EmailService : IEmailService
 	{
-		private readonly IOptions<EmailOptions> _options;
+		private readonly IOptionsSnapshot<EmailOptions> _options;
 		private readonly IEmailProvider _provider;
 
-		public EmailService(IEmailProvider provider, IOptions<EmailOptions> options)
+		public EmailService(IEmailProvider provider, IOptionsSnapshot<EmailOptions> options)
 		{
 			_provider = provider;
 			_options = options;
@@ -35,6 +35,8 @@ namespace HQ.Extensions.Notifications.Email.Models
 
 		public async Task<bool> SendAsync(EmailMessage message)
 		{
+			message.From = message.From ?? _options.Value.From;
+
 			return await _provider.SendAsync(message);
 		}
 

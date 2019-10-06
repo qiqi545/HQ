@@ -63,7 +63,7 @@ namespace HQ.Platform.Identity.Extensions
 
 		public static async Task<TUser> FindByIdentityAsync<TUser>(this UserManager<TUser> userManager,
 			IdentityType identityType, string identity)
-			where TUser : class, IEmailProvider, IPhoneNumberProvider
+			where TUser : class, IUserEmailProvider, IPhoneNumberProvider
 		{
 			TUser user;
 			switch (identityType)

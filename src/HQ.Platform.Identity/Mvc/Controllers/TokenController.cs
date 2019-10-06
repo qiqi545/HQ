@@ -117,13 +117,13 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			if (!operation.Succeeded)
 				return operation.ToResult();
 
-			Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IdentityUser.Id));
+			Debug.Assert(nameof(IUserIdProvider<TKey>.Id) == nameof(IdentityUser.Id));
 
 			var user = operation.Data;
 			var claims = _http.HttpContext.User.Claims;
 
-			var identity = user.ActLike<IUserIdProvider>();
-			var token = identity.CreateToken(claims, _securityOptions.CurrentValue);
+			var identity = user.ActLike<IUserIdProvider<TKey>>();
+			var token = identity.CreateToken<IUserIdProvider<TKey>, TKey>(claims, _securityOptions.CurrentValue);
 
 			return Ok(new {AccessToken = token});
 		}

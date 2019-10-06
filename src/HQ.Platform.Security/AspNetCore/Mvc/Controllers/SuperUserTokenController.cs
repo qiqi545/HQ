@@ -51,7 +51,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
-	public class SuperUserTokenController : DataController, IDynamicComponentEnabled<SuperUserComponent>
+	public class SuperUserTokenController<TKey> : DataController, IDynamicComponentEnabled<SuperUserComponent> where TKey : IEquatable<TKey>
 	{
 		private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
 		private readonly IValidOptionsSnapshot<SecurityOptions> _security;
@@ -103,18 +103,19 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			}
 
 			var encoding = Encoding.UTF8;
-			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password),
-				encoding.GetBytes(_options.Value.Password)))
+			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_options.Value.Password)))
 			{
-				Debug.Assert(nameof(IUserIdProvider.Id) == nameof(IObject.Id));
+				Debug.Assert(nameof(IUserIdProvider<string>.Id) == nameof(IObject.Id));
 				var claims = new List<Claim>
 				{
 					new Claim(_security.Value?.Claims?.RoleClaim ?? ClaimTypes.Role, ClaimValues.SuperUser)
 				};
-				var provider = new {Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1"}.ActLike<IUserIdProvider>();
+
+				var provider = new {Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1"}
+					.ActLike<IUserIdProvider<TKey>>();
 
 				// FIXME: pin claims transformation to user-provided scope
-				var token = provider.CreateToken(claims, _security.Value);
+				var token = provider.CreateToken<IUserIdProvider<TKey>, TKey>(claims, _security.Value);
 				return Task.FromResult((IActionResult) Ok(new {AccessToken = token}));
 			}
 

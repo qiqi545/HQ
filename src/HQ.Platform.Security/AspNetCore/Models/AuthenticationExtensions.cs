@@ -142,8 +142,8 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			return Task.CompletedTask;
 		}
 
-		public static string CreateToken<TUser>(this TUser user, IEnumerable<Claim> userClaims,
-			SecurityOptions security) where TUser : IUserIdProvider
+		public static string CreateToken<TUser, TKey>(this TUser user, IEnumerable<Claim> userClaims,
+			SecurityOptions security) where TUser : IUserIdProvider<TKey> where TKey : IEquatable<TKey>
 		{
 			var now = DateTimeOffset.Now;
 			var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
@@ -155,7 +155,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
             */
 
 			// JWT.io claims:
-			var sub = user.Id ?? string.Empty;
+			var sub = user.Id?.ToString() ?? string.Empty;
 			var jti = $"{Guid.NewGuid()}";
 			var iat = now.ToUnixTimeSeconds().ToString();
 			var exp = expires.ToUnixTimeSeconds().ToString();

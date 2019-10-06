@@ -22,7 +22,7 @@ using HQ.Platform.Security.AspNetCore.Mvc.Models;
 namespace HQ.Platform.Identity.Models
 {
 	public interface ISignInService<TUser, TTenant, TApplication, TKey>
-		where TUser : class, IEmailProvider, IPhoneNumberProvider
+		where TUser : class, IUserEmailProvider, IPhoneNumberProvider
 	{
 		Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password,
 			bool persistent);

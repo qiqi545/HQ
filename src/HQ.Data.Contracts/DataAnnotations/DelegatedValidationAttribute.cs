@@ -37,8 +37,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 				.Build();
 		}
 
-		protected DelegatedValidationAttribute(MethodInfo handler) => Condition =
-			Condition ?? (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
+		protected DelegatedValidationAttribute(MethodInfo handler) => Condition ??= (Func<object, bool>) Delegate.CreateDelegate(typeof(Func<object, bool>), null, handler);
 
 		public Func<object, bool> Condition { get; set; }
 

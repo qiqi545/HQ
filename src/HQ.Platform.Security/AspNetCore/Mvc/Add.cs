@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
@@ -26,17 +27,17 @@ namespace HQ.Platform.Security.AspNetCore.Mvc
 {
 	public static class Add
 	{
-		public static IServiceCollection AddSuperUserTokenController(this IServiceCollection services)
+		public static IServiceCollection AddSuperUserTokenController<TUser, TKey>(this IServiceCollection services) where TKey : IEquatable<TKey>
 		{
 			var mvcBuilder = services.AddMvcCommon();
-			mvcBuilder.AddSuperUserTokenController();
+			mvcBuilder.AddSuperUserTokenController<TUser, TKey>();
 			return services;
 		}
 
-		public static IMvcBuilder AddSuperUserTokenController(this IMvcBuilder mvcBuilder)
+		public static IMvcBuilder AddSuperUserTokenController<TUser, TKey>(this IMvcBuilder mvcBuilder) where TKey : IEquatable<TKey>
 		{
 			mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.AddControllerFeature<SuperUserTokenController>();
+			mvcBuilder.AddControllerFeature<SuperUserTokenController<TKey>>();
 			mvcBuilder.AddComponentFeature<SuperUserComponent, SuperUserOptions>();
 			return mvcBuilder;
 		}

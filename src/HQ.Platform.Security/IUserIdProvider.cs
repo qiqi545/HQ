@@ -15,10 +15,12 @@
 
 #endregion
 
+using System;
+
 namespace HQ.Platform.Security
 {
-	public interface IUserIdProvider
+	public interface IUserIdProvider<out TKey> where TKey : IEquatable<TKey>
 	{
-		string Id { get; }
+		TKey Id { get; }
 	}
 }

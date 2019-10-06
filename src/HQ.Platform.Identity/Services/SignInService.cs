@@ -36,7 +36,7 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Identity.Services
 {
 	public class SignInService<TUser, TTenant, TApplication, TKey> : ISignInService<TUser, TTenant, TApplication, TKey>
-		where TUser : IdentityUserExtended<TKey>, IEmailProvider, IPhoneNumberProvider
+		where TUser : IdentityUserExtended<TKey>, IUserEmailProvider, IPhoneNumberProvider
 		where TTenant : IdentityTenant<TKey>
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
