@@ -20,9 +20,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObject
+	public interface IObject : IObject<long> { }
+
+	public interface IObject<TKey> where TKey : IEquatable<TKey>
 	{
-		[Key] long Id { get; set; }
+		[Key] TKey Id { get; set; }
 		DateTimeOffset CreatedAt { get; set; }
 		DateTimeOffset? DeletedAt { get; set; }
 	}
