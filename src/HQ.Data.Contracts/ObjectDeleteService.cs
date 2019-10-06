@@ -25,7 +25,7 @@ namespace HQ.Data.Contracts
 	///     An implementation of <see cref="IObjectDeleteService{T}" /> that defers access to an
 	///     <see cref="IObjectDeleteRepository{T}" />.
 	/// </summary>
-	public class ObjectDeleteService<TObject> : IObjectDeleteService<TObject> where TObject : IObject
+	public class ObjectDeleteService<TObject> : IObjectDeleteService<TObject, long> where TObject : IObject
 	{
 		private readonly IObjectDeleteRepository<TObject> _repository;
 
@@ -58,7 +58,7 @@ namespace HQ.Data.Contracts
 	///     An implementation of <see cref="IObjectDeleteService" /> that defers access to an
 	///     <see cref="IObjectDeleteRepository" />.
 	/// </summary>
-	public class ObjectDeleteService : IObjectDeleteService
+	public class ObjectDeleteService : IObjectDeleteService<long>
 	{
 		private readonly IObjectDeleteRepository _repository;
 

@@ -22,11 +22,11 @@ namespace HQ.Data.Contracts
 {
 	public class ObjectService<TObject> : IObjectService<TObject> where TObject : IObject
 	{
-		private readonly IObjectDeleteService<TObject> _deletes;
+		private readonly IObjectDeleteService<TObject, long> _deletes;
 		private readonly IObjectGetService<TObject, long> _gets;
 		private readonly IObjectSaveService<TObject> _saves;
 
-		public ObjectService(IObjectGetService<TObject, long> gets, IObjectSaveService<TObject> saves, IObjectDeleteService<TObject> deletes)
+		public ObjectService(IObjectGetService<TObject, long> gets, IObjectSaveService<TObject> saves, IObjectDeleteService<TObject, long> deletes)
 		{
 			_gets = gets;
 			_saves = saves;

@@ -21,15 +21,15 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectDeleteService
+	public interface IObjectDeleteService<in TKey> where TKey : IEquatable<TKey>
 	{
-		Task<ObjectDelete> DeleteAsync(Type type, long id);
+		Task<ObjectDelete> DeleteAsync(Type type, TKey id);
 		Task<ObjectDelete> DeleteAsync(Type type, IObject @object);
 		Task DeleteAsync(Type type, SegmentOptions segment);
 		Task DeleteAsync(Type type, IEnumerable<IObject> objects, long startingAt = 0, int? count = null);
 	}
 
-	public interface IObjectDeleteService<in TObject> where TObject : IObject
+	public interface IObjectDeleteService<in TObject, in TKey> where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<ObjectDelete> DeleteAsync(long id);
 		Task<ObjectDelete> DeleteAsync(TObject @object);
