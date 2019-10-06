@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectSaveService
+	public interface IObjectSaveService<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<ObjectSave> SaveAsync(Type type, IObject @object);
 		Task<ObjectSave> SaveAsync(Type type, IObject @object, List<string> fields);
@@ -30,7 +30,7 @@ namespace HQ.Data.Contracts
 			int? count = null);
 	}
 
-	public interface IObjectSaveService<in TObject> where TObject : IObject
+	public interface IObjectSaveService<in TObject, TKey> where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<ObjectSave> SaveAsync(TObject @object);
 		Task<ObjectSave> SaveAsync(TObject @object, List<string> fields);

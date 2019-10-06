@@ -25,7 +25,7 @@ namespace HQ.Data.Contracts
 	///     An implementation of <see cref="IObjectSaveService{T}" /> that defers access to an
 	///     <see cref="IObjectSaveRepository{T}" />.
 	/// </summary>
-	public class ObjectSaveService<TObject> : IObjectSaveService<TObject> where TObject : IObject
+	public class ObjectSaveService<TObject> : IObjectSaveService<TObject, long> where TObject : IObject
 	{
 		private readonly IObjectSaveRepository<TObject> _repository;
 
@@ -54,7 +54,7 @@ namespace HQ.Data.Contracts
 	///     An implementation of <see cref="IObjectSaveService" /> that defers access to an
 	///     <see cref="IObjectSaveRepository" />.
 	/// </summary>
-	public class ObjectSaveService : IObjectSaveService
+	public class ObjectSaveService : IObjectSaveService<long>
 	{
 		private readonly IObjectSaveRepository _repository;
 
