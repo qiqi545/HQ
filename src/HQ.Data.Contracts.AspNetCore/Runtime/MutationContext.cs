@@ -30,7 +30,7 @@ namespace HQ.Data.Contracts.AspNetCore.Runtime
 		public ICollection<Error> Errors { get; } = new List<Error>();
 		public dynamic Body { get; set; }
 
-		public object Execute(IObjectSaveRepository repository)
+		public object Execute(IObjectSaveRepository<long> repository)
 		{
 			return repository.SaveAsync(Type, Body);
 		}

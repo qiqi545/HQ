@@ -48,12 +48,12 @@ namespace HQ.Platform.Api.Runtime
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	public class RuntimeController : DataController, IDynamicComponentEnabled<RuntimeComponent>
 	{
-		private readonly IObjectGetRepository _repository;
+		private readonly IObjectGetRepository<long> _repository;
 
 		private readonly IOptionsMonitor<RuntimeOptions> _runtimeOptions;
 		private readonly ITypeResolver _typeResolver;
 
-		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository repository,
+		public RuntimeController(ITypeResolver typeResolver, IObjectGetRepository<long> repository,
 			IOptionsMonitor<RuntimeOptions> runtimeOptions)
 		{
 			_typeResolver = typeResolver;

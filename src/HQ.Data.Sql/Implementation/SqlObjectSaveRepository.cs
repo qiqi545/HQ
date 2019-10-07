@@ -30,7 +30,7 @@ using HQ.Data.Sql.Queries;
 
 namespace HQ.Data.Sql.Implementation
 {
-	public class SqlObjectSaveRepository<TObject, TBatchOptions> : IObjectSaveRepository<TObject>
+	public class SqlObjectSaveRepository<TObject, TBatchOptions> : IObjectSaveRepository<TObject, long>
 		where TObject : IObject
 	{
 		private readonly IDataBatchOperation<TBatchOptions> _copy;
@@ -77,7 +77,7 @@ namespace HQ.Data.Sql.Implementation
 		}
 	}
 
-	public class SqlObjectSaveRepository<TOptions> : IObjectSaveRepository
+	public class SqlObjectSaveRepository<TOptions> : IObjectSaveRepository<long>
 	{
 		private readonly IDataBatchOperation<TOptions> _copy;
 		private readonly IDataConnection _db;

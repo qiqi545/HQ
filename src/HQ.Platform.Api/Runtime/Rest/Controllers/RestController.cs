@@ -45,7 +45,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 	[ApiExplorerSettings(IgnoreApi = true)]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
-	public class RestController<T> : DataController, IObjectController<T> where T : class, IObject
+	public class RestController<TObject, TKey> : DataController, IObjectController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		// ReSharper disable once StaticMemberInGenericType
 		private static readonly Lazy<FieldOptions> IdField = new Lazy<FieldOptions>(() =>
@@ -57,9 +57,9 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
 		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
-		private readonly IObjectRepository<T> _repository;
+		private readonly IObjectRepository<TObject, TKey> _repository;
 
-		public RestController(IObjectRepository<T> repository, IOptionsMonitor<QueryOptions> queryOptions,
+		public RestController(IObjectRepository<TObject, TKey> repository, IOptionsMonitor<QueryOptions> queryOptions,
 			IOptionsMonitor<ApiOptions> apiOptions)
 		{
 			_repository = repository;
@@ -67,9 +67,9 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			_apiOptions = apiOptions;
 		}
 
-		public Type ObjectType => typeof(T);
+		public Type ObjectType => typeof(TObject);
 
-		private async Task<IActionResult> SaveAsync(T @object)
+		private async Task<IActionResult> SaveAsync(TObject @object)
 		{
 			if (!Valid(@object, out var error))
 				return error;
@@ -101,7 +101,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			});
 		}
 
-		private async Task<IActionResult> SaveAsync([FromBody] IEnumerable<T> objects, long startingAt,
+		private async Task<IActionResult> SaveAsync([FromBody] IEnumerable<TObject> objects, long startingAt,
 			int? count = null, BatchSaveStrategy strategy = BatchSaveStrategy.Insert)
 		{
 			var errors = new List<Error>();
@@ -173,7 +173,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<IObject>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<IObject>))]
-		public async Task<IActionResult> GetAsync([FromRoute] [BindRequired] long id, FieldOptions fields,
+		public async Task<IActionResult> GetAsync([FromRoute] [BindRequired] TKey id, FieldOptions fields,
 			ProjectionOptions projections)
 		{
 			var @object = await _repository.GetAsync(id, fields);
@@ -193,9 +193,9 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.Forbidden)]
 		[ProducesResponseType((int) HttpStatusCode.Created)]
 		[ProducesResponseType((int) HttpStatusCode.Created, Type = typeof(IObject))]
-		public async Task<IActionResult> PostAsync([FromBody] T @object)
+		public async Task<IActionResult> PostAsync([FromBody] TObject @object)
 		{
-			if (@object.Id != 0)
+			if (!@object.Id.Equals(default))
 			{
 				if (await GetAsync(@object.Id, IdField.Value, ProjectionOptions.Empty) != null)
 				{
@@ -218,7 +218,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public async Task<IActionResult> PostAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+		public async Task<IActionResult> PostAsync([FromBody] IEnumerable<TObject> objects, long startingAt = 0,
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
@@ -239,7 +239,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(IObject))]
-		public async Task<IActionResult> PutAsync([FromRoute] [BindRequired] long id, T @object)
+		public async Task<IActionResult> PutAsync([FromRoute] [BindRequired] TKey id, TObject @object)
 		{
 			if (@object == null)
 				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
@@ -257,7 +257,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public async Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+		public async Task<IActionResult> PutAsync([FromBody] IEnumerable<TObject> objects, long startingAt = 0,
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
@@ -279,7 +279,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<IObject>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<IObject>))]
-		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] long id, JsonPatchDocument<T> patch)
+		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] TKey id, JsonPatchDocument<TObject> patch)
 		{
 			if (!Valid(patch, out var error))
 				return error;
@@ -301,7 +301,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(EnvelopeBody<Task>))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<Task>))]
-		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] long id, JsonMergePatchDocument<T> patch)
+		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] TKey id, JsonMergePatchDocument<TObject> patch)
 		{
 			if (!Valid(patch, out var error))
 				return error;
@@ -320,7 +320,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Nested))]
-		public virtual async Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0,
+		public virtual async Task<IActionResult> PatchAsync([FromBody] IEnumerable<TObject> objects, long startingAt = 0,
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
@@ -355,7 +355,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.Gone)]
 		[ProducesResponseType((int) HttpStatusCode.NoContent)]
-		public virtual async Task<IActionResult> DeleteAsync([FromRoute] [BindRequired] long id)
+		public virtual async Task<IActionResult> DeleteAsync([FromRoute] [BindRequired] TKey id)
 		{
 			var toDelete = await _repository.GetAsync(id, FieldOptions.Empty, ProjectionOptions.Empty);
 			if (toDelete?.Data == null)
@@ -384,8 +384,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		public virtual async Task<IActionResult> DeleteAsync(SegmentOptions segment)
 		{
-			var toDelete = await _repository.GetAsync(segment, FieldOptions.Empty, FilterOptions.Empty,
-				ProjectionOptions.Empty);
+			var toDelete = await _repository.GetAsync(segment, FieldOptions.Empty, FilterOptions.Empty, ProjectionOptions.Empty);
 			if (toDelete == null)
 				return NotFound();
 

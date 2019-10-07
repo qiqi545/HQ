@@ -320,7 +320,7 @@ namespace HQ.Platform.Api
 			builder.Services
 				.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, extensions, onConnection,
 					onCommand).AddAspNetCore();
-			builder.Services.AddScoped<IObjectGetRepository, SqlObjectGetRepository>();
+			builder.Services.AddScoped<IObjectGetRepository<long>, SqlObjectGetRepository>();
 
 			return builder;
 		}

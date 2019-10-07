@@ -21,9 +21,9 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectDeleteRepository
+	public interface IObjectDeleteRepository<in TKey> where TKey : IEquatable<TKey>
 	{
-		Task<Operation<ObjectDelete>> DeleteAsync(Type type, long id);
+		Task<Operation<ObjectDelete>> DeleteAsync(Type type, TKey id);
 		Task<Operation<ObjectDelete>> DeleteAsync(Type type, IObject @object);
 		Task<Operation<IEnumerable<ObjectDelete>>> DeleteAsync(Type type, SegmentOptions segment);
 
@@ -31,9 +31,9 @@ namespace HQ.Data.Contracts
 			long startingAt = 0, int? count = null);
 	}
 
-	public interface IObjectDeleteRepository<in TObject> where TObject : IObject
+	public interface IObjectDeleteRepository<in TObject, in TKey> where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
-		Task<Operation<ObjectDelete>> DeleteAsync(long id);
+		Task<Operation<ObjectDelete>> DeleteAsync(TKey id);
 		Task<Operation<ObjectDelete>> DeleteAsync(TObject @object);
 		Task<Operation> DeleteAsync(SegmentOptions segment);
 		Task<Operation> DeleteAsync(IEnumerable<TObject> objects, long startingAt = 0, int? count = null);

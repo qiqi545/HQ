@@ -27,9 +27,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectSaveService<TObject> : IObjectSaveService<TObject, long> where TObject : IObject
 	{
-		private readonly IObjectSaveRepository<TObject> _repository;
+		private readonly IObjectSaveRepository<TObject, long> _repository;
 
-		public ObjectSaveService(IObjectSaveRepository<TObject> repository) => _repository = repository;
+		public ObjectSaveService(IObjectSaveRepository<TObject, long> repository) => _repository = repository;
 
 		public virtual async Task<ObjectSave> SaveAsync(TObject @object)
 		{
@@ -56,9 +56,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectSaveService : IObjectSaveService<long>
 	{
-		private readonly IObjectSaveRepository _repository;
+		private readonly IObjectSaveRepository<long> _repository;
 
-		public ObjectSaveService(IObjectSaveRepository repository) => _repository = repository;
+		public ObjectSaveService(IObjectSaveRepository<long> repository) => _repository = repository;
 
 		public virtual async Task<ObjectSave> SaveAsync(Type type, IObject @object)
 		{

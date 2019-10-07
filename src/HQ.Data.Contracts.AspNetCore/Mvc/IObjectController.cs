@@ -24,8 +24,8 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 		Type ObjectType { get; }
 	}
 
-	public interface IObjectController<T> : IObjectGetController, IObjectPostController<T>, IObjectPutController<T>,
-		IObjectPatchController<T>, IObjectDeleteController where T : class, IObject
+	public interface IObjectController<TObject, TKey> : IObjectGetController, IObjectPostController<TObject>, IObjectPutController<TObject>,
+		IObjectPatchController<TObject>, IObjectDeleteController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
 	{
 	}
 }

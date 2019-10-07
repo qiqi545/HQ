@@ -15,10 +15,13 @@
 
 #endregion
 
+using System;
+
 namespace HQ.Data.Contracts
 {
-	public interface IObjectRepository<T> : IObjectGetRepository<T>, IObjectSaveRepository<T>,
-		IObjectDeleteRepository<T> where T : IObject
+	public interface IObjectRepository<TObject, TKey> : IObjectGetRepository<TObject, TKey>, IObjectSaveRepository<TObject, TKey>,
+		IObjectDeleteRepository<TObject, TKey>
+		where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
 	}
 }

@@ -16,7 +16,6 @@
 #endregion
 
 using System;
-using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
@@ -27,9 +26,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectGetService<TObject> : IObjectGetService<TObject, long> where TObject : IObject
 	{
-		private readonly IObjectGetRepository<TObject> _repository;
+		private readonly IObjectGetRepository<TObject, long> _repository;
 
-		public ObjectGetService(IObjectGetRepository<TObject> repository) => _repository = repository;
+		public ObjectGetService(IObjectGetRepository<TObject, long> repository) => _repository = repository;
 
 		public virtual async Task<IPage<TObject>> GetAsync(string query = null, SortOptions sort = null,
 			PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
@@ -60,9 +59,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectGetService : IObjectGetService<long>
 	{
-		private readonly IObjectGetRepository _repository;
+		private readonly IObjectGetRepository<long> _repository;
 
-		public ObjectGetService(IObjectGetRepository repository) => _repository = repository;
+		public ObjectGetService(IObjectGetRepository<long> repository) => _repository = repository;
 
 		public virtual async Task<IPage<IObject>> GetAsync(Type type, string query = null, SortOptions sort = null,
 			PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,

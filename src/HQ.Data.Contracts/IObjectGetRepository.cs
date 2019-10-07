@@ -20,13 +20,13 @@ using System.Threading.Tasks;
 
 namespace HQ.Data.Contracts
 {
-	public interface IObjectGetRepository
+	public interface IObjectGetRepository<in TKey> where TKey : IEquatable<TKey>
 	{
 		Task<Operation<IPage<IObject>>> GetAsync(Type type, string query = null, SortOptions sort = null,
 			PageOptions page = null, FieldOptions fields = null, FilterOptions filter = null,
 			ProjectionOptions projection = null);
 
-		Task<Operation<IObject>> GetAsync(Type type, long id, FieldOptions fields = null,
+		Task<Operation<IObject>> GetAsync(Type type, TKey id, FieldOptions fields = null,
 			ProjectionOptions projection = null);
 
 		Task<Operation<IStream<IObject>>> GetAsync(Type type, SegmentOptions buffer = null, FieldOptions fields = null,
@@ -34,12 +34,12 @@ namespace HQ.Data.Contracts
 			ProjectionOptions projection = null);
 	}
 
-	public interface IObjectGetRepository<TObject> where TObject : IObject
+	public interface IObjectGetRepository<TObject, in TKey> where TObject : IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		Task<Operation<IPage<TObject>>> GetAsync(string query = null, SortOptions sort = null, PageOptions page = null,
 			FieldOptions fields = null, FilterOptions filter = null, ProjectionOptions projection = null);
 
-		Task<Operation<TObject>> GetAsync(long id, FieldOptions fields = null, ProjectionOptions projection = null);
+		Task<Operation<TObject>> GetAsync(TKey id, FieldOptions fields = null, ProjectionOptions projection = null);
 
 		Task<Operation<IStream<TObject>>> GetAsync(SegmentOptions segment, FieldOptions fields = null,
 			FilterOptions filter = null, ProjectionOptions projection = null);

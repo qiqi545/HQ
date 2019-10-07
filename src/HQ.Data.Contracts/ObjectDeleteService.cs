@@ -27,9 +27,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectDeleteService<TObject> : IObjectDeleteService<TObject, long> where TObject : IObject
 	{
-		private readonly IObjectDeleteRepository<TObject> _repository;
+		private readonly IObjectDeleteRepository<TObject, long> _repository;
 
-		public ObjectDeleteService(IObjectDeleteRepository<TObject> repository) => _repository = repository;
+		public ObjectDeleteService(IObjectDeleteRepository<TObject, long> repository) => _repository = repository;
 
 		public virtual async Task<ObjectDelete> DeleteAsync(long id)
 		{
@@ -60,9 +60,9 @@ namespace HQ.Data.Contracts
 	/// </summary>
 	public class ObjectDeleteService : IObjectDeleteService<long>
 	{
-		private readonly IObjectDeleteRepository _repository;
+		private readonly IObjectDeleteRepository<long> _repository;
 
-		public ObjectDeleteService(IObjectDeleteRepository repository) => _repository = repository;
+		public ObjectDeleteService(IObjectDeleteRepository<long> repository) => _repository = repository;
 
 		public virtual async Task<ObjectDelete> DeleteAsync(Type type, long id)
 		{

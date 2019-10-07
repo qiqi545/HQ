@@ -31,7 +31,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Data.Sql.Implementation
 {
-	public class SqlObjectGetRepository<TObject> : IObjectGetRepository<TObject> where TObject : IObject
+	public class SqlObjectGetRepository<TObject> : IObjectGetRepository<TObject, long> where TObject : IObject
 	{
 		private readonly IDataConnection _db;
 		private readonly IDataDescriptor _descriptor = SimpleDataDescriptor.Create<TObject>();
@@ -88,7 +88,7 @@ namespace HQ.Data.Sql.Implementation
 		}
 	}
 
-	public class SqlObjectGetRepository : IObjectGetRepository
+	public class SqlObjectGetRepository : IObjectGetRepository<long>
 	{
 		private readonly IDataConnection _db;
 		private readonly ISqlDialect _dialect;

@@ -26,15 +26,15 @@ using HQ.Data.SessionManagement;
 
 namespace HQ.Data.Sql.Implementation
 {
-	public class SqlObjectDeleteRepository<TObject> : IObjectDeleteRepository<TObject> where TObject : IObject
+	public class SqlObjectDeleteRepository<TObject> : IObjectDeleteRepository<TObject, long> where TObject : IObject
 	{
 		private readonly IDataConnection _db;
-		private readonly IObjectGetRepository<TObject> _gets;
-		private readonly IObjectSaveRepository<TObject> _saves;
+		private readonly IObjectGetRepository<TObject, long> _gets;
+		private readonly IObjectSaveRepository<TObject, long> _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<TObject> gets,
-			IObjectSaveRepository<TObject> saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<TObject, long> gets,
+			IObjectSaveRepository<TObject, long> saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;
@@ -88,15 +88,15 @@ namespace HQ.Data.Sql.Implementation
 		}
 	}
 
-	public class SqlObjectDeleteRepository : IObjectDeleteRepository
+	public class SqlObjectDeleteRepository : IObjectDeleteRepository<long>
 	{
 		private readonly IDataConnection _db;
-		private readonly IObjectGetRepository _gets;
-		private readonly IObjectSaveRepository _saves;
+		private readonly IObjectGetRepository<long> _gets;
+		private readonly IObjectSaveRepository<long> _saves;
 		private readonly IServerTimestampService _timestamps;
 
-		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository gets,
-			IObjectSaveRepository saves, IServerTimestampService timestamps)
+		public SqlObjectDeleteRepository(IDataConnection<RuntimeBuilder> db, IObjectGetRepository<long> gets,
+			IObjectSaveRepository<long> saves, IServerTimestampService timestamps)
 		{
 			_db = db;
 			_gets = gets;

@@ -38,7 +38,7 @@ namespace HQ.Data.Contracts.AspNetCore.Runtime
 		public ProjectionOptions Projections { get; set; }
 		public SegmentOptions Buffer { get; set; }
 
-		public async Task<object> GetAsync(IObjectGetRepository repository)
+		public async Task<object> GetAsync(IObjectGetRepository<long> repository)
 		{
 			return await repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
 		}
