@@ -15,35 +15,31 @@
 
 #endregion
 
+using System;
 using HQ.Extensions.Options;
-using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Configuration;
 
-namespace HQ.Integration.DocumentDb.Options
+namespace HQ.Platform.Operations.Models
 {
-	public class DocumentConfigurationSource : IConfigurationSource
+	public class ConfigurationService
 	{
-		public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
-			IConfiguration configSeed = null)
+		private readonly IConfigurationRoot _root;
+
+		public ConfigurationService(IConfigurationRoot root)
 		{
-			SaveConfig = saveConfig;
-			Options = options;
-			ConfigSeed = configSeed;
+			_root = root;
 		}
 
-		public DocumentDbOptions Options { get; }
-
-		public SaveConfigurationOptions SaveConfig { get; set; }
-
-		public bool ReloadOnChange { get; set; }
-
-		public IConfiguration ConfigSeed { get; set; }
-
-		public IConfigurationProvider Build(IConfigurationBuilder builder)
+		public object Get(Type type, string section)
 		{
-			DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed,
-				SaveConfig?.SeedStrategy ?? SeedStrategy.None);
-			return new DocumentDbConfigurationProvider(this);
+			var config = _root.GetSection(section?.Replace("/", ":"));
+			if (config == null)
+				return null;
+
+			var template = Activator.CreateInstance(type);
+			config.FastBind(template);
+
+			return template;
 		}
 	}
 }

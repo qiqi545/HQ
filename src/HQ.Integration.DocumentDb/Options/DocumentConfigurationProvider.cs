@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using HQ.Common;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
@@ -25,13 +26,13 @@ using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.DocumentDb.Options
 {
-	public class DocumentConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
+	public class DocumentDbConfigurationProvider : ConfigurationProvider, ISaveConfigurationProvider
 	{
 		private readonly IDictionary<string, string> _ids;
 		private readonly IDocumentDbRepository<ConfigurationDocument> _repository;
 		private readonly DocumentConfigurationSource _source;
 
-		public DocumentConfigurationProvider(DocumentConfigurationSource source)
+		public DocumentDbConfigurationProvider(DocumentConfigurationSource source)
 		{
 			_ids = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 			_source = source;
@@ -68,11 +69,8 @@ namespace HQ.Integration.DocumentDb.Options
 					changed = true;
 			}
 
-			foreach (var entry in map)
+			foreach (var (k, v) in map)
 			{
-				var k = entry.Key;
-				var v = entry.Value;
-
 				Data.TryGetValue(k, out var value);
 
 				var before = value;
@@ -92,6 +90,28 @@ namespace HQ.Integration.DocumentDb.Options
 			}
 
 			return changed;
+		}
+
+		public bool Delete(string key)
+		{
+			var deleted = false;
+			var keys = Data.Keys.ToList();
+
+			for (var i = 0; i < keys.Count; i++)
+			{
+				var k = keys[i];
+				if (k == key || k.StartsWith($"{key}:"))
+				{
+					var id = _ids[k];
+					if (!_repository.DeleteAsync(id).GetAwaiter().GetResult())
+						continue;
+
+					Data.Remove(key);
+					deleted = true;
+				}
+			}
+
+			return deleted;
 		}
 
 		public override void Set(string key, string value)

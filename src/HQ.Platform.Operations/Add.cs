@@ -17,6 +17,7 @@
 
 #if NETCOREAPP2_2
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+using Swashbuckle.AspNetCore.Swagger;
 #else
 using Microsoft.Extensions.Hosting;
 #endif
@@ -117,6 +118,8 @@ namespace HQ.Platform.Operations
 			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
 
+			mvcBuilder.Services.AddScoped<ConfigurationService>();
+
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
 			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration,
@@ -151,8 +154,8 @@ namespace HQ.Platform.Operations
 			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
 
-			/* FIXME: Swashbuckle doesn't work with ASP.NET Core 3.0
-			mvcBuilder.Services.AddSwaggerGen(c =>
+#if NETCOREAPP2_2
+            mvcBuilder.Services.AddSwaggerGen(c =>
 			{
 				c.EnableAnnotations();
 				c.SwaggerDoc("swagger", new Info
@@ -161,8 +164,8 @@ namespace HQ.Platform.Operations
 					Version = "v1"
 				});
 			});
-			*/
-
+#endif
+			
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
 			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
 		}

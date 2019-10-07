@@ -15,14 +15,13 @@
 
 #endregion
 
-using Microsoft.Extensions.Configuration;
-
 namespace HQ.Extensions.Options
 {
-	public interface ISaveConfigurationProvider : IConfigurationProvider
+	public enum DeleteOptionsResult
 	{
-		bool HasChildren(string key);
-		bool Save<TOptions>(string key, TOptions instance);
-		bool Delete(string key);
+		NotFound,
+		NoContent,
+		Gone,
+		InternalServerError
 	}
 }

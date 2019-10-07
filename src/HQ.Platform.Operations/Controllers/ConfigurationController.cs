@@ -57,14 +57,15 @@ namespace HQ.Platform.Operations.Controllers
 	{
 		private readonly IConfigurationRoot _root;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly ConfigurationService _service;
 		private readonly ITypeResolver _typeResolver;
 
-		public ConfigurationController(IConfigurationRoot root, ITypeResolver typeResolver,
-			IServiceProvider serviceProvider)
+		public ConfigurationController(IConfigurationRoot root, ITypeResolver typeResolver, IServiceProvider serviceProvider, ConfigurationService service)
 		{
 			_root = root;
 			_typeResolver = typeResolver;
 			_serviceProvider = serviceProvider;
+			_service = service;
 		}
 
 		[FeatureSelector]
@@ -111,7 +112,7 @@ namespace HQ.Platform.Operations.Controllers
 			config.FastBind(model);
 			patch.ApplyTo(model);
 
-			return Set(type, model, section);
+			return Put(type, model, section);
 		}
 
 		[FeatureSelector]
@@ -147,14 +148,14 @@ namespace HQ.Platform.Operations.Controllers
 			var patchMethod = patchMethods.Single(x => x.Name == "ApplyTo" && !x.IsGenericMethod);
 			patchMethod?.Invoke(patchModel, new[] {model});
 
-			return Set(type, model, section);
+			return Put(type, model, section);
 		}
 
 		[FeatureSelector]
 		[HttpPut("")]
 		[HttpPut("{section?}")]
 		[MustHaveQueryParameters("type")]
-		public IActionResult Set([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
+		public IActionResult Put([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
@@ -187,61 +188,137 @@ namespace HQ.Platform.Operations.Controllers
 					$"Could not resolve IOptions<{type}> for validation");
 
 			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
-			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave),
-				new[] {typeof(string), typeof(Action)});
-			if (trySaveMethod == null || valueProperty == null)
-				return InternalServerError(ErrorEvents.PlatformError,
-					$"Unexpected error: IOptions<{type}> methods failed to resolve.");
+			if(valueProperty == null)
+				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
-			object result;
+			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave), new[] {typeof(string), typeof(Action)});
+			if (trySaveMethod == null)
+				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+
+			var tryAddMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TryAdd), new[] {typeof(string), typeof(Action)});
+			if (tryAddMethod == null)
+				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+
 			if (model is JObject)
 			{
 				var json = model.ToString();
-				result = JsonConvert.DeserializeObject(json, prototype);
+				model = JsonConvert.DeserializeObject(json, prototype);
 			}
-			else
-				result = model;
-
-			return TrySave(section, result, trySaveMethod, saveOptions, prototype, valueProperty);
+			
+			var result = TryUpsert(section, model, trySaveMethod, tryAddMethod, saveOptions, prototype, valueProperty);
+			return result;
 		}
 
-		private IActionResult TrySave(string section, object result, MethodBase trySaveMethod, object saveOptions,
-			Type prototype, PropertyInfo valueProperty)
+		[FeatureSelector]
+		[HttpDelete("")]
+		[HttpDelete("{section?}")]
+		public IActionResult Delete([FromQuery] string type, [FromRoute] string section = null)
+		{
+			if (string.IsNullOrWhiteSpace(section))
+				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+
+			var config = _root.GetSection(section.Replace("/", ":"));
+			if (config == null)
+				return NotFoundError(ErrorEvents.InvalidParameter,
+					$"Configuration sub-key path '{section}' not found.");
+
+			var prototype = _typeResolver.FindFirstByName(type);
+			if (prototype == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter,
+					$"No configuration type found with name '{type}'.");
+
+			var optionsType = typeof(IOptions<>).MakeGenericType(prototype);
+			var saveOptionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
+			var saveOptions = _serviceProvider.GetService(saveOptionsType);
+			if (saveOptions == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter,
+					$"Could not resolve IOptions<{type}> for saving");
+
+			var validOptionsType = typeof(IValidOptionsMonitor<>).MakeGenericType(prototype);
+			var validOptions = _serviceProvider.GetService(validOptionsType);
+			if (validOptions == null)
+				return NotAcceptableError(ErrorEvents.InvalidParameter,
+					$"Could not resolve IOptions<{type}> for validation");
+
+			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
+
+			var tryDeleteMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TryDelete), new[] {typeof(string)});
+			if (tryDeleteMethod == null || valueProperty == null)
+				return InternalServerError(ErrorEvents.PlatformError,
+					$"Unexpected error: IOptions<{type}> methods failed to resolve.");
+
+			var deleted = (DeleteOptionsResult) tryDeleteMethod.Invoke(saveOptions, new object[] { section });
+			switch (deleted)
+			{
+				case DeleteOptionsResult.NotFound:
+					return NotFound();
+				case DeleteOptionsResult.NoContent:
+					return NoContent();
+				case DeleteOptionsResult.Gone:
+					return Gone();
+				case DeleteOptionsResult.InternalServerError:
+					return InternalServerError(ErrorEvents.PlatformError, $"Could not delete section {section}");
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		private IActionResult TryUpsert(string key, object model, MethodBase trySaveMethod, MethodBase tryAddMethod, object saveOptions, Type prototype, PropertyInfo valueProperty)
 		{
 			try
 			{
-				result.Validate(_serviceProvider);
+				model.Validate(_serviceProvider);
 			}
 			catch (ValidationException e)
 			{
 				return UnprocessableEntityError(ErrorEvents.ValidationFailed, e.ValidationResult.ErrorMessage);
 			}
 
-			var saved = trySaveMethod.Invoke(saveOptions,
-				new object[]
-				{
-					section, new Action(() => { SaveOptions(prototype, saveOptions, valueProperty, result); })
-				});
-
-			if (saved is bool flag && !flag)
+			var saveResult = trySaveMethod.Invoke(saveOptions, new object[]
 			{
-				return NotModified();
+				key, new Action(() =>
+				{
+					SaveOptions(prototype, saveOptions, valueProperty, model);
+				})
+			});
+
+			if (saveResult is SaveOptionsResult save)
+			{
+				switch (save)
+				{
+					case SaveOptionsResult.NotFound:
+					{
+						var addResult = (bool) tryAddMethod.Invoke(saveOptions, new object[]
+						{
+							key, new Action(() =>
+							{
+								SaveOptions(prototype, saveOptions, valueProperty, model);
+							})
+						});
+						if (!addResult)
+							return InternalServerError(ErrorEvents.PlatformError,
+								$"Could not add existing configuration to section '{key}'");
+
+						break;
+					}
+					case SaveOptionsResult.NotModified:
+						return NotModified();
+				}
 			}
 
-			return GetSerialized(prototype, section);
+			var serialized = GetSerialized(prototype, key);
+
+			return serialized;
 		}
 
 		private IActionResult GetSerialized(Type type, string section)
 		{
-			var config = _root.GetSection(section?.Replace("/", ":"));
-			if (config == null)
-				return NotFoundError(ErrorEvents.InvalidParameter,
-					$"Configuration sub-key path '{section}' not found.");
+			var template = _service.Get(type, section);
 
-			var template = Activator.CreateInstance(type);
-			config.FastBind(template);
-
-			return Ok(template);
+			return template == null
+				? NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.")
+				: Ok(template);
 		}
 
 		private static void SaveOptions(Type type, object saveOptions, PropertyInfo valueProperty, object result)

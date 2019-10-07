@@ -58,7 +58,8 @@ namespace HQ.Integration.DocumentDb
 			_logger = logger;
 
 			var defaultSettings = new JsonSerializerSettings();
-			_client = new DocumentClient(EndpointUri, options.Get(_slot).AccountKey, defaultSettings);
+			var documentDbOptions = options.Get(_slot);
+			_client = new DocumentClient(EndpointUri, documentDbOptions.AccountKey, defaultSettings);
 
 			CreateDatabaseIfNotExistsAsync().Wait();
 			CreateCollectionIfNotExistsAsync().Wait();

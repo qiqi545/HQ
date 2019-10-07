@@ -41,9 +41,11 @@ namespace HQ.Extensions.Options
 
 		public TOptions Value => _monitor.CurrentValue;
 
-		public bool TrySave(string key, Action<TOptions> mutator = null)
+		public SaveOptionsResult TrySave(string key, Action<TOptions> mutator = null)
 		{
+			var found = false;
 			var saved = false;
+
 			foreach (var provider in _configuration.Providers.Reverse())
 			{
 				if (!(provider is ISaveConfigurationProvider saveProvider))
@@ -53,7 +55,9 @@ namespace HQ.Extensions.Options
 					continue; // key not found in this provider
 
 				var current = _monitor.CurrentValue;
+				
 				mutator?.Invoke(current);
+				found = true;
 
 				if (!current.IsValid(_serviceProvider))
 					continue; // don't allow saving invalid options
@@ -64,12 +68,14 @@ namespace HQ.Extensions.Options
 
 			if (saved)
 				_configuration.Reload();
-			return saved;
+			return !found ? SaveOptionsResult.NotFound : saved ? SaveOptionsResult.Ok : SaveOptionsResult.NotModified;
 		}
 
-		public bool TrySave(string key, Action mutator = null)
+		public SaveOptionsResult TrySave(string key, Action mutator = null)
 		{
+			var found = false;
 			var saved = false;
+
 			foreach (var provider in _configuration.Providers.Reverse())
 			{
 				if (!(provider is ISaveConfigurationProvider saveProvider))
@@ -77,11 +83,38 @@ namespace HQ.Extensions.Options
 
 				if (!saveProvider.HasChildren(key))
 					continue; // key not found in this provider
+
+				var current = _monitor.CurrentValue;
+
+				mutator?.Invoke();
+				found = true;
+
+				if (!current.IsValid(_serviceProvider))
+					continue; // don't allow saving invalid options
+
+				if (saveProvider.Save(key, current))
+					saved = true;
+			}
+
+			if (saved)
+				_configuration.Reload();
+
+			return !found ? SaveOptionsResult.NotFound : saved ? SaveOptionsResult.Ok : SaveOptionsResult.NotModified;
+		}
+
+		public bool TryAdd(string key, Action mutator = null)
+		{
+			var saved = false;
+
+			foreach (var provider in _configuration.Providers.Reverse())
+			{
+				if (!(provider is ISaveConfigurationProvider saveProvider))
+					continue; // this provider does not support saving
+
+				var current = _monitor.CurrentValue;
 
 				mutator?.Invoke();
 
-				var current = _monitor.CurrentValue;
-
 				if (!current.IsValid(_serviceProvider))
 					continue; // don't allow saving invalid options
 
@@ -91,7 +124,28 @@ namespace HQ.Extensions.Options
 
 			if (saved)
 				_configuration.Reload();
+
 			return saved;
+		}
+
+		public DeleteOptionsResult TryDelete(string key)
+		{
+			foreach (var provider in _configuration.Providers.Reverse())
+			{
+				if (!(provider is ISaveConfigurationProvider saveProvider))
+					continue; // this provider does not support saving
+
+				if (!saveProvider.HasChildren(key))
+					continue; // key not found in this provider
+
+				if (saveProvider.Delete(key))
+				{
+					_configuration.Reload();
+					return DeleteOptionsResult.NoContent;
+				}
+			}
+
+			return DeleteOptionsResult.NotFound;
 		}
 
 		public TOptions Get(string name)

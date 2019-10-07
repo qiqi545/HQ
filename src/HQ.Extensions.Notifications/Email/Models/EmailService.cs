@@ -35,7 +35,7 @@ namespace HQ.Extensions.Notifications.Email.Models
 
 		public async Task<bool> SendAsync(EmailMessage message)
 		{
-			message.From = message.From ?? _options.Value.From;
+			message.From ??= _options.Value.From;
 
 			return await _provider.SendAsync(message);
 		}

@@ -49,23 +49,22 @@ namespace HQ.Integration.Sqlite.Options
 
 				var t = db.BeginTransaction();
 
-				foreach (var entry in map)
+				foreach (var (k, v) in map)
 				{
-					if (!Data.TryGetValue(entry.Key, out var value))
+					if (!Data.TryGetValue(k, out var value))
 						continue; // deprecated?
 
 					var before = value;
-					var after = entry.Value;
 
-					if (before.Equals(after, StringComparison.Ordinal))
+					if (before.Equals(v, StringComparison.Ordinal))
 						continue; // no change
 
-					if (after == null)
+					if (v == null)
 						continue; // not null constraint violation
 
-					var count = db.Execute(Update, new {entry.Key, Value = after}, t);
+					var count = db.Execute(UpdateValue, new {s = k, Value = v}, t);
 					if (count == 0)
-						count = db.Execute(Insert, new {entry.Key, Value = after}, t);
+						count = db.Execute(InsertValue, new {s = k, Value = v}, t);
 					if (count > 0)
 						changed = true;
 				}
@@ -76,6 +75,18 @@ namespace HQ.Integration.Sqlite.Options
 			return changed;
 		}
 
+		public bool Delete(string key)
+		{
+			using var db = new SqliteConnection($"Data Source={_source.DataFilePath}");
+
+			db.Open();
+			var t = db.BeginTransaction();
+			var count = db.Execute(DeleteByKey, new { Key = key }, t);
+			t.Commit();
+
+			return count > 0;
+		}
+
 		public override void Set(string key, string value)
 		{
 			if (TryGet(key, out var previousValue) && value == previousValue)
@@ -84,9 +95,9 @@ namespace HQ.Integration.Sqlite.Options
 			{
 				db.Open();
 				var t = db.BeginTransaction();
-				var count = db.Execute(Update, new {Key = key, Value = value}, t);
+				var count = db.Execute(UpdateValue, new {Key = key, Value = value}, t);
 				if (count == 0)
-					db.Execute(Insert, new {Key = key, Value = value}, t);
+					db.Execute(InsertValue, new {Key = key, Value = value}, t);
 				t.Commit();
 			}
 
@@ -126,8 +137,9 @@ namespace HQ.Integration.Sqlite.Options
 		#region SQL
 
 		private const string GetAll = "SELECT * FROM Configuration";
-		private const string Update = "UPDATE Configuration SET Value = :Value WHERE Key = :Key";
-		private const string Insert = "INSERT INTO Configuration (Key, Value) VALUES (:Key, :Value)";
+		private const string UpdateValue = "UPDATE Configuration SET Value = :Value WHERE Key = :Key";
+		private const string InsertValue = "INSERT INTO Configuration (Key, Value) VALUES (:Key, :Value)";
+		private const string DeleteByKey = "DELETE FROM Configuration WHERE Key = :Key";
 
 		#endregion
 	}
