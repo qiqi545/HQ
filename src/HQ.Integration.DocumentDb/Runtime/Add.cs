@@ -63,7 +63,7 @@ namespace HQ.Integration.DocumentDb.Runtime
 			o.CollectionId ??= connectionStringBuilder.DefaultCollection ?? Constants.Runtime.DefaultCollection;
 
 			o.SharedCollection = true; // Anything
-			o.PartitionKeyPaths = new[] {"id"};
+			o.PartitionKeyPaths = new[] {"/id"};
 		}
 
 		private static RuntimeBuilder AddDocumentDbRuntimeStores(this RuntimeBuilder builder, string connectionString,

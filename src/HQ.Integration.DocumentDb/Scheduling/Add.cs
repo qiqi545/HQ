@@ -56,7 +56,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 			o.DatabaseId = connectionStringBuilder.Database ?? "Default";
 
 			o.SharedCollection = true; // Sequence, Document, etc.
-			o.PartitionKeyPaths = new[] {"id"};
+			o.PartitionKeyPaths = new[] {"/id"};
 		}
 
 		public static BackgroundTaskBuilder AddDocumentDbBackgroundTaskStore(this BackgroundTaskBuilder builder,

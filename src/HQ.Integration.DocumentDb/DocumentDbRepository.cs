@@ -101,8 +101,8 @@ namespace HQ.Integration.DocumentDb
 			CancellationToken cancellationToken = default)
 		{
 			var queryable = CreateDocumentQuery();
-			var query = predicate != null ? queryable.Where(predicate).LongCount() : queryable.LongCount();
-			return Task.FromResult(query);
+			var query = predicate != null ? queryable.Where(predicate).Count() : queryable.Count();
+			return Task.FromResult((long) query);
 		}
 
 		public async Task<IEnumerable<T>> RetrieveAsync(Func<IQueryable<T>, IQueryable<T>> projection,

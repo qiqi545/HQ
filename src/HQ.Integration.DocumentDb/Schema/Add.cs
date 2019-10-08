@@ -53,7 +53,7 @@ namespace HQ.Integration.DocumentDb.Schema
 			o.DatabaseId = connectionStringBuilder.Database ?? "Default";
 
 			o.SharedCollection = true; // SchemaVersionDocument, ApplicationVersionDocument
-			o.PartitionKeyPaths = new[] {"id"};
+			o.PartitionKeyPaths = new[] {"/id"};
 		}
 
 		public static SchemaBuilder AddDocumentDbSchemaStores(this SchemaBuilder builder,

@@ -97,7 +97,7 @@ namespace HQ.Integration.DocumentDb.Identity
 			o.CollectionId ??= builder.DefaultCollection ?? Constants.Identity.DefaultCollection;
 
 			o.SharedCollection = true; // User, Role, Tenant, Application, etc.
-			o.PartitionKeyPaths = new[] {"id"};
+			o.PartitionKeyPaths = new[] {"/id"};
 		}
 
 		public static IdentityBuilder AddDocumentDbIdentityStore<TKey, TUser, TRole, TTenant, TApplication>(
