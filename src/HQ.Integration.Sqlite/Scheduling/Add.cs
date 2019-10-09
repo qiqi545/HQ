@@ -55,8 +55,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 			var extensions = new[] {new HttpAccessorExtension()};
 
-			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString,
-				scope, extensions);
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString,scope, extensions);
 			builder.Services.AddLocalTimestamps();
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 

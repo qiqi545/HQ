@@ -106,7 +106,11 @@ namespace HQ.Integration.DocumentDb.Options
 					if (!_repository.DeleteAsync(id).GetAwaiter().GetResult())
 						continue;
 
-					Data.Remove(key);
+					lock (Data)
+					{
+						Data.Remove(key);
+					}
+					
 					deleted = true;
 				}
 			}
@@ -122,8 +126,11 @@ namespace HQ.Integration.DocumentDb.Options
 			var document = _repository.UpsertAsync(new ConfigurationDocument {Key = key, Value = value}).GetAwaiter()
 				.GetResult();
 
-			Data[key] = value;
-			_ids[key] = document.Id;
+			lock(Data)
+			{
+				Data[key] = value;
+				_ids[key] = document.Id;
+			}
 
 			if (_source.ReloadOnChange)
 				ReloadAndLog();
@@ -131,23 +138,28 @@ namespace HQ.Integration.DocumentDb.Options
 
 		public override void Load()
 		{
-			var onChange = Data.Count > 0;
-			Data.Clear();
-			_ids.Clear();
-			var data = _repository.RetrieveAsync().GetAwaiter().GetResult();
-			var loadedKeys = 0;
-			foreach (var item in data)
+			lock(Data)
 			{
-				Data[item.Key] = item.Value;
-				_ids[item.Key] = item.Id;
-				onChange = true;
-				loadedKeys++;
-			}
+				var onChange = Data.Count > 0;
+				Data.Clear();
+				_ids.Clear();
+				var data = _repository.RetrieveAsync().GetAwaiter().GetResult();
+				var loadedKeys = 0;
+				foreach (var item in data)
+				{
+					Data[item.Key] = item.Value;
+					_ids[item.Key] = item.Id;
+					onChange = true;
+					loadedKeys++;
+				}
 
-			if (loadedKeys > 0)
-				Trace.TraceInformation($"Configuration loaded {loadedKeys} keys from the store.");
-			if (onChange && _source.ReloadOnChange)
-				ReloadAndLog();
+				if (loadedKeys > 0)
+				{
+					Trace.TraceInformation($"Configuration loaded {loadedKeys} keys from the store.");
+				}
+				if (onChange && _source.ReloadOnChange)
+					ReloadAndLog();
+			}
 		}
 
 		private void ReloadAndLog()

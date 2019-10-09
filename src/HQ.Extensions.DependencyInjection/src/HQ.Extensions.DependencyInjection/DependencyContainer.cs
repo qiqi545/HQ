@@ -49,10 +49,13 @@ namespace HQ.Extensions.DependencyInjection
 
 		public bool AddExtension<T>(T extension) where T : IResolverExtension
 		{
-			if (_extensions.Contains(extension))
-				return false;
-			_extensions.Add(extension);
-			return true;
+			lock (_extensions)
+			{
+				if (_extensions.Contains(extension))
+					return false;
+				_extensions.Add(extension);
+				return true;
+			}
 		}
 
 		#region Register
@@ -293,15 +296,12 @@ namespace HQ.Extensions.DependencyInjection
 
 		private static object TryUntypedResolve(Type serviceType, bool throwIfCantResolve, Func<object> builder)
 		{
-			switch (builder())
+			return builder() switch
 			{
-				case object resolved:
-					return resolved;
-				case null when throwIfCantResolve:
-					throw new InvalidOperationException($"No registration for {serviceType}");
-				default:
-					return null;
-			}
+				{ } resolved => resolved,
+				null when throwIfCantResolve => throw new InvalidOperationException($"No registration for {serviceType}"),
+				_ => null
+			};
 		}
 
 		public IEnumerable<T> ResolveAll<T>() where T : class
@@ -373,7 +373,7 @@ namespace HQ.Extensions.DependencyInjection
 			// constructor->parameters
 			var parameters = InstanceFactory.Default.GetOrCacheParametersForConstructor(ctor);
 
-			// parameterless ctor
+			// parameter-less ctor
 			if (parameters.Length == 0)
 				return InstanceFactory.Default.CreateInstance(implementationType);
 

@@ -57,8 +57,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 			services.AddLocalTimestamps();
 			services.AddSafeLogging();
-			services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope)
-				.AddAspNetCore();
+			services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope, new[] {new HttpAccessorExtension()});
 			services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
 
 			var dialect = new SqlServerDialect();

@@ -47,10 +47,8 @@ namespace HQ.Platform.Identity.Stores.Sql
 			if (scope == ConnectionScope.ByRequest)
 				services.AddHttpContextAccessor();
 
-			var extensions = new[] {new HttpAccessorExtension()};
-			services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, extensions,
-				onConnection, onCommand);
-
+			services.AddDatabaseConnection<IdentityBuilder, TDatabase>(connectionString, scope, new[] { new HttpAccessorExtension() }, onConnection, onCommand);
+			
 			services.AddTransient<IUserStoreExtended<TUser>, UserStore<TUser, TKey, TRole>>();
 			services.AddTransient<IUserStore<TUser>>(r => r.GetRequiredService<IUserStoreExtended<TUser>>());
 

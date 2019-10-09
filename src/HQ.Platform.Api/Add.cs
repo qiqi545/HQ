@@ -316,10 +316,7 @@ namespace HQ.Platform.Api
 			if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			var extensions = new[] {new HttpAccessorExtension()};
-			builder.Services
-				.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, extensions, onConnection,
-					onCommand).AddAspNetCore();
+			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, new[] { new HttpAccessorExtension() }, onConnection,onCommand);
 			builder.Services.AddScoped<IObjectGetRepository<long>, SqlObjectGetRepository>();
 
 			return builder;

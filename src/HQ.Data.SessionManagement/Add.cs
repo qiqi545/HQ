@@ -19,6 +19,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using HQ.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,17 +31,18 @@ namespace HQ.Data.SessionManagement
 		
 		public static ContainerBuilder AddDatabaseConnection<TScope, TConnectionFactory>(
 			this IServiceCollection services, string connectionString, ConnectionScope scope,
-			IEnumerable<IResolverExtension> extensions = null,
+			IEnumerable<IResolverExtension> extensions,
 			Action<IDbConnection, IServiceProvider> onConnection = null,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null)
 			where TConnectionFactory : class, IConnectionFactory, new()
 		{
 			var slot = $"{typeof(TScope).FullName}";
-			var container = services.AddContainer(slot);
+			var builder = AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, extensions, onConnection, onCommand);
+			
+			if(!TryGetContainer(slot, out var container))
+				throw new ArgumentException($"Could not initialize container with slot {slot}", slot);
 
 			services.AddTransient(r => container.Resolve<IDataConnection<TScope>>());
-	
-			var builder = AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, extensions, onConnection, onCommand);
 
 			switch (scope)
 			{
@@ -71,7 +73,7 @@ namespace HQ.Data.SessionManagement
 			return builder;
 		}
 
-		private static IContainer AddContainer(this IServiceCollection services, string slot)
+		private static IContainer AddOrGetContainer(this IServiceCollection services, string slot, IEnumerable<IResolverExtension> extensions)
 		{
 			if (Containers.TryGetValue(slot, out var container))
 				return container;
@@ -79,9 +81,17 @@ namespace HQ.Data.SessionManagement
 			var serviceProvider = services.BuildServiceProvider();
 			container = new DependencyContainer(serviceProvider);
 			container.Register(r => serviceProvider);
+			foreach (var extension in extensions ?? Enumerable.Empty<IResolverExtension>())
+				container.AddExtension(extension);
+
 			Containers.TryAdd(slot, container);
 
 			return container;
+		}
+
+		private static bool TryGetContainer(string slot, out IContainer container)
+		{
+			return Containers.TryGetValue(slot, out container);
 		}
 
 		private static ContainerBuilder AddDatabaseConnection<TConnectionFactory>(this IServiceCollection services,
@@ -97,16 +107,8 @@ namespace HQ.Data.SessionManagement
 
 			services.AddSingleton(factory);
 
-			var container = services.AddContainer(slot);
+			var container = services.AddOrGetContainer(slot, extensions);
 			container.Register(slot, r => factory, Lifetime.Permanent);
-
-			if (extensions != null)
-			{
-				foreach (var extension in extensions)
-				{
-					container.AddExtension(extension);
-				}
-			}
 
 			switch (scope)
 			{

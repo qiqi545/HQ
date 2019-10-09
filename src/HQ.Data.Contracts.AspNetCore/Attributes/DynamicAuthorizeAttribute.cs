@@ -86,7 +86,7 @@ namespace HQ.Data.Contracts.AspNetCore.Attributes
 				}
 			}
 
-			policy = policy ?? policyProperty?.GetValue(currentValue);
+			policy ??= policyProperty?.GetValue(currentValue);
 			_policy = policy as string ?? Constants.Security.Policies.NoPolicy;
 
 			GuardAgainstUnregisteredSchemes();
