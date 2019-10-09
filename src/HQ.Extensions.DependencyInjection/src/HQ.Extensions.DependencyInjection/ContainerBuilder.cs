@@ -21,9 +21,9 @@ namespace HQ.Extensions.DependencyInjection
 {
 	public class ContainerBuilder
 	{
-		private readonly DependencyContainer _container;
+		private readonly IContainer _container;
 
-		public ContainerBuilder(IServiceCollection services, DependencyContainer container)
+		public ContainerBuilder(IServiceCollection services, IContainer container)
 		{
 			_container = container;
 			Services = services;

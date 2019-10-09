@@ -19,5 +19,6 @@ namespace HQ.Extensions.DependencyInjection
 {
 	public interface IContainer : IDependencyResolver, IDependencyRegistrar
 	{
+		bool AddExtension<T>(T extension) where T : IResolverExtension;
 	}
 }
