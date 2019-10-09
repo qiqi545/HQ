@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
+using TypeKitchen;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch
 {
 	internal static class ReflectionHelper
@@ -37,6 +37,8 @@ namespace HQ.Common.AspNetCore.MergePatch
 		internal static Type GetPropertyTypeFromPath(Type type, string path, IContractResolver contractResolver)
 		{
 			var currentType = type;
+			var currentMembers = AccessorMembers.Create(type, AccessorMemberTypes.Fields | AccessorMemberTypes.Properties, AccessorMemberScope.Public);
+
 			foreach (var propertyName in path.Split(pathSplitter, StringSplitOptions.RemoveEmptyEntries))
 			{
 				var jsonContract = contractResolver.ResolveContract(currentType);
@@ -46,14 +48,14 @@ namespace HQ.Common.AspNetCore.MergePatch
 					continue;
 				}
 
-				var currentProperty = GetPropertyInfo(currentType, propertyName);
-				currentType = currentProperty.PropertyType;
+				if (currentMembers.TryGetValue(propertyName, out var member))
+					currentType = member.Type;
 			}
 
 			return currentType;
 		}
 
-		private static bool Exist(object value, IEnumerable<string> paths, IContractResolver contractResolver)
+		private static bool Exists(object value, IEnumerable<string> paths, IContractResolver contractResolver)
 		{
 			if (value == null)
 				return false;
@@ -85,13 +87,12 @@ namespace HQ.Common.AspNetCore.MergePatch
 			}
 
 
-			return Exist(currentValue, paths.Skip(1), contractResolver);
+			return Exists(currentValue, paths.Skip(1), contractResolver);
 		}
 
-		internal static bool Exist(object value, string path, IContractResolver contractResolver)
+		internal static bool Exists(object value, string path, IContractResolver contractResolver)
 		{
-			return Exist(value, path.Split(pathSplitter, StringSplitOptions.RemoveEmptyEntries), contractResolver);
+			return Exists(value, path.Split(pathSplitter, StringSplitOptions.RemoveEmptyEntries), contractResolver);
 		}
 	}
 }
-#endif

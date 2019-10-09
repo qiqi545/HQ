@@ -23,6 +23,7 @@ using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -37,12 +38,6 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeKitchen;
-
-#if NETCOREAPP2_2
-using Morcatko.AspNetCore.JsonMergePatch;
-#else
-using HQ.Common.AspNetCore.MergePatch;
-#endif
 
 namespace HQ.Platform.Operations.Controllers
 {
@@ -136,9 +131,10 @@ namespace HQ.Platform.Operations.Controllers
 				return NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-key path '{section}' not found.");
 
-			var buildMethod = typeof(JsonMergePatchDocument<>)
-				.GetMethod(nameof(JsonMergePatchDocument.Build), new[] {typeof(JObject)})?.MakeGenericMethod(prototype);
-			var patchModel = buildMethod?.Invoke(null, new[] {patch});
+			var buildMethod = typeof(JsonMergePatchDocument).GetMethod(nameof(JsonMergePatchDocument.Build), new[] {typeof(JObject)});
+
+			var genericBuildMethod = buildMethod?.MakeGenericMethod(prototype);
+			var patchModel = genericBuildMethod?.Invoke(null, new[] {patch});
 
 			var model = Activator.CreateInstance(prototype);
 			config.FastBind(model);

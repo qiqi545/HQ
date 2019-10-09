@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Common.AspNetCore.MergePatch.Configuration;
 #if NETCOREAPP2_2
 #else
 using HQ.Common.AspNetCore.MergePatch.Configuration;
@@ -26,7 +27,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch
 {
 	public static class MvcBuilderExtensions
@@ -56,4 +56,3 @@ namespace HQ.Common.AspNetCore.MergePatch
 		}
 	}
 }
-#endif

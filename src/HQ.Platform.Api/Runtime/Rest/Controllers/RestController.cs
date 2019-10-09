@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HQ.Common;
+using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Configuration;
@@ -33,12 +34,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-
-#if NETCOREAPP2_2
-using Morcatko.AspNetCore.JsonMergePatch;
-#else
-using HQ.Common.AspNetCore.MergePatch;
-#endif
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {

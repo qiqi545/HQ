@@ -17,6 +17,7 @@
 
 using System;
 using System.Buffers;
+using HQ.Common.AspNetCore.MergePatch.Formatters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
@@ -28,7 +29,6 @@ using Newtonsoft.Json;
 using HQ.Common.AspNetCore.MergePatch.Formatters;
 #endif
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch.Configuration
 {
 	internal class JsonMergePatchOptionsSetup : IConfigureOptions<MvcOptions>
@@ -89,4 +89,3 @@ namespace HQ.Common.AspNetCore.MergePatch.Configuration
 		}
 	}
 }
-#endif

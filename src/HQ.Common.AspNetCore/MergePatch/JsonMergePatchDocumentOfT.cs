@@ -22,20 +22,13 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using Newtonsoft.Json.Serialization;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch
 {
 	public class JsonMergePatchDocument<TModel> : JsonMergePatchDocument where TModel : class
 	{
-		private static readonly string replaceOp = OperationType.Replace.ToString();
-		private static readonly string addOp = OperationType.Add.ToString();
-		private static readonly string removeOp = OperationType.Remove.ToString();
 		private readonly JsonPatchDocument<TModel> _jsonPatchDocument = new JsonPatchDocument<TModel>();
-
-
+		
 		private readonly Type _modelType = typeof(TModel);
-
-
 		private bool clean;
 
 		internal JsonMergePatchDocument(TModel model) => Model = model;
@@ -55,16 +48,18 @@ namespace HQ.Common.AspNetCore.MergePatch
 			if (clean)
 				throw new NotSupportedException("Cannot apply more than once");
 
-			var addOperations = _jsonPatchDocument.Operations
-				.Where(operation => operation.OperationType == OperationType.Add).ToArray();
-			foreach (var addOperation in addOperations)
+			for (var i = _jsonPatchDocument.Operations.Count - 1; i >= 0; i--)
 			{
-				if (ReflectionHelper.Exist(objectToApplyTo, addOperation.path, ContractResolver))
+				var operation = _jsonPatchDocument.Operations[i];
+				if (operation.OperationType != OperationType.Add)
+					continue;
+
+				if (ReflectionHelper.Exists(objectToApplyTo, operation.path, ContractResolver))
 				{
-					_jsonPatchDocument.Operations.Remove(addOperation);
+					_jsonPatchDocument.Operations.Remove(operation);
 				}
 			}
-
+			
 			clean = true;
 		}
 
@@ -94,22 +89,21 @@ namespace HQ.Common.AspNetCore.MergePatch
 
 		internal override void AddOperation_Replace(string path, object value)
 		{
-			_jsonPatchDocument.Operations.Add(new Operation<TModel>(replaceOp, path, null, value));
+			_jsonPatchDocument.Operations.Add(new Operation<TModel>(nameof(OperationType.Replace), path, null, value));
 		}
 
 		internal override void AddOperation_Remove(string path)
 		{
-			_jsonPatchDocument.Operations.Add(new Operation<TModel>(removeOp, path, null, null));
+			_jsonPatchDocument.Operations.Add(new Operation<TModel>(nameof(OperationType.Remove), path, null, null));
 		}
 
 		internal override void AddOperation_Add(string path)
 		{
 			var propertyType = ReflectionHelper.GetPropertyTypeFromPath(_modelType, path, ContractResolver);
-			_jsonPatchDocument.Operations.Add(new Operation<TModel>(addOp, path, null,
+			_jsonPatchDocument.Operations.Add(new Operation<TModel>(nameof(OperationType.Add), path, null,
 				ContractResolver.ResolveContract(propertyType).DefaultCreator()));
 		}
 
 		#endregion
 	}
 }
-#endif

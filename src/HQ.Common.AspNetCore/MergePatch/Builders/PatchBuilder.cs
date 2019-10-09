@@ -20,7 +20,6 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch.Builders
 {
 	public class PatchBuilder<TModel> where TModel : class
@@ -124,4 +123,3 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 		#endregion
 	}
 }
-#endif

@@ -100,7 +100,6 @@
         <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
-        <PackageReference Include="Morcatko.AspNetCore.JsonMergePatch" Version="2.0.0" />
       </ItemGroup>
     </When>
     <Otherwise>

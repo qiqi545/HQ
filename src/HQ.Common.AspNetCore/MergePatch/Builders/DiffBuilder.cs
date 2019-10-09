@@ -19,7 +19,6 @@ using System;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch.Builders
 {
 	public static class DiffBuilder
@@ -112,4 +111,3 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 		}
 	}
 }
-#endif

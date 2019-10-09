@@ -15,13 +15,7 @@
 
 #endregion
 
-#if NETCOREAPP2_2
-using Morcatko.AspNetCore.JsonMergePatch;
-using Morcatko.AspNetCore.JsonMergePatch.Builder;
-#else
 using HQ.Common.AspNetCore.MergePatch.Builders;
-#endif
-
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 

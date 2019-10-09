@@ -28,6 +28,7 @@ using HQ.Common.AspNetCore.MergePatch.Builders;
 #endif
 
 using System.Threading.Tasks;
+using HQ.Common.AspNetCore.MergePatch.Builders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
@@ -36,7 +37,6 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-#if NETCOREAPP3_0
 namespace HQ.Common.AspNetCore.MergePatch.Formatters
 {
 	internal class JsonMergePatchInputFormatter :
@@ -193,4 +193,3 @@ namespace HQ.Common.AspNetCore.MergePatch.Formatters
 		}
 	}
 }
-#endif
