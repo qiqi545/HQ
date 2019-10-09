@@ -36,7 +36,7 @@ namespace HQ.Test.Sdk.Fixtures
 
         public FlatFileFixture(int lineCount, Func<int> columnCount, Encoding encoding, string separator = null, bool persistent = false) : base(persistent)
         {
-            encoding = encoding ?? Encoding.UTF8;
+            encoding ??= Encoding.UTF8;
             for (var i = 0; i < lineCount; i++)
             {
                 byte[] buffer;

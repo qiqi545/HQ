@@ -67,7 +67,7 @@ namespace HQ.Test.Sdk
                 return;
 
             loggerFactory = ServiceProvider?.GetService<ILoggerFactory>();
-            loggerFactory = loggerFactory ?? DefaultLoggerFactory;
+            loggerFactory ??= DefaultLoggerFactory;
             loggerFactory.AddProvider(CreateLoggerProvider());
 
             Logger = loggerFactory.CreateLogger<ServiceUnderTest>();

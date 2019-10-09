@@ -102,8 +102,13 @@ namespace HQ.Test.Sdk
 			return new TestServer(builder).CreateClient();
 		}
 
-		private static void ConfigureAppConfiguration(IWebHostEnvironment env, TestSettings testSettings,
-            IConfigurationBuilder c)
+		private static void ConfigureAppConfiguration(
+#if NETCOREAPP2_2
+			IHostingEnvironment env,
+#else
+			IWebHostEnvironment env,
+#endif
+			TestSettings testSettings, IConfigurationBuilder c)
         {
             if (!string.IsNullOrWhiteSpace(testSettings.AppSettingsPath))
             {
@@ -156,8 +161,13 @@ namespace HQ.Test.Sdk
         {
             T startup = null;
             IConfiguration config = null;
-            IWebHostEnvironment env;
             IServiceCollection services = null;
+
+#if NETCOREAPP2_2
+			IHostingEnvironment env;
+#else
+			IWebHostEnvironment env;
+#endif
 
             var builder = new WebHostBuilder()
                 .ConfigureAppConfiguration((context, cb) =>
