@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using HQ.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ namespace HQ.Data.SessionManagement
 {
 	public static class Add
 	{
-		private static readonly Dictionary<string, IContainer> Containers = new Dictionary<string, IContainer>();
+		private static readonly ConcurrentDictionary<string, IContainer> Containers = new ConcurrentDictionary<string, IContainer>();
 		
 		public static ContainerBuilder AddDatabaseConnection<TScope, TConnectionFactory>(
 			this IServiceCollection services, string connectionString, ConnectionScope scope,
@@ -78,7 +79,7 @@ namespace HQ.Data.SessionManagement
 			var serviceProvider = services.BuildServiceProvider();
 			container = new DependencyContainer(serviceProvider);
 			container.Register(r => serviceProvider);
-			Containers.Add(slot, container);
+			Containers.TryAdd(slot, container);
 
 			return container;
 		}

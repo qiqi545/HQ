@@ -57,13 +57,13 @@ namespace HQ.Extensions.DependencyInjection
 
 		#region Register
 
-		private readonly IDictionary<Type, Func<object>>
+		private readonly ConcurrentDictionary<Type, Func<object>>
 			_registrations = new ConcurrentDictionary<Type, Func<object>>();
 
-		private readonly IDictionary<NameAndType, Func<object>> _namedRegistrations =
+		private readonly ConcurrentDictionary<NameAndType, Func<object>> _namedRegistrations =
 			new ConcurrentDictionary<NameAndType, Func<object>>();
 
-		private readonly IDictionary<Type, List<Func<object>>> _collectionRegistrations =
+		private readonly ConcurrentDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
 		public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
@@ -186,7 +186,7 @@ namespace HQ.Extensions.DependencyInjection
 			if (!_collectionRegistrations.TryGetValue(type, out var collectionBuilder))
 			{
 				collectionBuilder = new List<Func<object>> {previous};
-				_collectionRegistrations.Add(type, collectionBuilder);
+				_collectionRegistrations.TryAdd(type, collectionBuilder);
 			}
 
 			collectionBuilder.Add(_registrations[type]);
