@@ -155,7 +155,10 @@ namespace HQ.Integration.DocumentDb.Options
 
 				if (loadedKeys > 0)
 				{
-					Trace.TraceInformation($"Configuration loaded {loadedKeys} keys from the store.");
+					lock (Trace.Listeners)
+					{
+						Trace.TraceInformation($"Configuration loaded {loadedKeys} keys from the store.");
+					}
 				}
 				if (onChange && _source.ReloadOnChange)
 					ReloadAndLog();

@@ -39,6 +39,7 @@ namespace HQ.Extensions.Logging
 		{
 			lock (Trace.Listeners)
 			{
+				Trace.UseGlobalLock = true;
 				if (!Trace.Listeners.Contains(ActionTraceListener))
 					Trace.Listeners.Add(ActionTraceListener);
 			}
@@ -50,7 +51,8 @@ namespace HQ.Extensions.Logging
 		{
 			lock (Trace.Listeners)
 			{
-				if(!Trace.Listeners.Contains(ActionTraceListener))
+				Trace.UseGlobalLock = true;
+				if (!Trace.Listeners.Contains(ActionTraceListener))
 					Trace.Listeners.Add(ActionTraceListener);
 			}
 			
