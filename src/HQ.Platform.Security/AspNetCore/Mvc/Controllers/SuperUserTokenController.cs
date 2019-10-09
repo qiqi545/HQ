@@ -118,7 +118,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				var token = provider.CreateToken<IUserIdProvider<TKey>, TKey>(claims, _security.Value);
 				return Task.FromResult((IActionResult) Ok(new {AccessToken = token}));
 			}
-
+			
 			return UnauthorizedResult();
 		}
 
@@ -131,12 +131,12 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				return NotFound();
 
 			if (User.Identity == null)
-				return Unauthorized();
+				return Unauthorized(new { Message = "Super user identity not found. "});
 
 			if (User.Identity.IsAuthenticated)
 				return Ok(new {Data = User.Claims()});
 
-			return Unauthorized();
+			return Unauthorized(new { Message = "Super user identity not authenticated. " });
 		}
 	}
 }
