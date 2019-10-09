@@ -78,7 +78,7 @@ namespace HQ.Data.SessionManagement
 			var serviceProvider = services.BuildServiceProvider();
 			container = new DependencyContainer(serviceProvider);
 			container.Register(r => serviceProvider);
-			Containers[slot] = container;
+			Containers.Add(slot, container);
 
 			return container;
 		}
