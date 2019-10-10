@@ -15,6 +15,56 @@ using TypeKitchen;
 
 namespace HQ.Extensions.Options
 {
+	public interface ICustomConfigurationBinder
+	{
+		bool CanConvertFrom(Type type);
+		Type GetTypeFor(object instance);
+	}
+
+	/// <summary>
+	/// Guesses a type binding based on the presence of a `Type` property.
+	/// </summary>
+	internal sealed class TypeDiscriminatorBinder : ICustomConfigurationBinder
+	{
+		private static readonly ITypeResolver TypeResolver = new ReflectionTypeResolver();
+		private static bool IsTypeDiscriminated(Type type, out IEnumerable<Type> subTypes)
+		{
+			subTypes = TypeResolver.FindByParent(type);
+			return subTypes.Any();
+		}
+
+		public bool CanConvertFrom(Type type)
+		{
+			var members = AccessorMembers.Create(type, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
+			return members.TryGetValue("Type", out _);
+		}
+
+		public Type GetTypeFor(object instance)
+		{
+			var baseType = instance.GetType();
+			var members = AccessorMembers.Create(baseType, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
+			
+			if (!members.TryGetValue("Type", out var member))
+				return baseType; // no type discriminator
+
+			if (!IsTypeDiscriminated(baseType, out var subTypes))
+				return baseType; // no matching subTypes
+
+			var read = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
+			string typeKey = read[instance, "Type"]?.ToString();
+			if (string.IsNullOrWhiteSpace(typeKey))
+				return baseType; // missing type discriminant
+
+			var subType = subTypes.SingleOrDefault(x => x.Name == typeKey) ??
+			              subTypes.SingleOrDefault(x => x.Name == $"{typeKey}{baseType.Name}");
+
+			if (subType == null)
+				return baseType; // sub-type error
+
+			return subType;
+		}
+	}
+
 	/// <summary>
 	///     Static helper class that allows binding strongly typed objects to configuration values.
 	/// </summary>
@@ -95,6 +145,18 @@ namespace HQ.Extensions.Options
 		}
 
 		/// <summary>
+		///     Attempts to bind the given object instance to the configuration section specified by the key by matching property
+		///     names against configuration keys recursively.
+		/// </summary>
+		/// <param name="configuration">The configuration instance to bind.</param>
+		/// <param name="key">The key of the configuration section to bind.</param>
+		/// <param name="instance">The object to bind.</param>
+		public static void FastBind(this IConfiguration configuration, string key, object instance, IEnumerable<ICustomConfigurationBinder> customBinders)
+		{
+			configuration.GetSection(key).FastBind(instance, customBinders);
+		}
+
+		/// <summary>
 		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
 		///     keys recursively.
 		/// </summary>
@@ -104,6 +166,17 @@ namespace HQ.Extensions.Options
 		{
 			configuration.FastBind(instance, o => { });
 		}
+		
+		/// <summary>
+		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
+		///     keys recursively.
+		/// </summary>
+		/// <param name="configuration">The configuration instance to bind.</param>
+		/// <param name="instance">The object to bind.</param>
+		public static void FastBind(this IConfiguration configuration, object instance, IEnumerable<ICustomConfigurationBinder> customBinders)
+		{
+			configuration.FastBind(instance, o => { }, customBinders);
+		}
 
 		/// <summary>
 		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
@@ -112,8 +185,7 @@ namespace HQ.Extensions.Options
 		/// <param name="configuration">The configuration instance to bind.</param>
 		/// <param name="instance">The object to bind.</param>
 		/// <param name="configureOptions">Configures the binder options.</param>
-		public static void FastBind(this IConfiguration configuration, object instance,
-			Action<BinderOptions> configureOptions)
+		public static void FastBind(this IConfiguration configuration, object instance, Action<BinderOptions> configureOptions)
 		{
 			if (configuration == null)
 				throw new ArgumentNullException(nameof(configuration));
@@ -124,6 +196,26 @@ namespace HQ.Extensions.Options
 			var options = new BinderOptions();
 			configureOptions?.Invoke(options);
 			BindInstance(instance.GetType(), instance, configuration, options);
+		}
+
+		/// <summary>
+		///     Attempts to bind the given object instance to configuration values by matching property names against configuration
+		///     keys recursively.
+		/// </summary>
+		/// <param name="configuration">The configuration instance to bind.</param>
+		/// <param name="instance">The object to bind.</param>
+		/// <param name="configureOptions">Configures the binder options.</param>
+		public static void FastBind(this IConfiguration configuration, object instance, Action<BinderOptions> configureOptions, IEnumerable<ICustomConfigurationBinder> customBinders)
+		{
+			if (configuration == null)
+				throw new ArgumentNullException(nameof(configuration));
+
+			if (instance == null)
+				return;
+
+			var options = new BinderOptions();
+			configureOptions?.Invoke(options);
+			BindInstance(instance.GetType(), instance, configuration, options, customBinders);
 		}
 
 		/// <summary>
@@ -177,7 +269,7 @@ namespace HQ.Extensions.Options
 			return value != null ? ConvertValue(type, value) : defaultValue;
 		}
 
-		private static void BindNonScalar(this IConfiguration configuration, ref object instance, BinderOptions options)
+		private static void BindNonScalar(this IConfiguration configuration, ref object instance, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			if (instance == null)
 				return;
@@ -190,12 +282,12 @@ namespace HQ.Extensions.Options
 			var read = ReadAccessor.Create(type, AccessorMemberTypes.Properties, scope, out var members);
 			var write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
 
-			if (IsTypeDiscriminated(type))
+			if (IsTypeDiscriminated(type, out _))
 			{
 				// Set base properties so the converter has the right values to work with
-				SetMembers(configuration, instance, options, members, read, write);
+				SetMembers(configuration, instance, options, members, read, write, customBinders);
 
-				// Give the converter a chance to change what is bound
+				// Give a custom converter a chance to change what is bound
 				var converter = TypeDescriptor.GetConverter(type);
 				if (converter.CanConvertFrom(type))
 				{
@@ -207,13 +299,32 @@ namespace HQ.Extensions.Options
 						write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
 					}
 				}
+				else
+				{
+					foreach (var binder in customBinders ?? Enumerable.Empty<ICustomConfigurationBinder>())
+					{
+						if (!binder.CanConvertFrom(type))
+							continue;
+
+						var subType = binder.GetTypeFor(instance);
+						if (subType == null)
+							continue;
+
+						type = subType;
+						instance = Activator.CreateInstance(type);
+						read = ReadAccessor.Create(type, AccessorMemberTypes.Properties, scope, out members);
+						write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
+						goto setMembers;
+					}
+				}
 			}
 
-			SetMembers(configuration, instance, options, members, read, write);
+			setMembers:
+				SetMembers(configuration, instance, options, members, read, write, customBinders);
 		}
 		
 		private static void SetMembers(IConfiguration configuration, object instance, BinderOptions options,
-			AccessorMembers members, ITypeReadAccessor read, ITypeWriteAccessor write)
+			AccessorMembers members, ITypeReadAccessor read, ITypeWriteAccessor write, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			foreach (var member in members)
 			{
@@ -230,7 +341,7 @@ namespace HQ.Extensions.Options
 				}
 
 				var config = configuration.GetSection(member.Name);
-				value = BindInstance(member.Type, value, config, options);
+				value = BindInstance(member.Type, value, config, options, customBinders);
 				if (value == default || !member.CanWrite)
 					continue;
 
@@ -238,16 +349,16 @@ namespace HQ.Extensions.Options
 			}
 		}
 		
-		private static object BindToCollection(Type typeInfo, IConfiguration config, BinderOptions options)
+		private static object BindToCollection(Type typeInfo, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			var type = typeof(List<>).MakeGenericType(typeInfo.GenericTypeArguments[0]);
 			var instance = CreateInstance(ref type);
-			BindCollection(instance, type, config, options);
+			BindCollection(instance, type, config, options, customBinders);
 			return instance;
 		}
 
 		// Try to create an array/dictionary instance to back various collection interfaces
-		private static object AttemptBindToCollectionInterfaces(Type type, IConfiguration config, BinderOptions options)
+		private static object AttemptBindToCollectionInterfaces(Type type, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			var typeInfo = type.GetTypeInfo();
 
@@ -256,7 +367,7 @@ namespace HQ.Extensions.Options
 
 			var collectionInterface = FindOpenGenericInterface(typeof(IReadOnlyList<>), type);
 			if (collectionInterface != null)
-				return BindToCollection(typeInfo, config, options);
+				return BindToCollection(typeInfo, config, options, customBinders);
 
 			collectionInterface = FindOpenGenericInterface(typeof(IReadOnlyDictionary<,>), type);
 			if (collectionInterface != null)
@@ -264,7 +375,7 @@ namespace HQ.Extensions.Options
 				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
 					typeInfo.GenericTypeArguments[1]);
 				var instance = CreateInstance(ref dictionaryType);
-				BindDictionary(instance, dictionaryType, config, options);
+				BindDictionary(instance, dictionaryType, config, options, customBinders);
 				return instance;
 			}
 
@@ -274,23 +385,23 @@ namespace HQ.Extensions.Options
 				var dictionaryType = typeof(Dictionary<,>).MakeGenericType(typeInfo.GenericTypeArguments[0],
 					typeInfo.GenericTypeArguments[1]);
 				var instance = CreateInstance(ref dictionaryType);
-				BindDictionary(instance, collectionInterface, config, options);
+				BindDictionary(instance, collectionInterface, config, options, customBinders);
 				return instance;
 			}
 
 			collectionInterface = FindOpenGenericInterface(typeof(IReadOnlyCollection<>), type);
 			if (collectionInterface != null)
-				return BindToCollection(typeInfo, config, options);
+				return BindToCollection(typeInfo, config, options, customBinders);
 
 			collectionInterface = FindOpenGenericInterface(typeof(ICollection<>), type);
 			if (collectionInterface != null)
-				return BindToCollection(typeInfo, config, options);
+				return BindToCollection(typeInfo, config, options, customBinders);
 
 			collectionInterface = FindOpenGenericInterface(typeof(IEnumerable<>), type);
-			return collectionInterface != null ? BindToCollection(typeInfo, config, options) : null;
+			return collectionInterface != null ? BindToCollection(typeInfo, config, options, customBinders) : null;
 		}
 
-		private static object BindInstance(Type type, object instance, IConfiguration config, BinderOptions options)
+		private static object BindInstance(Type type, object instance, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders = null)
 		{
 			// if binding IConfigurationSection, break early
 			if (type == typeof(IConfigurationSection))
@@ -314,7 +425,7 @@ namespace HQ.Extensions.Options
 			if (instance == null)
 			{
 				// We are already done if binding to a new collection instance worked
-				instance = AttemptBindToCollectionInterfaces(type, config, options);
+				instance = AttemptBindToCollectionInterfaces(type, config, options, customBinders);
 				if (instance != null)
 					return instance;
 				instance = CreateInstance(ref type);
@@ -324,11 +435,11 @@ namespace HQ.Extensions.Options
 			var collectionInterface = FindOpenGenericInterface(typeof(IDictionary<,>), type);
 			if (collectionInterface != null)
 			{
-				BindDictionary(instance, collectionInterface, config, options);
+				BindDictionary(instance, collectionInterface, config, options, customBinders);
 			}
 			else if (type.IsArray)
 			{
-				instance = BindArray((Array) instance, config, options);
+				instance = BindArray((Array) instance, config, options, customBinders);
 			}
 			else
 			{
@@ -336,12 +447,12 @@ namespace HQ.Extensions.Options
 				collectionInterface = FindOpenGenericInterface(typeof(ICollection<>), type);
 				if (collectionInterface != null)
 				{
-					BindCollection(instance, collectionInterface, config, options);
+					BindCollection(instance, collectionInterface, config, options, customBinders);
 				}
 				// Something else
 				else
 				{
-					BindNonScalar(config, ref instance, options);
+					BindNonScalar(config, ref instance, options, customBinders);
 				}
 			}
 
@@ -380,7 +491,7 @@ namespace HQ.Extensions.Options
 				}
 			}
 
-			if (IsTypeDiscriminated(type))
+			if (IsTypeDiscriminated(type, out _))
 				return instance;
 
 			// Give converter a chance to change this type
@@ -396,10 +507,13 @@ namespace HQ.Extensions.Options
 
 
 		private static readonly ITypeResolver TypeResolver = new ReflectionTypeResolver();
-		private static bool IsTypeDiscriminated(Type type) => TypeResolver.FindByParent(type).Any();
+		private static bool IsTypeDiscriminated(Type type, out IEnumerable<Type> subTypes)
+		{
+			subTypes = TypeResolver.FindByParent(type);
+			return subTypes.Any();
+		}
 
-		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config,
-			BinderOptions options)
+		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			var typeInfo = dictionaryType.GetTypeInfo();
 
@@ -417,7 +531,7 @@ namespace HQ.Extensions.Options
 			var setter = typeInfo.GetDeclaredProperty("Item");
 			foreach (var child in config.GetChildren())
 			{
-				var item = BindInstance(valueType, null, child, options);
+				var item = BindInstance(valueType, null, child, options, customBinders);
 				if (item == null)
 					continue;
 
@@ -434,8 +548,7 @@ namespace HQ.Extensions.Options
 			}
 		}
 
-		private static void BindCollection(object collection, Type collectionType, IConfiguration config,
-			BinderOptions options)
+		private static void BindCollection(object collection, Type collectionType, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			var typeInfo = collectionType.GetTypeInfo();
 
@@ -447,7 +560,7 @@ namespace HQ.Extensions.Options
 			{
 				try
 				{
-					var item = BindInstance(itemType, null, section, options);
+					var item = BindInstance(itemType, null, section, options, customBinders);
 					if (item != null)
 						addMethod.Invoke(collection, new[] {item});
 				}
@@ -458,7 +571,7 @@ namespace HQ.Extensions.Options
 			}
 		}
 
-		private static Array BindArray(Array source, IConfiguration config, BinderOptions options)
+		private static Array BindArray(Array source, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			var children = config.GetChildren().ToArray();
 			var arrayLength = source.Length;
@@ -476,7 +589,7 @@ namespace HQ.Extensions.Options
 			{
 				try
 				{
-					var item = BindInstance(elementType, null, children[i], options);
+					var item = BindInstance(elementType, null, children[i], options, customBinders);
 					if (item != null)
 						newArray.SetValue(item, arrayLength + i);
 				}

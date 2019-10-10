@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 
@@ -24,10 +25,12 @@ namespace HQ.Platform.Operations.Models
 	public class ConfigurationService
 	{
 		private readonly IConfigurationRoot _root;
+		private readonly IEnumerable<ICustomConfigurationBinder> _customBinders;
 
-		public ConfigurationService(IConfigurationRoot root)
+		public ConfigurationService(IConfigurationRoot root, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			_root = root;
+			_customBinders = customBinders;
 		}
 
 		public object Get(Type type, string section)
@@ -37,7 +40,7 @@ namespace HQ.Platform.Operations.Models
 				return null;
 
 			var template = Activator.CreateInstance(type);
-			config.FastBind(template);
+			config.FastBind(template, _customBinders);
 
 			return template;
 		}

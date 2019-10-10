@@ -33,9 +33,13 @@ namespace HQ.Extensions.Options
 			}
 
 			services.AddOptions();
+
 			services.TryAdd(ServiceDescriptor.Singleton(typeof(IValidOptions<>), typeof(ValidOptionsManager<>)));
 			services.TryAdd(ServiceDescriptor.Scoped(typeof(IValidOptionsSnapshot<>), typeof(ValidOptionsManager<>)));
 			services.TryAdd(ServiceDescriptor.Singleton(typeof(IValidOptionsMonitor<>), typeof(ValidOptionsMonitor<>)));
+
+			services.TryAddEnumerable(ServiceDescriptor.Singleton<ICustomConfigurationBinder, TypeDiscriminatorBinder>());
+
 			return services;
 		}
 
