@@ -505,12 +505,17 @@ namespace HQ.Extensions.Options
 			return instance;
 		}
 
-
-		private static readonly ITypeResolver TypeResolver = new ReflectionTypeResolver();
+		private static ITypeResolver _lastTypeResolver;
 		private static bool IsTypeDiscriminated(Type type, out IEnumerable<Type> subTypes)
 		{
-			subTypes = TypeResolver.FindByParent(type);
-			return subTypes.Any();
+			// FIXME: perf in the degenerate case (no sub-types) is poor
+			var typeResolver = _lastTypeResolver ?? new ReflectionTypeResolver();
+			subTypes = typeResolver.FindByParent(type);
+			var any = subTypes.Any();
+			if (any)
+				return true;
+			_lastTypeResolver = new ReflectionTypeResolver();
+			return _lastTypeResolver.FindByParent(type).Any();
 		}
 
 		private static void BindDictionary(object dictionary, Type dictionaryType, IConfiguration config, BinderOptions options, IEnumerable<ICustomConfigurationBinder> customBinders)
