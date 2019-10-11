@@ -17,7 +17,7 @@
 
 using System.Collections.Generic;
 
-namespace HQ.Data.Contracts.Tests.Fakes
+namespace HQ.Platform.Tests.Data.Contracts.Topology.Fakes
 {
 	public sealed class Graph
 	{

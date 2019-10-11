@@ -1,8 +1,9 @@
 using System;
+using HQ.Extensions.Dates;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Extensions.Dates.Tests
+namespace HQ.Platform.Tests.Extensions.Dates
 {
     public class DateTimeZoneTests
     {

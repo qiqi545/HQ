@@ -17,10 +17,10 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using HQ.Data.Contracts.Tests.Fakes;
+using HQ.Platform.Tests.Data.Contracts.Topology.Fakes;
 using HQ.Test.Sdk;
 
-namespace HQ.Data.Contracts.Tests.Topology
+namespace HQ.Platform.Tests.Data.Contracts.Topology
 {
 	public class TopologyTests : UnitUnderTest
 	{

@@ -16,8 +16,9 @@
 #endregion
 
 using System;
+using HQ.Extensions.DependencyInjection;
 
-namespace HQ.Extensions.DependencyInjection.Tests
+namespace HQ.Platform.Tests.Extensions.DependencyInjection
 {
     public class DependencyContainerFixture : IDisposable
     {

@@ -17,9 +17,8 @@
 
 using System;
 using HQ.Data.Contracts.Serialization;
-using HQ.Data.Contracts.Versioning;
 
-namespace HQ.Data.Contracts.Tests.Serialization
+namespace HQ.Platform.Tests.Data.Contracts.Serialization
 {
     namespace V1
     {

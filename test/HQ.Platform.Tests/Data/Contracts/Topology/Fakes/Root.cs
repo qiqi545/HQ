@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using HQ.Data.Contracts.DataAnnotations;
 
-namespace HQ.Data.Contracts.Tests.Fakes
+namespace HQ.Platform.Tests.Data.Contracts.Topology.Fakes
 {
 	[TopologyRoot]
 	public sealed class Root

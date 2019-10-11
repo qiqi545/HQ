@@ -15,16 +15,26 @@
 
 #endregion
 
-using HQ.Common;
-using HQ.Extensions.Caching.Configuration;
+using HQ.Integration.Sqlite.SessionManagement;
+using Xunit;
 
-namespace HQ.Extensions.Caching.Tests
+namespace HQ.Platform.Tests.Data.SessionManagement
 {
-    public class InProcessCacheTests : CacheTestsBase
+    public class DataContextTests : IClassFixture<DatabaseFixture>
     {
-        public InProcessCacheTests()
+        public DataContextTests(DatabaseFixture fixture)
         {
-	        Cache = new InProcessCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new LocalServerTimestampService());
+            _fixture = fixture;
+        }
+
+        private readonly DatabaseFixture _fixture;
+
+        [Fact]
+        public void Data_context_instantiates()
+        {
+            var cs = _fixture.CreateConnectionString();
+            using var db = new SqliteDataContext(cs, null, null);
+            Assert.NotNull(db);
         }
     }
 }

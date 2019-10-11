@@ -16,9 +16,10 @@
 #endregion
 
 using System;
+using HQ.Extensions.Dates;
 using HQ.Test.Sdk;
 
-namespace HQ.Extensions.Dates.Tests
+namespace HQ.Platform.Tests.Extensions.Dates
 {
     public class DateSpanTests : UnitUnderTest
     {

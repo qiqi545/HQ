@@ -15,28 +15,24 @@
 
 #endregion
 
-using HQ.Integration.Sqlite.SessionManagement;
-using Xunit;
+using System;
+using System.Globalization;
+using System.Threading;
 
-namespace HQ.Data.SessionManagement.Tests
+namespace HQ.Platform.Tests.Extensions.Numerics
 {
-    public class DataContextTests : IClassFixture<DatabaseFixture>
+    public class CultureFixture : IDisposable
     {
-        public DataContextTests(DatabaseFixture fixture)
+        private readonly CultureInfo _culture;
+
+        public CultureFixture()
         {
-            _fixture = fixture;
+            _culture = Thread.CurrentThread.CurrentCulture;
         }
 
-        private readonly DatabaseFixture _fixture;
-
-        [Fact]
-        public void Data_context_instantiates()
+        public void Dispose()
         {
-            var cs = _fixture.CreateConnectionString();
-            using (var db = new SqliteDataContext(cs, null, null))
-            {
-                Assert.NotNull(db);
-            }
+            Thread.CurrentThread.CurrentCulture = _culture;
         }
     }
 }

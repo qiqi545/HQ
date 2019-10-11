@@ -16,16 +16,16 @@
 #endregion
 
 using HQ.Common;
+using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.Configuration;
-using Microsoft.Extensions.Internal;
 
-namespace HQ.Extensions.Caching.Tests
+namespace HQ.Platform.Tests.Extensions.Caching
 {
-    public class DistributedCacheTests : CacheTestsBase
+    public class InProcessCacheTests : CacheTestsBase
     {
-        public DistributedCacheTests()
+        public InProcessCacheTests()
         {
-	        Cache = new DistributedCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new SystemClock(), new LocalServerTimestampService());
+	        Cache = new InProcessCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new LocalServerTimestampService());
         }
     }
 }

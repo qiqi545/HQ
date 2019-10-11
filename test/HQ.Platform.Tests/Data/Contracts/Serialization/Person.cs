@@ -17,7 +17,7 @@
 
 using System.Text;
 
-namespace HQ.Data.Contracts.Tests.Serialization
+namespace HQ.Platform.Tests.Data.Contracts.Serialization
 {
     namespace V1
     {

@@ -16,13 +16,12 @@
 #endregion
 
 using System.Data;
-using System.Linq;
 using HQ.Data.SessionManagement;
 using HQ.Integration.Sqlite.SessionManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
-namespace HQ.Data.SessionManagement.Tests
+namespace HQ.Platform.Tests.Data.SessionManagement
 {
     public class ConnectionScopeTests : DatabaseFixture
     {
@@ -49,33 +48,13 @@ namespace HQ.Data.SessionManagement.Tests
 
             public IDbConnection Connection => _db.Current;
         }
-
-        private static DataContext _foreverContext;
-
-        private static DataContext Scope(IConnectionFactory connectionFactory)
-        {
-            return _foreverContext ?? (_foreverContext = new DataContext(connectionFactory, null));
-        }
-
-        [Fact]
-        public void Always_new()
-        {
-            var cs = CreateConnectionString();
-            var services = new ServiceCollection();
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.AlwaysNew);
-
-            var provider = services.BuildServiceProvider();
-            var connection1 = provider.GetService<DataContext>();
-            var connection2 = provider.GetService<DataContext>();
-            Assert.NotEqual(connection1, connection2);
-        }
-
-        [Fact]
+		
+		[Fact]
         public void Keep_alive()
         {
             var cs = CreateConnectionString();
             var services = new ServiceCollection();
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
+            services.AddDatabaseConnection<ConnectionScopeTests, SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
 
             var provider = services.BuildServiceProvider();
             var connection1 = provider.GetService<DataContext>();
@@ -98,34 +77,6 @@ namespace HQ.Data.SessionManagement.Tests
             var two = provider.GetService<SomeOtherService>();
 
             Assert.NotEqual(one.Connection, two.Connection);
-        }
-
-        [Fact]
-        public void Keep_alive_multisession()
-        {
-            var cs = CreateConnectionString();
-            var services = new ServiceCollection();
-			services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, ConnectionScope.KeepAlive);
-
-            var provider = services.BuildServiceProvider();
-            var connections = provider.GetServices<DataContext>().ToList();
-            var connection1 = connections[0];
-            var connection2 = connections[1];
-            Assert.NotEqual(connection1, connection2);
-        }
-
-        [Fact]
-        public void Resolves_custom_scoping()
-        {
-            var cs = CreateConnectionString();
-            var services = new ServiceCollection();
-            services.AddDatabaseConnection<SqliteConnectionFactory>(cs, Scope);
-
-            var provider = services.BuildServiceProvider();
-            var db = provider.GetService<DataContext>();
-            Assert.NotNull(db);
-            Assert.Equal(_foreverContext, provider.GetService<DataContext>());
         }
     }
 }

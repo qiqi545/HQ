@@ -1,4 +1,5 @@
 #region LICENSE
+
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
 // License ("RPL") Version 1.5, or subsequent versions as allowed by the RPL,
@@ -11,29 +12,22 @@
 // LIMITATION, ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
 // PURPOSE, QUIET ENJOYMENT, OR NON-INFRINGEMENT. See the RPL for specific
 // language governing rights and limitations under the RPL.
+
 #endregion
 
-using HQ.Test.Sdk;
-using TypeKitchen;
+using System;
 
-namespace HQ.Platform.Tests.Common
+namespace HQ.Platform.Tests.Data.SessionManagement
 {
-    public class StringBuilderPoolTests : UnitUnderTest
+    public class DatabaseFixture : IDisposable
     {
-        [Test]
-        public void Can_use_scoped_builder()
+        public void Dispose()
         {
-            var result = Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("This is a line.");
-            });
-            Assert.Equal("This is a line.", result);
+        }
 
-            result = Pooling.StringBuilderPool.Scoped(sb =>
-            {
-                sb.Append("This is a line.");
-            }, 10, 4);
-            Assert.Equal("line", result);
+        public string CreateConnectionString()
+        {
+            return $"Data Source={Guid.NewGuid()}.sqdb;Mode=ReadWriteCreate;";
         }
     }
 }

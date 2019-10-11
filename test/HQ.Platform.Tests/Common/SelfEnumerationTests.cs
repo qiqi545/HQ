@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using HQ.Common;
 using HQ.Test.Sdk;
-using Xunit;
 
-namespace HQ.Common.Tests
+namespace HQ.Platform.Tests.Common
 {
     public class SelfEnumerationTests : UnitUnderTest
     {

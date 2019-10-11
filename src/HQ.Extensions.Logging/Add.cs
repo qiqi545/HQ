@@ -25,8 +25,6 @@ namespace HQ.Extensions.Logging
 {
 	public static class Add
 	{
-		private static readonly ActionTraceListener ActionTraceListener = new ActionTraceListener(Console.Write, Console.WriteLine);
-
 		public static IServiceCollection AddSafeLogging(this IServiceCollection services)
 		{
 			services.AddLogging();
@@ -35,6 +33,7 @@ namespace HQ.Extensions.Logging
 			return services;
 		}
 
+		private static readonly ActionTraceListener ActionTraceListener = new ActionTraceListener(Console.Write, Console.WriteLine);
 		public static ILoggingBuilder AddTraceLogging(this ILoggingBuilder builder)
 		{
 			lock (Trace.Listeners)

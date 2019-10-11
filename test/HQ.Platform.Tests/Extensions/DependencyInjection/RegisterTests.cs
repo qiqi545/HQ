@@ -17,9 +17,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Extensions.DependencyInjection;
 using Xunit;
 
-namespace HQ.Extensions.DependencyInjection.Tests
+namespace HQ.Platform.Tests.Extensions.DependencyInjection
 {
     public class RegisterTests : IClassFixture<DependencyContainerFixture>
     {

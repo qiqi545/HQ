@@ -15,13 +15,15 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using HQ.Common;
 using HQ.Test.Sdk;
+using Xunit;
 
-namespace HQ.Common.Tests
+namespace HQ.Platform.Tests.Common
 {
     public class EnumerableExtensionsTests : UnitUnderTest
     {
-        [Test]
+        [Fact]
         public void Enumerable_is_already_a_list()
         {
             IEnumerable<string> enumerable = new List<string>();

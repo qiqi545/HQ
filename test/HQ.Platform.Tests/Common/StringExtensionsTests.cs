@@ -13,10 +13,11 @@
 // language governing rights and limitations under the RPL.
 #endregion
 
+using HQ.Common;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Common.Tests
+namespace HQ.Platform.Tests.Common
 {
     public class StringExtensionsTests : UnitUnderTest
     {

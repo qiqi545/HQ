@@ -30,8 +30,9 @@ namespace HQ.Data.SessionManagement
 		private static readonly ConcurrentDictionary<string, IContainer> Containers = new ConcurrentDictionary<string, IContainer>();
 		
 		public static ContainerBuilder AddDatabaseConnection<TScope, TConnectionFactory>(
-			this IServiceCollection services, string connectionString, ConnectionScope scope,
-			IEnumerable<IResolverExtension> extensions,
+			this IServiceCollection services, string connectionString, 
+			ConnectionScope scope = ConnectionScope.AlwaysNew,
+			IEnumerable<IResolverExtension> extensions = null,
 			Action<IDbConnection, IServiceProvider> onConnection = null,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null)
 			where TConnectionFactory : class, IConnectionFactory, new()

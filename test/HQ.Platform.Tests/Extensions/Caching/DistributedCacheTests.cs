@@ -15,19 +15,18 @@
 
 #endregion
 
-using System;
+using HQ.Common;
+using HQ.Extensions.Caching;
+using HQ.Extensions.Caching.Configuration;
+using Microsoft.Extensions.Internal;
 
-namespace HQ.Data.SessionManagement.Tests
+namespace HQ.Platform.Tests.Extensions.Caching
 {
-    public class DatabaseFixture : IDisposable
+    public class DistributedCacheTests : CacheTestsBase
     {
-        public void Dispose()
+        public DistributedCacheTests()
         {
-        }
-
-        public string CreateConnectionString()
-        {
-            return $"Data Source={Guid.NewGuid()}.sqdb;Mode=ReadWriteCreate;";
+	        Cache = new DistributedCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new SystemClock(), new LocalServerTimestampService());
         }
     }
 }

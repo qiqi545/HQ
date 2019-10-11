@@ -17,10 +17,9 @@
 
 using System;
 using HQ.Data.Contracts.Serialization;
-using HQ.Data.Contracts.Versioning;
 using Xunit;
 
-namespace HQ.Data.Contracts.Tests.Serialization
+namespace HQ.Platform.Tests.Data.Contracts.Serialization
 {
     public class SpanBufferTests
     {

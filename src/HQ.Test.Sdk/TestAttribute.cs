@@ -24,7 +24,8 @@ using Xunit.Sdk;
 namespace HQ.Test.Sdk
 {
     [AttributeUsage(AttributeTargets.Method)]
-    [XunitTestCaseDiscoverer(Constants.Namespace + "." + nameof(TestCaseDiscoverer), Constants.AssemblyName)]
+	//[XunitTestCaseDiscoverer("Xunit.Sdk.FactDiscoverer", "xunit.execution.{Platform}")]
+	[XunitTestCaseDiscoverer(Constants.Namespace + "." + nameof(TestCaseDiscoverer), Constants.AssemblyName)]
     public class TestAttribute : FactAttribute
     {
         public string[] Environments { get; set; }

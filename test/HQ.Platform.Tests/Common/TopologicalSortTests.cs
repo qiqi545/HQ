@@ -19,9 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using HQ.Common;
 using HQ.Test.Sdk;
 
-namespace HQ.Common.Tests
+namespace HQ.Platform.Tests.Common
 {
 	public class TopologicalSortTests : UnitUnderTest
 	{

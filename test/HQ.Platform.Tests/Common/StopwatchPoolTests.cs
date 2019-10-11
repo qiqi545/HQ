@@ -14,9 +14,10 @@
 #endregion
 
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Test.Sdk;
 
-namespace HQ.Common.Tests
+namespace HQ.Platform.Tests.Common
 {
     public class StopwatchPoolTests : UnitUnderTest
     {

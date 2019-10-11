@@ -21,10 +21,10 @@ using System.Drawing;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
-using HQ.Data.Contracts.Tests.Fakes;
+using HQ.Platform.Tests.Data.Contracts.Topology.Fakes;
 using HQ.Test.Sdk;
 
-namespace HQ.Data.Contracts.Tests.Mvc
+namespace HQ.Platform.Tests.Data.Contracts.Mvc
 {
 	public class GraphVizOutputFormatterTests : UnitUnderTest
 	{

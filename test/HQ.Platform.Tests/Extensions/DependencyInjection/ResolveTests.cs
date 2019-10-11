@@ -15,9 +15,10 @@
 
 #endregion
 
+using HQ.Extensions.DependencyInjection;
 using Xunit;
 
-namespace HQ.Extensions.DependencyInjection.Tests
+namespace HQ.Platform.Tests.Extensions.DependencyInjection
 {
     public class ResolveTests : IClassFixture<DependencyContainerFixture>
     {

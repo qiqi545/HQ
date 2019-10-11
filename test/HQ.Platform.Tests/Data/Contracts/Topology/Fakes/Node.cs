@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using HQ.Data.Contracts.Topology;
 
-namespace HQ.Data.Contracts.Tests.Fakes
+namespace HQ.Platform.Tests.Data.Contracts.Topology.Fakes
 {
 	public class Node : INode<string>, IEquatable<Node>
 	{

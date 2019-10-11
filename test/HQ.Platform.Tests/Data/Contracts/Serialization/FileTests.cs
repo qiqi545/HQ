@@ -14,11 +14,10 @@
 #endregion
 
 using HQ.Data.Contracts.Serialization;
-using HQ.Data.Contracts.Versioning;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
 
-namespace HQ.Data.Contracts.Tests.Serialization
+namespace HQ.Platform.Tests.Data.Contracts.Serialization
 {
     public class FileTests : UnitUnderTest
     {
