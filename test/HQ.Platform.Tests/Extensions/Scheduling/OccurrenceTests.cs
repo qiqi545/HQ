@@ -15,15 +15,23 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using System;
+using HQ.Extensions.Scheduling.Models;
+using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling
 {
-    internal static class TestOutputHelperExtensions
-    {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
-        {
-            helper.WriteLine($"{value}");
-        }
-    }
+	public class OccurrenceTests : UnitUnderTest
+	{
+		[Test]
+		public void Occurrence_is_in_UTC()
+		{
+            var task = new BackgroundTask {RunAt = DateTimeOffset.UtcNow, Expression = CronTemplates.Daily(1, 3, 30)};
+
+            var next = task.NextOccurrence;
+			Assert.NotNull(next);
+			Assert.True(next.Value.Hour == 3);
+			Assert.Equal(next.Value.Hour, next.Value.UtcDateTime.Hour);
+		}
+	}
 }

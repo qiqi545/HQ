@@ -15,15 +15,21 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using System;
+using HQ.Data.SessionManagement;
+using HQ.Extensions.Scheduling;
+using HQ.Integration.Sqlite.Scheduling;
+using HQ.Platform.Tests.Fixtures;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
 {
-    internal static class TestOutputHelperExtensions
+    public class SchedulingSqliteFixture : SqliteFixture
     {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            helper.WriteLine($"{value}");
+            services.AddBackgroundTasks(o => { })
+                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive, o => { });
         }
     }
 }

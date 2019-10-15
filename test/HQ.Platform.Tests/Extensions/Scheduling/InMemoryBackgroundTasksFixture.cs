@@ -15,15 +15,35 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using System;
+using HQ.Extensions.Scheduling;
+using HQ.Extensions.Scheduling.Models;
+using HQ.Test.Sdk;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling
 {
-    internal static class TestOutputHelperExtensions
+    public class InMemoryBackgroundTasksFixture : IServiceFixture, ISupportIsolation
     {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
+        public void Dispose() { }
+
+        public void ConfigureServices(IServiceCollection services)
         {
-            helper.WriteLine($"{value}");
+            services.AddBackgroundTasks();
         }
+
+        public IServiceProvider ServiceProvider { get; set; }
+
+        public void StartIsolation()
+        {
+			if (ServiceProvider.GetRequiredService<IBackgroundTaskStore>() is InMemoryBackgroundTaskStore memory)
+				memory.Clear();
+		}
+
+        public void EndIsolation()
+        {
+			if (ServiceProvider.GetRequiredService<IBackgroundTaskStore>() is InMemoryBackgroundTaskStore memory)
+				memory.Clear();
+		}
     }
 }

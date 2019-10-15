@@ -50,27 +50,27 @@ namespace HQ.Extensions.Options
 			return services;
 		}
 
-		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, IConfiguration config)
+		public static IServiceCollection FastConfigure<TOptions>(this IServiceCollection services, IConfiguration config)
 			where TOptions : class
 		{
-			return services.Configure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config);
+			return services.FastConfigure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config);
 		}
 
-		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name,
+		public static IServiceCollection FastConfigure<TOptions>(this IServiceCollection services, string name,
 			IConfiguration config) where TOptions : class
 		{
-			return services.Configure<TOptions>(name, config, _ => { });
+			return services.FastConfigure<TOptions>(name, config, _ => { });
 		}
 
-		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, IConfiguration config,
+		public static IServiceCollection FastConfigure<TOptions>(this IServiceCollection services, IConfiguration config,
 			Action<BinderOptions> configureBinder)
 			where TOptions : class
 		{
-			return services.Configure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config,
+			return services.FastConfigure<TOptions>(Microsoft.Extensions.Options.Options.DefaultName, config,
 				configureBinder);
 		}
 
-		public static IServiceCollection Configure<TOptions>(this IServiceCollection services, string name,
+		public static IServiceCollection FastConfigure<TOptions>(this IServiceCollection services, string name,
 			IConfiguration config, Action<BinderOptions> configureBinder)
 			where TOptions : class
 		{

@@ -15,15 +15,20 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using HQ.Data.SessionManagement;
+using HQ.Extensions.Scheduling;
+using HQ.Integration.SqlServer.Scheduling;
+using HQ.Platform.Tests.Fixtures;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 {
-    internal static class TestOutputHelperExtensions
+    public class SchedulingSqlServerFixture : SqlServerFixture
     {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
+        public override void ConfigureServices(IServiceCollection services)
         {
-            helper.WriteLine($"{value}");
+            services.AddBackgroundTasks(o => { })
+                .AddSqlServerBackgroundTasksStore(ConnectionString, ConnectionScope.ByThread, o => { });
         }
     }
 }

@@ -15,15 +15,13 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using Xunit;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
 {
-    internal static class TestOutputHelperExtensions
+    public class SqliteBackgroundTaskStoreTests : BackgroundTaskStoreTests, IClassFixture<SchedulingSqliteFixture>
     {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
-        {
-            helper.WriteLine($"{value}");
-        }
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public SqliteBackgroundTaskStoreTests(SchedulingSqliteFixture fixture) : base(CreateServiceProvider(fixture)) { }
     }
 }

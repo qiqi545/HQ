@@ -29,13 +29,18 @@ using HQ.Integration.SqlServer.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+
 #if NETCOREAPP3_0
 using Microsoft.Extensions.Hosting;
-
 #endif
 
 namespace HQ.Platform.Node
 {
+	public class AppOptions
+	{
+		public string Name { get; set; }
+	}
+
 	public static class Configure
 	{
 		private const string AppSettingsFileName = "appsettings";

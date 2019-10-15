@@ -15,15 +15,18 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using Xunit;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 {
-    internal static class TestOutputHelperExtensions
+    public class SqlServerBackgroundTaskStoreTests : BackgroundTaskStoreTests, IClassFixture<SchedulingSqlServerFixture>
     {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
+        private readonly SchedulingSqlServerFixture _fixture;
+
+        // ReSharper disable once SuggestBaseTypeForParameter
+        public SqlServerBackgroundTaskStoreTests(SchedulingSqlServerFixture fixture) : base(CreateServiceProvider(fixture))
         {
-            helper.WriteLine($"{value}");
+            _fixture = fixture;
         }
     }
 }

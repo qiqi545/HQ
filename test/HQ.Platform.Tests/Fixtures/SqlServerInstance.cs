@@ -15,15 +15,12 @@
 
 #endregion
 
-using Xunit.Abstractions;
-
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Fixtures
 {
-    internal static class TestOutputHelperExtensions
-    {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
-        {
-            helper.WriteLine($"{value}");
-        }
-    }
+	public class SqlServerInstance
+	{
+		public string ConnectionString { get; set; }
+		public string Database { get; set; }
+		public string FileName { get; set; }
+	}
 }

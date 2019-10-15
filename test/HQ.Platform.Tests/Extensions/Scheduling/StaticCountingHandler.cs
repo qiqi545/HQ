@@ -15,15 +15,20 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using System.Threading.Tasks;
+using HQ.Extensions.Scheduling.Hooks;
+using HQ.Extensions.Scheduling.Models;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Platform.Tests.Extensions.Scheduling
 {
-    internal static class TestOutputHelperExtensions
-    {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
+	public class StaticCountingHandler : Handler
+	{
+		public static int Count { get; set; }
+        
+        public Task PerformAsync(ExecutionContext context)
         {
-            helper.WriteLine($"{value}");
+            Count++;
+            return Task.CompletedTask;
         }
     }
 }

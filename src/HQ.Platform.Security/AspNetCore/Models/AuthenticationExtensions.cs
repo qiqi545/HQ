@@ -120,6 +120,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 		private static Task OnTokenValidated(TokenValidatedContext arg)
 		{
 			Trace.TraceInformation(arg.ToString());
+			arg.Success();
 			return Task.CompletedTask;
 		}
 
