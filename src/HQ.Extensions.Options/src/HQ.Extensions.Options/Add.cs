@@ -83,8 +83,8 @@ namespace HQ.Extensions.Options
 			services.AddOptions();
 			services.AddSingleton<IOptionsChangeTokenSource<TOptions>>(
 				new ConfigurationChangeTokenSource<TOptions>(name, config));
-			return services.AddSingleton<IConfigureOptions<TOptions>>(
-				new FastNamedConfigureFromConfigurationOptions<TOptions>(name, config, configureBinder));
+			return services.AddSingleton<IConfigureOptions<TOptions>>(r =>
+				new FastNamedConfigureFromConfigurationOptions<TOptions>(name, config, configureBinder, r.GetServices<ICustomConfigurationBinder>()));
 		}
 	}
 }

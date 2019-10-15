@@ -1,9 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-// Change: Uses FastConfigurationBinder to do the binding rather than the stock ConfigurationBinder.
+// Change: Uses FastConfigurationBinder to do the binding rather than the stock ConfigurationBinder
+// Change: Employ custom binders
 
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -22,10 +24,8 @@ namespace HQ.Extensions.Options
 		/// </summary>
 		/// <param name="name">The name of the options instance.</param>
 		/// <param name="config">The <see cref="IConfiguration" /> instance.</param>
-		public FastNamedConfigureFromConfigurationOptions(string name, IConfiguration config)
-			: this(name, config, _ => { })
-		{
-		}
+		public FastNamedConfigureFromConfigurationOptions(string name, IConfiguration config, IEnumerable<ICustomConfigurationBinder> customBinders)
+			: this(name, config, _ => { }, customBinders) { }
 
 		/// <summary>
 		///     Constructor that takes the <see cref="IConfiguration" /> instance to bind against.
@@ -34,8 +34,8 @@ namespace HQ.Extensions.Options
 		/// <param name="config">The <see cref="IConfiguration" /> instance.</param>
 		/// <param name="configureBinder">Used to configure the <see cref="BinderOptions" />.</param>
 		public FastNamedConfigureFromConfigurationOptions(string name, IConfiguration config,
-			Action<BinderOptions> configureBinder)
-			: base(name, options => config.FastBind(options, configureBinder))
+			Action<BinderOptions> configureBinder, IEnumerable<ICustomConfigurationBinder> customBinders)
+			: base(name, options => config.FastBind(options, configureBinder, customBinders))
 		{
 			if (config == null)
 			{
