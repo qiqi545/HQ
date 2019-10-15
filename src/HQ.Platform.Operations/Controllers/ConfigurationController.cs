@@ -73,13 +73,14 @@ namespace HQ.Platform.Operations.Controllers
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
 
-			var prototype = _typeResolver.FindFirstByName(type);
+			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			return GetSerialized(prototype, section);
 		}
+
 
 		[FeatureSelector]
 		[HttpPatch("")]
@@ -93,7 +94,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
 
-			var prototype = _typeResolver.FindFirstByName(type);
+			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
@@ -121,7 +122,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
 
-			var prototype = _typeResolver.FindFirstByName(type);
+			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
@@ -165,7 +166,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-key path '{section}' not found.");
 
-			var prototype = _typeResolver.FindFirstByName(type);
+			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
@@ -219,7 +220,7 @@ namespace HQ.Platform.Operations.Controllers
 				return NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-key path '{section}' not found.");
 
-			var prototype = _typeResolver.FindFirstByName(type);
+			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
 				return NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
@@ -333,6 +334,11 @@ namespace HQ.Platform.Operations.Controllers
 					writer.TrySetValue(target, member.Name, value);
 				}
 			}
+		}
+		
+		private Type ResolvePrototypeName(string type)
+		{
+			return _typeResolver.FindByFullName(type) ?? _typeResolver.FindFirstByName(type);
 		}
 	}
 }
