@@ -429,15 +429,20 @@ namespace HQ.Extensions.Scheduling.Internal
 		private void FlushBacklog()
 		{
 			_empty.Wait();
-			while (!_buffer.IsCompleted)
+			try
 			{
-				if (_buffer.TryTake(out var message, -1, _cancel.Token))
+				while (!_buffer.IsCompleted)
 				{
-					HandleBacklog(message);
+					if (_buffer.TryTake(out var message, -1, _cancel.Token))
+					{
+						HandleBacklog(message);
+					}
 				}
 			}
-
-			_empty.Release();
+			finally
+			{
+				_empty.Release();
+			}
 		}
 
 		private void ProduceOn(BlockingCollection<T> source, ParallelOptions options)
