@@ -23,6 +23,7 @@ using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
+using HQ.Platform.Tests.Extensions.Scheduling.Handlers;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,8 +31,15 @@ using TypeKitchen;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling
 {
-	public class BackgroundTaskHostTests : UnitUnderTest
+	public abstract class BackgroundTaskHostTests : ServiceUnderTest
 	{
+		protected readonly IBackgroundTaskStore Store;
+
+		protected BackgroundTaskHostTests(IServiceProvider serviceProvider) : base(serviceProvider)
+		{
+			Store = ServiceProvider.GetRequiredService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
+		}
+		
 		[Test]
 		public async Task Queues_for_delayed_execution()
 		{
@@ -96,17 +104,34 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 			host.Stop();
 		}
 
-        private static BackgroundTaskHost CreateBackgroundTaskHost(Action<BackgroundTaskOptions> configureOptions)
+		[Test]
+		public async Task Can_cleanup_hanging_tasks()
+		{
+			using var host = CreateBackgroundTaskHost(o =>
+			{
+				o.DelayTasks = false;
+				o.MaximumAttempts = 1;
+				o.MaximumRuntimeSeconds = 1;
+			});
+			host.Start();
+			await host.TryScheduleTaskAsync(typeof(HangingTaskHandler));
+			await Task.Delay(TimeSpan.FromSeconds(2)); // <-- enough time to timeout
+			await host.CleanUpHangingTasksAsync();
+			host.Stop();
+		}
+
+		private BackgroundTaskHost CreateBackgroundTaskHost(Action<BackgroundTaskOptions> configureOptions)
         {
             var services = new ServiceCollection();
             services.AddBackgroundTasks(configureOptions);
             var serviceProvider = services.BuildServiceProvider();
-            var timestamps = new LocalServerTimestampService();
-            var scheduler = new BackgroundTaskHost(serviceProvider, timestamps,
-                new InMemoryBackgroundTaskStore(timestamps), new JsonBackgroundTaskSerializer(),
-                new ReflectionTypeResolver(),
-                serviceProvider.GetRequiredService<IOptionsMonitor<BackgroundTaskOptions>>(),
-                serviceProvider.GetService<ISafeLogger<BackgroundTaskHost>>());
+			var timestamps = serviceProvider.GetRequiredService<IServerTimestampService>();
+			var serializer = new JsonBackgroundTaskSerializer();
+			var typeResolver = new ReflectionTypeResolver();
+			var options = serviceProvider.GetRequiredService<IOptionsMonitor<BackgroundTaskOptions>>();
+			var host = serviceProvider.GetService<ISafeLogger<BackgroundTaskHost>>();
+
+			var scheduler = new BackgroundTaskHost(serviceProvider, timestamps, Store, serializer, typeResolver, options, host);
             return scheduler;
         }
 	}

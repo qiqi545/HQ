@@ -229,6 +229,16 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private bool WithHangingTasks(IEnumerable<BackgroundTask> tasks)
 		{
+			return CleanUpHangingTasks(tasks);
+		}
+
+		public async Task<bool> CleanUpHangingTasksAsync()
+		{
+			return CleanUpHangingTasks(await Store.GetHangingTasksAsync());
+		}
+
+		private bool CleanUpHangingTasks(IEnumerable<BackgroundTask> tasks)
+		{
 			var now = _timestamps.GetCurrentTime();
 
 			_logger.Debug(() => "Cleaning up hanging tasks");

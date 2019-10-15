@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling
+namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
 {
 	public class StaticCountingHandler : Handler
 	{
@@ -32,3 +32,5 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
         }
     }
 }
+
+
