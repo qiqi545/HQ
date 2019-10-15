@@ -33,12 +33,15 @@ namespace HQ.Integration.Sqlite.Scheduling
 		private static readonly List<string> NoTags = new List<string>();
 
 		private readonly IDataConnection _db;
+		private readonly IServerTimestampService _timestamps;
 		private readonly string _tablePrefix;
 
 		public SqliteBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db,
+			IServerTimestampService timestamps,
 			string tablePrefix = "BackgroundTask")
 		{
 			_db = db;
+			_timestamps = timestamps;
 			_tablePrefix = tablePrefix;
 		}
 
@@ -214,7 +217,7 @@ SET
 WHERE Id IN 
     :Ids
 ";
-			var now = DateTime.Now;
+			var now = _timestamps.GetCurrentTime();
 			var user = LockedIdentity.Get();
 
 			await db.ExecuteAsync(sql, new {Now = now, Ids = tasks.Select(task => task.Id), User = user}, t);
@@ -296,7 +299,7 @@ ORDER BY {tagTable}.Name ASC
 			BackgroundTask task = null;
 			await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
 			{
-				task = task ?? s;
+				task ??= s;
 				if (tag != null)
 				{
 					task.Tags.Add(tag);

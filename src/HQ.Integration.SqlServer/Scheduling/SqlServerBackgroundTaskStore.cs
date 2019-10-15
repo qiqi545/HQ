@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -38,13 +39,15 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly IServerTimestampService _timestamps;
 		private readonly string _schema;
 		private readonly string _tablePrefix;
 
-		public SqlServerBackgroundTaskStore(IServiceProvider serviceProvider, string schema = "dbo",
+		public SqlServerBackgroundTaskStore(IServiceProvider serviceProvider, IServerTimestampService timestamps, string schema = "dbo",
 			string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
 		{
 			_serviceProvider = serviceProvider;
+			_timestamps = timestamps;
 			_schema = schema;
 			_tablePrefix = tablePrefix;
 			_logger = logger;
@@ -56,12 +59,10 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
 		{
-						var db = GetDbConnection();
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
 			return await GetByAnyTagsWithTagsAsync(tags, db, t);
 		}
-
-		
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
 		{
@@ -392,14 +393,18 @@ SET
 WHERE Id IN 
     @Ids
 ";
-			var now = DateTime.Now;
+			var now = _timestamps.GetCurrentTime();
 			var user = LockedIdentity.Get();
 
-			// ReSharper disable once PossibleMultipleEnumeration
-			await db.ExecuteAsync(sql, new {Now = now, Ids = tasks.Select(task => task.Id), User = user}, t);
+			var array = tasks as BackgroundTask[] ?? tasks.ToArray();
+			var ids = array.Select(task => task.Id);
 
 			// ReSharper disable once PossibleMultipleEnumeration
-			foreach (var task in tasks)
+			var updated = await db.ExecuteAsync(sql, new {Now = now, Ids = ids, User = user}, t);
+			Debug.Assert(updated == array.Length, "did not update the expected number of tasks");
+
+			// ReSharper disable once PossibleMultipleEnumeration
+			foreach (var task in array)
 			{
 				task.LockedAt = now;
 				task.LockedBy = user;
