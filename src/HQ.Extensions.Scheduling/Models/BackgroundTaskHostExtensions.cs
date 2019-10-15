@@ -73,16 +73,16 @@ namespace HQ.Extensions.Scheduling.Models
 			// Set the "Start" property only once, equal to the very first RunAt 
 			task.Start = task.RunAt;
 
-			if (!host.Options.DelayTasks)
-			{
-				return (await host.AttemptTaskAsync(task, false), task);
-			}
-
 			if (host.Store != null)
 			{
 				await host.Store.SaveAsync(task);
 			}
 
+			if (!host.Options.DelayTasks)
+			{
+				return (await host.AttemptTaskAsync(task, false), task);
+			}
+			
 			return (true, task);
 		}
 
