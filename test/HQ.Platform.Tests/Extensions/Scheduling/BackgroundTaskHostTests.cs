@@ -137,7 +137,8 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 				var hanging = (await Store.GetHangingTasksAsync()).ToList();
 				Assert.Equal(1, hanging.Count, "Hanging task is not considered hanging by the task store");
 
-				await host.CleanUpHangingTasksAsync();
+				var result = await host.CleanUpHangingTasksAsync();
+				Assert.True(result, "Hanging task operation did not return successfully.");
 			}
 			
 			host.Stop();
