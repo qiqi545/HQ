@@ -145,12 +145,16 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private IEnumerable<BackgroundTask> EnqueueTasks()
 		{
-			return Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult();
+			var tasks = Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult();
+
+			return tasks;
 		}
 
 		private IEnumerable<BackgroundTask> HangingTasks()
 		{
-			return Store.GetHangingTasksAsync().GetAwaiter().GetResult();
+			var tasks = Store.GetHangingTasksAsync().GetAwaiter().GetResult();
+
+			return tasks;
 		}
 
 		public void Start(bool immediate = false)
