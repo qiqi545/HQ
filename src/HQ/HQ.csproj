@@ -104,7 +104,7 @@
     <Content Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.7.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.8.1" />
   </ItemGroup>
 
   <!-- Azure -->
@@ -148,7 +148,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="Bogus" Version="28.3.2" />
+    <PackageReference Include="Bogus" Version="28.4.1" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.7.9" />
@@ -157,7 +157,7 @@
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Postmark" Version="4.1.0" />
-    <PackageReference Include="System.Reactive" Version="4.1.6" />
+    <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="TypeKitchen" Version="1.0.19" />
     <PackageReference Include="WyHash" Version="1.0.4" />
