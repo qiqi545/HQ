@@ -49,19 +49,15 @@ namespace HQ.Integration.Sqlite.Scheduling
 		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
 		{
 			var db = _db.Current;
-			using (var t = BeginTransaction(_db.Current, out _))
-			{
-				return await GetByAnyTagsWithTagsAsync(tags, db, t);
-			}
+			using var t = BeginTransaction(_db.Current, out _);
+			return await GetByAnyTagsWithTagsAsync(tags, db, t);
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
 		{
 			var db = _db.Current;
-			using (var t = BeginTransaction(_db.Current, out _))
-			{
-				return await GetByAllTagsWithTagsAsync(tags, db, t);
-			}
+			using var t = BeginTransaction(_db.Current, out _);
+			return await GetByAllTagsWithTagsAsync(tags, db, t);
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
@@ -73,9 +69,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 			{
 				tasks = await GetUnlockedTasksWithTagsAsync(readAhead, db, t);
 				if (tasks.Any())
-				{
 					await LockTasksAsync(tasks, db, t);
-				}
 
 				if (owner)
 					t.Commit();
@@ -89,10 +83,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 			var db = _db.Current;
 			BackgroundTask task;
 			using (var t = BeginTransaction(_db.Current, out _))
-			{
 				task = await GetByIdWithTagsAsync(id, db, t);
-			}
-
 			return task;
 		}
 
@@ -101,9 +92,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 			var db = _db.Current;
 			IEnumerable<BackgroundTask> locked;
 			using (var t = BeginTransaction(_db.Current, out _))
-			{
 				locked = await GetLockedTasksWithTagsAsync(db, t);
-			}
 
 			return locked.Where(st => st.RunningOvertime).ToList();
 		}
@@ -111,10 +100,8 @@ namespace HQ.Integration.Sqlite.Scheduling
 		public async Task<IEnumerable<BackgroundTask>> GetAllAsync()
 		{
 			var db = _db.Current;
-			using (var t = BeginTransaction(_db.Current, out _))
-			{
-				return await GetAllWithTagsAsync(db, t);
-			}
+			using var t = BeginTransaction(_db.Current, out _);
+			return await GetAllWithTagsAsync(db, t);
 		}
 
 		public async Task<bool> SaveAsync(BackgroundTask task)

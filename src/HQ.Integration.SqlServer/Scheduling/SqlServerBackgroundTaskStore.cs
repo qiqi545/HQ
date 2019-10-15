@@ -28,6 +28,7 @@ using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {
@@ -35,15 +36,15 @@ namespace HQ.Integration.SqlServer.Scheduling
 	{
 		private static readonly List<string> NoTags = new List<string>();
 
-		private readonly IDataConnection _db;
 		private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
+		private readonly IServiceProvider _serviceProvider;
 		private readonly string _schema;
 		private readonly string _tablePrefix;
 
-		public SqlServerBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db, string schema = "dbo",
+		public SqlServerBackgroundTaskStore(IServiceProvider serviceProvider, string schema = "dbo",
 			string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
 		{
-			_db = db;
+			_serviceProvider = serviceProvider;
 			_schema = schema;
 			_tablePrefix = tablePrefix;
 			_logger = logger;
@@ -55,21 +56,23 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
 		{
-			var db = _db.Current;
+						var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
-			return await GetByAnyTagsWithTagsAsync(tags, _db.Current, t);
+			return await GetByAnyTagsWithTagsAsync(tags, db, t);
 		}
+
+		
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
 			return await GetByAllTagsWithTagsAsync(tags, db, t);
 		}
 
 		public Task<BackgroundTask> GetByIdAsync(int id)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
 			var task = GetByIdWithTagsAsync(id, db, t);
 			return task;
@@ -77,7 +80,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
 			var locked = await GetLockedTasksWithTagsAsync(db, t);
 			return locked.Where(st => st.RunningOvertime);
@@ -85,14 +88,14 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		public Task<IEnumerable<BackgroundTask>> GetAllAsync()
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out _);
 			return GetAllWithTagsAsync(db, t);
 		}
 
 		public async Task<bool> SaveAsync(BackgroundTask task)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
 			if (task.Id == 0)
 				await InsertBackgroundTaskAsync(task, db, t);
@@ -108,7 +111,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		public async Task<bool> DeleteAsync(BackgroundTask task)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
 			var sql = $@"
 -- Primary relationship:
@@ -127,28 +130,33 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 
 		public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
 			var tasks = await GetUnlockedTasksWithTags(readAhead, db, t);
+			// ReSharper disable once PossibleMultipleEnumeration
 			if (tasks.Any())
+				// ReSharper disable once PossibleMultipleEnumeration
 				await LockTasksAsync(tasks, db, t);
 			if (owner)
 				CommitTransaction(t);
+			// ReSharper disable once PossibleMultipleEnumeration
 			return tasks;
 		}
 
-		private IDbTransaction BeginTransaction(SqlConnection db, out bool owner)
+		private IDbTransaction BeginTransaction(SqlConnection connection, out bool owner)
 		{
-			if (_db.Transaction != null)
+			var db = GetDataConnection();
+
+			if (db.Transaction != null)
 			{
 				_logger?.Debug(() => "Transaction is already initiated; we are not the owner.");
 				owner = false;
-				return _db.Transaction;
+				return db.Transaction;
 			}
 
 			_logger?.Debug(() => "Owner-initiated transaction occurred.");
-			var transaction = db.BeginTransaction(IsolationLevel.Serializable);
-			_db.Transaction = transaction;
+			var transaction = connection.BeginTransaction(IsolationLevel.Serializable);
+			db.Transaction = transaction;
 			owner = true;
 			return transaction;
 		}
@@ -156,7 +164,8 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 		private void CommitTransaction(IDbTransaction t)
 		{
 			t.Commit();
-			_db.Transaction = null;
+			var db = GetDataConnection();
+			db.Transaction = null;
 			_logger?.Debug(() => "Owner-committed transaction occurred.");
 		}
 
@@ -196,7 +205,9 @@ ORDER BY
 
 			var matches = await db.QueryAsync<BackgroundTask>(matchSql, transaction: t);
 
+			// ReSharper disable once PossibleMultipleEnumeration
 			if (!matches.Any())
+				// ReSharper disable once PossibleMultipleEnumeration
 				return matches;
 
 			var fetchSql = $@"
@@ -206,6 +217,7 @@ LEFT JOIN {TagTable} ON {TagsTable}.TagId = {TagTable}.Id
 WHERE {TaskTable}.Id IN @Ids
 ORDER BY {TagTable}.Name ASC
 ";
+			// ReSharper disable once PossibleMultipleEnumeration
 			var ids = matches.Select(m => m.Id);
 
 			return await QueryWithSplitOnTagsAsync(db, t, fetchSql, new {Ids = ids});
@@ -223,7 +235,7 @@ ORDER BY {TagTable}.Name ASC
 			BackgroundTask task = null;
 			await db.QueryAsync<BackgroundTask, string, BackgroundTask>(sql, (s, tag) =>
 			{
-				task = task ?? s;
+				task ??= s;
 				if (tag != null)
 					task.Tags.Add(tag);
 				return task;
@@ -383,8 +395,10 @@ WHERE Id IN
 			var now = DateTime.Now;
 			var user = LockedIdentity.Get();
 
+			// ReSharper disable once PossibleMultipleEnumeration
 			await db.ExecuteAsync(sql, new {Now = now, Ids = tasks.Select(task => task.Id), User = user}, t);
 
+			// ReSharper disable once PossibleMultipleEnumeration
 			foreach (var task in tasks)
 			{
 				task.LockedAt = now;
@@ -436,6 +450,18 @@ WHEN NOT MATCHED THEN
 				var sql = string.Format(upsertSql, string.Join(",", values));
 				await db.ExecuteAsync(sql, new {BackgroundTaskId = task.Id, Tags = tags}, t);
 			}
+		}
+		
+		private IDbConnection GetDbConnection()
+		{
+			// IMPORTANT: DI is out of our hands, here.
+			return GetDataConnection().Current;
+		}
+
+		private IDataConnection<BackgroundTaskBuilder> GetDataConnection()
+		{
+			// IMPORTANT: DI is out of our hands, here.
+			return _serviceProvider.GetRequiredService<IDataConnection<BackgroundTaskBuilder>>();
 		}
 	}
 }
