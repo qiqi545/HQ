@@ -15,20 +15,18 @@
 
 #endregion
 
-using System;
-using System.Threading.Tasks;
-using HQ.Extensions.Scheduling.Hooks;
-using HQ.Extensions.Scheduling.Models;
+using Xunit;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
+namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
 {
-	public class HangingTaskHandler : Handler
+	public class SqliteBackgroundTaskHostTests : BackgroundTaskHostTests, IClassFixture<SchedulingSqliteFixture>
 	{
-		public static int Count { get; set; }
+		private readonly SchedulingSqliteFixture _fixture;
 
-		public async Task PerformAsync(ExecutionContext context)
+		// ReSharper disable once SuggestBaseTypeForParameter
+		public SqliteBackgroundTaskHostTests(SchedulingSqliteFixture fixture) : base(CreateServiceProvider(fixture))
 		{
-			await Task.Delay(TimeSpan.MaxValue);
+			_fixture = fixture;
 		}
 	}
 }

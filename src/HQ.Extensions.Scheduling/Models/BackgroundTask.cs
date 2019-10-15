@@ -86,7 +86,7 @@ namespace HQ.Extensions.Scheduling.Models
 			}
 
 			var now = DateTimeOffset.UtcNow;
-			var elapsed = LockedAt.Value - now;
+			var elapsed = now - LockedAt.Value;
 
 			// overtime = 125% of maximum runtime
 			var overage = (long) (MaximumRuntime.Value.Ticks / 0.25f);

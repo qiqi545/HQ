@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
@@ -109,14 +110,36 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 		{
 			using var host = CreateBackgroundTaskHost(o =>
 			{
-				o.DelayTasks = false;
+				o.DelayTasks = true;
 				o.MaximumAttempts = 1;
 				o.MaximumRuntimeSeconds = 1;
+				o.CleanupIntervalSeconds = 1000;
+				o.SleepIntervalSeconds = 1;
 			});
+			
 			host.Start();
-			await host.TryScheduleTaskAsync(typeof(HangingTaskHandler));
-			await Task.Delay(TimeSpan.FromSeconds(2)); // <-- enough time to timeout
-			await host.CleanUpHangingTasksAsync();
+			{
+				await host.TryScheduleTaskAsync(typeof(TerminalTaskHandler));
+
+				var all = (await Store.GetAllAsync()).ToList();
+				Assert.Equal(1, all.Count, "Queue task should exist");
+
+				await Task.Delay(TimeSpan.FromSeconds(2)); // <-- enough time to have started the terminal task
+
+				all = (await Store.GetAllAsync()).ToList();
+				Assert.Equal(1, all.Count, "Queue task should still exist, since it is terminal");
+				
+				var task = all.First();
+				Assert.True(task.LockedAt.HasValue, "Queue task should be locked");
+				Assert.True(task.MaximumRuntime.HasValue, "Queue task should be have a maximum runtime set.");
+				Assert.True(task.RunningOvertime, "Queue task should be running overtime");
+
+				var hanging = (await Store.GetHangingTasksAsync()).ToList();
+				Assert.Equal(1, hanging.Count, "Hanging task is not considered hanging by the task store");
+
+				await host.CleanUpHangingTasksAsync();
+			}
+			
 			host.Stop();
 		}
 

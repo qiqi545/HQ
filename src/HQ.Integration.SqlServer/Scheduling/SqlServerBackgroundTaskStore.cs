@@ -364,7 +364,7 @@ VALUES
 
 SELECT MAX(Id) FROM {TaskTable};
 ";
-			task.Id = (await db.QueryAsync<int>(sql, task, t)).Single();
+			task.Id = await db.QuerySingleAsync<int>(sql, task, t);
 			task.CreatedAt =
 				(await db.QueryAsync<DateTimeOffset>($"SELECT CreatedAt FROM {TaskTable} WHERE Id = @Id", task, t))
 				.Single();
