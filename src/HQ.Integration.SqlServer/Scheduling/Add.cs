@@ -40,14 +40,14 @@ namespace HQ.Integration.SqlServer.Scheduling
 	public static class Add
 	{
 		public static BackgroundTaskBuilder AddSqlServerBackgroundTasksStore(this BackgroundTaskBuilder builder,
-			string connectionString, ConnectionScope scope = ConnectionScope.ByThread,
+			string connectionString, ConnectionScope scope = ConnectionScope.AlwaysNew,
 			IConfiguration databaseConfig = null)
 		{
 			return builder.AddSqlServerBackgroundTasksStore(connectionString, scope, databaseConfig.FastBind);
 		}
 
 		public static BackgroundTaskBuilder AddSqlServerBackgroundTasksStore(this BackgroundTaskBuilder builder,
-			string connectionString, ConnectionScope scope = ConnectionScope.ByThread,
+			string connectionString, ConnectionScope scope = ConnectionScope.AlwaysNew,
 			Action<SqlServerOptions> configureDatabase = null)
 		{
 			var services = builder.Services;
