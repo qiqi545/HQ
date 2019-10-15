@@ -241,6 +241,8 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			var now = _timestamps.GetCurrentTime();
 
+			_logger.Debug(() => $"Cleaning up hanging tasks");
+
 			foreach (var task in tasks)
 			{
 				// bump up attempts (wouldn't have reached here normally since we never unlocked)
