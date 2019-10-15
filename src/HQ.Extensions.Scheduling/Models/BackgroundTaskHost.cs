@@ -241,8 +241,6 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			var now = _timestamps.GetCurrentTime();
 
-			_logger.Debug(() => "Cleaning up hanging tasks");
-
 			foreach (var task in tasks)
 			{
 				// bump up attempts (wouldn't have reached here normally since we never unlocked)
@@ -257,6 +255,7 @@ namespace HQ.Extensions.Scheduling.Models
 				{
 					if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
 					{
+						_logger.Debug(() => $"Deleting task {task.Id}");
 						Store.DeleteAsync(task);
 					}
 
@@ -264,6 +263,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 					if (ShouldRepeat(task, false, ExceededRuntimeException))
 					{
+						_logger.Debug(() => $"Cloning task {task.Id}");
 						CloneTaskAtNextOccurrence(task).GetAwaiter().GetResult();
 					}
 
@@ -271,6 +271,7 @@ namespace HQ.Extensions.Scheduling.Models
 				}
 
 				task.RunAt += _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
+				_logger.Debug(() => $"Rescheduling task {task.Id}");
 				Store.SaveAsync(task);
 			}
 
