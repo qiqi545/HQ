@@ -460,7 +460,8 @@ WHEN NOT MATCHED THEN
 		private IDbConnection GetDbConnection()
 		{
 			// IMPORTANT: DI is out of our hands, here.
-			return GetDataConnection().Current;
+			var connection = GetDataConnection();
+			return connection.Current;
 		}
 
 		private IDataConnection<BackgroundTaskBuilder> GetDataConnection()
