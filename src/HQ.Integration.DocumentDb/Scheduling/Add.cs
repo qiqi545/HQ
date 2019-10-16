@@ -76,7 +76,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 					r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>(),
 					r.GetService<ISafeLogger<DocumentDbRepository<BackgroundTaskDocument>>>()
 				));
-			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentBackgroundTaskStore>());
+			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, DocumentDbBackgroundTaskStore>());
 
 			var serviceProvider = builder.Services.BuildServiceProvider();
 			var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();

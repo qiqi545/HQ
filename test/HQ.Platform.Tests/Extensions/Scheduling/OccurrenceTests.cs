@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using HQ.Common;
 using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 
@@ -23,10 +24,19 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 {
 	public class OccurrenceTests : UnitUnderTest
 	{
+		private IBackgroundTaskStore _store;
+
+		public OccurrenceTests()
+		{
+			_store = new InMemoryBackgroundTaskStore(new LocalServerTimestampService());
+		}
+
 		[Test]
 		public void Occurrence_is_in_UTC()
 		{
-            var task = new BackgroundTask {RunAt = DateTimeOffset.UtcNow, Expression = CronTemplates.Daily(1, 3, 30)};
+            var task = new BackgroundTask {
+	            RunAt = _store.GetTaskTimestamp(), 
+	            Expression = CronTemplates.Daily(1, 3, 30)};
 
             var next = task.NextOccurrence;
 			Assert.NotNull(next);

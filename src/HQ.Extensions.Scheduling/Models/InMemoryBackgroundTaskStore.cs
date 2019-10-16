@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			if (!_tasks.TryGetValue(task.Priority, out var tasks))
 			{
-				task.CreatedAt = _timestamps.GetCurrentTime();
+				task.CreatedAt = GetTaskTimestamp();
 				_tasks.Add(task.Priority, tasks = new HashSet<BackgroundTask>());
 			}
 
@@ -88,7 +89,7 @@ namespace HQ.Extensions.Scheduling.Models
 			var all = _tasks.SelectMany(t => t.Value);
 
 			// None locked, failed or succeeded, must be due, ordered by due time then priority
-			var now = _timestamps.GetCurrentTime();
+			var now = GetTaskTimestamp();
 
 			var query = all
 				.Where(t => !t.FailedAt.HasValue && !t.SucceededAt.HasValue && !t.LockedAt.HasValue)
@@ -112,6 +113,11 @@ namespace HQ.Extensions.Scheduling.Models
 			return Task.FromResult(tasks.AsEnumerable());
 		}
 
+		public DateTimeOffset GetTaskTimestamp()
+		{
+			return _timestamps.GetCurrentTime();
+		}
+
 		public Task<BackgroundTask> GetByIdAsync(int id)
 		{
 			return Task.FromResult(_tasks.SelectMany(t => t.Value).SingleOrDefault(t => t.Id == id));
@@ -121,7 +127,7 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			var tasks = await GetAllAsync();
 
-			return tasks.Where(t => t.RunningOvertime).ToList();
+			return tasks.Where(t => t.IsRunningOvertime(this)).ToList();
 		}
 
 		public Task<IEnumerable<BackgroundTask>> GetAllAsync()

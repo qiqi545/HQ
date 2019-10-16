@@ -24,7 +24,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts.Runtime;
-using HQ.Extensions.Dates;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
@@ -36,32 +35,26 @@ using TypeKitchen;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-	public class BackgroundTaskHost : IDisposable, IServerTimestampService
+	public class BackgroundTaskHost : IDisposable
 	{
-		private static readonly IDictionary<Type, HandlerHooks> MethodCache =
-			new ConcurrentDictionary<Type, HandlerHooks>();
-
+		private static readonly IDictionary<Type, HandlerHooks> MethodCache = new ConcurrentDictionary<Type, HandlerHooks>();
 		private static readonly Exception ExceededRuntimeException = new Exception(ErrorStrings.ExceededRuntime);
 
 		private readonly IServiceProvider _backgroundServices;
-
 		private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
-
 		private readonly ISafeLogger<BackgroundTaskHost> _logger;
 		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 		private readonly ConcurrentDictionary<object, HandlerHooks> _pending;
 		private readonly ConcurrentDictionary<int, TaskScheduler> _schedulers;
-		private readonly IServerTimestampService _timestamps;
 		private readonly ITypeResolver _typeResolver;
-		private PushQueue<IEnumerable<BackgroundTask>> _background;
 
+		private PushQueue<IEnumerable<BackgroundTask>> _background;
 		private CancellationTokenSource _cancel;
 		private PushQueue<IEnumerable<BackgroundTask>> _maintenance;
 		private QueuedTaskScheduler _scheduler;
 
 		public BackgroundTaskHost(
 			IServiceProvider backgroundServices,
-			IServerTimestampService timestamps,
 			IBackgroundTaskStore store,
 			IBackgroundTaskSerializer serializer,
 			ITypeResolver typeResolver,
@@ -69,7 +62,6 @@ namespace HQ.Extensions.Scheduling.Models
 			ISafeLogger<BackgroundTaskHost> logger)
 		{
 			_backgroundServices = backgroundServices;
-			_timestamps = timestamps;
 			Store = store;
 			Serializer = serializer;
 			_typeResolver = typeResolver;
@@ -145,7 +137,8 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private IEnumerable<BackgroundTask> EnqueueTasks()
 		{
-			var tasks = Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult();
+			var tasks = Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult()
+				.MaybeList();
 
 			return tasks;
 		}
@@ -243,7 +236,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private bool CleanUpHangingTasks(IEnumerable<BackgroundTask> tasks)
 		{
-			var now = _timestamps.GetCurrentTime();
+			var now = Store.GetTaskTimestamp();
 
 			_logger.Debug(() => $"Cleaning up hanging tasks");
 
@@ -337,7 +330,7 @@ namespace HQ.Extensions.Scheduling.Models
 			var success = await PerformAsync(task);
 			if (!success.Item1)
 			{
-				task.RunAt = _timestamps.GetCurrentTime() +
+				task.RunAt = Store.GetTaskTimestamp() +
 				             _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
 			}
 
@@ -348,7 +341,7 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			var deleted = false;
 
-			var now = _timestamps.GetCurrentTime();
+			var now = Store.GetTaskTimestamp();
 
 			if (!success)
 			{
@@ -635,29 +628,5 @@ namespace HQ.Extensions.Scheduling.Models
 			_maintenance?.Dispose();
 			_maintenance = null;
 		}
-
-		#region Timestamp Passthrough
-
-		public DateTimeZone GetCurrentZonedTime()
-		{
-			return _timestamps.GetCurrentZonedTime();
-		}
-
-		public DateTimeOffset GetCurrentTime()
-		{
-			return _timestamps.GetCurrentTime();
-		}
-
-		public long GetCurrentTimestamp()
-		{
-			return _timestamps.GetCurrentTimestamp();
-		}
-
-		public JsonSerializerSettings GetDateTimeSerializerSettings()
-		{
-			return _timestamps.GetDateTimeSerializerSettings();
-		}
-
-		#endregion
 	}
 }

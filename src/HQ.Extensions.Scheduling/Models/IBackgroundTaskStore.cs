@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,5 +33,7 @@ namespace HQ.Extensions.Scheduling.Models
 		Task<bool> SaveAsync(BackgroundTask task);
 		Task<bool> DeleteAsync(BackgroundTask task);
 		Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead);
+
+		DateTimeOffset GetTaskTimestamp();
 	}
 }

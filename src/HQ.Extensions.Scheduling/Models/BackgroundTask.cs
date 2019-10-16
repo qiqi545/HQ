@@ -49,13 +49,10 @@ namespace HQ.Extensions.Scheduling.Models
 		public bool ContinueOnSuccess { get; set; } = true;
 		public bool ContinueOnFailure { get; set; } = true;
 		public bool ContinueOnError { get; set; } = true;
-
-		[Computed] public DateTimeOffset CreatedAt { get; set; }
+		public DateTimeOffset CreatedAt { get; set; }
 
 		[NotMapped] public List<string> Tags { get; set; } = new List<string>();
-
-		[Computed] public bool RunningOvertime => IsRunningOvertime();
-
+		
 		[JsonIgnore] [Computed] public DateTimeOffset? NextOccurrence => GetNextOccurence();
 		[JsonIgnore] [Computed] public DateTimeOffset? LastOccurrence => GetLastOccurrence();
 		[JsonIgnore] [Computed] public IEnumerable<DateTimeOffset> AllOccurrences => GetAllOccurrences();
@@ -73,31 +70,22 @@ namespace HQ.Extensions.Scheduling.Models
 
 		public string Data { get; set; }
 
-		private bool IsRunningOvertime()
+		public bool IsRunningOvertime(IBackgroundTaskStore store)
 		{
 			if (!LockedAt.HasValue)
-			{
 				return false;
-			}
 
 			if (!MaximumRuntime.HasValue)
-			{
 				return false;
-			}
 
-			var now = DateTimeOffset.UtcNow;
+			var now = store.GetTaskTimestamp();
 			var elapsed = now - LockedAt.Value;
 
 			// overtime = 125% of maximum runtime
-			var overage = (long) (MaximumRuntime.Value.Ticks / 0.25f);
-			var overtime = MaximumRuntime.Value + new TimeSpan(overage);
+			var overage = TimeSpan.FromTicks((long) (MaximumRuntime.Value.Ticks * 0.25f));
+			var overtime = MaximumRuntime.Value + overage;
 
-			if (elapsed >= overtime)
-			{
-				return true;
-			}
-
-			return false;
+			return elapsed >= overtime;
 		}
 
 		private IEnumerable<DateTimeOffset> GetAllOccurrences()

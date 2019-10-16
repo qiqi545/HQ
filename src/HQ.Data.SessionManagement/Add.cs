@@ -105,7 +105,6 @@ namespace HQ.Data.SessionManagement
 			where TConnectionFactory : class, IConnectionFactory, new()
 		{
 			var factory = new TConnectionFactory {ConnectionString = connectionString};
-
 			services.AddSingleton(factory);
 
 			var container = services.AddOrGetContainer(slot, extensions);

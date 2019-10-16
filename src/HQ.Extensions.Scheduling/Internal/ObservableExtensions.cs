@@ -43,7 +43,7 @@ namespace HQ.Extensions.Scheduling.Internal
 		public static IObservable<T> AsContinuousObservable<T>(this Func<T> @delegate, TimeSpan? interval = null,
 			TaskScheduler scheduler = null)
 		{
-			scheduler = scheduler ?? TaskScheduler.Default;
+			scheduler ??= TaskScheduler.Default;
 
 			return new Func<CancellationToken, T>(token => @delegate()).AsContinuousObservable(interval, scheduler);
 		}
@@ -63,7 +63,7 @@ namespace HQ.Extensions.Scheduling.Internal
 		public static IObservable<T> AsContinuousObservable<T>(this Func<IEnumerable<T>> @delegate,
 			TimeSpan? interval = null, TaskScheduler scheduler = null)
 		{
-			scheduler = scheduler ?? TaskScheduler.Default;
+			scheduler ??= TaskScheduler.Default;
 
 			if (interval.HasValue)
 			{
@@ -114,7 +114,7 @@ namespace HQ.Extensions.Scheduling.Internal
 		public static IObservable<T> AsContinuousObservable<T>(this Func<CancellationToken, T> @delegate,
 			TimeSpan? interval = null, TaskScheduler scheduler = null)
 		{
-			scheduler = scheduler ?? TaskScheduler.Default;
+			scheduler ??= TaskScheduler.Default;
 
 			if (interval.HasValue)
 			{

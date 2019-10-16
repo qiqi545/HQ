@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,14 +25,14 @@ using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.DocumentDb.Scheduling
 {
-	public class DocumentBackgroundTaskStore : IBackgroundTaskStore
+	public class DocumentDbBackgroundTaskStore : IBackgroundTaskStore
 	{
-		private readonly ISafeLogger<DocumentBackgroundTaskStore> _logger;
+		private readonly ISafeLogger<DocumentDbBackgroundTaskStore> _logger;
 		private readonly IDocumentDbRepository<BackgroundTaskDocument> _repository;
 		private readonly IServerTimestampService _timestamps;
 
-		public DocumentBackgroundTaskStore(IDocumentDbRepository<BackgroundTaskDocument> repository,
-			IServerTimestampService timestamps, ISafeLogger<DocumentBackgroundTaskStore> logger)
+		public DocumentDbBackgroundTaskStore(IDocumentDbRepository<BackgroundTaskDocument> repository,
+			IServerTimestampService timestamps, ISafeLogger<DocumentDbBackgroundTaskStore> logger)
 		{
 			_repository = repository;
 			_timestamps = timestamps;
@@ -79,7 +80,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 		{
 			var tasks = await _repository.RetrieveAsync(x => x.LockedAt.HasValue);
 
-			return tasks.Select(x => (BackgroundTask) x).Where(x => x.RunningOvertime);
+			return tasks.Select(x => (BackgroundTask) x).Where(x => x.IsRunningOvertime(this));
 		}
 
 		public async Task<bool> SaveAsync(BackgroundTask task)
@@ -130,7 +131,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
 		{
-			var now = _timestamps.GetCurrentTime().UtcDateTime;
+			var now = GetTaskTimestamp();
 
 			var tasks = (await _repository.RetrieveAsync(x =>
 				x.LockedAt == null &&
@@ -149,6 +150,11 @@ namespace HQ.Integration.DocumentDb.Scheduling
 				.OrderBy(x => x.RunAt)
 				.ThenBy(x => x.Priority)
 				.Select(x => (BackgroundTask) x);
+		}
+
+		public DateTimeOffset GetTaskTimestamp()
+		{
+			return _timestamps.GetCurrentTime().UtcDateTime;
 		}
 	}
 }

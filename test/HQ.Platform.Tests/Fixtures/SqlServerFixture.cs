@@ -52,7 +52,7 @@ namespace HQ.Platform.Tests.Fixtures
 			var instance = new SqlServerInstance();
 			
 	        var database = $"{Guid.NewGuid().ToString("N").ToUpperInvariant()}";
-	        var builder = new SqlConnectionStringBuilder("Data Source=(localdb)\\MSSQLLocalDB;Integrated Security=true;") {InitialCatalog = "master"};
+	        var builder = new SqlConnectionStringBuilder("Data Source=(localdb)\\MSSQLLocalDB;Integrated Security=true;MultipleActiveResultSets=true") {InitialCatalog = "master"};
 	        using (var connection = new SqlConnection(builder.ConnectionString))
 	        {
 		        connection.Open();
@@ -114,15 +114,15 @@ namespace HQ.Platform.Tests.Fixtures
 	        if (!(ServiceProvider.GetService(typeof(IDataConnection)) is IDataConnection connection))
 		        return;
 	        if (connection.Transaction == null)
-		        connection.Transaction = connection.Current.BeginTransaction(IsolationLevel.Snapshot);
-		}
+		        connection.SetTransaction(connection.Current.BeginTransaction(IsolationLevel.Snapshot));
+        }
 
         public void EndIsolation()
         {
 			if (!(ServiceProvider.GetService(typeof(IDataConnection)) is IDataConnection connection))
 				return;
 			connection.Transaction?.Rollback();
-			connection.Transaction = null;
-		}
+			connection.SetTransaction(null);
+        }
     }
 }

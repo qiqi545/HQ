@@ -19,7 +19,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
@@ -113,8 +112,9 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 				o.DelayTasks = true;
 				o.MaximumAttempts = 1;
 				o.MaximumRuntimeSeconds = 1;
-				o.CleanupIntervalSeconds = 1000;
 				o.SleepIntervalSeconds = 1;
+
+				o.CleanupIntervalSeconds = 1000;
 			});
 			
 			host.Start();
@@ -124,7 +124,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 				var all = (await Store.GetAllAsync()).ToList();
 				Assert.Equal(1, all.Count, "Queue task should exist");
 
-				await Task.Delay(TimeSpan.FromSeconds(2)); // <-- enough time to have started the terminal task
+				await Task.Delay(TimeSpan.FromSeconds(3)); // <-- enough time to have started the terminal task
 
 				all = (await Store.GetAllAsync()).ToList();
 				Assert.Equal(1, all.Count, "Queue task should still exist, since it is terminal");
@@ -132,7 +132,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 				var task = all.First();
 				Assert.True(task.LockedAt.HasValue, "Queue task should be locked");
 				Assert.True(task.MaximumRuntime.HasValue, "Queue task should be have a maximum runtime set.");
-				Assert.True(task.RunningOvertime, "Queue task should be running overtime");
+				Assert.True(task.IsRunningOvertime(Store), "Queue task should be running overtime");
 
 				var hanging = (await Store.GetHangingTasksAsync()).ToList();
 				Assert.Equal(1, hanging.Count, "Hanging task is not considered hanging by the task store");
@@ -148,14 +148,15 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
         {
             var services = new ServiceCollection();
             services.AddBackgroundTasks(configureOptions);
+
             var serviceProvider = services.BuildServiceProvider();
-			var timestamps = serviceProvider.GetRequiredService<IServerTimestampService>();
+
 			var serializer = new JsonBackgroundTaskSerializer();
 			var typeResolver = new ReflectionTypeResolver();
 			var options = serviceProvider.GetRequiredService<IOptionsMonitor<BackgroundTaskOptions>>();
 			var host = serviceProvider.GetService<ISafeLogger<BackgroundTaskHost>>();
 
-			var scheduler = new BackgroundTaskHost(serviceProvider, timestamps, Store, serializer, typeResolver, options, host);
+			var scheduler = new BackgroundTaskHost(serviceProvider, Store, serializer, typeResolver, options, host);
             return scheduler;
         }
 	}

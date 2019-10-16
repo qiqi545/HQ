@@ -23,9 +23,11 @@ namespace HQ.Data.SessionManagement
 	public interface IDataConnection
 	{
 		IDbConnection Current { get; }
-		IDbTransaction Transaction { get; set; }
 		void SetTypeInfo(Type type);
 		void SetTypeInfo<T>();
 		bool TryGetLastInsertedId<TKey>(out TKey key);
+
+		IDbTransaction Transaction { get; }
+		void SetTransaction(IDbTransaction transaction);
 	}
 }

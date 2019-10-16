@@ -81,6 +81,11 @@ namespace HQ.Integration.Sqlite.Scheduling
 			return tasks;
 		}
 
+		public DateTimeOffset GetTaskTimestamp()
+		{
+			return _timestamps.GetCurrentTime();
+		}
+
 		public async Task<BackgroundTask> GetByIdAsync(int id)
 		{
 			var db = _db.Current;
@@ -97,7 +102,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 			using (var t = BeginTransaction(_db.Current, out _))
 				locked = await GetLockedTasksWithTagsAsync(db, t);
 
-			return locked.Where(st => st.RunningOvertime).ToList();
+			return locked.Where(st => st.IsRunningOvertime(this)).ToList();
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> GetAllAsync()
@@ -154,7 +159,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 		private IDbTransaction BeginTransaction(IDbConnection db, out bool owner)
 		{
 			var transaction = db.BeginTransaction(IsolationLevel.Serializable);
-			_db.Transaction = transaction;
+			_db.SetTransaction(transaction);
 			owner = true;
 			return transaction;
 		}
@@ -215,7 +220,7 @@ SET
 WHERE Id IN 
     :Ids
 ";
-			var now = _timestamps.GetCurrentTime();
+			var now = GetTaskTimestamp();
 			var user = LockedIdentity.Get();
 
 			await db.ExecuteAsync(sql, new {Now = now, Ids = tasks.Select(task => task.Id), User = user}, t);

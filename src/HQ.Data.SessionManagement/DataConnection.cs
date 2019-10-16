@@ -75,6 +75,15 @@ namespace HQ.Data.SessionManagement
 			}
 		}
 
-		public IDbTransaction Transaction { get; set; }
+		private volatile IDbTransaction _transaction;
+		public IDbTransaction Transaction
+		{
+			get => _transaction;
+		}
+
+		public void SetTransaction(IDbTransaction transaction)
+		{
+            _transaction = transaction;
+		}
 	}
 }
