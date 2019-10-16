@@ -146,7 +146,7 @@ namespace HQ.Integration.SqlServer.Scheduling
 
 		#region Mutate
 
-		public async Task<bool> SaveAsync(BackgroundTask task)
+		public Task<bool> SaveAsync(BackgroundTask task)
 		{
 			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
@@ -156,11 +156,11 @@ namespace HQ.Integration.SqlServer.Scheduling
 			try
 			{
 				if (task.Id == default)
-					await InsertBackgroundTaskAsync(task, db, t);
+					InsertBackgroundTask(task, db, t);
 				else
-					await UpdateBackgroundTaskAsync(task, db, t);
+					UpdateBackgroundTask(task, db, t);
 
-				await UpdateTagMapping(task, db, t);
+				UpdateTagMapping(task, db, t);
 
 				success = true;
 			}
@@ -179,10 +179,10 @@ namespace HQ.Integration.SqlServer.Scheduling
 				}
 			}
 
-			return success;
+			return Task.FromResult(success);
 		}
 		
-		public async Task<bool> DeleteAsync(BackgroundTask task)
+		public Task<bool> DeleteAsync(BackgroundTask task)
 		{
 			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
@@ -200,7 +200,7 @@ DELETE FROM {TaskTable} WHERE Id = @Id;
 DELETE FROM {TagTable}
 WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 ";
-				var deleted = await db.ExecuteAsync(sql, task, t);
+				var deleted = db.Execute(sql, task, t);
 				if (deleted != 1)
 					_logger.Warn(() => "Task with ID {Id} was not deleted", task.Id);
 
@@ -221,7 +221,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 				}
 			}
 
-			return success;
+			return Task.FromResult(success);
 		}
 
 		public Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
@@ -478,7 +478,7 @@ ORDER BY {TagTable}.Name ASC
 			return result;
 		}
 
-		private async Task UpdateBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		private void UpdateBackgroundTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
 		{
 			var sql = $@"
 UPDATE {TaskTable} 
@@ -506,10 +506,10 @@ SET
 WHERE 
     Id = @Id
 ";
-			await db.ExecuteAsync(sql, task, t);
+			db.Execute(sql, task, t);
 		}
 
-		private async Task InsertBackgroundTaskAsync(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		private void InsertBackgroundTask(BackgroundTask task, IDbConnection db, IDbTransaction t)
 		{
 			task.CreatedAt = GetTaskTimestamp();
 
@@ -521,7 +521,7 @@ VALUES
 
 SELECT MAX([Id]) AS [Id] FROM {TaskTable}
 ";
-			task.Id = await db.QuerySingleAsync<int>(sql, task, t);
+			task.Id = db.QuerySingle<int>(sql, task, t);
 		}
 
 		private void LockTasks(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
@@ -552,13 +552,13 @@ WHERE Id IN
 			}
 		}
 
-		private async Task UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)
+		private void UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)
 		{
 			var source = task.Tags ?? NoTags;
 
 			if (source == NoTags || source.Count == 0)
 			{
-				await db.ExecuteAsync($"DELETE FROM {TagsTable} WHERE [BackgroundTaskId] = @Id", task, t);
+				db.Execute($"DELETE FROM {TagsTable} WHERE [BackgroundTaskId] = @Id", task, t);
 				return;
 			}
 
@@ -594,7 +594,7 @@ WHEN NOT MATCHED THEN
 ";
 				var values = tags.Enumerate(tag => $"('{tag}')");
 				var sql = string.Format(upsertSql, string.Join(",", values));
-				await db.ExecuteAsync(sql, new {BackgroundTaskId = task.Id, Tags = tags}, t);
+				db.Execute(sql, new {BackgroundTaskId = task.Id, Tags = tags}, t);
 			}
 		}
 
