@@ -592,12 +592,12 @@ WHEN NOT MATCHED THEN
     INSERT (BackgroundTaskId,TagId) VALUES (Pending.BackgroundTaskId, Pending.TagId)
 ;
 ";
-				var values = tags.Enumerate(tag => $"('{tag}')");
+				var values = GetTagClauses(tags);
 				var sql = string.Format(upsertSql, string.Join(",", values));
 				db.Execute(sql, new {BackgroundTaskId = task.Id, Tags = tags}, t);
 			}
 		}
-
+		
 		#endregion
 
 		private WeakReference<IDbConnection> _lastDbConnection;
@@ -636,6 +636,13 @@ WHEN NOT MATCHED THEN
 		{
 			foreach (var id in tasks.Enumerate(x => x.Id))
 				yield return id;
+		}
+
+
+		private static IEnumerable<string> GetTagClauses(List<string> tags)
+		{
+			foreach (var tag in tags.Enumerate(tag => $"('{tag}')"))
+				yield return tag;
 		}
 	}
 }

@@ -40,16 +40,18 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
         {
             var create = CreateNewTask();
             create.Tags.Add("a");
-            await Store.SaveAsync(create);
+            
+            var created = await Store.SaveAsync(create);
+			Assert.True(created, "Task not created");
 
-            var created = await Store.GetByIdAsync(create.Id);
-            Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
+			var exists = await Store.GetByIdAsync(create.Id);
+            Assert.NotNull(exists, $"Created task with ID '{create.Id}' is not visible");
 
-            created.Tags.Add("b");
-            await Store.SaveAsync(created);
+            exists.Tags.Add("b");
+            await Store.SaveAsync(exists);
 
-            created.Tags.Add("c");
-            await Store.SaveAsync(created);
+            exists.Tags.Add("c");
+            await Store.SaveAsync(exists);
 
             var all = (await Store.GetAllAsync()).MaybeList();
 			Assert.Equal(1, all.Count);
