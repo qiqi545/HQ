@@ -20,7 +20,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
@@ -147,23 +150,48 @@ namespace HQ.Integration.SqlServer.Scheduling
 		{
 			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
-			if (task.Id == 0)
-				await InsertBackgroundTaskAsync(task, db, t);
-			else
-				await UpdateBackgroundTaskAsync(task, db, t);
 
-			await UpdateTagMapping(task, db, t);
+			var success = false;
 
-			if (owner)
-				CommitTransaction(t);
-			return true;
+			try
+			{
+				if (task.Id == default)
+					await InsertBackgroundTaskAsync(task, db, t);
+				else
+					await UpdateBackgroundTaskAsync(task, db, t);
+
+				await UpdateTagMapping(task, db, t);
+
+				success = true;
+			}
+			catch (Exception e)
+			{
+				_logger.Error(() => "Error saving task with ID {Id}", e, task.Id);
+			}
+			finally
+			{
+				if (owner)
+				{
+					if(success)
+						CommitTransaction(t);
+					else
+						RollbackTransaction(t);
+				}
+			}
+
+			return success;
 		}
 		
 		public async Task<bool> DeleteAsync(BackgroundTask task)
 		{
 			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
-			var sql = $@"
+
+			var success = false;
+
+			try
+			{
+				var sql = $@"
 -- Primary relationship:
 DELETE FROM {TagsTable} WHERE BackgroundTaskId = @Id;
 DELETE FROM {TaskTable} WHERE Id = @Id;
@@ -172,42 +200,82 @@ DELETE FROM {TaskTable} WHERE Id = @Id;
 DELETE FROM {TagTable}
 WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 ";
-			await db.ExecuteAsync(sql, task, t);
-			if (owner)
-				CommitTransaction(t);
-			return true;
+				var deleted = await db.ExecuteAsync(sql, task, t);
+				if (deleted != 1)
+					_logger.Warn(() => "Task with ID {Id} was not deleted", task.Id);
+
+				success = true;
+			}
+			catch (Exception e)
+			{
+				_logger.Error(() => "Error deleting task with ID {Id}", e, task.Id);
+			}
+			finally
+			{
+				if (owner)
+				{
+					if (success)
+						CommitTransaction(t);
+					else
+						RollbackTransaction(t);
+				}
+			}
+
+			return success;
 		}
 
 		public Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
 		{
 			var db = GetDbConnection();
 			var t = BeginTransaction((SqlConnection) db, out var owner);
-			
-			var tasks = GetUnlockedTasksWithTags(readAhead, db, t);
 
-			if (tasks.Count == 0)
-				return Task.FromResult((IEnumerable<BackgroundTask>) tasks);
+			var success = false;
 
-			LockTasks(tasks, db, t);
+			try
+			{
+				var tasks = GetUnlockedTasksWithTags(readAhead, db, t);
 
-			if (owner)
-				CommitTransaction(t);
+				if (tasks.Count > 0)
+					LockTasks(tasks, db, t);
 
-			return Task.FromResult((IEnumerable<BackgroundTask>) tasks);
+				var result = Task.FromResult((IEnumerable<BackgroundTask>) tasks);
+				success = true;
+				return result;
+			}
+			catch (Exception e)
+			{
+				_logger.Error(() => "Error locking tasks", e);
+				return Task.FromResult(Enumerable.Empty<BackgroundTask>());
+			}
+			finally
+			{
+				if (owner)
+				{
+					if (success)
+						CommitTransaction(t);
+					else
+						RollbackTransaction(t);
+				}
+			}
 		}
 
 		#endregion
 
-		private IDbTransaction BeginTransaction(SqlConnection connection, out bool owner)
+
+		#region Transaction Management
+
+		private static readonly object Sync = new object();
+		private IDbTransaction BeginTransaction(SqlConnection connection, out bool owner, [CallerMemberName] string callerMemberName = null)
 		{
 			var db = GetDataConnection();
 
 			if (db.Transaction == null)
 			{
-				lock (this)
+				lock (Sync)
 				{
 					if (db.Transaction == null)
 					{
+						Trace.TraceInformation($"{callerMemberName}:{nameof(BeginTransaction)} on {Thread.CurrentThread.ManagedThreadId}");
 						var transaction = connection.BeginTransaction(IsolationLevel.Serializable);
 						db.SetTransaction(transaction);
 						owner = true;
@@ -223,13 +291,25 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 			return db.Transaction;
 		}
 
-		private void CommitTransaction(IDbTransaction t)
+		private void CommitTransaction(IDbTransaction t, [CallerMemberName] string callerMemberName = null)
 		{
 			t.Commit();
 			var db = GetDataConnection();
 			db.SetTransaction(null);
-			_logger?.Debug(() => "Owner-committed transaction occurred.");
+			_logger?.Debug(() => "Owner-transaction committed.");
+			Trace.TraceInformation($"{callerMemberName}:{nameof(CommitTransaction)} on {Thread.CurrentThread.ManagedThreadId}");
 		}
+
+		private void RollbackTransaction(IDbTransaction t, [CallerMemberName] string callerMemberName = null)
+		{
+			t.Rollback();
+			var db = GetDataConnection();
+			db.SetTransaction(null);
+			_logger?.Debug(() => "Owner-transaction rolled back.");
+			Trace.TraceInformation($"{callerMemberName}:{nameof(RollbackTransaction)} on {Thread.CurrentThread.ManagedThreadId}");
+		}
+
+		#endregion
 
 		#region Transacted Calls (Non-Async)
 

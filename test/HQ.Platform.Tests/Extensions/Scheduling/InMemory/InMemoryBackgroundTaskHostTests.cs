@@ -16,6 +16,7 @@
 #endregion
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.InMemory
 {
@@ -24,7 +25,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.InMemory
 		private readonly InMemoryBackgroundTasksFixture _fixture;
 
 		// ReSharper disable once SuggestBaseTypeForParameter
-		public InMemoryBackgroundTaskHostTests(InMemoryBackgroundTasksFixture fixture) : base(CreateServiceProvider(fixture))
+		public InMemoryBackgroundTaskHostTests(InMemoryBackgroundTasksFixture fixture, ITestOutputHelper console) : base(CreateServiceProvider(fixture), console)
 		{
 			_fixture = fixture;
 		}

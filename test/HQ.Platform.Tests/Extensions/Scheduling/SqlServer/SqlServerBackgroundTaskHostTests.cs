@@ -16,6 +16,7 @@
 #endregion
 
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 {
@@ -24,7 +25,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 		private readonly SchedulingSqlServerFixture _fixture;
 
 		// ReSharper disable once SuggestBaseTypeForParameter
-		public SqlServerBackgroundTaskHostTests(SchedulingSqlServerFixture fixture) : base(CreateServiceProvider(fixture))
+		public SqlServerBackgroundTaskHostTests(SchedulingSqlServerFixture fixture, ITestOutputHelper console) : base(CreateServiceProvider(fixture), console)
 		{
 			_fixture = fixture;
 		}

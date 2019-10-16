@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,15 +29,19 @@ using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
+using Xunit.Abstractions;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling
 {
 	public abstract class BackgroundTaskHostTests : ServiceUnderTest
 	{
+		private readonly ITestOutputHelper _console;
+
 		protected readonly IBackgroundTaskStore Store;
 
-		protected BackgroundTaskHostTests(IServiceProvider serviceProvider) : base(serviceProvider)
+		protected BackgroundTaskHostTests(IServiceProvider serviceProvider, ITestOutputHelper console) : base(serviceProvider)
 		{
+			_console = console;
 			Store = ServiceProvider.GetRequiredService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
 		}
 		
@@ -131,7 +136,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 				
 				var task = all.First();
 				Assert.True(task.LockedAt.HasValue, "Queue task should be locked");
-				Assert.True(task.MaximumRuntime.HasValue, "Queue task should be have a maximum runtime set.");
+				Assert.True(task.MaximumRuntime.HasValue, "Queue task should have a maximum runtime set.");
 				Assert.True(task.IsRunningOvertime(Store), "Queue task should be running overtime");
 
 				var hanging = (await Store.GetHangingTasksAsync()).ToList();
@@ -139,6 +144,22 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 
 				var result = await host.CleanUpHangingTasksAsync();
 				Assert.True(result, "Hanging task operation did not return successfully.");
+
+				var threadId = 0;
+
+				await Task.Run(async () =>
+				{
+					var original = Interlocked.Exchange(ref threadId, Thread.CurrentThread.ManagedThreadId);
+					Assert.Equal(0, original);
+					return result = await host.CleanUpHangingTasksAsync();
+				});
+
+				await Task.Run(async () =>
+				{ 
+					var original = Interlocked.Exchange(ref threadId, Thread.CurrentThread.ManagedThreadId);
+					Assert.Equal(threadId, original, "Unexpected DI resolution of the second async cleanup thread");
+					return result = await host.CleanUpHangingTasksAsync();
+				});
 			}
 			
 			host.Stop();

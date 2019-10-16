@@ -15,28 +15,38 @@
 
 using System;
 using System.Diagnostics;
+using System.Text;
 
 namespace HQ.Test.Sdk.Internal
 {
 	internal sealed class DelegateTraceListener : TraceListener
 	{
-		private readonly Action<string> _write;
 		private readonly Action<string> _writeLine;
+		private readonly StringBuilder _buffer;
 
-		public DelegateTraceListener(Action<string> write, Action<string> writeLine = null)
+		public DelegateTraceListener(Action<string> writeLine = null)
 		{
-			_write = write;
-			_writeLine = writeLine ?? write;
+			_writeLine = writeLine;
+			_buffer = new StringBuilder();
 		}
 
 		public override void WriteLine(string value)
 		{
-			_writeLine?.Invoke(value);
+			try
+			{
+				Write(value);
+				_writeLine?.Invoke(value);
+			}
+			catch (InvalidOperationException)
+			{
+				/* do nothing */
+			}
+			finally
+			{
+				_buffer.Clear();
+			}
 		}
 
-		public override void Write(string value)
-		{
-			_write?.Invoke(value);
-		}
+		public override void Write(string s) => _buffer.Append(s);
 	}
 }
