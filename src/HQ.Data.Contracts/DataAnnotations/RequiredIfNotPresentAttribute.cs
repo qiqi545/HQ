@@ -36,17 +36,19 @@ namespace HQ.Data.Contracts.DataAnnotations
 		private static MethodInfo ResolveDelegateType(string propertyOrFieldName, bool allowEmptyStrings,
 			ScriptOptions options)
 		{
-			var handler = Snippet.CreateMethod("public static bool Validate(object value)" +
-			                                   "{ " +
-			                                   "   var accessor = ReadAccessor.Create(value); " +
-			                                   $"   if(accessor.TryGetValue(value, \"{propertyOrFieldName}\", out var propertyOrField))" +
-			                                   "   { " +
-			                                   $"       var attribute = new RequiredAttribute {{ AllowEmptyStrings = {(allowEmptyStrings ? "true" : "false")} }};" +
-			                                   "       var present = attribute.IsValid(propertyOrField); " +
-			                                   "       return present ? attribute.IsValid(value) : true;" +
-			                                   "   }" +
-			                                   "   return false;" +
-			                                   "}", options);
+			var code = "public static bool Validate(object value)" +
+			           "{ " +
+			           "   var accessor = ReadAccessor.Create(value); " +
+			           $"   if(accessor.TryGetValue(value, \"{propertyOrFieldName}\", out var propertyOrField))" +
+			           "   { " +
+			           $"       var attribute = new RequiredAttribute {{ AllowEmptyStrings = {(allowEmptyStrings ? "true" : "false")} }};" +
+			           "       var present = attribute.IsValid(propertyOrField); " +
+			           "       return present ? attribute.IsValid(value) : true;" +
+			           "   }" +
+			           "   return false;" +
+			           "}";
+
+			var handler = Snippet.CreateMethod(code, options);
 			return handler;
 		}
 	}

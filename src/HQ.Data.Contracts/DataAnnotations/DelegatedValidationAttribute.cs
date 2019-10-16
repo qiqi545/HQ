@@ -32,6 +32,7 @@ namespace HQ.Data.Contracts.DataAnnotations
 		{
 			var builder = Snippet.GetBuilder();
 			Options = builder
+				.Add<ReflectionTypeResolver>()
 				.Add<DelegatedValidationAttribute>()
 				.Add<RequiredAttribute>()
 				.Build();
