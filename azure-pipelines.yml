@@ -28,4 +28,4 @@ steps:
   displayName: Build
   inputs:
     command: build
-    projects: '**/*.sln'
+    projects: '**/HQ.Platform.sln'
