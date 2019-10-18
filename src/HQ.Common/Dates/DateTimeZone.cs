@@ -21,7 +21,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using TimeZoneConverter;
 
-namespace HQ.Extensions.Dates
+namespace HQ.Common.Dates
 {
 	/// <summary>
 	///     A <see cref="DateTimeOffset" /> replacement that doesn't lose time zone information,

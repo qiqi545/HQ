@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
-namespace HQ.Extensions.Dates
+namespace HQ.Common.Dates
 {
 	/// <summary>
 	///     A period of time used in date calculations.

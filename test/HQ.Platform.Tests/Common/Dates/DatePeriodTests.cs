@@ -17,10 +17,10 @@
 
 using System;
 using System.Linq;
-using HQ.Extensions.Dates;
+using HQ.Common.Dates;
 using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Extensions.Dates
+namespace HQ.Platform.Tests.Common.Dates
 {
     public class DatePeriodTests : UnitUnderTest
     {

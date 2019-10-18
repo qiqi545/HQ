@@ -23,7 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.InMemory
 {
-    public class InMemoryBackgroundTasksFixture : IServiceFixture, ISupportIsolation
+    public class InMemoryBackgroundTasksFixture : IServiceFixture
     {
         public void Dispose() { }
 

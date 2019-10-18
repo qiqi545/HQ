@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Dates
+namespace HQ.Common.Dates
 {
 	/// <summary>
 	///     A struct similar to <see cref="TimeSpan" /> that stores the elapsed time between two dates,

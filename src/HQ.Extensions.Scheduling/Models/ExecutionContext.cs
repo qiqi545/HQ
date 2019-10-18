@@ -18,33 +18,39 @@
 using System;
 using System.Threading;
 using HQ.Data.Contracts.Runtime;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Models
 {
-	public class ExecutionContext
+	public sealed class ExecutionContext : IDisposable
 	{
+		private readonly IServiceScope _serviceScope;
 		private readonly IKeyValueStore<string, object> _data;
 
-		public ExecutionContext(IServiceProvider serviceProvider, IKeyValueStore<string, object> data,
+		public ExecutionContext(IServiceScope serviceScope, IKeyValueStore<string, object> data,
 			CancellationToken cancellationToken = default)
 		{
 			Continue = true;
 			Successful = true;
-			ExecutionServices = serviceProvider;
+			
 			CancellationToken = cancellationToken;
+			_serviceScope = serviceScope;
 			_data = data;
 		}
 
-		public IServiceProvider ExecutionServices { get; }
+		public IServiceProvider ExecutionServices => _serviceScope.ServiceProvider;
 		public CancellationToken CancellationToken { get; }
 
 		public bool Continue { get; private set; }
 		public bool Successful { get; private set; }
 
-		public void Fail()
+        internal Exception Error { get; private set; }
+
+		public void Fail(Exception error = null)
 		{
 			if (!Continue)
 				throw new ExecutionException(this, $"{nameof(Fail)} was called on a halted execution");
+			Error = error;
 			Continue = false;
 			Successful = false;
 		}
@@ -88,5 +94,14 @@ namespace HQ.Extensions.Scheduling.Models
 			item = default;
 			return false;
 		}
+
+		#region IDisposable
+
+		public void Dispose()
+		{
+			_serviceScope.Dispose();
+		}
+
+		#endregion
 	}
 }

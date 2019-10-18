@@ -186,32 +186,30 @@ namespace HQ.Test.Sdk
 
                     var serviceProvider = serviceCollection.BuildServiceProvider();
                     Debug.Assert(serviceProvider != null);
-					
-                    using (var container = new DependencyContainer(serviceProvider))
+
+                    using var container = new DependencyContainer(serviceProvider);
+
+                    container.AddAspNetCore();
+					container.Register(serviceProvider);
+                    container.Register(services);
+                    container.Register(config);
+
+                    startup = container.Resolve<T>();
+                    Debug.Assert(startup != null);
+                    foreach (var action in configuration)
+	                    action(config);
+
+                    container.Register(startup);
+
+                    var method = startup.GetType().GetMethod("ConfigureServices");
+                    if (method != null)
                     {
-                        container.AddAspNetCore();
-
-                        container.Register(serviceProvider);
-                        container.Register(services);
-                        container.Register(config);
-
-                        startup = container.Resolve<T>();
-                        Debug.Assert(startup != null);
-                        foreach (var action in configuration)
-                            action(config);
-
-                        container.Register(startup);
-
-                        var method = startup.GetType().GetMethod("ConfigureServices");
-                        if (method != null)
-                        {
-	                        var accessor = CallAccessor.Create(method);
-	                        accessor.Call(startup);
-						}
-                        
-                        foreach (var action in configureServices)
-                            action(serviceCollection);
+	                    var accessor = CallAccessor.Create(method);
+	                    accessor.Call(startup);
                     }
+                        
+                    foreach (var action in configureServices)
+	                    action(serviceCollection);
                 });
 
             if (topology == SystemTopology.Web)
@@ -226,25 +224,23 @@ namespace HQ.Test.Sdk
                     var serviceProvider = services.BuildServiceProvider();
                     Debug.Assert(serviceProvider != null);
 
-                    using (var container = new DependencyContainer(serviceProvider))
+                    using var container = new DependencyContainer(serviceProvider);
+
+                    container.AddAspNetCore();
+                    container.Register(serviceProvider);
+                    container.Register(services);
+                    container.Register(config);
+                    container.Register(startup);
+                    container.Register(app);
+
+                    var method = startup.GetType().GetMethod("Configure");
+                    if (method != null)
                     {
-                        container.AddAspNetCore();
-
-                        container.Register(serviceProvider);
-                        container.Register(services);
-                        container.Register(config);
-                        container.Register(startup);
-                        container.Register(app);
-
-                        var method = startup.GetType().GetMethod("Configure");
-                        if (method != null)
-                        {
-	                        var accessor = CallAccessor.Create(method);
-	                        accessor.Call(startup);
-						}
-                        foreach (var action in configure)
-                            action(app);
+	                    var accessor = CallAccessor.Create(method);
+	                    accessor.Call(startup);
                     }
+                    foreach (var action in configure)
+	                    action(app);
                 });
             }
 

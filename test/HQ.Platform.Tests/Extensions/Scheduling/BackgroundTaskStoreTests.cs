@@ -35,7 +35,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Store = ServiceProvider.GetRequiredService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Adding_tags_synchronizes_with_store()
         {
             var create = CreateNewTask();
@@ -58,7 +58,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.Equal(3, all.Single().Tags.Count);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Can_delete_tasks_with_tags()
         {
             var create = CreateNewTask();
@@ -77,7 +77,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.Null(deleted);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Can_save_multiple_tasks_with_tags()
         {
             var first = CreateNewTask();
@@ -95,7 +95,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             await Store.DeleteAsync(second);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Can_search_for_all_tags()
         {
             var create = CreateNewTask();
@@ -117,7 +117,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.Equal(3, all.Single().Tags.Count);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Can_search_for_any_tags()
         {
             var create = CreateNewTask();
@@ -139,7 +139,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.Equal(3, all.Single().Tags.Count);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Inserts_new_task()
         {
             var create = CreateNewTask();
@@ -153,7 +153,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.Equal(create.Id, created.Id);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Locked_tasks_are_not_visible_to_future_fetches()
         {
             var created = CreateNewTask();
@@ -167,7 +167,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.True(!locked.Any(), "there was at least one unlocked task after locking all of them");
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Removing_tags_synchronizes_with_store()
         {
             var create = CreateNewTask();
@@ -198,7 +198,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.True(byId.Tags.Count == 0);
         }
 
-        [Test, Isolated]
+        [Test]
         public async Task Tags_are_saved_with_tasks()
         {
             var created = CreateNewTask();

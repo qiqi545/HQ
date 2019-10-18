@@ -16,10 +16,10 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
@@ -38,13 +38,13 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 		private readonly ITestOutputHelper _console;
 
 		protected readonly IBackgroundTaskStore Store;
-
+		
 		protected BackgroundTaskHostTests(IServiceProvider serviceProvider, ITestOutputHelper console) : base(serviceProvider)
 		{
 			_console = console;
 			Store = ServiceProvider.GetRequiredService(typeof(IBackgroundTaskStore)) as IBackgroundTaskStore;
 		}
-		
+
 		[Test]
 		public async Task Queues_for_delayed_execution()
 		{
@@ -55,7 +55,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
                 o.SleepIntervalSeconds = 1;
             });
             await host.TryScheduleTaskAsync(typeof(StaticCountingHandler), null, o => { o.RunAt =
-                DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1); });
+	            Store.GetTaskTimestamp() + TimeSpan.FromSeconds(1); });
 
             Assert.True(StaticCountingHandler.Count == 0, "handler should not have queued immediately since tasks are delayed");
 
@@ -66,7 +66,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 			Assert.True(StaticCountingHandler.Count == 1, "handler should have only executed once since it does not repeat");
 		}
 
-        [Test]
+		[Test]
 		public void Queues_for_delayed_execution_and_continuous_repeating_task()
 		{
             var host = CreateBackgroundTaskHost(o =>
@@ -77,7 +77,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             });
             host.TryScheduleTaskAsync(typeof(StaticCountingHandler), null, o =>
             {
-                o.RunAt = DateTimeOffset.UtcNow + TimeSpan.FromSeconds(1);
+                o.RunAt = Store.GetTaskTimestamp() + TimeSpan.FromSeconds(1);
                 o.RepeatIndefinitely(CronTemplates.Secondly(1));
             });
             host.Start(); // <-- starts background thread to poll for tasks

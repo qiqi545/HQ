@@ -154,7 +154,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 
 		public DateTimeOffset GetTaskTimestamp()
 		{
-			return _timestamps.GetCurrentTime().UtcDateTime;
+			return _timestamps.GetCurrentTime().ToUniversalTime();
 		}
 	}
 }

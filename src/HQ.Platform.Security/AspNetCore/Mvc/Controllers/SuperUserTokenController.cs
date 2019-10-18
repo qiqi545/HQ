@@ -39,6 +39,7 @@ using HQ.Platform.Security.Internal.Extensions;
 using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
@@ -115,7 +116,8 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 					.ActLike<IUserIdProvider<TKey>>();
 
 				// FIXME: pin claims transformation to user-provided scope
-				var token = provider.CreateToken<IUserIdProvider<TKey>, TKey>(claims, _security.Value);
+				var timestamps = Request.HttpContext.RequestServices.GetRequiredService<IServerTimestampService>();
+				var token = provider.CreateToken<IUserIdProvider<TKey>, TKey>(timestamps, claims, _security.Value);
 				return Task.FromResult((IActionResult) Ok(new {AccessToken = token}));
 			}
 			

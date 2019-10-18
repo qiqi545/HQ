@@ -83,7 +83,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 		public DateTimeOffset GetTaskTimestamp()
 		{
-			return _timestamps.GetCurrentTime();
+			return _timestamps.GetCurrentTime().ToUniversalTime();
 		}
 
 		public async Task<BackgroundTask> GetByIdAsync(int id)

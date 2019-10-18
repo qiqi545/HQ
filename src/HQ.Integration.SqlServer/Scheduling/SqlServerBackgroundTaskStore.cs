@@ -629,7 +629,7 @@ WHEN NOT MATCHED THEN
 
 		public DateTimeOffset GetTaskTimestamp()
 		{
-			return _timestamps.GetCurrentTime();
+			return _timestamps.GetCurrentTime().ToUniversalTime();
 		}
 
 		private static IEnumerable<int> GetTaskIds(List<BackgroundTask> tasks)

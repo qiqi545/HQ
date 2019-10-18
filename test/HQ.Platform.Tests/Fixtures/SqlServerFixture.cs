@@ -29,7 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Tests.Fixtures
 {
-	public abstract class SqlServerFixture : IServiceFixture, ISupportIsolation
+	public abstract class SqlServerFixture : IServiceFixture
     {
         public string ConnectionString => _stack.Peek().ConnectionString;
 
@@ -95,7 +95,6 @@ namespace HQ.Platform.Tests.Fixtures
 	        {
 				Trace.TraceError(e.ToString());
 			}
-	        
         }
 
 		private static string EnsureOutputDir()

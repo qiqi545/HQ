@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.Dates
+namespace HQ.Common.Dates
 {
 	/// <summary>
 	///     The frequency interval between occurrences in a <see cref="DatePeriod" />.

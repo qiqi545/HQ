@@ -115,7 +115,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 		public DateTimeOffset GetTaskTimestamp()
 		{
-			return _timestamps.GetCurrentTime();
+			return _timestamps.GetCurrentTime().ToUniversalTime();
 		}
 
 		public Task<BackgroundTask> GetByIdAsync(int id)

@@ -37,6 +37,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity.Mvc.Controllers
@@ -123,7 +124,9 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			var claims = _http.HttpContext.User.Claims;
 
 			var identity = user.ActLike<IUserIdProvider<TKey>>();
-			var token = identity.CreateToken<IUserIdProvider<TKey>, TKey>(claims, _securityOptions.CurrentValue);
+			var timestamps = Request.HttpContext.RequestServices.GetRequiredService<IServerTimestampService>();
+			var token = identity.CreateToken<IUserIdProvider<TKey>, TKey>(timestamps,
+				claims, _securityOptions.CurrentValue);
 
 			return Ok(new {AccessToken = token});
 		}

@@ -29,6 +29,7 @@ using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Internal;
 using ImpromptuInterface;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TypeKitchen;
@@ -38,8 +39,7 @@ namespace HQ.Extensions.Scheduling.Models
 	public class BackgroundTaskHost : IDisposable
 	{
 		private static readonly IDictionary<Type, HandlerHooks> MethodCache = new ConcurrentDictionary<Type, HandlerHooks>();
-		private static readonly Exception ExceededRuntimeException = new Exception(ErrorStrings.ExceededRuntime);
-
+		
 		private readonly IServiceProvider _backgroundServices;
 		private readonly ConcurrentDictionary<TaskScheduler, TaskFactory> _factories;
 		private readonly ISafeLogger<BackgroundTaskHost> _logger;
@@ -182,13 +182,17 @@ namespace HQ.Extensions.Scheduling.Models
 				CancellationToken = cancellationToken, MaxDegreeOfParallelism = ResolveConcurrency()
 			};
 
-			var context = ProvisionExecutionContext(cancellationToken);
-
-			Parallel.ForEach(_pending.Where(entry => entry.Value.OnHalt != null), options,
-				async e => { await e.Value.OnHalt.HaltAsync(context, immediate); });
+			using var context = ProvisionExecutionContext(cancellationToken);
+			
+			var pendingTasks = _pending.Where(entry => entry.Value.OnHalt != null);
+			Parallel.ForEach(pendingTasks, options, async e =>
+			{
+				// ReSharper disable once AccessToDisposedClosure (this is safe: immediately invoked and blocking)
+				await e.Value.OnHalt.HaltAsync(context, immediate);
+			});
 
 			_pending.Clear();
-
+			
 			_scheduler?.Dispose();
 			_scheduler = null;
 
@@ -208,7 +212,8 @@ namespace HQ.Extensions.Scheduling.Models
 				}
 			}
 
-			var context = new ExecutionContext(_backgroundServices, kv, cancellationToken);
+			var scope = _backgroundServices.CreateScope();
+			var context = new ExecutionContext(scope, kv, cancellationToken);
 			return context;
 		}
 
@@ -238,7 +243,7 @@ namespace HQ.Extensions.Scheduling.Models
 		{
 			var now = Store.GetTaskTimestamp();
 
-			_logger.Debug(() => $"Cleaning up hanging tasks");
+			_logger.Debug(() => "Cleaning up hanging tasks");
 
 			foreach (var task in tasks)
 			{
@@ -259,8 +264,9 @@ namespace HQ.Extensions.Scheduling.Models
 					}
 
 					task.FailedAt = now;
+					task.LastError = ErrorStrings.ExceededRuntime;
 
-					if (ShouldRepeat(task, false, ExceededRuntimeException))
+					if (ShouldRepeat(task, false))
 					{
 						_logger.Debug(() => $"Cloning task {task.Id}");
 						CloneTaskAtNextOccurrence(task).GetAwaiter().GetResult();
@@ -315,20 +321,20 @@ namespace HQ.Extensions.Scheduling.Models
 			if (_cancel.IsCancellationRequested)
 				return false;
 
-			var (success, error) = await AttemptCycleAsync(task);
+			var success = await DutyCycleAsync(task);
 			if (persist)
-				await UpdateTaskAsync(task, success, error);
+				await UpdateTaskAsync(task, success);
 
 			_cancel.Token.ThrowIfCancellationRequested();
 			return success;
 		}
 
-		private async Task<(bool, Exception)> AttemptCycleAsync(BackgroundTask task)
+		private async Task<bool> DutyCycleAsync(BackgroundTask task)
 		{
 			task.Attempts++;
 
 			var success = await PerformAsync(task);
-			if (!success.Item1)
+			if (!success)
 			{
 				task.RunAt = Store.GetTaskTimestamp() +
 				             _options.CurrentValue.IntervalFunction.NextInterval(task.Attempts);
@@ -337,7 +343,7 @@ namespace HQ.Extensions.Scheduling.Models
 			return success;
 		}
 
-		private async Task UpdateTaskAsync(BackgroundTask task, bool success, Exception exception)
+		private async Task UpdateTaskAsync(BackgroundTask task, bool success)
 		{
 			var deleted = false;
 
@@ -379,7 +385,7 @@ namespace HQ.Extensions.Scheduling.Models
 				}
 			}
 
-			if (ShouldRepeat(task, success, exception))
+			if (ShouldRepeat(task, success))
 			{
 				await CloneTaskAtNextOccurrence(task);
 			}
@@ -421,17 +427,17 @@ namespace HQ.Extensions.Scheduling.Models
 			await Store.SaveAsync(clone);
 		}
 
-		private static bool ShouldRepeat(BackgroundTask task, bool success, Exception exception)
+		private static bool ShouldRepeat(BackgroundTask task, bool success)
 		{
 			if (!task.SucceededAt.HasValue && !task.FailedAt.HasValue || task.NextOccurrence == null)
 				return false;
 
 			return success && task.ContinueOnSuccess ||
 			       !success && task.ContinueOnFailure ||
-			       exception != null && task.ContinueOnError;
+			       task.LastError != null && task.ContinueOnError;
 		}
 
-		private async Task<(bool, Exception)> PerformAsync(BackgroundTask task)
+		private async Task<bool> PerformAsync(BackgroundTask task)
 		{
 			// Acquire the handler:
 			var handler = CreateHandler(task);
@@ -439,15 +445,15 @@ namespace HQ.Extensions.Scheduling.Models
 			if (handler == null)
 			{
 				task.LastError = ErrorStrings.InvalidHandler;
-				return (false, null);
+				return false;
 			}
 
 			var hooks = GetOrCreateMethodHooks(handler);
-			var context = ProvisionExecutionContext(_cancel.Token, task.Data);
+
+			using var context = ProvisionExecutionContext(_cancel.Token, task.Data);
 
 			_pending.TryAdd(handler, hooks);
 
-			Exception exception;
 			try
 			{
 				// Before:
@@ -482,26 +488,29 @@ namespace HQ.Extensions.Scheduling.Models
 				{
 					await hooks.OnAfter?.AfterAsync(context);
 				}
-
-				exception = null;
 			}
-			catch (OperationCanceledException e)
+			catch (OperationCanceledException)
 			{
 				task.LastError = "Cancelled";
-				exception = e;
 			}
 			catch (Exception e)
 			{
 				task.LastError = e.Message;
 				hooks?.OnError?.ErrorAsync(context, e);
-				exception = e;
 			}
 			finally
 			{
+				// Error (passed via context):
+				if (task.LastError != null && hooks?.OnError != null && context.Error != null)
+				{
+                    task.LastError =  context.Error.Message;
+					hooks.OnError?.ErrorAsync(context, context.Error);
+				}
+                
 				_pending.TryRemove(handler, out _);
 			}
 
-			return (context.Successful, exception);
+			return context.Successful;
 		}
 
 		private object CreateHandler(BackgroundTask task)
