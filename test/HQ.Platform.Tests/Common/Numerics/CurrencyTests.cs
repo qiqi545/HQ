@@ -17,11 +17,11 @@
 
 using System.Globalization;
 using System.Threading;
-using HQ.Extensions.Numerics;
+using HQ.Common.Numerics;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Numerics
+namespace HQ.Platform.Tests.Common.Numerics
 {
     public class CurrencyTests : IClassFixture<CultureFixture>
     {

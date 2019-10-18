@@ -23,7 +23,6 @@
     <ProjectReference Include="..\..\src\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Extensions.Numerics\HQ.Extensions.Numerics.csproj" />
     <ProjectReference Include="..\..\src\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\..\src\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
     <ProjectReference Include="..\..\src\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />

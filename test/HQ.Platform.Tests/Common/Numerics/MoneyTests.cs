@@ -19,11 +19,12 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
-using HQ.Extensions.Numerics;
+using HQ.Common.Numerics;
+using HQ.Platform.Tests.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Numerics
+namespace HQ.Platform.Tests.Common.Numerics
 {
 	public class MoneyTests
 	{

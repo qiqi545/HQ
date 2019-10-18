@@ -1,8 +1,8 @@
-using HQ.Extensions.Numerics;
+using HQ.Common.Numerics;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Platform.Tests.Extensions.Numerics
+namespace HQ.Platform.Tests.Common.Numerics
 {
     public class FixedNumberTests : UnitUnderTest
     {
