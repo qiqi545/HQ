@@ -36,6 +36,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
 {

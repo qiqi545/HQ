@@ -22,6 +22,7 @@ using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Cryptography;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts.Versioning
 {

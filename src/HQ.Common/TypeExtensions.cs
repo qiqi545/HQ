@@ -53,15 +53,6 @@ namespace HQ.Common
 			typeof(BigInteger)
 		};
 
-		public static string GetNonGenericName(this Type type)
-		{
-			if (type == null)
-				return null;
-			var name = type.Name;
-			var index = name.IndexOf('`');
-			return index == -1 ? name : name.Substring(0, index);
-		}
-
 		public static bool IsInteger(this Type type)
 		{
 			return IntegerTypes.Contains(type);

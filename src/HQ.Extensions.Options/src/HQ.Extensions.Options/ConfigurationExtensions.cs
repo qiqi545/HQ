@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
+using Validator = System.ComponentModel.DataAnnotations.Validator;
 
 namespace HQ.Extensions.Options
 {
@@ -106,6 +107,7 @@ namespace HQ.Extensions.Options
 			var results = Pooling.ListPool<ValidationResult>.Get();
 			try
 			{
+				// FIXME: Use TK Validator
 				var context = new ValidationContext(instance, serviceProvider, null);
 				Validator.TryValidateObject(instance, context, results, true);
 				return results.Count == 0;
