@@ -112,7 +112,7 @@
     <Content Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.1" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.2" />
   </ItemGroup>
 
   <!-- This is required to work around when targeting both .NET Core 2.2 and .NET Core 3.0 -->
@@ -124,6 +124,9 @@
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[2.2.0]" />
         <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
@@ -145,7 +148,7 @@
   </Choose>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.5.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Bogus" Version="28.4.1" />
@@ -159,10 +162,10 @@
     <PackageReference Include="Postmark" Version="4.1.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.19" />
+    <PackageReference Include="TypeKitchen" Version="1.0.26" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
-    <PackageReference Include="GraphQL-Parser" Version="4.1.1" />
+    <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">
