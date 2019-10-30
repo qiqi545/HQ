@@ -79,18 +79,11 @@ namespace HQ.Extensions.Scheduling.Models
 			item = default;
 			return false;
 		}
-
-		public bool TryGetData(string key, out bool item)
+		
+		public bool TryGetData(string key, out object item)
 		{
-			if (_data.TryGetValue(key, out var value))
-			{
-				if (value is bool flag)
-				{
-					item = flag;
-					return true;
-				}
-			}
-
+			if (_data.TryGetValue(key, out item))
+				return true;
 			item = default;
 			return false;
 		}

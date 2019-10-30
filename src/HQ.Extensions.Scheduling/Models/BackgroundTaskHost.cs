@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -182,11 +183,12 @@ namespace HQ.Extensions.Scheduling.Models
 				CancellationToken = cancellationToken, MaxDegreeOfParallelism = ResolveConcurrency()
 			};
 
-			using var context = ProvisionExecutionContext(cancellationToken);
-			
 			var pendingTasks = _pending.Where(entry => entry.Value.OnHalt != null);
 			Parallel.ForEach(pendingTasks, options, async e =>
 			{
+				// FIXME: halt operation won't have user data in this context
+				using var context = ProvisionExecutionContext(cancellationToken, null);
+
 				// ReSharper disable once AccessToDisposedClosure (this is safe: immediately invoked and blocking)
 				await e.Value.OnHalt.HaltAsync(context, immediate);
 			});
@@ -200,16 +202,28 @@ namespace HQ.Extensions.Scheduling.Models
 			_maintenance.Stop(immediate);
 		}
 
-		private ExecutionContext ProvisionExecutionContext(CancellationToken cancellationToken, string data = null)
+		private ExecutionContext ProvisionExecutionContext(CancellationToken cancellationToken, string data)
 		{
 			var kv = new InMemoryKeyValueStore<string, object>();
 			if (!string.IsNullOrWhiteSpace(data))
 			{
-				var deserialized = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-				foreach (var entry in deserialized)
+				try
 				{
-					kv.AddOrUpdate(entry.Key, entry.Value);
+					var deserialized = JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
+					foreach (var entry in deserialized)
+					{
+						kv.AddOrUpdate(entry.Key, entry.Value);
+					}
 				}
+				catch (Exception e)
+				{
+					Trace.WriteLine(e);
+					throw;
+				}
+			}
+			else
+			{
+				Trace.TraceInformation("no data passed to execution context");
 			}
 
 			var scope = _backgroundServices.CreateScope();
@@ -421,7 +435,8 @@ namespace HQ.Extensions.Scheduling.Models
 				RunAt = nextOccurrence.GetValueOrDefault(),
 				MaximumAttempts = task.MaximumAttempts,
 				MaximumRuntime = task.MaximumRuntime,
-				Tags = task.Tags
+				Tags = task.Tags,
+				Data = task.Data
 			};
 
 			await Store.SaveAsync(clone);
@@ -439,7 +454,6 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private async Task<bool> PerformAsync(BackgroundTask task)
 		{
-			// Acquire the handler:
 			var handler = CreateHandler(task);
 
 			if (handler == null)

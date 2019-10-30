@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
@@ -25,9 +26,14 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
 	{
 		public static int Count { get; set; }
         
+		public static object Data { get; set; }
+
         public Task PerformAsync(ExecutionContext context)
         {
-            Count++;
+	        if (!context.TryGetData("Foo", out var data))
+		        Trace.WriteLine("missing data");
+	        Data = data;
+			Count++;
             return Task.CompletedTask;
         }
     }

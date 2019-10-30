@@ -64,7 +64,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 		public Task PerformAsync(ExecutionContext context)
 		{
 			_logger.Debug(() => $"{nameof(PerformAsync)} executed.");
-			if (context.TryGetData("Success", out var succeed) && succeed)
+			if (context.TryGetData("Success", out var succeed) && succeed is bool flag && flag)
 				context.Succeed();
 			else
 				context.Fail();

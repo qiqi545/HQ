@@ -77,17 +77,26 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             });
             host.TryScheduleTaskAsync(typeof(StaticCountingHandler), null, o =>
             {
+	            o.Data = "{ \"Foo\": \"123\" }";
                 o.RunAt = Store.GetTaskTimestamp() + TimeSpan.FromSeconds(1);
                 o.RepeatIndefinitely(CronTemplates.Secondly(1));
             });
             host.Start(); // <-- starts background thread to poll for tasks
 
             Assert.True(StaticCountingHandler.Count == 0, "handler should not have queued immediately since tasks are delayed");
+			
             Thread.Sleep(TimeSpan.FromSeconds(2)); // <-- enough time for the next occurrence
-            Assert.True(StaticCountingHandler.Count > 0, "handler should have executed since we scheduled it in the future");
-            Thread.Sleep(TimeSpan.FromSeconds(2)); // <-- enough time for the next occurrence
-            Assert.True(StaticCountingHandler.Count >= 2);
-        }
+			Assert.True(StaticCountingHandler.Count > 0, "handler should have executed since we scheduled it in the future");
+            Assert.NotNull(StaticCountingHandler.Data, "handler did not preserve data");
+			Assert.Equal(StaticCountingHandler.Data, "123", "handler misread data");
+			
+            StaticCountingHandler.Data = null;
+			
+			Thread.Sleep(TimeSpan.FromSeconds(2)); // <-- enough time for the next occurrence
+			Assert.True(StaticCountingHandler.Count >= 2);
+            Assert.NotNull(StaticCountingHandler.Data, "handler did not preserve data");
+            Assert.Equal(StaticCountingHandler.Data, "123", "handler misread data");
+		}
 
 		[Test]
 		public void Queues_for_immediate_execution()
