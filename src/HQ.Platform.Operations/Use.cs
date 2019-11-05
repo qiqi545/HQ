@@ -51,7 +51,7 @@ namespace HQ.Platform.Operations
 					{
 						var duration = sw.Elapsed;
 						StopwatchPool.Pool.Return(sw);
-						var header = options.Value.RequestProfilingHeader ?? HeaderNamesExt.ServerTiming;
+						var header = options.Value.RequestProfilingHeader ?? HeaderNames.ServerTiming;
 						context.Response.Headers.Add(header, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
 						return Task.CompletedTask;
 					});

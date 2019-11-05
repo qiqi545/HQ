@@ -18,6 +18,7 @@
 using System;
 using System.Runtime.Serialization;
 using HQ.Common;
+using TypeKitchen;
 
 namespace HQ.Extensions.Metrics
 {
@@ -55,8 +56,8 @@ namespace HQ.Extensions.Metrics
 		{
 			Name = metricName;
 			_evaluator = evaluator;
-			IsNumeric = typeof(T).IsNumeric();
-			IsBoolean = typeof(T).IsTruthy();
+			IsNumeric = TypeKitchen.TypeExtensions.IsNumeric(typeof(T));
+			IsBoolean = TypeKitchen.TypeExtensions.IsTruthy(typeof(T));
 		}
 
 		[IgnoreDataMember] public override MetricName Name { get; }

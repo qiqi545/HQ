@@ -23,7 +23,7 @@ namespace HQ.Data.Contracts.Attributes
 {
 	public class MetaDescriptionAttribute : Attribute
 	{
-		public MetaDescriptionAttribute(string content, string mediaType = MediaTypeNamesExt.Text.Markdown)
+		public MetaDescriptionAttribute(string content, string mediaType = MediaTypeNames.Text.Markdown)
 		{
 			Content = content;
 			MediaType = mediaType;

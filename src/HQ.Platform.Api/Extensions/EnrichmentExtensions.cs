@@ -101,7 +101,7 @@ namespace HQ.Platform.Api.Extensions
 
 			if (link.Length > 0)
 			{
-				response.Headers.Add(HeaderNamesExt.Link, link);
+				response.Headers.Add(HeaderNames.Link, link);
 			}
 
 			response.Headers.Add(queryOptions.TotalCountHeader, data.TotalCount.ToString());

@@ -17,14 +17,13 @@
 
 using System;
 using System.Net.Mime;
-using HQ.Common;
 
 namespace HQ.Data.Contracts.Attributes
 {
 	public class MetaCategoryAttribute : Attribute
 	{
 		public MetaCategoryAttribute(string name, string description,
-			string descriptionMediaType = MediaTypeNamesExt.Text.Markdown)
+			string descriptionMediaType = MediaTypeNames.Text.Markdown)
 		{
 			Name = name;
 			Description = description;

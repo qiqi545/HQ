@@ -12,7 +12,10 @@
   <ItemGroup>
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

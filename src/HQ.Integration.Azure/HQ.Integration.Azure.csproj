@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
   </ItemGroup>

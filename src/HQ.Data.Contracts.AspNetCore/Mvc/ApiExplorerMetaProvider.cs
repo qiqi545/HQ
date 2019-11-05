@@ -245,7 +245,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 				proxy = new { },
 				certificate = new { },
 				method = description.HttpMethod,
-				description = new MetaDescription {content = "", type = MediaTypeNamesExt.Text.Markdown, version = null},
+				description = new MetaDescription {content = "", type = MediaTypeNames.Text.Markdown, version = null},
 				header = new List<MetaParameter>
 				{
 					new MetaParameter
@@ -274,7 +274,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 				id = Guid.NewGuid(),
 				name = relativePath,
 				description =
-					new MetaDescription {content = "", type = MediaTypeNamesExt.Text.Markdown, version = null},
+					new MetaDescription {content = "", type = MediaTypeNames.Text.Markdown, version = null},
 				variable = new List<dynamic>(),
 				@event = new List<dynamic>(),
 				request = operation,

@@ -87,7 +87,7 @@ namespace HQ.Platform.Operations.Controllers
 		[HttpPatch("")]
 		[HttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
-		[Consumes(MediaTypeNamesExt.Application.JsonPatch)]
+		[Consumes(MediaTypeNames.Application.JsonPatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] JsonPatchDocument patch,
 			[FromRoute] string section = null)
 		{
@@ -116,7 +116,7 @@ namespace HQ.Platform.Operations.Controllers
 		[HttpPatch("")]
 		[HttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
-		[Consumes(MediaTypeNamesExt.Application.JsonMergePatch)]
+		[Consumes(MediaTypeNames.Application.JsonMergePatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] object patch, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))

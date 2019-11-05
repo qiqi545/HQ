@@ -48,7 +48,7 @@ namespace HQ.Platform.Operations.Configuration
 		public string CacheDebuggingPath { get; set; } = "/caches";
 
 		public bool EnableRequestProfiling { get; set; } = true;
-		public string RequestProfilingHeader { get; set; } = HeaderNamesExt.ServerTiming;
+		public string RequestProfilingHeader { get; set; } = HeaderNames.ServerTiming;
 
 		public bool EnableHealthChecksEndpoints { get; set; } = true;
 		public string HealthCheckLivePath { get; set; } = "/ping";

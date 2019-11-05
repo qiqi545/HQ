@@ -16,14 +16,12 @@
 #endregion
 
 using HQ.Common;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Configuration
 {
 	public class MethodOverrideOptions : FeatureToggle
 	{
-		public string MethodOverrideHeader { get; set; } = HeaderNamesExt.MethodOverride;
+		public string MethodOverrideHeader { get; set; } = HeaderNames.MethodOverride;
 
 		public string[] AllowedMethodOverrides { get; set; } =
 		{

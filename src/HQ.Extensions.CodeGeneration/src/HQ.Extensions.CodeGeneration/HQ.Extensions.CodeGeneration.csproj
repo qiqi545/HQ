@@ -22,7 +22,10 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.26" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

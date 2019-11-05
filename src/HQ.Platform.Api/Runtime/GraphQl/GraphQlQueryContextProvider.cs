@@ -32,7 +32,7 @@ namespace HQ.Platform.Api.Runtime.GraphQl
 		public GraphQlQueryContextProvider() =>
 			SupportedMediaTypes = new List<MediaTypeHeaderValue>
 			{
-				MediaTypeHeaderValue.Parse(MediaTypeNamesExt.Application.GraphQl)
+				MediaTypeHeaderValue.Parse(MediaTypeNames.Application.GraphQl)
 			};
 
 		public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }

@@ -34,7 +34,7 @@ namespace HQ.Data.Contracts.Configuration
 		public string AfterOperator { get; set; } = "after";
 		public string BeforeOperator { get; set; } = "before";
 
-		public string TotalCountHeader { get; set; } = HeaderNamesExt.TotalCount;
-		public string TotalPagesHeader { get; set; } = HeaderNamesExt.TotalPages;
+		public string TotalCountHeader { get; set; } = HeaderNames.TotalCount;
+		public string TotalPagesHeader { get; set; } = HeaderNames.TotalPages;
 	}
 }

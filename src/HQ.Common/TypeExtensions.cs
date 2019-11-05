@@ -24,50 +24,6 @@ namespace HQ.Common
 {
 	public static class TypeExtensions
 	{
-		private static readonly HashSet<Type> IntegerTypes = new HashSet<Type>
-		{
-			typeof(sbyte),
-			typeof(sbyte?),
-			typeof(byte),
-			typeof(byte?),
-			typeof(ushort),
-			typeof(ushort?),
-			typeof(short),
-			typeof(short?),
-			typeof(uint),
-			typeof(uint?),
-			typeof(int),
-			typeof(int?),
-			typeof(ulong),
-			typeof(ulong?),
-			typeof(long),
-			typeof(long?)
-		};
-
-		private static readonly HashSet<Type> RealNumberTypes = new HashSet<Type>
-		{
-			typeof(float),
-			typeof(double),
-			typeof(decimal),
-			typeof(Complex),
-			typeof(BigInteger)
-		};
-
-		public static bool IsInteger(this Type type)
-		{
-			return IntegerTypes.Contains(type);
-		}
-
-		public static bool IsNumeric(this Type type)
-		{
-			return RealNumberTypes.Contains(type) || type.IsInteger();
-		}
-
-		public static bool IsTruthy(this Type type)
-		{
-			return type == typeof(bool) || type == typeof(bool?);
-		}
-
 		public static bool ImplementsGeneric(this Type type, Type generic)
 		{
 			while (true)
@@ -89,8 +45,7 @@ namespace HQ.Common
 				type = type.BaseType;
 			}
 		}
-
-
+		
 		public static IEnumerable<Type> GetImplementationsOfOpenGeneric(this Type openGenericType)
 		{
 			return GetImplementationsOfOpenGeneric(openGenericType, AppDomain.CurrentDomain.GetAssemblies());

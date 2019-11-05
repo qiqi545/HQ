@@ -64,7 +64,7 @@ namespace HQ.Platform.Operations
 				description = new MetaDescription
 				{
 					content = "Provides diagnostic tools for server operators at runtime.",
-					type = MediaTypeNamesExt.Text.Markdown,
+					type = MediaTypeNames.Text.Markdown,
 					version = null
 				},
 				variable = new List<dynamic>(),

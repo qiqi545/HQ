@@ -24,6 +24,7 @@ using HQ.Extensions.Metrics;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 using Constants = HQ.Extensions.Metrics.Constants;
 
 namespace HQ.Integration.Azure.Metrics.Reporters

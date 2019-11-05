@@ -147,7 +147,7 @@ namespace HQ.Platform.Api
 				// Use 'application/merge-patch+json' header to disambiguate JSON patch strategy:
 				// See: https://tools.ietf.org/html/rfc7386
 				var contentType = c.Request.Headers[HeaderNames.ContentType];
-				if (contentType.Count > 0 && contentType.Contains(MediaTypeNamesExt.Application.JsonMergePatch))
+				if (contentType.Count > 0 && contentType.Contains(MediaTypeNames.Application.JsonMergePatch))
 				{
 					var path = c.Request.Path.ToUriComponent();
 					path = $"{path}/merge";

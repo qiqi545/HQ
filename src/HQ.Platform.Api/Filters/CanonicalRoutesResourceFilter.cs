@@ -17,7 +17,6 @@
 
 using System;
 using System.Text;
-using HQ.Common;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
