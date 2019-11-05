@@ -18,12 +18,14 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Metrics.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Extensions.Metrics.AspNetCore.Internal
 {
@@ -64,7 +66,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.Internal
 			var cancel = new CancellationTokenSource(timeout);
 
 			context.Response.StatusCode = 200;
-			context.Response.Headers.Add(Common.Constants.HttpHeaders.ContentType, Common.Constants.MediaTypes.Json);
+			context.Response.Headers.Add(HeaderNames.ContentType, MediaTypeNames.Application.Json);
 			await context.Response.WriteAsync(JsonSampleSerializer.Serialize(samples), cancel.Token);
 		}
 	}

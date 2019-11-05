@@ -22,6 +22,7 @@ using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Operations
 {
@@ -50,7 +51,7 @@ namespace HQ.Platform.Operations
 					{
 						var duration = sw.Elapsed;
 						StopwatchPool.Pool.Return(sw);
-						var header = options.Value.RequestProfilingHeader ?? Constants.HttpHeaders.ServerTiming;
+						var header = options.Value.RequestProfilingHeader ?? HeaderNamesExt.ServerTiming;
 						context.Response.Headers.Add(header, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
 						return Task.CompletedTask;
 					});

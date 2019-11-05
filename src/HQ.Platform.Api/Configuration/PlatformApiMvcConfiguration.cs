@@ -17,6 +17,7 @@
 
 using System.Buffers;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Xml;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -86,7 +87,7 @@ namespace HQ.Platform.Api.Configuration
 		{
 			if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("xml")))
 			{
-				options.FormatterMappings.SetMediaTypeMappingForFormat("xml", Constants.MediaTypes.Xml);
+				options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeNames.Application.Xml);
 			}
 
 			options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter(
@@ -104,7 +105,7 @@ namespace HQ.Platform.Api.Configuration
 		)
 		{
 			if (string.IsNullOrEmpty(options.FormatterMappings.GetMediaTypeMappingForFormat("json")))
-				options.FormatterMappings.SetMediaTypeMappingForFormat("json", Constants.MediaTypes.Json);
+				options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeNames.Application.Json);
 #if NETCOREAPP2_2
 			options.InputFormatters.Add(new JsonInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));
 			options.InputFormatters.Add(new JsonPatchInputFormatter(logger, _settings, _charPool, _objectPoolProvider, options, jsonOptions));

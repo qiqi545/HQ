@@ -16,6 +16,7 @@
 #endregion
 
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore;
@@ -39,7 +40,7 @@ namespace HQ.Platform.Api.Schemas
 	[DynamicController(typeof(SchemaOptions))]
 	[DynamicAuthorize(typeof(SchemaOptions))]
 	[Route("schemas")]
-	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
+	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to weak-typed object schemas.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]

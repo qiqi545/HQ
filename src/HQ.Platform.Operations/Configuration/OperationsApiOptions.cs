@@ -17,6 +17,7 @@
 
 using HQ.Common;
 using HQ.Extensions.Metrics;
+using Microsoft.Net.Http.Headers;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations.Configuration
@@ -47,7 +48,7 @@ namespace HQ.Platform.Operations.Configuration
 		public string CacheDebuggingPath { get; set; } = "/caches";
 
 		public bool EnableRequestProfiling { get; set; } = true;
-		public string RequestProfilingHeader { get; set; } = Constants.HttpHeaders.ServerTiming;
+		public string RequestProfilingHeader { get; set; } = HeaderNamesExt.ServerTiming;
 
 		public bool EnableHealthChecksEndpoints { get; set; } = true;
 		public string HealthCheckLivePath { get; set; } = "/ping";

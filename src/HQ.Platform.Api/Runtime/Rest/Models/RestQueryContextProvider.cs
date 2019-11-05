@@ -17,8 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Security.Claims;
-using HQ.Common;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -36,8 +36,8 @@ namespace HQ.Platform.Api.Runtime.Rest.Models
 
 			SupportedMediaTypes = new List<MediaTypeHeaderValue>
 			{
-				MediaTypeHeaderValue.Parse(Constants.MediaTypes.Json),
-				MediaTypeHeaderValue.Parse(Constants.MediaTypes.Xml)
+				MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Json),
+				MediaTypeHeaderValue.Parse(MediaTypeNames.Application.Xml)
 			};
 		}
 

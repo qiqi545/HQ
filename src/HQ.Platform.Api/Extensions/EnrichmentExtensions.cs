@@ -23,6 +23,7 @@ using HQ.Data.Contracts.Configuration;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using TypeKitchen;
 
 namespace HQ.Platform.Api.Extensions
@@ -100,7 +101,7 @@ namespace HQ.Platform.Api.Extensions
 
 			if (link.Length > 0)
 			{
-				response.Headers.Add(Constants.HttpHeaders.Link, link);
+				response.Headers.Add(HeaderNamesExt.Link, link);
 			}
 
 			response.Headers.Add(queryOptions.TotalCountHeader, data.TotalCount.ToString());

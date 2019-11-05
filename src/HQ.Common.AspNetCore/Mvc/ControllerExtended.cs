@@ -20,6 +20,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
@@ -73,7 +74,7 @@ namespace HQ.Common.AspNetCore.Mvc
 		[NonAction]
 		public IActionResult SeeOther(string location)
 		{
-			Response.Headers[Constants.HttpHeaders.Location] = location;
+			Response.Headers[HeaderNames.Location] = location;
 			return StatusCode(HttpStatusCode.SeeOther);
 		}
 
@@ -81,7 +82,7 @@ namespace HQ.Common.AspNetCore.Mvc
 		[NonAction]
 		public Task<IActionResult> SeeOtherResult(string location)
 		{
-			Response.Headers[Constants.HttpHeaders.Location] = location;
+			Response.Headers[HeaderNames.Location] = location;
 			return StatusCodeResult(HttpStatusCode.SeeOther);
 		}
 
@@ -89,7 +90,7 @@ namespace HQ.Common.AspNetCore.Mvc
 		[NonAction]
 		public IActionResult Created(string location)
 		{
-			Response.Headers[Constants.HttpHeaders.Location] = location;
+			Response.Headers[HeaderNames.Location] = location;
 			return StatusCode(HttpStatusCode.Created);
 		}
 

@@ -44,7 +44,7 @@ namespace HQ.Platform.Api.Filters
 
 		public void OnResourceExecuting(ResourceExecutingContext context)
 		{
-			if (!string.Equals(context.HttpContext.Request.Method, Constants.HttpVerbs.Get,
+			if (!string.Equals(context.HttpContext.Request.Method, HttpMethods.Get,
 				StringComparison.OrdinalIgnoreCase))
 				return;
 

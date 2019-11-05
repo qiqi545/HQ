@@ -22,6 +22,7 @@ using HQ.Common;
 using HQ.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Correlation
 {
@@ -32,20 +33,20 @@ namespace HQ.Platform.Api.Correlation
 		public TraceParentSafeLoggerInterceptor(IHttpContextAccessor accessor) => _accessor = accessor;
 
 		public bool CanIntercept => _accessor?.HttpContext?.Request?.Headers != null &&
-		                            _accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent,
+		                            _accessor.HttpContext.Request.Headers.TryGetValue(HeaderNames.TraceParent,
 			                            out _);
 
 		public bool TryLog<TState>(ILogger inner, ref int safe, LogLevel logLevel, EventId eventId, TState state,
 			Exception exception, Func<TState, Exception, string> formatter)
 		{
-			if (!_accessor.HttpContext.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent,
+			if (!_accessor.HttpContext.Request.Headers.TryGetValue(HeaderNames.TraceParent,
 				out var traceContext))
 				return false;
 
 			try
 			{
 				// See: https://messagetemplates.org/
-				var data = new Dictionary<string, object> {{$"@{Constants.HttpHeaders.TraceParent}", traceContext}};
+				var data = new Dictionary<string, object> {{$"@{HeaderNames.TraceParent}", traceContext}};
 
 				using (inner.BeginScope(data))
 				{

@@ -21,6 +21,7 @@ using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Extensions.Caching
 {
@@ -33,7 +34,7 @@ namespace HQ.Extensions.Caching
 
 		public bool TryGetETag(string key, out string etag)
 		{
-			if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out etag))
+			if (!Cache.TryGetValue($"{key}_{HeaderNames.LastModified}", out etag))
 			{
 				return true;
 			}
@@ -44,7 +45,7 @@ namespace HQ.Extensions.Caching
 
 		public bool TryGetLastModified(string key, out DateTimeOffset lastModified)
 		{
-			if (!Cache.TryGetValue($"{key}_{Constants.HttpHeaders.LastModified}", out lastModified))
+			if (!Cache.TryGetValue($"{key}_{HeaderNames.LastModified}", out lastModified))
 			{
 				return true;
 			}
@@ -55,12 +56,12 @@ namespace HQ.Extensions.Caching
 
 		public void Save(string key, string etag)
 		{
-			Cache.Set($"{key}_{Constants.HttpHeaders.ETag}", Encoding.UTF8.GetBytes(etag));
+			Cache.Set($"{key}_{HeaderNames.ETag}", Encoding.UTF8.GetBytes(etag));
 		}
 
 		public void Save(string key, DateTimeOffset lastModified)
 		{
-			Cache.Set($"{key}_{Constants.HttpHeaders.LastModified}",
+			Cache.Set($"{key}_{HeaderNames.LastModified}",
 				Encoding.UTF8.GetBytes(lastModified.ToString("d")));
 		}
 	}

@@ -15,9 +15,9 @@
 
 #endregion
 
-using HQ.Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Correlation
 {
@@ -29,9 +29,9 @@ namespace HQ.Platform.Api.Correlation
 		{
 			app.Use(async (context, next) =>
 			{
-				if (!context.Request.Headers.TryGetValue(Constants.HttpHeaders.TraceParent, out var traceContext))
+				if (!context.Request.Headers.TryGetValue(HeaderNames.TraceParent, out var traceContext))
 				{
-					context.Request.Headers.Add(Constants.HttpHeaders.TraceParent,
+					context.Request.Headers.Add(HeaderNames.TraceParent,
 						traceContext = TraceContext.New().Header);
 				}
 

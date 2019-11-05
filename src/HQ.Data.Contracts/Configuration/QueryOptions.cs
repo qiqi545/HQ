@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Data.Contracts.Configuration
 {
@@ -34,7 +34,7 @@ namespace HQ.Data.Contracts.Configuration
 		public string AfterOperator { get; set; } = "after";
 		public string BeforeOperator { get; set; } = "before";
 
-		public string TotalCountHeader { get; set; } = Constants.HttpHeaders.TotalCount;
-		public string TotalPagesHeader { get; set; } = Constants.HttpHeaders.TotalPages;
+		public string TotalCountHeader { get; set; } = HeaderNamesExt.TotalCount;
+		public string TotalPagesHeader { get; set; } = HeaderNamesExt.TotalPages;
 	}
 }

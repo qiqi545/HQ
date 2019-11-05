@@ -15,12 +15,14 @@
 
 #endregion
 
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Common.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
 namespace HQ.Common.AspNetCore
@@ -30,14 +32,14 @@ namespace HQ.Common.AspNetCore
 		public static async Task WriteResultAsJson(this IApplicationBuilder app, HttpContext context, string json,
 			CancellationToken? cancellationToken = null)
 		{
-			context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
+			context.Response.Headers.Add(HeaderNames.ContentType, MediaTypeNames.Application.Json);
 			await context.Response.WriteAsync(json, cancellationToken ?? context.RequestAborted);
 		}
 
 		public static async Task WriteResultAsJson(this IApplicationBuilder app, HttpContext context, object instance,
 			CancellationToken? cancellationToken = null)
 		{
-			context.Response.Headers.Add(Constants.HttpHeaders.ContentType, Constants.MediaTypes.Json);
+			context.Response.Headers.Add(HeaderNames.ContentType, MediaTypeNames.Application.Json);
 			await context.Response.WriteAsync(SerializeObject(app, context, instance),
 				cancellationToken ?? context.RequestAborted);
 		}

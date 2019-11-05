@@ -20,6 +20,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
 using System.Runtime.Serialization;
 using HQ.Common;
@@ -35,6 +36,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using TypeKitchen;
 
@@ -220,8 +222,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 					foreach (var objectGroup in groupFolder.Value.item.OfType<MetaFolder>())
 					foreach (var item in objectGroup.item)
 					{
-						item.request.url.query =
-							item.request.url.query ?? (item.request.url.query = new List<MetaParameter>());
+						item.request.url.query ??= (item.request.url.query = new List<MetaParameter>());
 						item.request.url.query.Add(new MetaParameter
 						{
 							key = _versionProvider.VersionParameter,
@@ -244,7 +245,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 				proxy = new { },
 				certificate = new { },
 				method = description.HttpMethod,
-				description = new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
+				description = new MetaDescription {content = "", type = MediaTypeNamesExt.Text.Markdown, version = null},
 				header = new List<MetaParameter>
 				{
 					new MetaParameter
@@ -253,11 +254,11 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 						description = "", /* new MetaDescription
                             {
                                 content = "",
-                                type = Constants.MediaTypes.Markdown,
+                                type = MediaTypeNames.Markdown,
                                 version = null
                             },*/
-						key = Constants.HttpHeaders.ContentType,
-						value = Constants.MediaTypes.Json
+						key = HeaderNames.ContentType,
+						value = MediaTypeNames.Application.Json
 					}
 				},
 				body = default
@@ -273,7 +274,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 				id = Guid.NewGuid(),
 				name = relativePath,
 				description =
-					new MetaDescription {content = "", type = Constants.MediaTypes.Markdown, version = null},
+					new MetaDescription {content = "", type = MediaTypeNamesExt.Text.Markdown, version = null},
 				variable = new List<dynamic>(),
 				@event = new List<dynamic>(),
 				request = operation,

@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore;
@@ -42,7 +43,7 @@ namespace HQ.Platform.Api.Runtime
 	[DynamicController(typeof(RuntimeOptions))]
 	[DynamicAuthorize(typeof(RuntimeOptions))]
 	[Route("objects")]
-	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
+	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to API resources over HTTP.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]

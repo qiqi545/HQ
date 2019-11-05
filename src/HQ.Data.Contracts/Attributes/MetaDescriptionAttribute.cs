@@ -16,13 +16,14 @@
 #endregion
 
 using System;
+using System.Net.Mime;
 using HQ.Common;
 
 namespace HQ.Data.Contracts.Attributes
 {
 	public class MetaDescriptionAttribute : Attribute
 	{
-		public MetaDescriptionAttribute(string content, string mediaType = Constants.MediaTypes.Markdown)
+		public MetaDescriptionAttribute(string content, string mediaType = MediaTypeNamesExt.Text.Markdown)
 		{
 			Content = content;
 			MediaType = mediaType;

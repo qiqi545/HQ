@@ -17,10 +17,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net.Mime;
 using System.Security.Claims;
 using GraphQLParser;
 using GraphQLParser.AST;
-using HQ.Common;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
@@ -32,7 +32,7 @@ namespace HQ.Platform.Api.Runtime.GraphQl
 		public GraphQlQueryContextProvider() =>
 			SupportedMediaTypes = new List<MediaTypeHeaderValue>
 			{
-				MediaTypeHeaderValue.Parse(Constants.MediaTypes.GraphQl)
+				MediaTypeHeaderValue.Parse(MediaTypeNamesExt.Application.GraphQl)
 			};
 
 		public IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }

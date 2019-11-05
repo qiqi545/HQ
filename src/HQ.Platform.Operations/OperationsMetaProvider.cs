@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Mime;
 using HQ.Common;
 using HQ.Common.Models;
 using HQ.Platform.Operations.Configuration;
@@ -63,7 +64,7 @@ namespace HQ.Platform.Operations
 				description = new MetaDescription
 				{
 					content = "Provides diagnostic tools for server operators at runtime.",
-					type = Constants.MediaTypes.Markdown,
+					type = MediaTypeNamesExt.Text.Markdown,
 					version = null
 				},
 				variable = new List<dynamic>(),

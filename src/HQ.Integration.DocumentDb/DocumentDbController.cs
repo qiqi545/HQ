@@ -23,6 +23,7 @@ using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Integration.DocumentDb
 {
@@ -46,10 +47,10 @@ namespace HQ.Integration.DocumentDb
 
 			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
 			var location = $"{typeof(T).Name.Pluralize()}/{created.Id}";
-			if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString()
+			if (Request.Headers.TryGetValue(HeaderNamesExt.Prefer, out var prefer) && prefer.ToString()
 				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 			{
-				Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
+				Response.Headers.Add(HeaderNamesExt.PreferenceApplied, "true");
 				return Created(location);
 			}
 

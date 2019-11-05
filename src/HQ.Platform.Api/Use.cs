@@ -17,6 +17,7 @@
 
 using System;
 using System.Linq;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
@@ -34,7 +35,9 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 using CookieOptions = Microsoft.AspNetCore.Http.CookieOptions;
+using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace HQ.Platform.Api
 {
@@ -72,7 +75,7 @@ namespace HQ.Platform.Api
 
 			async Task ExecuteFeature(HttpContext c, CanonicalRoutesOptions o, Func<Task> next)
 			{
-				if (string.Equals(c.Request.Method, Constants.HttpVerbs.Get, StringComparison.OrdinalIgnoreCase))
+				if (string.Equals(c.Request.Method, HttpMethods.Get, StringComparison.OrdinalIgnoreCase))
 				{
 					if (!CanonicalRoutesResourceFilter.TryGetCanonicalRoute(c.Request, o, out var redirectToUrl))
 					{
@@ -101,7 +104,7 @@ namespace HQ.Platform.Api
 
 			async Task ExecuteFeature(HttpContext c, MethodOverrideOptions o, Func<Task> next)
 			{
-				if (c.Request.Method.Equals(Constants.HttpVerbs.Post, StringComparison.OrdinalIgnoreCase) &&
+				if (c.Request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase) &&
 				    c.Request.Headers.TryGetValue(o.MethodOverrideHeader, out var header))
 				{
 					var value = header.ToString();
@@ -143,8 +146,8 @@ namespace HQ.Platform.Api
 
 				// Use 'application/merge-patch+json' header to disambiguate JSON patch strategy:
 				// See: https://tools.ietf.org/html/rfc7386
-				var contentType = c.Request.Headers[Constants.HttpHeaders.ContentType];
-				if (contentType.Count > 0 && contentType.Contains(Constants.MediaTypes.JsonMergePatch))
+				var contentType = c.Request.Headers[HeaderNames.ContentType];
+				if (contentType.Count > 0 && contentType.Contains(MediaTypeNamesExt.Application.JsonMergePatch))
 				{
 					var path = c.Request.Path.ToUriComponent();
 					path = $"{path}/merge";

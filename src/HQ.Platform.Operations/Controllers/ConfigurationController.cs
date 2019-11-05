@@ -19,6 +19,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mime;
 using System.Reflection;
 using HQ.Common;
 using HQ.Common.AspNetCore;
@@ -86,7 +87,7 @@ namespace HQ.Platform.Operations.Controllers
 		[HttpPatch("")]
 		[HttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
-		[Consumes(Constants.MediaTypes.JsonPatch)]
+		[Consumes(MediaTypeNamesExt.Application.JsonPatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] JsonPatchDocument patch,
 			[FromRoute] string section = null)
 		{
@@ -115,7 +116,7 @@ namespace HQ.Platform.Operations.Controllers
 		[HttpPatch("")]
 		[HttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
-		[Consumes(Constants.MediaTypes.JsonMergePatch)]
+		[Consumes(MediaTypeNamesExt.Application.JsonMergePatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] object patch, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))

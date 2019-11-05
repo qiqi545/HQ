@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Common.AspNetCore.MergePatch;
@@ -34,12 +35,13 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {
 	[ApiExplorerSettings(IgnoreApi = true)]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	[Produces(Constants.MediaTypes.Json, Constants.MediaTypes.Xml)]
+	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
 	public class RestController<TObject, TKey> : DataController, IObjectController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		// ReSharper disable once StaticMemberInGenericType
@@ -73,11 +75,11 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			return operation.ToResult(body =>
 			{
 				// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-				if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString()
+				if (Request.Headers.TryGetValue(HeaderNamesExt.Prefer, out var prefer) && prefer.ToString()
 					    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 				{
 					body = null;
-					Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
+					Response.Headers.Add(HeaderNamesExt.PreferenceApplied, "true");
 				}
 
 				switch (operation.Data)
@@ -113,10 +115,10 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				result.Errors.Add(error);
 
 			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-			if (Request.Headers.TryGetValue(Constants.HttpHeaders.Prefer, out var prefer) && prefer.ToString()
+			if (Request.Headers.TryGetValue(HeaderNamesExt.Prefer, out var prefer) && prefer.ToString()
 				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 			{
-				Response.Headers.Add(Constants.HttpHeaders.PreferenceApplied, "true");
+				Response.Headers.Add(HeaderNamesExt.PreferenceApplied, "true");
 				return Ok();
 			}
 
@@ -267,7 +269,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPatch("X/{id}")]
-		[Consumes(Constants.MediaTypes.JsonPatch)]
+		[Consumes(MediaTypeNamesExt.Application.JsonPatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
@@ -289,7 +291,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		[VersionSelector]
 		[HttpPatch("X/{id}/merge")]
-		[Consumes(Constants.MediaTypes.JsonMergePatch)]
+		[Consumes(MediaTypeNamesExt.Application.JsonMergePatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]

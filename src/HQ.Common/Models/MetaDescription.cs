@@ -16,6 +16,7 @@
 #endregion
 
 using System.Diagnostics;
+using System.Net.Mime;
 
 namespace HQ.Common.Models
 {
@@ -28,7 +29,7 @@ namespace HQ.Common.Models
 
 		public static MetaDescription PlainText(string value)
 		{
-			return new MetaDescription {content = value, type = Constants.MediaTypes.PlainText, version = null};
+			return new MetaDescription {content = value, type = MediaTypeNames.Text.Plain, version = null};
 		}
 	}
 }
