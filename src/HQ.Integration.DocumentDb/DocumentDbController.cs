@@ -47,10 +47,10 @@ namespace HQ.Integration.DocumentDb
 
 			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
 			var location = $"{typeof(T).Name.Pluralize()}/{created.Id}";
-			if (Request.Headers.TryGetValue(HeaderNames.Prefer, out var prefer) && prefer.ToString()
+			if (Request.Headers.TryGetValue(HttpHeaders.Prefer, out var prefer) && prefer.ToString()
 				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 			{
-				Response.Headers.Add(HeaderNames.PreferenceApplied, "true");
+				Response.Headers.Add(HttpHeaders.PreferenceApplied, "true");
 				return Created(location);
 			}
 

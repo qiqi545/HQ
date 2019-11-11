@@ -72,11 +72,11 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			return operation.ToResult(body =>
 			{
 				// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-				if (Request.Headers.TryGetValue(HeaderNames.Prefer, out var prefer) && prefer.ToString()
+				if (Request.Headers.TryGetValue(HttpHeaders.Prefer, out var prefer) && prefer.ToString()
 					    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 				{
 					body = null;
-					Response.Headers.Add(HeaderNames.PreferenceApplied, "true");
+					Response.Headers.Add(HttpHeaders.PreferenceApplied, "true");
 				}
 
 				switch (operation.Data)
@@ -112,10 +112,10 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				result.Errors.Add(error);
 
 			// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#75-standard-request-headers
-			if (Request.Headers.TryGetValue(HeaderNames.Prefer, out var prefer) && prefer.ToString()
+			if (Request.Headers.TryGetValue(HttpHeaders.Prefer, out var prefer) && prefer.ToString()
 				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 			{
-				Response.Headers.Add(HeaderNames.PreferenceApplied, "true");
+				Response.Headers.Add(HttpHeaders.PreferenceApplied, "true");
 				return Ok();
 			}
 

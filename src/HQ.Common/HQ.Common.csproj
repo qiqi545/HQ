@@ -27,8 +27,10 @@
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.6.0" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
+    <PackageReference Include="TypeKitchen" Version="1.0.27" />
+    <PackageReference Include="WebStrings" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,10 +45,6 @@
     <None Include="Models\MetaParameter.cs.pp" />
     <None Include="Models\MetaUrl.cs.pp" />
     <None Include="Models\NoMetaVersionProvider.cs.pp" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

@@ -16,12 +16,11 @@
 #endregion
 
 using HQ.Common;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Configuration
 {
 	public class ResourceRewritingOptions : FeatureToggle
 	{
-		public string ActionHeader { get; set; } = HeaderNames.Action;
+		public string ActionHeader { get; set; } = HttpHeaders.Action;
 	}
 }

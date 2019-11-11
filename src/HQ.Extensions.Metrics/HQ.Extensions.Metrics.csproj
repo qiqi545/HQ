@@ -13,10 +13,10 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.6.0" />
+    <PackageReference Include="TypeKitchen" Version="1.0.27" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
   </ItemGroup>

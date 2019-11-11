@@ -17,7 +17,6 @@
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Api.Correlation
 {
@@ -29,9 +28,9 @@ namespace HQ.Platform.Api.Correlation
 		{
 			app.Use(async (context, next) =>
 			{
-				if (!context.Request.Headers.TryGetValue(HeaderNames.TraceParent, out var traceContext))
+				if (!context.Request.Headers.TryGetValue(HttpHeaders.TraceParent, out var traceContext))
 				{
-					context.Request.Headers.Add(HeaderNames.TraceParent,
+					context.Request.Headers.Add(HttpHeaders.TraceParent,
 						traceContext = TraceContext.New().Header);
 				}
 

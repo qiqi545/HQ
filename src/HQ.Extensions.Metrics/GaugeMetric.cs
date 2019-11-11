@@ -56,8 +56,8 @@ namespace HQ.Extensions.Metrics
 		{
 			Name = metricName;
 			_evaluator = evaluator;
-			IsNumeric = TypeKitchen.TypeExtensions.IsNumeric(typeof(T));
-			IsBoolean = TypeKitchen.TypeExtensions.IsTruthy(typeof(T));
+			IsNumeric = typeof(T).IsNumeric();
+			IsBoolean = typeof(T).IsTruthy();
 		}
 
 		[IgnoreDataMember] public override MetricName Name { get; }

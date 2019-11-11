@@ -24,7 +24,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 {
@@ -39,7 +38,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 				var options = context.RequestServices.GetService<IOptions<ServerTimingReporterOptions>>();
 				if (options?.Value != null && options.Value.Enabled)
 				{
-					context.Response.Headers[HeaderNames.TimingAllowOrigin] =
+					context.Response.Headers[HttpHeaders.TimingAllowOrigin] =
 						options.Value.AllowedOrigins;
 
 					var sw = StopwatchPool.Pool.Get();
@@ -48,7 +47,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 					{
 						var duration = sw.Elapsed;
 						StopwatchPool.Pool.Return(sw);
-						context.Response.Headers.Add(HeaderNames.ServerTiming,
+						context.Response.Headers.Add(HttpHeaders.ServerTiming,
 							$"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
 						var metrics = context.RequestServices.GetService<IMetricsRegistry>();
 						if (metrics != null)
@@ -184,7 +183,7 @@ namespace HQ.Extensions.Metrics.Reporters.ServerTiming
 
 		private static void AddServerTimingEntry(HttpContext context, string value)
 		{
-			context.Response.Headers.Add(HeaderNames.ServerTiming, value);
+			context.Response.Headers.Add(HttpHeaders.ServerTiming, value);
 		}
 	}
 }

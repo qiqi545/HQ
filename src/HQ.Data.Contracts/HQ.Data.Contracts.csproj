@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\WebStrings\src\WebStrings\WebStrings.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\HQ.Extensions.Cryptography.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />

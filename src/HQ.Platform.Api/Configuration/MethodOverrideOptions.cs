@@ -21,7 +21,7 @@ namespace HQ.Platform.Api.Configuration
 {
 	public class MethodOverrideOptions : FeatureToggle
 	{
-		public string MethodOverrideHeader { get; set; } = HeaderNames.MethodOverride;
+		public string MethodOverrideHeader { get; set; } = HttpHeaders.MethodOverride;
 
 		public string[] AllowedMethodOverrides { get; set; } =
 		{
