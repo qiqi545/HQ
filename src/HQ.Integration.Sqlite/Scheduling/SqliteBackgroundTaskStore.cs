@@ -23,8 +23,12 @@ using System.Threading.Tasks;
 using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
+using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.Sqlite.Scheduling
 {
@@ -32,17 +36,23 @@ namespace HQ.Integration.Sqlite.Scheduling
 	{
 		private static readonly List<string> NoTags = new List<string>();
 
-		private readonly IDataConnection _db;
+		private readonly IServiceProvider _serviceProvider;
 		private readonly IServerTimestampService _timestamps;
+		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 		private readonly string _tablePrefix;
+		private readonly ISafeLogger<SqliteBackgroundTaskStore> _logger;
 
-		public SqliteBackgroundTaskStore(IDataConnection<BackgroundTaskBuilder> db,
+		public SqliteBackgroundTaskStore(IServiceProvider serviceProvider,
 			IServerTimestampService timestamps,
-			string tablePrefix = "BackgroundTask")
+			IOptionsMonitor<BackgroundTaskOptions> options,
+			string tablePrefix = nameof(BackgroundTask),
+			ISafeLogger<SqliteBackgroundTaskStore> logger = null)
 		{
-			_db = db;
+			_serviceProvider = serviceProvider;
 			_timestamps = timestamps;
+			_options = options;
 			_tablePrefix = tablePrefix;
+			_logger = logger;
 		}
 
 		internal string TaskTable => $"\"{_tablePrefix}\"";
@@ -51,24 +61,24 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAnyTagsAsync(params string[] tags)
 		{
-			var db = _db.Current;
-			using var t = BeginTransaction(_db.Current, out _);
+			var db = GetDbConnection();
+			using var t = BeginTransaction(db, out _);
 			return await GetByAnyTagsWithTagsAsync(tags, db, t);
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> GetByAllTagsAsync(params string[] tags)
 		{
-			var db = _db.Current;
-			using var t = BeginTransaction(_db.Current, out _);
+			var db = GetDbConnection();
+			using var t = BeginTransaction(db, out _);
 			return await GetByAllTagsWithTagsAsync(tags, db, t);
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> LockNextAvailableAsync(int readAhead)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 
 			List<BackgroundTask> tasks;
-			using (var t = BeginTransaction(_db.Current, out var owner))
+			using (var t = BeginTransaction(db, out var owner))
 			{
 				tasks = await GetUnlockedTasksWithTagsAsync(readAhead, db, t);
 				if (tasks.Any())
@@ -81,25 +91,20 @@ namespace HQ.Integration.Sqlite.Scheduling
 			return tasks;
 		}
 
-		public DateTimeOffset GetTaskTimestamp()
-		{
-			return _timestamps.GetCurrentTime().ToUniversalTime();
-		}
-
 		public async Task<BackgroundTask> GetByIdAsync(int id)
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			BackgroundTask task;
-			using (var t = BeginTransaction(_db.Current, out _))
+			using (var t = BeginTransaction(db, out _))
 				task = await GetByIdWithTagsAsync(id, db, t);
 			return task;
 		}
 
 		public async Task<IEnumerable<BackgroundTask>> GetHangingTasksAsync()
 		{
-			var db = _db.Current;
+			var db = GetDbConnection();
 			IEnumerable<BackgroundTask> locked;
-			using (var t = BeginTransaction(_db.Current, out _))
+			using (var t = BeginTransaction(db, out _))
 				locked = await GetLockedTasksWithTagsAsync(db, t);
 
 			return locked.Where(st => st.IsRunningOvertime(this)).ToList();
@@ -107,25 +112,26 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 		public async Task<IEnumerable<BackgroundTask>> GetAllAsync()
 		{
-			var db = _db.Current;
-			using var t = BeginTransaction(_db.Current, out _);
+			var db = GetDbConnection();
+			using var t = BeginTransaction(db, out _);
 			return await GetAllWithTagsAsync(db, t);
 		}
 
 		public async Task<bool> SaveAsync(BackgroundTask task)
 		{
-			using (var t = BeginTransaction(_db.Current, out var owner))
+			var db = GetDbConnection();
+			using (var t = BeginTransaction(db, out var owner))
 			{
 				if (task.Id == 0)
 				{
-					await InsertBackgroundTaskAsync(task, _db.Current, t);
+					await InsertBackgroundTaskAsync(task, db, t);
 				}
 				else
 				{
-					await UpdateBackgroundTaskAsync(task, _db.Current, t);
+					await UpdateBackgroundTaskAsync(task, db, t);
 				}
 
-				await UpdateTagMappingAsync(task, _db.Current, t);
+				await UpdateTagMappingAsync(task, db, t);
 
 				if (owner)
 					t.Commit();
@@ -136,8 +142,8 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 		public async Task<bool> DeleteAsync(BackgroundTask task)
 		{
-			var db = _db.Current;
-			using (var t = BeginTransaction(_db.Current, out var owner))
+			var db = GetDbConnection();
+			using (var t = BeginTransaction(db, out var owner))
 			{
 				var sql = $@"
 -- Primary relationship:
@@ -158,8 +164,9 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 
 		private IDbTransaction BeginTransaction(IDbConnection db, out bool owner)
 		{
+			var connection = GetDataConnection();
 			var transaction = db.BeginTransaction(IsolationLevel.Serializable);
-			_db.SetTransaction(transaction);
+			connection.SetTransaction(transaction);
 			owner = true;
 			return transaction;
 		}
@@ -441,6 +448,38 @@ ORDER BY {TagTable}.Name ASC
 						new {BackgroundTaskId = task.Id, TagId = id}, t);
 				}
 			}
+		}
+
+		public DateTimeOffset GetTaskTimestamp()
+		{
+			return _timestamps.GetCurrentTime().ToUniversalTime();
+		}
+
+		private WeakReference<IDbConnection> _lastDbConnection;
+		private IDbConnection GetDbConnection()
+		{
+			// IMPORTANT: DI is out of our hands, here.
+			var connection = GetDataConnection();
+			var current = connection.Current;
+
+			if (_lastDbConnection != null && _lastDbConnection.TryGetTarget(out var target) && target == current)
+				_logger.Debug(() => "IDbConnection is pre-initialized.");
+			_lastDbConnection = new WeakReference<IDbConnection>(current, false);
+
+			return current;
+		}
+
+		private WeakReference<IDataConnection> _lastDataConnection;
+		private IDataConnection<BackgroundTaskBuilder> GetDataConnection()
+		{
+			// IMPORTANT: DI is out of our hands, here.
+			var connection = _serviceProvider.GetRequiredService<IDataConnection<BackgroundTaskBuilder>>();
+
+			if (_lastDataConnection != null && _lastDataConnection.TryGetTarget(out var target) && target == connection)
+				_logger.Debug(() => "IDataConnection is pre-initialized.");
+			_lastDataConnection = new WeakReference<IDataConnection>(connection, false);
+
+			return connection;
 		}
 	}
 }

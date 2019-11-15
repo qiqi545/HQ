@@ -13,7 +13,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="3.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.6.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.27" />
+    <PackageReference Include="TypeKitchen" Version="1.0.27.4" />
   </ItemGroup>
 
   <ItemGroup>

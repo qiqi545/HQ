@@ -114,11 +114,11 @@ namespace HQ.Extensions.Scheduling.Configuration
 		/// <summary> Set task values that have defaults if not provided by the user. </summary>
 		public void ProvisionTask(BackgroundTask task)
 		{
-			task.MaximumRuntime = task.MaximumRuntime ?? TimeSpan.FromSeconds(MaximumRuntimeSeconds);
-			task.MaximumAttempts = task.MaximumAttempts ?? MaximumAttempts;
-			task.DeleteOnSuccess = task.DeleteOnSuccess ?? DeleteOnSuccess;
-			task.DeleteOnFailure = task.DeleteOnFailure ?? DeleteOnFailure;
-			task.DeleteOnError = task.DeleteOnError ?? DeleteOnError;
+			task.MaximumRuntime ??= TimeSpan.FromSeconds(MaximumRuntimeSeconds);
+			task.MaximumAttempts ??= MaximumAttempts;
+			task.DeleteOnSuccess ??= DeleteOnSuccess;
+			task.DeleteOnFailure ??= DeleteOnFailure;
+			task.DeleteOnError ??= DeleteOnError;
 		}
 	}
 }

@@ -19,7 +19,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Common;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;

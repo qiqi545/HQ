@@ -138,7 +138,9 @@ namespace HQ.Extensions.Scheduling.Models
 
 		private IEnumerable<BackgroundTask> EnqueueTasks()
 		{
-			var tasks = Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead).GetAwaiter().GetResult()
+			var tasks = Store.LockNextAvailableAsync(_options.CurrentValue.ReadAhead)
+				.GetAwaiter()
+				.GetResult()
 				.MaybeList();
 
 			return tasks;
@@ -261,6 +263,16 @@ namespace HQ.Extensions.Scheduling.Models
 
 			foreach (var task in tasks)
 			{
+				if (task.LockedBy == Constants.Scheduling.EvictionUser)
+				{
+					if (task.DeleteOnFailure.HasValue && task.DeleteOnFailure.Value)
+					{
+						_logger.Debug(() => $"Deleting evicted task {task.Id}");
+						Store.DeleteAsync(task);
+					}
+					continue;
+				}
+
 				// bump up attempts (wouldn't have reached here normally since we never unlocked)
 				task.Attempts++;
 
@@ -421,6 +433,7 @@ namespace HQ.Extensions.Scheduling.Models
 
 			var clone = new BackgroundTask
 			{
+				CorrelationId = task.CorrelationId,
 				Priority = task.Priority,
 				Handler = task.Handler,
 				DeleteOnSuccess = task.DeleteOnSuccess,

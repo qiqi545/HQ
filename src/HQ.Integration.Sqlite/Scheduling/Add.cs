@@ -22,6 +22,7 @@ using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.DependencyInjection.AspNetCore;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;
@@ -53,10 +54,11 @@ namespace HQ.Integration.Sqlite.Scheduling
 			if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			var extensions = new[] {new HttpAccessorExtension()};
-
-			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString,scope, extensions);
 			builder.Services.AddLocalTimestamps();
+			builder.Services.AddSafeLogging();
+
+			var extensions = new[] {new HttpAccessorExtension()};
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString,scope, extensions);
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 
 			var dialect = new SqliteDialect();
@@ -72,7 +74,6 @@ namespace HQ.Integration.Sqlite.Scheduling
 
 			var serviceProvider = builder.Services.BuildServiceProvider();
 			var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
-
 			MigrateToLatest(connectionString, options.Value);
 
 			return builder;

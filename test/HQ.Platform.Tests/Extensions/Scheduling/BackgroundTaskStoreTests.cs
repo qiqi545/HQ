@@ -168,6 +168,26 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
         }
 
         [Test]
+        public async Task Correlated_tasks_are_evicted_on_lock()
+        {
+	        var correlationId = Guid.NewGuid();
+
+	        var first = CreateNewTask();
+	        first.CorrelationId = correlationId;
+			await Store.SaveAsync(first);
+
+			var second = CreateNewTask();
+			second.CorrelationId = correlationId;
+			await Store.SaveAsync(second);
+			
+			var locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+	        Assert.False(!locked.Any(), "did not retrieve at least one unlocked task");
+
+	        locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+	        Assert.True(!locked.Any(), "there was at least one unlocked task after locking all of them");
+        }
+
+		[Test]
         public async Task Removing_tags_synchronizes_with_store()
         {
             var create = CreateNewTask();

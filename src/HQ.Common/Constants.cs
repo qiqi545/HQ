@@ -98,6 +98,11 @@ namespace HQ.Common
 			}
 		}
 
+		public static class Scheduling
+		{
+			public const string EvictionUser = "Eviction";
+		}
+
 		public static class Versioning
 		{
 			public const string DefaultVersion = "1.0";

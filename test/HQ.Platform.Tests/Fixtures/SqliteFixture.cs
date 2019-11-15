@@ -18,6 +18,7 @@
 using System;
 using System.IO;
 using HQ.Data.SessionManagement;
+using HQ.Extensions.Scheduling;
 using HQ.Test.Sdk;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
@@ -32,7 +33,7 @@ namespace HQ.Platform.Tests.Fixtures
 
         public void Dispose()
         {
-            var connection = ServiceProvider?.GetRequiredService<IDataConnection>();
+            var connection = ServiceProvider?.GetRequiredService<IDataConnection<BackgroundTaskBuilder>>();
             if (!(connection?.Current is WrapDbConnection wrapped) || !(wrapped.Inner is SqliteConnection sqlite))
                 return;
 

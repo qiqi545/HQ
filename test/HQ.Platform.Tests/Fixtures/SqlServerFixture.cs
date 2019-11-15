@@ -17,13 +17,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using Dapper;
-using HQ.Data.SessionManagement;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -107,21 +105,5 @@ namespace HQ.Platform.Tests.Fixtures
 		}
 
 		private readonly Stack<SqlServerInstance> _stack = new Stack<SqlServerInstance>();
-
-		public void StartIsolation()
-        {
-	        if (!(ServiceProvider.GetService(typeof(IDataConnection)) is IDataConnection connection))
-		        return;
-	        if (connection.Transaction == null)
-		        connection.SetTransaction(connection.Current.BeginTransaction(IsolationLevel.Snapshot));
-        }
-
-        public void EndIsolation()
-        {
-			if (!(ServiceProvider.GetService(typeof(IDataConnection)) is IDataConnection connection))
-				return;
-			connection.Transaction?.Rollback();
-			connection.SetTransaction(null);
-        }
     }
 }

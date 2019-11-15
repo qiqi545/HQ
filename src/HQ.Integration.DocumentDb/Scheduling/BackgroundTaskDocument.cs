@@ -31,6 +31,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 		public BackgroundTaskDocument(BackgroundTask task)
 		{
 			TaskId = task.Id;
+			CorrelationId = task.CorrelationId;
 			Priority = task.Priority;
 			Attempts = task.Attempts;
 			Handler = task.Handler;
@@ -58,6 +59,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 		}
 
 		[AutoIncrement] public int TaskId { get; set; }
+		public Guid CorrelationId { get; set; }
 
 		public int Priority { get; set; }
 		public int Attempts { get; set; }
@@ -90,6 +92,7 @@ namespace HQ.Integration.DocumentDb.Scheduling
 			var task = new BackgroundTask
 			{
 				Id = document.TaskId,
+				CorrelationId = document.CorrelationId,
 				Priority = document.Priority,
 				Attempts = document.Attempts,
 				Handler = document.Handler,

@@ -30,8 +30,10 @@ using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling;
+using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {
@@ -42,14 +44,20 @@ namespace HQ.Integration.SqlServer.Scheduling
 		private readonly ISafeLogger<SqlServerBackgroundTaskStore> _logger;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IServerTimestampService _timestamps;
+		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
 		private readonly string _schema;
 		private readonly string _tablePrefix;
 
-		public SqlServerBackgroundTaskStore(IServiceProvider serviceProvider, IServerTimestampService timestamps, string schema = "dbo",
-			string tablePrefix = nameof(BackgroundTask), ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
+		public SqlServerBackgroundTaskStore(IServiceProvider serviceProvider, 
+			IServerTimestampService timestamps, 
+			IOptionsMonitor<BackgroundTaskOptions> options,
+			string schema = "dbo",
+			string tablePrefix = nameof(BackgroundTask), 
+			ISafeLogger<SqlServerBackgroundTaskStore> logger = null)
 		{
 			_serviceProvider = serviceProvider;
 			_timestamps = timestamps;
+			_options = options;
 			_schema = schema;
 			_tablePrefix = tablePrefix;
 			_logger = logger;
@@ -237,7 +245,7 @@ WHERE NOT EXISTS (SELECT 1 FROM {TagsTable} st WHERE {TagTable}.Id = st.TagId)
 
 				if (tasks.Count > 0)
 					LockTasks(tasks, db, t);
-
+				
 				var result = Task.FromResult((IEnumerable<BackgroundTask>) tasks);
 				success = true;
 				return result;
@@ -331,8 +339,37 @@ ORDER BY
 		{
 			var now = GetTaskTimestamp();
 
-			// None locked, failed or succeeded, must be due, ordered by due time then priority
-			var sql = $@"
+			string sql;
+			if (_options.CurrentValue.Store.FilterCorrelatedTasks)
+			{
+				// None locked, failed or succeeded, must be due, ordered by due time then priority,
+				// from a set correlated by continuous task (only the latest due task is included)
+				sql = $@"
+WITH Correlated AS
+(
+    SELECT st.*, ROW_NUMBER() OVER(PARTITION BY st.[CorrelationId] ORDER BY st.[RunAt] DESC) AS [Row]
+    FROM {TaskTable} st
+)
+SELECT TOP {readAhead} c.* FROM Correlated c
+WHERE
+    c.[Row] = 1
+AND
+    c.[LockedAt] IS NULL 
+AND
+    c.[FailedAt] IS NULL 
+AND 
+    c.[SucceededAt] IS NULL
+AND 
+    (c.[RunAt] <= @Now)
+ORDER BY 
+    c.[RunAt], 
+    c.[Priority] ASC
+";
+			}
+			else
+			{
+				// None locked, failed or succeeded, must be due, ordered by due time then priority
+				sql = $@"
 SELECT TOP {readAhead} st.* FROM {TaskTable} st
 WHERE
     st.[LockedAt] IS NULL 
@@ -346,6 +383,7 @@ ORDER BY
     st.[RunAt], 
     st.[Priority] ASC
 ";
+			}
 
 			var matches = db.Query<BackgroundTask>(sql, new { Now = now }, t).AsList();
 			if (matches.Count == 0)
@@ -409,7 +447,7 @@ WHERE stt.TagId = t.Id
 AND t.Name IN @Tags
 AND st.Id = stt.BackgroundTaskId
 GROUP BY 
-st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumAttempts, st.DeleteOnSuccess, st.DeleteOnFailure, st.DeleteOnError, st.Expression, st.Start, st.[End], st.ContinueOnSuccess, st.ContinueOnFailure, st.ContinueOnError, st.Data,
+st.CorrelationId, st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumAttempts, st.DeleteOnSuccess, st.DeleteOnFailure, st.DeleteOnError, st.Expression, st.Start, st.[End], st.ContinueOnSuccess, st.ContinueOnFailure, st.ContinueOnError, st.Data,
 st.Id, st.LastError, st.FailedAt, st.SucceededAt, st.LockedAt, st.LockedBy, st.CreatedAt,
 t.Name
 ";
@@ -439,7 +477,7 @@ WHERE stt.TagId = t.Id
 AND t.Name IN @Tags
 AND st.Id = stt.BackgroundTaskId
 GROUP BY 
-st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumAttempts, st.DeleteOnSuccess, st.DeleteOnFailure, st.DeleteOnError, st.Expression, st.Start, st.[End], st.ContinueOnSuccess, st.ContinueOnFailure, st.ContinueOnError, st.Data,
+st.CorrelationId, st.[Priority], st.Attempts, st.Handler, st.RunAt, st.MaximumRuntime, st.MaximumAttempts, st.DeleteOnSuccess, st.DeleteOnFailure, st.DeleteOnError, st.Expression, st.Start, st.[End], st.ContinueOnSuccess, st.ContinueOnFailure, st.ContinueOnError, st.Data,
 st.Id, st.LastError, st.FailedAt, st.SucceededAt, st.LockedAt, st.LockedBy, st.CreatedAt
 HAVING COUNT (st.Id) = @Count
 ";
@@ -515,9 +553,9 @@ WHERE
 
 			var sql = $@"
 INSERT INTO {TaskTable} 
-    (Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError, [Data], [CreatedAt]) 
+    (CorrelationId, Priority, Attempts, Handler, RunAt, MaximumRuntime, MaximumAttempts, DeleteOnSuccess, DeleteOnFailure, DeleteOnError, Expression, Start, [End], ContinueOnSuccess, ContinueOnFailure, ContinueOnError, [Data], [CreatedAt]) 
 VALUES
-    (@Priority, @Attempts, @Handler, @RunAt, @MaximumRuntime, @MaximumAttempts, @DeleteOnSuccess, @DeleteOnFailure, @DeleteOnError, @Expression, @Start, @End, @ContinueOnSuccess, @ContinueOnFailure, @ContinueOnError, @Data, @CreatedAt);
+    (@CorrelationId, @Priority, @Attempts, @Handler, @RunAt, @MaximumRuntime, @MaximumAttempts, @DeleteOnSuccess, @DeleteOnFailure, @DeleteOnError, @Expression, @Start, @End, @ContinueOnSuccess, @ContinueOnFailure, @ContinueOnError, @Data, @CreatedAt);
 
 SELECT MAX([Id]) AS [Id] FROM {TaskTable}
 ";
@@ -526,7 +564,16 @@ SELECT MAX([Id]) AS [Id] FROM {TaskTable}
 
 		private void LockTasks(IEnumerable<BackgroundTask> tasks, IDbConnection db, IDbTransaction t)
 		{
-			var sql = $@"
+			var now = GetTaskTimestamp();
+			var user = LockedIdentity.Get();
+
+			var matches = tasks.AsList();
+			var ids = GetTaskIds(matches).AsList();
+
+			if (_options.CurrentValue.Store.FilterCorrelatedTasks)
+				FilterCorrelatedTasks(db, t, now, ids, matches);
+
+			var lockTasks = $@"
 UPDATE {TaskTable}  
 SET 
     LockedAt = @Now, 
@@ -534,22 +581,49 @@ SET
 WHERE Id IN 
     @Ids;
 ";
-			var now = GetTaskTimestamp();
-			var user = LockedIdentity.Get();
-
-			var matches = tasks.AsList();
-			var ids = GetTaskIds(matches);
 
 			_logger.Debug(() => "Locking {TaskCount} tasks", matches.Count);
-			var updated = db.Execute(sql, new {Now = now, Ids = ids, User = user}, t);
+			var updated = db.Execute(lockTasks, new {Now = now, Ids = ids, User = user}, t);
 			if(updated != matches.Count)
 				_logger.Warn(()=> "Did not lock the expected number of tasks");
-
+			
 			foreach (var task in matches)
 			{
 				task.LockedAt = now;
 				task.LockedBy = user;
 			}
+		}
+
+		private void FilterCorrelatedTasks(IDbConnection db, IDbTransaction t, DateTimeOffset now, List<int> ids, List<BackgroundTask> matches)
+		{
+			_logger.Debug(() => "Evicting correlated tasks");
+
+			var filterTasks = $@"
+UPDATE {TaskTable}
+SET
+	[LastError] = 'Evicted by correlation',
+	[FailedAt] = @Now,
+	[LockedAt] = @Now,
+	[LockedBy] = '{Constants.Scheduling.EvictionUser}'
+WHERE
+    [LockedAt] IS NULL 
+AND
+    [FailedAt] IS NULL 
+AND 
+    [SucceededAt] IS NULL
+AND
+	[CorrelationId] IN @CorrelationIds
+AND
+	[Id] NOT IN @Ids
+";
+			var filtered = db.Execute(filterTasks, new
+			{
+				Now = now,
+				Ids = ids,
+				CorrelationIds = GetTaskCorrelationIds(matches)
+			}, t);
+			if (filtered > 0)
+				_logger.Debug(() => "Evicted {Filtered} correlated tasks", filtered);
 		}
 
 		private void UpdateTagMapping(BackgroundTask task, IDbConnection db, IDbTransaction t)
@@ -635,6 +709,12 @@ WHEN NOT MATCHED THEN
 		private static IEnumerable<int> GetTaskIds(List<BackgroundTask> tasks)
 		{
 			foreach (var id in tasks.Enumerate(x => x.Id))
+				yield return id;
+		}
+
+		private static IEnumerable<Guid> GetTaskCorrelationIds(List<BackgroundTask> tasks)
+		{
+			foreach (var id in tasks.Enumerate(x => x.CorrelationId))
 				yield return id;
 		}
 

@@ -50,29 +50,26 @@ namespace HQ.Integration.SqlServer.Scheduling
 			string connectionString, ConnectionScope scope = ConnectionScope.ByThread,
 			Action<SqlServerOptions> configureDatabase = null)
 		{
-			var services = builder.Services;
-
 			if (scope == ConnectionScope.ByRequest)
-				services.AddHttpContextAccessor();
+				builder.Services.AddHttpContextAccessor();
 
-			services.AddLocalTimestamps();
-			services.AddSafeLogging();
-			services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope, new[] {new HttpAccessorExtension()});
-			services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
+			builder.Services.AddLocalTimestamps();
+			builder.Services.AddSafeLogging();
+
+			var extensions = new[] {new HttpAccessorExtension()};
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqlServerConnectionFactory>(connectionString, scope, extensions);
+			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqlServerBackgroundTaskStore>());
 
 			var dialect = new SqlServerDialect();
 			SqlBuilder.Dialect = dialect;
 
-			services.Configure(configureDatabase);
+			builder.Services.Configure(configureDatabase);
+			builder.Services.AddMetrics();
+			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
+			builder.Services.TryAddSingleton(dialect);
 
-			services.AddMetrics();
-			services.TryAddSingleton<ISqlDialect>(dialect);
-			services.TryAddSingleton(dialect);
-
-			var serviceProvider = services.BuildServiceProvider();
-
+			var serviceProvider = builder.Services.BuildServiceProvider();
 			var options = serviceProvider.GetRequiredService<IOptions<BackgroundTaskOptions>>();
-
 			MigrateToLatest(connectionString, options.Value);
 
 			return builder;

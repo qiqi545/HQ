@@ -21,5 +21,6 @@ namespace HQ.Extensions.Scheduling.Configuration
 	{
 		public bool CreateIfNotExists { get; set; } = true;
 		public bool MigrateOnStartup { get; set; } = true;
+		public bool FilterCorrelatedTasks { get; set; } = true;
 	}
 }
