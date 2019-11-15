@@ -104,7 +104,7 @@
     <Content Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.1" />
   </ItemGroup>
 
   <!-- Azure -->
@@ -161,7 +161,7 @@
     <PackageReference Include="Postmark" Version="4.1.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.27" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen" Version="1.0.27.4" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.1" PrivateAssets="all" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
