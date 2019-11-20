@@ -88,6 +88,12 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			set => DefaultCollection = value;
 		}
 
+		public string ContainerId
+		{
+			get => DefaultCollection;
+			set => DefaultCollection = value;
+		}
+
 		public string[] PartitionKeyPaths
 		{
 			get
@@ -204,15 +210,15 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		protected override void GetProperties(Hashtable propertyDescriptors)
 		{
-			foreach (var entry in _settings)
-				propertyDescriptors.Add(entry.Key, entry.Value);
+			foreach (var (k, v) in _settings)
+				propertyDescriptors.Add(k, v);
 		}
 
 		public override string ToString()
 		{
 			var sb = new StringBuilder();
-			foreach (var setting in _settings)
-				sb.Append(setting.Key).Append("=").Append(setting.Value).Append(";");
+			foreach (var (k, v) in _settings)
+				sb.Append(k).Append("=").Append(v).Append(";");
 			return sb.ToString();
 		}
 

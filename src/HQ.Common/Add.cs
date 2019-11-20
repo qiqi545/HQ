@@ -18,6 +18,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using TypeKitchen;
 
 namespace HQ.Common
@@ -30,10 +31,10 @@ namespace HQ.Common
 			return services;
 		}
 
-		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services)
+		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services, ILogger logger = null)
 		{
 			services.TryAddSingleton<ITypeResolver>(r =>
-				new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies()));
+				new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies(), logger));
 			services.TryAddSingleton<ITypeRegistry, TypeRegistry>();
 			return services;
 		}

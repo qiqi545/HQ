@@ -91,16 +91,16 @@
       <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.App" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[2.2.0]" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.0.0" />
-        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.0.1" />
+        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
       </ItemGroup>
@@ -118,8 +118,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.27.4" PrivateAssets="all" />
-    <PackageReference Include="WebStrings" Version="1.0.1" PrivateAssets="all"/>
+    <PackageReference Include="TypeKitchen" Version="1.0.28.2" PrivateAssets="all" />
+    <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Bogus" Version="28.4.1" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
@@ -142,7 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.0.1" />
   </ItemGroup>
 
   <!-- SQL Server -->
@@ -155,7 +155,7 @@
     <Compile Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.0" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.2" />
   </ItemGroup>
 
   <!-- Azure -->
