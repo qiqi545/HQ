@@ -311,7 +311,7 @@ namespace HQ.Extensions.Options
 							continue;
 
 						type = subType;
-						instance = Activator.CreateInstance(type);
+						instance = Instancing.CreateInstance(type);
 						read = ReadAccessor.Create(type, AccessorMemberTypes.Properties, scope, out members);
 						write = WriteAccessor.Create(type, AccessorMemberTypes.Properties, scope);
 						goto setMembers;

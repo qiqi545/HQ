@@ -118,7 +118,7 @@ namespace HQ.Platform.Operations
 			mvcBuilder.Services.AddSaveOptions();
 			mvcBuilder.Services.AddDynamicAuthorization();
 
-			mvcBuilder.Services.AddScoped<ConfigurationService>();
+			mvcBuilder.Services.AddSingleton<ConfigurationService>();
 
 			mvcBuilder.AddControllerFeature<ConfigurationController>();
 			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();

@@ -17,20 +17,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
+using TypeKitchen;
 
 namespace HQ.Platform.Operations.Models
 {
 	public class ConfigurationService
 	{
 		private readonly IConfigurationRoot _root;
+		private readonly IServiceProvider _serviceProvider;
 		private readonly IEnumerable<ICustomConfigurationBinder> _customBinders;
 
-		public ConfigurationService(IConfigurationRoot root, IEnumerable<ICustomConfigurationBinder> customBinders)
+		private readonly Dictionary<CacheKey, object> _boundInstances;
+		private readonly Dictionary<CacheKey, IChangeToken> _changeTokens;
+
+		public ConfigurationService(IConfigurationRoot root, IServiceProvider serviceProvider, IEnumerable<ICustomConfigurationBinder> customBinders)
 		{
 			_root = root;
+			_serviceProvider = serviceProvider;
 			_customBinders = customBinders;
+			_boundInstances = new Dictionary<CacheKey, object>();
+			_changeTokens = new Dictionary<CacheKey, IChangeToken>();
 		}
 
 		public object Get(Type type, string section)
@@ -39,9 +50,117 @@ namespace HQ.Platform.Operations.Models
 			if (config == null)
 				return null;
 
-			var template = Activator.CreateInstance(type);
-			config.FastBind(template, _customBinders);
+			var key = new CacheKey(type.FullName, section);
 
+			MaybeRegisterChangeCallback(type, key);
+			
+			if(!_boundInstances.TryGetValue(key, out var instance))
+				_boundInstances.Add(key, instance = BindTemplateInstance(type, config));
+
+			return instance;
+		}
+
+		private struct CacheKey : IEquatable<CacheKey>, IComparable<CacheKey>, IComparable
+		{
+			private readonly string _type;
+			private readonly string _section;
+
+			public CacheKey(string type, string section)
+			{
+				_type = type;
+				_section = section;
+			}
+
+			public int CompareTo(CacheKey other)
+			{
+				var typeComparison = string.Compare(_type, other._type, StringComparison.Ordinal);
+				return typeComparison != 0 ? typeComparison : string.Compare(_section, other._section, StringComparison.Ordinal);
+			}
+
+			public int CompareTo(object obj)
+			{
+				if (ReferenceEquals(null, obj))
+					return 1;
+				return obj is CacheKey other ? CompareTo(other) : throw new ArgumentException($"Object must be of type {nameof(CacheKey)}");
+			}
+
+			public static bool operator <(CacheKey left, CacheKey right)
+			{
+				return left.CompareTo(right) < 0;
+			}
+
+			public static bool operator >(CacheKey left, CacheKey right)
+			{
+				return left.CompareTo(right) > 0;
+			}
+
+			public static bool operator <=(CacheKey left, CacheKey right)
+			{
+				return left.CompareTo(right) <= 0;
+			}
+
+			public static bool operator >=(CacheKey left, CacheKey right)
+			{
+				return left.CompareTo(right) >= 0;
+			}
+
+			public bool Equals(CacheKey other)
+			{
+				return _type == other._type && _section == other._section;
+			}
+
+			public override bool Equals(object obj)
+			{
+				return obj is CacheKey other && Equals(other);
+			}
+
+			public override int GetHashCode()
+			{
+				unchecked
+				{
+					return ((_type != null ? _type.GetHashCode() : 0) * 397) ^ (_section != null ? _section.GetHashCode() : 0);
+				}
+			}
+
+			public static bool operator ==(CacheKey left, CacheKey right)
+			{
+				return left.Equals(right);
+			}
+
+			public static bool operator !=(CacheKey left, CacheKey right)
+			{
+				return !left.Equals(right);
+			}
+		}
+
+		private void Callback(object _)
+		{
+			_boundInstances.Clear();
+		}
+
+
+		private void MaybeRegisterChangeCallback(Type type, CacheKey key)
+		{
+			if (_changeTokens.ContainsKey(key))
+				return;
+
+			var sourceType = typeof(IOptionsChangeTokenSource<>).MakeGenericType(type);
+			var source = _serviceProvider.GetService(sourceType);
+			if (source != null)
+			{
+				var method = sourceType.GetMethod(nameof(IOptionsChangeTokenSource<object>.GetChangeToken));
+				var changeToken = method?.Invoke(source, new object[] { }) as IChangeToken;
+				changeToken?.RegisterChangeCallback(Callback, null);
+				_changeTokens.Add(key, changeToken);
+			}
+			else
+				_changeTokens.Add(key, default);
+		}
+
+		private object BindTemplateInstance(Type type, IConfiguration config)
+		{
+			var template = Instancing.CreateInstance(type);
+			config.FastBind(template, _customBinders);
 			return template;
 		}
 	}
