@@ -99,7 +99,7 @@ namespace HQ.Platform.Node
 			//
 			// Platform Services:
 			services.AddSecurityPolicies(hq.GetSection("Security"), hq.GetSection("SuperUser"), logger);
-			services.AddOperationsApi(env, hq.GetSection("Ops"));
+			services.AddOperationsApi(hq.GetSection("Ops"));
 			services.AddPlatformApi(hq.GetSection("Api"));
 			services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))
 				.AddIdentityTenantContextStore<IdentityTenant>()

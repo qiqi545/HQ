@@ -170,8 +170,7 @@ namespace HQ.Platform.Operations
 					{
 						Auth = auth,
 						Name = "Health Checks (full)",
-						Description =
-							"Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
+						Description = "Used to monitor an API for its ability to respond to requests. This method checks all registered health checks for internal systems.",
 						Method = HttpMethod.Get,
 						Url = $"{baseUri}/{rootPath + options.HealthChecksPath}",
 						Version = versionString
@@ -186,8 +185,7 @@ namespace HQ.Platform.Operations
 					{
 						Auth = auth,
 						Name = "Health Check (live-only)",
-						Description =
-							"Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
+						Description = "Used to monitor an API for its ability to respond to requests. This method does not check internal systems.",
 						Method = HttpMethod.Get,
 						Url = $"{baseUri}/{rootPath + options.HealthCheckLivePath}",
 						Version = versionString

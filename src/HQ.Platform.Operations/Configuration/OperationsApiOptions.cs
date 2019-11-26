@@ -50,6 +50,7 @@ namespace HQ.Platform.Operations.Configuration
 		public bool EnableRequestProfiling { get; set; } = true;
 		public string RequestProfilingHeader { get; set; } = HttpHeaders.ServerTiming;
 
+		public bool EnableHealthChecks { get; set; } = true;
 		public bool EnableHealthChecksEndpoints { get; set; } = true;
 		public string HealthCheckLivePath { get; set; } = "/ping";
 		public string HealthChecksPath { get; set; } = "/health";

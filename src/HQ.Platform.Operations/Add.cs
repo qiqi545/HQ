@@ -47,24 +47,23 @@ namespace HQ.Platform.Operations
 {
 	public static class Add
 	{
-		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-			IWebHostEnvironment environment, IConfiguration config)
+		public static IServiceCollection AddOperationsApi(this IServiceCollection services, IConfiguration config)
 		{
-			return AddOperationsApi(services, environment, config.FastBind);
+			return AddOperationsApi(services, config.FastBind);
 		}
 
-		public static IServiceCollection AddOperationsApi(this IServiceCollection services,
-			IWebHostEnvironment environment, Action<OperationsApiOptions> configureAction = null)
+		public static IServiceCollection AddOperationsApi(this IServiceCollection services, Action<OperationsApiOptions> configureAction = null)
 		{
 			Bootstrap.EnsureInitialized();
 
 			if (configureAction != null)
 				services.Configure(configureAction);
 
-			if (!environment.IsDevelopment())
-			{
+			var options = new OperationsApiOptions();
+			configureAction?.Invoke(options);
+
+			if(options.EnableHealthChecks)
 				services.AddTransient<IStartupFilter, HealthCheckStartupFilter>();
-			}
 
 			services.AddValidOptions();
 			services.AddSaveOptions();

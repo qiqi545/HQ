@@ -162,7 +162,7 @@
     <PackageReference Include="Postmark" Version="4.1.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.28.2" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen" Version="1.0.29" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
