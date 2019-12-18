@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp2.2;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Configurations>Debug;Release;</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
@@ -108,8 +108,8 @@
     <Otherwise>
       <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -118,9 +118,9 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.28.2" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen" Version="1.0.30" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
-    <PackageReference Include="Bogus" Version="28.4.1" />
+    <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.7.9" />
@@ -128,8 +128,8 @@
     <PackageReference Include="AngleSharp" Version="0.13.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
-    <PackageReference Include="Postmark" Version="4.1.0" />
-    <PackageReference Include="System.Reactive" Version="4.2.0" />
+    <PackageReference Include="Postmark" Version="4.2.0" />
+    <PackageReference Include="System.Reactive" Version="4.3.1" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
@@ -142,7 +142,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.0" />
   </ItemGroup>
 
   <!-- SQL Server -->
@@ -163,7 +163,7 @@
     <Compile Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.2" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
   </ItemGroup>
 
 </Project>
