@@ -21,12 +21,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-#if NETCOREAPP2_2
-#else
-using HQ.Common.AspNetCore.MergePatch.Builders;
-#endif
-
 using System.Threading.Tasks;
 using HQ.Common.AspNetCore.MergePatch.Builders;
 using Microsoft.AspNetCore.Mvc;
@@ -39,12 +33,7 @@ using Newtonsoft.Json.Linq;
 
 namespace HQ.Common.AspNetCore.MergePatch.Formatters
 {
-	internal class JsonMergePatchInputFormatter :
-#if NETCOREAPP2_2
-		JsonInputFormatter
-#else
-		NewtonsoftJsonInputFormatter
-#endif
+	internal class JsonMergePatchInputFormatter : NewtonsoftJsonInputFormatter
 	{
 		private static readonly MediaTypeHeaderValue JsonMergePatchMediaType =
 			MediaTypeHeaderValue.Parse(JsonMergePatchDocument.ContentType).CopyAsReadOnly();
@@ -78,11 +67,7 @@ namespace HQ.Common.AspNetCore.MergePatch.Formatters
 			ArrayPool<char> charPool,
 			ObjectPoolProvider objectPoolProvider,
 			MvcOptions mvcOptions,
-#if NETCOREAPP2_2
-			MvcJsonOptions jsonOptions,
-#else
 			MvcNewtonsoftJsonOptions jsonOptions,
-#endif
 			JsonMergePatchOptions mergePatchOptions)
 			: base(logger, serializerSettings, charPool, objectPoolProvider, mvcOptions, jsonOptions)
 		{

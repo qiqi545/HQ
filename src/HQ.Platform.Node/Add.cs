@@ -15,11 +15,7 @@
 
 #endregion
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
 using Microsoft.AspNetCore.Hosting;
-#endif
 using System;
 using System.Reflection;
 using HQ.Common;

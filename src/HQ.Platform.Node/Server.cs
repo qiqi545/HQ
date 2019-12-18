@@ -25,10 +25,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
-
 namespace HQ.Platform.Node
 {
 	public static class Server
@@ -36,12 +32,7 @@ namespace HQ.Platform.Node
 		public static void Start(string[] args,
 			Action<IServiceCollection> configureServices = null,
 			Action<IApplicationBuilder, IWebHostEnvironment> configure = null,
-#if NETCOREAPP2_2
-			Action<IRouteBuilder> routes = null
-#else
-			Action<IEndpointRouteBuilder> routes = null
-#endif
-		)
+			Action<IEndpointRouteBuilder> routes = null)
 		{
 			Masthead();
 
@@ -53,29 +44,13 @@ namespace HQ.Platform.Node
 				var builder = WebHost.CreateDefaultBuilder(args);
 
 				builder.ConfigureHq(args, appName, true);
-
-#if NETCOREAPP2_2
-				IWebHostEnvironment env = null;
-#endif
-
 				builder.ConfigureServices((context, services) =>
 				{
-#if NETCOREAPP2_2
-					env = context.HostingEnvironment;
-#endif
 					var logger = services.BuildServiceProvider().GetService<ISafeLogger<Startup>>();
 					services.AddHq(context.HostingEnvironment, context.Configuration, logger);
 					configureServices?.Invoke(services);
 				});
 
-#if NETCOREAPP2_2
-				builder.Configure(app =>
-				{
-					var logger = app.ApplicationServices.GetService<ISafeLogger<Startup>>();
-					app.UseHq(env, logger, routes);
-					configure?.Invoke(app, env);
-				});
-#else
 				builder.UseStaticWebAssets(); // required for component static files visibility
 				builder.Configure((context, app) =>
 				{
@@ -83,7 +58,6 @@ namespace HQ.Platform.Node
 					app.UseHq(context.HostingEnvironment, logger, routes);
 					configure?.Invoke(app, context.HostingEnvironment);
 				});
-#endif
 
 				var host = builder.Build();
 				host.Run();

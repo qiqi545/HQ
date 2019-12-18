@@ -35,10 +35,6 @@ using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-#if NETCOREAPP2_2
-using Swashbuckle.AspNetCore.Swagger;
-#endif
-
 namespace HQ.Platform.Operations.Controllers
 {
 	[Route("meta")]
@@ -51,10 +47,6 @@ namespace HQ.Platform.Operations.Controllers
 	public class MetaController : Controller
 	{
 		private readonly IEnumerable<IMetaProvider> _providers;
-#if NETCOREAPP2_2
-		private readonly ISwaggerProvider _swaggerProvider;
-		private readonly IOptionsMonitor<SwaggerOptions> _swaggerOptions;
-#endif
 		private readonly ISchemaVersionStore _schemaStore;
 		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
 
@@ -64,26 +56,13 @@ namespace HQ.Platform.Operations.Controllers
 			IEnumerable<IMetaProvider> providers,
 			ISchemaVersionStore schemaStore,
 			IOptionsMonitor<MetaApiOptions> metaOptions,
-#if NETCOREAPP2_2
-			IOptionsMonitor<MvcJsonOptions> mvcOptions,
-#else
 			IOptionsMonitor<MvcNewtonsoftJsonOptions> mvcOptions,
-#endif
-#if NETCOREAPP2_2
-			ISwaggerProvider swaggerProvider,
-			IOptionsMonitor<SwaggerOptions> swaggerOptions,
-#endif
 			IOptionsMonitor<SchemaOptions> schemaOptions
 		)
 		{
 			_providers = providers;
 			_schemaStore = schemaStore;
 			_metaOptions = metaOptions;
-
-#if NETCOREAPP2_2
-			_swaggerProvider = swaggerProvider;
-			_swaggerOptions = swaggerOptions;
-#endif
 			_schemaOptions = schemaOptions;
 		}
 

@@ -15,11 +15,6 @@
 
 #endregion
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.AspNetCore.Hosting;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -39,6 +34,7 @@ using HQ.Extensions.Metrics.Internal;
 using HQ.Platform.Operations.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;

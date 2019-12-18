@@ -24,21 +24,12 @@ using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-#if NETCOREAPP2_2
-#else
-using HQ.Common.AspNetCore.MergePatch.Formatters;
-#endif
-
 namespace HQ.Common.AspNetCore.MergePatch.Configuration
 {
 	internal class JsonMergePatchOptionsSetup : IConfigureOptions<MvcOptions>
 	{
 		private readonly ILoggerFactory _loggerFactory;
-#if NETCOREAPP2_2
-		private readonly IOptions<MvcJsonOptions> _jsonOptions;
-#else
 		private readonly IOptions<MvcNewtonsoftJsonOptions> _jsonOptions;
-#endif
 		private readonly JsonSerializerSettings _jsonSerializerSettings;
 		private readonly ArrayPool<char> _charPool;
 		private readonly ObjectPoolProvider _objectPoolProvider;
@@ -46,11 +37,7 @@ namespace HQ.Common.AspNetCore.MergePatch.Configuration
 
 		public JsonMergePatchOptionsSetup(
 			ILoggerFactory loggerFactory,
-#if NETCOREAPP2_2
-			IOptions<MvcJsonOptions> jsonOptions,
-#else
 			IOptions<MvcNewtonsoftJsonOptions> jsonOptions,
-#endif
 			ArrayPool<char> charPool,
 			ObjectPoolProvider objectPoolProvider,
 			IOptions<JsonMergePatchOptions> options)
@@ -67,7 +54,6 @@ namespace HQ.Common.AspNetCore.MergePatch.Configuration
 		{
 			var jsonMergePatchLogger = _loggerFactory.CreateLogger<JsonMergePatchInputFormatter>();
 
-#if NETCOREAPP2_2
 			options.InputFormatters.Insert(0, new JsonMergePatchInputFormatter(
 				jsonMergePatchLogger,
 				_jsonSerializerSettings,
@@ -76,16 +62,6 @@ namespace HQ.Common.AspNetCore.MergePatch.Configuration
 				options,
 				_jsonOptions.Value,
 				_options.Value));
-#else
-			options.InputFormatters.Insert(0, new JsonMergePatchInputFormatter(
-				jsonMergePatchLogger,
-				_jsonSerializerSettings,
-				_charPool,
-				_objectPoolProvider,
-				options,
-				_jsonOptions.Value,
-				_options.Value));
-#endif
 		}
 	}
 }

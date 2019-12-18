@@ -32,24 +32,15 @@ namespace HQ.Platform.Security.AspNetCore
 
 			if (options.Value.Cors.Enabled)
 			{
-#if NETCOREAPP2_2
-				app.UseCors(Constants.Security.Policies.CorsPolicy);
-				app.UseMvc(routes => { });
-#else
 				app.UseRouting();
 				app.UseCors(Constants.Security.Policies.CorsPolicy);
 				app.UseEndpoints(builder => { });
-#endif
 			}
 
 			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)
 			{
-#if NETCOREAPP2_2
-				app.UseAuthentication();
-#else
 				app.UseAuthentication();
 				app.UseAuthorization();
-#endif
 			}
 
 			if (options.Value.Https.Enabled)

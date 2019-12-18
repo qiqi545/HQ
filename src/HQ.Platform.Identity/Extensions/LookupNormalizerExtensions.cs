@@ -23,11 +23,7 @@ namespace HQ.Platform.Identity.Extensions
 	{
 		public static string MaybeNormalizeName(this ILookupNormalizer normalizer, string lookup)
 		{
-#if NETCOREAPP2_2
-			return normalizer != null ? normalizer.Normalize(lookup) : lookup;
-#else
 			return normalizer != null ? normalizer.NormalizeName(lookup) : lookup;
-#endif
 		}
 	}
 }

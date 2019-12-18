@@ -15,11 +15,6 @@
 
 #endregion
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#else
-using Microsoft.Extensions.Hosting;
-#endif
 using System;
 using HQ.Common;
 using HQ.Extensions.Logging;
@@ -31,19 +26,13 @@ using HQ.Platform.Security.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting;
 
 namespace HQ.Platform.Node
 {
 	public static class Use
 	{
-		public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env,
-			ISafeLogger logger = null,
-#if NETCOREAPP2_2
-			Action<IRouteBuilder> configureRoutes = null
-#else
-			Action<IEndpointRouteBuilder> configureRoutes = null
-#endif
-		)
+		public static IApplicationBuilder UseHq(this IApplicationBuilder app, IWebHostEnvironment env, ISafeLogger logger = null, Action<IEndpointRouteBuilder> configureRoutes = null)
 		{
 			Bootstrap.EnsureInitialized();
 
@@ -51,15 +40,6 @@ namespace HQ.Platform.Node
 				app.UseDeveloperExceptionPage();
 
 			app.UseTraceContext();
-
-#if NETCOREAPP2_2
-			app.UseSwaggerUI(c =>
-			{
-				c.SwaggerEndpoint("/meta/swagger", "Swagger 2.0");
-				c.RoutePrefix = "docs/swagger";
-			});
-#endif
-
 			app.UseSecurityPolicies();
 			app.UseVersioning();
 			app.UseOperationsApi();
@@ -68,21 +48,6 @@ namespace HQ.Platform.Node
 			app.UseMetaApi();
 			app.UseMultiTenancy<IdentityTenant, string>();
 
-#if NETCOREAPP2_2
-			app.UseStaticFiles();
-			app.UseMvc(routes =>
-	        {
-		        try
-		        {
-			        configureRoutes?.Invoke(routes);
-		        }
-		        catch (Exception e)
-		        {
-			        logger?.Critical(() => "Error encountered when starting MVC for HQ services", e);
-			        throw;
-		        }
-	        });
-#else
 			app.UseStaticFiles();
 			app.UseRouting();
 			app.UseEndpoints(endpoints =>
@@ -98,7 +63,6 @@ namespace HQ.Platform.Node
 					throw;
 				}
 			});
-#endif
 			return app;
 		}
 	}

@@ -15,12 +15,6 @@
 
 #endregion
 
-#if NETCOREAPP2_2
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-using Swashbuckle.AspNetCore.Swagger;
-#else
-using Microsoft.Extensions.Hosting;
-#endif
 using System;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -152,18 +146,6 @@ namespace HQ.Platform.Operations
 			mvcBuilder.AddControllerFeature<MetaController>();
 			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
-
-#if NETCOREAPP2_2
-            mvcBuilder.Services.AddSwaggerGen(c =>
-			{
-				c.EnableAnnotations();
-				c.SwaggerDoc("swagger", new Info
-				{
-					Title = "Sample API",
-					Version = "v1"
-				});
-			});
-#endif
 			
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
 			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());

@@ -30,6 +30,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using TypeKitchen;
 
 namespace HQ.Test.Sdk
@@ -102,13 +103,7 @@ namespace HQ.Test.Sdk
 			return new TestServer(builder).CreateClient();
 		}
 
-		private static void ConfigureAppConfiguration(
-#if NETCOREAPP2_2
-			IHostingEnvironment env,
-#else
-			IWebHostEnvironment env,
-#endif
-			TestSettings testSettings, IConfigurationBuilder c)
+		private static void ConfigureAppConfiguration(IHostEnvironment env, TestSettings testSettings, IConfigurationBuilder c)
         {
             if (!string.IsNullOrWhiteSpace(testSettings.AppSettingsPath))
             {
@@ -162,12 +157,7 @@ namespace HQ.Test.Sdk
             T startup = null;
             IConfiguration config = null;
             IServiceCollection services = null;
-
-#if NETCOREAPP2_2
-			IHostingEnvironment env;
-#else
 			IWebHostEnvironment env;
-#endif
 
             var builder = new WebHostBuilder()
                 .ConfigureAppConfiguration((context, cb) =>
