@@ -28,6 +28,7 @@ using HQ.Integration.Sqlite.Options;
 using HQ.Integration.SqlServer.Options;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 #if NETCOREAPP3_0

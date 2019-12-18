@@ -14,7 +14,7 @@
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="WyHash" Version="1.0.4" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.6.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

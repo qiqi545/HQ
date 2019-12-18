@@ -5,14 +5,14 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.0" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
   </ItemGroup>
 

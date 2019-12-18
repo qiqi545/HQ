@@ -5,7 +5,7 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
     <LangVersion>8</LangVersion>
   </PropertyGroup>
@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.3.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.4.0" />
   </ItemGroup>
 
   <ItemGroup>
