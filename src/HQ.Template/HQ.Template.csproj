@@ -1,20 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseRazorBuildServer>false</UseRazorBuildServer>
     <TieredCompilation>true</TieredCompilation>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="HQ" Version="1.0.145" />
+  <ItemGroup Condition="'$(DevTemplate)' == 'false'">
+    <PackageReference Include="HQ" Version="1.0.160" />
   </ItemGroup>
 
   <!--#if(false)-->
+  <ItemGroup Condition="'$(DevTemplate)' == 'true'">
+    <ProjectReference Include="..\HQ\HQ.csproj" />
+  </ItemGroup>
+  <Import Project="$(ProjectDir)..\..\build\build.props" />
   <Import Project="$(ProjectDir)..\..\build\version.props" />
   <PropertyGroup>
     <DefineConstants>Sqlite;AppInsights</DefineConstants>
@@ -53,7 +56,7 @@
     <PackageTags>hq hq-io dotnet-standard serverless platform</PackageTags>
     <PackageType>template</PackageType>
     <PackageProjectUrl>https://hq.io</PackageProjectUrl>
-    <Description>HQ.io Web Application</Description>
+    <Description>HQ.io</Description>
     <RepositoryUrl>https://github.com/hq-io/$(MSBuildProjectName)</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>

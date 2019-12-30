@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;PackageSources;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
@@ -21,7 +21,6 @@
     <TieredCompilation>true</TieredCompilation>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
     <LangVersion>8</LangVersion>
-    <UserSecretsId>c55d9cc2-f9d8-4479-9109-f3c254e7b863</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
@@ -116,16 +115,13 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
   </ItemGroup>
 
-  <!-- This is required to work around when targeting both .NET Core 2.2 and .NET Core 3.0 -->
-  <Target Name="ResolveComReferencesDesignTime"></Target>
-
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
@@ -135,13 +131,14 @@
     <PackageReference Include="NCrontab" Version="3.3.1" />
     <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
     <PackageReference Include="Postmark" Version="4.2.0" />
-    <PackageReference Include="System.Reactive" Version="4.3.1" />
+    <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
-    <PackageReference Include="TypeKitchen" Version="1.0.30" PrivateAssets="all" />
-    <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
+
+    <PackageReference Include="TypeKitchen" Version="1.0.30" PrivateAssets="all" />
+    <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

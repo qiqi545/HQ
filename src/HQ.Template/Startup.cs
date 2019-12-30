@@ -21,18 +21,19 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace HQ.Template
 {
 	public class Startup
 	{
-		public static void Main(string[] args) => Server.Start<Startup>(args);
+		public static void Main(string[] args) => Server.Start(args);
 
 		private readonly IConfiguration _configuration;
-		private readonly IHostingEnvironment _environment;
+		private readonly IWebHostEnvironment _environment;
 		private readonly ISafeLogger<Startup> _logger;
 
-		public Startup(IConfiguration configuration, IHostingEnvironment environment, ISafeLogger<Startup> logger)
+		public Startup(IConfiguration configuration, IWebHostEnvironment environment, ISafeLogger<Startup> logger)
 		{
 			_configuration = configuration;
 			_environment = environment;
@@ -47,14 +48,14 @@ namespace HQ.Template
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 			}
 
-			app.UseHq(_logger, routes => { /* custom MVC routes */});
+			app.UseHq(env, _logger, routes => { /* custom MVC routes */});
 		}
 	}
 }
