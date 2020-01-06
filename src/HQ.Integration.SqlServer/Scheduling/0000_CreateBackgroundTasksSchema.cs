@@ -32,7 +32,6 @@ namespace HQ.Integration.SqlServer.Scheduling
 			Create.Table(nameof(BackgroundTask))
 				.WithColumn("Id")
 				.AsCustom($"INT DEFAULT(NEXT VALUE FOR [{schema}].[{nameof(BackgroundTask)}_Id]) PRIMARY KEY CLUSTERED")
-				.WithColumn("CorrelationId").AsGuid().NotNullable()
 				.WithColumn("Priority").AsInt32().NotNullable().WithDefaultValue(0)
 				.WithColumn("Attempts").AsInt32().NotNullable().WithDefaultValue(0)
 				.WithColumn("Handler").AsString(int.MaxValue).NotNullable()
