@@ -21,6 +21,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
+	/*
 	public class ExpressionAttribute : ValidationAttribute
 	{
 		public ExpressionAttribute(string expression)
@@ -39,4 +40,5 @@ namespace HQ.Data.Contracts.DataAnnotations
 				: new ValidationResult(string.Format(CultureInfo.CurrentCulture, ErrorMessageString));
 		}
 	}
+	*/
 }

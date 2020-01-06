@@ -22,11 +22,11 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 	public class CreateBackgroundTaskModel
 	{
 		[RequiredOnlyOne]
-		[RequiredIfNotPresent(nameof(TaskCode))]
+		//[RequiredIfNotPresent(nameof(TaskCode))]
 		public string TaskType { get; set; }
 
 		[RequiredOnlyOne]
-		[RequiredIfNotPresent(nameof(TaskType))]
+		//[RequiredIfNotPresent(nameof(TaskType))]
 		public string TaskCode { get; set; }
 
 		public string[] Tags { get; set; }

@@ -23,6 +23,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
+	/*
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = true)]
 	public abstract class DelegatedValidationAttribute : ValidationAttribute
 	{
@@ -57,4 +58,5 @@ namespace HQ.Data.Contracts.DataAnnotations
 			return new ValidationResult(errorMessage, new[] {validationContext.MemberName});
 		}
 	}
+	*/
 }

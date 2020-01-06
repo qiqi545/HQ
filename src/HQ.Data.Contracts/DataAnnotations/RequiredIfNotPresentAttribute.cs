@@ -21,6 +21,7 @@ using TypeKitchen;
 
 namespace HQ.Data.Contracts.DataAnnotations
 {
+	/*
 	public sealed class RequiredIfNotPresentAttribute : DelegatedValidationAttribute
 	{
 		public RequiredIfNotPresentAttribute(string propertyOrFieldName, bool allowEmptyStrings = false) : base(
@@ -52,4 +53,5 @@ namespace HQ.Data.Contracts.DataAnnotations
 			return handler;
 		}
 	}
+	*/
 }
