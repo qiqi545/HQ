@@ -18,7 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\HQ.Extensions.Cryptography.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
   </ItemGroup>
 

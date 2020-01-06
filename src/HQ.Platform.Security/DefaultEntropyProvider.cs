@@ -18,7 +18,7 @@
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace HQ.Data.Contracts.Security
+namespace HQ.Platform.Security
 {
 	public class DefaultEntropyProvider<TSubject> : IEntropyProvider<TSubject>
 	{

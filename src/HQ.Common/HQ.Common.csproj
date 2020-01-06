@@ -33,18 +33,4 @@
     <PackageReference Include="WebStrings" Version="1.0.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="Models\IMetaParameterProvider.cs.pp" />
-    <None Include="Models\IMetaProvider.cs.pp" />
-    <None Include="Models\IMetaVersionProvider.cs.pp" />
-    <None Include="Models\MetaCollection.cs.pp" />
-    <None Include="Models\MetaDescription.cs.pp" />
-    <None Include="Models\MetaFolder.cs.pp" />
-    <None Include="Models\MetaItem.cs.pp" />
-    <None Include="Models\MetaOperation.cs.pp" />
-    <None Include="Models\MetaParameter.cs.pp" />
-    <None Include="Models\MetaUrl.cs.pp" />
-    <None Include="Models\NoMetaVersionProvider.cs.pp" />
-  </ItemGroup>
-
 </Project>

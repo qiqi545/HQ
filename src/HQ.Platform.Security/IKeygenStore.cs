@@ -17,7 +17,7 @@
 
 using System.Threading.Tasks;
 
-namespace HQ.Data.Contracts.Security
+namespace HQ.Platform.Security
 {
 	public interface IKeygenStore
 	{

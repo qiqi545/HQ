@@ -15,12 +15,11 @@
 
 #endregion
 
-using System.Text;
-
-namespace HQ.Data.Contracts.Security
+namespace HQ.Platform.Security
 {
-	internal static class MessageEncoding
+	public enum KeyType
 	{
-		public static Encoding Current = new UTF8Encoding(false, true);
+		OneTimePassword,
+		PrivateKey
 	}
 }
