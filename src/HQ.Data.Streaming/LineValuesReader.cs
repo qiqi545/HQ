@@ -17,26 +17,22 @@
 
 using System;
 using System.Text;
-using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming
 {
 	public static class LineValuesReader
 	{
-		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-			string separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding, string separator, NewValueAsSpan newValue)
 		{
-			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
+			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
+		}       
+		 
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding, byte[] separator, NewValueAsSpan newValue)
+		{
+			ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue);
 		}
 
-		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-			byte[] separator, NewValueAsSpan newValue, IMetricsHost metrics = null)
-		{
-			ReadValues(lineNumber, new ReadOnlySpan<byte>(start, length), encoding, separator, newValue, metrics);
-		}
-
-		public static void ReadValues(long lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator,
-			NewValueAsSpan newValue, IMetricsHost metrics = null)
+		public static void ReadValues(long lineNumber, ReadOnlySpan<byte> line, Encoding encoding, byte[] separator, NewValueAsSpan newValue)
 		{
 			var position = 0;
 			while (true)
@@ -54,14 +50,12 @@ namespace HQ.Data.Streaming
 			}
 		}
 
-		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-			string separator, NewValue newValue, IMetricsHost metrics = null)
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding, string separator, NewValue newValue)
 		{
-			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue, metrics);
+			ReadValues(lineNumber, start, length, encoding, encoding.GetSeparatorBuffer(separator), newValue);
 		}
 
-		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding,
-			byte[] separator, NewValue newValue, IMetricsHost metrics = null)
+		public static unsafe void ReadValues(long lineNumber, byte* start, int length, Encoding encoding, byte[] separator, NewValue newValue)
 		{
 			var position = 0;
 			while (true)

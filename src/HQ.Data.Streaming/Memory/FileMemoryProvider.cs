@@ -28,8 +28,9 @@ namespace HQ.Data.Streaming.Memory
 	public class FileMemoryProvider<T> : IExternalMemoryProvider<T>
 	{
 		private readonly string _baseDirectory;
-		private readonly Func<string, T> _deserialize;
 		private readonly int _hashCode;
+
+		private readonly Func<string, T> _deserialize;
 		private readonly Func<T, string> _serialize;
 
 		public FileMemoryProvider(Func<T, string> serialize, Func<string, T> deserialize, string baseDirectory)
@@ -40,27 +41,12 @@ namespace HQ.Data.Streaming.Memory
 			_baseDirectory = baseDirectory ?? Path.GetTempPath();
 		}
 
-		public Stream CreateSegment(string label, int index)
-		{
-			var segment = File.OpenWrite(GetFilePathForSegment(label, index));
-			return segment;
-		}
+		public Stream CreateSegment(string label, int index) => File.OpenWrite(GetFilePathForSegment(label, index));
 
-		public void DeleteSegment(string label, int index)
-		{
-			File.Delete(GetFilePathForSegment(label, index));
-		}
+		public void DeleteSegment(string label, int index) => File.Delete(GetFilePathForSegment(label, index));
 
-		public IEnumerable<T> Read(string label, int index, IComparer<T> sort, IMetricsHost metrics = null,
-			CancellationToken cancellationToken = default)
-		{
-			var stream = File.OpenRead(GetFilePathForSegment(label, index));
-
-			return Read(stream, sort, metrics, cancellationToken);
-		}
-
-		public IEnumerable<T> Read(Stream stream, IComparer<T> sort, IMetricsHost metrics = null,
-			CancellationToken cancellationToken = default)
+		public IEnumerable<T> Read(string label, int index, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default) => Read(File.OpenRead(GetFilePathForSegment(label, index)), sort, metrics, cancellationToken);
+		public IEnumerable<T> Read(Stream stream, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
 		{
 			var list = new List<T>();
 			LineReader.ReadLines(stream, Encoding.UTF8, (lineNumber, line) =>
@@ -78,8 +64,7 @@ namespace HQ.Data.Streaming.Memory
 				.OrderBy(x => x).Select(File.OpenRead);
 		}
 
-		public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0,
-			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
 		{
 			var histogram = metrics?.Histogram(typeof(FileMemoryProvider<T>), "line_length", SampleType.Uniform);
 			var count = 0L;
@@ -118,8 +103,7 @@ namespace HQ.Data.Streaming.Memory
 			};
 		}
 
-		public void Sort(string fromLabel, string toLabel, IComparer<T> sort, IMetricsHost metrics = null,
-			CancellationToken cancellationToken = default)
+		public void Sort(string fromLabel, string toLabel, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
 		{
 			var streams = GetAllSegments(fromLabel);
 			var data = new Queue<Stream>(streams);
@@ -127,17 +111,16 @@ namespace HQ.Data.Streaming.Memory
 			{
 				using (var stream = data.Dequeue())
 				{
-					using (var sw = new StreamWriter(CreateSegment(toLabel, i)))
-					{
-						var items = Read(stream, sort, metrics, cancellationToken);
-						foreach (var item in items)
-						{
-							var line = _serialize(item);
-							sw.WriteLine(line);
-						}
+					using var sw = new StreamWriter(CreateSegment(toLabel, i));
 
-						sw.Flush();
+					var items = Read(stream, sort, metrics, cancellationToken);
+					foreach (var item in items)
+					{
+						var line = _serialize(item);
+						sw.WriteLine(line);
 					}
+
+					sw.Flush();
 				}
 
 				DeleteSegment(fromLabel, i);
@@ -147,12 +130,10 @@ namespace HQ.Data.Streaming.Memory
 		/// <summary>
 		///     https://en.wikipedia.org/wiki/K-way_merge_algorithm
 		/// </summary>
-		public IEnumerable<T> Merge(string label, SegmentStats stats, int maxWorkingMemoryBytes = 0,
-			IMetricsHost metrics = null, CancellationToken cancellationToken = default)
+		public IEnumerable<T> Merge(string label, SegmentStats stats, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
 		{
 			var segments = GetAllSegments(label).ToList();
-			var queueSize = (int) Math.Min(stats.RecordCount,
-				maxWorkingMemoryBytes / segments.Count / stats.RecordLength);
+			var queueSize = (int) Math.Min(stats.RecordCount, maxWorkingMemoryBytes / segments.Count / stats.RecordLength);
 			if (queueSize == 0)
 			{
 				queueSize = (int) stats.RecordCount;

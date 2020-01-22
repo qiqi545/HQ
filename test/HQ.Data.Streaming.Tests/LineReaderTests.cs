@@ -55,7 +55,7 @@ namespace HQ.Data.Streaming.Tests
             {
                 var lines = 0UL;
                 var sw = Stopwatch.StartNew();
-                foreach (var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8, "|"))
+                foreach (var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8))
                 {
                     var row = new DummyDataLayout(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
                     Assert.NotNull(row.SomeField.Value);
