@@ -25,11 +25,11 @@ namespace HQ.Data.Streaming.Tests
     public class LineValuesReaderTests : UnitUnderTest
     {
         [Test]
-        public void Can_read_line_values()
+        public unsafe void Can_read_line_values()
         {
             var values = 0;
             var encoding = Encoding.UTF8;
-            using (var fixture = new FlatFileFixture(100000, encoding, ","))
+            using (var fixture = new FlatFileFixture(100, encoding, ","))
             {
                 var sw = Stopwatch.StartNew();
                 LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, v, e, m) => { values++; });

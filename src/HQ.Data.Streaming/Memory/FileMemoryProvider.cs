@@ -63,7 +63,7 @@ namespace HQ.Data.Streaming.Memory
 			CancellationToken cancellationToken = default)
 		{
 			var list = new List<T>();
-			LineReader.ReadLines(stream, Encoding.UTF8, (lineNumber, line, m) =>
+			LineReader.ReadLines(stream, Encoding.UTF8, (lineNumber, line) =>
 			{
 				var t = _deserialize(line);
 				list.Add(t);

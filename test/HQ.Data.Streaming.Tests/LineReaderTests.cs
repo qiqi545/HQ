@@ -39,7 +39,7 @@ namespace HQ.Data.Streaming.Tests
             {
                 var lines = 0L;
                 var sw = Stopwatch.StartNew();
-                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line, metrics) =>
+                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line) =>
                 {
                     Assert.NotNull(line);
                     lines = lineNumber;

@@ -44,11 +44,11 @@ namespace HQ.Data.Streaming
 				var next = line.IndexOf(separator);
 				if (next == -1)
 				{
-					newValue?.Invoke(lineNumber, position, line, encoding, metrics);
+					newValue?.Invoke(lineNumber, position, line, encoding);
 					break;
 				}
 
-				newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding, metrics);
+				newValue?.Invoke(lineNumber, position, line.Slice(0, next), encoding);
 				line = line.Slice(next + separator.Length);
 				position += next + separator.Length;
 			}
@@ -70,11 +70,11 @@ namespace HQ.Data.Streaming
 				var next = line.IndexOf(separator);
 				if (next == -1)
 				{
-					newValue?.Invoke(lineNumber, position, start, length, encoding, metrics);
+					newValue?.Invoke(lineNumber, position, start, length, encoding);
 					break;
 				}
 
-				newValue?.Invoke(lineNumber, position, start, next, encoding, metrics);
+				newValue?.Invoke(lineNumber, position, start, next, encoding);
 				var consumed = next + separator.Length;
 				start += consumed;
 				position += consumed;

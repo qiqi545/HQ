@@ -144,19 +144,19 @@ namespace HQ.Data.Streaming
 								count++;
 
 								BytesPerSecond(metrics, length);
-								onNewLine?.Invoke(count, false, start, length, encoding, metrics);
+								onNewLine?.Invoke(count, false, start, length, encoding);
 							}
 							else if (count == 0 && position == end)
 							{
 								BytesPerSecond(metrics, length);
-								onNewLine?.Invoke(count, false, start, length, encoding, metrics);
+								onNewLine?.Invoke(count, false, start, length, encoding);
 								return 1;
 							}
 							else
 							{
 								// line spans across the read-ahead buffer
 								BytesPerSecond(metrics, length);
-								onNewLine?.Invoke(count, true, start, length, encoding, metrics);
+								onNewLine?.Invoke(count, true, start, length, encoding);
 							}
 
 							startIndex += length;
@@ -231,7 +231,7 @@ namespace HQ.Data.Streaming
 				var pendingLength = 0;
 				byte[] buffer = null; // TODO convert to allocator
 
-				NewLine newLine = (lineNumber, partial, start, length, x, m) =>
+				NewLine newLine = (lineNumber, partial, start, length, x) =>
 				{
 					if (buffer == null)
 					{
@@ -249,7 +249,7 @@ namespace HQ.Data.Streaming
 					else
 					{
 						var line = new ReadOnlySpan<byte>(buffer, 0, length + pendingLength);
-						onNewLine?.Invoke(lineNumber, encoding.GetString(line), m);
+						onNewLine?.Invoke(lineNumber, encoding.GetString(line));
 						pendingLength = 0;
 						buffer = null;
 					}
@@ -264,7 +264,7 @@ namespace HQ.Data.Streaming
 		{
 			unsafe
 			{
-				NewLine newLine = (n, p, s, l, e, m) => { onNewLine?.Invoke(n, e.GetString(s, l), m); };
+				NewLine newLine = (n, p, s, l, e) => { onNewLine?.Invoke(n, e.GetString(s, l)); };
 				return ReadOrCountLines(stream, encoding, workingBuffer, newLine, cancellationToken, metrics);
 			}
 		}
@@ -293,9 +293,9 @@ namespace HQ.Data.Streaming
 		{
 			unsafe
 			{
-				NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
+				NewLine onNewLine = (lineNumber, partial, start, length, e) =>
 				{
-					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
 				};
 				return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
 			}
@@ -312,9 +312,9 @@ namespace HQ.Data.Streaming
 		{
 			unsafe
 			{
-				NewLine onNewLine = (lineNumber, partial, start, length, e, m) =>
+				NewLine onNewLine = (lineNumber, partial, start, length, e) =>
 				{
-					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue, m);
+					LineValuesReader.ReadValues(lineNumber, start, length, e, separator, onNewValue);
 				};
 				return ReadLines(stream, encoding, workingBuffer, onNewLine, metrics, cancellationToken);
 			}
@@ -361,7 +361,7 @@ namespace HQ.Data.Streaming
 				{
 					unsafe
 					{
-						LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x, m) =>
+						LineReader.ReadLines(stream, e, workingBuffer, (lineNumber, partial, start, length, x) =>
 						{
 							if (buffer == null)
 							{

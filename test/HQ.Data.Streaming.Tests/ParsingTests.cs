@@ -34,7 +34,7 @@ namespace HQ.Data.Streaming.Tests
                 var sw = Stopwatch.StartNew();
                 unsafe
                 {
-                    LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e, m) =>
+                    LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e) =>
                     {
                         values++;
                         e.TryParse(start, length, out bool _);
