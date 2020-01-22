@@ -16,6 +16,7 @@
 #endregion
 
 using HQ.Common;
+using HQ.Common.DataAnnotations;
 using HQ.Data.Contracts.DataAnnotations;
 
 namespace HQ.Platform.Security.Configuration
