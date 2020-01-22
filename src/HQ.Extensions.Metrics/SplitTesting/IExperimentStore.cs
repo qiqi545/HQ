@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Data.Contracts.Runtime;
+using HQ.Common.Models;
 
 namespace HQ.Extensions.Metrics.SplitTesting
 {

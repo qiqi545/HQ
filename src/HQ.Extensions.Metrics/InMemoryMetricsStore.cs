@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using HQ.Data.Contracts.Runtime;
+using HQ.Common.Models;
 
 namespace HQ.Extensions.Metrics
 {

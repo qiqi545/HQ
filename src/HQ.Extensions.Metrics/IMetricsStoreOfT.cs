@@ -16,12 +16,11 @@
 #endregion
 
 using System.Collections.Immutable;
-using HQ.Data.Contracts.Runtime;
+using HQ.Common.Models;
 
 namespace HQ.Extensions.Metrics
 {
-	public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter>
-		where TFilter : IMetric
+	public interface IMetricsStore<TFilter> : IKeyValueStore<MetricName, TFilter> where TFilter : IMetric
 	{
 		IImmutableDictionary<MetricName, TFilter> GetSample(MetricType typeFilter = MetricType.None);
 	}

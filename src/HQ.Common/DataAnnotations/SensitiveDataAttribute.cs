@@ -15,12 +15,15 @@
 
 #endregion
 
-namespace HQ.Data.Contracts.DataAnnotations
+using System;
+
+namespace HQ.Common.DataAnnotations
 {
-	public enum SensitiveDataCategory
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
+	public class SensitiveDataAttribute : Attribute
 	{
-		PersonallyIdentifiableInformation,
-		ProtectedHealthInformation,
-		OperationalSecurity
+		public SensitiveDataAttribute(SensitiveDataCategory category) => Category = category;
+
+		public SensitiveDataCategory Category { get; }
 	}
 }

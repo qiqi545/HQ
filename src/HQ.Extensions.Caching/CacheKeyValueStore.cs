@@ -16,7 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Data.Contracts.Runtime;
+using HQ.Common.Models;
 
 namespace HQ.Extensions.Caching
 {

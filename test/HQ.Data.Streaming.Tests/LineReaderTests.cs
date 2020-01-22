@@ -22,7 +22,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
-using HQ.Data.Contracts.DataAnnotations;
+using HQ.Common.DataAnnotations;
 using HQ.Data.Streaming.Fields;
 using HQ.Data.Streaming.Internal;
 using HQ.Test.Sdk;
