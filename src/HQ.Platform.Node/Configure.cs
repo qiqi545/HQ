@@ -31,10 +31,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-#if NETCOREAPP3_0
-using Microsoft.Extensions.Hosting;
-#endif
-
 namespace HQ.Platform.Node
 {
 	public class AppOptions

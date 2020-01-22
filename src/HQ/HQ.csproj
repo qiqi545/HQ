@@ -144,7 +144,7 @@
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.30" />
+    <PackageReference Include="TypeKitchen.Lightweight" Version="1.0.30" />
 
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>

@@ -27,22 +27,16 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-#if NETSTANDARD2_0
-using IWebHostEnvironment = Microsoft.Extensions.Hosting.IHostingEnvironment;
-#else
-using Microsoft.AspNetCore.Hosting;
-#endif
-
 namespace HQ.Data.Contracts.Schema.Services
 {
 	public class SchemaDiscoveryService : IHostedService
 	{
-		private readonly IWebHostEnvironment _environment;
+		private readonly IHostEnvironment _environment;
 		private readonly ISafeLogger<SchemaDiscoveryService> _logger;
 		private readonly IOptionsMonitor<SchemaOptions> _options;
 		private readonly SchemaService _service;
 
-		public SchemaDiscoveryService(SchemaService service, IWebHostEnvironment environment,
+		public SchemaDiscoveryService(SchemaService service, IHostEnvironment environment,
 			IOptionsMonitor<SchemaOptions> options, ISafeLogger<SchemaDiscoveryService> logger)
 		{
 			_service = service;

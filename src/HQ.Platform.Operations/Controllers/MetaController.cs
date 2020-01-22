@@ -48,8 +48,8 @@ namespace HQ.Platform.Operations.Controllers
 	{
 		private readonly IEnumerable<IMetaProvider> _providers;
 		private readonly ISchemaVersionStore _schemaStore;
-		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
 
+		private readonly IOptionsMonitor<MetaApiOptions> _metaOptions;
 		private readonly IOptionsMonitor<SchemaOptions> _schemaOptions;
 
 		public MetaController(
