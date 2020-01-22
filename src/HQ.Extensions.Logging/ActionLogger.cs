@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 using TypeKitchen;
 
@@ -40,7 +39,7 @@ namespace HQ.Extensions.Logging
 
 		public IDisposable BeginScope<TState>(TState state)
 		{
-			return this.ActLike<IDisposable>();
+			return this.QuackLike<IDisposable>();
 		}
 
 		public bool IsEnabled(LogLevel logLevel)
