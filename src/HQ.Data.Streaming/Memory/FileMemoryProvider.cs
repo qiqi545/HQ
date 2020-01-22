@@ -21,6 +21,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using HQ.Data.Streaming.Internal;
 using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming.Memory
@@ -66,7 +67,7 @@ namespace HQ.Data.Streaming.Memory
 
 		public SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes = 0, IMetricsHost metrics = null, CancellationToken cancellationToken = default)
 		{
-			var histogram = metrics?.Histogram(typeof(FileMemoryProvider<T>), "line_length", SampleType.Uniform);
+			
 			var count = 0L;
 			var segments = 0;
 			var sw = new StreamWriter(CreateSegment(label, segments));
@@ -75,7 +76,7 @@ namespace HQ.Data.Streaming.Memory
 				foreach (var item in stream)
 				{
 					var line = _serialize(item);
-					histogram?.Update(line.Length);
+					BuiltInMetrics.LineLength<T>(metrics, line.Length);
 
 					sw.WriteLine(line);
 					count++;
@@ -99,7 +100,9 @@ namespace HQ.Data.Streaming.Memory
 
 			return new SegmentStats
 			{
-				RecordCount = count, RecordLength = (int) (histogram?.Mean ?? 0) + 1, SegmentCount = segments
+				RecordCount = count, 
+				RecordLength = (int) BuiltInMetrics.GetMeanLineLength<T>(metrics) + 1, 
+				SegmentCount = segments
 			};
 		}
 
