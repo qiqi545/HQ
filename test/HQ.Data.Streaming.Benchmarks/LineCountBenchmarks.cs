@@ -21,11 +21,12 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Jobs;
 using HQ.Test.Sdk.Fixtures;
 
 namespace HQ.Data.Streaming.Benchmarks
 {
-    [CoreJob]
+	[SimpleJob(RuntimeMoniker.NetCoreApp31)]
     [MarkdownExporter]
     [MemoryDiagnoser]
     [CsvMeasurementsExporter]
@@ -34,7 +35,7 @@ namespace HQ.Data.Streaming.Benchmarks
     {
         private Dictionary<int, string> _files;
 
-        [Params(10_000_000)] public int rowCount;
+        [Params(10_000_000)] public int RowCount;
 
         [GlobalSetup]
         public void Setup()
@@ -57,13 +58,13 @@ namespace HQ.Data.Streaming.Benchmarks
         [Benchmark(Baseline = true, OperationsPerInvoke = 1)]
         public int File_ReadLines()
         {
-            return File.ReadLines(_files[rowCount], Encoding.UTF8).Count();
+            return File.ReadLines(_files[RowCount], Encoding.UTF8).Count();
         }
 
         [Benchmark(OperationsPerInvoke = 1)]
         public long LineReader_CountLines()
         {
-            return LineReader.CountLines(File.OpenRead(_files[rowCount]), Encoding.UTF8, null, CancellationToken.None);
+            return LineReader.CountLines(File.OpenRead(_files[RowCount]), Encoding.UTF8, null, CancellationToken.None);
         }
     }
 }

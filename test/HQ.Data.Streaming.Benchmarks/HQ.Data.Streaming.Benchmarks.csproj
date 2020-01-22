@@ -11,8 +11,4 @@
     <PackageReference Include="HQ.Test.Sdk" Version="1.0.51" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\HQ.Data.Streaming\HQ.Data.Streaming.csproj" />
-  </ItemGroup>
-
 </Project>
