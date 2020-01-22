@@ -22,11 +22,11 @@ using System.Text;
 using HQ.Common;
 using HQ.Extensions.Caching.Configuration;
 using HQ.Extensions.Caching.Internal;
-using HQ.Extensions.CodeGeneration;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 using SysOptions = Microsoft.Extensions.Options.Options;
 
 namespace HQ.Extensions.Caching
@@ -111,25 +111,22 @@ namespace HQ.Extensions.Caching
 		private byte[] SerializeInternal(Type type, object value)
 		{
 			var method = SerializeMethods.GetOrAdd(type, t => SerializeMethod.MakeGenericMethod(t));
-			var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method,
-				DelegateBuildStrategy.MethodInfo);
-			return (byte[]) handler.Invoke(_serializer, new[] {value});
+			var accessor = CallAccessor.Create(method);
+			return (byte[]) accessor.Call(_serializer, new[] {value});
 		}
 
 		private byte[] SerializeInternal<T>(T value)
 		{
 			var method = SerializeMethods.GetOrAdd(typeof(T), t => SerializeMethod.MakeGenericMethod(t));
-			var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method,
-				DelegateBuildStrategy.MethodInfo);
-			return (byte[]) handler.Invoke(_serializer, new object[] {value});
+			var accessor = CallAccessor.Create(method);
+			return (byte[]) accessor.Call(_serializer, new object[] {value});
 		}
 
 		private object DeserializeInternal(Type type, byte[] bytes)
 		{
 			var method = DeserializeMethods.GetOrAdd(type, t => DeserializeMethod.MakeGenericMethod(t));
-			var handler = HandlerFactory.Default.GetOrCacheHandlerFromMethod(typeof(ICacheSerializer), method,
-				DelegateBuildStrategy.MethodInfo);
-			return handler.Invoke(_serializer, new object[] {bytes});
+			var accessor = CallAccessor.Create(method);
+			return accessor.Call(_serializer, new object[] {bytes});
 		}
 
 		private T DeserializeInternal<T>(byte[] bytes)
