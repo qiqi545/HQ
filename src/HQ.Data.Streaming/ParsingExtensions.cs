@@ -23,7 +23,6 @@ namespace HQ.Data.Streaming
 {
 	public static class ParsingExtensions
 	{
-#if NETSTANDARD
 		public static string GetString(this Encoding encoding, ReadOnlySpan<byte> buffer)
 		{
 			unsafe
@@ -34,7 +33,6 @@ namespace HQ.Data.Streaming
 				}
 			}
 		}
-#endif
 
 		#region Unsafe
 
@@ -193,8 +191,6 @@ namespace HQ.Data.Streaming
 		}
 
 		#endregion
-
-		#region Span (.NET Core 2.2 only, without shim)
 
 		public static bool TryParse(this Encoding encoding, ReadOnlySpan<byte> buffer, out byte value)
 		{
@@ -371,7 +367,5 @@ namespace HQ.Data.Streaming
 			var field = encoding.GetString(buffer);
 			return Guid.TryParse(field, out value);
 		}
-
-		#endregion
 	}
 }

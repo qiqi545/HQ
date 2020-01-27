@@ -22,7 +22,6 @@ using System.Text;
 using System.Threading;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Jobs;
-using HQ.Test.Sdk.Fixtures;
 
 namespace HQ.Data.Streaming.Benchmarks
 {
@@ -30,7 +29,6 @@ namespace HQ.Data.Streaming.Benchmarks
     [MarkdownExporter]
     [MemoryDiagnoser]
     [CsvMeasurementsExporter]
-    [RPlotExporter]
     public class LineCountBenchmarks
     {
         private Dictionary<int, string> _files;
@@ -42,7 +40,7 @@ namespace HQ.Data.Streaming.Benchmarks
         {
             _files = new Dictionary<int, string>
             {
-                {10_000_000, new FlatFileFixture(10_000_000, Encoding.UTF8, null, true).FilePath}
+                {RowCount, new FlatFileFixture(RowCount, Encoding.UTF8, null, null, true).FilePath}
             };
         }
 
@@ -56,15 +54,15 @@ namespace HQ.Data.Streaming.Benchmarks
         }
 
         [Benchmark(Baseline = true, OperationsPerInvoke = 1)]
-        public int File_ReadLines()
+        public int SystemIO_File_ReadLines()
         {
             return File.ReadLines(_files[RowCount], Encoding.UTF8).Count();
         }
-
+		
         [Benchmark(OperationsPerInvoke = 1)]
-        public long LineReader_CountLines()
+        public long HQ_LineReader_CountLines()
         {
-            return LineReader.CountLines(File.OpenRead(_files[RowCount]), Encoding.UTF8, null, CancellationToken.None);
+            return LineReader.CountLines(File.OpenRead(_files[RowCount]), Encoding.UTF8, null, null, CancellationToken.None);
         }
     }
 }

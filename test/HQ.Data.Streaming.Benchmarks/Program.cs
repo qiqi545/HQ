@@ -23,7 +23,8 @@ namespace HQ.Data.Streaming.Benchmarks
     {
         private static void Main()
         {
-            BenchmarkRunner.Run<LineCountBenchmarks>();
+            //BenchmarkRunner.Run<LineCountBenchmarks>();
+            BenchmarkRunner.Run<ParsingBenchmarks>();
         }
     }
 }

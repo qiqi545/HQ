@@ -18,6 +18,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming.Memory
@@ -27,10 +28,10 @@ namespace HQ.Data.Streaming.Memory
 		IEnumerable<Stream> GetAllSegments(string label);
 		Stream CreateSegment(string label, int index);
 		void DeleteSegment(string label, int index);
-		IEnumerable<T> Read(string label, int index, IComparer<T> sort = null, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
-		IEnumerable<T> Read(Stream stream, IComparer<T> sort, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
-		SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
-		void Sort(string fromLabel, string toLabel, IComparer<T> sort, IMetricsHost metrics = null,  CancellationToken cancellationToken = default);
-		IEnumerable<T> Merge(string label, SegmentStats stats, int maxWorkingMemoryBytes, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
+		IEnumerable<T> Read(string label, int index, IComparer<T> sort = null, ISafeLogger logger = null, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
+		IEnumerable<T> Read(Stream stream, IComparer<T> sort, ISafeLogger logger = null, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
+		SegmentStats Segment(string label, IEnumerable<T> stream, int maxWorkingMemoryBytes, ISafeLogger logger = null, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
+		void Sort(string fromLabel, string toLabel, IComparer<T> sort, ISafeLogger logger = null, IMetricsHost metrics = null,  CancellationToken cancellationToken = default);
+		IEnumerable<T> Merge(string label, SegmentStats stats, int maxWorkingMemoryBytes, ISafeLogger logger = null, IMetricsHost metrics = null, CancellationToken cancellationToken = default);
 	}
 }

@@ -4,10 +4,11 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IsPackable>false</IsPackable>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>8</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
@@ -18,7 +19,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\HQ.Data.Streaming\HQ.Data.Streaming.csproj" />
-    <ProjectReference Include="..\..\src\HQ.Test.Sdk\HQ.Test.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

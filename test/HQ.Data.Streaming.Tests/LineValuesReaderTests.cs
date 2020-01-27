@@ -17,27 +17,26 @@
 
 using System.Diagnostics;
 using System.Text;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Fixtures;
+using HQ.Data.Streaming.Benchmarks;
+using Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {
-    public class LineValuesReaderTests : UnitUnderTest
+    public class LineValuesReaderTests 
     {
-        [Test]
+        [Fact]
         public void Can_read_line_values()
         {
             var values = 0;
             var encoding = Encoding.UTF8;
-            using (var fixture = new FlatFileFixture(100, encoding, ","))
+            using var fixture = new FlatFileFixture(1000, encoding, ",");
+
+            unsafe
             {
-	            unsafe
-	            {
-		            var sw = Stopwatch.StartNew();
-		            LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, v, e, m) => { values++; });
-		            Trace.WriteLine($"{values} cells took {sw.Elapsed} to read.");    
-	            }
-	        }
+	            var sw = Stopwatch.StartNew();
+	            LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, v, e, m) => { values++; });
+	            Trace.WriteLine($"{values} cells took {sw.Elapsed} to read.");    
+            }
         }
     }
 }

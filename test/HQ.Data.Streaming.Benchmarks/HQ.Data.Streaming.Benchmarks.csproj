@@ -8,7 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.0" />
-    <PackageReference Include="HQ.Test.Sdk" Version="1.0.51" />
+    <PackageReference Include="Bogus" Version="28.4.4" />
+    <PackageReference Include="CsvHelper" Version="13.0.0" />
+    <PackageReference Include="FileHelpers" Version="3.4.1" />
   </ItemGroup>
 
   <ItemGroup>

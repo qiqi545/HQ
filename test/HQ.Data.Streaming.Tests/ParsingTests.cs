@@ -17,32 +17,30 @@
 
 using System.Diagnostics;
 using System.Text;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Fixtures;
+using HQ.Data.Streaming.Benchmarks;
+using Xunit;
 
 namespace HQ.Data.Streaming.Tests
 {
-    public class ParsingTests : UnitUnderTest
+    public class ParsingTests 
     {
-        [Test]
+        [Fact]
         public void Can_parse_line_values()
         {
             var values = 0;
             var encoding = Encoding.UTF8;
-            using (var fixture = new FlatFileFixture(100000, encoding, ","))
+            using var fixture = new FlatFileFixture(1000, encoding, ",");
+            var sw = Stopwatch.StartNew();
+            unsafe
             {
-                var sw = Stopwatch.StartNew();
-                unsafe
-                {
-                    LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e) =>
-                    {
-                        values++;
-                        e.TryParse(start, length, out bool _);
-                    });
-                }
-
-                Trace.WriteLine($"{values} cells took {sw.Elapsed} to parse.");
+	            LineReader.ReadLines(fixture.FileStream, encoding, ",", (n, i, start, length, e) =>
+	            {
+		            values++;
+		            e.TryParse(start, length, out bool _);
+	            });
             }
+
+            Trace.WriteLine($"{values} cells took {sw.Elapsed} to parse.");
         }
     }
 }

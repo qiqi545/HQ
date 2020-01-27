@@ -23,83 +23,102 @@ using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Text;
 using HQ.Common.DataAnnotations;
+using HQ.Data.Streaming.Benchmarks;
 using HQ.Data.Streaming.Fields;
 using HQ.Data.Streaming.Internal;
-using HQ.Test.Sdk;
-using HQ.Test.Sdk.Fixtures;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace HQ.Data.Streaming.Tests
 {
-    public class LineReaderTests : UnitUnderTest
+    public class LineReaderTests
     {
-        [Test]
+	    private readonly ITestOutputHelper _console;
+
+	    public LineReaderTests(ITestOutputHelper console)
+	    {
+		    _console = console;
+	    }
+
+	    [Fact]
         public void Can_read_string_lines()
         {
-            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
-            {
-                var lines = 0L;
-                var sw = Stopwatch.StartNew();
-                LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line) =>
-                {
-                    Assert.NotNull(line);
-                    lines = lineNumber;
-                });
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
-            }
+	        using var fixture = new FlatFileFixture(10000, Encoding.UTF8);
+
+	        var lines = 0L;
+	        var sw = Stopwatch.StartNew();
+	        LineReader.ReadLines(fixture.FileStream, Encoding.UTF8, (lineNumber, line) =>
+	        {
+		        Assert.NotNull(line);
+		        lines = lineNumber;
+	        });
+	        _console.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
         }
 
-        [Test]
+        [Fact]
         public void Can_stream_constructor_lines()
         {
-            using (var fixture = new FlatFileFixture(10000, Encoding.UTF8))
-            {
-                var lines = 0UL;
-                var sw = Stopwatch.StartNew();
-                foreach (var ctor in LineReader.StreamLines(fixture.FileStream, Encoding.UTF8))
-                {
-                    var row = new DummyDataLayout(ctor, Encoding.UTF8, Encoding.UTF8.GetSeparatorBuffer("|"));
-                    Assert.NotNull(row.SomeField.Value);
-                    lines++;
-                }
+	        const string separator = "|";
+			var encoding = Encoding.UTF8;
+			
+			var separatorBuffer = encoding.GetSeparatorBuffer(separator);
 
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
-            }
+			const int rowCount = 1000;
+			using var fixture = new FlatFileFixture(rowCount, 3, encoding, "A|B|C", separator);
+
+			var lines = 0;
+			var sw = Stopwatch.StartNew();
+
+			foreach (var ctor in LineReader.StreamLines(fixture.FileStream, encoding))
+			{
+				var row = new RowLayout(ctor, encoding, separatorBuffer);
+
+				if (row.A.Value == null || row.B.Value == null || row.C.Value == null)
+				{
+					Trace.WriteLine(lines);
+				}
+
+				Assert.NotNull(row.A.Value);
+				Assert.NotNull(row.B.Value);
+				Assert.NotNull(row.C.Value);
+				lines++;
+			}
+
+			Assert.Equal(rowCount + 1, lines);
+			_console.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
         }
 		
-		[Test]
+		[Fact]
         public void Can_count_lines()
         {
 	        const long expected = 10000L;
-	        using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
-            {
-                var sw = Stopwatch.StartNew();
-                var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
-                Assert.Equal(expected, lines);
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
-            }
+	        using var fixture = new FlatFileFixture((int) expected, Encoding.UTF8);
+
+	        var sw = Stopwatch.StartNew();
+	        var lines = LineReader.CountLines(fixture.FileStream, Encoding.UTF8);
+	        Assert.Equal(expected, lines);
+	        _console.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
         }
 
-        [Test]
+        [Fact]
         public void Can_count_lines_ranged()
         {
 	        const long expected = 10000L;
-	        using (var fixture = new FlatFileFixture((int) expected, Encoding.UTF8))
-            {
-				var range = new RangeStream(fixture.FileStream, 0, 5000);
-                var sw = Stopwatch.StartNew();
-                var lines = LineReader.CountLines(range, Encoding.UTF8);
-                Assert.True(lines < 150);
-                Trace.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
-            }
+	        using var fixture = new FlatFileFixture((int) expected, Encoding.UTF8);
+
+	        var range = new RangeStream(fixture.FileStream, 0, 5000);
+	        var sw = Stopwatch.StartNew();
+	        var lines = LineReader.CountLines(range, Encoding.UTF8);
+	        Assert.True(lines < 150);
+	        _console.WriteLine($"{lines} lines took {sw.Elapsed} to read.");
         }
 		
-        [Test]
+        [Fact]
         public void Can_get_header_text()
         {
 	        var header = LineReader.GetHeaderText<DummyDataMetadata>("|");
-	        Assert.NotEmpty(header, "header was not generated");
-			Trace.WriteLine(header);
-			Assert.Equal("Name", header, "header doesn't use display attribute name, if available");
+	        Assert.NotEmpty(header);	  // "header was not generated"
+			Assert.Equal("Name", header); // "header doesn't use display attribute name, if available"
         }
 
 		#region Fakes
@@ -118,21 +137,18 @@ namespace HQ.Data.Streaming.Tests
 			public string SomeField;
 		}
 
-		public ref struct DummyDataLayout
+		public ref struct RowLayout
         {
-	        private readonly Encoding _encoding;
-	        private readonly byte[] _separator;
-
-	        public StringField SomeField;
+	        public StringField A;
+	        public StringField B;
+	        public StringField C;
             public StringField ExtraFields;
 
-            public string HeaderText => _encoding.GetHeaderText<DummyDataMetadata>(_separator);
-
-            public DummyDataLayout(LineConstructor constructor, Encoding encoding, byte[] separator)
+            public RowLayout(LineConstructor constructor, Encoding encoding, byte[] separator)
             {
-	            _encoding = encoding;
-	            _separator = separator;
-	            SomeField = default;
+	            A = default;
+	            B = default;
+	            C = default;
                 ExtraFields = default;
 
                 SetFromLineConstructor(constructor, encoding, separator);
@@ -153,15 +169,15 @@ namespace HQ.Data.Streaming.Tests
                         {
                             if (line.IndexOf(Constants.CarriageReturn) > -1)
                             {
-                                SomeField = new StringField(start, length - 2, encoding);
+                                C = new StringField(start, length - 2, encoding);
                             }
                             else if (line.IndexOf(Constants.LineFeed) > -1)
                             {
-                                SomeField = new StringField(start, length - 1, encoding);
+                                C = new StringField(start, length - 1, encoding);
                             }
                             else
                             {
-                                SomeField = new StringField(start, length, encoding);
+                                C = new StringField(start, length, encoding);
                             }
 
                             break;
@@ -173,8 +189,14 @@ namespace HQ.Data.Streaming.Tests
                         switch (column)
                         {
                             case 0:
-                                SomeField = new StringField(start, next, encoding);
+                                A = new StringField(start, next, encoding);
                                 break;
+                            case 1:
+	                            B = new StringField(start, next, encoding);
+	                            break;
+                            case 2:
+	                            C = new StringField(start, next, encoding);
+	                            break;
                             default:
                                 ExtraFields = ExtraFields.Initialized
                                     ? ExtraFields.AddLength(next)
