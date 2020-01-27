@@ -19,7 +19,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)..\assets\320x320.png" Pack="true" Visible="false" PackagePath="/" />
+    <None Include="$(MSBuildThisFileDirectory)..\assets\320x320.png" Pack="true" Visible="false" PackagePath="/" />
   </ItemGroup>
    
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">

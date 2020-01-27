@@ -90,6 +90,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Platform.Tests", "..\tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalTestAssembly", "..\..\TypeKitchen\test\ExternalTestAssembly\ExternalTestAssembly.csproj", "{2D41AD0B-7F37-44E3-8C3E-F00B7A442360}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestKitchen", "..\..\TestKitchen\src\TestKitchen\TestKitchen.csproj", "{0E9AF866-AAB4-428D-878E-D8402877E845}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -496,6 +498,18 @@ Global
 		{2D41AD0B-7F37-44E3-8C3E-F00B7A442360}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D41AD0B-7F37-44E3-8C3E-F00B7A442360}.Release|x64.ActiveCfg = Release|Any CPU
 		{2D41AD0B-7F37-44E3-8C3E-F00B7A442360}.Release|x64.Build.0 = Release|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Debug|x64.ActiveCfg = Debug|x64
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Debug|x64.Build.0 = Debug|x64
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Package|Any CPU.Build.0 = Package|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Package|x64.ActiveCfg = Package|x64
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Package|x64.Build.0 = Package|x64
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Release|x64.ActiveCfg = Release|x64
+		{0E9AF866-AAB4-428D-878E-D8402877E845}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

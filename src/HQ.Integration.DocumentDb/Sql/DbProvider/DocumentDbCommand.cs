@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -34,13 +35,18 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbCommand : DbCommand
 	{
+		private readonly DocumentDbOptions _options;
 		private readonly DocumentDbParameterCollection _parameters;
 
 		private DocumentDbConnection _connection;
 
-		public DocumentDbCommand() => _parameters = new DocumentDbParameterCollection();
+		public DocumentDbCommand(DocumentDbOptions options)
+		{
+			_options = options;
+			_parameters = new DocumentDbParameterCollection();
+		}
 
-		public DocumentDbCommand(DocumentDbConnection connection) : this() => _connection = connection;
+		public DocumentDbCommand(DocumentDbConnection connection, DocumentDbOptions options) : this(options) => _connection = connection;
 
 		protected override DbParameterCollection DbParameterCollection => _parameters;
 
@@ -101,20 +107,27 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			var document = CommandToDocument(Constants.Update);
 
 			var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-			if (!document.ContainsKey(Constants.IdKey))
-				SetSurrogateKeyForUpdate(document, uri);
 
 			const bool disableAutomaticIdGeneration = true;
-			var options = new RequestOptions();
-			var response = _connection.Client.UpsertDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
-				.Result;
+			
+			var response = _connection.Client.UpsertDocumentAsync(uri, document, GetDocumentRequestOptions(document, uri), disableAutomaticIdGeneration).Result;
 			return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
 		}
 
-		private void SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
+		private RequestOptions GetDocumentRequestOptions(IDictionary<string, object> document, Uri uri)
 		{
-			var query = new SqlQuerySpec(
-				$"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
+			var id = !document.ContainsKey(Constants.IdKey)
+				? SetSurrogateKeyForUpdate(document, uri)
+				: document[Constants.IdKey]?.ToString();
+
+			var options = DocumentDbRepository<IDocument>.GetRequestOptions(_options, id);
+			return options;
+		}
+
+
+		private string SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
+		{
+			var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
 			query.Parameters.Add(new SqlParameter("@Id", document[Id]));
 			query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
 
@@ -146,23 +159,22 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 			if (!document.ContainsKey(Constants.IdKey))
 				throw new ArgumentNullException();
+
+			return id;
 		}
 
 		private int InsertImpl()
 		{
-			var options = new RequestOptions();
 			var document = CommandToDocument(Constants.Insert);
 
 			var disableAutomaticIdGeneration = document.ContainsKey(Constants.IdKey);
 			var uri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
-			var response = _connection.Client.CreateDocumentAsync(uri, document, options, disableAutomaticIdGeneration)
-				.Result;
+			var response = _connection.Client.CreateDocumentAsync(uri, document, GetDocumentRequestOptions(document, uri), disableAutomaticIdGeneration).Result;
 			return response.StatusCode == HttpStatusCode.Created ? 1 : 0;
 		}
 
 		private int DeleteImpl()
 		{
-			var options = new RequestOptions();
 			var document = CommandToDocument(Constants.Delete);
 
 			object id;
@@ -194,8 +206,8 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				id = document[Constants.IdKey];
 			}
 
-			var documentUri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{id}");
-			var deleted = _connection.Client.DeleteDocumentAsync(documentUri, options).Result;
+			var uri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{id}");
+			var deleted = _connection.Client.DeleteDocumentAsync(uri, GetDocumentRequestOptions(document, uri)).Result;
 			return deleted.StatusCode == HttpStatusCode.NoContent ? 1 : 0;
 		}
 
@@ -304,8 +316,10 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			options.MaxItemCount = page * perPage;
 
 			var ids = new List<string>();
-			var projection = _connection.Client.CreateDocumentQuery<List<string>>(uri, query, options)
+			var projection = _connection.Client
+				.CreateDocumentQuery<List<string>>(uri, query, options)
 				.AsDocumentQuery();
+
 			while (projection.HasMoreResults)
 			{
 				var next = projection.ExecuteNextAsync().GetAwaiter().GetResult();

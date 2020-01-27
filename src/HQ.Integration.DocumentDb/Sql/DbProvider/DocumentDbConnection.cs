@@ -20,19 +20,25 @@ using System.Data;
 using System.Data.Common;
 using System.Threading;
 using System.Threading.Tasks;
+using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
 	public sealed class DocumentDbConnection : DbConnection
 	{
+		private readonly DocumentDbOptions _options;
 		private readonly DocumentDbConnectionStringBuilder _builder = new DocumentDbConnectionStringBuilder();
 
 		private bool _isOpen;
 
-		public DocumentDbConnection() => _builder = new DocumentDbConnectionStringBuilder();
+		public DocumentDbConnection(DocumentDbOptions options)
+		{
+			_options = options;
+			_builder = new DocumentDbConnectionStringBuilder();
+		}
 
-		public DocumentDbConnection(DocumentClient client) : this() => Client = client;
+		public DocumentDbConnection(DocumentClient client, DocumentDbOptions options) : this(options) => Client = client;
 
 		public DocumentDbConnection(string connectionString)
 		{
@@ -40,7 +46,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			Client = _builder.Build();
 		}
 
-		public DocumentDbConnection(string serviceUri, string accountKey, string database)
+		public DocumentDbConnection(string serviceUri, string accountKey, string database, DocumentDbOptions options) : this(options)
 		{
 			_builder.AccountEndpoint = new Uri(serviceUri);
 			_builder.AccountKey = accountKey;
@@ -76,7 +82,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		public override Task OpenAsync(CancellationToken cancellationToken)
 		{
-			return Task.Run(() => Open(), cancellationToken);
+			return Task.Run(Open, cancellationToken);
 		}
 
 		public override void Close()
@@ -92,7 +98,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		protected override DbCommand CreateDbCommand()
 		{
-			return new DocumentDbCommand(this);
+			return new DocumentDbCommand(this, _options);
 		}
 
 		protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)

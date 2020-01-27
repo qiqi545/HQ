@@ -76,7 +76,7 @@ namespace HQ.Integration.DocumentDb.Sql
 			var throughput = ((OfferV2) offer)?.Content.OfferThroughput ?? 1000;
 
 			// ReSharper disable once PossibleMultipleEnumeration
-			count = count ?? objects.Count();
+			count ??= objects.Count();
 
 			var batchSize = count.GetValueOrDefault();
 
@@ -152,11 +152,8 @@ namespace HQ.Integration.DocumentDb.Sql
 			}
 		}
 
-		private static async Task InsertDocumentAsync(IDocumentClient client, string databaseId, Resource collection,
-			IEnumerable<ExpandoObject> page)
+		private static async Task InsertDocumentAsync(IDocumentClient client, string databaseId, Resource collection, IEnumerable<ExpandoObject> page)
 		{
-			var options = new RequestOptions();
-
 			// FIXME: collection.SelfLink?
 			var documentCollectionUri = UriFactory.CreateDocumentCollectionUri(databaseId, collection.Id);
 
@@ -164,7 +161,7 @@ namespace HQ.Integration.DocumentDb.Sql
 			{
 				try
 				{
-					await client.CreateDocumentAsync(documentCollectionUri, document, options);
+					await client.CreateDocumentAsync(documentCollectionUri, document, DocumentDbRepository<IDocument>.GetRequestOptions());
 				}
 				catch (Exception e)
 				{

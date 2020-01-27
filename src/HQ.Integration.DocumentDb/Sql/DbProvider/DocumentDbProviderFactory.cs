@@ -16,6 +16,8 @@
 #endregion
 
 using System.Data.Common;
+using HQ.Integration.DocumentDb.SessionManagement;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
 {
@@ -25,21 +27,24 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 		private readonly string _databaseName;
 		private readonly string _serviceUri;
 
-		public DocumentDbProviderFactory(string serviceUri, string authKey, string databaseName)
+		private readonly IOptionsMonitor<DocumentDbOptions> _options;
+
+		public DocumentDbProviderFactory(string serviceUri, string authKey, string databaseName, IOptionsMonitor<DocumentDbOptions> options)
 		{
 			_serviceUri = serviceUri;
 			_authKey = authKey;
 			_databaseName = databaseName;
+			_options = options;
 		}
 
 		public override DbCommand CreateCommand()
 		{
-			return new DocumentDbCommand();
+			return new DocumentDbCommand(_options.CurrentValue);
 		}
 
 		public override DbConnection CreateConnection()
 		{
-			return new DocumentDbConnection(_serviceUri, _authKey, _databaseName);
+			return new DocumentDbConnection(_serviceUri, _authKey, _databaseName, _options.CurrentValue);
 		}
 
 		public override DbParameter CreateParameter()

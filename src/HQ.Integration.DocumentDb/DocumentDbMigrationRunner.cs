@@ -70,14 +70,16 @@ namespace HQ.Integration.DocumentDb
 						new DocumentCollection
 						{
 							Id = _options.CollectionId,
-							PartitionKey =
-								new PartitionKeyDefinition
-								{
-									Paths = new Collection<string>(_options.PartitionKeyPaths),
-									Version = PartitionKeyDefinitionVersion.V2
-								}
+							PartitionKey = new PartitionKeyDefinition
+							{
+								Paths = new Collection<string>(_options.PartitionKeyPaths),
+								Version = PartitionKeyDefinitionVersion.V2
+							}
 						},
-						new RequestOptions {OfferThroughput = _options.OfferThroughput});
+						new RequestOptions
+						{
+							OfferThroughput = _options.OfferThroughput,
+						});
 				}
 				else
 				{

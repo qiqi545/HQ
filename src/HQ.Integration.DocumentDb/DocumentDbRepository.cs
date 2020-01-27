@@ -39,7 +39,7 @@ namespace HQ.Integration.DocumentDb
 	public class DocumentDbRepository<T> : IDocumentDbRepository<T> where T : IDocument
 	{
 		// ReSharper disable once StaticMemberInGenericType
-		private static readonly RequestOptions None = new RequestOptions();
+		internal static readonly RequestOptions None = new RequestOptions();
 		private readonly DocumentClient _client;
 		private readonly ISafeLogger<DocumentDbRepository<T>> _logger;
 		private readonly IOptionsMonitor<DocumentDbOptions> _options;
@@ -82,8 +82,7 @@ namespace HQ.Integration.DocumentDb
 		{
 			try
 			{
-				var options = GetRequestOptions(id);
-				Document document = await _client.ReadDocumentAsync(DocumentUri(id), options, cancellationToken);
+				Document document = await _client.ReadDocumentAsync(DocumentUri(id), GetRequestOptions(_options.CurrentValue, id), cancellationToken);
 				return (T) (dynamic) document;
 			}
 			catch (DocumentClientException e)
@@ -159,25 +158,21 @@ namespace HQ.Integration.DocumentDb
 
 		public async Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default)
 		{
-			var options = GetRequestOptions(id);
-			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, options, cancellationToken);
+			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, GetRequestOptions(_options.CurrentValue,id), cancellationToken);
 		}
 
 		public async Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default)
 		{
-			var options = GetRequestOptions(item.Id);
-			var response =
-				await _client.UpsertDocumentAsync(CollectionUri, item, options, cancellationToken: cancellationToken);
+			var response = await _client.UpsertDocumentAsync(CollectionUri, item, GetRequestOptions(_options.CurrentValue, item.Id), cancellationToken: cancellationToken);
 			return response;
 		}
 
 		public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
 		{
-			var documentUri = DocumentUri(id);
-			var options = GetRequestOptions(id);
+			var uri = DocumentUri(id);
 			try
 			{
-				var response = await _client.DeleteDocumentAsync(documentUri, options, cancellationToken);
+				var response = await _client.DeleteDocumentAsync(uri, GetRequestOptions(_options.CurrentValue, id), cancellationToken);
 				return response.StatusCode == HttpStatusCode.NoContent;
 			}
 			catch (Exception e)
@@ -187,13 +182,17 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
-		private static RequestOptions GetRequestOptions(string partitionKey)
+		internal static RequestOptions GetRequestOptions(DocumentDbOptions options = null, string partitionKey = null)
 		{
-			if (string.IsNullOrWhiteSpace(partitionKey))
-				return None;
+			var o = new RequestOptions();
 
-			var options = new RequestOptions {PartitionKey = new PartitionKey(partitionKey)};
-			return options;
+			if (options != null)
+				o.OfferThroughput = options.OfferThroughput;
+
+			if (string.IsNullOrWhiteSpace(partitionKey))
+				o.PartitionKey = new PartitionKey(partitionKey);
+
+			return o;
 		}
 
 		private async Task BeforeSaveAsync(T item, CancellationToken cancellationToken)
@@ -213,7 +212,7 @@ namespace HQ.Integration.DocumentDb
 					continue;
 				}
 
-				queryable = queryable ?? CreateDocumentQuery();
+				queryable ??= CreateDocumentQuery();
 				queryable = queryable.Where(ComputedPredicate<T>.AsExpression(member.Name, ExpressionOperator.Equal,
 					_reads[item, member.Name]));
 			}
