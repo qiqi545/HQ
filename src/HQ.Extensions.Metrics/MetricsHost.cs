@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Immutable;
-using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.Metrics
 {

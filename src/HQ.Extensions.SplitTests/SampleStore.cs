@@ -15,25 +15,14 @@
 
 #endregion
 
-using System;
+using System.Collections.Concurrent;
 
-namespace HQ.Extensions.Metrics.SplitTesting.Internal
+namespace HQ.Extensions.SplitTests
 {
-	internal static class TimeExtensions
+	public static class SampleStore
 	{
-		private static readonly DateTimeOffset Epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+		static SampleStore() => Samples = new ConcurrentBag<Sample>();
 
-		public static DateTimeOffset FromUnixTime(this long seconds)
-		{
-			return Epoch.AddSeconds(seconds).ToLocalTime();
-		}
-
-		public static long ToUnixTime(this DateTimeOffset dateTime)
-		{
-			var timeSpan = dateTime - Epoch;
-			var timestamp = (long) timeSpan.TotalSeconds;
-
-			return timestamp;
-		}
+		internal static IProducerConsumerCollection<Sample> Samples { get; set; }
 	}
 }

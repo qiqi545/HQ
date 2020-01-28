@@ -15,11 +15,10 @@
 
 #endregion
 
-using HQ.Common.Models;
-
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
-	public interface IExperimentStore : IKeyValueStore<ExperimentKey, Experiment>
+	public interface ISegmentIdentifier
 	{
+		string Identify();
 	}
 }

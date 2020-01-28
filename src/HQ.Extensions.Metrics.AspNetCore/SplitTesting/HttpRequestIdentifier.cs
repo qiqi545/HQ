@@ -17,17 +17,17 @@
 
 using System.Net;
 using HQ.Common.AspNetCore;
-using HQ.Extensions.Metrics.SplitTesting;
+using HQ.Extensions.SplitTests;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Metrics.AspNetCore
+namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
 {
 	/// <summary>
 	///     A default identity that is based on the user first, if they are authenticated,
 	///     and then the request's anonymous ID. If both of these identity methods fail,
 	///     then the inbound IP address is used.
 	/// </summary>
-	public class HttpRequestIdentifier : ICohortIdentifier
+	public class HttpRequestIdentifier : ISegmentIdentifier
 	{
 		private readonly IHttpContextAccessor _accessor;
 

@@ -18,8 +18,9 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using HQ.Extensions.Caching;
+using HQ.Extensions.Metrics;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Extensions.SplitTests
 {
 	public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
 	{
@@ -30,9 +31,9 @@ namespace HQ.Extensions.Metrics
 
 		public CacheMetricsStore(ICache cache) : base(cache, Common.Constants.Categories.Metrics) => _cache = cache;
 
-		public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType typeFilter = MetricType.None)
+		public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType excludeTypes = MetricType.None)
 		{
-			if (typeFilter.HasFlagFast(MetricType.All))
+			if (excludeTypes.HasFlagFast(MetricType.All))
 			{
 				return NoSample;
 			}
@@ -42,11 +43,11 @@ namespace HQ.Extensions.Metrics
 			{
 				switch (entry.Class.Name)
 				{
-					case nameof(GaugeMetric) when typeFilter.HasFlagFast(MetricType.Gauge):
-					case nameof(CounterMetric) when typeFilter.HasFlagFast(MetricType.Counter):
-					case nameof(MeterMetric) when typeFilter.HasFlagFast(MetricType.Meter):
-					case nameof(HistogramMetric) when typeFilter.HasFlagFast(MetricType.Histogram):
-					case nameof(TimerMetric) when typeFilter.HasFlagFast(MetricType.Timer):
+					case nameof(GaugeMetric) when excludeTypes.HasFlagFast(MetricType.Gauge):
+					case nameof(CounterMetric) when excludeTypes.HasFlagFast(MetricType.Counter):
+					case nameof(MeterMetric) when excludeTypes.HasFlagFast(MetricType.Meter):
+					case nameof(HistogramMetric) when excludeTypes.HasFlagFast(MetricType.Histogram):
+					case nameof(TimerMetric) when excludeTypes.HasFlagFast(MetricType.Timer):
 						continue;
 					default:
 						filtered.Add(entry, _cache.Get<IMetric>(entry.CacheKey));

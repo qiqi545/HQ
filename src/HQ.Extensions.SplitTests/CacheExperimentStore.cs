@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,14 +15,14 @@
 
 #endregion
 
-using System.Collections.Concurrent;
+using HQ.Extensions.Caching;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
-	public static class SampleStore
+	public class CacheExperimentStore : CacheKeyValueStore<ExperimentKey, Experiment>, IExperimentStore
 	{
-		static SampleStore() => Samples = new ConcurrentBag<Sample>();
-
-		internal static IProducerConsumerCollection<Sample> Samples { get; set; }
+		public CacheExperimentStore(ICache cache, string keyGroup = null) : base(cache, keyGroup)
+		{
+		}
 	}
 }

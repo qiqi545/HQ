@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,14 +15,21 @@
 
 #endregion
 
-using HQ.Extensions.Caching;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
-	public class CacheExperimentStore : CacheKeyValueStore<ExperimentKey, Experiment>, IExperimentStore
+	public static class Experiments
 	{
-		public CacheExperimentStore(ICache cache, string keyGroup = null) : base(cache, keyGroup)
-		{
-		}
+		public static readonly ConcurrentDictionary<ExperimentKey, Experiment> Inner =
+			new ConcurrentDictionary<ExperimentKey, Experiment>();
+
+		public static IDictionary<ExperimentKey, Experiment> All =>
+			new ReadOnlyDictionary<ExperimentKey, Experiment>(Inner);
+
+		public static IDictionary<ExperimentKey, Experiment> AllSorted =>
+			new ReadOnlyDictionary<ExperimentKey, Experiment>(new SortedDictionary<ExperimentKey, Experiment>(Inner));
 	}
 }

@@ -17,7 +17,7 @@
 
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
 	public static class AB
 	{

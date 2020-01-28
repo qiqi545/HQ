@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+    <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
 
 </Project>

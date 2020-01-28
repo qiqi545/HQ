@@ -15,21 +15,25 @@
 
 #endregion
 
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests.Internal
 {
-	public static class Experiments
+	internal static class TimeExtensions
 	{
-		public static readonly ConcurrentDictionary<ExperimentKey, Experiment> Inner =
-			new ConcurrentDictionary<ExperimentKey, Experiment>();
+		private static readonly DateTimeOffset Epoch = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
-		public static IDictionary<ExperimentKey, Experiment> All =>
-			new ReadOnlyDictionary<ExperimentKey, Experiment>(Inner);
+		public static DateTimeOffset FromUnixTime(this long seconds)
+		{
+			return Epoch.AddSeconds(seconds).ToLocalTime();
+		}
 
-		public static IDictionary<ExperimentKey, Experiment> AllSorted =>
-			new ReadOnlyDictionary<ExperimentKey, Experiment>(new SortedDictionary<ExperimentKey, Experiment>(Inner));
+		public static long ToUnixTime(this DateTimeOffset dateTime)
+		{
+			var timeSpan = dateTime - Epoch;
+			var timestamp = (long) timeSpan.TotalSeconds;
+
+			return timestamp;
+		}
 	}
 }

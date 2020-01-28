@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
 	public class Participant
 	{

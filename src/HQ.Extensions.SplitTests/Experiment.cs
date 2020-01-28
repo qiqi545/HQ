@@ -20,7 +20,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Extensions.SplitTests
 {
 	public class Experiment
 	{
@@ -29,7 +29,7 @@ namespace HQ.Extensions.Metrics.SplitTesting
 
 		private readonly IDictionary<string, Participant> _participants;
 
-		protected internal Experiment(ICohortIdentifier identifier, string name, string description,
+		public Experiment(ISegmentIdentifier identifier, string name, string description,
 			object[] alternatives = null, params string[] metrics)
 		{
 			Name = name;

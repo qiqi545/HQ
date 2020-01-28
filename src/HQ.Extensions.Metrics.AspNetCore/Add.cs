@@ -15,11 +15,12 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.SplitTesting;
+using HQ.Extensions.Metrics.AspNetCore.SplitTesting;
+using HQ.Extensions.SplitTests;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
+namespace HQ.Extensions.Metrics.AspNetCore
 {
 	public static class Add
 	{
@@ -37,7 +38,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
 			builder.AddSplitTesting();
 			builder.Services.AddScoped(r =>
 			{
-				var identifier = r.GetRequiredService<ICohortIdentifier>();
+				var identifier = r.GetRequiredService<ISegmentIdentifier>();
 				var experiment = new Experiment(identifier, name, description, alternatives, metrics);
 				return GetOrAdd(new ExperimentKey(name), experiment);
 			});
@@ -47,7 +48,7 @@ namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
 		public static IMetricsBuilder AddSplitTesting(this IMetricsBuilder builder)
 		{
 			builder.Services.AddHttpContextAccessor();
-			builder.Services.TryAddScoped<ICohortIdentifier, HttpRequestIdentifier>();
+			builder.Services.TryAddScoped<ISegmentIdentifier, HttpRequestIdentifier>();
 			return builder;
 		}
 
