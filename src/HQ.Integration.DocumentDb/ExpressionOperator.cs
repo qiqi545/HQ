@@ -15,15 +15,11 @@
 
 #endregion
 
-using System.Runtime.Loader;
-
-namespace HQ.Extensions.CodeGeneration
+namespace HQ.Integration.DocumentDb
 {
-	public class DefaultAssemblyLoadContextProvider : IAssemblyLoadContextProvider
+	public enum ExpressionOperator
 	{
-		public AssemblyLoadContext Get()
-		{
-			return AssemblyLoadContext.Default;
-		}
+		Equal,
+		NotEqual
 	}
 }

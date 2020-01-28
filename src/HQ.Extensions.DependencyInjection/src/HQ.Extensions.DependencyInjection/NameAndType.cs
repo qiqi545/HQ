@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HQ.Extensions.CodeGeneration
+namespace HQ.Extensions.DependencyInjection
 {
 	public struct NameAndType
 	{

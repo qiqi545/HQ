@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using HQ.Extensions.CodeGeneration;
 using Microsoft.Extensions.DependencyInjection;
+using TypeKitchen;
 
 namespace HQ.Extensions.DependencyInjection
 {
@@ -197,7 +197,7 @@ namespace HQ.Extensions.DependencyInjection
 			// implied registration of the enumerable equivalent
 			Register(typeof(IEnumerable<>).MakeGenericType(type), () =>
 			{
-				var collection = (IList) InstanceFactory.Default.CreateInstance(typeof(List<>).MakeGenericType(type));
+				var collection = (IList) Instancing.CreateInstance(typeof(List<>).MakeGenericType(type));
 				foreach (var item in YieldCollection(collectionBuilder))
 					collection.Add(item);
 				return collection;
@@ -368,21 +368,21 @@ namespace HQ.Extensions.DependencyInjection
 		private object CreateInstance(Type implementationType)
 		{
 			// type->constructor
-			var ctor = InstanceFactory.Default.GetOrCacheConstructorForType(implementationType);
+			var ctor = GetOrCacheConstructorForType(implementationType);
 
 			// constructor->parameters
-			var parameters = InstanceFactory.Default.GetOrCacheParametersForConstructor(ctor);
+			var parameters = GetOrCacheParametersForConstructor(ctor);
 
 			// parameter-less ctor
 			if (parameters.Length == 0)
-				return InstanceFactory.Default.CreateInstance(implementationType);
+				return Instancing.CreateInstance(implementationType);
 
 			// auto-resolve widest ctor
 			var args = new object[parameters.Length];
 			for (var i = 0; i < parameters.Length; i++)
 				args[i] = AutoResolve(parameters[i].ParameterType, ThrowIfCantResolve);
 
-			return InstanceFactory.Default.CreateInstance(implementationType, args);
+			return Instancing.CreateInstance(implementationType, args);
 		}
 
 		#endregion
@@ -539,6 +539,32 @@ namespace HQ.Extensions.DependencyInjection
 				foreach (var descriptor in services)
 					_container.Register(descriptor.ServiceType, () => _fallback.GetService(descriptor.ServiceType));
 			}
+		}
+
+		#endregion
+
+		#region Caches
+
+		private readonly IDictionary<ConstructorInfo, ParameterInfo[]> _constructorParameters =
+			new ConcurrentDictionary<ConstructorInfo, ParameterInfo[]>();
+
+		private readonly IDictionary<Type, ConstructorInfo> _constructors =
+			new ConcurrentDictionary<Type, ConstructorInfo>();
+
+		public ConstructorInfo GetOrCacheConstructorForType(Type type)
+		{
+			// type->constructor
+			if (!_constructors.TryGetValue(type, out var ctor))
+				_constructors[type] = ctor = type.GetWidestConstructor();
+			return ctor;
+		}
+
+		public ParameterInfo[] GetOrCacheParametersForConstructor(ConstructorInfo ctor)
+		{
+			// constructor->parameters
+			if (!_constructorParameters.TryGetValue(ctor, out var parameters))
+				_constructorParameters[ctor] = parameters = ctor.GetParameters();
+			return parameters;
 		}
 
 		#endregion

@@ -15,11 +15,27 @@
 
 #endregion
 
-namespace HQ.Extensions.CodeGeneration.Helpers
+using System;
+using System.Linq.Expressions;
+
+namespace HQ.Integration.DocumentDb
 {
-	public enum StringSort
+	public static class ComputedPredicate<T>
 	{
-		Ascending,
-		Descending
+		public static Expression<Func<T, bool>> AsExpression(string memberName, ExpressionOperator @operator,
+			object value)
+		{
+			var parameter = Expression.Parameter(typeof(T), memberName);
+			var memberExpression = Expression.PropertyOrField(parameter, memberName);
+
+			var expression = @operator switch
+			{
+				ExpressionOperator.Equal => Expression.Equal(memberExpression, Expression.Constant(value)),
+				ExpressionOperator.NotEqual => Expression.NotEqual(memberExpression, Expression.Constant(value)),
+				_ => throw new ArgumentOutOfRangeException(nameof(@operator), @operator, null)
+			};
+
+			return Expression.Lambda<Func<T, bool>>(expression, parameter);
+		}
 	}
 }
