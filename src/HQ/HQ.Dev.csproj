@@ -37,6 +37,7 @@
     <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Extensions.SplitTests\**\*.cs" Exclude="..\HQ.Extensions.SplitTests\obj\**\*" Link="Extensions.SplitTests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Notifications\**\*.cs" Exclude="..\HQ.Extensions.Notifications\obj\**\*" Link="Extensions.Notifications\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\**\*.cs" Exclude="..\HQ.Extensions.Options\src\HQ.Extensions.Options\obj\**\*" Link="Extensions.Options\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -108,8 +109,8 @@
     <Otherwise>
       <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -118,7 +119,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.30" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen" Version="1.0.38" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -142,7 +143,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="DotLiquid" Version="2.0.314" />
-    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.1" />
   </ItemGroup>
 
   <!-- SQL Server -->
@@ -163,7 +164,7 @@
     <Compile Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
   </ItemGroup>
 
 </Project>
