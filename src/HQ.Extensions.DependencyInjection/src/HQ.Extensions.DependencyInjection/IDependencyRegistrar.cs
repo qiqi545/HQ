@@ -23,15 +23,9 @@ namespace HQ.Extensions.DependencyInjection
 	{
 		IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew);
 		IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
-
-		IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class;
-
-		IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class;
-
-		IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder,
-			Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+		IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+		IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
+		IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 
 		IDependencyRegistrar Register<T>(T instance);
 		IDependencyRegistrar Register(object instance);

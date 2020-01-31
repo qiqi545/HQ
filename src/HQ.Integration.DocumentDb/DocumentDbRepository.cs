@@ -64,9 +64,7 @@ namespace HQ.Integration.DocumentDb
 			CreateCollectionIfNotExistsAsync().Wait();
 		}
 
-		private Uri CollectionUri =>
-			UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
-
+		private Uri CollectionUri => UriFactory.CreateDocumentCollectionUri(_options.Get(_slot).DatabaseId, _options.Get(_slot).CollectionId);
 		private Uri DatabaseUri => UriFactory.CreateDatabaseUri(_options.Get(_slot).DatabaseId);
 		private Uri EndpointUri => _options.Get(_slot).AccountEndpoint;
 
@@ -81,7 +79,9 @@ namespace HQ.Integration.DocumentDb
 		{
 			try
 			{
-				Document document = await _client.ReadDocumentAsync(DocumentUri(id), GetRequestOptions(_options.CurrentValue, id), cancellationToken);
+				var uri = DocumentUri(id);
+				var options = GetRequestOptions(_options.CurrentValue);
+				Document document = await _client.ReadDocumentAsync(uri, options, cancellationToken);
 				return (T) (dynamic) document;
 			}
 			catch (DocumentClientException e)
@@ -157,12 +157,12 @@ namespace HQ.Integration.DocumentDb
 
 		public async Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default)
 		{
-			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, GetRequestOptions(_options.CurrentValue,id), cancellationToken);
+			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, GetRequestOptions(_options.CurrentValue), cancellationToken);
 		}
 
 		public async Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default)
 		{
-			var response = await _client.UpsertDocumentAsync(CollectionUri, item, GetRequestOptions(_options.CurrentValue, item.Id), cancellationToken: cancellationToken);
+			var response = await _client.UpsertDocumentAsync(CollectionUri, item, GetRequestOptions(_options.CurrentValue), cancellationToken: cancellationToken);
 			return response;
 		}
 
@@ -171,7 +171,8 @@ namespace HQ.Integration.DocumentDb
 			var uri = DocumentUri(id);
 			try
 			{
-				var response = await _client.DeleteDocumentAsync(uri, GetRequestOptions(_options.CurrentValue, id), cancellationToken);
+				var requestOptions = GetRequestOptions(_options.CurrentValue);
+				var response = await _client.DeleteDocumentAsync(uri, requestOptions, cancellationToken);
 				return response.StatusCode == HttpStatusCode.NoContent;
 			}
 			catch (Exception e)
@@ -181,15 +182,15 @@ namespace HQ.Integration.DocumentDb
 			}
 		}
 
-		internal static RequestOptions GetRequestOptions(DocumentDbOptions options = null, string partitionKey = null)
+		internal static RequestOptions GetRequestOptions(DocumentDbOptions options = null)
 		{
 			var o = new RequestOptions();
 
 			if (options != null)
 				o.OfferThroughput = options.OfferThroughput;
 
-			if (string.IsNullOrWhiteSpace(partitionKey))
-				o.PartitionKey = new PartitionKey(partitionKey);
+			if(options?.PartitionKeyPaths != null && options.PartitionKeyPaths.Length > 0)
+				o.PartitionKey = new PartitionKey(string.Join("/", options.PartitionKeyPaths));
 
 			return o;
 		}
