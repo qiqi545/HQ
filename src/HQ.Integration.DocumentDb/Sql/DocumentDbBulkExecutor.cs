@@ -161,7 +161,7 @@ namespace HQ.Integration.DocumentDb.Sql
 			{
 				try
 				{
-					await client.CreateDocumentAsync(documentCollectionUri, document, DocumentDbRepository<IDocument>.GetRequestOptions());
+					await client.CreateDocumentAsync(documentCollectionUri, document, DocumentDbRepository<IDocument>.GetRequestOptions(null));
 				}
 				catch (Exception e)
 				{

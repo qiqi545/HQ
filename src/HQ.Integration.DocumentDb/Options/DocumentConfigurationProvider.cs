@@ -94,28 +94,27 @@ namespace HQ.Integration.DocumentDb.Options
 
 		public bool Delete(string key)
 		{
-			var deleted = false;
-			var keys = Data.Keys.ToList();
-
-			for (var i = 0; i < keys.Count; i++)
+			lock (Data)
 			{
-				var k = keys[i];
-				if (k == key || k.StartsWith($"{key}:"))
+				var idsToDelete = new List<string>();
+				var keysToDelete = new List<string>();
+
+				foreach (var k in Data.Keys.Where(k => k == key || k.StartsWith($"{key}:")))
 				{
-					var id = _ids[k];
-					if (!_repository.DeleteAsync(id).GetAwaiter().GetResult())
-						continue;
-
-					lock (Data)
-					{
-						Data.Remove(key);
-					}
-					
-					deleted = true;
+					keysToDelete.Add(k);
+					idsToDelete.Add(_ids[k]);
 				}
-			}
 
-			return deleted;
+				_repository.DeleteAsync(idsToDelete).GetAwaiter().GetResult();
+
+				for (var i = 0; i < keysToDelete.Count; i++)
+				{
+					Data.Remove(keysToDelete[i]);
+					_ids.Remove(idsToDelete[i]);
+				}
+
+				return true;
+			}
 		}
 
 		public override void Set(string key, string value)

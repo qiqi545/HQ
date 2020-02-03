@@ -120,7 +120,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 				? SetSurrogateKeyForUpdate(document, uri)
 				: document[Constants.IdKey]?.ToString();
 
-			var options = DocumentDbRepository<IDocument>.GetRequestOptions(_options);
+			var options = DocumentDbRepository<IDocument>.GetRequestOptions(id);
 			return options;
 		}
 

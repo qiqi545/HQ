@@ -26,12 +26,17 @@ using System.Threading.Tasks;
 using HQ.Data.Contracts.DataAnnotations;
 using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.SessionManagement;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TypeKitchen;
+using ConnectionMode = Microsoft.Azure.Cosmos.ConnectionMode;
+using Database = Microsoft.Azure.Documents.Database;
+using PartitionKey = Microsoft.Azure.Documents.PartitionKey;
+using RequestOptions = Microsoft.Azure.Documents.Client.RequestOptions;
 
 namespace HQ.Integration.DocumentDb
 {
@@ -46,7 +51,12 @@ namespace HQ.Integration.DocumentDb
 
 		private readonly string _slot;
 		private readonly ITypeWriteAccessor _writes;
-
+		
+		// 3.X
+		private readonly CosmosClient _client2;
+		private Microsoft.Azure.Cosmos.Database _database;
+		private Container _container;
+		
 		public DocumentDbRepository(string slot, IOptionsMonitor<DocumentDbOptions> options,
 			ISafeLogger<DocumentDbRepository<T>> logger)
 		{
@@ -59,6 +69,15 @@ namespace HQ.Integration.DocumentDb
 			var defaultSettings = new JsonSerializerSettings();
 			var documentDbOptions = options.Get(_slot);
 			_client = new DocumentClient(EndpointUri, documentDbOptions.AccountKey, defaultSettings);
+
+
+			_client2 = new CosmosClient(EndpointUri.ToString(), documentDbOptions.AccountKey,
+				new CosmosClientOptions
+				{
+					AllowBulkExecution = true,
+					ConnectionMode = ConnectionMode.Gateway,
+					MaxRetryAttemptsOnRateLimitedRequests = 100
+				});
 
 			CreateDatabaseIfNotExistsAsync().Wait();
 			CreateCollectionIfNotExistsAsync().Wait();
@@ -80,7 +99,7 @@ namespace HQ.Integration.DocumentDb
 			try
 			{
 				var uri = DocumentUri(id);
-				var options = GetRequestOptions(_options.CurrentValue);
+				var options = GetRequestOptions(id, _options.CurrentValue);
 				Document document = await _client.ReadDocumentAsync(uri, options, cancellationToken);
 				return (T) (dynamic) document;
 			}
@@ -157,40 +176,58 @@ namespace HQ.Integration.DocumentDb
 
 		public async Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default)
 		{
-			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, GetRequestOptions(_options.CurrentValue), cancellationToken);
+			return await _client.ReplaceDocumentAsync(DocumentUri(id), item, GetRequestOptions(id, _options.CurrentValue), cancellationToken);
 		}
 
 		public async Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default)
 		{
-			var response = await _client.UpsertDocumentAsync(CollectionUri, item, GetRequestOptions(_options.CurrentValue), cancellationToken: cancellationToken);
+			var response = await _client.UpsertDocumentAsync(CollectionUri, item, GetRequestOptions(item.Id, _options.CurrentValue), cancellationToken: cancellationToken);
 			return response;
 		}
 
 		public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
 		{
-			var uri = DocumentUri(id);
-			try
-			{
-				var requestOptions = GetRequestOptions(_options.CurrentValue);
-				var response = await _client.DeleteDocumentAsync(uri, requestOptions, cancellationToken);
-				return response.StatusCode == HttpStatusCode.NoContent;
-			}
-			catch (Exception e)
-			{
-				_logger?.Error(() => "Error deleting document {Id} from task store", e, id);
-				return false;
-			}
+			_database ??= await CreateDatabaseIfNotExistsAsync2(cancellationToken);
+			_container ??= await CreateContainerIfNotExistsAsync(cancellationToken);
+
+			var response = await _container.DeleteItemAsync<T>(id, new Microsoft.Azure.Cosmos.PartitionKey(id), new ItemRequestOptions(), cancellationToken);
+			return response.StatusCode == HttpStatusCode.NoContent;
 		}
 
-		internal static RequestOptions GetRequestOptions(DocumentDbOptions options = null)
+		public async Task<bool> DeleteAsync(IEnumerable<string> ids, CancellationToken cancellationToken = default)
+		{
+			_database ??= await CreateDatabaseIfNotExistsAsync2(cancellationToken);
+			_container ??= await CreateContainerIfNotExistsAsync(cancellationToken);
+
+			var deleted = 0;
+			var total = ids.Count();
+			foreach(var id in ids)
+			{
+				try
+				{
+					var options = new ItemRequestOptions();
+					await _container.DeleteItemAsync<T>(id, new Microsoft.Azure.Cosmos.PartitionKey(id), options, cancellationToken);
+					deleted++;
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e);
+					throw;
+				}
+			}
+
+			return deleted == total;
+		}
+
+		internal static RequestOptions GetRequestOptions(string id, DocumentDbOptions options = null)
 		{
 			var o = new RequestOptions();
 
 			if (options != null)
 				o.OfferThroughput = options.OfferThroughput;
 
-			if(options?.PartitionKeyPaths != null && options.PartitionKeyPaths.Length > 0)
-				o.PartitionKey = new PartitionKey(string.Join("/", options.PartitionKeyPaths));
+			if(!string.IsNullOrWhiteSpace(id))
+				o.PartitionKey = new PartitionKey(id);
 
 			return o;
 		}
@@ -265,6 +302,23 @@ namespace HQ.Integration.DocumentDb
 					throw;
 				}
 			}
+		}
+
+		private async Task<Microsoft.Azure.Cosmos.Database> CreateDatabaseIfNotExistsAsync2(CancellationToken cancellationToken = default)
+		{
+			var databaseName = _options.CurrentValue.DatabaseId;
+			var response = await _client2.CreateDatabaseIfNotExistsAsync(databaseName, cancellationToken: cancellationToken);
+			return response.Database;
+		}
+
+		private async Task<Container> CreateContainerIfNotExistsAsync(CancellationToken cancellationToken = default)
+		{
+			var containerName = _options.CurrentValue.CollectionId;
+			var response = await _database.CreateContainerIfNotExistsAsync(containerName, 
+				_options.CurrentValue.PartitionKeyPath,
+				_options.CurrentValue.OfferThroughput, cancellationToken: cancellationToken);
+
+			return response.Container;
 		}
 
 		private async Task CreateCollectionIfNotExistsAsync()

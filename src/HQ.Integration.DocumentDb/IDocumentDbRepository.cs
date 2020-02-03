@@ -53,6 +53,8 @@ namespace HQ.Integration.DocumentDb
 		Task<Document> CreateAsync(T item, CancellationToken cancellationToken = default);
 		Task<Document> UpdateAsync(string id, T item, CancellationToken cancellationToken = default);
 		Task<Document> UpsertAsync(T item, CancellationToken cancellationToken = default);
+
 		Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default);
+		Task<bool> DeleteAsync(IEnumerable<string> ids, CancellationToken cancellationToken = default);
 	}
 }

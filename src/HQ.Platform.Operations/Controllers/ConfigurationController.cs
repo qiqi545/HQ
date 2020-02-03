@@ -241,23 +241,19 @@ namespace HQ.Platform.Operations.Controllers
 
 			var tryDeleteMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TryDelete), new[] {typeof(string)});
 			if (tryDeleteMethod == null || valueProperty == null)
-				return InternalServerError(ErrorEvents.PlatformError,
+				return InternalServerError(ErrorEvents.PlatformError, 
 					$"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
 			var deleted = (DeleteOptionsResult) tryDeleteMethod.Invoke(saveOptions, new object[] { section });
-			switch (deleted)
+			
+			return deleted switch
 			{
-				case DeleteOptionsResult.NotFound:
-					return NotFound();
-				case DeleteOptionsResult.NoContent:
-					return NoContent();
-				case DeleteOptionsResult.Gone:
-					return Gone();
-				case DeleteOptionsResult.InternalServerError:
-					return InternalServerError(ErrorEvents.PlatformError, $"Could not delete section {section}");
-				default:
-					throw new ArgumentOutOfRangeException();
-			}
+				DeleteOptionsResult.NotFound => NotFound(),
+				DeleteOptionsResult.NoContent => NoContent(),
+				DeleteOptionsResult.Gone => Gone(),
+				DeleteOptionsResult.InternalServerError => InternalServerError(ErrorEvents.PlatformError, $"Could not delete section {section}"),
+				_ => throw new ArgumentOutOfRangeException()
+			};
 		}
 
 		private IActionResult TryUpsert(string key, object model, MethodBase trySaveMethod, MethodBase tryAddMethod, object saveOptions, Type prototype, PropertyInfo valueProperty)

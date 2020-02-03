@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -53,9 +52,14 @@ namespace HQ.Platform.Operations.Models
 			var key = new CacheKey(type.FullName, section);
 
 			MaybeRegisterChangeCallback(type, key);
-			
-			if(!_boundInstances.TryGetValue(key, out var instance))
-				_boundInstances.Add(key, instance = BindTemplateInstance(type, config));
+
+			if (!_boundInstances.TryGetValue(key, out var instance))
+			{
+				instance = BindTemplateInstance(type, config);
+
+				if(instance != null)
+					_boundInstances.Add(key, instance);
+			}
 
 			return instance;
 		}
@@ -133,12 +137,13 @@ namespace HQ.Platform.Operations.Models
 			}
 		}
 
-		private void Callback(object _)
+		private void Callback(object state)
 		{
-			_boundInstances.Clear();
+			var key = (CacheKey) state;
+			_boundInstances.Remove(key);
+			_changeTokens.Remove(key);
 		}
-
-
+		
 		private void MaybeRegisterChangeCallback(Type type, CacheKey key)
 		{
 			if (_changeTokens.ContainsKey(key))
@@ -150,18 +155,27 @@ namespace HQ.Platform.Operations.Models
 			{
 				var method = sourceType.GetMethod(nameof(IOptionsChangeTokenSource<object>.GetChangeToken));
 				var changeToken = method?.Invoke(source, new object[] { }) as IChangeToken;
-				changeToken?.RegisterChangeCallback(Callback, null);
+				changeToken?.RegisterChangeCallback(Callback, key);
 				_changeTokens.Add(key, changeToken);
 			}
 			else
 				_changeTokens.Add(key, default);
 		}
 
+		private static readonly object Sync = new object();
+		private readonly IDictionary<Type, ulong> _empties = new Dictionary<Type, ulong>();
+
 		private object BindTemplateInstance(Type type, IConfiguration config)
 		{
-			var template = Instancing.CreateInstance(type);
-			config.FastBind(template, _customBinders);
-			return template;
+			lock (Sync)
+			{
+				var template = Instancing.CreateInstance(type);
+				if(!_empties.TryGetValue(type, out _))
+					_empties.Add(type, ValueHash.ComputeHash(template));
+				
+				config.FastBind(template, _customBinders);
+				return ValueHash.ComputeHash(template) == _empties[type] ? null : template;
+			}
 		}
 	}
 }

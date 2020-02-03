@@ -24,6 +24,7 @@ namespace HQ.Extensions.Options
 	{
 		SaveOptionsResult TrySave(string key, Action<T> mutator = null);
 		SaveOptionsResult TrySave(string key, Action mutator = null);
+
 		bool TryAdd(string key, Action mutator = null);
 		DeleteOptionsResult TryDelete(string key);
 	}

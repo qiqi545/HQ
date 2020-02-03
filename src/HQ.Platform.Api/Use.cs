@@ -172,7 +172,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, RequestLimitOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, RequestLimitOptions o, Func<Task> next)
 			{
 				var bodySize = c.Features.Get<IHttpMaxRequestBodySizeFeature>();
 				if (bodySize != null && !bodySize.IsReadOnly)

@@ -16,6 +16,8 @@
 #endregion
 
 using System;
+using System.Linq;
+using Microsoft.Azure.Cosmos;
 
 namespace HQ.Integration.DocumentDb.SessionManagement
 {
@@ -28,5 +30,7 @@ namespace HQ.Integration.DocumentDb.SessionManagement
 		public string[] PartitionKeyPaths { get; set; } = {"/id"};
 		public int? OfferThroughput { get; set; } = 400;
 		public bool SharedCollection { get; set; }
+
+		public string PartitionKeyPath => string.Join("/", PartitionKeyPaths ?? Enumerable.Empty<string>());
 	}
 }
