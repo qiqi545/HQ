@@ -18,7 +18,6 @@
 using System;
 using System.Threading;
 using HQ.Common.Models;
-using HQ.Data.Contracts.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Extensions.Scheduling.Models

@@ -1,14 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>This package contains the full-stack build for HQ.io.</Description>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Description>This package contains the full-stack sources for HQ.io.</Description>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <Configurations>Debug;Release;</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -69,6 +61,11 @@
     <Compile Include="..\HQ.Platform.Security.AspNetCore\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore\obj\**\*" Link="Platform.Security.AspNetCore\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Security.AspNetCore.Mvc\**\*.cs" Exclude="..\HQ.Platform.Security.AspNetCore.Mvc\obj\**\*" Link="Platform.Security.AspNetCore.Mvc\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Platform.Schema\**\*.cs" Exclude="..\HQ.Platform.Schema\obj\**\*" Link="Platform.Schema\%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <Compile Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Integration.SqlServer\**\*.cs" Exclude="..\HQ.Integration.SqlServer\obj\**\*" Link="Integration.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -83,38 +80,10 @@
     </Compile>
   </ItemGroup>
 
-  <!-- This is required to work around when targeting both .NET Core 2.2 and .NET Core 3.0 -->
-  <Target Name="ResolveComReferencesDesignTime"></Target>
-
-  <Choose>
-    <When Condition=" '$(TargetFramework)' == 'netcoreapp2.2' ">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="[2.2.0]" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.0.1" />
-        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="3.0.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="4.0.1" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
@@ -135,36 +104,13 @@
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
-  </ItemGroup>
 
-  <!-- SQLite -->
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Compile Include="..\HQ.Integration.Sqlite\**\*.cs" Exclude="..\HQ.Integration.Sqlite\obj\**\*" Link="Integration.Sqlite\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  <ItemGroup>
+    <!-- Integrations -->
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.1" />
-  </ItemGroup>
-
-  <!-- SQL Server -->
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Compile Include="..\HQ.Integration.SqlServer\**\*.cs" Exclude="..\HQ.Integration.SqlServer\obj\**\*" Link="Integration.SqlServer\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <!-- DocumentDB -->
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Compile Include="..\HQ.Integration.DocumentDb\**\*.cs" Exclude="..\HQ.Integration.DocumentDb\obj\**\*" Link="Integration.DocumentDb\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.3" />
-  </ItemGroup>
-
-  <!-- Azure -->
-  <ItemGroup Condition="'$(Configuration)'!='PackageSources' AND '$(Configuration)'!='Package'">
-    <Compile Include="..\HQ.Integration.Azure\**\*.cs" Exclude="..\HQ.Integration.Azure\obj\**\*" Link="Integration.Azure\%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
+
   </ItemGroup>
 
 </Project>
