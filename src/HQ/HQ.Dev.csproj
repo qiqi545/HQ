@@ -88,7 +88,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.38" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen" Version="1.1.0" PrivateAssets="all" />
+    <PackageReference Include="TypeKitchen.ValueHash" Version="1.1.0" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Dapper" Version="2.0.30" />
