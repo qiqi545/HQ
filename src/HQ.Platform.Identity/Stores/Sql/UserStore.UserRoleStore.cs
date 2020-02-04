@@ -92,12 +92,15 @@ namespace HQ.Platform.Identity.Stores.Sql
 			if (roleMapping.Any())
 			{
 				var descriptor = SqlBuilder.GetDescriptor<TRole>();
-				var roleQuery = SqlBuilder.Select<TRole>(descriptor,
-					new {TenantId = _tenantId, RoleIds = roleMapping.Select(x => x.RoleId)});
+				var ids = roleMapping.Select(x => x.RoleId).Distinct().AsList();
+
+				var roleQuery = SqlBuilder.Select<TRole>(descriptor, new { TenantId = _tenantId, RoleIds = ids } );
 				_connection.SetTypeInfo(typeof(TRole));
 
 				var roles = await _connection.Current.QueryAsync<TRole>(roleQuery.Sql, roleQuery.Parameters);
-				return roles.Select(x => x.Name).ToList();
+
+				// FIXME: SqlBuilder is not transforming this to an "IN" clause, so we're effectively always retrieving all roles and have to filter
+				return roles.Where(x => ids.Contains(x.Id)).Select(x => x.Name).ToList();
 			}
 
 			return new List<string>(0);
