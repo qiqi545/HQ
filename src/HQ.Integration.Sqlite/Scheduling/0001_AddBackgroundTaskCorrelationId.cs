@@ -26,7 +26,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 		public override void Up()
 		{
 			Alter.Table(nameof(BackgroundTask))
-				.AddColumn(nameof(BackgroundTask.CorrelationId)).AsGuid().NotNullable()
+				.AddColumn(nameof(BackgroundTask.CorrelationId)).AsGuid().Nullable() /* Can't add a non-default column in SQLite, even if no data exists */
 				;
 		}
 

@@ -19,14 +19,24 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
+using Microsoft.Extensions.Logging;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
 {
 	public class StaticCountingHandler : Handler
 	{
+		private readonly ILogger<StaticCountingHandler> _logger;
+		private readonly ILoggerFactory _factory;
+
 		public static int Count { get; set; }
         
 		public static object Data { get; set; }
+
+		public StaticCountingHandler(ILogger<StaticCountingHandler> logger, ILoggerFactory factory)
+		{
+			_logger = logger;
+			_factory = factory;
+		}
 
         public Task PerformAsync(ExecutionContext context)
         {
