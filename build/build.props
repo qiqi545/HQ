@@ -57,12 +57,4 @@
     <Exec Command="dotnet nuget push &quot;$(SolutionDir)HQ\bin\$(Configuration)\$(PackageId).$(PackageVersion).nupkg&quot; -s https://www.nuget.org/api/v2/package" />
   </Target>
 
-  <!--
-  <PropertyGroup>
-    <PreBuildEvent>
-      dotnet run -c Release -p &quot;$(MSBuildThisFileDirectory)..\package\PackagePrep\PackagePrep.csproj&quot; \-\- tokenize $(MSBuildProjectDirectory) $(RootNamespace)
-    </PreBuildEvent>
-  </PropertyGroup>
-  -->
-
 </Project>

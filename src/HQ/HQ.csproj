@@ -8,13 +8,9 @@
     <Description>This package contains the full-stack build for HQ.io.</Description>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='PackageSources'">
-    <Description>This package contains the full-stack sources for HQ.io.</Description>
-  </PropertyGroup>
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Configurations>Debug;Release;PackageSources;Package</Configurations>
+    <Configurations>Debug;Release;Package</Configurations>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <DefineConstants>TRACE;PLATFORM</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -95,13 +91,13 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.0.38" PrivateAssets="all" />
     <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
     <PackageReference Include="Bogus" Version="28.4.4" />
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -118,11 +114,22 @@
     <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
 
+    <!-- Meta Programming -->
+    <PackageReference Include="TypeKitchen" Version="1.1.0" />
+    <PackageReference Include="TypeKitchen.ValueHash" Version="1.1.0" />
+    
     <!-- Integrations -->
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.1" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
+
+    <!-- SourceLink Support -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
   </ItemGroup>
   
   <Target Name="MergeLinkedSource" BeforeTargets="Build" Condition="'$(Configuration)'!='Package'">

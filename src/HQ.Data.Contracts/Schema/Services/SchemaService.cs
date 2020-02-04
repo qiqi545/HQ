@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Data.Contracts.Schema.Extensions;
 using HQ.Data.Contracts.Schema.Models;
-using TypeKitchen;
+using TypeKitchen.ValueHash;
 using S = HQ.Data.Contracts.Schema.Models.Schema;
 
 namespace HQ.Data.Contracts.Schema.Services

@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "PackagePrep": {
-      "commandName": "Project",
-      "commandLineArgs": "tokenize D:\\Src\\HQ\\HQ.Test.Sdk\\src\\HQ.Test.Sdk.Xunit HQ.Test.Sdk.Xunit"
-    }
-  }
-}

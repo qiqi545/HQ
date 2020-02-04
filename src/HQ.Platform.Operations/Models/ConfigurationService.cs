@@ -22,6 +22,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
+using TypeKitchen.ValueHash;
 
 namespace HQ.Platform.Operations.Models
 {
