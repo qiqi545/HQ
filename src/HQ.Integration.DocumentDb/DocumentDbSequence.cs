@@ -56,8 +56,7 @@ namespace HQ.Integration.DocumentDb
 			sequence.Add(DocumentTypeField, SequenceDocumentType);
 			sequence.Add(SequenceTypeField, sequenceTypeName);
 
-			var sql =
-				$@"SELECT r.id, r.Current FROM {SequenceDocumentType} r WHERE r.{DocumentTypeField} = @{DocumentTypeField} AND r.{SequenceTypeField} = @{SequenceTypeField}";
+			var sql = $@"SELECT r.id, r.Current FROM {SequenceDocumentType} r WHERE r.{DocumentTypeField} = @{DocumentTypeField} AND r.{SequenceTypeField} = @{SequenceTypeField}";
 			var query = new SqlQuerySpec(sql);
 			query.Parameters.Add(new SqlParameter($"@{DocumentTypeField}", sequence[DocumentTypeField]));
 			query.Parameters.Add(new SqlParameter($"@{SequenceTypeField}", sequence[SequenceTypeField]));

@@ -26,7 +26,9 @@ namespace HQ.Platform.Identity.Mvc
 	{
 		public override IEnumerable<Type> ControllerTypes => new[]
 		{
-			typeof(UserController<,,>), typeof(RoleController<,>), typeof(TenantController<,>),
+			typeof(UserController<,,>), 
+			typeof(RoleController<,>), 
+			typeof(TenantController<,>),
 			typeof(ApplicationController<,>)
 		};
 	}

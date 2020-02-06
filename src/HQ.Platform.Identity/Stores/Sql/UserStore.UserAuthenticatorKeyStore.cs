@@ -31,7 +31,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
-			user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			user.ConcurrencyStamp ??= $"{Guid.NewGuid()}";
 
 			_connection.SetTypeInfo(typeof(AspNetUserTokens<TKey>));
 

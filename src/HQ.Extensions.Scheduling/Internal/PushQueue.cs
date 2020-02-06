@@ -24,7 +24,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
 using TypeKitchen;
-using TypeKitchen.ValueHash;
+using TypeKitchen.Differencing;
 
 namespace HQ.Extensions.Scheduling.Internal
 {
