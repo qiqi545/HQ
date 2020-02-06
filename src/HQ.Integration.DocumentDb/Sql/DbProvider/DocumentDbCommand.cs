@@ -128,7 +128,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 		private string SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
 		{
-			if (string.IsNullOrWhiteSpace(Id))
+			if (string.IsNullOrWhiteSpace(Id) || !document.ContainsKey(Constants.IdKey))
 				return null;
 
 			var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
