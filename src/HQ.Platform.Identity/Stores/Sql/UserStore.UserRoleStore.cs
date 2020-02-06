@@ -21,6 +21,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Queries;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Stores.Sql.Models;
@@ -60,14 +61,26 @@ namespace HQ.Platform.Identity.Stores.Sql
 
 			if (roleId != null)
 			{
-				var query = SqlBuilder.Delete<AspNetUserRoles<TUser>>(new
+				// FIXME: Can't assume the underlying store supports DELETE WHERE (because CosmosDB no longer does...)
+				// FIXME: This is no longer on the correct layer of abstraction!
+
+				_connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
+
+				var select = SqlBuilder.Select<AspNetUserRoles<TKey>>(new
 				{
 					UserId = user.Id, RoleId = roleId, TenantId = _tenantId
 				});
 
-				_connection.SetTypeInfo(typeof(AspNetUserRoles<TKey>));
-				var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
-				Debug.Assert(deleted == 1);
+				var toDelete =
+					(await _connection.Current.QueryAsync<AspNetUserRoles<TKey>>(select.Sql, select.Parameters))
+					.AsList();
+
+				foreach (var role in toDelete)
+				{
+					var query = SqlBuilder.Delete<AspNetUserRoles<TKey>>(new { role.id });
+					var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+					Debug.Assert(deleted == 1);
+				}
 			}
 		}
 
@@ -109,7 +122,18 @@ namespace HQ.Platform.Identity.Stores.Sql
 		public async Task<bool> IsInRoleAsync(TUser user, string roleName, CancellationToken cancellationToken)
 		{
 			var userRoles = await GetRolesAsync(user, cancellationToken);
-			return userRoles.Contains(roleName);
+
+			var match = _lookupNormalizer.MaybeNormalizeName(roleName);
+
+			foreach (var role in userRoles)
+			{
+				if(_lookupNormalizer.MaybeNormalizeName(role).Equals(match))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public async Task<IList<TUser>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)

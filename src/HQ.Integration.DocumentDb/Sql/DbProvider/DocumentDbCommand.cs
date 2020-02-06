@@ -29,6 +29,8 @@ using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
 using Newtonsoft.Json.Linq;
 
+using RequestOptions = Microsoft.Azure.Documents.Client.RequestOptions;
+
 #pragma warning disable 649
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
@@ -124,9 +126,11 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 			return options;
 		}
 
-
 		private string SetSurrogateKeyForUpdate(IDictionary<string, object> document, Uri uri)
 		{
+			if (string.IsNullOrWhiteSpace(Id))
+				return null;
+
 			var query = new SqlQuerySpec($"SELECT VALUE r.id FROM {DocumentType} r WHERE r.{Id} = @Id AND r.DocumentType = @DocumentType");
 			query.Parameters.Add(new SqlParameter("@Id", document[Id]));
 			query.Parameters.Add(new SqlParameter($"@{nameof(DocumentType)}", DocumentType));
@@ -155,7 +159,10 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 
 			var id = ids.SingleOrDefault();
 			if (!string.IsNullOrWhiteSpace(id))
-				document[Constants.IdKey] = id;
+			{
+				if(!document.TryAdd(Constants.IdKey, id))
+					document[Constants.IdKey] = id;
+			}
 
 			if (!document.ContainsKey(Constants.IdKey))
 				throw new ArgumentNullException();
@@ -177,37 +184,47 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 		{
 			var document = CommandToDocument(Constants.Delete);
 
+			var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
+			
 			object id;
-			if (!document.ContainsKey(Constants.IdKey))
+			if(!string.IsNullOrWhiteSpace(Id))
 			{
-				if (!document.TryGetValue(Id, out var objectId))
-					return 0;
+				if (!document.ContainsKey(Constants.IdKey) && !string.IsNullOrWhiteSpace(Id))
+				{
+					if (!document.TryGetValue(Id, out var objectId))
+						return 0;
 
-				var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
+					var collectionUri = UriFactory.CreateDocumentCollectionUri(_connection.Database, Collection);
 
-				var sql = $"SELECT c.id FROM c WHERE c.{Id} = @{Id}";
-				var parameters = new SqlParameterCollection(new[] {new SqlParameter($"@{Id}", objectId)});
-				var query = new SqlQuerySpec(sql, parameters);
+					var sql = $"SELECT c.id FROM c WHERE c.{Id} = @{Id}";
+					var parameters = new SqlParameterCollection(new[] {new SqlParameter($"@{Id}", objectId)});
+					var query = new SqlQuerySpec(sql, parameters);
 
-				if (MaybeTypeDiscriminate(query))
-					query.QueryText += " AND c.DocumentType = @DocumentType";
+					if (MaybeTypeDiscriminate(query))
+						query.QueryText += " AND c.DocumentType = @DocumentType";
+					
+					var getId = _connection.Client.CreateDocumentQuery(collectionUri, query, feedOptions).ToList()
+						.SingleOrDefault();
 
-				var feedOptions = new FeedOptions {EnableCrossPartitionQuery = true};
-				var getId = _connection.Client.CreateDocumentQuery(collectionUri, query, feedOptions).ToList()
-					.SingleOrDefault();
+					if (getId == null)
+						return 0;
 
-				if (getId == null)
-					return 0;
-
-				id = getId.id;
+					id = getId.id;
+				}
+				else
+				{
+					id = document[Constants.IdKey];
+				}
 			}
 			else
 			{
-				id = document[Constants.IdKey];
+				throw new InvalidOperationException("CosmosDB cannot handle a 'DELETE WHERE' convention; ids must be known.");
 			}
 
+			//
+			// Delete By Id:
 			var uri = UriFactory.CreateDocumentUri(_connection.Database, Collection, $"{id}");
-			var deleted = _connection.Client.DeleteDocumentAsync(uri, GetDocumentRequestOptions(document, uri)).Result;
+			var deleted = _connection.Client.DeleteDocumentAsync(uri,  GetDocumentRequestOptions(document, uri)).Result;
 			return deleted.StatusCode == HttpStatusCode.NoContent ? 1 : 0;
 		}
 
@@ -255,7 +272,7 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 						var parameterType = parameter.Value.GetType();
 						var isValidIdType = parameterType == typeof(string) || parameterType == typeof(Guid);
 						if (isValidIdType && parameterName == Id)
-							document.Add(Constants.IdKey, parameter.Value);
+							document[Constants.IdKey] = parameter.Value;
 					}
 
 					break;

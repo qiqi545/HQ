@@ -69,12 +69,10 @@ namespace HQ.Data.Sql.Queries
 				whereHash.Keys.ToDictionary(k => Dialect.ResolveColumnName(descriptor, k), v => v);
 
 			var whereFilter = Dialect.ResolveColumnNames(descriptor).Intersect(whereHashKeyRewrite.Keys).ToList();
-			var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}",
-				key => whereHash[whereHashKeyRewrite[key]]);
+			var whereParams = whereFilter.ToDictionary(key => $"{whereHashKeyRewrite[key]}", key => whereHash[whereHashKeyRewrite[key]]);
 			var whereParameters = whereParams.Keys.ToList();
 
-			var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter,
-				whereParameters);
+			var sql = Dialect.Delete(descriptor, Dialect.ResolveTableName(descriptor), descriptor.Schema, whereFilter, whereParameters);
 			var parameters = whereParams.ToDictionary(k => $"{Dialect.Parameter}{k.Key}", v => v.Value);
 			return new Query(sql, parameters);
 		}

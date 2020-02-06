@@ -112,8 +112,4 @@
 
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen.ValueHash\TypeKitchen.ValueHash.csproj" />
-  </ItemGroup>
-
 </Project>

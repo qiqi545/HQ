@@ -26,8 +26,10 @@ namespace HQ.Platform.Identity.Stores.Sql.Models
 
 		[Required] public TKey UserId { get; set; }
 
-		public string PasswordHash { get; set; }
-		public DateTimeOffset StartedAt { get; set; }
+		[Required] public string PasswordHash { get; set; }
+
+		[Required] public DateTimeOffset StartedAt { get; set; }
+
 		public DateTimeOffset? EndedAt { get; set; }
 	}
 }

@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
+using HQ.Data.Sql.Queries;
 using Microsoft.Azure.Documents;
 
 namespace HQ.Integration.DocumentDb.Sql.DbProvider
@@ -31,7 +32,18 @@ namespace HQ.Integration.DocumentDb.Sql.DbProvider
 		private static IEnumerable<SqlParameter> YieldParameters(DbCommand command)
 		{
 			foreach (DbParameter parameter in command.Parameters)
-				yield return new SqlParameter("@" + parameter.ParameterName, parameter.Value);
+				yield return new SqlParameter($"@{parameter.ParameterName}", parameter.Value);
+		}
+
+		public static SqlQuerySpec ToQuerySpec(this Query query)
+		{
+			return new SqlQuerySpec(query.Sql, new SqlParameterCollection(YieldParameters(query.Parameters)));
+		}
+
+		private static IEnumerable<SqlParameter> YieldParameters(IReadOnlyDictionary<string, object> parameters)
+		{
+			foreach (var parameter in parameters)
+				yield return new SqlParameter($"@{parameter.Key}", parameter.Value);
 		}
 	}
 }
