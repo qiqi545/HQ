@@ -19,11 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Common.AspNetCore.MergePatch;
+using HQ.Common.AspNetCore.MergePatch.Builders;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -74,7 +73,7 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
-					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
@@ -95,7 +94,7 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
-					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
@@ -105,7 +104,7 @@ namespace HQ.Platform.Operations.Controllers
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
 				return NotFoundError(ErrorEvents.InvalidParameter,
-					$"Configuration sub-key path '{section}' not found.");
+					$"Configuration sub-section path '{section}' not found.");
 
 			var model = Instancing.CreateInstance(prototype);
 			config.FastBind(model, _customBinders);
@@ -123,7 +122,7 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
-					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
@@ -133,22 +132,18 @@ namespace HQ.Platform.Operations.Controllers
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
 				return NotFoundError(ErrorEvents.InvalidParameter,
-					$"Configuration sub-key path '{section}' not found.");
+					$"Configuration sub-section path '{section}' not found.");
 
-			var buildMethod = typeof(JsonMergePatchDocument).GetMethod(nameof(JsonMergePatchDocument.Build), new[] {typeof(JObject)});
+			if(config.Value == null)
+				return Put(type, patch, section);
 
-			var genericBuildMethod = buildMethod?.MakeGenericMethod(prototype);
-			var patchModel = genericBuildMethod?.Invoke(null, new[] {patch});
+			var original = Instancing.CreateInstance(prototype);
+			config.FastBind(original, _customBinders);
 
-			var model = Instancing.CreateInstance(prototype);
-			config.FastBind(model, _customBinders);
+			var diff = PatchBuilder.Build(original, patch);
+			diff.ApplyTo(original);
 
-			var patchType = typeof(JsonMergePatchDocument<>).MakeGenericType(prototype);
-			var patchMethods = patchType.GetTypeInfo().DeclaredMethods;
-			var patchMethod = patchMethods.Single(x => x.Name == "ApplyTo" && !x.IsGenericMethod);
-			patchMethod?.Invoke(patchModel, new[] {model});
-
-			return Put(type, model, section);
+			return Put(type, patch, section);
 		}
 
 		[FeatureSelector]
@@ -159,7 +154,7 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
-					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			if (model == null)
 				return NotAcceptableError(ErrorEvents.InvalidRequest, "Missing configuration body.");
@@ -167,7 +162,7 @@ namespace HQ.Platform.Operations.Controllers
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
 				return NotFoundError(ErrorEvents.InvalidParameter,
-					$"Configuration sub-key path '{section}' not found.");
+					$"Configuration sub-section path '{section}' not found.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
@@ -216,12 +211,12 @@ namespace HQ.Platform.Operations.Controllers
 		{
 			if (string.IsNullOrWhiteSpace(section))
 				return NotAcceptableError(ErrorEvents.UnsafeRequest,
-					"You must specify a known configuration sub-key, to avoid exposing sensitive root-level data.");
+					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
 				return NotFoundError(ErrorEvents.InvalidParameter,
-					$"Configuration sub-key path '{section}' not found.");
+					$"Configuration sub-section path '{section}' not found.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
@@ -260,7 +255,7 @@ namespace HQ.Platform.Operations.Controllers
 			};
 		}
 
-		private IActionResult TryUpsert(string key, object model, MethodBase trySaveMethod, MethodBase tryAddMethod, object saveOptions, Type prototype, PropertyInfo valueProperty)
+		private IActionResult TryUpsert(string section, object model, MethodBase trySaveMethod, MethodBase tryAddMethod, object saveOptions, Type prototype, PropertyInfo valueProperty)
 		{
 			try
 			{
@@ -273,7 +268,7 @@ namespace HQ.Platform.Operations.Controllers
 
 			var saveResult = trySaveMethod.Invoke(saveOptions, new object[]
 			{
-				key, new Action(() =>
+				section, new Action(() =>
 				{
 					SaveOptions(prototype, saveOptions, valueProperty, model);
 				})
@@ -287,14 +282,14 @@ namespace HQ.Platform.Operations.Controllers
 					{
 						var addResult = (bool) tryAddMethod.Invoke(saveOptions, new object[]
 						{
-							key, new Action(() =>
+							section, new Action(() =>
 							{
 								SaveOptions(prototype, saveOptions, valueProperty, model);
 							})
 						});
 						if (!addResult)
 							return InternalServerError(ErrorEvents.PlatformError,
-								$"Could not add existing configuration to section '{key}'");
+								$"Could not add existing configuration to section '{section}'");
 
 						break;
 					}
@@ -303,7 +298,7 @@ namespace HQ.Platform.Operations.Controllers
 				}
 			}
 
-			var serialized = GetSerialized(prototype, key);
+			var serialized = GetSerialized(prototype, section);
 
 			return serialized;
 		}
@@ -313,7 +308,7 @@ namespace HQ.Platform.Operations.Controllers
 			var template = _service.Get(type, section);
 
 			return template == null
-				? NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-key path '{section}' not found.")
+				? NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-section path '{section}' not found.")
 				: Ok(template);
 		}
 

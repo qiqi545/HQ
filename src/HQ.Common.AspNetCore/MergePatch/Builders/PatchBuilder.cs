@@ -22,29 +22,6 @@ using Newtonsoft.Json.Linq;
 
 namespace HQ.Common.AspNetCore.MergePatch.Builders
 {
-	public class PatchBuilder<TModel> where TModel : class
-	{
-		public JsonMergePatchDocument<TModel> Build(TModel original, TModel patched)
-		{
-			return PatchBuilder.Build(original, patched);
-		}
-
-		public JsonMergePatchDocument<TModel> Build(string jsonObjectPatch)
-		{
-			return PatchBuilder.Build<TModel>(jsonObjectPatch);
-		}
-
-		public JsonMergePatchDocument<TModel> Build(object jsonObjectPatch)
-		{
-			return PatchBuilder.Build<TModel>(jsonObjectPatch);
-		}
-
-		public JsonMergePatchDocument<TModel> Build(JObject jsonObjectPatch)
-		{
-			return PatchBuilder.Build<TModel>(jsonObjectPatch);
-		}
-	}
-
 	public static class PatchBuilder
 	{
 		private static readonly JsonSerializer defaultSerializer = JsonSerializer.CreateDefault();
@@ -56,19 +33,7 @@ namespace HQ.Common.AspNetCore.MergePatch.Builders
 		{
 			return Build<TModel>(DiffBuilder.Build(original, patched) ?? new JObject(), options);
 		}
-
-		public static JsonMergePatchDocument<TModel> Build<TModel>(string jsonObjectPatch,
-			JsonMergePatchOptions options = null) where TModel : class
-		{
-			return Build<TModel>(JObject.Parse(jsonObjectPatch), options);
-		}
-
-		public static JsonMergePatchDocument<TModel> Build<TModel>(object jsonObjectPatch,
-			JsonMergePatchOptions options = null) where TModel : class
-		{
-			return Build<TModel>(JObject.FromObject(jsonObjectPatch), options);
-		}
-
+		
 		public static JsonMergePatchDocument<TModel> Build<TModel>(JObject jsonObjectPatch,
 			JsonMergePatchOptions options = null) where TModel : class
 		{
