@@ -15,6 +15,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.IO;
 using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
@@ -24,8 +25,7 @@ namespace HQ.Integration.Sqlite.Options
 {
 	public class SqliteConfigurationSource : IConfigurationSource
 	{
-		public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig,
-			IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.Initialize)
+		public SqliteConfigurationSource(string dataFilePath, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null, SeedStrategy strategy = SeedStrategy.Initialize)
 		{
 			SaveConfig = saveConfig;
 			ConfigSeed = configSeed;
@@ -49,6 +49,7 @@ namespace HQ.Integration.Sqlite.Options
 		{
 			if (DataDirectoryPath != null)
 				Directory.CreateDirectory(DataDirectoryPath);
+			
 			SqliteConfigurationHelper.MigrateToLatest(DataFilePath, SaveConfig, ConfigSeed, SeedStrategy);
 			return new SqliteConfigurationProvider(this);
 		}

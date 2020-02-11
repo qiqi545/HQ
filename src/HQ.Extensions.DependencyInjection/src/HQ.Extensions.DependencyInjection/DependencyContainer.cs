@@ -23,7 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using TypeKitchen;
+using TypeKitchen.Creation;
 
 namespace HQ.Extensions.DependencyInjection
 {

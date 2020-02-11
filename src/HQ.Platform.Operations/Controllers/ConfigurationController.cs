@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -37,6 +38,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using TypeKitchen;
+using TypeKitchen.Creation;
 
 namespace HQ.Platform.Operations.Controllers
 {
@@ -51,14 +53,16 @@ namespace HQ.Platform.Operations.Controllers
 	{
 		private readonly IConfigurationRoot _root;
 		private readonly IServiceProvider _serviceProvider;
+		private readonly IEnumerable<ICustomConfigurationBinder> _customBinders;
 		private readonly ConfigurationService _service;
 		private readonly ITypeResolver _typeResolver;
 
-		public ConfigurationController(IConfigurationRoot root, ITypeResolver typeResolver, IServiceProvider serviceProvider, ConfigurationService service)
+		public ConfigurationController(IConfigurationRoot root, ITypeResolver typeResolver, IServiceProvider serviceProvider, IEnumerable<ICustomConfigurationBinder> customBinders, ConfigurationService service)
 		{
 			_root = root;
 			_typeResolver = typeResolver;
 			_serviceProvider = serviceProvider;
+			_customBinders = customBinders;
 			_service = service;
 		}
 
@@ -104,7 +108,7 @@ namespace HQ.Platform.Operations.Controllers
 					$"Configuration sub-key path '{section}' not found.");
 
 			var model = Instancing.CreateInstance(prototype);
-			config.FastBind(model);
+			config.FastBind(model, _customBinders);
 			patch.ApplyTo(model);
 
 			return Put(type, model, section);
@@ -137,7 +141,7 @@ namespace HQ.Platform.Operations.Controllers
 			var patchModel = genericBuildMethod?.Invoke(null, new[] {patch});
 
 			var model = Instancing.CreateInstance(prototype);
-			config.FastBind(model);
+			config.FastBind(model, _customBinders);
 
 			var patchType = typeof(JsonMergePatchDocument<>).MakeGenericType(prototype);
 			var patchMethods = patchType.GetTypeInfo().DeclaredMethods;

@@ -115,8 +115,8 @@
     <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
 
     <!-- Meta Programming -->
-    <PackageReference Include="TypeKitchen" Version="1.1.1" />
-    <PackageReference Include="TypeKitchen.Differencing" Version="1.1.1" />
+    <PackageReference Include="TypeKitchen" Version="1.2.0" />
+    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.0" />
     
     <!-- Integrations -->
     <PackageReference Include="DotLiquid" Version="2.0.314" />

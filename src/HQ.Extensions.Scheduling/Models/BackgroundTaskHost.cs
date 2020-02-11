@@ -34,6 +34,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TypeKitchen;
+using TypeKitchen.Creation;
 
 namespace HQ.Extensions.Scheduling.Models
 {

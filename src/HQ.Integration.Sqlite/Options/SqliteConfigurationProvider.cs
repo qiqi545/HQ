@@ -28,7 +28,10 @@ namespace HQ.Integration.Sqlite.Options
 	{
 		private readonly SqliteConfigurationSource _source;
 
-		public SqliteConfigurationProvider(SqliteConfigurationSource source) => _source = source;
+		public SqliteConfigurationProvider(SqliteConfigurationSource source)
+		{
+			_source = source;
+		}
 
 		public bool HasChildren(string key)
 		{

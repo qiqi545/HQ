@@ -23,8 +23,7 @@ namespace HQ.Integration.DocumentDb.Options
 {
 	public class DocumentConfigurationSource : IConfigurationSource
 	{
-		public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig,
-			IConfiguration configSeed = null)
+		public DocumentConfigurationSource(DocumentDbOptions options, SaveConfigurationOptions saveConfig, IConfiguration configSeed = null)
 		{
 			SaveConfig = saveConfig;
 			Options = options;
@@ -43,6 +42,7 @@ namespace HQ.Integration.DocumentDb.Options
 		{
 			DocumentConfigurationHelper.MigrateToLatest(Options, SaveConfig, ConfigSeed,
 				SaveConfig?.SeedStrategy ?? SeedStrategy.None);
+
 			return new DocumentDbConfigurationProvider(this);
 		}
 	}

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using TypeKitchen;
+using TypeKitchen.Creation;
 
 namespace HQ.Extensions.Options
 {
@@ -44,14 +45,14 @@ namespace HQ.Extensions.Options
 			var baseType = instance.GetType();
 			var members = AccessorMembers.Create(baseType, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
 			
-			if (!members.TryGetValue("Type", out var member))
+			if (!members.TryGetValue("Type", out _))
 				return baseType; // no type discriminator
 
 			if (!IsTypeDiscriminated(baseType, out var subTypes))
 				return baseType; // no matching subTypes
 
 			var read = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public);
-			string typeKey = read[instance, "Type"]?.ToString();
+			var typeKey = read[instance, "Type"]?.ToString();
 			if (string.IsNullOrWhiteSpace(typeKey))
 				return baseType; // missing type discriminant
 

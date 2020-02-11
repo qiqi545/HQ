@@ -29,8 +29,9 @@ namespace HQ.Extensions.Options
 	{
 		public static Dictionary<string, string> Unbind(this object instance, string key)
 		{
-			var accessor = ReadAccessor.Create(instance, AccessorMemberTypes.Properties, AccessorMemberScope.Public,
-				out var members);
+			var type = instance.GetType();
+			
+			var accessor = ReadAccessor.Create(type, AccessorMemberTypes.Properties, AccessorMemberScope.Public, out var members);
 			var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
 			foreach (var member in members)
@@ -38,8 +39,6 @@ namespace HQ.Extensions.Options
 				var prefix = $"{key}:{member.Name}";
 				if (!accessor.TryGetValue(instance, member.Name, out var value))
 					continue;
-
-				var type = member.Type;
 
 				switch (value)
 				{
@@ -54,7 +53,7 @@ namespace HQ.Extensions.Options
 						break;
 					default:
 					{
-						if (type.IsValueTypeOrNullableValueType())
+						if (member.Type.IsValueTypeOrNullableValueType())
 						{
 							map.Add(prefix, value.ToString());
 						}
@@ -78,8 +77,8 @@ namespace HQ.Extensions.Options
 									var index = 0;
 									foreach (var item in enumerable)
 									{
-										foreach (var entry in item.Unbind($"{prefix}:{index}"))
-											map.Add(entry.Key, entry.Value);
+										foreach (var (k, v) in item.Unbind($"{prefix}:{index}"))
+											map.Add(k, v);
 										index++;
 									}
 
@@ -88,8 +87,8 @@ namespace HQ.Extensions.Options
 
 								default:
 								{
-									foreach (var entry in value.Unbind(prefix))
-										map.Add(entry.Key, entry.Value);
+									foreach (var (k, v) in value.Unbind(prefix))
+										map.Add(k, v);
 									break;
 								}
 							}

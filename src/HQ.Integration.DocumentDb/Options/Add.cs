@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
@@ -26,15 +27,13 @@ namespace HQ.Integration.DocumentDb.Options
 {
 	public static class Add
 	{
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString,
-			IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, IConfiguration configureOptions, bool reloadOnChange = false, IConfiguration configSeed = null)
 		{
 			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions.FastBind,
 				reloadOnChange, configSeed);
 		}
 
-		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString,
-			bool reloadOnChange = false, IConfiguration configSeed = null,
+		public static IConfigurationBuilder AddDocumentDb(this IConfigurationBuilder builder, string connectionString, bool reloadOnChange = false, IConfiguration configSeed = null,
 			Action<SaveConfigurationOptions> configureOptions = null)
 		{
 			return builder.AddDocumentDb(o => { DefaultDbOptions(connectionString, o); }, configureOptions,
@@ -50,6 +49,8 @@ namespace HQ.Integration.DocumentDb.Options
 
 			var saveConfig = new SaveConfigurationOptions();
 			configureOptions?.Invoke(saveConfig);
+
+			var binders = new ICustomConfigurationBinder[] { new TypeDiscriminatorBinder() };
 
 			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed)
 			{

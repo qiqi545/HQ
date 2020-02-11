@@ -53,43 +53,95 @@ namespace HQ.Integration.DocumentDb.Options
 			var map = instance.Unbind(key);
 			var changed = false;
 
-			foreach (var entry in Data)
-			{
-				var k = entry.Key;
-				var v = entry.Value;
+			lock (Data)
+			{	
+				//
+				// Get all keys in the unbound instance that are *not* in our current view of configuration:
+				var toDelete = new Dictionary<string, string>();
+				foreach (var (k, v) in Data)
+				{
+					if (map.ContainsKey(k))
+						continue; // we already know about this key
 
-				if (v == null)
-					continue;
-
-				if (map.ContainsKey(k))
-					continue;
-
-				var id = _ids[k];
-				if (_repository.DeleteAsync(id).GetAwaiter().GetResult())
+					toDelete.Add(k, _ids[k]);
 					changed = true;
+				}
+
+				//
+				// Get all keys in the current view of configuration that are *not* in the unbound instance:
+				var toAdd = new Dictionary<string, string>();
+				foreach (var (k, v) in map)
+				{
+					if (v == null)
+						continue; // we don't have the key, but it's null, so we don't need it yet
+					if (Data.ContainsKey(k))
+						continue; // we already know about this key
+
+					toAdd.Add(k, v);
+					changed = true;
+				}
+
+				//
+				// Get all keys in the unbound instance that are changing in the current view of configuration:
+				var toUpdateIds = new Dictionary<string, string>();
+				var toUpdateValues = new Dictionary<string, string>();
+				
+				foreach (var (k, after) in map)
+				{
+					if (!Data.TryGetValue(k, out var before))
+						continue; // not an update
+
+					if (before == null && after == null)
+						continue; // no change
+
+					if (before != null && before.Equals(after, StringComparison.Ordinal))
+						continue; // no change
+
+					if (after == null)
+					{
+						toDelete.Add(k, _ids[k]);
+						changed = true;
+						continue; // going from a value to null means we're deleting
+					}
+
+					toUpdateIds.Add(k, _ids[k]);
+					toUpdateValues.Add(_ids[k], after);
+					changed = true;
+				}
+
+				if (!changed)
+					return false; // no changes
+
+				foreach (var (k, v) in toAdd)
+				{
+					_repository.UpsertAsync(new ConfigurationDocument
+					{
+						Id = null,
+						Key = k, 
+						Value = v
+					}).GetAwaiter().GetResult();
+				}
+
+				foreach (var (k, id) in toUpdateIds)
+				{
+					_repository.UpsertAsync(new ConfigurationDocument
+					{
+						Id = id,
+						Key = k, 
+						Value = toUpdateValues[id]
+					}).GetAwaiter().GetResult();
+				}
+					
+				foreach (var (k, v) in toDelete)
+				{
+					var id = v;
+					var deleted = _repository.DeleteAsync(id).GetAwaiter().GetResult();
+					if(deleted)
+						_ids.Remove(k);
+				}
 			}
 
-			foreach (var (k, v) in map)
-			{
-				Data.TryGetValue(k, out var value);
-
-				var before = value;
-				if (before == null && v == null)
-					continue; // no change
-
-				if (before != null && before.Equals(v, StringComparison.Ordinal))
-					continue; // no change
-
-				if (v == null)
-					continue; // not null constraint violation
-
-				var document = _repository.UpsertAsync(new ConfigurationDocument {Key = k, Value = v}).GetAwaiter()
-					.GetResult();
-				_ids[k] = document.Id;
-				changed = true;
-			}
-
-			return changed;
+			return true;
 		}
 
 		public bool Delete(string key)
