@@ -15,12 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class HttpsOptions : FeatureToggle
+	public class HttpsOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public HstsOptions Hsts { get; set; } = new HstsOptions();
 	}
 }

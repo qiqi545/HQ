@@ -17,13 +17,13 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
-	internal class BackgroundTasksComponent : DynamicComponent
+	internal sealed class BackgroundTasksComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(BackgroundTaskController)};
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(BackgroundTaskController)};
 	}
 }

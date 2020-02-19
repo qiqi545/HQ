@@ -15,14 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Extensions.Metrics;
-using Microsoft.Net.Http.Headers;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations.Configuration
 {
-	public class OperationsApiOptions : IProtectedFeature
+	public class OperationsApiOptions : IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{
 		public string RootPath { get; set; } = "/ops";
 

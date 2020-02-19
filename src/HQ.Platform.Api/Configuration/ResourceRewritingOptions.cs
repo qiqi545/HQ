@@ -15,12 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class ResourceRewritingOptions : FeatureToggle
+	public class ResourceRewritingOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public string ActionHeader { get; set; } = HttpHeaders.Action;
 	}
 }

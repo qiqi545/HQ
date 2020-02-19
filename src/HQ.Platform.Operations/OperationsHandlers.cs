@@ -26,6 +26,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Extensions.Caching;
@@ -233,7 +234,7 @@ namespace HQ.Platform.Operations
 			{
 				foreach (var featureType in assembly.GetTypes())
 				{
-					if (!featureType.IsSubclassOf(typeof(FeatureToggle)))
+					if (!featureType.IsSubclassOf(typeof(IFeatureToggle)))
 					{
 						continue;
 					}
@@ -263,7 +264,7 @@ namespace HQ.Platform.Operations
 					if (optionsWrapperType.IsAssignableFrom(serviceType))
 					{
 						var property = optionsWrapperType.GetProperty(nameof(IOptions<object>.Value));
-						if (!(property?.GetValue(instance) is FeatureToggle feature))
+						if (!(property?.GetValue(instance) is IFeatureToggle feature))
 						{
 							indeterminate.Add(featureType.Name);
 							continue;
@@ -275,7 +276,7 @@ namespace HQ.Platform.Operations
 
 					if (serviceType == featureType)
 					{
-						if (instance is FeatureToggle feature)
+						if (instance is IFeatureToggle feature)
 						{
 							registered[featureType.Name] = feature.Enabled;
 						}

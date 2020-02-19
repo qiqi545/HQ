@@ -17,13 +17,13 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Platform.Identity.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.Mvc
 {
-	public class TokensComponent : DynamicComponent
+	public class TokensComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(TokenController<,,,>)};
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(TokenController<,,,>)};
 	}
 }

@@ -5,12 +5,11 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
-    <Description>An SQL generator multi-tool for .NET.</Description>
     <PackageTags>sql generator dotnet-standard hq-stack</PackageTags>
   </PropertyGroup>
 

@@ -15,7 +15,8 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Configuration
 {
@@ -26,25 +27,25 @@ namespace HQ.Platform.Identity.Configuration
 		public ManageApplicationsPolicy Applications { get; set; } = new ManageApplicationsPolicy();
 		public ManageTenantsPolicy Tenants { get; set; } = new ManageTenantsPolicy();
 
-		public class ManageUsersPolicy : IProtectedFeature
+		public class ManageUsersPolicy : IFeatureScheme, IFeaturePolicy
 		{
 			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageUsers;
 		}
 
-		public class ManageRolesPolicy : IProtectedFeature
+		public class ManageRolesPolicy : IFeatureScheme, IFeaturePolicy
 		{
 			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageRoles;
 		}
 
-		public class ManageApplicationsPolicy : IProtectedFeature
+		public class ManageApplicationsPolicy : IFeatureScheme, IFeaturePolicy
 		{
 			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageApplications;
 		}
 
-		public class ManageTenantsPolicy : IProtectedFeature
+		public class ManageTenantsPolicy : IFeatureScheme, IFeaturePolicy
 		{
 			public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 			public string Policy { get; set; } = Constants.Security.Policies.ManageTenants;

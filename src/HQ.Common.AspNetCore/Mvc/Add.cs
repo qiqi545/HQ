@@ -18,7 +18,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace HQ.Common.AspNetCore.Mvc
 {
@@ -31,23 +30,6 @@ namespace HQ.Common.AspNetCore.Mvc
 				.AddControllers(configureAction)
 				.AddNewtonsoftJson()
 				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-		}
-
-		public static IMvcBuilder AddComponentFeature<TComponent, TComponentOptions>(this IMvcBuilder mvcBuilder)
-			where TComponent : IDynamicComponent
-			where TComponentOptions : IComponentOptions
-		{
-			mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-			{
-				var instance = Activator.CreateInstance<TComponent>();
-				instance.RouteTemplate = () =>
-				{
-					var o = r.GetRequiredService<IOptionsMonitor<TComponentOptions>>();
-					return o.CurrentValue.RootPath ?? string.Empty;
-				};
-				return instance;
-			});
-			return mvcBuilder;
 		}
 	}
 }

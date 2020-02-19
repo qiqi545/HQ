@@ -18,9 +18,8 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
@@ -32,8 +31,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 {
 	[Route("tenants")]
 	[DynamicController(typeof(IdentityApiOptions))]
-	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies),
-		nameof(IdentityApiOptions.Policies.Tenants))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Tenants))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Tenants")]
@@ -51,8 +49,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			_options = options;
 		}
 
-		[FeatureSelector]
-		[HttpGet("")]
+		[DynamicHttpGet("")]
 		public async Task<IActionResult> Get()
 		{
 			var tenants = await _tenantService.GetAsync();
@@ -61,8 +58,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Ok(tenants.Data);
 		}
 
-		[FeatureSelector]
-		[HttpPost("")]
+		[DynamicHttpPost("")]
 		public async Task<IActionResult> Create([FromBody] CreateTenantModel model)
 		{
 			if (!ValidModelState(out var error))
@@ -77,8 +73,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}")]
+		[DynamicHttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
 			if (!ValidModelState(out var error))
@@ -95,8 +90,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? NoContent() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpPut("{id}")]
+		[DynamicHttpPut("{id}")]
 		public async Task<IActionResult> Update([FromBody] TTenant tenant)
 		{
 			if (!ValidModelState(out var error))
@@ -113,9 +107,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("{id}")]
-		[HttpGet("id/{id}")]
+		[DynamicHttpGet("{id}")]
+		[DynamicHttpGet("id/{id}")]
 		public async Task<IActionResult> FindById([FromRoute] string id)
 		{
 			var tenant = await _tenantService.FindByIdAsync(id);
@@ -129,8 +122,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(tenant.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("name/{name}")]
+		[DynamicHttpGet("name/{name}")]
 		public async Task<IActionResult> FindByUsername([FromRoute] string name)
 		{
 			var tenant = await _tenantService.FindByNameAsync(name);

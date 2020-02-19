@@ -16,11 +16,7 @@
 #endregion
 
 using System.Buffers;
-using System.Collections.Generic;
-using System.Net.Mime;
 using System.Xml;
-using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Formatters;
@@ -30,13 +26,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Configuration
 {
 	internal class PlatformApiMvcConfiguration : IConfigureOptions<MvcOptions>
 	{
 		private readonly ArrayPool<char> _charPool;
-		private readonly IEnumerable<IDynamicComponent> _components;
 		private readonly ILoggerFactory _loggerFactory;
 		private readonly ObjectPoolProvider _objectPoolProvider;
 		private readonly JsonSerializerSettings _settings;
@@ -45,14 +41,12 @@ namespace HQ.Platform.Api.Configuration
 			ILoggerFactory loggerFactory,
 			ArrayPool<char> charPool,
 			ObjectPoolProvider objectPoolProvider,
-			JsonSerializerSettings settings,
-			IEnumerable<IDynamicComponent> components)
+			JsonSerializerSettings settings)
 		{
 			_loggerFactory = loggerFactory;
 			_charPool = charPool;
 			_objectPoolProvider = objectPoolProvider;
 			_settings = settings;
-			_components = components;
 		}
 
 		public void Configure(MvcOptions options)
@@ -69,7 +63,6 @@ namespace HQ.Platform.Api.Configuration
 			AddJson(options, logger, jsonOptions);
 			AddXml(options);
 
-			options.Conventions.Add(new DynamicComponentConvention(_components));
 			options.Filters.Add(typeof(CanonicalRoutesResourceFilter));
 		}
 

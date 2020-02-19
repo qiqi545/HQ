@@ -16,6 +16,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Extensions.Logging;
@@ -35,7 +36,7 @@ namespace HQ.Integration.DocumentDb
 			ISafeLogger<DocumentDbRepository<T>> logger) =>
 			Repository = new DocumentDbRepository<T>(slot, options, logger);
 
-		[HttpPost("")]
+		[DynamicHttpPost("")]
 		public async Task<IActionResult> CreateAsync([FromBody] T document)
 		{
 			if (!ValidModelState(out var error))
@@ -57,14 +58,14 @@ namespace HQ.Integration.DocumentDb
 			return Created(location, document);
 		}
 
-		[HttpGet("")]
+		[DynamicHttpGet("")]
 		public async Task<IActionResult> RetrieveAsync()
 		{
 			var documents = await Repository.RetrieveAsync(predicate: null, CancellationToken);
 			return Ok(documents);
 		}
 
-		[HttpGet("{id}")]
+		[DynamicHttpGet("{id}")]
 		public async Task<IActionResult> RetrieveAsync(string id)
 		{
 			if (id == null)
@@ -79,7 +80,7 @@ namespace HQ.Integration.DocumentDb
 			return Ok(document);
 		}
 
-		[HttpPut("")]
+		[DynamicHttpPut("")]
 		public async Task<ActionResult> UpdateAsync(T item)
 		{
 			if (item == null)
@@ -94,7 +95,7 @@ namespace HQ.Integration.DocumentDb
 			return Ok();
 		}
 
-		[HttpDelete("{id}")]
+		[DynamicHttpDelete("{id}")]
 		public async Task<ActionResult> DeleteAsync(string id)
 		{
 			if (id == null)

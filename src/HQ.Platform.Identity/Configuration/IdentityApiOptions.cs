@@ -15,12 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Identity.Configuration
 {
-	public class IdentityApiOptions : FeatureToggle, IComponentOptions
+	public class IdentityApiOptions : IFeatureToggle, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
 		public IdentityApiPolicies Policies { get; set; } = new IdentityApiPolicies();
 		public string RootPath { get; set; } = "auth";
 	}

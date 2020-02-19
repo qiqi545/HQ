@@ -20,11 +20,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using ActiveRoutes;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.AspNetCore.MergePatch.Builders;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Options;
@@ -42,7 +42,6 @@ using TypeKitchen.Creation;
 namespace HQ.Platform.Operations.Controllers
 {
 	[Route("configuration")]
-	[DynamicAuthorize(typeof(ConfigurationApiOptions))]
 	[DynamicController(typeof(ConfigurationApiOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
 	[MetaDescription("Manages configuration items.")]
@@ -65,9 +64,8 @@ namespace HQ.Platform.Operations.Controllers
 			_service = service;
 		}
 
-		[FeatureSelector]
-		[HttpGet("")]
-		[HttpGet("{section?}")]
+		[DynamicHttpGet("")]
+		[DynamicHttpGet("{section?}")]
 		[MustHaveQueryParameters("type")]
 		public IActionResult Get([FromQuery] string type, [FromRoute] string section = null)
 		{
@@ -84,9 +82,8 @@ namespace HQ.Platform.Operations.Controllers
 		}
 
 
-		[FeatureSelector]
-		[HttpPatch("")]
-		[HttpPatch("{section?}")]
+		[DynamicHttpPatch("")]
+		[DynamicHttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
 		[Consumes(MediaTypeNames.Application.JsonPatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] JsonPatchDocument patch,
@@ -113,9 +110,8 @@ namespace HQ.Platform.Operations.Controllers
 			return Put(type, model, section);
 		}
 
-		[FeatureSelector]
-		[HttpPatch("")]
-		[HttpPatch("{section?}")]
+		[DynamicHttpPatch("")]
+		[DynamicHttpPatch("{section?}")]
 		[MustHaveQueryParameters("type")]
 		[Consumes(MediaTypeNames.Application.JsonMergePatch)]
 		public IActionResult Patch([FromQuery] string type, [FromBody] object patch, [FromRoute] string section = null)
@@ -146,9 +142,8 @@ namespace HQ.Platform.Operations.Controllers
 			return Put(type, patch, section);
 		}
 
-		[FeatureSelector]
-		[HttpPut("")]
-		[HttpPut("{section?}")]
+		[DynamicHttpPut("")]
+		[DynamicHttpPut("{section?}")]
 		[MustHaveQueryParameters("type")]
 		public IActionResult Put([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
 		{
@@ -204,9 +199,8 @@ namespace HQ.Platform.Operations.Controllers
 			return result;
 		}
 
-		[FeatureSelector]
-		[HttpDelete("")]
-		[HttpDelete("{section?}")]
+		[DynamicHttpDelete("")]
+		[DynamicHttpDelete("{section?}")]
 		public IActionResult Delete([FromQuery] string type, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))

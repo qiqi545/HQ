@@ -15,12 +15,13 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class BlockListOptions : FeatureToggle
+	public class BlockListOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		private static readonly string[] Empty = new string[0];
 		public string[] PasswordBlockList { get; set; } = Empty;
 		public string[] UsernameBlockList { get; set; } = Empty;

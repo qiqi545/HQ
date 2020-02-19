@@ -19,7 +19,6 @@ using System;
 using System.Linq;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Configuration;
@@ -75,7 +74,6 @@ namespace HQ.Platform.Security.AspNetCore
 
 			services.ConfigureOptions<ConfigureWebServer>();
 
-			services.AddDynamicAuthorization();
 			services.AddCors(logger, security.Cors);
 			services.AddAuthentication(logger, security, superUser);
 			services.AddSuperUser(logger, superUser);

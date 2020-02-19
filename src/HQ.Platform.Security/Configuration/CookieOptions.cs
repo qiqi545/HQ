@@ -15,12 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class CookieOptions : FeatureToggle
+	public class CookieOptions : IFeatureToggle, IFeatureScheme
 	{
+		public bool Enabled { get; set; } = true;
 		public string SignInPath { get; set; } = Constants.Cookies.SignInPath;
 		public string SignOutPath { get; set; } = Constants.Cookies.SignOutPath;
 		public string ForbidPath { get; set; } = Constants.Cookies.ForbidPath;

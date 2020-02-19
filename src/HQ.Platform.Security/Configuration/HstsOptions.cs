@@ -16,15 +16,16 @@
 #endregion
 
 using System;
-using HQ.Common;
+using ActiveRoutes;
 
 namespace HQ.Platform.Security.Configuration
 {
 	/// <summary>
 	///     See: https://hstspreload.org
 	/// </summary>
-	public class HstsOptions : FeatureToggle
+	public class HstsOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public HstsPreloadStage Stage { get; set; } = HstsPreloadStage.One;
 		public bool IncludeSubdomains { get; set; } = true;
 		public bool Preload { get; set; } = false;

@@ -15,12 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class RequestLimitOptions : FeatureToggle
+	public class RequestLimitOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public long MaxRequestSizeBytes { get; set; } = 30_000_000;
 	}
 }

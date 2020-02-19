@@ -16,13 +16,10 @@
 #endregion
 
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
-using HQ.Common;
-using HQ.Common.AspNetCore;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Configuration;
@@ -38,7 +35,6 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Api.Schemas
 {
 	[DynamicController(typeof(SchemaOptions))]
-	[DynamicAuthorize(typeof(SchemaOptions))]
 	[Route("schemas")]
 	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
 	[ApiExplorerSettings(IgnoreApi = false)]
@@ -58,8 +54,7 @@ namespace HQ.Platform.Api.Schemas
 			_queryOptions = queryOptions;
 		}
 
-		[FeatureSelector]
-		[HttpGet("{applicationId}")]
+		[DynamicHttpGet("{applicationId}")]
 		public async Task<IActionResult> GetSchemas([FromRoute] [BindRequired] string applicationId)
 		{
 			//var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);

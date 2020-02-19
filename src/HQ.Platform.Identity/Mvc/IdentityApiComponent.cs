@@ -17,14 +17,14 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Platform.Identity.Mvc.Controllers;
 
 namespace HQ.Platform.Identity.Mvc
 {
-	public class IdentityApiComponent : DynamicComponent
+	public class IdentityApiComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[]
+		public override IList<Type> ControllerTypes { get; } = new[]
 		{
 			typeof(UserController<,,>), 
 			typeof(RoleController<,>), 

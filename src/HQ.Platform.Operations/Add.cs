@@ -16,11 +16,11 @@
 #endregion
 
 using System;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
@@ -61,7 +61,6 @@ namespace HQ.Platform.Operations
 
 			services.AddValidOptions();
 			services.AddSaveOptions();
-			services.AddDynamicAuthorization();
 
 			services.AddScoped<IMetaProvider, OperationsMetaProvider>();
 
@@ -82,8 +81,7 @@ namespace HQ.Platform.Operations
 				});
 			});
 
-			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations,
-				ClaimValues.AccessOperations);
+			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations, ClaimValues.AccessOperations);
 			return services;
 		}
 
@@ -97,26 +95,26 @@ namespace HQ.Platform.Operations
 			IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			services.AddSingleton(configurationRoot);
-			services.AddMvcCommon().AddConfigurationApi(configureAction);
+			services.AddActiveRouting(mvcBuilder =>
+			{
+				mvcBuilder.AddConfigurationApi(configureAction);
+			});
 			return services;
 		}
 
-		private static void AddConfigurationApi(this IMvcBuilder mvcBuilder,
-			Action<ConfigurationApiOptions> configureAction = null)
+		public static IMvcCoreBuilder AddConfigurationApi(this IMvcCoreBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
 
 			mvcBuilder.Services.AddValidOptions();
 			mvcBuilder.Services.AddSaveOptions();
-			mvcBuilder.Services.AddDynamicAuthorization();
 
 			mvcBuilder.Services.AddSingleton<ConfigurationService>();
+			mvcBuilder.AddActiveRoute<ConfigurationController, ConfigurationComponent, ConfigurationApiOptions>();
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration, ClaimValues.ManageConfiguration);
 
-			mvcBuilder.AddControllerFeature<ConfigurationController>();
-			mvcBuilder.AddComponentFeature<ConfigurationComponent, ConfigurationApiOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration,
-				ClaimValues.ManageConfiguration);
+			return mvcBuilder;
 		}
 
 		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
@@ -127,11 +125,11 @@ namespace HQ.Platform.Operations
 		public static IServiceCollection AddMetaApi(this IServiceCollection services,
 			Action<MetaApiOptions> configureAction = null)
 		{
-			services.AddMvcCommon().AddMetaApi(configureAction);
+			services.AddMvcCore().AddMetaApi(configureAction);
 			return services;
 		}
 
-		private static void AddMetaApi(this IMvcBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
+		private static void AddMetaApi(this IMvcCoreBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -141,10 +139,8 @@ namespace HQ.Platform.Operations
 
 			mvcBuilder.Services.AddValidOptions();
 			mvcBuilder.Services.AddSaveOptions();
-			mvcBuilder.Services.AddDynamicAuthorization();
 
-			mvcBuilder.AddControllerFeature<MetaController>();
-			mvcBuilder.AddComponentFeature<MetaComponent, MetaApiOptions>();
+			mvcBuilder.AddActiveRoute<MetaController, MetaComponent, MetaApiOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
 			
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();

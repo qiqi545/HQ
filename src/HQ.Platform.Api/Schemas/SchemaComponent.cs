@@ -17,12 +17,12 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 
 namespace HQ.Platform.Api.Schemas
 {
-	public class SchemaComponent : DynamicComponent
+	public class SchemaComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(SchemaController)};
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(SchemaController)};
 	}
 }

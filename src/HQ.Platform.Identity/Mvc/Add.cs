@@ -16,9 +16,7 @@
 #endregion
 
 using System;
-using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Mvc.Security;
+using ActiveRoutes;
 using HQ.Extensions.Options;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
@@ -29,6 +27,7 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Mvc
 {
@@ -66,13 +65,13 @@ namespace HQ.Platform.Identity.Mvc
 			where TApplication : IdentityApplication<TKey>
 			where TKey : IEquatable<TKey>
 		{
-			services.AddMvcCommon()
+			services.AddMvcCore()
 				.AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
 
 			return services;
 		}
 
-		private static void AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcBuilder mvcBuilder,
+		private static void AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcCoreBuilder mvcBuilder,
 			Action<IdentityApiOptions> configureApi = null)
 			where TUser : IdentityUserExtended<TKey>
 			where TRole : IdentityRoleExtended<TKey>
@@ -83,44 +82,24 @@ namespace HQ.Platform.Identity.Mvc
 			if (configureApi != null)
 				mvcBuilder.Services.Configure(configureApi);
 
-			mvcBuilder.Services.AddDynamicAuthorization();
-
-			mvcBuilder.AddControllerFeature<TenantController<TTenant, TKey>>();
-			mvcBuilder.AddControllerFeature<ApplicationController<TApplication, TKey>>();
-			mvcBuilder.AddControllerFeature<UserController<TUser, TTenant, TKey>>();
-			mvcBuilder.AddControllerFeature<RoleController<TRole, TKey>>();
+			mvcBuilder.AddActiveRoute<TenantController<TTenant, TKey>, IdentityApiComponent, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<ApplicationController<TApplication, TKey>, IdentityApiComponent, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<UserController<TUser, TTenant, TKey>, IdentityApiComponent, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<RoleController<TRole, TKey>, IdentityApiComponent, IdentityApiOptions>();
 
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
 
-			mvcBuilder.AddComponentFeature<IdentityApiComponent, IdentityApiOptions>();
-
 			if (TokensEnabled(mvcBuilder))
-			{
-				mvcBuilder.AddControllerFeature<TokenController<TUser, TTenant, TApplication, TKey>>();
-
-				// FIXME:
-				// mvcBuilder.AddComponentFeature<TokensComponent, TokenOptions>();
-				mvcBuilder.Services.AddSingleton<IDynamicComponent>(r =>
-				{
-					return new TokensComponent
-					{
-						RouteTemplate = () =>
-						{
-							var o = r.GetRequiredService<IOptionsMonitor<SecurityOptions>>();
-							return o.CurrentValue.Tokens?.RootPath ?? string.Empty;
-						}
-					};
-				});
-			}
+				mvcBuilder.AddActiveRoute<TokenController<TUser, TTenant, TApplication, TKey>, IdentityApiComponent, IdentityApiOptions>();
 		}
 
-		private static bool TokensEnabled(this IMvcBuilder mvcBuilder)
+		private static bool TokensEnabled(this IMvcCoreBuilder mvcBuilder)
 		{
-			return mvcBuilder.Services.BuildServiceProvider().GetRequiredService<IOptions<SecurityOptions>>().Value
-				.Tokens.Enabled;
+			var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+			return serviceProvider.GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens.Enabled;
 		}
 	}
 }

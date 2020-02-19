@@ -18,13 +18,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading.Tasks;
-using HQ.Common;
-using HQ.Common.AspNetCore;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Attributes;
@@ -41,7 +38,6 @@ using TypeKitchen;
 namespace HQ.Platform.Api.Runtime
 {
 	[DynamicController(typeof(RuntimeOptions))]
-	[DynamicAuthorize(typeof(RuntimeOptions))]
 	[Route("objects")]
 	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
 	[ApiExplorerSettings(IgnoreApi = false)]
@@ -62,8 +58,7 @@ namespace HQ.Platform.Api.Runtime
 			_runtimeOptions = runtimeOptions;
 		}
 
-		[FeatureSelector]
-		[HttpOptions("")]
+		[DynamicHttpOptions]
 		public IActionResult Options()
 		{
 			IEnumerable<string> availableTypes = new List<string>();
@@ -83,11 +78,10 @@ namespace HQ.Platform.Api.Runtime
 		#region GET
 
 		// [VersionSelector] // FIXME: controller name dependent
-		[FeatureSelector]
 		[QueryContextProviderSelector]
 		[FormatFilter]
-		[HttpGet("{objectType}")]
-		[HttpGet("{objectType}.{format}")]
+		[DynamicHttpGet("{objectType}")]
+		[DynamicHttpGet("{objectType}.{format}")]
 		public async Task<IActionResult> GetAsync([FromRoute] [BindRequired] string objectType)
 		{
 			var type = _typeResolver.FindFirstByName(objectType); // FIXME: allow pluralized type names

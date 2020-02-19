@@ -16,12 +16,15 @@
 #endregion
 
 using System.Net;
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class VersioningOptions : FeatureToggle
+	public class VersioningOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
+
 		public int ExplicitVersionRequiredStatusCode = (int) HttpStatusCode.NotFound;
 		public bool RequireExplicitVersion { get; set; } = false;
 

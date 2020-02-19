@@ -15,12 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Data.Contracts.Schema.Configuration
 {
-	public class SchemaOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class SchemaOptions : IFeatureToggle, IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
 		public string SchemaFolder { get; set; } = "schemas";
 		public string ApplicationId { get; set; } = Constants.Schemas.DefaultApplicationId;
 		public StoreOptions Store { get; set; } = new StoreOptions();

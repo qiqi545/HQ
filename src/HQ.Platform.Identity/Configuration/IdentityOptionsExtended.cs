@@ -15,6 +15,7 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;

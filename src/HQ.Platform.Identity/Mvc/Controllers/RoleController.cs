@@ -21,9 +21,8 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
@@ -36,8 +35,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 {
 	[Route("roles")]
 	[DynamicController(typeof(IdentityApiOptions))]
-	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies),
-		nameof(IdentityApiOptions.Policies.Roles))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Roles))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Roles")]
@@ -58,8 +56,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			_options = options;
 		}
 
-		[FeatureSelector]
-		[HttpGet("")]
+		[DynamicHttpGet("")]
 		public async Task<IActionResult> Get()
 		{
 			var roles = await _roleService.GetAsync();
@@ -71,8 +68,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Ok(roles.Data);
 		}
 
-		[FeatureSelector]
-		[HttpPost("")]
+		[DynamicHttpPost("")]
 		public async Task<IActionResult> Create([FromBody] CreateRoleModel model)
 		{
 			if (!ValidModelState(out var error))
@@ -87,8 +83,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpPut("{id}")]
+		[DynamicHttpPut("{id}")]
 		public async Task<IActionResult> Update([FromBody] TRole role)
 		{
 			if (!ValidModelState(out var error))
@@ -105,8 +100,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}")]
+		[DynamicHttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
 			if (!ValidModelState(out var error))
@@ -123,8 +117,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("{id}/claims")]
+		[DynamicHttpGet("{id}/claims")]
 		public async Task<IActionResult> GetClaims([FromRoute] string id)
 		{
 			var role = await _roleService.FindByIdAsync(id);
@@ -143,8 +136,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Ok(claims);
 		}
 
-		[FeatureSelector]
-		[HttpPost("{id}/claims")]
+		[DynamicHttpPost("{id}/claims")]
 		public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] CreateClaimModel model)
 		{
 			if (!Valid(model, out var error))
@@ -167,8 +159,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}/claims/{type}/{value}")]
+		[DynamicHttpDelete("{id}/claims/{type}/{value}")]
 		public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
 			[FromRoute] string value)
 		{
@@ -195,8 +186,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("{id}")]
+		[DynamicHttpGet("{id}")]
 		public async Task<TRole> FindById([FromRoute] string id)
 		{
 			var role = await _roleService.FindByIdAsync(id);

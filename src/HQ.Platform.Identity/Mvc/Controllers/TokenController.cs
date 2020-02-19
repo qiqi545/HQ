@@ -19,10 +19,10 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Logging;
@@ -39,11 +39,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Mvc.Controllers
 {
 	[Route("tokens")]
-	[DynamicController(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
+	[DynamicController(typeof(SecurityOptions), new []{nameof(SecurityOptions.Tokens)})]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
@@ -73,9 +74,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			_logger = logger;
 		}
 
-		[FeatureSelector]
 		[DynamicAuthorize(typeof(SecurityOptions), nameof(SecurityOptions.Tokens))]
-		[HttpPut]
+		[DynamicHttpPut]
 		public IActionResult VerifyToken()
 		{
 			if (User.Identity == null)
@@ -95,9 +95,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Unauthorized();
 		}
 
-		[FeatureSelector]
 		[AllowAnonymous]
-		[HttpPost]
+		[DynamicHttpPost]
 		public async Task<IActionResult> IssueToken(
 			[FromBody] BearerTokenRequest model,
 			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]

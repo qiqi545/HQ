@@ -24,10 +24,8 @@ using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Common.Models;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
@@ -38,7 +36,6 @@ using Microsoft.Extensions.Options;
 namespace HQ.Platform.Operations.Controllers
 {
 	[Route("meta")]
-	[DynamicAuthorize(typeof(MetaApiOptions))]
 	[DynamicController(typeof(MetaApiOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
 	[MetaDescription("Provides specifications and discovery for external tooling.")]
@@ -66,15 +63,13 @@ namespace HQ.Platform.Operations.Controllers
 			_schemaOptions = schemaOptions;
 		}
 
-		[FeatureSelector]
-		[HttpOptions("")]
+		[DynamicHttpOptions]
 		public IActionResult Options()
 		{
 			return Ok(new {data = new[] {"postman", "swagger"}});
 		}
 
-		[FeatureSelector]
-		[HttpGet("postman")]
+		[DynamicHttpGet("postman")]
 		public async Task<IActionResult> Postman([FromHeader(Name = "X-Postman-Version")]
 			string version = "2.1.0")
 		{
@@ -159,8 +154,7 @@ namespace HQ.Platform.Operations.Controllers
 			}
 		}
 
-		[FeatureSelector]
-		[HttpGet("swagger")]
+		[DynamicHttpGet("swagger")]
 		public IActionResult Swagger([FromHeader(Name = "X-Swagger-Version")]
 			string version = "2.0")
 		{

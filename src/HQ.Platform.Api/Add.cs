@@ -19,12 +19,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO.Compression;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Versioning;
@@ -53,6 +53,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api
 {
@@ -240,30 +241,27 @@ namespace HQ.Platform.Api
 		public static IServiceCollection AddSchemaApi(this IServiceCollection services,
 			Action<SchemaOptions> configureAction = null)
 		{
-			var mvcBuilder = services.AddMvcCommon();
+			var mvcBuilder = services.AddMvcCore();
 			mvcBuilder.AddSchemaApi(configureAction);
 			return mvcBuilder.Services;
 		}
 
-		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder, IConfiguration config)
+		public static IMvcCoreBuilder AddSchemaApi(this IMvcCoreBuilder mvcBuilder, IConfiguration config)
 		{
 			mvcBuilder.AddSchemaApi(config.FastBind);
 			return mvcBuilder;
 		}
 
-		public static IMvcBuilder AddSchemaApi(this IMvcBuilder mvcBuilder,
+		public static IMvcCoreBuilder AddSchemaApi(this IMvcCoreBuilder mvcBuilder,
 			Action<SchemaOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
 
-			mvcBuilder.AddControllerFeature<SchemaController>();
-			mvcBuilder.AddComponentFeature<SchemaComponent, SchemaOptions>();
-
 			mvcBuilder.Services.AddTypeDiscovery();
-			mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);
 
+			mvcBuilder.AddActiveRoute<SchemaController, SchemaComponent, SchemaOptions>();
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);
 			return mvcBuilder;
 		}
 
@@ -279,26 +277,23 @@ namespace HQ.Platform.Api
 		public static RuntimeBuilder AddRuntimeApi(this IServiceCollection services,
 			Action<RuntimeOptions> configureAction = null)
 		{
-			var mvcBuilder = services.AddMvcCommon();
+			var mvcBuilder = services.AddMvcCore();
 			mvcBuilder.AddRuntimeApi(configureAction);
 			return new RuntimeBuilder(mvcBuilder.Services);
 		}
 
-		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder, IConfiguration config)
+		public static RuntimeBuilder AddRuntimeApi(this IMvcCoreBuilder mvcBuilder, IConfiguration config)
 		{
 			return mvcBuilder.AddRuntimeApi(config.FastBind);
 		}
 
-		public static RuntimeBuilder AddRuntimeApi(this IMvcBuilder mvcBuilder,
+		public static RuntimeBuilder AddRuntimeApi(this IMvcCoreBuilder mvcBuilder,
 			Action<RuntimeOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
-
-			mvcBuilder.AddControllerFeature<RuntimeController>();
-			mvcBuilder.AddComponentFeature<RuntimeComponent, RuntimeOptions>();
-
-			mvcBuilder.Services.AddDynamicAuthorization();
+			
+			mvcBuilder.AddActiveRoute<RuntimeController, RuntimeComponent, RuntimeOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageObjects, ClaimValues.ManageObjects);
 			return new RuntimeBuilder(mvcBuilder.Services);
 		}

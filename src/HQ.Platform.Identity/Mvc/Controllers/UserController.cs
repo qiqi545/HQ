@@ -21,9 +21,8 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
@@ -35,8 +34,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 {
 	[Route("users")]
 	[DynamicController(typeof(IdentityApiOptions))]
-	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies),
-		nameof(IdentityApiOptions.Policies.Users))]
+	[DynamicAuthorize(typeof(IdentityApiOptions), nameof(IdentityApiOptions.Policies), nameof(IdentityApiOptions.Policies.Users))]
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Users")]
@@ -57,8 +55,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			_options = options;
 		}
 
-		[FeatureSelector]
-		[HttpGet("")]
+		[DynamicHttpGet("")]
 		public async Task<IActionResult> Get()
 		{
 			var users = await _userService.GetAsync();
@@ -70,8 +67,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Ok(users.Data);
 		}
 
-		[FeatureSelector]
-		[HttpPost("")]
+		[DynamicHttpPost("")]
 		public async Task<IActionResult> Create([FromBody] CreateUserModel model)
 		{
 			if (!ValidModelState(out var error))
@@ -86,8 +82,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpPut("{id}")]
+		[DynamicHttpPut("{id}")]
 		public async Task<IActionResult> Update([FromBody] TUser user)
 		{
 			if (!ValidModelState(out var error))
@@ -104,8 +99,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}")]
+		[DynamicHttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
 			if (!ValidModelState(out var error))
@@ -122,9 +116,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return result.Succeeded ? Ok() : (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("{id}")]
-		[HttpGet("id/{id}")]
+		[DynamicHttpGet("{id}")]
+		[DynamicHttpGet("id/{id}")]
 		public async Task<IActionResult> FindById([FromRoute] string id)
 		{
 			var user = await _userService.FindByIdAsync(id);
@@ -138,8 +131,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(user.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("email/{email}")]
+		[DynamicHttpGet("email/{email}")]
 		public async Task<IActionResult> FindByEmail([FromRoute] string email)
 		{
 			var user = await _userService.FindByEmailAsync(email);
@@ -153,8 +145,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(user.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("username/{username}")]
+		[DynamicHttpGet("username/{username}")]
 		public async Task<IActionResult> FindByUsername([FromRoute] string username)
 		{
 			var user = await _userService.FindByNameAsync(username);
@@ -168,8 +159,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(user.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("phone/{phone}")]
+		[DynamicHttpGet("phone/{phone}")]
 		public async Task<IActionResult> FindByPhoneNumber([FromRoute] string phone)
 		{
 			var user = await _userService.FindByPhoneNumberAsync(phone);
@@ -185,8 +175,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 
 		#region Role Assignment
 
-		[FeatureSelector]
-		[HttpGet("{id}/roles")]
+		[DynamicHttpGet("{id}/roles")]
 		public async Task<IActionResult> GetRoles([FromRoute] string id)
 		{
 			var user = await _userService.FindByIdAsync(id);
@@ -204,8 +193,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Ok(result.Data);
 		}
 
-		[FeatureSelector]
-		[HttpPost("{id}/roles/{role}")]
+		[DynamicHttpPost("{id}/roles/{role}")]
 		public async Task<IActionResult> AddToRole([FromRoute] string id, [FromRoute] string role)
 		{
 			var user = await _userService.FindByIdAsync(id);
@@ -221,8 +209,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}/roles/{role}")]
+		[DynamicHttpDelete("{id}/roles/{role}")]
 		public async Task<IActionResult> RemoveFromRole([FromRoute] string id, [FromRoute] string role)
 		{
 			var user = await _userService.FindByIdAsync(id);
@@ -242,8 +229,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 
 		#region Claim Assignment
 
-		[FeatureSelector]
-		[HttpGet("{id}/claims")]
+		[DynamicHttpGet("{id}/claims")]
 		public async Task<IActionResult> GetClaims([FromRoute] string id)
 		{
 			var user = await _userService.FindByIdAsync(id);
@@ -259,8 +245,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpPost("{id}/claims")]
+		[DynamicHttpPost("{id}/claims")]
 		public async Task<IActionResult> AddClaim([FromRoute] string id, [FromBody] AddClaimModel model)
 		{
 			if (!ValidModelState(out var error))
@@ -283,8 +268,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(result.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}/claims/{type}/{value}")]
+		[DynamicHttpDelete("{id}/claims/{type}/{value}")]
 		public async Task<IActionResult> RemoveClaim([FromRoute] string id, [FromRoute] string type,
 			[FromRoute] string value)
 		{
@@ -315,8 +299,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 
 		#region Tenant Assignment
 
-		[FeatureSelector]
-		[HttpGet("email/{email}/tenants")]
+		[DynamicHttpGet("email/{email}/tenants")]
 		public async Task<IActionResult> FindTenantsByEmail([FromRoute] string email)
 		{
 			var tenants = await _tenantService.FindByEmailAsync(email);
@@ -330,8 +313,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(tenants.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("username/{username}/tenants")]
+		[DynamicHttpGet("username/{username}/tenants")]
 		public async Task<IActionResult> FindTenantsByUsername([FromRoute] string username)
 		{
 			var tenants = await _tenantService.FindByUserNameAsync(username);
@@ -345,8 +327,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 				: (IActionResult) BadRequest(tenants.Errors);
 		}
 
-		[FeatureSelector]
-		[HttpGet("phone/{phone}/tenants")]
+		[DynamicHttpGet("phone/{phone}/tenants")]
 		public async Task<IActionResult> FindTenantsByPhoneNumber([FromRoute] string phone)
 		{
 			var tenants = await _tenantService.FindByPhoneNumberAsync(phone);

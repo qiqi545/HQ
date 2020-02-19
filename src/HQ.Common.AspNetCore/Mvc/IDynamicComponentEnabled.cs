@@ -15,9 +15,9 @@
 
 #endregion
 
+using ActiveRoutes;
+
 namespace HQ.Common.AspNetCore.Mvc
 {
-	public interface IDynamicComponentEnabled<T> where T : IDynamicComponent
-	{
-	}
+	public interface IDynamicComponentEnabled<T> where T : IDynamicComponent { }
 }

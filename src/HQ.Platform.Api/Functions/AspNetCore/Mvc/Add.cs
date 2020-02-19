@@ -16,9 +16,9 @@
 #endregion
 
 using System;
+using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Data.Contracts.AspNetCore.Mvc.Security;
 using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling.Configuration;
@@ -28,6 +28,7 @@ using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {
@@ -41,12 +42,11 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 		public static IServiceCollection AddBackgroundTasksApi(this IServiceCollection services,
 			Action<BackgroundTaskOptions> configureTasks = null)
 		{
-			services.AddMvcCommon()
-				.AddBackgroundTasksApi(configureTasks);
+			services.AddMvcCore().AddBackgroundTasksApi(configureTasks);
 			return services;
 		}
 
-		private static void AddBackgroundTasksApi(this IMvcBuilder mvcBuilder,
+		private static void AddBackgroundTasksApi(this IMvcCoreBuilder mvcBuilder,
 			Action<BackgroundTaskOptions> configureTasks = null)
 		{
 			mvcBuilder.Services.Configure(configureTasks);
@@ -54,12 +54,8 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 			mvcBuilder.Services.AddLocalTimestamps();
 			mvcBuilder.Services.AddSafeLogging();
 
-			mvcBuilder.AddControllerFeature<BackgroundTaskController>();
-			mvcBuilder.AddComponentFeature<BackgroundTasksComponent, BackgroundTaskOptions>();
-
-			mvcBuilder.Services.AddDynamicAuthorization();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks,
-				ClaimValues.ManageBackgroundTasks);
+			mvcBuilder.AddActiveRoute<BackgroundTaskController, BackgroundTasksComponent, BackgroundTaskOptions>();
+			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks, ClaimValues.ManageBackgroundTasks);
 		}
 	}
 }

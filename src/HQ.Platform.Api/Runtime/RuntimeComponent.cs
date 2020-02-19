@@ -17,12 +17,12 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 
 namespace HQ.Platform.Api.Runtime
 {
-	public class RuntimeComponent : DynamicComponent
+	public class RuntimeComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(RuntimeController)};
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(RuntimeController)};
 	}
 }

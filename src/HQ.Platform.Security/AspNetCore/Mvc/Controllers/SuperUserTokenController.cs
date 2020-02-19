@@ -22,11 +22,10 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveRoutes;
 using HQ.Common;
-using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Cryptography;
@@ -40,6 +39,7 @@ using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 {
@@ -66,9 +66,8 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 
 		private bool Enabled => _options.Value.Enabled;
 
-		[FeatureSelector]
 		[AllowAnonymous]
-		[HttpPost]
+		[DynamicHttpPost]
 		public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
 			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]
 			string application,
@@ -124,9 +123,8 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			return UnauthorizedResult();
 		}
 
-		[FeatureSelector]
 		[DynamicAuthorize(typeof(SuperUserOptions))]
-		[HttpPut]
+		[DynamicHttpPut]
 		public IActionResult VerifyToken()
 		{
 			if (!Enabled)

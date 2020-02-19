@@ -15,11 +15,12 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
 
 namespace HQ.Extensions.Metrics.RateLimiting.Configuration
 {
-	public class RateLimitingOptions : FeatureToggle
+	public class RateLimitingOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 	}
 }

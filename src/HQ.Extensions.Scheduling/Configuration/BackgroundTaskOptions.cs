@@ -16,13 +16,16 @@
 #endregion
 
 using System;
-using HQ.Common;
+using ActiveRoutes;
 using HQ.Extensions.Scheduling.Models;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Extensions.Scheduling.Configuration
 {
-	public class BackgroundTaskOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class BackgroundTaskOptions : IFeatureToggle, IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
+
 		public BackgroundTaskOptions()
 		{
 			// System:

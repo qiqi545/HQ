@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ActiveRoutes;
 using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -127,8 +128,8 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region GET
 
 		[VersionSelector]
-		[HttpGet("X")]
-		[HttpGet("X.{format}")]
+		[DynamicHttpGet("X")]
+		[DynamicHttpGet("X.{format}")]
 		[ResourceFilter]
 		[FormatFilter]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
@@ -158,8 +159,8 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpGet("X/{id}")]
-		[HttpGet("X/{id}.{format}")]
+		[DynamicHttpGet("X/{id}")]
+		[DynamicHttpGet("X/{id}.{format}")]
 		[FieldsFilter]
 		[ProjectionFilter]
 		[FormatFilter]
@@ -182,7 +183,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region POST
 
 		[VersionSelector]
-		[HttpPost("X")]
+		[DynamicHttpPost("X")]
 		[ProducesResponseType((int) HttpStatusCode.SeeOther)]
 		[ProducesResponseType((int) HttpStatusCode.Forbidden)]
 		[ProducesResponseType((int) HttpStatusCode.Created)]
@@ -207,7 +208,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpPost("X/batch")]
+		[DynamicHttpPost("X/batch")]
 		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
@@ -227,7 +228,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region PUT
 
 		[VersionSelector]
-		[HttpPut("X/{id}")]
+		[DynamicHttpPut("X/{id}")]
 		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
@@ -246,7 +247,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpPut("X")]
+		[DynamicHttpPut("X")]
 		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
@@ -265,7 +266,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region PATCH
 
 		[VersionSelector]
-		[HttpPatch("X/{id}")]
+		[DynamicHttpPatch("X/{id}")]
 		[Consumes(MediaTypeNames.Application.JsonPatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -287,7 +288,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpPatch("X/{id}/merge")]
+		[DynamicHttpPatch("X/{id}/merge")]
 		[Consumes(MediaTypeNames.Application.JsonMergePatch)]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -309,7 +310,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpPatch("X")]
+		[DynamicHttpPatch("X")]
 		[ProducesResponseType(422 /*HttpStatusCode.UnprocessableEntity*/)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(Envelope))]
@@ -328,7 +329,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		#region DELETE
 
 		[VersionSelector]
-		[HttpDelete("X")]
+		[DynamicHttpDelete("X")]
 		[FilterFilter]
 		[ProducesResponseType((int) HttpStatusCode.BadRequest)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
@@ -345,7 +346,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpDelete("X/{id}")]
+		[DynamicHttpDelete("X/{id}")]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.Gone)]
 		[ProducesResponseType((int) HttpStatusCode.NoContent)]
@@ -373,7 +374,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		}
 
 		[VersionSelector]
-		[HttpDelete("X/{ids}")]
+		[DynamicHttpDelete("X/{ids}")]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType((int) HttpStatusCode.OK)]
 		public virtual async Task<IActionResult> DeleteAsync(SegmentOptions segment)

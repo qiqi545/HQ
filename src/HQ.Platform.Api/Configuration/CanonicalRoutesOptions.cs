@@ -15,12 +15,14 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class CanonicalRoutesOptions : FeatureToggle
+	public class CanonicalRoutesOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public bool LowercaseUrls { get; set; } = true;
 		public bool LowercaseQueryStrings { get; set; } = false;
 		public bool AppendTrailingSlash { get; set; } = true;

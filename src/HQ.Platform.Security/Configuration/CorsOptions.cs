@@ -15,12 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class CorsOptions : FeatureToggle
+	public class CorsOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
+
 		public CorsOptions() : this(false) { }
 
 		public CorsOptions(bool forBinding)

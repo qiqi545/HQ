@@ -18,15 +18,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HQ.Common;
+using ActiveRoutes;
 using HQ.Common.Models;
 using HQ.Common.Serialization;
 using Microsoft.Extensions.DependencyInjection;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class JsonConversionOptions : FeatureToggle, IMetaParameterProvider
+	public class JsonConversionOptions : IFeatureToggle, IMetaParameterProvider
 	{
+		public bool Enabled { get; set; } = true;
 		public string MultiCaseOperator { get; set; } = Constants.QueryStrings.MultiCase;
 		public string EnvelopeOperator { get; set; } = Constants.QueryStrings.Envelope;
 		public string TrimOperator { get; set; } = Constants.QueryStrings.Trim;

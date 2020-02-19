@@ -15,12 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Operations.Configuration
 {
-	public class MetaApiOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class MetaApiOptions : IFeatureToggle, IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
 		public string Host { get; set; } = "{{web-host}}";
 		public string ApplicationId { get; set; } = Constants.Schemas.DefaultApplicationId;
 		public string RootPath { get; set; } = "/ops";

@@ -16,12 +16,14 @@
 #endregion
 
 using System.Net;
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class MultiTenancyOptions : FeatureToggle
+	public class MultiTenancyOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public int TenantRequiredStatusCode = (int) HttpStatusCode.NotFound;
 		public bool RequireTenant { get; set; } = false;
 		public string DefaultTenantId { get; set; } = "0";

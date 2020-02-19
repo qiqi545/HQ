@@ -15,14 +15,16 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
 using HQ.Common.DataAnnotations;
-using HQ.Data.Contracts.DataAnnotations;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class TokenOptions : FeatureToggle, IProtectedFeatureScheme, IComponentOptions
+	public class TokenOptions : IFeatureToggle, IFeatureScheme, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
+
 		[SensitiveData(SensitiveDataCategory.OperationalSecurity)]
 		public string SigningKey { get; set; } = Constants.Tokens.NoSigningKeySet;
 

@@ -15,12 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class RuntimeOptions : FeatureToggle, IProtectedFeature, IComponentOptions
+	public class RuntimeOptions : IFeatureToggle, IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{
+		public bool Enabled { get; set; } = true;
 		public bool CreateIfNotExists { get; set; } = true;
 		public bool MigrateOnStartup { get; set; } = true;
 		public bool EnableRest { get; set; } = true;

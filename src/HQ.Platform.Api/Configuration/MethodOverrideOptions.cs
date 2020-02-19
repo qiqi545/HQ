@@ -15,17 +15,19 @@
 
 #endregion
 
+using ActiveRoutes;
 using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
-	public class MethodOverrideOptions : FeatureToggle
+	public class MethodOverrideOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public string MethodOverrideHeader { get; set; } = HttpHeaders.MethodOverride;
 
 		public string[] AllowedMethodOverrides { get; set; } =
 		{
-			HttpMethods.Delete, HttpMethods.Head, HttpMethods.Put
+			Microsoft.AspNetCore.Http.HttpMethods.Delete, Microsoft.AspNetCore.Http.HttpMethods.Head, Microsoft.AspNetCore.Http.HttpMethods.Put
 		};
 	}
 }

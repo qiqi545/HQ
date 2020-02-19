@@ -19,10 +19,8 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Scheduling.Configuration;
@@ -37,7 +35,6 @@ using Error = HQ.Data.Contracts.Error;
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 {
 	[Route("tasks")]
-	[DynamicAuthorize(typeof(BackgroundTaskOptions))]
 	[DynamicController(typeof(BackgroundTaskOptions))]
 	[MetaCategory("Operations", "Provides diagnostic tools for server operators at runtime.")]
 	[MetaDescription("Manages background tasks.")]
@@ -60,8 +57,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			_options = options;
 		}
 
-		[FeatureSelector]
-		[HttpOptions]
+		[DynamicHttpOptions]
 		public IActionResult GetOptions()
 		{
 			var typesWithPerformMethod = _typeResolver.FindByMethodName(nameof(Handler.PerformAsync));
@@ -73,15 +69,13 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return Ok(new BackgroundTaskOptionsView {Options = _options.CurrentValue, TaskTypes = taskTypeNames});
 		}
 
-		[FeatureSelector]
-		[HttpGet]
+		[DynamicHttpGet]
 		public async Task<IActionResult> GetBackgroundTasks()
 		{
 			return Ok(await _store.GetAllAsync());
 		}
 
-		[FeatureSelector]
-		[HttpGet]
+		[DynamicHttpGet]
 		[MustHaveQueryParameters("tags")]
 		public async Task<IActionResult> GetBackgroundTasksByTag([FromQuery] string tags)
 		{
@@ -90,8 +84,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return Ok(tasks);
 		}
 
-		[FeatureSelector]
-		[HttpGet("{id}")]
+		[DynamicHttpGet("{id}")]
 		public async Task<IActionResult> GetBackgroundTaskById(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
@@ -104,8 +97,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return Ok(task);
 		}
 
-		[FeatureSelector]
-		[HttpPost("secondly/{seconds?}")]
+		[DynamicHttpPost("secondly/{seconds?}")]
 		[MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N second(s).")]
 		public async Task<IActionResult> CreateSecondlyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
 			[FromRoute] int seconds = 0)
@@ -115,8 +107,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return await CreateBackgroundTask(model);
 		}
 
-		[FeatureSelector]
-		[HttpPost("minutely/{minutes?}/{atSecond?}")]
+		[DynamicHttpPost("minutely/{minutes?}/{atSecond?}")]
 		[MetaDescription("Creates a frequently repeating background task, occurring on a schedule every N minute(s).")]
 		public async Task<IActionResult> CreateMinutelyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
 			[FromRoute] int minutes = 0, [FromRoute] int atSecond = 0)
@@ -126,8 +117,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return await CreateBackgroundTask(model);
 		}
 
-		[FeatureSelector]
-		[HttpPost("daily/{atHour?}/{atMinute?}/{atSecond?}")]
+		[DynamicHttpPost("daily/{atHour?}/{atMinute?}/{atSecond?}")]
 		[MetaDescription("Creates a daily repeating background task.")]
 		public async Task<IActionResult> CreateDailyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
 			[FromRoute] int atHour = 0, [FromRoute] int atMinute = 0, [FromRoute] int atSecond = 0)
@@ -137,8 +127,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return await CreateBackgroundTask(model);
 		}
 
-		[FeatureSelector]
-		[HttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}/{atSecond?}")]
+		[DynamicHttpPost("weekly/{dayOfWeek?}/{atHour?}/{atMinute?}/{atSecond?}")]
 		[MetaDescription("Creates a weekly repeating background task.")]
 		public async Task<IActionResult> CreateWeeklyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
 			[FromRoute] DayOfWeek dayOfWeek = DayOfWeek.Sunday, [FromRoute] int atHour = 0,
@@ -149,8 +138,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return await CreateBackgroundTask(model);
 		}
 
-		[FeatureSelector]
-		[HttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}/{atSecond?}")]
+		[DynamicHttpPost("monthly/{atDay?}/{atHour?}/{atMinute?}/{atSecond?}")]
 		[MetaDescription("Creates a monthly repeating background task.")]
 		public async Task<IActionResult> CreateMonthlyBackgroundTask([FromBody] CreateBackgroundTaskModel model,
 			[FromRoute] int atDay = 0, [FromRoute] int atHour = 0, [FromRoute] int atMinute = 0,
@@ -161,8 +149,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return await CreateBackgroundTask(model);
 		}
 
-		[FeatureSelector]
-		[HttpPost]
+		[DynamicHttpPost]
 		[MetaDescription("Creates a background task.")]
 		public async Task<IActionResult> CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
 		{
@@ -197,8 +184,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 			return NotImplemented();
 		}
 
-		[FeatureSelector]
-		[HttpDelete("{id}")]
+		[DynamicHttpDelete("{id}")]
 		[MetaDescription("Deletes a background task.")]
 		public async Task<IActionResult> DeleteBackgroundTask(string id)
 		{

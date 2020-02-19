@@ -15,13 +15,14 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveRoutes;
 using Constants = HQ.Extensions.Metrics.Constants;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {
-	public class AppInsightsMetricsReporterOptions : FeatureToggle
+	public class AppInsightsMetricsReporterOptions : IFeatureToggle
 	{
+		public bool Enabled { get; set; } = true;
 		public string HealthCheckEventName { get; set; } = Constants.Events.HealthCheck;
 		public string MetricsSampleEventName { get; set; } = Constants.Events.MetricsSample;
 

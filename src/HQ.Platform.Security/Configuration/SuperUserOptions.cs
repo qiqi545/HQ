@@ -16,13 +16,14 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
-using HQ.Common;
+using ActiveRoutes;
 using HQ.Common.DataAnnotations;
 using HQ.Data.Contracts.DataAnnotations;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Security.Configuration
 {
-	public class SuperUserOptions : FeatureToggle, IComponentOptions, IProtectedFeature
+	public class SuperUserOptions : IFeatureNamespace, IFeatureToggle, IFeatureScheme, IFeaturePolicy
 	{
 		private string _email;
 		private string _password;
@@ -65,6 +66,7 @@ namespace HQ.Platform.Security.Configuration
 			set => _email = value;
 		}
 
+		public bool Enabled { get; set; }
 		public string RootPath { get; set; } = "/superuser";
 		public string Scheme { get; set; } = Constants.Security.Schemes.PlatformBearer;
 		public string Policy { get; } = Constants.Security.Policies.SuperUserOnly;

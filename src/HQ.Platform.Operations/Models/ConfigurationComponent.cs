@@ -17,13 +17,13 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes;
 using HQ.Platform.Operations.Controllers;
 
 namespace HQ.Platform.Operations.Models
 {
-	internal class ConfigurationComponent : DynamicComponent
+	internal sealed class ConfigurationComponent : DynamicFeature
 	{
-		public override IEnumerable<Type> ControllerTypes => new[] {typeof(ConfigurationController)};
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(ConfigurationController)};
 	}
 }

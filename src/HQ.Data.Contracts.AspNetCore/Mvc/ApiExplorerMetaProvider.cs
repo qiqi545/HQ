@@ -22,9 +22,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using ActiveRoutes;
+using Dynamitey;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
-using HQ.Data.Contracts.AspNetCore.Attributes;
 using HQ.Data.Contracts.Attributes;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -356,7 +357,7 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 		{
 			var authorize =
 				descriptor.EndpointMetadata.FirstOrDefault(x => x is AuthorizeAttribute) as IAuthorizeData ??
-				descriptor.EndpointMetadata.FirstOrDefault(x => x is DynamicAuthorizeAttribute) as IAuthorizeData;
+				descriptor.EndpointMetadata.FirstOrDefault(x => x is DynamicControllerAttribute) as IAuthorizeData;
 
 			if (authorize == null)
 				return null;
@@ -390,14 +391,15 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 
 			var attribute = !Attribute.IsDefined(controllerType, typeof(DynamicControllerAttribute))
 				? null
-				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute),
-					true);
+				: (DynamicControllerAttribute) controllerType.GetCustomAttribute(typeof(DynamicControllerAttribute), true);
 
 			if (attribute == null)
 				return true;
 
+			// FIXME: can't "see" enabled flag from this layer anymore!
 			attribute.ServiceProvider = serviceProvider;
-			return attribute.Enabled;
+			//return attribute.Enabled;
+			return true;
 		}
 
 		private static MetaDescriptionAttribute ResolveControllerDescription(MemberInfo controllerType)
