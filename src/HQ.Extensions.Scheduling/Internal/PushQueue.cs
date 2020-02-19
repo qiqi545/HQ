@@ -23,7 +23,6 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HQ.Extensions.Scheduling.Models;
-using TypeKitchen;
 using TypeKitchen.Differencing;
 
 namespace HQ.Extensions.Scheduling.Internal

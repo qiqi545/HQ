@@ -29,6 +29,7 @@ using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
 using TestKitchen;
 using TypeKitchen;
+using TypeKitchen.Creation;
 
 namespace HQ.Test.Sdk
 {

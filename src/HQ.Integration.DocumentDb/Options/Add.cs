@@ -50,8 +50,6 @@ namespace HQ.Integration.DocumentDb.Options
 			var saveConfig = new SaveConfigurationOptions();
 			configureOptions?.Invoke(saveConfig);
 
-			var binders = new ICustomConfigurationBinder[] { new TypeDiscriminatorBinder() };
-
 			var source = new DocumentConfigurationSource(dbConfig, saveConfig, configSeed)
 			{
 				ReloadOnChange = reloadOnChange

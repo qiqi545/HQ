@@ -77,8 +77,8 @@ namespace HQ.Extensions.Options
 									var index = 0;
 									foreach (var item in enumerable)
 									{
-										foreach (var (k, v) in item.Unbind($"{prefix}:{index}"))
-											map.Add(k, v);
+										foreach (var kvp in item.Unbind($"{prefix}:{index}"))
+											map.Add(kvp.Key, kvp.Value);
 										index++;
 									}
 
@@ -87,8 +87,8 @@ namespace HQ.Extensions.Options
 
 								default:
 								{
-									foreach (var (k, v) in value.Unbind(prefix))
-										map.Add(k, v);
+									foreach (var kvp in value.Unbind(prefix))
+										map.Add(kvp.Key, kvp.Value);
 									break;
 								}
 							}
