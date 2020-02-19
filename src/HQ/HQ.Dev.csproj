@@ -82,14 +82,16 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.1" />
+    <PackageReference Include="ActiveRoutes" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="WebStrings" Version="1.0.3" PrivateAssets="all" />
-    <PackageReference Include="Bogus" Version="28.4.4" />
+    <PackageReference Include="TypeKitchen" Version="1.2.2" />
+    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.2" />
+    <PackageReference Include="Bogus" Version="29.0.1" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
     <PackageReference Include="Humanizer" Version="2.7.9" />
@@ -102,7 +104,7 @@
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
     <PackageReference Include="WyHash" Version="1.0.4" />
 	  <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
-    <PackageReference Include="GraphQL-Parser" Version="4.1.2" />
+    <PackageReference Include="GraphQL-Parser" Version="5.1.0" />
 
     <!-- Integrations -->
     <PackageReference Include="DotLiquid" Version="2.0.314" />
@@ -110,11 +112,6 @@
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
 
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen.Differencing\TypeKitchen.Differencing.csproj" />
-    <ProjectReference Include="..\..\..\TypeKitchen\src\TypeKitchen\TypeKitchen.csproj" />
   </ItemGroup>
 
 </Project>

@@ -46,16 +46,21 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 			return services;
 		}
 
-		private static void AddBackgroundTasksApi(this IMvcCoreBuilder mvcBuilder,
-			Action<BackgroundTaskOptions> configureTasks = null)
+		public static IMvcCoreBuilder AddBackgroundTasksApi(this IMvcCoreBuilder mvcBuilder, IConfiguration config)
+		{
+			return AddBackgroundTasksApi(mvcBuilder, config.FastBind);
+		}
+
+		public static IMvcCoreBuilder AddBackgroundTasksApi(this IMvcCoreBuilder mvcBuilder, Action<BackgroundTaskOptions> configureTasks = null)
 		{
 			mvcBuilder.Services.Configure(configureTasks);
-
 			mvcBuilder.Services.AddLocalTimestamps();
 			mvcBuilder.Services.AddSafeLogging();
 
 			mvcBuilder.AddActiveRoute<BackgroundTaskController, BackgroundTasksComponent, BackgroundTaskOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks, ClaimValues.ManageBackgroundTasks);
+
+			return mvcBuilder;
 		}
 	}
 }

@@ -17,7 +17,7 @@
 
 namespace HQ.Integration.DocumentDb.Options
 {
-	internal class ConfigurationDocument : DocumentBase<ConfigurationDocument>
+	public class ConfigurationDocument : DocumentBase<ConfigurationDocument>
 	{
 		public string Key { get; set; }
 		public string Value { get; set; }

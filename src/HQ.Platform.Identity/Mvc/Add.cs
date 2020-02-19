@@ -71,7 +71,12 @@ namespace HQ.Platform.Identity.Mvc
 			return services;
 		}
 
-		private static void AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcCoreBuilder mvcBuilder,
+		public static IMvcCoreBuilder AddIdentityApi(this IMvcCoreBuilder mvcBuilder, IConfiguration apiConfig)
+		{
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(mvcBuilder, apiConfig.FastBind);
+		}
+
+		public static IMvcCoreBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcCoreBuilder mvcBuilder,
 			Action<IdentityApiOptions> configureApi = null)
 			where TUser : IdentityUserExtended<TKey>
 			where TRole : IdentityRoleExtended<TKey>
@@ -94,6 +99,8 @@ namespace HQ.Platform.Identity.Mvc
 
 			if (TokensEnabled(mvcBuilder))
 				mvcBuilder.AddActiveRoute<TokenController<TUser, TTenant, TApplication, TKey>, IdentityApiComponent, IdentityApiOptions>();
+
+			return mvcBuilder;
 		}
 
 		private static bool TokensEnabled(this IMvcCoreBuilder mvcBuilder)

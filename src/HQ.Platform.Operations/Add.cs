@@ -85,14 +85,12 @@ namespace HQ.Platform.Operations
 			return services;
 		}
 
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services,
-			IConfigurationRoot configurationRoot, IConfiguration config)
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
 		{
 			return AddConfigurationApi(services, configurationRoot, config.FastBind);
 		}
 
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services,
-			IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
+		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
 		{
 			services.AddSingleton(configurationRoot);
 			services.AddActiveRouting(mvcBuilder =>
@@ -100,6 +98,12 @@ namespace HQ.Platform.Operations
 				mvcBuilder.AddConfigurationApi(configureAction);
 			});
 			return services;
+		}
+
+		public static IMvcCoreBuilder AddConfigurationApi(this IMvcCoreBuilder mvcBuilder, IConfigurationRoot configurationRoot, IConfiguration config)
+		{
+			mvcBuilder.Services.AddSingleton(configurationRoot);
+			return AddConfigurationApi(mvcBuilder, config.FastBind);
 		}
 
 		public static IMvcCoreBuilder AddConfigurationApi(this IMvcCoreBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
@@ -122,14 +126,18 @@ namespace HQ.Platform.Operations
 			return AddMetaApi(services, config.FastBind);
 		}
 
-		public static IServiceCollection AddMetaApi(this IServiceCollection services,
-			Action<MetaApiOptions> configureAction = null)
+		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
 		{
 			services.AddMvcCore().AddMetaApi(configureAction);
 			return services;
 		}
 
-		private static void AddMetaApi(this IMvcCoreBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
+		public static IMvcCoreBuilder AddMetaApi(this IMvcCoreBuilder builder, IConfiguration config)
+		{
+			return AddMetaApi(builder, config.FastBind);
+		}
+
+		public static IMvcCoreBuilder AddMetaApi(this IMvcCoreBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
 		{
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
@@ -145,6 +153,8 @@ namespace HQ.Platform.Operations
 			
 			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
 			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
+
+			return mvcBuilder;
 		}
 
 		public static IServiceCollection AddGraphViz(this IServiceCollection services)
