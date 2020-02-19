@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
 

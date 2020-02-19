@@ -88,11 +88,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExternalTestAssembly", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestKitchen", "..\..\TestKitchen\src\TestKitchen\TestKitchen.csproj", "{0E9AF866-AAB4-428D-878E-D8402877E845}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HQ.Extensions.SplitTests", "HQ.Extensions.SplitTests\HQ.Extensions.SplitTests.csproj", "{B01FE540-0BA2-408F-8915-8930185B75FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.SplitTests", "HQ.Extensions.SplitTests\HQ.Extensions.SplitTests.csproj", "{B01FE540-0BA2-408F-8915-8930185B75FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HQ.Extensions.Metrics.AspNetCore", "HQ.Extensions.Metrics.AspNetCore\HQ.Extensions.Metrics.AspNetCore.csproj", "{4124A7A5-7A6E-4B7C-99F8-462D3DD03946}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestKitchen.TestAdapter", "..\..\TestKitchen\src\TestKitchen.TestAdapter\TestKitchen.TestAdapter.csproj", "{F550710E-5EF4-4559-90E4-6EBAC0CF4DD9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActiveRoutes", "..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj", "{3C491D8F-3408-4298-9AEB-141823B1831D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -524,6 +526,18 @@ Global
 		{F550710E-5EF4-4559-90E4-6EBAC0CF4DD9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F550710E-5EF4-4559-90E4-6EBAC0CF4DD9}.Release|x64.ActiveCfg = Release|Any CPU
 		{F550710E-5EF4-4559-90E4-6EBAC0CF4DD9}.Release|x64.Build.0 = Release|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Package|Any CPU.ActiveCfg = Package|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Package|Any CPU.Build.0 = Package|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Package|x64.ActiveCfg = Package|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Package|x64.Build.0 = Package|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C491D8F-3408-4298-9AEB-141823B1831D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
