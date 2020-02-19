@@ -33,11 +33,6 @@ using Microsoft.Extensions.Logging;
 
 namespace HQ.Platform.Node
 {
-	public class AppOptions
-	{
-		public string Name { get; set; }
-	}
-
 	public static class Configure
 	{
 		private const string AppSettingsFileName = "appsettings";

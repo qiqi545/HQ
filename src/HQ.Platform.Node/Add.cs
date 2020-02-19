@@ -81,10 +81,6 @@ namespace HQ.Platform.Node
 			var hq = configRoot.GetSection("HQ");
 
 			//
-			// App:
-			services.FastConfigure<AppOptions>(configRoot.GetSection("App"));
-
-			//
 			// Core Services:
 			services.AddTypeDiscovery();
 			services.AddLocalTimestamps();

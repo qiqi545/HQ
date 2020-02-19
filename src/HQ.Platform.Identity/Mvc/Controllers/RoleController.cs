@@ -56,7 +56,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			_options = options;
 		}
 
-		[DynamicHttpGet("")]
+		[DynamicHttpGet]
 		public async Task<IActionResult> Get()
 		{
 			var roles = await _roleService.GetAsync();

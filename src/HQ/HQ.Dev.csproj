@@ -82,14 +82,12 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ActiveRoutes" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen" Version="1.2.2" />
     <PackageReference Include="TypeKitchen.Differencing" Version="1.2.2" />
     <PackageReference Include="Bogus" Version="29.0.1" />
     <PackageReference Include="Dapper" Version="2.0.30" />
@@ -112,6 +110,10 @@
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
 
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj" />
   </ItemGroup>
 
 </Project>
