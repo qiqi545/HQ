@@ -17,8 +17,8 @@
 
 using System;
 using System.Diagnostics;
+using ActiveOptions;
 using Dapper;
-using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 

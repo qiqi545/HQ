@@ -15,9 +15,8 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.IO;
-using HQ.Extensions.Options;
+using ActiveOptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 

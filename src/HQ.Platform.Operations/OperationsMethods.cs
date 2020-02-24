@@ -21,10 +21,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using HQ.Common;
-using HQ.Extensions.Options.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using ActiveOptions;
 
 namespace HQ.Platform.Operations
 {

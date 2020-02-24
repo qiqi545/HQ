@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.Options;
+using ActiveOptions;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Configuration;
 

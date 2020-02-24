@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using HQ.Extensions.Options;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;

@@ -15,8 +15,8 @@
 
 #endregion
 
+using ActiveOptions;
 using HQ.Common;
-using HQ.Extensions.Options;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;

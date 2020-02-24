@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Extensions.Options;
+using ActiveOptions;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 

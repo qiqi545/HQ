@@ -16,8 +16,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using HQ.Extensions.Options;
+using ActiveOptions;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Microsoft.Extensions.Configuration;

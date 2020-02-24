@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Extensions.Options;
+using ActiveOptions;
 using Microsoft.Extensions.Configuration;
 
 namespace HQ.Integration.SqlServer.Options

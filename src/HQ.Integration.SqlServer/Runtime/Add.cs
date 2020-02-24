@@ -24,7 +24,6 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
-using HQ.Extensions.Options;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
@@ -34,6 +33,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using ActiveOptions;
 
 namespace HQ.Integration.SqlServer.Runtime
 {

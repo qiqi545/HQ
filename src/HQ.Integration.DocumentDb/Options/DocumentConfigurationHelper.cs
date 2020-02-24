@@ -20,8 +20,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
+using ActiveOptions;
 using HQ.Common;
-using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Configuration;
 

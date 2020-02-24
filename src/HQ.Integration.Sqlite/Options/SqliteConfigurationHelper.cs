@@ -19,8 +19,8 @@ using System;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using ActiveOptions;
 using Dapper;
-using HQ.Extensions.Options;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 

@@ -20,7 +20,6 @@ using System.Linq;
 using ActiveLogging;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using HQ.Platform.Security.AspNetCore.Models;
@@ -30,6 +29,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ActiveOptions;
 
 namespace HQ.Platform.Security.AspNetCore
 {

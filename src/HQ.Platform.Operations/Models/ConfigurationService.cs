@@ -17,7 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Extensions.Options;
+using ActiveOptions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;

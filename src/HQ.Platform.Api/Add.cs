@@ -33,7 +33,6 @@ using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
 using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Extensions.DependencyInjection.AspNetCore;
-using HQ.Extensions.Options;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -54,6 +53,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Constants = HQ.Common.Constants;
+using ActiveOptions;
 
 namespace HQ.Platform.Api
 {

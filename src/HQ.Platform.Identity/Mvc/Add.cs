@@ -17,7 +17,6 @@
 
 using System;
 using ActiveRoutes;
-using HQ.Extensions.Options;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Mvc.Controllers;
@@ -27,6 +26,7 @@ using HQ.Platform.Security.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using ActiveOptions;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Mvc

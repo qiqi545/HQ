@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveOptions\src\ActiveOptions\ActiveOptions.csproj" />
     <ProjectReference Include="..\..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
   </ItemGroup>
 
 </Project>

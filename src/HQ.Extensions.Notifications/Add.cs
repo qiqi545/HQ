@@ -20,9 +20,9 @@ using System.IO;
 using HQ.Extensions.Notifications.Configuration;
 using HQ.Extensions.Notifications.Email.Models;
 using HQ.Extensions.Notifications.Email.Providers;
-using HQ.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ActiveOptions;
 
 namespace HQ.Extensions.Notifications
 {

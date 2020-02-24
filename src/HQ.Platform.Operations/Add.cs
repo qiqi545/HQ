@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using ActiveOptions;
 using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
@@ -24,7 +25,6 @@ using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Schema.Models;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Metrics.Reporters.ServerTiming;
-using HQ.Extensions.Options;
 using HQ.Platform.Operations.Configuration;
 using HQ.Platform.Operations.Controllers;
 using HQ.Platform.Operations.Models;

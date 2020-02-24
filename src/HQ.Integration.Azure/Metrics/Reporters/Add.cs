@@ -17,7 +17,6 @@
 
 using System;
 using HQ.Extensions.Metrics;
-using HQ.Extensions.Options;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using ActiveOptions;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {

@@ -23,7 +23,6 @@ using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.Metrics;
-using HQ.Extensions.Options;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
@@ -34,6 +33,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Constants = HQ.Common.Constants;
+using ActiveOptions;
 
 namespace HQ.Integration.DocumentDb.Runtime
 {
