@@ -18,7 +18,7 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
-using HQ.Extensions.Logging;
+using ActiveLogging;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

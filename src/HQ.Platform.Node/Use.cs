@@ -16,8 +16,8 @@
 #endregion
 
 using System;
+using ActiveLogging;
 using HQ.Common;
-using HQ.Extensions.Logging;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Correlation;
 using HQ.Platform.Identity.Models;

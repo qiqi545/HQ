@@ -17,9 +17,9 @@
 
 using System;
 using System.Linq;
+using ActiveLogging;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Platform.Security.AspNetCore.Configuration;
 using HQ.Platform.Security.AspNetCore.Extensions;

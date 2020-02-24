@@ -19,8 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveLogging;
 using HQ.Common;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.DocumentDb.Scheduling

@@ -16,15 +16,13 @@
 #endregion
 
 using System.Threading.Tasks;
+using ActiveLogging;
 using ActiveRoutes;
-using HQ.Common;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Integration.DocumentDb
 {

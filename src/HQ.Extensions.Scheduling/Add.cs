@@ -16,8 +16,8 @@
 #endregion
 
 using System;
+using ActiveLogging;
 using HQ.Common;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.Configuration;

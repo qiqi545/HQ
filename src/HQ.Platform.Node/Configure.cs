@@ -18,9 +18,9 @@
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using ActiveLogging;
 using HQ.Common;
 using HQ.Extensions.Deployment;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Options;

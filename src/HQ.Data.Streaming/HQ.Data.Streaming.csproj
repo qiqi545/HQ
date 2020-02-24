@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
+    <ProjectReference Include="..\..\..\ActiveLogging\src\ActiveLogging\ActiveLogging.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>
 

@@ -18,8 +18,8 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using ActiveLogging;
 using HQ.Common;
-using HQ.Extensions.Logging;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;

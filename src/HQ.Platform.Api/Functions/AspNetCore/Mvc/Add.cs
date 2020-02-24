@@ -16,10 +16,9 @@
 #endregion
 
 using System;
+using ActiveLogging;
 using ActiveRoutes;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;

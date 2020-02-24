@@ -18,7 +18,7 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using HQ.Extensions.Logging;
+using ActiveLogging;
 using HQ.Extensions.Scheduling.Hooks;
 using HQ.Extensions.Scheduling.Models;
 

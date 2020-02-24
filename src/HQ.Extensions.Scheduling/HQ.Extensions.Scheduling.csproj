@@ -17,10 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveLogging\src\ActiveLogging\ActiveLogging.csproj" />
     <ProjectReference Include="..\..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
   </ItemGroup>
 
 </Project>

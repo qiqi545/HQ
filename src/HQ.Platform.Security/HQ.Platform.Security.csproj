@@ -18,12 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveLogging\src\ActiveLogging\ActiveLogging.csproj" />
     <ProjectReference Include="..\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\HQ.Extensions.Cryptography.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Logging\HQ.Extensions.Logging.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Options\src\HQ.Extensions.Options\HQ.Extensions.Options.csproj" />
   </ItemGroup>
 

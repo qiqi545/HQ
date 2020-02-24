@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.Logging;
+using ActiveLogging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api.Correlation

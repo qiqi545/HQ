@@ -16,12 +16,12 @@
 #endregion
 
 using System;
+using ActiveLogging;
 using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.DependencyInjection.AspNetCore;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;

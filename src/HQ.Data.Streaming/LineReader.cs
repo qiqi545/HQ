@@ -25,8 +25,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiveLogging;
 using HQ.Data.Streaming.Internal;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 using TypeKitchen;
 

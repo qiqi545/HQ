@@ -19,7 +19,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Extensions.Logging;
+using ActiveLogging;
 using HQ.Extensions.Scheduling;
 using HQ.Extensions.Scheduling.Configuration;
 using HQ.Extensions.Scheduling.Models;

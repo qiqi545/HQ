@@ -21,8 +21,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ActiveLogging;
 using HQ.Data.Streaming.Internal;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Metrics;
 
 namespace HQ.Data.Streaming.Memory

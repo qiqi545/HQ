@@ -15,8 +15,8 @@
 
 #endregion
 
+using ActiveLogging;
 using HQ.Extensions.Deployment;
-using HQ.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HQ.Integration.Azure

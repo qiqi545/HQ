@@ -18,11 +18,11 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Reflection;
+using ActiveLogging;
 using HQ.Common;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
-using HQ.Extensions.Logging;
 using HQ.Extensions.Notifications;
 using HQ.Extensions.Options;
 using HQ.Extensions.Scheduling;

@@ -18,9 +18,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveLogging;
 using HQ.Common;
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Extensions.Logging;
 using HQ.Integration.DocumentDb.Schema.Documents;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Microsoft.Extensions.Options;
