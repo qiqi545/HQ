@@ -34,7 +34,6 @@
     <Compile Include="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\**\*.cs" Exclude="..\HQ.Extensions.Cryptography\src\HQ.Extensions.Cryptography\obj\**\*" Link="Extensions.Cryptography\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Deployment\**\*.cs" Exclude="..\HQ.Extensions.Deployment\obj\**\*" Link="Extensions.Deployment\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\**\*.cs" Exclude="..\HQ.Extensions.DependencyInjection\src\HQ.Extensions.DependencyInjection\obj\**\*" Link="Extensions.DependencyInjection\%(RecursiveDir)%(Filename)%(Extension)" />
-    <Compile Include="..\HQ.Extensions.Logging\**\*.cs" Exclude="..\HQ.Extensions.Logging\obj\**\*" Link="Extensions.Logging\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Metrics\**\*.cs" Exclude="..\HQ.Extensions.Metrics\obj\**\*" Link="Extensions.Metrics\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.SplitTests\**\*.cs" Exclude="..\HQ.Extensions.SplitTests\obj\**\*" Link="Extensions.SplitTests\%(RecursiveDir)%(Filename)%(Extension)" />
     <Compile Include="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\**\*.cs" Exclude="..\HQ.Extensions.Messaging\src\HQ.Extensions.Messaging\obj\**\*" Link="Extensions.Messaging\%(RecursiveDir)%(Filename)%(Extension)" />
@@ -112,10 +111,11 @@
     <PackageReference Include="Sodium.Core.Unofficial" Version="1.2.1" />
     <PackageReference Include="GraphQL-Parser" Version="5.1.0" />
 
-    <!-- Meta Programming -->
+    <!-- Infrastructure -->
     <PackageReference Include="TypeKitchen.Differencing" Version="1.2.3" />
+    <PackageReference Include="ActiveLogging" Version="1.0.0" />
     <PackageReference Include="ActiveRoutes" Version="1.0.5" />
-    
+
     <!-- Integrations -->
     <PackageReference Include="DotLiquid" Version="2.0.314" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.2" />
