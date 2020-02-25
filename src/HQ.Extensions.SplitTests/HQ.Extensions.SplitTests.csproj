@@ -5,8 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Metrics" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
   </ItemGroup>
 
 </Project>

@@ -10,8 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Metrics" Version="2.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Extensions.SplitTests\HQ.Extensions.SplitTests.csproj" />
   </ItemGroup>
 

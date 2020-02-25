@@ -18,8 +18,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using HQ.Extensions.Metrics;
 using HQ.Extensions.SplitTests.Internal;
+using Metrics;
 
 namespace HQ.Extensions.SplitTests
 {

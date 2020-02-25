@@ -30,6 +30,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Node
 {

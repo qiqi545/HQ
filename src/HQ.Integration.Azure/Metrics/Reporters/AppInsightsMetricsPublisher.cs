@@ -19,13 +19,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Common;
-using HQ.Extensions.Metrics;
+using Metrics;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-using Constants = HQ.Extensions.Metrics.Constants;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {

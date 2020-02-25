@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ActiveLogging;
-using HQ.Extensions.Metrics;
+using Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 

@@ -16,7 +16,7 @@
 #endregion
 
 using ActiveLogging;
-using HQ.Extensions.Metrics;
+using Metrics;
 
 namespace HQ.Extensions.Deployment
 {

@@ -1,5 +1,5 @@
 using HQ.Data.Streaming.Memory;
-using HQ.Extensions.Metrics;
+using Metrics;
 
 namespace HQ.Data.Streaming.Internal
 {

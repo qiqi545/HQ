@@ -17,8 +17,8 @@
 
 using ActiveLogging;
 using HQ.Extensions.Deployment;
-using HQ.Extensions.Metrics;
 using HQ.Integration.Azure.Metrics.Reporters;
+using Metrics;
 
 namespace HQ.Integration.Azure
 {

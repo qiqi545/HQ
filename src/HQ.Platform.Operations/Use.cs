@@ -17,12 +17,11 @@
 
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Extensions.Metrics.Reporters.ServerTiming;
 using HQ.Platform.Operations.Configuration;
+using Metrics.Reporters.ServerTiming;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 
 namespace HQ.Platform.Operations
 {

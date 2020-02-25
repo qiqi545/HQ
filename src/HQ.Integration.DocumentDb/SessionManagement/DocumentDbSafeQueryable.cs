@@ -21,7 +21,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HQ.Data.Contracts.Queryable;
-using HQ.Extensions.Metrics;
+using Metrics;
 using Microsoft.Azure.Documents.Client;
 
 namespace HQ.Integration.DocumentDb.SessionManagement

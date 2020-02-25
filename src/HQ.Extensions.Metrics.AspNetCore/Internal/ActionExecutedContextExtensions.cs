@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using Metrics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HQ.Extensions.Metrics.AspNetCore.Internal

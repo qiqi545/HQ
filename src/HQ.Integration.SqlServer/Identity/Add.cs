@@ -26,7 +26,6 @@ using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
-using HQ.Extensions.Metrics;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
 using HQ.Platform.Identity.Configuration;
@@ -38,6 +37,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using ActiveOptions;
+using Metrics;
 
 namespace HQ.Integration.SqlServer.Identity
 {

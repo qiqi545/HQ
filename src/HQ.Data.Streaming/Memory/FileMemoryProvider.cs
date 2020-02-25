@@ -23,7 +23,7 @@ using System.Text;
 using System.Threading;
 using ActiveLogging;
 using HQ.Data.Streaming.Internal;
-using HQ.Extensions.Metrics;
+using Metrics;
 
 namespace HQ.Data.Streaming.Memory
 {

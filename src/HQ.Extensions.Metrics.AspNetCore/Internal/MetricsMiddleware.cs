@@ -18,10 +18,10 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
-using HQ.Extensions.Metrics.Internal;
+using Metrics;
+using Metrics.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

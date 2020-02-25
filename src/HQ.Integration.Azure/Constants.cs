@@ -15,13 +15,16 @@
 
 #endregion
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Integration.Azure
 {
-	public static class MetricTypeExtensions
+	public static class Constants
 	{
-		public static bool HasFlagFast(this MetricType value, MetricType flag)
+		public static readonly double[] Percentiles = {0.5, 0.75, 0.95, 0.98, 0.99, 0.999};
+
+		public static class Events
 		{
-			return (value & flag) != 0;
+			public const string HealthCheck = "health.check";
+			public const string MetricsSample = "metrics.sample";
 		}
 	}
 }

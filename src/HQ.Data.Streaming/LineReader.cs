@@ -27,7 +27,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ActiveLogging;
 using HQ.Data.Streaming.Internal;
-using HQ.Extensions.Metrics;
+using Metrics;
 using TypeKitchen;
 
 using Constants = HQ.Data.Streaming.Internal.Constants;

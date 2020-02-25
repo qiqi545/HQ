@@ -16,7 +16,6 @@
 #endregion
 
 using ActiveRoutes;
-using Constants = HQ.Extensions.Metrics.Constants;
 
 namespace HQ.Integration.Azure.Metrics.Reporters
 {

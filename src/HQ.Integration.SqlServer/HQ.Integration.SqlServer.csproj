@@ -12,12 +12,12 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Metrics" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.DependencyInjection.AspNetCore\HQ.Extensions.DependencyInjection.AspNetCore.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Metrics\HQ.Extensions.Metrics.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Scheduling\HQ.Extensions.Scheduling.csproj" />
     <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>

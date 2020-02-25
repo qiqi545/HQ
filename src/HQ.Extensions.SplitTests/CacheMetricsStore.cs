@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using HQ.Extensions.Caching;
-using HQ.Extensions.Metrics;
+using Metrics;
 
 namespace HQ.Extensions.SplitTests
 {

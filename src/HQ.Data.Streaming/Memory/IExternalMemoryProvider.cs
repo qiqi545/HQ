@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using ActiveLogging;
-using HQ.Extensions.Metrics;
+using Metrics;
 
 namespace HQ.Data.Streaming.Memory
 {
