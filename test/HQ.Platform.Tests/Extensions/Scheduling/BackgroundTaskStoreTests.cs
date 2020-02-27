@@ -18,9 +18,10 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveScheduler;
+using ActiveScheduler.Configuration;
+using ActiveScheduler.Models;
 using HQ.Common;
-using HQ.Extensions.Scheduling.Configuration;
-using HQ.Extensions.Scheduling.Models;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 

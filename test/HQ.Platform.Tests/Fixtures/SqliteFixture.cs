@@ -17,8 +17,8 @@
 
 using System;
 using System.IO;
+using ActiveScheduler;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling;
 using HQ.Test.Sdk;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;

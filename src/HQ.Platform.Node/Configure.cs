@@ -20,7 +20,6 @@ using System.Diagnostics;
 using System.Reflection;
 using ActiveLogging;
 using ActiveOptions;
-using HQ.Common;
 using HQ.Extensions.Deployment;
 using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Options;

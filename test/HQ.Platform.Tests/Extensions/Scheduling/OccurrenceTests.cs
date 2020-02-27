@@ -16,19 +16,21 @@
 #endregion
 
 using System;
+using ActiveScheduler;
+using ActiveScheduler.Models;
 using HQ.Common;
-using HQ.Extensions.Scheduling.Models;
+using HQ.Platform.Tests.Fixtures;
 using HQ.Test.Sdk;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling
 {
 	public class OccurrenceTests : UnitUnderTest
 	{
-		private IBackgroundTaskStore _store;
+		private readonly IBackgroundTaskStore _store;
 
 		public OccurrenceTests()
 		{
-			_store = new InMemoryBackgroundTaskStore(new LocalServerTimestampService());
+			_store = new InMemoryBackgroundTaskStore(()=> DateTimeOffset.Now);
 		}
 
 		[Test]

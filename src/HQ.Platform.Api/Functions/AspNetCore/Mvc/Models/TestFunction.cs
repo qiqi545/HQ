@@ -19,8 +19,8 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using ActiveLogging;
-using HQ.Extensions.Scheduling.Hooks;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler.Hooks;
+using ActiveScheduler.Models;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {
@@ -39,7 +39,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 
 		public Task BeforeAsync(ExecutionContext context)
 		{
-			_logger.Debug(() => $"{nameof(BeforeAsync)} executed.");
+			_logger.Debug(() => $"{nameof(Before)} executed.");
 			return Task.CompletedTask;
 		}
 
@@ -51,7 +51,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 
 		public Task FailureAsync(ExecutionContext context)
 		{
-			_logger.Debug(() => $"{nameof(FailureAsync)} executed.");
+			_logger.Debug(() => $"{nameof(Failure)} executed.");
 			return Task.CompletedTask;
 		}
 

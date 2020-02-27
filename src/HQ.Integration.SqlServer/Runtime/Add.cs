@@ -54,8 +54,6 @@ namespace HQ.Integration.SqlServer.Runtime
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqlServerOptions> configureDatabase = null)
 		{
-			builder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
-
 			void ConfigureDatabase(SqlServerOptions o) { configureDatabase?.Invoke(o); }
 			builder.Services.Configure<SqlServerOptions>(ConfigureDatabase);
 

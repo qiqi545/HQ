@@ -98,8 +98,6 @@ namespace HQ.Integration.Sqlite.Identity
 		{
 			var services = identityBuilder.Services;
 
-			services.AddSingleton<ITypeRegistry, TypeRegistry>();
-
 			var builder = new SqliteConnectionStringBuilder(connectionString);
 
 			void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }

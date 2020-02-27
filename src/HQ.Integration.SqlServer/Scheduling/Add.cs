@@ -17,23 +17,23 @@
 
 using System;
 using ActiveLogging;
-using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
 using HQ.Extensions.DependencyInjection.AspNetCore;
-using HQ.Extensions.Scheduling;
-using HQ.Extensions.Scheduling.Configuration;
-using HQ.Extensions.Scheduling.Models;
-using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using ActiveOptions;
+using ActiveScheduler;
+using ActiveScheduler.Configuration;
+using ActiveScheduler.Models;
+using HQ.Common;
+using HQ.Integration.SqlServer.SessionManagement;
 using Metrics;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {

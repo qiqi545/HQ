@@ -31,11 +31,9 @@ namespace HQ.Common
 			return services;
 		}
 
-		public static IServiceCollection AddTypeDiscovery(this IServiceCollection services, ILogger logger = null)
+		public static IServiceCollection AddTypeResolver(this IServiceCollection services, ILogger logger = null)
 		{
-			services.TryAddSingleton<ITypeResolver>(r =>
-				new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies(), logger));
-			services.TryAddSingleton<ITypeRegistry, TypeRegistry>();
+			services.TryAddSingleton<ITypeResolver>(r => new ReflectionTypeResolver(AppDomain.CurrentDomain.GetAssemblies(), logger));
 			return services;
 		}
 	}

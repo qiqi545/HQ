@@ -17,8 +17,8 @@
 
 using System.Diagnostics;
 using System.Threading.Tasks;
-using HQ.Extensions.Scheduling.Hooks;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler.Hooks;
+using ActiveScheduler.Models;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers

@@ -19,7 +19,6 @@ using System;
 using ActiveLogging;
 using ActiveRoutes;
 using HQ.Common;
-using HQ.Extensions.Scheduling.Configuration;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using HQ.Platform.Security;
@@ -28,6 +27,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Constants = HQ.Common.Constants;
 using ActiveOptions;
+using ActiveScheduler.Configuration;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 {

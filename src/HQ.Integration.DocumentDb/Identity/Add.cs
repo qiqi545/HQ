@@ -117,8 +117,6 @@ namespace HQ.Integration.DocumentDb.Identity
 			if (configureAction != null)
 				services.Configure(slot, configureAction);
 
-			identityBuilder.Services.AddSingleton<ITypeRegistry, TypeRegistry>();
-
 			var options = new DocumentDbOptions();
 			configureAction?.Invoke(options);
 
@@ -191,10 +189,7 @@ namespace HQ.Integration.DocumentDb.Identity
 				if (c is DocumentDbCommand command)
 				{
 					var options = r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>();
-					var registry = r.GetRequiredService<ITypeRegistry>();
-
 					var descriptor = SimpleDataDescriptor.Create(t);
-					registry.TryRegister(t);
 
 					command.Id = descriptor.Id?.Property?.Name;
 					command.Type = t;

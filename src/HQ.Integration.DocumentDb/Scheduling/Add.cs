@@ -17,10 +17,10 @@
 
 using System;
 using ActiveLogging;
+using ActiveScheduler;
+using ActiveScheduler.Configuration;
+using ActiveScheduler.Models;
 using HQ.Common;
-using HQ.Extensions.Scheduling;
-using HQ.Extensions.Scheduling.Configuration;
-using HQ.Extensions.Scheduling.Models;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Metrics;

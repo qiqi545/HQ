@@ -19,6 +19,11 @@ namespace HQ.Common
 {
 	public static class Constants
 	{
+		public static class Scheduling
+		{
+			public const string EvictionUser = "Eviction";
+		}
+
 		public static class ConnectionSlots
 		{
 			public const string Identity = nameof(Identity);
@@ -96,11 +101,6 @@ namespace HQ.Common
 				public const string AccessMeta = nameof(AccessMeta);
 				public const string AccessOperations = nameof(AccessOperations);
 			}
-		}
-
-		public static class Scheduling
-		{
-			public const string EvictionUser = "Eviction";
 		}
 
 		public static class Versioning

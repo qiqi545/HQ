@@ -17,8 +17,8 @@
 
 using System;
 using System.Collections.Generic;
+using ActiveScheduler;
 using HQ.Data.Contracts.DataAnnotations;
-using HQ.Extensions.Scheduling.Models;
 using Newtonsoft.Json;
 
 namespace HQ.Integration.DocumentDb.Scheduling

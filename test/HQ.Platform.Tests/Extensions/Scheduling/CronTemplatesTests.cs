@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler.Models;
 using HQ.Test.Sdk;
 using NCrontab;
 using Xunit;

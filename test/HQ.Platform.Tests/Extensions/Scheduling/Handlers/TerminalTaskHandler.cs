@@ -17,8 +17,8 @@
 
 using System;
 using System.Threading.Tasks;
-using HQ.Extensions.Scheduling.Hooks;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler.Hooks;
+using ActiveScheduler.Models;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
 {

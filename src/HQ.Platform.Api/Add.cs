@@ -21,7 +21,6 @@ using System.Data;
 using System.IO.Compression;
 using ActiveRoutes;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Common.Serialization;
 using HQ.Data.Contracts;
@@ -258,7 +257,7 @@ namespace HQ.Platform.Api
 			if (configureAction != null)
 				mvcBuilder.Services.Configure(configureAction);
 
-			mvcBuilder.Services.AddTypeDiscovery();
+			mvcBuilder.Services.AddTypeResolver();
 
 			mvcBuilder.AddActiveRoute<SchemaController, SchemaComponent, SchemaOptions>();
 			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);

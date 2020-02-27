@@ -26,14 +26,15 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ActiveLogging;
+using ActiveScheduler;
+using ActiveScheduler.Configuration;
+using ActiveScheduler.Models;
 using Dapper;
 using HQ.Common;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling;
-using HQ.Extensions.Scheduling.Configuration;
-using HQ.Extensions.Scheduling.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using IServerTimestampService = HQ.Common.IServerTimestampService;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {

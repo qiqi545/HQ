@@ -15,8 +15,8 @@
 
 #endregion
 
+using ActiveScheduler;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling;
 using HQ.Integration.SqlServer.Scheduling;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;

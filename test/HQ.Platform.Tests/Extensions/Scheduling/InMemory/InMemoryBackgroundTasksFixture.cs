@@ -16,8 +16,9 @@
 #endregion
 
 using System;
-using HQ.Extensions.Scheduling;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler;
+using ActiveScheduler.Models;
+using HQ.Platform.Tests.Fixtures;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -20,8 +20,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ActiveLogging;
-using HQ.Common;
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler;
+using ActiveScheduler.Models;
+using IServerTimestampService = HQ.Common.IServerTimestampService;
 
 namespace HQ.Integration.DocumentDb.Scheduling
 {

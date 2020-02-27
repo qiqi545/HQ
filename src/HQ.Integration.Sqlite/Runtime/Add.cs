@@ -55,7 +55,7 @@ namespace HQ.Integration.Sqlite.Runtime
 			ConnectionScope scope = ConnectionScope.ByRequest,
 			Action<SqliteOptions> configureDatabase = null)
 		{
-			builder.Services.AddTypeDiscovery();
+			builder.Services.AddTypeResolver();
 
 			void ConfigureDatabase(SqliteOptions o) { configureDatabase?.Invoke(o); }
 			builder.Services.Configure<SqliteOptions>(ConfigureDatabase);

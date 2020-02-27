@@ -16,8 +16,8 @@
 #endregion
 
 using System;
+using ActiveScheduler;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.Scheduling;
 using HQ.Integration.Sqlite.Scheduling;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;

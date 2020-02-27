@@ -16,7 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Extensions.Scheduling.Configuration;
+using ActiveScheduler.Configuration;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Models
 {

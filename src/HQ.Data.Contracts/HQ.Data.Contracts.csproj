@@ -16,14 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ActiveLogging" Version="1.0.0" />
+    <PackageReference Include="ActiveRoutes" Version="1.0.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
-    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.4" />
+    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.7" />
+    <PackageReference Include="WebStrings" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ActiveLogging\src\ActiveLogging\ActiveLogging.csproj" />
-    <ProjectReference Include="..\..\..\ActiveRoutes\src\ActiveRoutes\ActiveRoutes.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
   </ItemGroup>
 

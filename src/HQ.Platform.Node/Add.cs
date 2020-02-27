@@ -20,12 +20,12 @@ using System;
 using System.Reflection;
 using ActiveLogging;
 using ActiveOptions;
+using ActiveScheduler;
 using HQ.Common;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.Deployment;
 using HQ.Extensions.Notifications;
-using HQ.Extensions.Scheduling;
 using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Identity;
 using HQ.Integration.DocumentDb.Runtime;
@@ -82,7 +82,7 @@ namespace HQ.Platform.Node
 
 			//
 			// Core Services:
-			services.AddTypeDiscovery();
+			services.AddTypeResolver();
 			services.AddLocalTimestamps();
 			services.AddSafeLogging();
 			services.AddValidOptions();

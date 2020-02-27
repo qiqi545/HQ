@@ -43,7 +43,7 @@ namespace HQ.Data.Contracts.Schema
 				services.Configure(configureAction);
 
 			services.AddLocalTimestamps();
-			services.AddTypeDiscovery();
+			services.AddTypeResolver();
 
 			services.AddSingleton<SchemaService>();
 			services.Replace(ServiceDescriptor.Singleton<IVersionContextStore, SchemaDiscoveryVersionContextStore>());

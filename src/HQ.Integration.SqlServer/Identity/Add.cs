@@ -99,8 +99,6 @@ namespace HQ.Integration.SqlServer.Identity
 		{
 			var services = identityBuilder.Services;
 
-			services.AddSingleton<ITypeRegistry, TypeRegistry>();
-
 			var builder = new SqlConnectionStringBuilder(connectionString);
 
 			void ConfigureAction(SqlServerOptions o)

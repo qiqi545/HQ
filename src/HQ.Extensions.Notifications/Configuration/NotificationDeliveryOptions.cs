@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.Scheduling.Models;
+using ActiveScheduler.Models;
 
 namespace HQ.Extensions.Notifications.Configuration
 {

@@ -15,8 +15,8 @@
 
 #endregion
 
+using ActiveScheduler;
 using FluentMigrator;
-using HQ.Extensions.Scheduling.Models;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {
