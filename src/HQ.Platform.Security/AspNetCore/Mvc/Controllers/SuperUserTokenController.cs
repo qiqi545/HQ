@@ -35,10 +35,10 @@ using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
-using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using TypeKitchen;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
@@ -112,7 +112,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				};
 
 				var provider = new {Id = "87BA0A16-7253-4A6F-A8D4-82DFA1F723C1"}
-					.ActLike<IUserIdProvider<TKey>>();
+					.QuackLike<IUserIdProvider<TKey>>();
 
 				// FIXME: pin claims transformation to user-provided scope
 				var timestamps = Request.HttpContext.RequestServices.GetRequiredService<IServerTimestampService>();
