@@ -91,8 +91,9 @@ namespace HQ.Platform.Identity.Stores.Sql
 				LoginProvider = loginProvider, ProviderKey = providerKey, TenantId = _tenantId
 			});
 
-			var user = await _connection.Current.QuerySingleOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql,
+			var user = await _connection.Current.QueryFirstOrDefaultAsync<AspNetUserLogins<TKey>>(query.Sql,
 				query.Parameters);
+
 			if (user == null)
 				return null;
 

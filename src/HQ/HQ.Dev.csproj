@@ -79,13 +79,14 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ActiveScheduler" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2" />
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.6.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
-    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.4" />
+    <PackageReference Include="TypeKitchen.Differencing" Version="1.2.7" />
     <PackageReference Include="Bogus" Version="29.0.1" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="FluentMigrator.Runner" Version="3.2.1" />
@@ -93,7 +94,7 @@
     <PackageReference Include="ImpromptuInterface" Version="7.0.1" />
     <PackageReference Include="AngleSharp" Version="0.13.0" />
     <PackageReference Include="NCrontab" Version="3.3.1" />
-    <PackageReference Include="NSec.Cryptography" Version="19.5.0" />
+    <PackageReference Include="NSec.Cryptography" Version="20.2.0" />
     <PackageReference Include="Postmark" Version="4.2.0" />
     <PackageReference Include="System.Reactive" Version="4.3.2" />
     <PackageReference Include="TimeZoneConverter" Version="3.2.0" />
@@ -108,9 +109,9 @@
     <PackageReference Include="Metrics" Version="2.0.2" />
 
     <!-- Integrations -->
-    <PackageReference Include="DotLiquid" Version="2.0.314" />
+    <PackageReference Include="DotLiquid" Version="2.0.325" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.4" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.10.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
 
   </ItemGroup>

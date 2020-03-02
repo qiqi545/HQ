@@ -29,6 +29,7 @@ using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Queries;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
+using HQ.Platform.Identity.Stores.Sql.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Identity;
 
@@ -116,7 +117,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 			cancellationToken.ThrowIfCancellationRequested();
 
 			user.TenantId = _tenantId;
-			user.ConcurrencyStamp = user.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			user.ConcurrencyStamp ??= $"{Guid.NewGuid()}";
 
 			if (user.Id == null)
 			{
@@ -148,11 +149,22 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
-			var query = SqlBuilder.Delete<TUser>(new {user.Id, TenantId = _tenantId});
+			var deleteUser = SqlBuilder.Delete<TUser>(new {user.Id, TenantId = _tenantId});
 			_connection.SetTypeInfo(typeof(TUser));
-			var deleted = await _connection.Current.ExecuteAsync(query.Sql, query.Parameters);
+			var deletedUsers = await _connection.Current.ExecuteAsync(deleteUser.Sql, deleteUser.Parameters);
 
-			Debug.Assert(deleted == 1);
+			if (deletedUsers == 1)
+			{
+				_connection.SetTypeInfo(typeof(AspNetUserLogins<TKey>));
+				var deleteLogins = SqlBuilder.Delete<AspNetUserLogins<TKey>>(new
+				{
+					UserId = user.Id, 
+					TenantId = _tenantId
+				});
+				await _connection.Current.ExecuteAsync(deleteLogins.Sql, deleteLogins.Parameters);
+			}
+
+			Debug.Assert(deletedUsers == 1);
 			return IdentityResult.Success;
 		}
 
