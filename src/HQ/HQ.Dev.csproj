@@ -104,7 +104,8 @@
 
     <!-- Infrastructure -->
     <PackageReference Include="ActiveLogging" Version="1.0.0" />
-    <PackageReference Include="ActiveRoutes" Version="1.0.6" />
+    <PackageReference Include="ActiveRoutes" Version="1.0.7" />
+    <PackageReference Include="ActiveRoutes.Meta" Version="1.0.7" />
     <PackageReference Include="ActiveOptions" Version="1.0.0" />
     <PackageReference Include="Metrics" Version="2.0.2" />
 
