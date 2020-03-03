@@ -122,42 +122,6 @@ namespace HQ.Platform.Operations
 			return mvcBuilder;
 		}
 
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, IConfiguration config)
-		{
-			return AddMetaApi(services, config.FastBind);
-		}
-
-		public static IServiceCollection AddMetaApi(this IServiceCollection services, Action<MetaApiOptions> configureAction = null)
-		{
-			services.AddMvcCore().AddMetaApi(configureAction);
-			return services;
-		}
-
-		public static IMvcCoreBuilder AddMetaApi(this IMvcCoreBuilder builder, IConfiguration config)
-		{
-			return AddMetaApi(builder, config.FastBind);
-		}
-
-		public static IMvcCoreBuilder AddMetaApi(this IMvcCoreBuilder mvcBuilder, Action<MetaApiOptions> configureAction = null)
-		{
-			if (configureAction != null)
-				mvcBuilder.Services.Configure(configureAction);
-
-			mvcBuilder.Services.TryAddSingleton<IApplicationVersionStore, NoApplicationVersionStore>();
-			mvcBuilder.Services.TryAddSingleton<ISchemaVersionStore, NoSchemaVersionStore>();
-
-			mvcBuilder.Services.AddValidOptions();
-			mvcBuilder.Services.AddSaveOptions();
-
-			mvcBuilder.AddActiveRoute<MetaController, MetaComponent, MetaApiOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
-			
-			mvcBuilder.Services.TryAddSingleton<IMetaVersionProvider, NoMetaVersionProvider>();
-			mvcBuilder.Services.TryAddEnumerable(ServiceDescriptor.Scoped<IMetaProvider, ApiExplorerMetaProvider>());
-
-			return mvcBuilder;
-		}
-
 		public static IServiceCollection AddGraphViz(this IServiceCollection services)
 		{
 			services.AddMvcCommon(o =>

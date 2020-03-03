@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveRoutes" Version="1.0.6" />
+    <PackageReference Include="ActiveRoutes" Version="1.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2" />
   </ItemGroup>
 

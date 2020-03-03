@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ActiveRoutes.Meta" Version="1.0.7" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.4.0" />
   </ItemGroup>
 
