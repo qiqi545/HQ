@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using ActiveErrors;
 using ActiveOptions;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
@@ -46,7 +47,7 @@ namespace HQ.Platform.Operations.Controllers
 	[MetaDescription("Manages configuration items.")]
 	[DisplayName("Configuration")]
 	[ApiExplorerSettings(IgnoreApi = false)]
-	public class ConfigurationController : DataController, IDynamicComponentEnabled<ConfigurationComponent>
+	public class ConfigurationController : Controller, IDynamicComponentEnabled<ConfigurationComponent>
 	{
 		private readonly IConfigurationRoot _root;
 		private readonly IServiceProvider _serviceProvider;
@@ -69,12 +70,12 @@ namespace HQ.Platform.Operations.Controllers
 		public IActionResult Get([FromQuery] string type, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
-				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+				return this.NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			return GetSerialized(prototype, section);
@@ -89,17 +90,17 @@ namespace HQ.Platform.Operations.Controllers
 			[FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
-				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+				return this.NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
-				return NotFoundError(ErrorEvents.InvalidParameter,
+				return this.NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-section path '{section}' not found.");
 
 			var model = Instancing.CreateInstance(prototype);
@@ -116,17 +117,17 @@ namespace HQ.Platform.Operations.Controllers
 		public IActionResult Patch([FromQuery] string type, [FromBody] object patch, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
-				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+				return this.NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
-				return NotFoundError(ErrorEvents.InvalidParameter,
+				return this.NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-section path '{section}' not found.");
 
 			if(config.Value == null)
@@ -147,46 +148,46 @@ namespace HQ.Platform.Operations.Controllers
 		public IActionResult Put([FromQuery] string type, [FromBody] object model, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
-				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+				return this.NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			if (model == null)
-				return NotAcceptableError(ErrorEvents.InvalidRequest, "Missing configuration body.");
+				return this.NotAcceptableError(ErrorEvents.InvalidRequest, "Missing configuration body.");
 
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
-				return NotFoundError(ErrorEvents.InvalidParameter,
+				return this.NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-section path '{section}' not found.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			var optionsType = typeof(IOptions<>).MakeGenericType(prototype);
 			var saveOptionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
 			var saveOptions = _serviceProvider.GetService(saveOptionsType);
 			if (saveOptions == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"Could not resolve IOptions<{type}> for saving");
 
 			var validOptionsType = typeof(IValidOptionsMonitor<>).MakeGenericType(prototype);
 			var validOptions = _serviceProvider.GetService(validOptionsType);
 			if (validOptions == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"Could not resolve IOptions<{type}> for validation");
 
 			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
 			if(valueProperty == null)
-				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+				return this.InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
 			var trySaveMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TrySave), new[] {typeof(string), typeof(Action)});
 			if (trySaveMethod == null)
-				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+				return this.InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
 			var tryAddMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TryAdd), new[] {typeof(string), typeof(Action)});
 			if (tryAddMethod == null)
-				return InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
+				return this.InternalServerError(ErrorEvents.PlatformError, $"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
 			if (model is JObject)
 			{
@@ -203,37 +204,37 @@ namespace HQ.Platform.Operations.Controllers
 		public IActionResult Delete([FromQuery] string type, [FromRoute] string section = null)
 		{
 			if (string.IsNullOrWhiteSpace(section))
-				return NotAcceptableError(ErrorEvents.UnsafeRequest,
+				return this.NotAcceptableError(ErrorEvents.UnsafeRequest,
 					"You must specify a known configuration sub-section, to avoid exposing sensitive root-level data.");
 
 			var config = _root.GetSection(section.Replace("/", ":"));
 			if (config == null)
-				return NotFoundError(ErrorEvents.InvalidParameter,
+				return this.NotFoundError(ErrorEvents.InvalidParameter,
 					$"Configuration sub-section path '{section}' not found.");
 
 			var prototype = ResolvePrototypeName(type);
 			if (prototype == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"No configuration type found with name '{type}'.");
 
 			var optionsType = typeof(IOptions<>).MakeGenericType(prototype);
 			var saveOptionsType = typeof(ISaveOptions<>).MakeGenericType(prototype);
 			var saveOptions = _serviceProvider.GetService(saveOptionsType);
 			if (saveOptions == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"Could not resolve IOptions<{type}> for saving");
 
 			var validOptionsType = typeof(IValidOptionsMonitor<>).MakeGenericType(prototype);
 			var validOptions = _serviceProvider.GetService(validOptionsType);
 			if (validOptions == null)
-				return NotAcceptableError(ErrorEvents.InvalidParameter,
+				return this.NotAcceptableError(ErrorEvents.InvalidParameter,
 					$"Could not resolve IOptions<{type}> for validation");
 
 			var valueProperty = optionsType.GetProperty(nameof(IOptions<object>.Value));
 
 			var tryDeleteMethod = saveOptionsType.GetMethod(nameof(ISaveOptions<object>.TryDelete), new[] {typeof(string)});
 			if (tryDeleteMethod == null || valueProperty == null)
-				return InternalServerError(ErrorEvents.PlatformError, 
+				return this.InternalServerError(ErrorEvents.PlatformError, 
 					$"Unexpected error: IOptions<{type}> methods failed to resolve.");
 
 			var deleted = (DeleteOptionsResult) tryDeleteMethod.Invoke(saveOptions, new object[] { section });
@@ -242,8 +243,8 @@ namespace HQ.Platform.Operations.Controllers
 			{
 				DeleteOptionsResult.NotFound => NotFound(),
 				DeleteOptionsResult.NoContent => NoContent(),
-				DeleteOptionsResult.Gone => Gone(),
-				DeleteOptionsResult.InternalServerError => InternalServerError(ErrorEvents.PlatformError, $"Could not delete section {section}"),
+				DeleteOptionsResult.Gone => this.Gone(),
+				DeleteOptionsResult.InternalServerError => this.InternalServerError(ErrorEvents.PlatformError, $"Could not delete section {section}"),
 				_ => throw new ArgumentOutOfRangeException()
 			};
 		}
@@ -256,7 +257,7 @@ namespace HQ.Platform.Operations.Controllers
 			}
 			catch (ValidationException e)
 			{
-				return UnprocessableEntityError(ErrorEvents.ValidationFailed, e.ValidationResult.ErrorMessage);
+				return this.UnprocessableEntityError(ErrorEvents.ValidationFailed, e.ValidationResult.ErrorMessage);
 			}
 
 			var saveResult = trySaveMethod.Invoke(saveOptions, new object[]
@@ -281,13 +282,13 @@ namespace HQ.Platform.Operations.Controllers
 							})
 						});
 						if (!addResult)
-							return InternalServerError(ErrorEvents.PlatformError,
+							return this.InternalServerError(ErrorEvents.PlatformError,
 								$"Could not add existing configuration to section '{section}'");
 
 						break;
 					}
 					case SaveOptionsResult.NotModified:
-						return NotModified();
+						return this.NotModified();
 				}
 			}
 
@@ -301,7 +302,7 @@ namespace HQ.Platform.Operations.Controllers
 			var template = _service.Get(type, section);
 
 			return template == null
-				? NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-section path '{section}' not found.")
+				? this.NotFoundError(ErrorEvents.InvalidParameter, $"Configuration sub-section path '{section}' not found.")
 				: Ok(template);
 		}
 

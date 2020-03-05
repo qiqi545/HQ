@@ -23,6 +23,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
 using HQ.Platform.Identity.Extensions;

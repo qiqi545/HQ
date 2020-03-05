@@ -15,6 +15,7 @@
 
 #endregion
 
+using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
@@ -67,7 +68,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Attributes
 
 			if (qc.Errors?.Count > 0)
 			{
-				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+				context.Result = new ErrorObjectResult(new Error(ErrorEvents.ValidationFailed,
 					ErrorStrings.ValidationFailed, 422 /*HttpStatusCode.UnprocessableEntity*/, qc.Errors));
 			}
 		}

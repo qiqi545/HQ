@@ -17,6 +17,7 @@
 
 using System;
 using System.Net;
+using ActiveErrors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HQ.Data.Contracts.AspNetCore.Mvc
@@ -40,8 +41,9 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 							HttpStatusCode.InternalServerError, operation.Errors)
 						: operation.Errors[0];
 
-					var error = new ErrorResult(errors);
-					if (operation.Succeeded) error.StatusCode = 200;
+					var error = new ErrorObjectResult(errors);
+					if (operation.Succeeded)
+						error.StatusCode = 200;
 
 					return error;
 				}
@@ -70,19 +72,19 @@ namespace HQ.Data.Contracts.AspNetCore.Mvc
 			}
 
 			if (operation.Data == null)
-				return new NotFoundObjectResult(new ErrorResult(
+				return new NotFoundObjectResult(new ErrorObjectResult(
 					new Error(ErrorEvents.ResourceMissing, "Resource not found.", HttpStatusCode.NotFound,
 						operation.Errors)
 				));
 
 			var error = AggregateErrors(operation);
 
-			if (operation.Result == OperationResult.Error) return new ErrorResult(error);
+			if (operation.Result == OperationResult.Error) return new ErrorObjectResult(error);
 
 			return inner != null ? inner(new {operation.Data, Errors = error}) :
-				operation.Succeeded ? new OkErrorObjectResult<T>(operation.Data, error) : new ErrorResult(error);
+				operation.Succeeded ? new ErrorAndObjectResult<T>(operation.Data, error) : new ErrorObjectResult(error);
 		}
-
+		
 		private static Error AggregateErrors(Operation operation)
 		{
 			var error = operation.HasErrors

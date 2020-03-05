@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using ActiveErrors;
 using HQ.Data.Contracts;
 
 namespace HQ.Platform.Api.Models

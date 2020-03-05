@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using ActiveErrors;
 
 namespace HQ.Data.Contracts.AspNetCore.Runtime
 {

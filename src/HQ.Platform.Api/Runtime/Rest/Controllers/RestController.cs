@@ -21,6 +21,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using ActiveRoutes;
+using ActiveErrors;
 using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -34,13 +35,14 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using Error = ActiveErrors.Error;
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {
 	[ApiExplorerSettings(IgnoreApi = true)]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
 	[Produces(MediaTypeNames.Application.Json, MediaTypeNames.Application.Xml)]
-	public class RestController<TObject, TKey> : DataController, IObjectController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
+	public class RestController<TObject, TKey> : Controller, IObjectController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		// ReSharper disable once StaticMemberInGenericType
 		private static readonly Lazy<FieldOptions> IdField = new Lazy<FieldOptions>(() =>
@@ -66,7 +68,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 
 		private async Task<IActionResult> SaveAsync(TObject @object)
 		{
-			if (!Valid(@object, out var error))
+			if (!this.TryValidateModelOrError(@object, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			var operation = await _repository.SaveAsync(@object);
@@ -85,7 +87,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 					case ObjectSave.NotFound:
 						return NotFound();
 					case ObjectSave.NoChanges:
-						return NotModified();
+						return this.NotModified();
 					case ObjectSave.Updated:
 						return Ok(body);
 					case ObjectSave.Created:
@@ -104,7 +106,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			{
 				if (TryValidateModel(x, $"{x.Id}"))
 					return true;
-				errors.Add(ConvertModelStateToError());
+				errors.Add(this.ConvertModelStateToError(ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed));
 				return false;
 			});
 
@@ -196,12 +198,12 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				{
 					// If trying to create an existing @object by mistake, use REST constraints:
 					// https://tools.ietf.org/html/rfc7231#section-4.3.3
-					return SeeOther($"{Request.Path}/{@object.Id}");
+					return this.SeeOther($"{Request.Path}/{@object.Id}");
 				}
 
 				var error = new Error(ErrorEvents.InvalidRequest,
 					"Cannot create an object with a pre-specified identifier.", HttpStatusCode.Forbidden);
-				return new ErrorResult(error);
+				return new ErrorObjectResult(error);
 			}
 
 			return await SaveAsync(@object);
@@ -217,7 +219,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+				return new ErrorObjectResult(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
 					422 /*HttpStatusCode.UnprocessableEntity*/));
 			// ReSharper disable once PossibleMultipleEnumeration
 			return await SaveAsync(objects, startingAt, count);
@@ -237,7 +239,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		public async Task<IActionResult> PutAsync([FromRoute] [BindRequired] TKey id, TObject @object)
 		{
 			if (@object == null)
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+				return new ErrorObjectResult(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
 					422 /*HttpStatusCode.UnprocessableEntity*/));
 			var existing = await _repository.GetAsync(id);
 			if (existing == null)
@@ -256,7 +258,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+				return new ErrorObjectResult(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
 					422 /*HttpStatusCode.UnprocessableEntity*/));
 			return await SaveAsync(objects, startingAt, count, BatchSaveStrategy.Upsert);
 		}
@@ -276,7 +278,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<IObject>))]
 		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] TKey id, JsonPatchDocument<TObject> patch)
 		{
-			if (!Valid(patch, out var error))
+			if (!this.TryValidateModelOrError(patch, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			var @object = await _repository.GetAsync(id);
@@ -298,7 +300,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		[ProducesResponseType((int) HttpStatusCode.OK, Type = typeof(NestedBody<Task>))]
 		public async Task<IActionResult> PatchAsync([FromRoute] [BindRequired] TKey id, JsonMergePatchDocument<TObject> patch)
 		{
-			if (!Valid(patch, out var error))
+			if (!this.TryValidateModelOrError(patch, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			var @object = await _repository.GetAsync(id);
@@ -319,7 +321,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			int? count = null)
 		{
 			if (objects == null || count.HasValue && count.Value == 0 || !objects.Any())
-				return Error(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
+				return new ErrorObjectResult(new Error(ErrorEvents.ResourceMissing, ErrorStrings.ResourceMissingInSave,
 					422 /*HttpStatusCode.UnprocessableEntity*/));
 			return await SaveAsync(objects, startingAt, count, BatchSaveStrategy.Update);
 		}
@@ -366,7 +368,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 					case ObjectDelete.Deleted:
 						return NoContent();
 					case ObjectDelete.Gone:
-						return Gone();
+						return this.Gone();
 					default:
 						throw new ArgumentOutOfRangeException();
 				}

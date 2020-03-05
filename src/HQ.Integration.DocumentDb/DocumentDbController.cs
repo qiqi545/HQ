@@ -16,9 +16,10 @@
 #endregion
 
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveLogging;
 using ActiveRoutes;
-using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ using Microsoft.Extensions.Options;
 
 namespace HQ.Integration.DocumentDb
 {
-	public abstract class DocumentDbController<T> : DataController where T : IDocument
+	public abstract class DocumentDbController<T> : Controller where T : IDocument
 	{
 		protected DocumentDbRepository<T> Repository;
 
@@ -37,10 +38,8 @@ namespace HQ.Integration.DocumentDb
 		[DynamicHttpPost("")]
 		public async Task<IActionResult> CreateAsync([FromBody] T document)
 		{
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
 			var created = await Repository.CreateAsync(document);
 
@@ -50,7 +49,7 @@ namespace HQ.Integration.DocumentDb
 				    .ToUpperInvariant().Replace(" ", string.Empty).Equals("RETURN=MINIMAL"))
 			{
 				Response.Headers.Add(HttpHeaders.PreferenceApplied, "true");
-				return Created(location);
+				return this.Created(location);
 			}
 
 			return Created(location, document);
@@ -59,7 +58,7 @@ namespace HQ.Integration.DocumentDb
 		[DynamicHttpGet("")]
 		public async Task<IActionResult> RetrieveAsync()
 		{
-			var documents = await Repository.RetrieveAsync(predicate: null, CancellationToken);
+			var documents = await Repository.RetrieveAsync(predicate: null, HttpContext.RequestAborted);
 			return Ok(documents);
 		}
 
@@ -69,7 +68,7 @@ namespace HQ.Integration.DocumentDb
 			if (id == null)
 				return BadRequest();
 
-			var document = await Repository.RetrieveAsync(id, CancellationToken);
+			var document = await Repository.RetrieveAsync(id, HttpContext.RequestAborted);
 			if (document == null)
 			{
 				return NotFound();
@@ -84,12 +83,10 @@ namespace HQ.Integration.DocumentDb
 			if (item == null)
 				return BadRequest();
 
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
-			await Repository.UpdateAsync(item.Id, item, CancellationToken);
+			await Repository.UpdateAsync(item.Id, item, HttpContext.RequestAborted);
 			return Ok();
 		}
 
@@ -99,11 +96,11 @@ namespace HQ.Integration.DocumentDb
 			if (id == null)
 				return BadRequest();
 
-			var document = await Repository.RetrieveAsync(id, CancellationToken);
+			var document = await Repository.RetrieveAsync(id, HttpContext.RequestAborted);
 			if (document == null)
 				return NotFound();
 
-			await Repository.DeleteAsync(id, CancellationToken);
+			await Repository.DeleteAsync(id, HttpContext.RequestAborted);
 			return NoContent();
 		}
 	}

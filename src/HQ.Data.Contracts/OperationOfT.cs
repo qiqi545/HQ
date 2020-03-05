@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ActiveErrors;
 
 namespace HQ.Data.Contracts
 {

@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using HQ.Data.Contracts;
+using ActiveErrors;
 
 namespace HQ.Platform.Api.Models
 {

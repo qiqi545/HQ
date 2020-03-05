@@ -19,6 +19,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveRoutes;
 using ActiveScheduler;
 using ActiveScheduler.Configuration;
@@ -31,7 +32,8 @@ using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-using Error = HQ.Data.Contracts.Error;
+using Error = ActiveErrors.Error;
+using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
 
 namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 {
@@ -41,7 +43,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 	[MetaDescription("Manages background tasks.")]
 	[DisplayName("Background Tasks")]
 	[ApiExplorerSettings(IgnoreApi = false)]
-	public class BackgroundTaskController : DataController
+	public class BackgroundTaskController : Controller
 	{
 		private readonly BackgroundTaskHost _host;
 		private readonly IOptionsMonitor<BackgroundTaskOptions> _options;
@@ -89,11 +91,11 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 		public async Task<IActionResult> GetBackgroundTaskById(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-				return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
+				return new ErrorObjectResult(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
 			var task = await _store.GetByIdAsync(taskId);
 			if (task == null)
-				return NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
+				return this.NotFoundError(ErrorEvents.ResourceMissing, "No task found with ID {0}", id);
 
 			return Ok(task);
 		}
@@ -154,7 +156,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 		[MetaDescription("Creates a background task.")]
 		public async Task<IActionResult> CreateBackgroundTask([FromBody] CreateBackgroundTaskModel model)
 		{
-			if (!Valid(model, out var error))
+			if (!this.TryValidateModelOrError(model, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			if (!string.IsNullOrWhiteSpace(model.TaskType))
@@ -162,7 +164,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 				var type = _typeResolver.FindByFullName(model.TaskType) ??
 				           _typeResolver.FindFirstByName(model.TaskType);
 				if (type == null)
-					return BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}",
+					return this.BadRequestError(ErrorEvents.ResourceMissing, "No task type found with name {0}",
 						model.TaskType);
 
 				var (success, task) = await _host.TryScheduleTaskAsync(type, model.Data, t =>
@@ -176,13 +178,13 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 
 				if (!success)
 				{
-					return NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
+					return this.NotAcceptableError(ErrorEvents.CouldNotAcceptWork, "Task was not accepted by the server");
 				}
 
 				return Accepted(new Uri($"{Request.Path}/{task.Id}", UriKind.Relative));
 			}
 
-			return NotImplemented();
+			return this.NotImplemented();
 		}
 
 		[DynamicHttpDelete("{id}")]
@@ -190,7 +192,7 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers
 		public async Task<IActionResult> DeleteBackgroundTask(string id)
 		{
 			if (string.IsNullOrWhiteSpace(id) || !int.TryParse(id, out var taskId))
-				return Error(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
+				return new ErrorObjectResult(new Error(ErrorEvents.InvalidRequest, "Invalid task ID"));
 
 			var task = await _store.GetByIdAsync(taskId);
 			if (task == null)

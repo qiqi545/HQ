@@ -18,8 +18,10 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
@@ -36,7 +38,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Tenants")]
 	[MetaDescription("Manages system tenants.")]
-	public class TenantController<TTenant, TKey> : DataController, IDynamicComponentEnabled<IdentityApiComponent>
+	public class TenantController<TTenant, TKey> : Controller, IDynamicComponentEnabled<IdentityApiComponent>
 		where TTenant : IdentityTenant<TKey>
 		where TKey : IEquatable<TKey>
 	{
@@ -61,10 +63,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 		[DynamicHttpPost("")]
 		public async Task<IActionResult> Create([FromBody] CreateTenantModel model)
 		{
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
 			var result = await _tenantService.CreateAsync(model);
 
@@ -76,10 +76,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 		[DynamicHttpDelete("{id}")]
 		public async Task<IActionResult> Delete(string id)
 		{
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
 			var result = await _tenantService.DeleteAsync(id);
 			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)
@@ -93,10 +91,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 		[DynamicHttpPut("{id}")]
 		public async Task<IActionResult> Update([FromBody] TTenant tenant)
 		{
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
 			var result = await _tenantService.UpdateAsync(tenant);
 			if (!result.Succeeded && result.Errors.Count == 1 && result.Errors[0].StatusCode == 404)

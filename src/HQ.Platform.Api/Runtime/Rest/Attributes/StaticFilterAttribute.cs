@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.AspNetCore.Runtime;
@@ -71,7 +72,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Attributes
 
 			if (isolated && qc.Errors?.Count > 0)
 			{
-				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+				context.Result = new ErrorObjectResult(new Error(ErrorEvents.ValidationFailed,
 					ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
 			}
 
@@ -96,7 +97,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Attributes
 
 			if (isolated && qc.Errors?.Count > 0)
 			{
-				context.Result = new ErrorResult(new Error(ErrorEvents.ValidationFailed,
+				context.Result = new ErrorObjectResult(new Error(ErrorEvents.ValidationFailed,
 					ErrorStrings.ValidationFailed, (HttpStatusCode) 422, qc.Errors));
 			}
 

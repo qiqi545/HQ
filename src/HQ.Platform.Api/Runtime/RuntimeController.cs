@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
@@ -43,7 +44,7 @@ namespace HQ.Platform.Api.Runtime
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to API resources over HTTP.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class RuntimeController : DataController, IDynamicComponentEnabled<RuntimeComponent>
+	public class RuntimeController : Controller, IDynamicComponentEnabled<RuntimeComponent>
 	{
 		private readonly IObjectGetRepository<long> _repository;
 
@@ -89,8 +90,7 @@ namespace HQ.Platform.Api.Runtime
 				return NotFound();
 
 			if (!(HttpContext.Items[nameof(QueryContextProviderSelectorAttribute)] is IQueryContextProvider provider))
-				return InternalServerError(ErrorEvents.PlatformError,
-					"Did not correctly resolve query context provider");
+				return await this.InternalServerErrorAsync(ErrorEvents.PlatformError, "Did not correctly resolve query context provider");
 
 			var contexts = provider.Parse(type, User, Request.GetEncodedPathAndQuery());
 			var results = new List<object>();

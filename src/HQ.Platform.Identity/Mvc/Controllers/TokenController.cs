@@ -19,11 +19,13 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveLogging;
 using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
+using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Models;
@@ -49,7 +51,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
-	public class TokenController<TUser, TTenant, TApplication, TKey> : DataController,
+	public class TokenController<TUser, TTenant, TApplication, TKey> : Controller,
 		IDynamicComponentEnabled<TokensComponent>
 		where TUser : IdentityUserExtended<TKey>
 		where TTenant : IdentityTenant<TKey>
@@ -107,10 +109,8 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			string version
 		)
 		{
-			if (!ValidModelState(out var error))
-			{
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
 				return error;
-			}
 
 			// FIXME: pin claims transformation to user-provided scope
 			var operation = await _signInService.SignInAsync(model.IdentityType, model.Identity, model.Password, true);

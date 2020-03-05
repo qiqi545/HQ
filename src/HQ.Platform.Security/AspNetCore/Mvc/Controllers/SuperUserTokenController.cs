@@ -22,12 +22,12 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveOptions;
 using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Extensions.Cryptography;
 using HQ.Platform.Security.AspNetCore.Models;
@@ -52,7 +52,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 	[MetaCategory("Authentication", "Manages authenticating incoming users against policies and identities, if any.")]
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
-	public class SuperUserTokenController<TKey> : DataController, IDynamicComponentEnabled<SuperUserComponent> where TKey : IEquatable<TKey>
+	public class SuperUserTokenController<TKey> : Controller, IDynamicComponentEnabled<SuperUserComponent> where TKey : IEquatable<TKey>
 	{
 		private readonly IValidOptionsSnapshot<SuperUserOptions> _options;
 		private readonly IValidOptionsSnapshot<SecurityOptions> _security;
@@ -76,7 +76,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			[FromHeader(Name = Constants.Versioning.VersionHeader)]
 			string version)
 		{
-			if (!ValidModelState(out var error))
+			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
 				return Task.FromResult((IActionResult) error);
 
 			bool isSuperUser;
@@ -86,17 +86,17 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				case IdentityType.Username:
 					isSuperUser = superUser.Username == model.Identity;
 					if (!isSuperUser)
-						return NotFoundResult();
+						return this.NotFoundAsync();
 					break;
 				case IdentityType.Email:
 					isSuperUser = superUser.Email == model.Identity;
 					if (!isSuperUser)
-						return NotFoundResult();
+						return this.NotFoundAsync();
 					break;
 				case IdentityType.PhoneNumber:
 					isSuperUser = superUser.PhoneNumber == model.Identity;
 					if (!isSuperUser)
-						return NotFoundResult();
+						return this.NotFoundAsync();
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -120,7 +120,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 				return Task.FromResult((IActionResult) Ok(new {AccessToken = token}));
 			}
 			
-			return UnauthorizedResult();
+			return this.UnauthorizedAsync();
 		}
 
 		[DynamicAuthorize(typeof(SuperUserOptions))]

@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Net;
+using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;

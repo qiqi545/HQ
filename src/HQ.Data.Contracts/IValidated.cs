@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ActiveErrors;
 
 namespace HQ.Data.Contracts
 {

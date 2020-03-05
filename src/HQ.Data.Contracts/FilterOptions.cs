@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ActiveErrors;
 using HQ.Common;
 using HQ.Data.Contracts.Configuration;
 
