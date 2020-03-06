@@ -23,7 +23,6 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Extensions.Cryptography;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -31,6 +30,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Sodium;
 using CookieOptions = HQ.Platform.Security.Configuration.CookieOptions;
 
 namespace HQ.Platform.Security.AspNetCore.Models
@@ -227,7 +227,7 @@ namespace HQ.Platform.Security.AspNetCore.Models
 			if (options.SigningKey == null || options.SigningKey == Constants.Tokens.NoSigningKeySet)
 			{
 				Trace.TraceWarning("No JWT signing key found, creating temporary key.");
-				options.SigningKey = Crypto.GetRandomString(64);
+				options.SigningKey = Encoding.UTF8.GetString(SodiumCore.GetRandomBytes(128));
 				changed = true;
 			}
 

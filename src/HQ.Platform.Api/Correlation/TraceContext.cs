@@ -15,8 +15,8 @@
 
 #endregion
 
-using HQ.Extensions.Cryptography;
 using Microsoft.Extensions.Primitives;
+using Sodium;
 
 namespace HQ.Platform.Api.Correlation
 {
@@ -33,11 +33,13 @@ namespace HQ.Platform.Api.Correlation
 		{
 			var context = new TraceContext
 			{
-				TraceId = Crypto.GetRandomBytes(16), ParentId = Crypto.GetRandomBytes(8), Flags = TraceFlags.None
+				TraceId = SodiumCore.GetRandomBytes(16), 
+				ParentId = SodiumCore.GetRandomBytes(8), 
+				Flags = TraceFlags.None
 			};
 			return context;
 		}
 
-		public StringValues Header => $"00-{Crypto.BinToHex(TraceId)}-{Crypto.BinToHex(ParentId)}-{Flags:x}";
+		public StringValues Header => $"00-{Utilities.BinaryToHex(TraceId)}-{Utilities.BinaryToHex(ParentId)}-{Flags:x}";
 	}
 }

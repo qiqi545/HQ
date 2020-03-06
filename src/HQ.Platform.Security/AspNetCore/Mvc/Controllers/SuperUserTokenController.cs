@@ -29,7 +29,6 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
-using HQ.Extensions.Cryptography;
 using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
@@ -38,6 +37,7 @@ using HQ.Platform.Security.Internal.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Sodium;
 using TypeKitchen;
 using Constants = HQ.Common.Constants;
 
@@ -103,7 +103,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			}
 
 			var encoding = Encoding.UTF8;
-			if (Crypto.ConstantTimeEquals(encoding.GetBytes(model.Password), encoding.GetBytes(_options.Value.Password)))
+			if (Utilities.Compare(encoding.GetBytes(model.Password), encoding.GetBytes(_options.Value.Password)))
 			{
 				Debug.Assert(nameof(IUserIdProvider<string>.Id) == nameof(IObject.Id));
 				var claims = new List<Claim>
