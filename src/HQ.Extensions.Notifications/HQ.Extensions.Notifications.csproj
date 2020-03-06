@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveOptions" Version="1.0.0" />
+    <PackageReference Include="ActiveOptions" Version="1.0.2" />
     <PackageReference Include="ActiveScheduler" Version="1.0.2" />
     <PackageReference Include="DotLiquid" Version="2.0.325" />
     <PackageReference Include="Postmark" Version="4.2.0" />
