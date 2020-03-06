@@ -79,6 +79,18 @@ namespace HQ.Platform.Security.AspNetCore
 			services.AddSuperUser(logger, superUser);
 			services.AddHttps(logger, security);
 
+			// FIXME: may need a better home for default policies for the platform
+			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations, ClaimValues.AccessOperations);
+			services.AddDefaultAuthorization(Constants.Security.Policies.AccessMeta, ClaimValues.AccessMeta);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration, ClaimValues.ManageConfiguration);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageObjects, ClaimValues.ManageObjects);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks, ClaimValues.ManageBackgroundTasks);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
+			services.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
+
 			return services;
 		}
 

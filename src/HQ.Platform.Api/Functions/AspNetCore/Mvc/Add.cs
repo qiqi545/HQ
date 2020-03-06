@@ -57,8 +57,6 @@ namespace HQ.Platform.Api.Functions.AspNetCore.Mvc
 			mvcBuilder.Services.AddSafeLogging();
 
 			mvcBuilder.AddActiveRoute<BackgroundTaskController, BackgroundTasksComponent, BackgroundTaskOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageBackgroundTasks, ClaimValues.ManageBackgroundTasks);
-
 			return mvcBuilder;
 		}
 	}

@@ -5,11 +5,12 @@
   <Import Project="$(ProjectDir)..\..\build\version.props" />
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;Package</Configurations>
   </PropertyGroup>
   
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.2" />
     <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
@@ -17,6 +18,7 @@
   
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
+    <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

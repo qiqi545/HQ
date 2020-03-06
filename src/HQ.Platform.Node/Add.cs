@@ -20,6 +20,7 @@ using System;
 using System.Reflection;
 using ActiveLogging;
 using ActiveOptions;
+using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
 using HQ.Common;

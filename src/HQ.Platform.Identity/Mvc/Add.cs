@@ -92,11 +92,6 @@ namespace HQ.Platform.Identity.Mvc
 			mvcBuilder.AddActiveRoute<UserController<TUser, TTenant, TKey>, IdentityApiComponent, IdentityApiOptions>();
 			mvcBuilder.AddActiveRoute<RoleController<TRole, TKey>, IdentityApiComponent, IdentityApiOptions>();
 
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageUsers, ClaimValues.ManageUsers);
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageRoles, ClaimValues.ManageRoles);
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageTenants, ClaimValues.ManageTenants);
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageApplications, ClaimValues.ManageApplications);
-
 			if (TokensEnabled(mvcBuilder))
 				mvcBuilder.AddActiveRoute<TokenController<TUser, TTenant, TApplication, TKey>, IdentityApiComponent, IdentityApiOptions>();
 

@@ -63,13 +63,6 @@ namespace HQ.Platform.Security.AspNetCore.Extensions
 			return builder;
 		}
 
-		public static IMvcCoreBuilder AddDefaultAuthorization(this IMvcCoreBuilder mvcBuilder, string policyName,
-			string permission)
-		{
-			mvcBuilder.Services.AddDefaultAuthorization(policyName, permission);
-			return mvcBuilder;
-		}
-
 		public static IServiceCollection AddDefaultAuthorization(this IServiceCollection services, string policyName,
 			string permission)
 		{

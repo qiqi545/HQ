@@ -17,15 +17,11 @@
 
 using System;
 using ActiveOptions;
-using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Models;
 using HQ.Data.Contracts.AspNetCore.Mvc;
-using HQ.Data.Contracts.Schema.Models;
 using HQ.Platform.Operations.Configuration;
-using HQ.Platform.Operations.Controllers;
-using HQ.Platform.Operations.Models;
 using HQ.Platform.Security;
 using HQ.Platform.Security.AspNetCore.Extensions;
 using Metrics;
@@ -33,7 +29,6 @@ using Metrics.Reporters.ServerTiming;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Constants = HQ.Common.Constants;
 
@@ -81,45 +76,8 @@ namespace HQ.Platform.Operations
 					o.AllowedOrigins = "*";
 				});
 			});
-
-			services.AddDefaultAuthorization(Constants.Security.Policies.AccessOperations, ClaimValues.AccessOperations);
+			
 			return services;
-		}
-
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, IConfiguration config)
-		{
-			return AddConfigurationApi(services, configurationRoot, config.FastBind);
-		}
-
-		public static IServiceCollection AddConfigurationApi(this IServiceCollection services, IConfigurationRoot configurationRoot, Action<ConfigurationApiOptions> configureAction = null)
-		{
-			services.AddSingleton(configurationRoot);
-			services.AddActiveRouting(mvcBuilder =>
-			{
-				mvcBuilder.AddConfigurationApi(configureAction);
-			});
-			return services;
-		}
-
-		public static IMvcCoreBuilder AddConfigurationApi(this IMvcCoreBuilder mvcBuilder, IConfigurationRoot configurationRoot, IConfiguration config)
-		{
-			mvcBuilder.Services.AddSingleton(configurationRoot);
-			return AddConfigurationApi(mvcBuilder, config.FastBind);
-		}
-
-		public static IMvcCoreBuilder AddConfigurationApi(this IMvcCoreBuilder mvcBuilder, Action<ConfigurationApiOptions> configureAction = null)
-		{
-			if (configureAction != null)
-				mvcBuilder.Services.Configure(configureAction);
-
-			mvcBuilder.Services.AddValidOptions();
-			mvcBuilder.Services.AddSaveOptions();
-
-			mvcBuilder.Services.AddSingleton<ConfigurationService>();
-			mvcBuilder.AddActiveRoute<ConfigurationController, ConfigurationComponent, ConfigurationApiOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageConfiguration, ClaimValues.ManageConfiguration);
-
-			return mvcBuilder;
 		}
 
 		public static IServiceCollection AddGraphViz(this IServiceCollection services)

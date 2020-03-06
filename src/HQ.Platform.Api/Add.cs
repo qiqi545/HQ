@@ -260,7 +260,7 @@ namespace HQ.Platform.Api
 			mvcBuilder.Services.AddTypeResolver();
 
 			mvcBuilder.AddActiveRoute<SchemaController, SchemaComponent, SchemaOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageSchemas, ClaimValues.ManageSchemas);
+
 			return mvcBuilder;
 		}
 
@@ -293,7 +293,6 @@ namespace HQ.Platform.Api
 				mvcBuilder.Services.Configure(configureAction);
 			
 			mvcBuilder.AddActiveRoute<RuntimeController, RuntimeComponent, RuntimeOptions>();
-			mvcBuilder.AddDefaultAuthorization(Constants.Security.Policies.ManageObjects, ClaimValues.ManageObjects);
 			return new RuntimeBuilder(mvcBuilder.Services);
 		}
 
