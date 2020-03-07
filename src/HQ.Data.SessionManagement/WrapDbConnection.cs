@@ -18,7 +18,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using ImpromptuInterface;
+using TypeKitchen;
 
 namespace HQ.Data.SessionManagement
 {
@@ -29,8 +29,7 @@ namespace HQ.Data.SessionManagement
 		private readonly IServiceProvider _serviceProvider;
 		private readonly Type _type;
 
-		public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider,
-			Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
+		public WrapDbConnection(DbConnection inner, IServiceProvider serviceProvider, Action<IDbCommand, Type, IServiceProvider> onCommand, Type type)
 		{
 			Inner = inner;
 			_serviceProvider = serviceProvider;
@@ -39,7 +38,7 @@ namespace HQ.Data.SessionManagement
 
 			try
 			{
-				_maybeRetains = Inner.ActLike(typeof(IRetainLastInsertedId));
+				_maybeRetains = Inner.QuackLike<IRetainLastInsertedId>();
 				_maybeRetains.GetLastInsertedId();
 			}
 			catch
@@ -50,8 +49,7 @@ namespace HQ.Data.SessionManagement
 
 		public DbConnection Inner { get; }
 
-		public object LastInsertedId =>
-			_maybeRetains is IRetainLastInsertedId retainer ? retainer.GetLastInsertedId() : null;
+		public object LastInsertedId => _maybeRetains is IRetainLastInsertedId retainer ? retainer.GetLastInsertedId() : null;
 
 		public override string ConnectionString
 		{

@@ -23,7 +23,6 @@ using ActiveErrors;
 using ActiveLogging;
 using ActiveRoutes;
 using HQ.Common;
-using HQ.Common.AspNetCore;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
@@ -34,13 +33,13 @@ using HQ.Platform.Security.AspNetCore.Models;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Security.Configuration;
 using HQ.Platform.Security.Internal.Extensions;
-using ImpromptuInterface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Mvc.Controllers
@@ -122,7 +121,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			var user = operation.Data;
 			var claims = _http.HttpContext.User.Claims;
 
-			var identity = user.ActLike<IUserIdProvider<TKey>>();
+			var identity = user.QuackLike<IUserIdProvider<TKey>>();
 			var timestamps = Request.HttpContext.RequestServices.GetRequiredService<IServerTimestampService>();
 			var token = identity.CreateToken<IUserIdProvider<TKey>, TKey>(timestamps,
 				claims, _securityOptions.CurrentValue);
