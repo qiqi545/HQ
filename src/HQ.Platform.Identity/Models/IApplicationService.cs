@@ -17,6 +17,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models

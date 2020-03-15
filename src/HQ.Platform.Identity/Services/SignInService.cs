@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Platform.Api.Extensions;

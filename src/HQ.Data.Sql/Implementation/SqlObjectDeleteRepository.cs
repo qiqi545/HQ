@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Runtime;

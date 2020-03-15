@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Data.Contracts;
 
 namespace HQ.Platform.Identity.Models

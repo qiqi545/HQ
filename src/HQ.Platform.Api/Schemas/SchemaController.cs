@@ -17,6 +17,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveErrors;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;

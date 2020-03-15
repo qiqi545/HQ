@@ -17,6 +17,7 @@
 
 using System;
 using System.Threading.Tasks;
+using ActiveErrors;
 
 namespace HQ.Data.Contracts
 {

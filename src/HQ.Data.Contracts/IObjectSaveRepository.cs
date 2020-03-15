@@ -18,6 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ActiveErrors;
 
 namespace HQ.Data.Contracts
 {

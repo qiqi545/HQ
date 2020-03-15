@@ -16,6 +16,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Platform.Security.AspNetCore.Mvc.Models;
 
