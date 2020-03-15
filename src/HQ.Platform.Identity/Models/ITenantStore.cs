@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-	public interface ITenantStore<TTenant> where TTenant : class
+	public interface ITenantStore<TTenant>
 	{
 		CancellationToken CancellationToken { get; }
 

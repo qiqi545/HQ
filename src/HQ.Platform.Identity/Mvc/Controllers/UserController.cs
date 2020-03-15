@@ -25,7 +25,6 @@ using ActiveErrors;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;

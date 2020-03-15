@@ -31,7 +31,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Stores.Sql
 {
-	public class TenantStore<TTenant, TKey> : IQueryableTenantStore<TTenant>, ITenantSecurityStampStore<TTenant>
+	public class TenantStore<TTenant, TKey> : 
+		IQueryableTenantStore<TTenant>, 
+		ITenantSecurityStampStore<TTenant>
 		where TTenant : IdentityTenant<TKey>
 		where TKey : IEquatable<TKey>
 	{

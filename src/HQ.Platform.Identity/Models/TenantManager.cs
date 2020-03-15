@@ -88,18 +88,21 @@ namespace HQ.Platform.Identity.Models
 		public async Task<int> GetCountAsync()
 		{
 			ThrowIfDisposed();
+
 			return await _tenantStore.GetCountAsync(CancellationToken);
 		}
 
 		public virtual async Task<TTenant> FindByIdAsync(string tenantId)
 		{
 			ThrowIfDisposed();
+
 			return await _tenantStore.FindByIdAsync(tenantId, CancellationToken);
 		}
 
 		public virtual async Task<TTenant> FindByNameAsync(string tenantName)
 		{
 			ThrowIfDisposed();
+
 			if (tenantName == null)
 			{
 				throw new ArgumentNullException(nameof(tenantName));
@@ -135,6 +138,7 @@ namespace HQ.Platform.Identity.Models
 		public virtual async Task<IEnumerable<TTenant>> FindByEmailAsync(string email)
 		{
 			ThrowIfDisposed();
+
 			if (email == null)
 			{
 				throw new ArgumentNullException(nameof(email));
@@ -150,7 +154,7 @@ namespace HQ.Platform.Identity.Models
 			var users = await emailStore.FindAllByEmailAsync(email, CancellationToken);
 			if (users != null || !Options.Stores.ProtectPersonalData)
 			{
-				if (!(users is IEnumerable<IdentityUserExtended> ext))
+				if (!(users is IEnumerable<IdentityUserExtended<TKey>> ext))
 				{
 					throw new NotSupportedException();
 				}
@@ -187,6 +191,7 @@ namespace HQ.Platform.Identity.Models
 		public virtual async Task<IEnumerable<TTenant>> FindByPhoneNumberAsync(string phoneNumber)
 		{
 			ThrowIfDisposed();
+
 			if (phoneNumber == null)
 			{
 				throw new ArgumentNullException(nameof(phoneNumber));
@@ -200,7 +205,7 @@ namespace HQ.Platform.Identity.Models
 			var users = await phoneStore.FindAllByPhoneNumberAsync(phoneNumber, CancellationToken);
 			if (users != null || !Options.Stores.ProtectPersonalData)
 			{
-				if (!(users is IEnumerable<IdentityUserExtended> ext))
+				if (!(users is IEnumerable<IdentityUserExtended<TKey>> ext))
 				{
 					throw new NotSupportedException();
 				}
@@ -238,6 +243,7 @@ namespace HQ.Platform.Identity.Models
 		public virtual async Task<IEnumerable<TTenant>> FindByUserNameAsync(string username)
 		{
 			ThrowIfDisposed();
+
 			if (username == null)
 			{
 				throw new ArgumentNullException(nameof(username));
