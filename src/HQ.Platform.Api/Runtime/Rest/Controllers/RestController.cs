@@ -22,6 +22,7 @@ using System.Net;
 using System.Threading.Tasks;
 using ActiveRoutes;
 using ActiveErrors;
+using ActiveVersion;
 using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;

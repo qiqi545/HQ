@@ -17,6 +17,8 @@
 
 using System;
 using ActiveLogging;
+using ActiveTenant;
+using ActiveVersion;
 using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Correlation;

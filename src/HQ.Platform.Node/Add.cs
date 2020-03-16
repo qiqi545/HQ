@@ -24,7 +24,7 @@ using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
 using ActiveTenant;
-using ActiveTenant.Internal;
+using ActiveVersion;
 using HQ.Common;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;
@@ -95,13 +95,16 @@ namespace HQ.Platform.Node
 			//
 			// Platform Services:
 			services.AddSecurityPolicies(hq.GetSection("Security"), hq.GetSection("SuperUser"), logger);
-			services.AddOperationsApi(hq.GetSection("Ops"));
-			services.AddPlatformApi(hq.GetSection("Api"));
+			services.AddVersioning(hq.GetSection("Versioning"));
 			services.AddMultiTenancy<IdentityTenant, IdentityApplication>(hq.GetSection("MultiTenancy"))
 				.AddIdentityTenantContextStore<IdentityTenant>()
 				.AddIdentityApplicationContextStore<IdentityApplication>();
-			services.AddVersioning(hq.GetSection("Versioning"));
+
+			// 
+			// Platform APIs:
 			services
+				.AddOperationsApi(hq.GetSection("Ops"))
+				.AddPlatformApi(hq.GetSection("Api"))
 				.AddBackgroundTasksApi(hq.GetSection("BackgroundTasks"))
 				.AddConfigurationApi(configRoot, hq.GetSection("Configuration"))
 				.AddIdentityApi(hq.GetSection("IdentityApi"))

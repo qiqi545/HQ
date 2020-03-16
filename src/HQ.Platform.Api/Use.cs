@@ -17,19 +17,13 @@
 
 using System;
 using System.Linq;
-using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using ActiveTenant;
-using ActiveTenant.Configuration;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.Serialization;
-using HQ.Data.Contracts.Versioning;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
-using HQ.Platform.Api.Models;
 using HQ.Platform.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -76,7 +70,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, CanonicalRoutesOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, CanonicalRoutesOptions o, Func<Task> next)
 			{
 				if (string.Equals(c.Request.Method, HttpMethods.Get, StringComparison.OrdinalIgnoreCase))
 				{
@@ -105,7 +99,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, MethodOverrideOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, MethodOverrideOptions o, Func<Task> next)
 			{
 				if (c.Request.Method.Equals(HttpMethods.Post, StringComparison.OrdinalIgnoreCase) &&
 				    c.Request.Headers.TryGetValue(o.MethodOverrideHeader, out var header))
@@ -135,7 +129,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, ResourceRewritingOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, ResourceRewritingOptions o, Func<Task> next)
 			{
 				// Use X-Action to disambiguate one vs. many resources in a write call
 				// See: http://restlet.com/blog/2015/05/18/implementing-bulk-updates-within-restful-services/
@@ -201,10 +195,11 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
 			{
 				var qs = c.Request.Query;
 				qs.TryGetValue(o.MultiCaseOperator, out var values);
+
 				foreach (var value in values)
 				{
 					foreach (var entry in c.RequestServices.GetServices<ITextTransform>())
@@ -238,7 +233,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
 			{
 				var qs = c.Request.Query;
 				qs.TryGetValue(o.TrimOperator, out var values);
@@ -270,7 +265,7 @@ namespace HQ.Platform.Api
 				}
 			});
 
-			async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
+			static async Task ExecuteFeature(HttpContext c, JsonConversionOptions o, Func<Task> next)
 			{
 				var qs = c.Request.Query;
 				qs.TryGetValue(o.PrettyPrintOperator, out var values);
@@ -287,110 +282,6 @@ namespace HQ.Platform.Api
 				await next();
 			}
 		}
-
-		#region Versioning
-
-		// See: https://github.com/Microsoft/api-guidelines/blob/master/Guidelines.md#12-versioning
-
-		public static IApplicationBuilder UseVersioning(this IApplicationBuilder app)
-		{
-			return app.Use(async (context, next) =>
-			{
-				if (context.FeatureEnabled<VersioningOptions>(out var options))
-				{
-					await ExecuteFeature(context, options, next);
-				}
-				else
-				{
-					await next();
-				}
-			});
-
-			async Task ExecuteFeature(HttpContext c, VersioningOptions o, Func<Task> next)
-			{
-				var versionResolver = c.RequestServices.GetRequiredService<IVersionContextResolver>();
-				var versionContext = await versionResolver.ResolveAsync(c);
-				if (versionContext != null && versionContext != VersionContext.None)
-				{
-					c.SetVersionContext(versionContext);
-				}
-				else
-				{
-					if (!o.RequireExplicitVersion ||
-					    c.Request.Path.StartsWithAny(o.VersionAgnosticPaths, StringComparison.OrdinalIgnoreCase))
-					{
-						c.SetVersionContext(VersionContext.None);
-					}
-					else
-					{
-						c.Response.StatusCode = o.ExplicitVersionRequiredStatusCode;
-						return;
-					}
-				}
-
-				await next();
-			}
-		}
-
-		#endregion
-
-		#region MultiTenancy
-
-		public static IApplicationBuilder UseMultiTenancy<TTenant>(this IApplicationBuilder app)
-			where TTenant : class, ITenant<string>, new()
-		{
-			return app.UseMultiTenancy<TTenant, string>();
-		}
-
-		public static IApplicationBuilder UseMultiTenancy<TTenant, TKey>(this IApplicationBuilder app)
-			where TTenant : class, ITenant<TKey>, new()
-		{
-			return app.Use(async (context, next) =>
-			{
-				if (context.FeatureEnabled<MultiTenancyOptions>(out var options))
-				{
-					await ExecuteFeature(context, options, next);
-				}
-			});
-
-			async Task ExecuteFeature(HttpContext c, MultiTenancyOptions o, Func<Task> next)
-			{
-				var tenantResolver = c.RequestServices.GetRequiredService<ITenantContextResolver<TTenant>>();
-				var tenantContext = await tenantResolver.ResolveAsync(c);
-				if (tenantContext != null)
-				{
-					c.SetTenantContext(tenantContext);
-				}
-				else
-				{
-					if (!o.RequireTenant)
-					{
-						if (!string.IsNullOrWhiteSpace(o.DefaultTenantId) &&
-						    !string.IsNullOrWhiteSpace(o.DefaultTenantName))
-						{
-							c.SetTenantContext(new TenantContext<TTenant>
-							{
-								Value = new TTenant
-								{
-									Name = o.DefaultTenantName,
-									Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ??
-									             default(TKey))
-								}
-							});
-						}
-					}
-					else
-					{
-						c.Response.StatusCode = o.TenantRequiredStatusCode;
-						return;
-					}
-				}
-
-				await next();
-			}
-		}
-
-		#endregion
 
 		#region Anonymous Users
 

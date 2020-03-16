@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using ActiveVersion;
 using HQ.Common;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Services;

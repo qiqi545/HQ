@@ -75,7 +75,7 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 			string application,
 			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.TenantHeader)]
 			string tenant,
-			[FromHeader(Name = Constants.Versioning.VersionHeader)]
+			[FromHeader(Name = ActiveVersion.Constants.Versioning.VersionHeader)]
 			string version)
 		{
 			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))

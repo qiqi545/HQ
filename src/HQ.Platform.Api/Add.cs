@@ -50,6 +50,9 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ActiveOptions;
+using ActiveVersion;
+using ActiveVersion.Configuration;
+using ActiveVersion.Internal;
 
 namespace HQ.Platform.Api
 {
@@ -125,42 +128,7 @@ namespace HQ.Platform.Api
 			return services;
 		}
 
-		#region Versioning
-
-		public static IServiceCollection AddVersioning(this IServiceCollection services, IConfiguration config)
-		{
-			return services.AddVersioning(config.FastBind);
-		}
-
-		public static IServiceCollection AddVersioning(this IServiceCollection services,
-			Action<VersioningOptions> configureAction = null)
-		{
-			return services.AddVersioning<DefaultVersionContextResolver>(configureAction);
-		}
-
-		public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services,
-			IConfiguration config)
-			where TVersionResolver : class, IVersionContextResolver
-		{
-			return services.AddVersioning<TVersionResolver>(config.FastBind);
-		}
-
-		public static IServiceCollection AddVersioning<TVersionResolver>(this IServiceCollection services,
-			Action<VersioningOptions> configureAction = null) where TVersionResolver : class, IVersionContextResolver
-		{
-			services.AddHttpContextAccessor();
-
-			if (configureAction != null)
-				services.Configure(configureAction);
-
-			services.AddInProcessCache();
-			services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
-			services.AddScoped<IVersionContextResolver, TVersionResolver>();
-			services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
-			return services;
-		}
-
-		#endregion
+		
 
 		#region Schema
 

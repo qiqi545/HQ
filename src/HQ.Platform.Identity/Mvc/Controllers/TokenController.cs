@@ -106,7 +106,7 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			string application,
 			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.TenantHeader)]
 			string tenant,
-			[FromHeader(Name = Constants.Versioning.VersionHeader)]
+			[FromHeader(Name = ActiveVersion.Constants.Versioning.VersionHeader)]
 			string version
 		)
 		{

@@ -15,6 +15,7 @@
 
 #endregion
 
+using ActiveVersion.Configuration;
 using HQ.Common.Models;
 using HQ.Platform.Api.Configuration;
 using Microsoft.Extensions.Options;

@@ -50,7 +50,6 @@ namespace HQ.Common
 			public const string CacheKeyArgument = nameof(CacheKeyArgument);
 			public const string Tenant = nameof(Tenant);
 			public const string Application = nameof(Application);
-			public const string Version = nameof(Version);
 			public const string AnonymousUserId = nameof(AnonymousUserId);
 		}
 
@@ -102,17 +101,6 @@ namespace HQ.Common
 				public const string AccessOperations = nameof(AccessOperations);
 			}
 		}
-
-		public static class Versioning
-		{
-			public const string DefaultVersion = "1.0";
-			public const string VersionHeader = "X-Api-Version";
-			public const string VersionParameter = "api-version";
-			public const string VersionPathPrefix = "v";
-			public const string UserVersionClaim = "version";
-		}
-
-		
 
 		public static class QueryStrings
 		{
