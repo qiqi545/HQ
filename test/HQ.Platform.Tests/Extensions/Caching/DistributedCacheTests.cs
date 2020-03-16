@@ -16,8 +16,7 @@
 #endregion
 
 using System;
-using ActiveCaching.Configuration;
-using HQ.Common;
+using ActiveCaching;
 using HQ.Extensions.Caching;
 using Microsoft.Extensions.Internal;
 
@@ -28,8 +27,7 @@ namespace HQ.Platform.Tests.Extensions.Caching
         public DistributedCacheTests()
         {
 	        Cache = new DistributedCache(
-		        Microsoft.Extensions.Options.Options.Create(new CacheOptions()),
-				new JsonCacheSerializer(),
+		        new JsonCacheSerializer(),
 		        new JsonCacheSerializer(),
 		        new SystemClock(),
 		        () => DateTimeOffset.Now);

@@ -23,6 +23,8 @@ using ActiveOptions;
 using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
+using ActiveTenant;
+using ActiveTenant.Internal;
 using HQ.Common;
 using HQ.Data.Contracts.Schema;
 using HQ.Data.SessionManagement;

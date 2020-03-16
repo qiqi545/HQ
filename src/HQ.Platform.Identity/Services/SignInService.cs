@@ -35,6 +35,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Constants = HQ.Common.Constants;
+using HttpContextExtensions = ActiveTenant.HttpContextExtensions;
 
 namespace HQ.Platform.Identity.Services
 {
@@ -137,7 +138,7 @@ namespace HQ.Platform.Identity.Services
 				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Value.Name));
 			}
 
-			if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext &&
+			if (HttpContextExtensions.GetApplicationContext<TApplication>(context) is ApplicationContext<TApplication> applicationContext &&
 			    applicationContext.Application != null)
 			{
 				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.ApplicationIdClaim,

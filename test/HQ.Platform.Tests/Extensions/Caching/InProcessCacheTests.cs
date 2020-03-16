@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using ActiveCaching;
 using ActiveCaching.Configuration;
 using HQ.Common;
 using HQ.Extensions.Caching;

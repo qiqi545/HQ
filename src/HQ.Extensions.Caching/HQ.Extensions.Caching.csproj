@@ -11,14 +11,13 @@
   
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ActiveCaching" Version="1.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.2" />
     <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
   </ItemGroup>
   
   <ItemGroup>
-    <ProjectReference Include="..\..\..\ActiveCaching\src\ActiveCaching\ActiveCaching.csproj" />
-    <ProjectReference Include="..\..\..\ActiveTenant\src\ActiveTenant\ActiveTenant.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>

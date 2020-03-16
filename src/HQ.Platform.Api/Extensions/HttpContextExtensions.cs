@@ -25,33 +25,7 @@ namespace HQ.Platform.Api.Extensions
 {
 	public static class HttpContextExtensions
 	{
-		public static void SetTenantContext<TTenant>(this HttpContext context, ITenantContext<TTenant> tenantContext)
-			where TTenant : class
-		{
-			context.Items[Constants.ContextKeys.Tenant] = tenantContext;
-		}
-
-		public static TenantContext<TTenant> GetTenantContext<TTenant>(this HttpContext context) where TTenant : class
-		{
-			return context.Items.TryGetValue(Constants.ContextKeys.Tenant, out var tenantContext)
-				? tenantContext as TenantContext<TTenant>
-				: default;
-		}
-
-		public static void SetApplicationContext<TApplication>(this HttpContext context,
-			ApplicationContext<TApplication> tenantContext)
-			where TApplication : class
-		{
-			context.Items[Constants.ContextKeys.Application] = tenantContext;
-		}
-
-		public static ApplicationContext<TApplication> GetApplicationContext<TApplication>(this HttpContext context)
-			where TApplication : class
-		{
-			return context.Items.TryGetValue(Constants.ContextKeys.Application, out var tenantContext)
-				? tenantContext as ApplicationContext<TApplication>
-				: default;
-		}
+		
 
 		public static void SetVersionContext(this HttpContext context, VersionContext versionContext)
 		{

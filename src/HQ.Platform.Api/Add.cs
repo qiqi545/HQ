@@ -50,8 +50,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ActiveOptions;
-using ActiveTenant;
-using ActiveTenant.Configuration;
 
 namespace HQ.Platform.Api
 {
@@ -73,8 +71,7 @@ namespace HQ.Platform.Api
 			services.AddHttpCaching();
 			services.AddCanonicalRoutes();
 			services.AddGzipCompression();
-			services.AddSingleton<IEnumerable<ITextTransform>>(r =>
-				new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
+			services.AddSingleton<IEnumerable<ITextTransform>>(r => new ITextTransform[] {new CamelCase(), new SnakeCase(), new PascalCase()});
 			services.AddOptions<RouteOptions>().Configure<IOptions<ApiOptions>>((o, x) =>
 			{
 				o.AppendTrailingSlash = x.Value.CanonicalRoutes.AppendTrailingSlash;
@@ -96,9 +93,9 @@ namespace HQ.Platform.Api
 			{
 				// Needed for proxy, cohort analysis, domain-based multi-tenancy, etc.
 				options.ForwardedHeaders =
-					ForwardedHeaders.XForwardedFor | // context.Connection.RemoteIpAddress
-					ForwardedHeaders.XForwardedProto | // context.Request.Scheme
-					ForwardedHeaders.XForwardedHost; // context.Request.Host
+					ForwardedHeaders.XForwardedFor |	// context.Connection.RemoteIpAddress
+					ForwardedHeaders.XForwardedProto |	// context.Request.Scheme
+					ForwardedHeaders.XForwardedHost;	// context.Request.Host
 			});
 			return services;
 		}
@@ -160,69 +157,6 @@ namespace HQ.Platform.Api
 			services.TryAddSingleton<IVersionContextStore, NoVersionContextStore>();
 			services.AddScoped<IVersionContextResolver, TVersionResolver>();
 			services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetVersionContext());
-			return services;
-		}
-
-		#endregion
-
-		#region Multi-Tenancy
-
-		public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
-			IConfiguration config)
-			where TTenant : class, new()
-			where TApplication : class, new()
-		{
-			return services.AddMultiTenancy<TTenant, TApplication>(config.FastBind);
-		}
-
-		public static IServiceCollection AddMultiTenancy<TTenant, TApplication>(this IServiceCollection services,
-			Action<MultiTenancyOptions> configureAction = null)
-			where TTenant : class, new()
-			where TApplication : class, new()
-		{
-			return services
-				.AddMultiTenancy<DefaultTenantContextResolver<TTenant>, TTenant,
-					DefaultApplicationContextResolver<TApplication>, TApplication>(configureAction);
-		}
-
-		public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
-			this IServiceCollection services,
-			IConfiguration config)
-			where TTenantResolver : class, ITenantContextResolver<TTenant>
-			where TTenant : class, new()
-			where TApplicationResolver : class, IApplicationContextResolver<TApplication>
-			where TApplication : class, new()
-		{
-			return services.AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
-				config.FastBind);
-		}
-
-		public static IServiceCollection AddMultiTenancy<TTenantResolver, TTenant, TApplicationResolver, TApplication>(
-			this IServiceCollection services,
-			Action<MultiTenancyOptions> configureAction = null)
-			where TTenantResolver : class, ITenantContextResolver<TTenant>
-			where TTenant : class, new()
-			where TApplicationResolver : class, IApplicationContextResolver<TApplication>
-			where TApplication : class, new()
-		{
-			services.AddHttpContextAccessor();
-
-			if (configureAction != null)
-				services.Configure(configureAction);
-
-			services.AddInProcessCache();
-
-			services.AddScoped<ITenantContextResolver<TTenant>, TTenantResolver>();
-			services.AddScoped(r => r.GetService<IHttpContextAccessor>()?.HttpContext?.GetTenantContext<TTenant>());
-			services.AddScoped<ITenantContext<TTenant>>(r =>
-				new TenantContextWrapper<TTenant>(r.GetService<TTenant>()));
-
-			services.AddScoped<IApplicationContextResolver<TApplication>, TApplicationResolver>();
-			services.AddScoped(r =>
-				r.GetService<IHttpContextAccessor>()?.HttpContext?.GetApplicationContext<TApplication>());
-			services.AddScoped<IApplicationContext<TApplication>>(r =>
-				new ApplicationContextWrapper<TApplication>(r.GetService<TApplication>()));
-
 			return services;
 		}
 

@@ -19,13 +19,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using ActiveCaching;
+using ActiveTenant;
 using ActiveTenant.Configuration;
-using HQ.Common;
-using HQ.Extensions.Caching;
-using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Models
 {
