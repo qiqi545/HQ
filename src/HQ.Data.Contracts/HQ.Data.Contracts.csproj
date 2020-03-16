@@ -19,7 +19,7 @@
     <PackageReference Include="ActiveErrors" Version="1.0.2" />
     <PackageReference Include="ActiveLogging" Version="1.0.0" />
     <PackageReference Include="ActiveRoutes" Version="1.0.8" />
-    <PackageReference Include="ActiveVersion" Version="1.0.0" />
+    <PackageReference Include="ActiveVersion" Version="1.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="TypeKitchen.Differencing" Version="1.2.7" />
