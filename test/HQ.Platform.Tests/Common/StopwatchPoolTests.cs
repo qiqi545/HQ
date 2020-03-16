@@ -16,6 +16,7 @@
 using System.Threading.Tasks;
 using HQ.Common;
 using HQ.Test.Sdk;
+using TypeKitchen;
 
 namespace HQ.Platform.Tests.Common
 {
@@ -24,7 +25,7 @@ namespace HQ.Platform.Tests.Common
         [Test]
         public void Can_use_scoped_builder()
         {
-            var elapsed = StopwatchPool.Scoped(x =>
+            var elapsed = Pooling.StopwatchPool.Scoped(x =>
             {
                 Task.Delay(100).Wait();
             });

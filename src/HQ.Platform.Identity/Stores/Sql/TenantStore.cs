@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiveTenant;
 using Dapper;
 using HQ.Common.AspNetCore;
 using HQ.Data.Contracts.Queryable;
@@ -59,7 +60,7 @@ namespace HQ.Platform.Identity.Stores.Sql
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 
-			tenant.ConcurrencyStamp = tenant.ConcurrencyStamp ?? $"{Guid.NewGuid()}";
+			tenant.ConcurrencyStamp ??= $"{Guid.NewGuid()}";
 
 			if (tenant.Id == null)
 			{

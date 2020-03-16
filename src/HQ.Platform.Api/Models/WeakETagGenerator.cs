@@ -16,21 +16,21 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Security.Cryptography;
-using HQ.Extensions.Caching.AspNetCore.Mvc;
+using ActiveCaching;
 
 namespace HQ.Platform.Api.Models
 {
 	public class WeakETagGenerator : IETagGenerator
 	{
-		public string GenerateFromBuffer(byte[] data)
+		public string GenerateFromBuffer(ReadOnlySpan<byte> buffer)
 		{
-			using (var md5 = MD5.Create())
-			{
-				var hash = md5.ComputeHash(data);
-				var hex = BitConverter.ToString(hash);
-				return $"W/\"{hex.Replace("-", "")}\"";
-			}
+			using var md5 = MD5.Create();
+			var hash = new byte[6];
+			Debug.Assert(md5.TryComputeHash(buffer, hash, out _));
+			var hex = BitConverter.ToString(hash);
+			return $"W/\"{hex.Replace("-", "")}\"";
 		}
 	}
 }

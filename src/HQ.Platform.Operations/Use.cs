@@ -22,6 +22,7 @@ using Metrics.Reporters.ServerTiming;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Platform.Operations
 {
@@ -44,12 +45,12 @@ namespace HQ.Platform.Operations
 				if (options?.Value != null && options.Value.EnableRequestProfiling &&
 				    !options.Value.MetricsOptions.EnableServerTiming)
 				{
-					var sw = StopwatchPool.Pool.Get();
+					var sw = Pooling.StopwatchPool.Pool.Get();
 
 					context.Response.OnStarting(() =>
 					{
 						var duration = sw.Elapsed;
-						StopwatchPool.Pool.Return(sw);
+						Pooling.StopwatchPool.Pool.Return(sw);
 						var header = options.Value.RequestProfilingHeader ?? HttpHeaders.ServerTiming;
 						context.Response.Headers.Add(header, $"roundtrip;dur={duration.TotalMilliseconds};desc=\"*\"");
 						return Task.CompletedTask;

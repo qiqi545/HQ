@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Platform.Api.Models;
+using ActiveTenant;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models

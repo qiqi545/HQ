@@ -15,6 +15,7 @@
 
 #endregion
 
+using ActiveCaching;
 using HQ.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;

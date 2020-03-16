@@ -16,7 +16,8 @@
 #endregion
 
 using System;
-using HQ.Extensions.Caching.Configuration;
+using ActiveCaching;
+using ActiveCaching.Configuration;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;

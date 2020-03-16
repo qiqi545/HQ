@@ -66,12 +66,14 @@ namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
 
 		private bool Enabled => _options.Value.Enabled;
 
+		// FIXME: defaults for headers should come from a dynamic source
+
 		[AllowAnonymous]
 		[DynamicHttpPost]
 		public Task<IActionResult> IssueToken([FromBody] BearerTokenRequest model,
-			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]
+			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.ApplicationHeader)]
 			string application,
-			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)]
+			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.TenantHeader)]
 			string tenant,
 			[FromHeader(Name = Constants.Versioning.VersionHeader)]
 			string version)

@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using ActiveTenant;
 using HQ.Data.SessionManagement;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Platform.Identity.Models;

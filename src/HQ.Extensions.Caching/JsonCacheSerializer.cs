@@ -15,19 +15,23 @@
 
 #endregion
 
+using System;
 using System.Text;
+using ActiveCaching;
+using HQ.Data.Contracts.Serialization;
+using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 
 namespace HQ.Extensions.Caching
 {
-	internal class JsonCacheSerializer : ICacheSerializer
+	internal class JsonCacheSerializer : ICacheSerializer, ICacheDeserializer
 	{
-		public byte[] Serialize<T>(T value)
+		public void ObjectToBuffer<T>(T value, ref Span<byte> buffer, ref int startAt)
 		{
-			return Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value));
+			buffer.WriteString(ref startAt, new StringValues(JsonConvert.SerializeObject(value)));
 		}
 
-		public T Deserialize<T>(byte[] bytes)
+		public T BufferToObject<T>(ReadOnlySpan<byte> bytes)
 		{
 			return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
 		}

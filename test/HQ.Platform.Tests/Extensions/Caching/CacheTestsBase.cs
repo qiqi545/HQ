@@ -16,6 +16,7 @@
 #endregion
 
 using System.Threading;
+using ActiveCaching;
 using HQ.Extensions.Caching;
 using HQ.Test.Sdk;
 

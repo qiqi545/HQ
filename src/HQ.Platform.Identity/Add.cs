@@ -19,6 +19,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using ActiveLogging;
+using ActiveTenant;
 using HQ.Common;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Identity.Configuration;
@@ -165,10 +166,8 @@ namespace HQ.Platform.Identity
 			Debug.Assert(removed);
 
 			services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
-			services.AddScoped<ITenantValidator<TTenant, TUser, TKey>, TenantValidator<TTenant, TUser, TKey>>();
-			services
-				.AddScoped<IApplicationValidator<TApplication, TUser, TKey>,
-					ApplicationValidator<TApplication, TUser, TKey>>();
+			services.AddScoped<ITenantValidator<TTenant, TKey>, TenantValidator<TTenant, TUser, TKey>>();
+			services.AddScoped<IApplicationValidator<TApplication, TUser, TKey>, ApplicationValidator<TApplication, TUser, TKey>>();
 
 			services.AddScoped<IUserService<TUser>, UserService<TUser, TKey>>();
 			services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();

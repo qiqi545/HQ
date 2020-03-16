@@ -19,8 +19,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Text;
-using HQ.Common;
-using HQ.Extensions.Caching.Configuration;
+using ActiveCaching;
+using ActiveCaching.Configuration;
 using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
@@ -34,13 +34,13 @@ namespace HQ.Extensions.Caching
 	public class DistributedCache : ICache
 	{
 		private static readonly MethodInfo SerializeMethod =
-			typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Serialize));
+			typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.ObjectToBuffer));
 
 		private static readonly ConcurrentDictionary<Type, MethodInfo> SerializeMethods =
 			new ConcurrentDictionary<Type, MethodInfo>();
 
 		private static readonly MethodInfo DeserializeMethod =
-			typeof(ICacheSerializer).GetMethod(nameof(ICacheSerializer.Deserialize));
+			typeof(ICacheSerializer).GetMethod(nameof(ICacheDeserializer.BufferToObject));
 
 		private static readonly ConcurrentDictionary<Type, MethodInfo> DeserializeMethods =
 			new ConcurrentDictionary<Type, MethodInfo>();
@@ -51,10 +51,17 @@ namespace HQ.Extensions.Caching
 		private readonly IDistributedCache _cache;
 		private readonly IOptions<CacheOptions> _options;
 		private readonly ICacheSerializer _serializer;
+		private readonly ICacheDeserializer _deserializer;
 
-		public DistributedCache(IOptions<CacheOptions> options, ISystemClock clock, IServerTimestampService timestamps)
+		public DistributedCache(
+			IOptions<CacheOptions> options, 
+			ICacheSerializer serializer, 
+			ICacheDeserializer deserializer, 
+			ISystemClock clock, 
+			Func<DateTimeOffset> timestamps)
 		{
-			_serializer = new JsonCacheSerializer();
+			_serializer = serializer;
+			_deserializer = deserializer;
 			_cache = new MemoryDistributedCache(SysOptions.Create(new MemoryDistributedCacheOptions
 			{
 				CompactionPercentage = 0.05,
@@ -129,11 +136,6 @@ namespace HQ.Extensions.Caching
 			return accessor.Call(_serializer, new object[] {bytes});
 		}
 
-		private T DeserializeInternal<T>(byte[] bytes)
-		{
-			return _serializer.Deserialize<T>(bytes);
-		}
-
 		private void SetWithType(string key, object value, DistributedCacheEntryOptions entry)
 		{
 			var type = value.GetType();
@@ -174,7 +176,7 @@ namespace HQ.Extensions.Caching
 			});
 		}
 
-		public bool Set(string key, object value, DateTime absoluteExpiration)
+		public bool Set(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			return Try(() =>
 			{
@@ -201,7 +203,7 @@ namespace HQ.Extensions.Caching
 			});
 		}
 
-		public bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Set(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return Try(() =>
 			{
@@ -228,7 +230,7 @@ namespace HQ.Extensions.Caching
 			});
 		}
 
-		public bool Set<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Set<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			return Try(() =>
 			{
@@ -255,7 +257,7 @@ namespace HQ.Extensions.Caching
 			});
 		}
 
-		public bool Set<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Set<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return Try(() =>
 			{
@@ -286,7 +288,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add(string key, object value, DateTime absoluteExpiration)
+		public bool Add(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			if (_cache.Get(key) != null)
 				return false;
@@ -313,7 +315,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Add(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			if (_cache.Get(key) != null)
 				return false;
@@ -340,7 +342,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Add<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			if (_cache.Get(key) != null)
 				return false;
@@ -367,7 +369,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Add<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			if (_cache.Get(key) != null)
 				return false;
@@ -394,7 +396,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value)));
 		}
 
-		public bool Replace(string key, object value, DateTime absoluteExpiration)
+		public bool Replace(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration)));
 		}
@@ -409,7 +411,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, dependency)));
 		}
 
-		public bool Replace(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Replace(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return EnsureKeyExistsThen(key,
 				() => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration, dependency)));
@@ -426,7 +428,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value)));
 		}
 
-		public bool Replace<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Replace<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration)));
 		}
@@ -441,7 +443,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, dependency)));
 		}
 
-		public bool Replace<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Replace<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return EnsureKeyExistsThen(key,
 				() => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration, dependency)));
@@ -515,7 +517,7 @@ namespace HQ.Extensions.Caching
 			if (bytes == null)
 				return default;
 
-			var deserialized = DeserializeInternal<T>(bytes);
+			var deserialized = _deserializer.BufferToObject<T>(bytes);
 
 			var item = deserialized is T typed ? typed : default;
 			if (item != null)

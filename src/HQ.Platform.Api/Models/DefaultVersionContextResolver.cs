@@ -19,6 +19,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ActiveCaching;
 using HQ.Common;
 using HQ.Data.Contracts.Versioning;
 using HQ.Extensions.Caching;

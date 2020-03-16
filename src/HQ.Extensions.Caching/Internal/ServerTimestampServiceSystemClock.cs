@@ -16,17 +16,16 @@
 #endregion
 
 using System;
-using HQ.Common;
 using Microsoft.Extensions.Internal;
 
 namespace HQ.Extensions.Caching.Internal
 {
 	internal class ServerTimestampServiceSystemClock : ISystemClock
 	{
-		private readonly IServerTimestampService _timestamps;
+		private readonly Func<DateTimeOffset> _timestamps;
 
-		public ServerTimestampServiceSystemClock(IServerTimestampService timestamps) => _timestamps = timestamps;
+		public ServerTimestampServiceSystemClock(Func<DateTimeOffset> timestamps) => _timestamps = timestamps;
 
-		public DateTimeOffset UtcNow => _timestamps.GetCurrentTime().ToUniversalTime();
+		public DateTimeOffset UtcNow => _timestamps().ToUniversalTime();
 	}
 }

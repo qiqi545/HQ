@@ -23,6 +23,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ActiveErrors;
 using ActiveRoutes;
+using ActiveTenant;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;

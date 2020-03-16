@@ -18,6 +18,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveCaching;
+using ActiveTenant.Configuration;
 using HQ.Common;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;

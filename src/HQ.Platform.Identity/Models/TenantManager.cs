@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiveTenant;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
@@ -42,7 +43,7 @@ namespace HQ.Platform.Identity.Models
 		public TenantManager(
 			ITenantStore<TTenant> tenantStore,
 			IUserStoreExtended<TUser> userStore,
-			IEnumerable<ITenantValidator<TTenant, TUser, TKey>> tenantValidators,
+			IEnumerable<ITenantValidator<TTenant, TKey>> tenantValidators,
 			IOptions<IdentityOptionsExtended> optionsAccessor,
 			ILookupNormalizer keyNormalizer,
 			IServiceProvider serviceProvider,
@@ -56,11 +57,11 @@ namespace HQ.Platform.Identity.Models
 			Options = optionsAccessor?.Value ?? new IdentityOptionsExtended();
 			KeyNormalizer = keyNormalizer;
 			TenantValidators = tenantValidators?.ToList() ??
-			                   Enumerable.Empty<ITenantValidator<TTenant, TUser, TKey>>().ToList();
+			                   Enumerable.Empty<ITenantValidator<TTenant, TKey>>().ToList();
 		}
 
 		public IdentityOptionsExtended Options { get; set; }
-		public IList<ITenantValidator<TTenant, TUser, TKey>> TenantValidators { get; }
+		public IList<ITenantValidator<TTenant, TKey>> TenantValidators { get; }
 		public ILogger Logger { get; set; }
 		public ILookupNormalizer KeyNormalizer { get; set; }
 
@@ -372,7 +373,7 @@ namespace HQ.Platform.Identity.Models
 			var errors = new List<IdentityError>();
 			foreach (var tenantValidator in TenantValidators)
 			{
-				var identityResult = await tenantValidator.ValidateAsync(this, tenant);
+				var identityResult = await tenantValidator.ValidateAsync(tenant);
 				if (!identityResult.Succeeded)
 				{
 					errors.AddRange(identityResult.Errors);

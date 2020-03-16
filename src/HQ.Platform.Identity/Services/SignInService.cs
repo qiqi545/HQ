@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ActiveErrors;
+using ActiveTenant;
 using HQ.Common;
 using HQ.Data.Contracts;
 using HQ.Platform.Api.Extensions;
@@ -33,6 +34,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Identity.Services
 {
@@ -129,10 +131,10 @@ namespace HQ.Platform.Identity.Services
 			var claims = await _userManager.GetClaimsAsync(user);
 
 			if (context.GetTenantContext<TTenant>() is TenantContext<TTenant> tenantContext &&
-			    tenantContext.Tenant != null)
+			    tenantContext.Value != null)
 			{
-				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Tenant.Id}"));
-				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Tenant.Name));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantIdClaim, $"{tenantContext.Value.Id}"));
+				claims.Add(new Claim(_securityOptions.CurrentValue.Claims.TenantNameClaim, tenantContext.Value.Name));
 			}
 
 			if (context.GetApplicationContext<TApplication>() is ApplicationContext<TApplication> applicationContext &&

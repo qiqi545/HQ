@@ -15,12 +15,11 @@
 
 #endregion
 
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
-namespace HQ.Platform.Api.Models
+[assembly: InternalsVisibleTo("HQ.Platform.Tests")]
+
+namespace HQ.Extensions.Caching.Internal
 {
-	public interface ITenantContextStore<TTenant> where TTenant : class
-	{
-		Task<TenantContext<TTenant>> FindByKeyAsync(string tenantKey);
-	}
+	internal class InternalsVisibleTo { }
 }

@@ -112,12 +112,7 @@ namespace HQ.Common
 			public const string UserVersionClaim = "version";
 		}
 
-		public static class MultiTenancy
-		{
-			public const string DefaultTenantName = "defaultTenant";
-			public const string TenantHeader = "X-Api-Tenant";
-			public const string ApplicationHeader = "X-Api-Application";
-		}
+		
 
 		public static class QueryStrings
 		{
@@ -157,8 +152,6 @@ namespace HQ.Common
 		{
 			public const string ApplicationName = "appName";
 			public const string ApplicationId = "appId";
-			public const string TenantId = "tenantId";
-			public const string TenantName = "tenantName";
 			public const string Permission = "userPermission";
 			public const string Email = "userEmail";
 			public const string Role = "userRole";

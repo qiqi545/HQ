@@ -17,6 +17,8 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveCaching\src\ActiveCaching\ActiveCaching.csproj" />
+    <ProjectReference Include="..\..\..\ActiveTenant\src\ActiveTenant\ActiveTenant.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />
   </ItemGroup>

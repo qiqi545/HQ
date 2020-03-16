@@ -16,6 +16,7 @@
 #endregion
 
 using System.Threading.Tasks;
+using ActiveTenant;
 using HQ.Platform.Api.Models;
 
 namespace HQ.Platform.Identity.Models
@@ -26,7 +27,7 @@ namespace HQ.Platform.Identity.Models
 
 		public IdentityTenantContextStore(ITenantService<TTenant> tenantService) => _tenantService = tenantService;
 
-		public async Task<TenantContext<TTenant>> FindByKeyAsync(string tenantKey)
+		public async Task<ITenantContext<TTenant>> FindByKeyAsync(string tenantKey)
 		{
 			// FIXME!
 			return null;
@@ -37,7 +38,7 @@ namespace HQ.Platform.Identity.Models
 				return null;
 			}
 
-			var context = new TenantContext<TTenant> {Tenant = tenant.Data, Identifiers = new[] {tenant.Data.Name}};
+			var context = new TenantContext<TTenant> {Value = tenant.Data, Identifiers = new[] {tenant.Data.Name}};
 			return context;
 		}
 	}

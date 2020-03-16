@@ -20,6 +20,8 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveTenant;
+using ActiveTenant.Configuration;
 using HQ.Common;
 using HQ.Common.AspNetCore;
 using HQ.Common.Serialization;
@@ -36,6 +38,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Constants = HQ.Common.Constants;
 using CookieOptions = Microsoft.AspNetCore.Http.CookieOptions;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
@@ -367,7 +370,7 @@ namespace HQ.Platform.Api
 						{
 							c.SetTenantContext(new TenantContext<TTenant>
 							{
-								Tenant = new TTenant
+								Value = new TTenant
 								{
 									Name = o.DefaultTenantName,
 									Id = (TKey) (Convert.ChangeType(o.DefaultTenantId, typeof(TKey)) ??

@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO.Compression;
+using ActiveCaching;
 using ActiveRoutes;
 using HQ.Common;
 using HQ.Common.Models;
@@ -30,7 +31,6 @@ using HQ.Data.Contracts.Versioning;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
-using HQ.Extensions.Caching.AspNetCore.Mvc;
 using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
@@ -38,8 +38,6 @@ using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Api.Runtime;
 using HQ.Platform.Api.Schemas;
-using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -51,8 +49,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Constants = HQ.Common.Constants;
 using ActiveOptions;
+using ActiveTenant;
+using ActiveTenant.Configuration;
 
 namespace HQ.Platform.Api
 {
@@ -108,8 +107,7 @@ namespace HQ.Platform.Api
 		{
 			services.TryAddSingleton<IHttpCache, InProcessHttpCache>();
 			services.TryAddSingleton<IETagGenerator, WeakETagGenerator>();
-			services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(),
-				r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
+			services.AddScoped(r => new HttpCacheFilterAttribute(r.GetRequiredService<IETagGenerator>(), r.GetRequiredService<IHttpCache>(), r.GetRequiredService<JsonSerializerSettings>()));
 			return services;
 		}
 

@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveTenant\src\ActiveTenant\ActiveTenant.csproj" />
     <ProjectReference Include="..\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />

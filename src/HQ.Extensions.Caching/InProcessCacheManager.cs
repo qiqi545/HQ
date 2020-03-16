@@ -17,8 +17,7 @@
 
 using System;
 using System.Reflection;
-using HQ.Common;
-using HQ.Extensions.Caching.Configuration;
+using ActiveCaching.Configuration;
 using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -28,10 +27,11 @@ namespace HQ.Extensions.Caching
 	public abstract class InProcessCacheManager : ICacheManager
 	{
 		private readonly MemoryCacheOptions _memoryCacheOptions;
+
 		protected readonly IMemoryCache Cache;
 		protected readonly IOptions<CacheOptions> CacheOptions;
 
-		protected InProcessCacheManager(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps)
+		protected InProcessCacheManager(IOptions<CacheOptions> cacheOptions, Func<DateTimeOffset> timestamps)
 		{
 			_memoryCacheOptions = new MemoryCacheOptions
 			{
@@ -46,13 +46,13 @@ namespace HQ.Extensions.Caching
 
 		#region ICacheManager
 
-		public int Count
+		public int KeyCount
 		{
 			get
 			{
 				if (!(Cache is MemoryCache memory))
 					return 0;
-				var getCount = typeof(MemoryCache).GetProperty("Count", BindingFlags.Instance | BindingFlags.Public);
+				var getCount = typeof(MemoryCache).GetProperty(nameof(MemoryCache.Count), BindingFlags.Instance | BindingFlags.Public);
 				return (int) (getCount?.GetValue(memory) ?? 0);
 			}
 		}

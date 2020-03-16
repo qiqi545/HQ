@@ -17,8 +17,8 @@
 
 using System;
 using System.Text;
-using HQ.Common;
-using HQ.Extensions.Caching.Configuration;
+using ActiveCaching;
+using ActiveCaching.Configuration;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
@@ -27,7 +27,7 @@ namespace HQ.Extensions.Caching
 {
 	public class InProcessHttpCache : InProcessCacheManager, IHttpCache
 	{
-		public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(
+		public InProcessHttpCache(IOptions<CacheOptions> cacheOptions, Func<DateTimeOffset> timestamps) : base(
 			cacheOptions, timestamps)
 		{
 		}

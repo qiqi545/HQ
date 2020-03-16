@@ -16,8 +16,8 @@
 #endregion
 
 using System;
-using HQ.Common;
-using HQ.Extensions.Caching.Configuration;
+using ActiveCaching;
+using ActiveCaching.Configuration;
 using HQ.Extensions.Caching.Internal;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -26,7 +26,7 @@ namespace HQ.Extensions.Caching
 {
 	public class InProcessCache : InProcessCacheManager, ICache
 	{
-		public InProcessCache(IOptions<CacheOptions> cacheOptions, IServerTimestampService timestamps) : base(
+		public InProcessCache(IOptions<CacheOptions> cacheOptions, Func<DateTimeOffset> timestamps) : base(
 			cacheOptions, timestamps)
 		{
 		}
@@ -122,7 +122,7 @@ namespace HQ.Extensions.Caching
 			return Try(() => Cache.Set(key, value, CreateEntry()));
 		}
 
-		public bool Set(string key, object value, DateTime absoluteExpiration)
+		public bool Set(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration)));
 		}
@@ -137,7 +137,7 @@ namespace HQ.Extensions.Caching
 			return Try(() => Cache.Set(key, value, CreateEntry(dependency: dependency)));
 		}
 
-		public bool Set(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Set(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
 		}
@@ -153,7 +153,7 @@ namespace HQ.Extensions.Caching
 			return Try(() => Cache.Set(key, value, CreateEntry()));
 		}
 
-		public bool Set<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Set<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration)));
 		}
@@ -168,15 +168,14 @@ namespace HQ.Extensions.Caching
 			return Try(() => Cache.Set(key, value, CreateEntry(dependency: dependency)));
 		}
 
-		public bool Set<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Set<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return Try(() => Cache.Set(key, value, CreateEntry(absoluteExpiration, dependency: dependency)));
 		}
 
 		public bool Set<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency)
 		{
-			return Try(() =>
-				Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
+			return Try(() => Cache.Set(key, value, CreateEntry(slidingExpiration: slidingExpiration, dependency: dependency)));
 		}
 
 		#endregion
@@ -191,7 +190,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add(string key, object value, DateTime absoluteExpiration)
+		public bool Add(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			if (Cache.Get(key) != null)
 				return false;
@@ -215,7 +214,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Add(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			if (Cache.Get(key) != null)
 				return false;
@@ -239,7 +238,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Add<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			if (Cache.Get(key) != null)
 				return false;
@@ -263,7 +262,7 @@ namespace HQ.Extensions.Caching
 			return true;
 		}
 
-		public bool Add<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Add<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			if (Cache.Get(key) != null)
 				return false;
@@ -288,7 +287,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value)));
 		}
 
-		public bool Replace(string key, object value, DateTime absoluteExpiration)
+		public bool Replace(string key, object value, DateTimeOffset absoluteExpiration)
 		{
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration)));
 		}
@@ -303,7 +302,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, dependency)));
 		}
 
-		public bool Replace(string key, object value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Replace(string key, object value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
 			return EnsureKeyExistsThen(key,
 				() => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration, dependency)));
@@ -320,7 +319,7 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value)));
 		}
 
-		public bool Replace<T>(string key, T value, DateTime absoluteExpiration)
+		public bool Replace<T>(string key, T value, DateTimeOffset absoluteExpiration)
 		{
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration)));
 		}
@@ -335,10 +334,9 @@ namespace HQ.Extensions.Caching
 			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, dependency)));
 		}
 
-		public bool Replace<T>(string key, T value, DateTime absoluteExpiration, ICacheDependency dependency)
+		public bool Replace<T>(string key, T value, DateTimeOffset absoluteExpiration, ICacheDependency dependency)
 		{
-			return EnsureKeyExistsThen(key,
-				() => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration, dependency)));
+			return EnsureKeyExistsThen(key, () => RemoveByKeyThen(key, () => Add(key, value, absoluteExpiration, dependency)));
 		}
 
 		public bool Replace<T>(string key, T value, TimeSpan slidingExpiration, ICacheDependency dependency)

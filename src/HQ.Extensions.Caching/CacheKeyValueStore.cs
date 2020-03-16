@@ -16,6 +16,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ActiveCaching;
 using HQ.Common.Models;
 
 namespace HQ.Extensions.Caching
@@ -54,14 +55,6 @@ namespace HQ.Extensions.Caching
 		void IKeyValueStore<TKey, TValue>.AddOrUpdate<T>(TKey key, T value)
 		{
 			AddOrUpdate(key, value);
-		}
-
-		public bool Clear()
-		{
-			if (!(_cache is IClearable clear))
-				return false;
-			clear.Clear();
-			return true;
 		}
 
 		public virtual string CacheKey(TKey key)

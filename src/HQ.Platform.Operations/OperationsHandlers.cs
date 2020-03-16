@@ -26,6 +26,7 @@ using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using ActiveCaching;
 using ActiveRoutes;
 using HQ.Common.AspNetCore;
 using HQ.Extensions.Caching;
@@ -303,12 +304,12 @@ namespace HQ.Platform.Operations
 				if (cache is ICacheManager manager)
 				{
 					totalCacheMemory += manager.SizeBytes;
-					totalCacheKeys += manager.Count;
+					totalCacheKeys += manager.KeyCount;
 
 					managed.Add(new
 					{
 						Type = manager.GetType().Name,
-						manager.Count,
+						Count = manager.KeyCount,
 						Size = manager.SizeBytes,
 						SizeLimit = manager.SizeLimitBytes
 					});
@@ -324,12 +325,12 @@ namespace HQ.Platform.Operations
 				if (cache is ICacheManager manager)
 				{
 					totalCacheMemory += manager.SizeBytes;
-					totalCacheKeys += manager.Count;
+					totalCacheKeys += manager.KeyCount;
 
 					managed.Add(new
 					{
 						Type = manager.GetType().Name,
-						manager.Count,
+						Count = manager.KeyCount,
 						Size = manager.SizeBytes,
 						SizeLimit = manager.SizeLimitBytes
 					});

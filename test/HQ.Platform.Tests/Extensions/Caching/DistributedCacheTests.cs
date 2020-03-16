@@ -15,9 +15,10 @@
 
 #endregion
 
+using System;
+using ActiveCaching.Configuration;
 using HQ.Common;
 using HQ.Extensions.Caching;
-using HQ.Extensions.Caching.Configuration;
 using Microsoft.Extensions.Internal;
 
 namespace HQ.Platform.Tests.Extensions.Caching
@@ -26,7 +27,12 @@ namespace HQ.Platform.Tests.Extensions.Caching
     {
         public DistributedCacheTests()
         {
-	        Cache = new DistributedCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new SystemClock(), new LocalServerTimestampService());
+	        Cache = new DistributedCache(
+		        Microsoft.Extensions.Options.Options.Create(new CacheOptions()),
+				new JsonCacheSerializer(),
+		        new JsonCacheSerializer(),
+		        new SystemClock(),
+		        () => DateTimeOffset.Now);
         }
     }
 }

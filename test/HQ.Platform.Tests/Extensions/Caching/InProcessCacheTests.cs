@@ -15,9 +15,10 @@
 
 #endregion
 
+using System;
+using ActiveCaching.Configuration;
 using HQ.Common;
 using HQ.Extensions.Caching;
-using HQ.Extensions.Caching.Configuration;
 
 namespace HQ.Platform.Tests.Extensions.Caching
 {
@@ -25,7 +26,9 @@ namespace HQ.Platform.Tests.Extensions.Caching
     {
         public InProcessCacheTests()
         {
-	        Cache = new InProcessCache(Microsoft.Extensions.Options.Options.Create(new CacheOptions()), new LocalServerTimestampService());
+	        Cache = new InProcessCache(
+		        Microsoft.Extensions.Options.Options.Create(
+			        new CacheOptions()), () => DateTimeOffset.Now);
         }
     }
 }

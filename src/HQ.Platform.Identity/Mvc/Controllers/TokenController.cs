@@ -96,13 +96,15 @@ namespace HQ.Platform.Identity.Mvc.Controllers
 			return Unauthorized();
 		}
 
+		// FIXME: defaults for headers should come from a dynamic source
+
 		[AllowAnonymous]
 		[DynamicHttpPost]
 		public async Task<IActionResult> IssueToken(
 			[FromBody] BearerTokenRequest model,
-			[FromHeader(Name = Constants.MultiTenancy.ApplicationHeader)]
+			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.ApplicationHeader)]
 			string application,
-			[FromHeader(Name = Constants.MultiTenancy.TenantHeader)]
+			[FromHeader(Name = ActiveTenant.Constants.MultiTenancy.TenantHeader)]
 			string tenant,
 			[FromHeader(Name = Constants.Versioning.VersionHeader)]
 			string version

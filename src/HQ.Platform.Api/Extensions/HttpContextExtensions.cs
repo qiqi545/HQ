@@ -15,16 +15,17 @@
 
 #endregion
 
-using HQ.Common;
+using ActiveTenant;
 using HQ.Data.Contracts.Versioning;
 using HQ.Platform.Api.Models;
 using Microsoft.AspNetCore.Http;
+using Constants = HQ.Common.Constants;
 
 namespace HQ.Platform.Api.Extensions
 {
 	public static class HttpContextExtensions
 	{
-		public static void SetTenantContext<TTenant>(this HttpContext context, TenantContext<TTenant> tenantContext)
+		public static void SetTenantContext<TTenant>(this HttpContext context, ITenantContext<TTenant> tenantContext)
 			where TTenant : class
 		{
 			context.Items[Constants.ContextKeys.Tenant] = tenantContext;

@@ -15,6 +15,7 @@
 
 #endregion
 
+using ActiveCaching;
 using HQ.Extensions.Caching;
 
 namespace HQ.Extensions.SplitTests

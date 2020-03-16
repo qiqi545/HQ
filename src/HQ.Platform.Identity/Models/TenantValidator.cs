@@ -19,27 +19,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveTenant;
 using HQ.Platform.Identity.Extensions;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models
 {
-	public class TenantValidator<TTenant, TUser, TKey> : ITenantValidator<TTenant, TUser, TKey>
+	public class TenantValidator<TTenant, TUser, TKey> : ITenantValidator<TTenant, TKey>
 		where TTenant : IdentityTenant<TKey>
 		where TUser : IdentityUserExtended<TKey>
 		where TKey : IEquatable<TKey>
 	{
+		private readonly TenantManager<TTenant, TUser, TKey> _manager;
+
 		public TenantValidator(IdentityErrorDescriber errors = null) =>
 			Describer = errors ?? new IdentityErrorDescriber();
 
 		public IdentityErrorDescriber Describer { get; }
 
-		public virtual async Task<IdentityResult> ValidateAsync(TenantManager<TTenant, TUser, TKey> manager,
-			TTenant tenant)
+		public TenantValidator(TenantManager<TTenant, TUser, TKey> manager)
 		{
-			if (manager == null)
+			_manager = manager;
+		}
+
+		public virtual async Task<IdentityResult> ValidateAsync(TTenant tenant)
+		{
+			if (_manager == null)
 			{
-				throw new ArgumentNullException(nameof(manager));
+				throw new ArgumentNullException(nameof(_manager));
 			}
 
 			if (tenant == null)
@@ -48,11 +55,11 @@ namespace HQ.Platform.Identity.Models
 			}
 
 			var errors = new List<IdentityError>();
-			await ValidateTenantName(manager, tenant, errors);
+			await ValidateTenantNameAsync(_manager, tenant, errors);
 			return errors.Count > 0 ? IdentityResult.Failed(errors.ToArray()) : IdentityResult.Success;
 		}
 
-		private async Task ValidateTenantName(TenantManager<TTenant, TUser, TKey> manager, TTenant tenant,
+		private async Task ValidateTenantNameAsync(TenantManager<TTenant, TUser, TKey> manager, TTenant tenant,
 			ICollection<IdentityError> errors)
 		{
 			var tenantName = await manager.GetTenantNameAsync(tenant);

@@ -18,6 +18,7 @@
 using System;
 using System.Net;
 using System.Text;
+using ActiveCaching;
 using HQ.Data.Contracts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -26,7 +27,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
-namespace HQ.Extensions.Caching.AspNetCore.Mvc
+namespace HQ.Extensions.Caching
 {
 	public class HttpCacheFilterAttribute : ActionFilterAttribute
 	{

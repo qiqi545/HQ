@@ -18,12 +18,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Common;
+using ActiveCaching;
+using ActiveTenant;
+using ActiveTenant.Configuration;
 using HQ.Extensions.Caching;
-using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Constants = ActiveTenant.Constants;
 
 namespace HQ.Platform.Api.Models
 {
@@ -43,7 +45,7 @@ namespace HQ.Platform.Api.Models
 			_logger = logger;
 		}
 
-		public async Task<TenantContext<TTenant>> ResolveAsync(HttpContext http)
+		public async Task<ITenantContext<TTenant>> ResolveAsync(HttpContext http)
 		{
 			if (string.IsNullOrWhiteSpace(_options.Value.TenantHeader) ||
 			    !http.Request.Headers.TryGetValue(_options.Value.TenantHeader, out var tenantKey))
@@ -62,7 +64,7 @@ namespace HQ.Platform.Api.Models
 				return tenantContext;
 			}
 
-			tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey);
+			tenantContext = await _tenantContextStore.FindByKeyAsync(tenantKey) as TenantContext<TTenant>;
 			if (tenantContext == null)
 			{
 				return null;

@@ -21,8 +21,8 @@ namespace HQ.Platform.Security.Configuration
 {
 	public class ClaimOptions
 	{
-		public string TenantIdClaim { get; set; } = Constants.Claims.TenantId;
-		public string TenantNameClaim { get; set; } = Constants.Claims.TenantName;
+		public string TenantIdClaim { get; set; } = ActiveTenant.Constants.Claims.TenantId;
+		public string TenantNameClaim { get; set; } = ActiveTenant.Constants.Claims.TenantName;
 		public string ApplicationIdClaim { get; set; } = Constants.Claims.ApplicationId;
 		public string ApplicationNameClaim { get; set; } = Constants.Claims.ApplicationName;
 		public string UserIdClaim { get; set; } = Constants.Claims.UserId;
