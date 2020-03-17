@@ -33,7 +33,6 @@ using ActiveOptions;
 using ActiveScheduler;
 using ActiveScheduler.Configuration;
 using ActiveScheduler.Models;
-using HQ.Extensions.DependencyInjection;
 using Metrics;
 
 namespace HQ.Integration.Sqlite.Scheduling
@@ -57,8 +56,7 @@ namespace HQ.Integration.Sqlite.Scheduling
 			builder.Services.AddLocalTimestamps();
 			builder.Services.AddSafeLogging();
 
-			var extensions = new[] {new HttpAccessorExtension()};
-			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString,scope, extensions);
+			builder.Services.AddDatabaseConnection<BackgroundTaskBuilder, SqliteConnectionFactory>(connectionString, scope);
 			builder.Services.Replace(ServiceDescriptor.Singleton<IBackgroundTaskStore, SqliteBackgroundTaskStore>());
 
 			var dialect = new SqliteDialect();

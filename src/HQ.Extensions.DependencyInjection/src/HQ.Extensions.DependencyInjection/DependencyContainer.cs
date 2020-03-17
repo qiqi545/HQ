@@ -21,7 +21,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using TypeKitchen.Creation;
 
@@ -112,16 +111,14 @@ namespace HQ.Extensions.DependencyInjection
 			return this;
 		}
 
-		public IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder,
-			Lifetime lifetime = Lifetime.AlwaysNew) where T : class
+		public IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
 		{
 			var registration = WrapLifecycle(builder, lifetime);
 			_namedRegistrations[new NameAndType(name, typeof(T))] = () => registration(this);
 			return this;
 		}
 
-		public IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder,
-			Lifetime lifetime = Lifetime.AlwaysNew)
+		public IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
 			where T : class
 		{
 			var type = typeof(T);
@@ -164,24 +161,6 @@ namespace HQ.Extensions.DependencyInjection
 			}
 
 			return this;
-		}
-
-		public bool TryRegister<T>(T instance)
-		{
-			var type = typeof(T);
-			if (_registrations.ContainsKey(type))
-				return false;
-			_registrations[type] = () => instance;
-			return true;
-		}
-
-		public bool TryRegister(object instance)
-		{
-			var type = instance.GetType();
-			if (_registrations.ContainsKey(type))
-				return false;
-			_registrations[type] = () => instance;
-			return true;
 		}
 
 		private void RegisterManyUnnamed(Type type, Func<object> previous)
@@ -392,84 +371,32 @@ namespace HQ.Extensions.DependencyInjection
 		private Func<IDependencyResolver, T> WrapLifecycle<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime)
 			where T : class
 		{
-			Func<IDependencyResolver, T> registration;
-			switch (lifetime)
+			var registration = lifetime switch
 			{
-				case Lifetime.AlwaysNew:
-					registration = builder;
-					break;
-				case Lifetime.Permanent:
-					registration = ProcessMemoize(builder);
-					break;
-				case Lifetime.Thread:
-					registration = ThreadMemoize(builder);
-					break;
-				case Lifetime.Request:
-					foreach (var extension in _extensions)
-						if (extension.CanResolve(lifetime))
-							return extension.Memoize(this, builder);
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
-						"No extensions can serve this lifetime.");
-				default:
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
-			}
+				Lifetime.AlwaysNew => builder,
+				Lifetime.Permanent => MemoFunctions.ProcessMemoize(this, builder),
+				Lifetime.Thread => MemoFunctions.ThreadMemoize(this, builder),
+				Lifetime.Request => MemoFunctions.HttpContextMemoize(this, builder),
+				_ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
+					"No extensions can serve this lifetime.")
+			};
 
 			return registration;
 		}
 
 		private Func<T> WrapLifecycle<T>(Func<T> builder, Lifetime lifetime) where T : class
 		{
-			Func<T> registration;
-			switch (lifetime)
+			var registration = lifetime switch
 			{
-				case Lifetime.AlwaysNew:
-					registration = builder;
-					break;
-				case Lifetime.Permanent:
-					registration = ProcessMemoize(builder);
-					break;
-				case Lifetime.Thread:
-					registration = ThreadMemoize(builder);
-					break;
-				case Lifetime.Request:
-					foreach (var extension in _extensions)
-						if (extension.CanResolve(lifetime))
-							return extension.Memoize(this, builder);
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
-						"No extensions can serve this lifetime.");
-				default:
-					throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
-			}
+				Lifetime.AlwaysNew => builder,
+				Lifetime.Permanent => MemoFunctions.ProcessMemoize(builder),
+				Lifetime.Thread => MemoFunctions.ThreadMemoize(builder),
+				Lifetime.Request => MemoFunctions.HttpContextMemoize(this, builder),
+				_ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
+					"No extensions can serve this lifetime.")
+			};
 
 			return registration;
-		}
-
-		private static Func<T> ProcessMemoize<T>(Func<T> f)
-		{
-			var cache = new ConcurrentDictionary<Type, T>();
-
-			return () => cache.GetOrAdd(typeof(T), v => f());
-		}
-
-		private static Func<T> ThreadMemoize<T>(Func<T> f)
-		{
-			var cache = new ThreadLocal<T>(f);
-
-			return () => cache.Value;
-		}
-
-		private Func<IDependencyResolver, T> ProcessMemoize<T>(Func<IDependencyResolver, T> f)
-		{
-			var cache = new ConcurrentDictionary<Type, T>();
-
-			return r => cache.GetOrAdd(typeof(T), v => f(this));
-		}
-
-		private Func<IDependencyResolver, T> ThreadMemoize<T>(Func<IDependencyResolver, T> f)
-		{
-			var cache = new ThreadLocal<T>(() => f(this));
-
-			return r => cache.Value;
 		}
 
 		#endregion

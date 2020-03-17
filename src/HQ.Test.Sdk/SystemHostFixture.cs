@@ -178,8 +178,7 @@ namespace HQ.Test.Sdk
 
                     using var container = new DependencyContainer(serviceProvider);
 
-                    container.AddAspNetCore();
-					container.Register(serviceProvider);
+                    container.Register(serviceProvider);
                     container.Register(services);
                     container.Register(config);
 
@@ -215,7 +214,6 @@ namespace HQ.Test.Sdk
 
                     using var container = new DependencyContainer(serviceProvider);
 
-                    container.AddAspNetCore();
                     container.Register(serviceProvider);
                     container.Register(services);
                     container.Register(config);

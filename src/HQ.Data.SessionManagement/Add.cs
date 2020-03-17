@@ -17,9 +17,7 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using HQ.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,16 +27,15 @@ namespace HQ.Data.SessionManagement
 	{
 		private static readonly ConcurrentDictionary<string, IContainer> Containers = new ConcurrentDictionary<string, IContainer>();
 		
-		public static ContainerBuilder AddDatabaseConnection<TScope, TConnectionFactory>(
+		public static IServiceCollection AddDatabaseConnection<TScope, TConnectionFactory>(
 			this IServiceCollection services, string connectionString, 
 			ConnectionScope scope = ConnectionScope.AlwaysNew,
-			IEnumerable<IResolverExtension> extensions = null,
 			Action<IDbConnection, IServiceProvider> onConnection = null,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null)
 			where TConnectionFactory : class, IConnectionFactory, new()
 		{
 			var slot = $"{typeof(TScope).FullName}";
-			var builder = AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, extensions, onConnection, onCommand);
+			AddDatabaseConnection<TConnectionFactory>(services, connectionString, scope, slot, onConnection, onCommand);
 			
 			if(!TryGetContainer(slot, out var container))
 				throw new ArgumentException($"Could not initialize container with slot {slot}", slot);
@@ -71,10 +68,10 @@ namespace HQ.Data.SessionManagement
 					throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
 			}
 
-			return builder;
+			return services;
 		}
 
-		private static IContainer AddOrGetContainer(this IServiceCollection services, string slot, IEnumerable<IResolverExtension> extensions)
+		private static IContainer AddOrGetContainer(this IServiceCollection services, string slot)
 		{
 			if (Containers.TryGetValue(slot, out var container))
 				return container;
@@ -82,9 +79,6 @@ namespace HQ.Data.SessionManagement
 			var serviceProvider = services.BuildServiceProvider();
 			container = new DependencyContainer(serviceProvider);
 			container.Register(r => serviceProvider);
-			foreach (var extension in extensions ?? Enumerable.Empty<IResolverExtension>())
-				container.AddExtension(extension);
-
 			Containers.TryAdd(slot, container);
 
 			return container;
@@ -95,11 +89,10 @@ namespace HQ.Data.SessionManagement
 			return Containers.TryGetValue(slot, out container);
 		}
 
-		private static ContainerBuilder AddDatabaseConnection<TConnectionFactory>(this IServiceCollection services,
+		private static IServiceCollection AddDatabaseConnection<TConnectionFactory>(this IServiceCollection services,
 			string connectionString,
 			ConnectionScope scope,
 			string slot,
-			IEnumerable<IResolverExtension> extensions = null,
 			Action<IDbConnection, IServiceProvider> onConnection = null,
 			Action<IDbCommand, Type, IServiceProvider> onCommand = null)
 			where TConnectionFactory : class, IConnectionFactory, new()
@@ -107,7 +100,7 @@ namespace HQ.Data.SessionManagement
 			var factory = new TConnectionFactory {ConnectionString = connectionString};
 			services.AddSingleton(factory);
 
-			var container = services.AddOrGetContainer(slot, extensions);
+			var container = services.AddOrGetContainer(slot);
 			container.Register(slot, r => factory, Lifetime.Permanent);
 
 			switch (scope)
@@ -151,7 +144,7 @@ namespace HQ.Data.SessionManagement
 					throw new ArgumentOutOfRangeException(nameof(scope), scope, null);
 			}
 
-			return new ContainerBuilder(services, container);
+			return services;
 		}
 	}
 }

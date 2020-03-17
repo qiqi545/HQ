@@ -16,18 +16,43 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Extensions.DependencyInjection
 {
-	public class HttpAccessorExtension : IResolverExtension
+	public static class MemoFunctions
 	{
-		public bool CanResolve(Lifetime lifetime)
+		public static Func<T> ProcessMemoize<T>(Func<T> f)
 		{
-			return lifetime == Lifetime.Request;
+			var cache = new ConcurrentDictionary<Type, T>();
+
+			return () => cache.GetOrAdd(typeof(T), v => f());
 		}
 
-		public Func<T> Memoize<T>(IDependencyResolver host, Func<T> f)
+		public static Func<IDependencyResolver, T> ProcessMemoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f)
+		{
+			var cache = new ConcurrentDictionary<Type, T>();
+
+			return r => cache.GetOrAdd(typeof(T), v => f(host));
+		}
+
+		public static Func<T> ThreadMemoize<T>(Func<T> f)
+		{
+			var cache = new ThreadLocal<T>(f);
+
+			return () => cache.Value;
+		}
+
+		public static Func<IDependencyResolver, T> ThreadMemoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f)
+		{
+			var cache = new ThreadLocal<T>(() => f(host));
+
+			return r => cache.Value;
+		}
+
+		public static Func<T> HttpContextMemoize<T>(IDependencyResolver host, Func<T> f)
 		{
 			return () =>
 			{
@@ -55,7 +80,7 @@ namespace HQ.Extensions.DependencyInjection
 			};
 		}
 
-		public Func<IDependencyResolver, T> Memoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f)
+		public static Func<IDependencyResolver, T> HttpContextMemoize<T>(IDependencyResolver host, Func<IDependencyResolver, T> f)
 		{
 			return r =>
 			{

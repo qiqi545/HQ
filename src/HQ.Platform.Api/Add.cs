@@ -27,18 +27,15 @@ using HQ.Common.Serialization;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Schema.Configuration;
-using HQ.Data.Contracts.Versioning;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
 using HQ.Platform.Api.Runtime;
 using HQ.Platform.Api.Schemas;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -49,10 +46,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ActiveOptions;
-using ActiveVersion;
-using ActiveVersion.Configuration;
-using ActiveVersion.Internal;
-using HQ.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api
 {
@@ -209,7 +202,7 @@ namespace HQ.Platform.Api
 			if (scope == ConnectionScope.ByRequest)
 				builder.Services.AddHttpContextAccessor();
 
-			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, new[] { new HttpAccessorExtension() }, onConnection,onCommand);
+			builder.Services.AddDatabaseConnection<RuntimeBuilder, TDatabase>(connectionString, scope, onConnection,onCommand);
 			builder.Services.AddScoped<IObjectGetRepository<long>, SqlObjectGetRepository>();
 
 			return builder;

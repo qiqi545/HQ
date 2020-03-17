@@ -29,6 +29,5 @@ namespace HQ.Extensions.DependencyInjection
 
 		IDependencyRegistrar Register<T>(T instance);
 		IDependencyRegistrar Register(object instance);
-		bool TryRegister<T>(T instance);
 	}
 }
