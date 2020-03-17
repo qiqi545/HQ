@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveCaching" Version="1.0.1" />
+    <PackageReference Include="ActiveCaching" Version="1.0.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveScheduler\src\ActiveScheduler.SqlServer\ActiveScheduler.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\HQ.Data.Contracts\HQ.Data.Contracts.csproj" />

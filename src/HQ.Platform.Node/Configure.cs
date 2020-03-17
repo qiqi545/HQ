@@ -25,6 +25,8 @@ using HQ.Integration.Azure;
 using HQ.Integration.DocumentDb.Options;
 using HQ.Integration.Sqlite.Options;
 using HQ.Integration.SqlServer.Options;
+using HQ.Platform.Node.Backends;
+using HQ.Platform.Node.Clouds;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;

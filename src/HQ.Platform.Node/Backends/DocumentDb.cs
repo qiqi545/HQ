@@ -15,9 +15,9 @@
 
 #endregion
 
-namespace HQ.Platform.Node
+namespace HQ.Platform.Node.Backends
 {
-	public interface IBackend
+	public sealed class DocumentDb : IBackend
 	{
 	}
 }

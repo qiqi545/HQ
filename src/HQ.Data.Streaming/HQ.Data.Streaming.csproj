@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveLogging" Version="1.0.0" />
+    <PackageReference Include="ActiveLogging" Version="1.0.2" />
     <PackageReference Include="Metrics" Version="2.0.2" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>

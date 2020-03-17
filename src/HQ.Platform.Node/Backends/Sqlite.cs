@@ -15,9 +15,9 @@
 
 #endregion
 
-namespace HQ.Platform.Node
+namespace HQ.Platform.Node.Backends
 {
-	public sealed class Azure : ICloud
+	public sealed class Sqlite : IBackend
 	{
 	}
 }

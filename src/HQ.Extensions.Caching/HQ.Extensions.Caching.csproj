@@ -11,7 +11,7 @@
   
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ActiveCaching" Version="1.0.1" />
+    <PackageReference Include="ActiveCaching" Version="1.0.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.2" />
     <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />

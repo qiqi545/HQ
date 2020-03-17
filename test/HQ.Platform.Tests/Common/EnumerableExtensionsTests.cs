@@ -15,6 +15,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using Dapper;
 using HQ.Common;
 using HQ.Test.Sdk;
 using Xunit;
@@ -27,7 +28,7 @@ namespace HQ.Platform.Tests.Common
         public void Enumerable_is_already_a_list()
         {
             IEnumerable<string> enumerable = new List<string>();
-            var list = enumerable.MaybeList();
+            var list = enumerable.AsList();
             Assert.Equal(enumerable, list);
             Assert.StrictEqual(enumerable, list);
         }
@@ -38,7 +39,7 @@ namespace HQ.Platform.Tests.Common
             var enumerable = Enumerable.Repeat(1, 10);
 
             // ReSharper disable once PossibleMultipleEnumeration
-            var list = enumerable.MaybeList();
+            var list = enumerable.AsList();
 
             // ReSharper disable once PossibleMultipleEnumeration
             Assert.Equal(enumerable, list);

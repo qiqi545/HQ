@@ -23,6 +23,7 @@ using ActiveOptions;
 using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
+using ActiveScheduler.SqlServer;
 using ActiveTenant;
 using ActiveVersion;
 using HQ.Common;
@@ -57,16 +58,14 @@ using HQ.Platform.Api.Security.AspNetCore;
 using HQ.Platform.Identity;
 using HQ.Platform.Identity.Models;
 using HQ.Platform.Identity.Mvc;
+using HQ.Platform.Node.Backends;
+using HQ.Platform.Node.Clouds;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace HQ.Platform.Node
 {
-	#region Sentinels
-
-	#endregion
-
 	public static class Add
 	{
 		public static IServiceCollection AddHq(this IServiceCollection services, IWebHostEnvironment env,
@@ -156,7 +155,7 @@ namespace HQ.Platform.Node
 					break;
 				case nameof(SqlServer):
 					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"),
-						ConnectionScope.ByRequest, dbConfig);
+						(ActiveScheduler.SqlServer.Internal.SessionManagement.ConnectionScope) ConnectionScope.ByRequest);
 					identityBuilder
 						.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,

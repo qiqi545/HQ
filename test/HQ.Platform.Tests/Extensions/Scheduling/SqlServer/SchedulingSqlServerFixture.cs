@@ -16,10 +16,10 @@
 #endregion
 
 using ActiveScheduler;
-using HQ.Data.SessionManagement;
-using HQ.Integration.SqlServer.Scheduling;
+using ActiveScheduler.SqlServer;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
+using ConnectionScope = ActiveScheduler.SqlServer.Internal.SessionManagement.ConnectionScope;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 {
@@ -28,7 +28,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
         public override void ConfigureServices(IServiceCollection services)
         {
             services.AddBackgroundTasks(o => { })
-                .AddSqlServerBackgroundTasksStore(ConnectionString, ConnectionScope.ByThread, o => { });
+                .AddSqlServerBackgroundTasksStore(ConnectionString, (ConnectionScope) HQ.Data.SessionManagement.ConnectionScope.ByThread);
         }
     }
 }

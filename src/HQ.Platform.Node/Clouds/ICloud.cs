@@ -15,26 +15,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-
-namespace HQ.Common
+namespace HQ.Platform.Node.Clouds
 {
-	public struct PredicateEnumerable<T>
+	public interface ICloud
 	{
-		private readonly Predicate<T> _predicate;
-
-		public PredicateEnumerable(List<T> inner, Predicate<T> predicate)
-		{
-			AsList = inner;
-			_predicate = predicate;
-		}
-
-		public PredicateEnumerator<T> GetEnumerator()
-		{
-			return new PredicateEnumerator<T>(AsList, _predicate);
-		}
-
-		public List<T> AsList { get; }
 	}
 }

@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using ActiveScheduler;
 using ActiveScheduler.Configuration;
 using ActiveScheduler.Models;
-using HQ.Common;
+using Dapper;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,7 +54,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             exists.Tags.Add("c");
             await Store.SaveAsync(exists);
 
-            var all = (await Store.GetAllAsync()).MaybeList();
+            var all = (await Store.GetAllAsync()).AsList();
 			Assert.Equal(1, all.Count);
             Assert.Equal(3, all.Single().Tags.Count);
         }
@@ -89,7 +89,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             second.Tags.Add("two");
             await Store.SaveAsync(second);
 
-            var tasks = (await Store.GetByAllTagsAsync("one")).MaybeList();
+            var tasks = (await Store.GetByAllTagsAsync("one")).AsList();
             Assert.True(tasks.Count == 1);
             Assert.True(tasks.Single().Tags.Count == 1);
 
@@ -109,11 +109,11 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
             // GetByAllTagsAsync (miss):
-            var all = (await Store.GetByAllTagsAsync("a", "b", "c", "d")).MaybeList();
+            var all = (await Store.GetByAllTagsAsync("a", "b", "c", "d")).AsList();
             Assert.Equal(0, all.Count, "Result returned that doesn't contain all tags");
 
             // GetByAnyTagsAsync (hit):
-            all = (await Store.GetByAllTagsAsync("a", "b", "c")).MaybeList();
+            all = (await Store.GetByAllTagsAsync("a", "b", "c")).AsList();
             Assert.Equal(1, all.Count);
             Assert.Equal(3, all.Single().Tags.Count);
         }
@@ -131,11 +131,11 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.NotNull(created, $"Created task with ID '{create.Id}' is not visible");
 
             // GetByAllTagsAsync (miss):
-            var all = (await Store.GetByAnyTagsAsync("e")).MaybeList();
+            var all = (await Store.GetByAnyTagsAsync("e")).AsList();
             Assert.Equal(0, all.Count);
 
             // GetByAnyTagsAsync (hit):
-            all = (await Store.GetByAnyTagsAsync("e", "a")).MaybeList();
+            all = (await Store.GetByAnyTagsAsync("e", "a")).AsList();
             Assert.Equal(1, all.Count);
             Assert.Equal(3, all.Single().Tags.Count);
         }
@@ -161,10 +161,10 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 
             await Store.SaveAsync(created);
 
-            var locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+            var locked = (await Store.LockNextAvailableAsync(int.MaxValue)).AsList();
             Assert.False(!locked.Any(), "did not retrieve at least one unlocked task");
 
-            locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+            locked = (await Store.LockNextAvailableAsync(int.MaxValue)).AsList();
             Assert.True(!locked.Any(), "there was at least one unlocked task after locking all of them");
         }
 
@@ -181,10 +181,10 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
 			second.CorrelationId = correlationId;
 			await Store.SaveAsync(second);
 			
-			var locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+			var locked = (await Store.LockNextAvailableAsync(int.MaxValue)).AsList();
 	        Assert.False(!locked.Any(), "did not retrieve at least one unlocked task");
 
-	        locked = (await Store.LockNextAvailableAsync(int.MaxValue)).MaybeList();
+	        locked = (await Store.LockNextAvailableAsync(int.MaxValue)).AsList();
 	        Assert.True(!locked.Any(), "there was at least one unlocked task after locking all of them");
         }
 
@@ -203,7 +203,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             create.Tags.Remove("a");
             await Store.SaveAsync(create);
 
-            var all = (await Store.GetAllAsync()).MaybeList();
+            var all = (await Store.GetAllAsync()).AsList();
 			Assert.Equal(1, all.Count);
             Assert.Equal(2, all.First().Tags.Count);
 
@@ -228,7 +228,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             created.Tags.Add("c");
             await Store.SaveAsync(created);
 
-            var all = (await Store.GetAllAsync()).MaybeList();
+            var all = (await Store.GetAllAsync()).AsList();
             Assert.Equal(1, all.Count);
             Assert.Equal(3, all.Single().Tags.Count);
 
@@ -236,7 +236,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             Assert.NotNull(byId);
             Assert.Equal(3, byId.Tags.Count);
 
-            var locked = (await Store.LockNextAvailableAsync(1)).MaybeList();
+            var locked = (await Store.LockNextAvailableAsync(1)).AsList();
             Assert.Equal(1, locked.Count);
             Assert.Equal(3, locked.Single().Tags.Count);
         }

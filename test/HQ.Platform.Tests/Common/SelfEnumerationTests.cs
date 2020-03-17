@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HQ.Common;
 using HQ.Test.Sdk;
+using TypeKitchen;
 
 namespace HQ.Platform.Tests.Common
 {

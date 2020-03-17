@@ -35,6 +35,7 @@ using HQ.Data.SessionManagement;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using IServerTimestampService = HQ.Common.IServerTimestampService;
+using static TypeKitchen.EnumerableExtensions;
 
 namespace HQ.Integration.SqlServer.Scheduling
 {

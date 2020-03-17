@@ -86,16 +86,16 @@ namespace HQ.Platform.Node
 			try
 			{
 				Console.WriteLine(args == null || args.Length == 0
-					? "HQ started."
-					: $"HQ started with args: {string.Join(" ", args)}");
+					? @"HQ started."
+					: @$"HQ started with args: {string.Join(" ", args)}");
 
 				action?.Invoke();
 
-				Console.WriteLine("HQ stopped normally.");
+				Console.WriteLine(@"HQ stopped normally.");
 			}
 			catch (Exception exception)
 			{
-				Console.Error.WriteLine("HQ stopped unexpectedly. Error: {0}", exception);
+				Console.Error.WriteLine(@"HQ stopped unexpectedly. Error: {0}", exception);
 
 				if (Debugger.IsAttached)
 				{
@@ -103,7 +103,7 @@ namespace HQ.Platform.Node
 				}
 				else if (Environment.UserInteractive)
 				{
-					Console.WriteLine("Press any key to quit.");
+					Console.WriteLine(@"Press any key to quit.");
 					Console.ReadKey();
 				}
 			}

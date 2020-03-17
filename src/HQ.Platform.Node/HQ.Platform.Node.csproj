@@ -22,13 +22,14 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ActiveOptions.Api" Version="1.0.2" />
+    <PackageReference Include="ActiveOptions.Api" Version="1.0.4" />
+    <PackageReference Include="ActiveRoutes.Meta" Version="1.0.9" />
+    <PackageReference Include="ActiveVersion" Version="1.0.3" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
-    <PackageReference Include="ActiveRoutes.Meta" Version="1.0.8" />
-    <PackageReference Include="ActiveVersion" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveScheduler\src\ActiveScheduler.SqlServer\ActiveScheduler.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />

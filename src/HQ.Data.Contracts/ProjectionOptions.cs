@@ -21,6 +21,7 @@ using System.Net;
 using ActiveErrors;
 using HQ.Common;
 using HQ.Data.Contracts.Configuration;
+using TypeKitchen;
 
 namespace HQ.Data.Contracts
 {
