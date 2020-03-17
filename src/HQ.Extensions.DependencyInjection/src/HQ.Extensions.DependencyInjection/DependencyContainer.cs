@@ -21,14 +21,12 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
 using TypeKitchen.Creation;
 
 namespace HQ.Extensions.DependencyInjection
 {
 	public sealed class DependencyContainer : IContainer
 	{
-		private readonly List<IResolverExtension> _extensions;
 		private readonly IEnumerable<Assembly> _fallbackAssemblies;
 		private readonly IServiceProvider _fallbackProvider;
 
@@ -36,8 +34,6 @@ namespace HQ.Extensions.DependencyInjection
 			IServiceProvider fallbackProvider = null,
 			IEnumerable<Assembly> fallbackAssemblies = null)
 		{
-			_extensions = new List<IResolverExtension>();
-
 			_fallbackProvider = fallbackProvider;
 			_fallbackAssemblies = fallbackAssemblies ?? Enumerable.Empty<Assembly>();
 		}
@@ -55,29 +51,23 @@ namespace HQ.Extensions.DependencyInjection
 		private readonly ConcurrentDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
-
-
-		#region Register (Memoize)
-
-		
-
-		public IDependencyRegistrar Register(Type type, Func<object> builder)
+		public IDependencyRegistrar Register(Type type, Func<object> builder, Func<Func<object>, Func<object>> memoFunc = null)
 		{
+			var next = memoFunc == null ? builder : () => memoFunc(builder);
+
 			if (_registrations.ContainsKey(type))
 			{
 				var previous = _registrations[type];
-				_registrations[type] = builder;
+				_registrations[type] = next;
 				RegisterManyUnnamed(type, previous);
 			}
 			else
 			{
-				_registrations[type] = builder;
+				_registrations[type] = next;
 			}
 
 			return this;
 		}
-
-		#endregion
 
 		#region Register
 		
@@ -397,7 +387,7 @@ namespace HQ.Extensions.DependencyInjection
 
 			return registration;
 		}
-
+		
 		private Func<T> WrapLifecycle<T>(Func<T> builder, Lifetime lifetime) where T : class
 		{
 			var registration = lifetime switch
@@ -411,75 +401,6 @@ namespace HQ.Extensions.DependencyInjection
 			};
 
 			return registration;
-		}
-
-		#endregion
-
-		#region Scoping Features
-
-		public IServiceProvider Populate(IServiceCollection services)
-		{
-			Register<IServiceProvider>(() => new NoServiceProvider(this, services), Lifetime.Permanent);
-			Register<IServiceScopeFactory>(() => new NoServiceScopeFactory(this), Lifetime.Permanent);
-			Register<IEnumerable<ServiceDescriptor>>(services);
-			Register(this);
-			return Resolve<IServiceProvider>();
-		}
-
-		internal sealed class NoServiceScopeFactory : IServiceScopeFactory
-		{
-			private readonly IContainer _container;
-
-			public NoServiceScopeFactory(IContainer container) => _container = container;
-
-			public IServiceScope CreateScope()
-			{
-				return new NoServiceScope(_container);
-			}
-
-			private class NoServiceScope : IServiceScope
-			{
-				private readonly IContainer _container;
-
-				public NoServiceScope(IContainer container) => _container = container;
-
-				public IServiceProvider ServiceProvider => _container.Resolve<IServiceProvider>();
-
-				public void Dispose()
-				{
-					_container.Dispose();
-				}
-			}
-		}
-
-		internal sealed class NoServiceProvider : IServiceProvider, ISupportRequiredService
-		{
-			private readonly IContainer _container;
-			private readonly IServiceProvider _fallback;
-
-			public NoServiceProvider(IContainer container, IServiceCollection services)
-			{
-				_container = container;
-				_fallback = services.BuildServiceProvider();
-				RegisterServiceDescriptors(services);
-			}
-
-			public object GetService(Type serviceType)
-			{
-				return _container.Resolve(serviceType) ?? _fallback.GetService(serviceType);
-			}
-
-			public object GetRequiredService(Type serviceType)
-			{
-				return _container.Resolve(serviceType) ?? _fallback.GetRequiredService(serviceType);
-			}
-
-			private void RegisterServiceDescriptors(IServiceCollection services)
-			{
-				// we're going to shell out to the native container for anything passed in here
-				foreach (var descriptor in services)
-					_container.Register(descriptor.ServiceType, () => _fallback.GetService(descriptor.ServiceType));
-			}
 		}
 
 		#endregion
