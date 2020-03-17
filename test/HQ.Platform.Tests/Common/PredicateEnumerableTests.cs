@@ -15,7 +15,6 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Common;
 using HQ.Test.Sdk;
 using TypeKitchen;
 
