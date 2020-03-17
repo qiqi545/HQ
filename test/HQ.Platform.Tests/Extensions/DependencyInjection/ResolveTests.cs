@@ -50,7 +50,7 @@ namespace HQ.Platform.Tests.Extensions.DependencyInjection
         [Fact]
         public void Can_resolve_arbitrary_types()
         {
-            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
+            _fixture.C.Register<IFoo>(() => new Foo(), InstanceIsUnique.PerProcess);
 
             var first = _fixture.C.Resolve<Bar>();
             var second = _fixture.C.Resolve<Bar>();
@@ -74,7 +74,7 @@ namespace HQ.Platform.Tests.Extensions.DependencyInjection
         [Fact]
         public void Can_resolve_singleton_twice_with_same_reference()
         {
-            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
+            _fixture.C.Register<IFoo>(() => new Foo(), InstanceIsUnique.PerProcess);
 
             var first = _fixture.C.Resolve<IFoo>();
             var second = _fixture.C.Resolve<IFoo>();
@@ -85,7 +85,7 @@ namespace HQ.Platform.Tests.Extensions.DependencyInjection
         [Fact]
         public void Can_resolve_transient_twice_with_different_references()
         {
-            _fixture.C.Register<IFoo>(() => new Foo());
+            _fixture.C.Register<IFoo>(() => new Foo(), InstanceIsUnique.PerProcess);
 
             var first = _fixture.C.Resolve<IFoo>();
             var second = _fixture.C.Resolve<IFoo>();

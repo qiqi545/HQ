@@ -46,8 +46,8 @@ namespace HQ.Platform.Tests.Extensions.DependencyInjection
         [Fact]
         public void Can_register_twice_and_get_back_a_collection()
         {
-            _fixture.C.Register<IFoo>(() => new Foo(), Lifetime.Permanent);
-            _fixture.C.Register<IFoo>(() => new OtherFoo(), Lifetime.Permanent);
+            _fixture.C.Register<IFoo>(() => new Foo(), InstanceIsUnique.PerProcess);
+            _fixture.C.Register<IFoo>(() => new OtherFoo(), InstanceIsUnique.PerProcess);
 
             // strong-typed
             var strong = _fixture.C.ResolveAll<IFoo>();

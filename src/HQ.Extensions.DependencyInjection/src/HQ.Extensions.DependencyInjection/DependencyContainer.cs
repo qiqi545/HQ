@@ -46,19 +46,6 @@ namespace HQ.Extensions.DependencyInjection
 
 		public void Dispose() { }
 
-		public bool AddExtension<T>(T extension) where T : IResolverExtension
-		{
-			lock (_extensions)
-			{
-				if (_extensions.Contains(extension))
-					return false;
-				_extensions.Add(extension);
-				return true;
-			}
-		}
-
-		#region Register
-
 		private readonly ConcurrentDictionary<Type, Func<object>>
 			_registrations = new ConcurrentDictionary<Type, Func<object>>();
 
@@ -68,6 +55,32 @@ namespace HQ.Extensions.DependencyInjection
 		private readonly ConcurrentDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
+
+
+		#region Register (Memoize)
+
+		
+
+		public IDependencyRegistrar Register(Type type, Func<object> builder)
+		{
+			if (_registrations.ContainsKey(type))
+			{
+				var previous = _registrations[type];
+				_registrations[type] = builder;
+				RegisterManyUnnamed(type, previous);
+			}
+			else
+			{
+				_registrations[type] = builder;
+			}
+
+			return this;
+		}
+
+		#endregion
+
+		#region Register
+		
 		public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
 		{
 			var next = WrapLifecycle(builder, lifetime);
@@ -103,8 +116,9 @@ namespace HQ.Extensions.DependencyInjection
 			return this;
 		}
 
-		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-			where T : class
+		
+
+		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
 		{
 			var type = typeof(T);
 			_namedRegistrations[new NameAndType(name, type)] = WrapLifecycle(builder, lifetime);
@@ -374,9 +388,9 @@ namespace HQ.Extensions.DependencyInjection
 			var registration = lifetime switch
 			{
 				Lifetime.AlwaysNew => builder,
-				Lifetime.Permanent => MemoFunctions.ProcessMemoize(this, builder),
-				Lifetime.Thread => MemoFunctions.ThreadMemoize(this, builder),
-				Lifetime.Request => MemoFunctions.HttpContextMemoize(this, builder),
+				Lifetime.Permanent => InstanceIsUnique.PerProcess(this, builder),
+				Lifetime.Thread => InstanceIsUnique.PerThread(this, builder),
+				Lifetime.Request => InstanceIsUnique.PerHttpRequest(this, builder),
 				_ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
 					"No extensions can serve this lifetime.")
 			};
@@ -389,9 +403,9 @@ namespace HQ.Extensions.DependencyInjection
 			var registration = lifetime switch
 			{
 				Lifetime.AlwaysNew => builder,
-				Lifetime.Permanent => MemoFunctions.ProcessMemoize(builder),
-				Lifetime.Thread => MemoFunctions.ThreadMemoize(builder),
-				Lifetime.Request => MemoFunctions.HttpContextMemoize(this, builder),
+				Lifetime.Permanent => InstanceIsUnique.PerProcess(builder),
+				Lifetime.Thread => InstanceIsUnique.PerThread(builder),
+				Lifetime.Request => InstanceIsUnique.PerHttpRequest(this, builder),
 				_ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime,
 					"No extensions can serve this lifetime.")
 			};
