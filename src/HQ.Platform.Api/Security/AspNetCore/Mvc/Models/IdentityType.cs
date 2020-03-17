@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Security.AspNetCore.Mvc.Models
+namespace HQ.Platform.Api.Security.AspNetCore.Mvc.Models
 {
 	public enum IdentityType
 	{

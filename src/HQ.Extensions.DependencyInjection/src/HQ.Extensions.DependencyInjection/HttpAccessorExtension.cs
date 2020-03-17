@@ -18,7 +18,7 @@
 using System;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.DependencyInjection.AspNetCore
+namespace HQ.Extensions.DependencyInjection
 {
 	public class HttpAccessorExtension : IResolverExtension
 	{

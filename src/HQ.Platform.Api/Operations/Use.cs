@@ -16,15 +16,14 @@
 #endregion
 
 using System.Threading.Tasks;
-using HQ.Common;
-using HQ.Platform.Operations.Configuration;
+using HQ.Platform.Api.Operations.Configuration;
 using Metrics.Reporters.ServerTiming;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	public static class Use
 	{

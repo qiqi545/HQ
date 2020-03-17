@@ -18,10 +18,9 @@
 using System;
 using System.Collections.Generic;
 using ActiveRoutes;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Controllers;
 
-namespace HQ.Platform.Security.AspNetCore.Mvc.Configuration
+namespace HQ.Platform.Api.Security.AspNetCore.Mvc.Configuration
 {
 	public class SuperUserComponent : DynamicFeature
 	{

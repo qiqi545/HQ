@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Api.Security
 {
 	public interface IUserIdProvider<out TKey> where TKey : IEquatable<TKey>
 	{

@@ -17,7 +17,7 @@
 
 using HQ.Common;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class ClaimOptions
 	{

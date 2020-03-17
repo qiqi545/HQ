@@ -22,7 +22,6 @@ using HQ.Common;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
-using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Integration.Sqlite.SessionManagement;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Integration.Sqlite.Sql.Configuration;
@@ -34,6 +33,7 @@ using ActiveOptions;
 using ActiveScheduler;
 using ActiveScheduler.Configuration;
 using ActiveScheduler.Models;
+using HQ.Extensions.DependencyInjection;
 using Metrics;
 
 namespace HQ.Integration.Sqlite.Scheduling

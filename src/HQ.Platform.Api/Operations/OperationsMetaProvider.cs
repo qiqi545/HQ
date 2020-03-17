@@ -18,13 +18,13 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Mime;
 using HQ.Common;
+using HQ.Common.Dates;
 using HQ.Common.Models;
-using HQ.Platform.Operations.Configuration;
+using HQ.Platform.Api.Operations.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	internal class OperationsMetaProvider : IMetaProvider
 	{

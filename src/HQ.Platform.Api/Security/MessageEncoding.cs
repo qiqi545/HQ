@@ -17,7 +17,7 @@
 
 using System.Text;
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Api.Security
 {
 	internal static class MessageEncoding
 	{

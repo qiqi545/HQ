@@ -19,7 +19,7 @@ using System;
 using System.Threading.Tasks;
 using Sodium;
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Api.Security
 {
 	public class UnsafeKeygenStore : IKeygenStore
 	{

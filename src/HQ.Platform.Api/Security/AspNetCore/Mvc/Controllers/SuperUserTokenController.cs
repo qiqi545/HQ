@@ -29,19 +29,18 @@ using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Security.AspNetCore.Models;
-using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
-using HQ.Platform.Security.AspNetCore.Mvc.Models;
-using HQ.Platform.Security.Configuration;
-using HQ.Platform.Security.Internal.Extensions;
+using HQ.Platform.Api.Security.AspNetCore.Models;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Security.Configuration;
+using HQ.Platform.Api.Security.Internal.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Sodium;
 using TypeKitchen;
-using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Security.AspNetCore.Mvc.Controllers
+namespace HQ.Platform.Api.Security.AspNetCore.Mvc.Controllers
 {
 	/// <summary>
 	///     A light-weight token issuer that only works against a super user.

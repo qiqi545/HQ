@@ -19,7 +19,7 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("HQ.Platform.Tests")]
 
-namespace HQ.Extensions.Caching.Internal
+namespace HQ.Extensions.Caching
 {
 	internal class InternalsVisibleTo { }
 }

@@ -16,8 +16,9 @@
 #endregion
 
 using System;
+using HQ.Common.Models;
 
-namespace HQ.Common.Models
+namespace HQ.Common.Dates
 {
 	public interface IMetaProvider
 	{

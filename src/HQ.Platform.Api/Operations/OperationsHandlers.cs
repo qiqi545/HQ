@@ -29,8 +29,7 @@ using System.Threading.Tasks;
 using ActiveCaching;
 using ActiveRoutes;
 using HQ.Common.AspNetCore;
-using HQ.Extensions.Caching;
-using HQ.Platform.Operations.Configuration;
+using HQ.Platform.Api.Operations.Configuration;
 using Metrics;
 using Metrics.Internal;
 using Microsoft.AspNetCore.Builder;
@@ -44,7 +43,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	internal static class OperationsHandlers
 	{

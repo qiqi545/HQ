@@ -18,7 +18,7 @@
 using System;
 using ActiveRoutes;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	/// <summary>
 	///     See: https://hstspreload.org

@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using ActiveRoutes;
-using HQ.Platform.Identity.Mvc.Controllers;
+using HQ.Platform.Identity.Controllers;
 
 namespace HQ.Platform.Identity.Mvc
 {

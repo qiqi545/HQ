@@ -20,13 +20,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ActiveOptions;
 using HQ.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using ActiveOptions;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	internal static class OperationsMethods
 	{

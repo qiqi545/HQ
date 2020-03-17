@@ -17,8 +17,8 @@
 
 using System;
 using System.Threading.Tasks;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 using TypeKitchen;
 

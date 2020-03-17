@@ -27,12 +27,13 @@ using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
+using HQ.Platform.Api.Security;
+using HQ.Platform.Api.Security.AspNetCore.Models;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Security.Configuration;
+using HQ.Platform.Api.Security.Internal.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore.Models;
-using HQ.Platform.Security.AspNetCore.Mvc.Models;
-using HQ.Platform.Security.Configuration;
-using HQ.Platform.Security.Internal.Extensions;
+using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -40,9 +41,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
-using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Identity.Mvc.Controllers
+namespace HQ.Platform.Identity.Controllers
 {
 	[Route("tokens")]
 	[DynamicController(typeof(SecurityOptions), new []{nameof(SecurityOptions.Tokens)})]

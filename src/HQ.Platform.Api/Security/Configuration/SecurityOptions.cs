@@ -19,7 +19,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using Microsoft.IdentityModel.Tokens;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class SecurityOptions
 	{

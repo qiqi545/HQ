@@ -22,7 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	internal static class OperationsHealthChecks
 	{

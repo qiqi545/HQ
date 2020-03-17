@@ -19,7 +19,7 @@ using ActiveRoutes;
 using Metrics;
 using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Operations.Configuration
+namespace HQ.Platform.Api.Operations.Configuration
 {
 	public class OperationsApiOptions : IFeatureScheme, IFeaturePolicy, IFeatureNamespace
 	{

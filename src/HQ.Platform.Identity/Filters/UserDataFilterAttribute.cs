@@ -20,7 +20,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HQ.Data.Contracts;
-using HQ.Platform.Security;
+using HQ.Platform.Api.Security;
 using Microsoft.AspNetCore.Mvc.Filters;
 using TypeKitchen;
 

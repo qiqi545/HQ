@@ -23,7 +23,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HQ.Common;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -31,9 +31,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Sodium;
-using CookieOptions = HQ.Platform.Security.Configuration.CookieOptions;
+using CookieOptions = HQ.Platform.Api.Security.Configuration.CookieOptions;
 
-namespace HQ.Platform.Security.AspNetCore.Models
+namespace HQ.Platform.Api.Security.AspNetCore.Models
 {
 	public static class AuthenticationExtensions
 	{

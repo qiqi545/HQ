@@ -21,7 +21,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using HQ.Extensions.DependencyInjection;
-using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Test.Sdk.Configuration;
 using HQ.Test.Sdk.Internal;
 using Microsoft.AspNetCore.Builder;

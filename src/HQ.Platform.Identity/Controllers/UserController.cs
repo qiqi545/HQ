@@ -29,10 +29,11 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
 using HQ.Platform.Identity.Configuration;
 using HQ.Platform.Identity.Models;
+using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Identity.Mvc.Controllers
+namespace HQ.Platform.Identity.Controllers
 {
 	[Route("users")]
 	[DynamicController(typeof(IdentityApiOptions))]

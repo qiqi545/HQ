@@ -15,11 +15,11 @@
 
 #endregion
 
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Security.AspNetCore.Configuration
+namespace HQ.Platform.Api.Security.AspNetCore.Configuration
 {
 	internal class ConfigureWebServer : IConfigureOptions<KestrelServerOptions>
 	{

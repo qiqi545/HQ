@@ -22,7 +22,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	/// <summary>
 	///     Fails startup if health checks fail. This is a fat canary.

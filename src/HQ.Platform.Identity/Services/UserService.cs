@@ -26,9 +26,9 @@ using System.Threading.Tasks;
 using ActiveErrors;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Queryable;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Identity.Extensions;
 using HQ.Platform.Identity.Models;
-using HQ.Platform.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 

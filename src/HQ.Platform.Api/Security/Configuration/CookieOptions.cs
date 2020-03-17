@@ -18,7 +18,7 @@
 using ActiveRoutes;
 using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class CookieOptions : IFeatureToggle, IFeatureScheme
 	{

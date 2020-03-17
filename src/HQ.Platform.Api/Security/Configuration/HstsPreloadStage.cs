@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public enum HstsPreloadStage { One, Two, Three, ReadyForPreload }
 }

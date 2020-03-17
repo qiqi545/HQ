@@ -20,7 +20,7 @@ using HQ.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Extensions.Caching.AspNetCore.Mvc
+namespace HQ.Extensions.Caching
 {
 	public class CacheFilterAttribute : ActionFilterAttribute
 	{

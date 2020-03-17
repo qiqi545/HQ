@@ -24,7 +24,7 @@ using HQ.Common.AspNetCore;
 using HQ.Common.Serialization;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Filters;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;

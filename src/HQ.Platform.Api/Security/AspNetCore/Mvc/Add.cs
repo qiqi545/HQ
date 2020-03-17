@@ -17,13 +17,12 @@
 
 using System;
 using ActiveRoutes;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Security.AspNetCore.Mvc.Configuration;
-using HQ.Platform.Security.AspNetCore.Mvc.Controllers;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Controllers;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Security.AspNetCore.Mvc
+namespace HQ.Platform.Api.Security.AspNetCore.Mvc
 {
 	public static class Add
 	{

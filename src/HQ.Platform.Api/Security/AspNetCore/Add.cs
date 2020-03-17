@@ -18,20 +18,20 @@
 using System;
 using System.Linq;
 using ActiveLogging;
+using ActiveOptions;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Security.AspNetCore.Configuration;
-using HQ.Platform.Security.AspNetCore.Extensions;
-using HQ.Platform.Security.AspNetCore.Models;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Extensions;
+using HQ.Platform.Api.Security.AspNetCore.Models;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ActiveOptions;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Platform.Api.Security.AspNetCore
 {
 	public static class Add
 	{

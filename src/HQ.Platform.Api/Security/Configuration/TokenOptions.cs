@@ -19,7 +19,7 @@ using ActiveRoutes;
 using HQ.Common.DataAnnotations;
 using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class TokenOptions : IFeatureToggle, IFeatureScheme, IFeatureNamespace
 	{

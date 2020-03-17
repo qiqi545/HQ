@@ -16,13 +16,13 @@
 #endregion
 
 using ActiveOptions;
-using HQ.Platform.Security.AspNetCore.Requirements;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.AspNetCore.Requirements;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Security.AspNetCore.Extensions
+namespace HQ.Platform.Api.Security.AspNetCore.Extensions
 {
 	public static class AuthorizationExtensions
 	{

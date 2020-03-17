@@ -17,7 +17,7 @@
 
 using System.Threading.Tasks;
 
-namespace HQ.Platform.Security
+namespace HQ.Platform.Api.Security
 {
 	public interface IEntropyProvider<in TSubject>
 	{

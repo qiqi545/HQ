@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Platform.Security;
+using HQ.Platform.Api.Security;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Models

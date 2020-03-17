@@ -21,8 +21,6 @@ using ActiveRoutes;
 using HQ.Common;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
-using HQ.Platform.Security;
-using HQ.Platform.Security.AspNetCore.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Constants = HQ.Common.Constants;

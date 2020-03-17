@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Operations
+namespace HQ.Platform.Api.Operations
 {
 	internal static class OperationsReports
 	{

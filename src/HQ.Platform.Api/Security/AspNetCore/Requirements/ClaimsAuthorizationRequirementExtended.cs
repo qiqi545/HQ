@@ -20,10 +20,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ActiveOptions;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HQ.Platform.Security.AspNetCore.Requirements
+namespace HQ.Platform.Api.Security.AspNetCore.Requirements
 {
 	public class ClaimsAuthorizationRequirementExtended :
 		AuthorizationHandler<ClaimsAuthorizationRequirementExtended>,

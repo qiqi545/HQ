@@ -18,7 +18,7 @@
 using System;
 using Microsoft.Extensions.Internal;
 
-namespace HQ.Extensions.Caching.Internal
+namespace HQ.Extensions.Caching
 {
 	internal class ServerTimestampServiceSystemClock : ISystemClock
 	{

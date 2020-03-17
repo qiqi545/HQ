@@ -17,7 +17,7 @@
 
 using ActiveRoutes;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class CorsOptions : IFeatureToggle
 	{

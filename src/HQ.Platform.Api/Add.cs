@@ -31,7 +31,6 @@ using HQ.Data.Contracts.Versioning;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
 using HQ.Extensions.Caching;
-using HQ.Extensions.DependencyInjection.AspNetCore;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Filters;
@@ -53,6 +52,7 @@ using ActiveOptions;
 using ActiveVersion;
 using ActiveVersion.Configuration;
 using ActiveVersion.Internal;
+using HQ.Extensions.DependencyInjection;
 
 namespace HQ.Platform.Api
 {

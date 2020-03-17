@@ -17,11 +17,11 @@
 
 using ActiveOptions;
 using HQ.Common;
-using HQ.Platform.Security.Configuration;
+using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Security.AspNetCore
+namespace HQ.Platform.Api.Security.AspNetCore
 {
 	public static class Use
 	{

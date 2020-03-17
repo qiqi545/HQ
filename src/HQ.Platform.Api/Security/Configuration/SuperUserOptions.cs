@@ -21,7 +21,7 @@ using HQ.Common.DataAnnotations;
 using HQ.Data.Contracts.DataAnnotations;
 using Constants = HQ.Common.Constants;
 
-namespace HQ.Platform.Security.Configuration
+namespace HQ.Platform.Api.Security.Configuration
 {
 	public class SuperUserOptions : IFeatureNamespace, IFeatureToggle, IFeatureScheme, IFeaturePolicy
 	{

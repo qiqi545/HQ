@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.DependencyInjection.AspNetCore
+namespace HQ.Extensions.DependencyInjection
 {
 	public static class DependencyContainerExtensions
 	{

@@ -18,7 +18,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TypeKitchen;
 
-namespace HQ.Extensions.Caching.AspNetCore.Mvc
+namespace HQ.Extensions.Caching
 {
 	public class CacheKeyBuilder
 	{

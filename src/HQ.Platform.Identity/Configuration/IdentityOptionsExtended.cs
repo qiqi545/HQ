@@ -17,7 +17,7 @@
 
 using ActiveRoutes;
 using HQ.Common;
-using HQ.Platform.Security.AspNetCore.Mvc.Models;
+using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace HQ.Platform.Identity.Configuration
