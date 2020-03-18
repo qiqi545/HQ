@@ -67,60 +67,22 @@ namespace HQ.Extensions.DependencyInjection
 			return this;
 		}
 
-		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Func<Func<T>, Func<T>> memoFunc = null)
+		public IDependencyRegistrar Register(Type type, Func<object> builder, Func<Func<object>, Func<object>> memoFunc) => Register(type, memoFunc(builder));
+
+		public IDependencyRegistrar Register(Type type, string name, Func<object> builder)
 		{
-			_namedRegistrations[new NameAndType(name, typeof(T))] = () => memoFunc == null ? builder : memoFunc(builder);
+			_namedRegistrations[new NameAndType(name, type)] = () => builder;
 			return this;
 		}
 
-		
+		public IDependencyRegistrar Register<T>(string name, Func<T> builder)
+		{
+			_namedRegistrations[new NameAndType(name, typeof(T))] = () => builder;
+			return this;
+		}
 
 		#region Register
 		
-		public IDependencyRegistrar Register(Type type, Func<object> builder, Lifetime lifetime = Lifetime.AlwaysNew)
-		{
-			var next = WrapLifecycle(builder, lifetime);
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
-
-			return this;
-		}
-
-		public IDependencyRegistrar Register<T>(Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
-		{
-			var type = typeof(T);
-			Func<object> next = WrapLifecycle(builder, lifetime);
-			if (_registrations.ContainsKey(type))
-			{
-				var previous = _registrations[type];
-				_registrations[type] = next;
-				RegisterManyUnnamed(type, previous);
-			}
-			else
-			{
-				_registrations[type] = next;
-			}
-
-			return this;
-		}
-
-		
-
-		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
-		{
-			var type = typeof(T);
-			_namedRegistrations[new NameAndType(name, type)] = WrapLifecycle(builder, lifetime);
-			return this;
-		}
-
 		public IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class
 		{
 			var registration = WrapLifecycle(builder, lifetime);
@@ -190,7 +152,7 @@ namespace HQ.Extensions.DependencyInjection
 				foreach (var item in YieldCollection(collectionBuilder))
 					collection.Add(item);
 				return collection;
-			}, Lifetime.Permanent);
+			}, InstanceIsUnique.PerProcess);
 		}
 
 		#endregion
