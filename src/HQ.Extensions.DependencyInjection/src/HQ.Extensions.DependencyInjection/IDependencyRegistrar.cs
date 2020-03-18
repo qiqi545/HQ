@@ -21,16 +21,21 @@ namespace HQ.Extensions.DependencyInjection
 {
 	public interface IDependencyRegistrar : IDisposable
 	{
-		IDependencyRegistrar Register(Type type, Func<object> builder, Func<Func<object>, Func<object>> memoFunc = null);
-		
+		IDependencyRegistrar Register(Type type, Func<object> builder);
+		IDependencyRegistrar Register<T>(string name, Func<T> builder, Func<Func<T>, Func<T>> memoFunc = null);
+
+
+
+
+		IDependencyRegistrar Register(Type type, string name, Func<object> builder) => Register(type, name, builder, b => b);
+		IDependencyRegistrar Register(Type type, string name, Func<object> builder, Func<Func<object>, Func<object>> memoFunc) => Register(type, memoFunc(builder));
+		IDependencyRegistrar Register(Type type, Func<object> builder, Func<Func<object>, Func<object>> memoFunc) => Register(type, memoFunc(builder));
 		IDependencyRegistrar Register<T>(Func<T> builder) => Register(typeof(T), () => builder);
 		IDependencyRegistrar Register<T>(Func<T> builder, Func<Func<T>, Func<T>> memoFunc) => Register(typeof(T), () => memoFunc(builder));
 		IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Func<Func<IDependencyResolver, T>, Func<T>> memoFunc) => Register(typeof(T), () => memoFunc(builder));
 		
+
 		
-
-
-		IDependencyRegistrar Register<T>(string name, Func<T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 		IDependencyRegistrar Register<T>(Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 		IDependencyRegistrar Register<T>(string name, Func<IDependencyResolver, T> builder, Lifetime lifetime = Lifetime.AlwaysNew) where T : class;
 		IDependencyRegistrar Register<T>(T instance);

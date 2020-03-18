@@ -51,23 +51,29 @@ namespace HQ.Extensions.DependencyInjection
 		private readonly ConcurrentDictionary<Type, List<Func<object>>> _collectionRegistrations =
 			new ConcurrentDictionary<Type, List<Func<object>>>();
 
-		public IDependencyRegistrar Register(Type type, Func<object> builder, Func<Func<object>, Func<object>> memoFunc = null)
+		public IDependencyRegistrar Register(Type type, Func<object> builder)
 		{
-			var next = memoFunc == null ? builder : () => memoFunc(builder);
-
 			if (_registrations.ContainsKey(type))
 			{
 				var previous = _registrations[type];
-				_registrations[type] = next;
+				_registrations[type] = builder;
 				RegisterManyUnnamed(type, previous);
 			}
 			else
 			{
-				_registrations[type] = next;
+				_registrations[type] = builder;
 			}
 
 			return this;
 		}
+
+		public IDependencyRegistrar Register<T>(string name, Func<T> builder, Func<Func<T>, Func<T>> memoFunc = null)
+		{
+			_namedRegistrations[new NameAndType(name, typeof(T))] = () => memoFunc == null ? builder : memoFunc(builder);
+			return this;
+		}
+
+		
 
 		#region Register
 		
