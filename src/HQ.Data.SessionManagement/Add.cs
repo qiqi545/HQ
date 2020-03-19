@@ -141,7 +141,7 @@ namespace HQ.Data.SessionManagement
 			{
 				Lifetime.AlwaysNew => builder,
 				Lifetime.Permanent => InstanceIsUnique.PerProcess(builder),
-				Lifetime.Thread => InstanceIsUnique.PerThread(host, builder),
+				Lifetime.Thread => InstanceIsUnique.PerThread(builder),
 				Lifetime.Request => InstanceIsUnique.PerHttpRequest(builder),
 				_ => throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "No extensions can serve this lifetime.")
 			};

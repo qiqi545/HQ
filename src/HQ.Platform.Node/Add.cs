@@ -44,7 +44,6 @@ using HQ.Integration.Sqlite.Schema;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.Runtime;
-using HQ.Integration.SqlServer.Scheduling;
 using HQ.Integration.SqlServer.Schema;
 using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
