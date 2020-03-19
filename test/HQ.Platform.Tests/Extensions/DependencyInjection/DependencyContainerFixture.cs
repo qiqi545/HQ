@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Extensions.DependencyInjection;
+using ActiveResolver;
 
 namespace HQ.Platform.Tests.Extensions.DependencyInjection
 {
@@ -27,11 +27,11 @@ namespace HQ.Platform.Tests.Extensions.DependencyInjection
             C = new DependencyContainer();
         }
 
-        public IContainer C { get; }
+        public DependencyContainer C { get; }
 
         public void Dispose()
         {
-            C.Dispose();
+            
         }
     }
 }

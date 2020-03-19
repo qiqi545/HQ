@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.DependencyInjection;
+using ActiveResolver;
 using Xunit;
 
 namespace HQ.Platform.Tests.Extensions.DependencyInjection

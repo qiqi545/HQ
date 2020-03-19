@@ -19,7 +19,6 @@ using System;
 using System.Data;
 using ActiveTenant;
 using HQ.Data.SessionManagement;
-using HQ.Extensions.DependencyInjection;
 using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;

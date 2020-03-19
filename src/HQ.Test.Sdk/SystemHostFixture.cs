@@ -20,9 +20,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
-using HQ.Extensions.DependencyInjection;
+using ActiveResolver;
 using HQ.Test.Sdk.Configuration;
-using HQ.Test.Sdk.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -31,6 +30,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TypeKitchen;
+using Constants = HQ.Test.Sdk.Internal.Constants;
 
 namespace HQ.Test.Sdk
 {
@@ -176,7 +176,7 @@ namespace HQ.Test.Sdk
                     var serviceProvider = serviceCollection.BuildServiceProvider();
                     Debug.Assert(serviceProvider != null);
 
-                    using var container = new DependencyContainer(serviceProvider);
+                    var container = new DependencyContainer(serviceProvider);
 
                     container.Register(serviceProvider);
                     container.Register(services);
@@ -212,7 +212,7 @@ namespace HQ.Test.Sdk
                     var serviceProvider = services.BuildServiceProvider();
                     Debug.Assert(serviceProvider != null);
 
-                    using var container = new DependencyContainer(serviceProvider);
+                    var container = new DependencyContainer(serviceProvider);
 
                     container.Register(serviceProvider);
                     container.Register(services);
