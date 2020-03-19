@@ -1,4 +1,4 @@
-﻿#region LICENSE
+#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,13 +15,18 @@
 
 #endregion
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace HQ.Data.Contracts.Mvc
 {
-	public enum GraphDirection
+	public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
 	{
-		LeftToRight,
-		RightToLeft,
-		TopToBottom,
-		BottomToTop
+		Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
+			FilterOptions filter, ProjectionOptions projection, SegmentOptions segment,
+			[FromQuery] string query = null);
+
+		Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
 	}
 }

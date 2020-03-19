@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
-using HQ.Data.Contracts.AspNetCore.Runtime;
+using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 

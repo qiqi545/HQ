@@ -18,9 +18,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using HQ.Data.Contracts.AspNetCore.Mvc;
 using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.DataAnnotations;
+using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Tests.Data.Contracts.Topology.Fakes;
 using HQ.Test.Sdk;
 

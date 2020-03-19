@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Data.Contracts.AspNetCore.Runtime;
+using HQ.Data.Contracts.Runtime;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 

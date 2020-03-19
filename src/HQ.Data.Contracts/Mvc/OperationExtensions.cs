@@ -20,7 +20,7 @@ using System.Net;
 using ActiveErrors;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
 	public static class OperationExtensions
 	{

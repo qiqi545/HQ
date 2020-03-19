@@ -16,8 +16,8 @@
 #endregion
 
 using System.Collections.Generic;
-using HQ.Data.Contracts.AspNetCore.Runtime;
 using HQ.Data.Contracts.Configuration;
+using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;

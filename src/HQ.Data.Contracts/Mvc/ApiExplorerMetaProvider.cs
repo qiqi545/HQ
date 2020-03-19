@@ -39,7 +39,7 @@ using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
 	public class ApiExplorerMetaProvider : IMetaProvider
 	{

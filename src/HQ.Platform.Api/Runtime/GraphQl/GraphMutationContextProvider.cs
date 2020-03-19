@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using HQ.Data.Contracts.AspNetCore.Runtime;
+using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 
 namespace HQ.Platform.Api.Runtime.GraphQl

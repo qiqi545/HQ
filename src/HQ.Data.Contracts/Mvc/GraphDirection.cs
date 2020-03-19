@@ -1,4 +1,4 @@
-#region LICENSE
+﻿#region LICENSE
 
 // Unless explicitly acquired and licensed from Licensor under another
 // license, the contents of this file are subject to the Reciprocal Public
@@ -15,16 +15,13 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
-	public interface IObjectPutController<in T> : IObjectController, IActionFilter, IAsyncActionFilter
+	public enum GraphDirection
 	{
-		Task<IActionResult> PutAsync([FromRoute] long id, [FromBody] T @object);
-		Task<IActionResult> PutAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
+		LeftToRight,
+		RightToLeft,
+		TopToBottom,
+		BottomToTop
 	}
 }

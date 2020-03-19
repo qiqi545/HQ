@@ -16,16 +16,17 @@
 #endregion
 
 using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using System.Collections.Generic;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Runtime
 {
-	public interface IObjectDeleteController : IObjectController, IActionFilter, IAsyncActionFilter, IDisposable
+	public interface IQueryContextProvider
 	{
-		Task<IActionResult> DeleteAsync(FilterOptions filter);
-		Task<IActionResult> DeleteAsync([FromRoute] long id);
-		Task<IActionResult> DeleteAsync(SegmentOptions segment);
+		IEnumerable<MediaTypeHeaderValue> SupportedMediaTypes { get; }
+		IEnumerable<QueryContext> Parse(Type type, HttpContext source);
+		IEnumerable<QueryContext> Parse(Type type, ClaimsPrincipal user, string source);
 	}
 }

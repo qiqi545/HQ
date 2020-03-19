@@ -15,19 +15,33 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using HQ.Common.AspNetCore.MergePatch;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using ActiveErrors;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Runtime
 {
-	public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
+	public class QueryContext
 	{
-		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
-		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
-		Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
+		public QueryContext(ClaimsPrincipal user) => User = user;
+
+		public ClaimsPrincipal User { get; }
+		public Type Type { get; set; }
+		public List<Error> Errors { get; } = new List<Error>();
+
+		public FieldOptions Fields { get; set; }
+		public SortOptions Sorting { get; set; }
+		public PageOptions Paging { get; set; }
+		public StreamOptions Streaming { get; set; }
+		public FilterOptions Filters { get; set; }
+		public ProjectionOptions Projections { get; set; }
+		public SegmentOptions Buffer { get; set; }
+
+		public async Task<object> GetAsync(IObjectGetRepository<long> repository)
+		{
+			return await repository.GetAsync(Type, null, Sorting, Paging, Fields, Filters, Projections);
+		}
 	}
 }

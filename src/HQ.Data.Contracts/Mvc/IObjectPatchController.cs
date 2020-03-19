@@ -15,18 +15,19 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using HQ.Common.AspNetCore.MergePatch;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
-	public interface IObjectGetController : IObjectController, IActionFilter, IAsyncActionFilter
+	public interface IObjectPatchController<T> : IObjectController, IActionFilter, IAsyncActionFilter where T : class
 	{
-		Task<IActionResult> GetAsync(SortOptions sort, PageOptions page, StreamOptions stream, FieldOptions fields,
-			FilterOptions filter, ProjectionOptions projection, SegmentOptions segment,
-			[FromQuery] string query = null);
-
-		Task<IActionResult> GetAsync([FromRoute] long id, FieldOptions fields, ProjectionOptions projections);
+		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonPatchDocument<T> patch);
+		Task<IActionResult> PatchAsync([FromRoute] long id, [FromBody] JsonMergePatchDocument<T> patch);
+		Task<IActionResult> PatchAsync([FromBody] IEnumerable<T> objects, long startingAt = 0, int? count = null);
 	}
 }

@@ -32,7 +32,7 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using TypeKitchen;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
 	public class GraphVizOutputFormatter : TextOutputFormatter
 	{

@@ -16,28 +16,16 @@
 #endregion
 
 using System;
-using Microsoft.AspNetCore.Mvc.ActionConstraints;
 
-namespace HQ.Data.Contracts.AspNetCore.Mvc
+namespace HQ.Data.Contracts.Mvc
 {
-	public class MustHaveQueryParametersAttribute : Attribute, IActionConstraint
+	public interface IObjectController
 	{
-		private readonly string[] _matchAll;
+		Type ObjectType { get; }
+	}
 
-		public MustHaveQueryParametersAttribute(params string[] matchAll) => _matchAll = matchAll;
-
-		public int Order => 0;
-
-		public bool Accept(ActionConstraintContext context)
-		{
-			var query = context.RouteContext.HttpContext.Request.Query;
-			if (query.Count != _matchAll.Length) return false;
-
-			foreach (var key in _matchAll)
-				if (!query.ContainsKey(key))
-					return false;
-
-			return true;
-		}
+	public interface IObjectController<TObject, TKey> : IObjectGetController, IObjectPostController<TObject>, IObjectPutController<TObject>,
+		IObjectPatchController<TObject>, IObjectDeleteController where TObject : class, IObject<TKey> where TKey : IEquatable<TKey>
+	{
 	}
 }

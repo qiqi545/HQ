@@ -16,24 +16,16 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using ActiveErrors;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Data.Contracts.AspNetCore.Runtime
+namespace HQ.Data.Contracts.Mvc
 {
-	public class MutationContext
+	public interface IObjectDeleteController : IObjectController, IActionFilter, IAsyncActionFilter, IDisposable
 	{
-		public MutationContext(ClaimsPrincipal user) => User = user;
-
-		public ClaimsPrincipal User { get; }
-		public Type Type { get; set; }
-		public ICollection<Error> Errors { get; } = new List<Error>();
-		public dynamic Body { get; set; }
-
-		public object Execute(IObjectSaveRepository<long> repository)
-		{
-			return repository.SaveAsync(Type, Body);
-		}
+		Task<IActionResult> DeleteAsync(FilterOptions filter);
+		Task<IActionResult> DeleteAsync([FromRoute] long id);
+		Task<IActionResult> DeleteAsync(SegmentOptions segment);
 	}
 }

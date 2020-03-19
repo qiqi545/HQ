@@ -15,15 +15,25 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+using ActiveErrors;
 
-namespace HQ.Data.Contracts.AspNetCore.Runtime
+namespace HQ.Data.Contracts.Runtime
 {
-	public interface IMutationContextProvider
+	public class MutationContext
 	{
-		IEnumerable<MutationContext> Parse(HttpContext source);
-		IEnumerable<MutationContext> Parse(ClaimsPrincipal user, string source);
+		public MutationContext(ClaimsPrincipal user) => User = user;
+
+		public ClaimsPrincipal User { get; }
+		public Type Type { get; set; }
+		public ICollection<Error> Errors { get; } = new List<Error>();
+		public dynamic Body { get; set; }
+
+		public object Execute(IObjectSaveRepository<long> repository)
+		{
+			return repository.SaveAsync(Type, Body);
+		}
 	}
 }

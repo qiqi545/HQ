@@ -21,7 +21,7 @@ using System.Net.Mime;
 using System.Security.Claims;
 using GraphQLParser;
 using GraphQLParser.AST;
-using HQ.Data.Contracts.AspNetCore.Runtime;
+using HQ.Data.Contracts.Runtime;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 

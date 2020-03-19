@@ -20,7 +20,7 @@ using ActiveOptions;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Dates;
-using HQ.Data.Contracts.AspNetCore.Mvc;
+using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Api.Operations.Configuration;
 using Metrics;
 using Metrics.Reporters.ServerTiming;

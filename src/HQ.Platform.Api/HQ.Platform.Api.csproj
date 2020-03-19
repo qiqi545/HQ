@@ -31,7 +31,6 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common.AspNetCore\HQ.Common.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
-    <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />

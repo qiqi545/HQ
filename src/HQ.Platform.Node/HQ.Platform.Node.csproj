@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
-    <ProjectReference Include="..\HQ.Data.Contracts.AspNetCore\HQ.Data.Contracts.AspNetCore.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Notifications\HQ.Extensions.Notifications.csproj" />
