@@ -18,14 +18,13 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
 using ActiveErrors;
 using ActiveRoutes;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -39,7 +38,7 @@ namespace HQ.Platform.Identity.Controllers
 	[DisplayName("Applications")]
 	[MetaDescription("Manages system applications.")]
 	public class ApplicationController<TApplication, TKey> : Controller,
-		IDynamicComponentEnabled<IdentityApiComponent>
+		IDynamicComponentEnabled<IdentityApiFeature>
 		where TApplication : IdentityApplication<TKey>
 		where TKey : IEquatable<TKey>
 	{

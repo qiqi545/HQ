@@ -16,21 +16,16 @@
 #endregion
 
 using System;
-using System.Data;
-using System.Data.SqlClient;
 using System.Threading;
-using HQ.Common;
-using HQ.Data.Contracts.Queryable;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
+using ActiveAuth.Stores;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
-using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -98,9 +93,7 @@ namespace HQ.Integration.SqlServer.Identity
 			where TApplication : IdentityApplication<TKey>
 		{
 			var services = identityBuilder.Services;
-
-			var builder = new SqlConnectionStringBuilder(connectionString);
-
+			
 			void ConfigureAction(SqlServerOptions o)
 			{
 				configureDatabase?.Invoke(o);
@@ -109,9 +102,7 @@ namespace HQ.Integration.SqlServer.Identity
 			identityBuilder.Services.Configure<SqlServerOptions>(ConfigureAction);
 
 			var dialect = new SqlServerDialect();
-			identityBuilder.AddSqlIdentityStores<SqlServerConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
-				connectionString,
-				scope, OnCommand<TKey>(), OnConnection);
+			identityBuilder.AddIdentityStores<TKey, TUser, TRole, TTenant, TApplication>();
 
 			SqlBuilder.Dialect = dialect;
 
@@ -156,24 +147,6 @@ namespace HQ.Integration.SqlServer.Identity
 			MigrateToLatest<TKey>(connectionString, identityOptions, options);
 
 			return identityBuilder;
-		}
-
-		private static void OnConnection(IDbConnection c, IServiceProvider r)
-		{
-			if (c is SqlConnection connection)
-			{
-			}
-		}
-
-		private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>()
-			where TKey : IEquatable<TKey>
-		{
-			return (c, t, r) =>
-			{
-				if (c is SqlServerOptions command)
-				{
-				}
-			};
 		}
 
 		private static void MigrateToLatest<TKey>(string connectionString, IdentityOptionsExtended identityOptions,

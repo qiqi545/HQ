@@ -16,6 +16,7 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
+using ActiveAuth;
 
 namespace HQ.Platform.Api.Security.AspNetCore.Mvc.Models
 {

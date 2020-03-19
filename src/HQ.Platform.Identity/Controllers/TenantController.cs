@@ -18,15 +18,14 @@
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
 using ActiveErrors;
 using ActiveRoutes;
 using ActiveTenant;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -39,7 +38,7 @@ namespace HQ.Platform.Identity.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Tenants")]
 	[MetaDescription("Manages system tenants.")]
-	public class TenantController<TTenant, TKey> : Controller, IDynamicComponentEnabled<IdentityApiComponent>
+	public class TenantController<TTenant, TKey> : Controller, IDynamicComponentEnabled<IdentityApiFeature>
 		where TTenant : IdentityTenant<TKey>
 		where TKey : IEquatable<TKey>
 	{

@@ -16,186 +16,93 @@
 #endregion
 
 using System;
-using System.Diagnostics;
-using System.Linq;
-using ActiveLogging;
-using ActiveTenant;
-using HQ.Common;
-using HQ.Platform.Api.Models;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Extensions;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Security;
-using HQ.Platform.Identity.Services;
-using HQ.Platform.Identity.Validators;
-using Microsoft.AspNetCore.Identity;
+using ActiveAuth.Configuration;
+using ActiveAuth.Events;
+using ActiveAuth.Models;
+using ActiveAuth.Services;
+using ActiveOptions;
+using ActiveRoutes;
+using HQ.Platform.Api.Security.Configuration;
+using HQ.Platform.Identity.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace HQ.Platform.Identity
 {
 	public static class Add
 	{
-		private static readonly Action<IdentityOptionsExtended> Defaults;
-
-		static Add() =>
-			Defaults = x =>
-			{
-				// Sensible defaults not set by ASP.NET Core Identity:
-				x.Stores.ProtectPersonalData = true;
-				x.Stores.MaxLengthForKeys = 128;
-
-				// Extended:
-				x.User.RequireUniqueEmail = true;
-			};
-
-		public static IdentityBuilder AddIdentityExtended(this IServiceCollection services,
-			IConfiguration configuration)
+		public static IServiceCollection AddIdentityApi(this IServiceCollection services, IConfiguration apiConfig)
 		{
-			return services
-				.AddIdentityCoreExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication
-					, string>(configuration);
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication,
+				string>(services, apiConfig.FastBind);
 		}
 
-		public static IdentityBuilder AddIdentityExtended(this IServiceCollection services,
-			Action<IdentityOptionsExtended> configureIdentityExtended = null,
-			Action<IdentityOptions> configureIdentity = null)
-		{
-			return services
-				.AddIdentityCoreExtended<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication
-					, string>(configureIdentityExtended, configureIdentity);
-		}
-
-		public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(
-			this IServiceCollection services, IConfiguration configuration)
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(
+			this IServiceCollection services, IConfiguration apiConfig)
 			where TUser : IdentityUserExtended<TKey>
 			where TRole : IdentityRoleExtended<TKey>
 			where TTenant : IdentityTenant<TKey>
 			where TApplication : IdentityApplication<TKey>
 			where TKey : IEquatable<TKey>
 		{
-			return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration);
+			return AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(services, apiConfig.FastBind);
 		}
 
-		public static IdentityBuilder AddIdentityExtended<TUser, TRole, TTenant, TApplication, TKey>(
-			this IServiceCollection services,
-			Action<IdentityOptionsExtended> configureIdentityExtended = null)
+		public static IServiceCollection AddIdentityApi(this IServiceCollection services,
+			Action<IdentityApiOptions> configureApi = null)
+		{
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication,
+				string>(services, configureApi);
+		}
+
+		public static IServiceCollection AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(
+			this IServiceCollection services, Action<IdentityApiOptions> configureApi = null)
 			where TUser : IdentityUserExtended<TKey>
 			where TRole : IdentityRoleExtended<TKey>
 			where TTenant : IdentityTenant<TKey>
 			where TApplication : IdentityApplication<TKey>
 			where TKey : IEquatable<TKey>
 		{
-			return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(o =>
-			{
-				configureIdentityExtended?.Invoke(o);
-			});
-		}
+			services.AddMvcCore()
+				.AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(configureApi);
 
-		public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
-			this IServiceCollection services,
-			IConfiguration configuration)
-			where TUser : IdentityUserExtended<TKey>
-			where TRole : IdentityRoleExtended<TKey>
-			where TTenant : IdentityTenant<TKey>
-			where TApplication : IdentityApplication<TKey>
-			where TKey : IEquatable<TKey>
-		{
-			AddIdentityPreamble(services);
-			services.Configure<IdentityOptions>(configuration);
-			services.Configure<IdentityOptionsExtended>(configuration);
-
-			return services.AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(configuration.Bind,
-				configuration.Bind);
-		}
-
-		private static void AddIdentityPreamble(IServiceCollection services)
-		{
-			var authBuilder = services.AddAuthentication(o =>
-			{
-				o.DefaultScheme = IdentityConstants.ApplicationScheme;
-				o.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-			});
-			authBuilder.AddIdentityCookies(o => { });
-		}
-
-		public static IdentityBuilder AddIdentityCoreExtended<TUser, TRole, TTenant, TApplication, TKey>(
-			this IServiceCollection services,
-			Action<IdentityOptionsExtended> configureIdentityExtended = null,
-			Action<IdentityOptions> configureIdentity = null)
-			where TUser : IdentityUserExtended<TKey>
-			where TRole : IdentityRoleExtended<TKey>
-			where TTenant : IdentityTenant<TKey>
-			where TApplication : IdentityApplication<TKey>
-			where TKey : IEquatable<TKey>
-		{
-			services.AddLocalTimestamps();
-			services.AddSafeLogging();
-
-			var identityBuilder = services.AddIdentityCore<TUser>(o =>
-			{
-				var x = new IdentityOptionsExtended(o);
-				Defaults(x);
-				configureIdentityExtended?.Invoke(x);
-				o.Apply(x);
-			});
-
-			if (configureIdentityExtended != null)
-			{
-				services.Configure(configureIdentityExtended);
-			}
-
-			if (configureIdentity != null)
-			{
-				services.Configure(configureIdentity);
-			}
-
-			identityBuilder.AddDefaultTokenProviders();
-
-			// See: https://github.com/blowdart/AspNetCoreIdentityEncryption
-			identityBuilder.AddPersonalDataProtection<NoLookupProtector, NoLookupProtectorKeyRing>();
-			identityBuilder.Services.AddSingleton<IPersonalDataProtector, DefaultPersonalDataProtector>();
-
-			services.AddScoped<IEmailValidator<TUser>, DefaultEmailValidator<TUser>>();
-			services.AddScoped<IPhoneNumberValidator<TUser>, DefaultPhoneNumberValidator<TUser>>();
-			services.AddScoped<IUsernameValidator<TUser>, DefaultUsernameValidator<TUser>>();
-
-			var validator = services.SingleOrDefault(x => x.ServiceType == typeof(IUserValidator<TUser>));
-			var removed = services.Remove(validator);
-			Debug.Assert(validator != null);
-			Debug.Assert(removed);
-
-			services.AddScoped<IUserValidator<TUser>, UserValidatorExtended<TUser>>();
-			services.AddScoped<ITenantValidator<TTenant, TKey>, TenantValidator<TTenant, TUser, TKey>>();
-			services.AddScoped<IApplicationValidator<TApplication, TUser, TKey>, ApplicationValidator<TApplication, TUser, TKey>>();
-
-			services.AddScoped<IUserService<TUser>, UserService<TUser, TKey>>();
-			services.AddScoped<ITenantService<TTenant>, TenantService<TTenant, TUser, TKey>>();
-			services.AddScoped<IApplicationService<TApplication>, ApplicationService<TApplication, TUser, TKey>>();
-			services.AddScoped<IRoleService<TRole>, RoleService<TRole, TKey>>();
-			services
-				.AddScoped<ISignInService<TUser, TTenant, TApplication, TKey>,
-					SignInService<TUser, TTenant, TApplication, TKey>>();
-
-			// untyped forwarding
-			services.AddTransient<IApplicationService>(r => r.GetService<IApplicationService<TApplication>>());
-
-			return identityBuilder;
-		}
-
-		public static IServiceCollection AddIdentityTenantContextStore<TTenant>(this IServiceCollection services)
-			where TTenant : IdentityTenant
-		{
-			services.AddScoped<ITenantContextStore<TTenant>, IdentityTenantContextStore<TTenant>>();
 			return services;
 		}
 
-		public static IServiceCollection AddIdentityApplicationContextStore<TApplication>(
-			this IServiceCollection services)
-			where TApplication : IdentityApplication
+		public static IMvcCoreBuilder AddIdentityApi(this IMvcCoreBuilder mvcBuilder, IConfiguration apiConfig)
 		{
-			services.AddScoped<IApplicationContextStore<TApplication>, IdentityApplicationContextStore<TApplication>>();
-			return services;
+			return AddIdentityApi<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication, string>(mvcBuilder, apiConfig.FastBind);
+		}
+
+		public static IMvcCoreBuilder AddIdentityApi<TUser, TRole, TTenant, TApplication, TKey>(this IMvcCoreBuilder mvcBuilder,
+			Action<IdentityApiOptions> configureApi = null)
+			where TUser : IdentityUserExtended<TKey>
+			where TRole : IdentityRoleExtended<TKey>
+			where TTenant : IdentityTenant<TKey>
+			where TApplication : IdentityApplication<TKey>
+			where TKey : IEquatable<TKey>
+		{
+			if (configureApi != null)
+				mvcBuilder.Services.Configure(configureApi);
+
+			mvcBuilder.Services.AddScoped<ISignInHandler, CookiesSignInHandler<TTenant, TApplication, TKey>>();
+
+			mvcBuilder.AddActiveRoute<TenantController<TTenant, TKey>, IdentityApiFeature, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<ApplicationController<TApplication, TKey>, IdentityApiFeature, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<UserController<TUser, TTenant, TKey>, IdentityApiFeature, IdentityApiOptions>();
+			mvcBuilder.AddActiveRoute<RoleController<TRole, TKey>, IdentityApiFeature, IdentityApiOptions>();
+
+			if (TokensEnabled(mvcBuilder))
+				mvcBuilder.AddActiveRoute<TokenController<TUser, TTenant, TApplication, TKey>, IdentityApiFeature, IdentityApiOptions>();
+
+			return mvcBuilder;
+		}
+
+		private static bool TokensEnabled(this IMvcCoreBuilder mvcBuilder)
+		{
+			var serviceProvider = mvcBuilder.Services.BuildServiceProvider();
+			return serviceProvider.GetRequiredService<IOptions<SecurityOptions>>().Value.Tokens.Enabled;
 		}
 	}
 }

@@ -19,6 +19,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using ActiveAuth.Models;
 using ActiveErrors;
 using ActiveLogging;
 using ActiveRoutes;
@@ -32,8 +33,6 @@ using HQ.Platform.Api.Security.AspNetCore.Models;
 using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
 using HQ.Platform.Api.Security.Configuration;
 using HQ.Platform.Api.Security.Internal.Extensions;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -51,7 +50,7 @@ namespace HQ.Platform.Identity.Controllers
 	[DisplayName("Tokens")]
 	[MetaDescription("Manages authentication tokens.")]
 	public class TokenController<TUser, TTenant, TApplication, TKey> : Controller,
-		IDynamicComponentEnabled<TokensComponent>
+		IDynamicComponentEnabled<TokensApiFeature>
 		where TUser : IdentityUserExtended<TKey>
 		where TTenant : IdentityTenant<TKey>
 		where TApplication : IdentityApplication<TKey>
@@ -61,11 +60,11 @@ namespace HQ.Platform.Identity.Controllers
 		private readonly ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> _logger;
 
 		private readonly IOptionsMonitor<SecurityOptions> _securityOptions;
-		private readonly ISignInService<TUser, TTenant, TApplication, TKey> _signInService;
+		private readonly ISignInService<TUser> _signInService;
 
 		public TokenController(
 			IHttpContextAccessor http,
-			ISignInService<TUser, TTenant, TApplication, TKey> signInService,
+			ISignInService<TUser> signInService,
 			IOptionsMonitor<SecurityOptions> securityOptions,
 			ISafeLogger<TokenController<TUser, TTenant, TApplication, TKey>> logger)
 		{
@@ -114,7 +113,7 @@ namespace HQ.Platform.Identity.Controllers
 				return error;
 
 			// FIXME: pin claims transformation to user-provided scope
-			var operation = await _signInService.SignInAsync(model.IdentityType, model.Identity, model.Password, true);
+			var operation = await _signInService.SignInAsync(model.IdentityType, model.Identity, model.Password);
 			if (!operation.Succeeded)
 				return operation.ToResult();
 

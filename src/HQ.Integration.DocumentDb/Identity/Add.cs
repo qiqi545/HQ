@@ -17,8 +17,10 @@
 
 using System;
 using System.Data;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
+using ActiveAuth.Stores;
 using HQ.Common;
-using HQ.Data.Contracts.Queryable;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dapper;
@@ -28,9 +30,6 @@ using HQ.Data.Sql.Queries;
 using HQ.Integration.DocumentDb.SessionManagement;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Stores.Sql;
 using Metrics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Documents.Client;
@@ -120,11 +119,8 @@ namespace HQ.Integration.DocumentDb.Identity
 			var options = new DocumentDbOptions();
 			configureAction?.Invoke(options);
 
-			var builder = new DocumentDbConnectionStringBuilder(options);
-
 			identityBuilder
-				.AddSqlIdentityStores<DocumentDbConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
-					builder.ConnectionString, scope, OnCommand<TKey>(slot), OnConnection);
+				.AddIdentityStores<TKey, TUser, TRole, TTenant, TApplication>();
 
 			var dialect = new DocumentDbDialect();
 			SqlBuilder.Dialect = dialect;
@@ -173,14 +169,7 @@ namespace HQ.Integration.DocumentDb.Identity
 				r.GetRequiredService<DocumentDbConnectionFactory>(), r.GetService<IMetricsHost<DocumentClient>>(),
 				r.GetRequiredService<IOptionsMonitor<DocumentDbOptions>>()));
 		}
-
-		private static void OnConnection(IDbConnection c, IServiceProvider r)
-		{
-			if (c is DocumentDbConnection)
-			{
-			}
-		}
-
+		
 		private static Action<IDbCommand, Type, IServiceProvider> OnCommand<TKey>(string slot)
 			where TKey : IEquatable<TKey>
 		{

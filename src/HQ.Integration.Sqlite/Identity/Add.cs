@@ -16,21 +16,17 @@
 #endregion
 
 using System;
-using System.Data;
-using HQ.Common;
-using HQ.Data.Contracts.Queryable;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
+using ActiveAuth.Stores;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
 using HQ.Data.Sql.Dapper;
 using HQ.Data.Sql.Descriptor;
 using HQ.Data.Sql.Dialects;
 using HQ.Data.Sql.Queries;
-using HQ.Integration.Sqlite.SessionManagement;
 using HQ.Integration.Sqlite.Sql;
 using HQ.Integration.Sqlite.Sql.Configuration;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Stores.Sql;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
@@ -111,8 +107,7 @@ namespace HQ.Integration.Sqlite.Identity
 			var dialect = new SqliteDialect();
 			SqlBuilder.Dialect = dialect;
 
-			identityBuilder.AddSqlIdentityStores<SqliteConnectionFactory, TKey, TUser, TRole, TTenant, TApplication>(
-				connectionString, scope, OnCommand(), OnConnection);
+			identityBuilder.AddIdentityStores<TKey, TUser, TRole, TTenant, TApplication>();
 
 			SimpleDataDescriptor.TableNameConvention = s =>
 			{
@@ -153,24 +148,7 @@ namespace HQ.Integration.Sqlite.Identity
 
 			return identityBuilder;
 		}
-
-		private static void OnConnection(IDbConnection c, IServiceProvider r)
-		{
-			if (c is SqliteConnection connection)
-			{
-			}
-		}
-
-		private static Action<IDbCommand, Type, IServiceProvider> OnCommand()
-		{
-			return (c, t, r) =>
-			{
-				if (c is SqliteCommand command)
-				{
-				}
-			};
-		}
-
+		
 		private static void MigrateToLatest(string connectionString, IdentityOptionsExtended identityOptions)
 		{
 			var runner = new SqliteMigrationRunner(connectionString);

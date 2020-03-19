@@ -18,6 +18,8 @@
 using Microsoft.AspNetCore.Hosting;
 using System;
 using System.Reflection;
+using ActiveAuth;
+using ActiveAuth.Models;
 using ActiveLogging;
 using ActiveOptions;
 using ActiveOptions.Api;
@@ -55,8 +57,6 @@ using HQ.Platform.Api.Runtime.GraphQl;
 using HQ.Platform.Api.Runtime.Rest;
 using HQ.Platform.Api.Security.AspNetCore;
 using HQ.Platform.Identity;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Mvc;
 using HQ.Platform.Node.Backends;
 using HQ.Platform.Node.Clouds;
 using Microsoft.Extensions.Configuration;

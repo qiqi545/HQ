@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using ActiveAuth.Models;
 using ActiveLogging;
 using ActiveTenant;
 using ActiveVersion;
@@ -24,7 +25,6 @@ using HQ.Platform.Api;
 using HQ.Platform.Api.Correlation;
 using HQ.Platform.Api.Operations;
 using HQ.Platform.Api.Security.AspNetCore;
-using HQ.Platform.Identity.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;

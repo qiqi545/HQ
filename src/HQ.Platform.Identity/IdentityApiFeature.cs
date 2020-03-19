@@ -15,19 +15,21 @@
 
 #endregion
 
-using System.Threading.Tasks;
-using ActiveErrors;
-using HQ.Data.Contracts;
-using HQ.Platform.Api.Security.AspNetCore.Mvc.Models;
+using System;
+using System.Collections.Generic;
+using ActiveRoutes;
+using HQ.Platform.Identity.Controllers;
 
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Identity
 {
-	public interface ISignInService<TUser, TTenant, TApplication, TKey>
-		where TUser : class, IUserEmailProvider, IPhoneNumberProvider
+	public class IdentityApiFeature : DynamicFeature
 	{
-		Task<Operation<TUser>> SignInAsync(IdentityType identityType, string identity, string password,
-			bool persistent);
-
-		Task<Operation> SignOutAsync(TUser user);
+		public override IList<Type> ControllerTypes { get; } = new[]
+		{
+			typeof(UserController<,,>), 
+			typeof(RoleController<,>), 
+			typeof(TenantController<,>),
+			typeof(ApplicationController<,>)
+		};
 	}
 }

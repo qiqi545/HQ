@@ -21,15 +21,14 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
 using ActiveErrors;
 using ActiveRoutes;
 using ActiveTenant;
 using HQ.Common.AspNetCore.Mvc;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Attributes;
-using HQ.Platform.Identity.Configuration;
-using HQ.Platform.Identity.Models;
-using HQ.Platform.Identity.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -42,7 +41,7 @@ namespace HQ.Platform.Identity.Controllers
 	[MetaCategory("Identity", "Manages application access controls.")]
 	[DisplayName("Users")]
 	[MetaDescription("Manages user accounts.")]
-	public class UserController<TUser, TTenant, TKey> : Controller, IDynamicComponentEnabled<IdentityApiComponent>
+	public class UserController<TUser, TTenant, TKey> : Controller, IDynamicComponentEnabled<IdentityApiFeature>
 		where TUser : IdentityUserExtended<TKey>
 		where TKey : IEquatable<TKey>
 	{

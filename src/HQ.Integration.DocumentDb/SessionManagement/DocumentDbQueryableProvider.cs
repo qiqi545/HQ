@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HQ.Data.Contracts.Queryable;
+using ActiveAuth.Models;
 using HQ.Data.Sql.Queries;
 using HQ.Integration.DocumentDb.Sql.DbProvider;
 using Metrics;

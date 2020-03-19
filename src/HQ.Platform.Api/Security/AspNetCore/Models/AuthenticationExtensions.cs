@@ -22,6 +22,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveAuth.Models;
 using HQ.Common;
 using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;

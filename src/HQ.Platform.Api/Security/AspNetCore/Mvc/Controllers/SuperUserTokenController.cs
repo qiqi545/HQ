@@ -22,6 +22,8 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveAuth;
+using ActiveAuth.Models;
 using ActiveErrors;
 using ActiveOptions;
 using ActiveRoutes;
@@ -39,6 +41,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Sodium;
 using TypeKitchen;
+using ErrorEvents = ActiveAuth.ErrorEvents;
+using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
 
 namespace HQ.Platform.Api.Security.AspNetCore.Mvc.Controllers
 {

@@ -15,35 +15,15 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using ActiveErrors;
-using HQ.Data.Contracts;
+using ActiveRoutes;
+using HQ.Platform.Identity.Controllers;
 
-namespace HQ.Platform.Identity.Models
+namespace HQ.Platform.Identity
 {
-	public interface IRoleService
+	public class TokensApiFeature : DynamicFeature
 	{
-		Task<Operation<int>> GetCountAsync();
-	}
-
-	public interface IRoleService<TRole> : IRoleService
-	{
-		IQueryable<TRole> Roles { get; }
-
-		Task<Operation<IEnumerable<TRole>>> GetAsync();
-		Task<Operation<TRole>> CreateAsync(CreateRoleModel model);
-		Task<Operation> UpdateAsync(TRole role);
-		Task<Operation> DeleteAsync(string id);
-
-		Task<Operation<TRole>> FindByIdAsync(string id);
-		Task<Operation<TRole>> FindByNameAsync(string roleName);
-
-		Task<Operation<IList<Claim>>> GetClaimsAsync(TRole role);
-		Task<Operation<IList<Claim>>> GetAllRoleClaimsAsync();
-		Task<Operation> AddClaimAsync(TRole role, Claim claim);
-		Task<Operation> RemoveClaimAsync(TRole role, Claim claim);
+		public override IList<Type> ControllerTypes { get; } = new[] {typeof(TokenController<,,,>)};
 	}
 }
