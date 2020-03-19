@@ -23,6 +23,7 @@ using ActiveOptions;
 using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
+using ActiveScheduler.Sqlite;
 using ActiveScheduler.SqlServer;
 using ActiveTenant;
 using ActiveVersion;
@@ -39,7 +40,6 @@ using HQ.Integration.DocumentDb.Schema;
 using HQ.Integration.DocumentDb.Sql;
 using HQ.Integration.Sqlite.Identity;
 using HQ.Integration.Sqlite.Runtime;
-using HQ.Integration.Sqlite.Scheduling;
 using HQ.Integration.Sqlite.Schema;
 using HQ.Integration.Sqlite.Sql.Configuration;
 using HQ.Integration.SqlServer.Identity;
@@ -153,8 +153,7 @@ namespace HQ.Platform.Node
 					schemaBuilder.AddDocumentDbSchemaStores(backend.GetConnectionString("Schema"));
 					break;
 				case nameof(SqlServer):
-					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"),
-						(ActiveScheduler.SqlServer.Internal.SessionManagement.ConnectionScope) ConnectionScope.ByRequest);
+					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"), ActiveConnection.ConnectionScope.ByRequest);
 					identityBuilder
 						.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
@@ -164,8 +163,7 @@ namespace HQ.Platform.Node
 					schemaBuilder.AddSqlServerSchemaStores();
 					break;
 				case nameof(Sqlite):
-					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"),
-						ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"));
 					identityBuilder
 						.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
 							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
