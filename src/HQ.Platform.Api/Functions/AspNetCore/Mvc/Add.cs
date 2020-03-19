@@ -23,7 +23,6 @@ using HQ.Platform.Api.Functions.AspNetCore.Mvc.Controllers;
 using HQ.Platform.Api.Functions.AspNetCore.Mvc.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Constants = HQ.Common.Constants;
 using ActiveOptions;
 using ActiveScheduler.Configuration;
 

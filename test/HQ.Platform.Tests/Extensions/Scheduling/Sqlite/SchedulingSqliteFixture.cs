@@ -16,9 +16,9 @@
 #endregion
 
 using System;
+using ActiveConnection;
 using ActiveScheduler;
-using HQ.Data.SessionManagement;
-using HQ.Integration.Sqlite.Scheduling;
+using ActiveScheduler.Sqlite;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,7 +29,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
         public override void ConfigureServices(IServiceCollection services)
         {
             services.AddBackgroundTasks(o => { })
-                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive, o => { });
+                .AddSqliteBackgroundTasksStore($"Data Source={Guid.NewGuid()}.db", ConnectionScope.KeepAlive);
         }
     }
 }

@@ -19,7 +19,6 @@ using ActiveScheduler;
 using ActiveScheduler.SqlServer;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
-using ConnectionScope = ActiveScheduler.SqlServer.Internal.SessionManagement.ConnectionScope;
 
 namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
 {
@@ -28,7 +27,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
         public override void ConfigureServices(IServiceCollection services)
         {
             services.AddBackgroundTasks(o => { })
-                .AddSqlServerBackgroundTasksStore(ConnectionString, (ConnectionScope) HQ.Data.SessionManagement.ConnectionScope.ByThread);
+                .AddSqlServerBackgroundTasksStore(ConnectionString);
         }
     }
 }
