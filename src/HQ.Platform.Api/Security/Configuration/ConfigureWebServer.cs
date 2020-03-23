@@ -15,21 +15,25 @@
 
 #endregion
 
-using System;
-using System.Net.Mime;
-using HQ.Common;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Extensions.Options;
 
-namespace HQ.Data.Contracts.Attributes
+namespace HQ.Platform.Api.Security.Configuration
 {
-	public class MetaDescriptionAttribute : Attribute
+	internal class ConfigureWebServer : IConfigureOptions<KestrelServerOptions>
 	{
-		public MetaDescriptionAttribute(string content, string mediaType = MediaTypeNames.Text.Markdown)
-		{
-			Content = content;
-			MediaType = mediaType;
-		}
+		private readonly IOptions<SecurityOptions> _options;
 
-		public string Content { get; }
-		public string MediaType { get; }
+		public ConfigureWebServer(IOptions<SecurityOptions> options) => _options = options;
+
+		public void Configure(KestrelServerOptions options)
+		{
+			options.AddServerHeader = false;
+
+			// See: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-2.2
+			options.Limits.MaxConcurrentConnections = _options.Value.WebServer.MaxConcurrentConnections;
+			options.Limits.MaxConcurrentUpgradedConnections = _options.Value.WebServer.MaxConcurrentUpgradedConnections;
+			options.Limits.MaxRequestBodySize = _options.Value.WebServer.MaxRequestBodySize;
+		}
 	}
 }

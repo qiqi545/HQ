@@ -24,7 +24,7 @@ using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Correlation;
 using HQ.Platform.Api.Operations;
-using HQ.Platform.Api.Security.AspNetCore;
+using HQ.Platform.Api.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Routing;

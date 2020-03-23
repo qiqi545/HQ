@@ -21,7 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.2" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="5.6.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Sodium.Core" Version="1.2.2" />
+    <PackageReference Include="Sodium.Core" Version="1.2.3" />
     <PackageReference Include="System.Buffers" Version="4.5.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
     <PackageReference Include="GraphQL-Parser" Version="5.1.0" />
@@ -35,6 +35,12 @@
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Caching\HQ.Extensions.Caching.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Security\Internal\Extensions\" />
+    <Folder Include="Security\Mvc\Controllers\" />
+    <Folder Include="Security\Mvc\Models\" />
   </ItemGroup>
 
 </Project>

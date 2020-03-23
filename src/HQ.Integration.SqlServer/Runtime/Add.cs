@@ -17,7 +17,6 @@
 
 using System;
 using System.Data;
-using HQ.Common;
 using HQ.Data.Contracts.Runtime;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;
@@ -26,13 +25,13 @@ using HQ.Data.Sql.Queries;
 using HQ.Integration.SqlServer.Identity;
 using HQ.Integration.SqlServer.SessionManagement;
 using HQ.Integration.SqlServer.Sql;
-using HQ.Platform.Api;
-using HQ.Platform.Api.Configuration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using ActiveOptions;
+using HQ.Platform.Api;
+using HQ.Platform.Api.Configuration;
 using Metrics;
 
 namespace HQ.Integration.SqlServer.Runtime
@@ -70,8 +69,7 @@ namespace HQ.Integration.SqlServer.Runtime
 			builder.Services.AddMetrics();
 			builder.Services.TryAddSingleton<ISqlDialect>(dialect);
 			builder.Services.TryAddSingleton(dialect);
-			builder.Services
-				.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
+			builder.Services.TryAddSingleton<IDataBatchOperation<SqlServerPreBatchStatus>, SqlServerBatchDataOperation>();
 
 			var runtimeOptions = serviceProvider.GetRequiredService<IOptions<RuntimeOptions>>().Value;
 

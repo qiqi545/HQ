@@ -26,6 +26,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using ErrorEvents = HQ.Data.Contracts.ErrorEvents;
+using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
 
 namespace HQ.Platform.Api.Runtime.Rest.Attributes
 {

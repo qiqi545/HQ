@@ -15,14 +15,15 @@
 
 #endregion
 
+using ActiveAuth.Configuration;
 using ActiveOptions;
-using HQ.Platform.Api.Security.AspNetCore.Requirements;
 using HQ.Platform.Api.Security.Configuration;
+using HQ.Platform.Api.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Platform.Api.Security.AspNetCore.Extensions
+namespace HQ.Platform.Api.Security.Extensions
 {
 	public static class AuthorizationExtensions
 	{

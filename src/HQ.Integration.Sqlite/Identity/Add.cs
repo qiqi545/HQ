@@ -18,6 +18,7 @@
 using System;
 using ActiveAuth.Configuration;
 using ActiveAuth.Models;
+using ActiveAuth.Providers;
 using ActiveAuth.Stores;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Batching;

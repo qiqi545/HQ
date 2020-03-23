@@ -24,6 +24,8 @@ using HQ.Data.Contracts.Runtime;
 using HQ.Platform.Api.Runtime.Rest.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
+using ErrorEvents = HQ.Data.Contracts.ErrorEvents;
+using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
 
 namespace HQ.Platform.Api.Runtime.Rest.Filters
 {

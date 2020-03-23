@@ -15,28 +15,43 @@
 
 #endregion
 
-using System;
-using ActiveRoutes;
-using HQ.Platform.Api.Security.AspNetCore.Mvc.Configuration;
-using HQ.Platform.Api.Security.AspNetCore.Mvc.Controllers;
+using ActiveAuth.Configuration;
+using ActiveOptions;
+using HQ.Common;
 using HQ.Platform.Api.Security.Configuration;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Api.Security.AspNetCore.Mvc
+namespace HQ.Platform.Api.Security
 {
-	public static class Add
+	public static class Use
 	{
-		public static IServiceCollection AddSuperUserTokenController<TUser, TKey>(this IServiceCollection services) where TKey : IEquatable<TKey>
+		public static IApplicationBuilder UseSecurityPolicies(this IApplicationBuilder app)
 		{
-			var mvcBuilder = services.AddMvcCore();
-			mvcBuilder.AddSuperUserTokenController<TUser, TKey>();
-			return services;
-		}
+			var options = app.ApplicationServices.GetRequiredService<IValidOptions<SecurityOptions>>();
+			var superUser = app.ApplicationServices.GetRequiredService<IValidOptions<SuperUserOptions>>();
 
-		public static IMvcCoreBuilder AddSuperUserTokenController<TUser, TKey>(this IMvcCoreBuilder mvcBuilder) where TKey : IEquatable<TKey>
-		{
-			mvcBuilder.AddActiveRoute<SuperUserTokenController<TKey>, SuperUserComponent, SuperUserOptions>();
-			return mvcBuilder;
+			if (options.Value.Cors.Enabled)
+			{
+				app.UseRouting();
+				app.UseCors(Constants.Security.Policies.CorsPolicy);
+				app.UseEndpoints(builder => { });
+			}
+
+			if (options.Value.Tokens.Enabled || options.Value.Cookies.Enabled || superUser.Value.Enabled)
+			{
+				app.UseAuthentication();
+				app.UseAuthorization();
+			}
+
+			if (options.Value.Https.Enabled)
+			{
+				app.UseHttpsRedirection();
+
+				return !options.Value.Https.Hsts.Enabled ? app : app.UseHsts();
+			}
+
+			return app;
 		}
 	}
 }

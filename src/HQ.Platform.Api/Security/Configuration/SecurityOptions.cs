@@ -17,6 +17,7 @@
 
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using ActiveAuth.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace HQ.Platform.Api.Security.Configuration

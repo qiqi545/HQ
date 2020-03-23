@@ -23,7 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
+    <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
   </ItemGroup>
 
 </Project>

@@ -37,6 +37,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Error = ActiveErrors.Error;
+using ErrorEvents = HQ.Data.Contracts.ErrorEvents;
+using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {

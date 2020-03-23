@@ -17,11 +17,12 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveAuth.Configuration;
 using ActiveOptions;
 using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authorization;
 
-namespace HQ.Platform.Api.Security.AspNetCore.Requirements
+namespace HQ.Platform.Api.Security.Requirements
 {
 	public class DenyAnonymousAuthorizationRequirementExtended :
 		AuthorizationHandler<DenyAnonymousAuthorizationRequirementExtended>,

@@ -16,9 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveErrors" Version="1.0.3" />
+    <PackageReference Include="ActiveErrors" Version="1.0.4" />
     <PackageReference Include="ActiveLogging" Version="1.0.2" />
+    <PackageReference Include="ActiveResolver" Version="1.0.5" />
     <PackageReference Include="ActiveRoutes" Version="1.0.9" />
+    <PackageReference Include="ActiveRoutes.Meta" Version="1.0.9" />
     <PackageReference Include="ActiveVersion" Version="1.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="3.1.2" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="3.1.2" />

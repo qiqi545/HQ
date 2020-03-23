@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using ActiveErrors;
 using ActiveLogging;
 using ActiveRoutes;
-using HQ.Data.Contracts;
 using HQ.Integration.DocumentDb.SessionManagement;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +37,7 @@ namespace HQ.Integration.DocumentDb
 		[DynamicHttpPost("")]
 		public async Task<IActionResult> CreateAsync([FromBody] T document)
 		{
-			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, HQ.Data.Contracts.ErrorStrings.ValidationFailed, out var error))
+			if (!this.TryValidateModelOrError(ModelState, ActiveAuth.ErrorEvents.ValidationFailed, ActiveAuth.ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			var created = await Repository.CreateAsync(document);
@@ -83,7 +82,7 @@ namespace HQ.Integration.DocumentDb
 			if (item == null)
 				return BadRequest();
 
-			if (!this.TryValidateModelOrError(ModelState, ErrorEvents.ValidationFailed, ErrorStrings.ValidationFailed, out var error))
+			if (!this.TryValidateModelOrError(ModelState, ActiveAuth.ErrorEvents.ValidationFailed, ActiveAuth.ErrorStrings.ValidationFailed, out var error))
 				return error;
 
 			await Repository.UpdateAsync(item.Id, item, HttpContext.RequestAborted);

@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Common;
+using ActiveResolver;
 using HQ.Data.Contracts.Schema.Extensions;
 using HQ.Data.Contracts.Schema.Models;
 using TypeKitchen.Differencing;

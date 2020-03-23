@@ -19,7 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using HQ.Common;
+using ActiveResolver;
 using HQ.Test.Sdk;
 
 namespace HQ.Platform.Tests.Common

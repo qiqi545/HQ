@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ActiveAuth\src\ActiveAuth.Api\ActiveAuth.Api.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
@@ -40,7 +41,6 @@
     <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
     <ProjectReference Include="..\HQ.Integration.SqlServer\HQ.Integration.SqlServer.csproj" />
     <ProjectReference Include="..\HQ.Platform.Api\HQ.Platform.Api.csproj" />
-    <ProjectReference Include="..\HQ.Platform.Identity\HQ.Platform.Identity.csproj" />
   </ItemGroup>
 
 </Project>

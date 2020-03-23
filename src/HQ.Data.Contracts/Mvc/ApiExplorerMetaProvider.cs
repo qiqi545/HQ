@@ -23,10 +23,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using ActiveRoutes;
-using HQ.Common.AspNetCore.Mvc;
-using HQ.Common.Dates;
-using HQ.Common.Models;
-using HQ.Data.Contracts.Attributes;
+using ActiveRoutes.Meta;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -383,7 +380,7 @@ namespace HQ.Data.Contracts.Mvc
 			{
 				if (!@interface.IsGenericType)
 					continue;
-				if (@interface.GetGenericTypeDefinition() != typeof(IDynamicComponentEnabled<>))
+				if (@interface.GetGenericTypeDefinition() != typeof(Common.AspNetCore.Mvc.IDynamicComponentEnabled<>))
 					continue;
 				if (!componentTypes.Contains(@interface.GenericTypeArguments[0]))
 					return false; // requires an installed component that isn't present

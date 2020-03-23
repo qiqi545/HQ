@@ -19,9 +19,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using ActiveErrors;
 using ActiveRoutes;
-using HQ.Common.AspNetCore.Mvc;
+using ActiveRoutes.Meta;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.Attributes;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
@@ -40,7 +39,7 @@ namespace HQ.Platform.Api.Schemas
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to weak-typed object schemas.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class SchemaController : Controller, IDynamicComponentEnabled<SchemaComponent>
+	public class SchemaController : Controller, Common.AspNetCore.Mvc.IDynamicComponentEnabled<SchemaComponent>
 	{
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
 		private readonly IOptionsMonitor<QueryOptions> _queryOptions;

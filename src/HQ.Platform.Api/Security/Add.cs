@@ -17,21 +17,23 @@
 
 using System;
 using System.Linq;
+using System.Net;
+using ActiveAuth.Configuration;
+using ActiveAuth.Models;
 using ActiveLogging;
 using ActiveOptions;
 using HQ.Common;
 using HQ.Common.AspNetCore.Mvc;
-using HQ.Platform.Api.Security.AspNetCore.Configuration;
-using HQ.Platform.Api.Security.AspNetCore.Extensions;
-using HQ.Platform.Api.Security.AspNetCore.Models;
 using HQ.Platform.Api.Security.Configuration;
+using HQ.Platform.Api.Security.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TypeKitchen;
 
-namespace HQ.Platform.Api.Security.AspNetCore
+namespace HQ.Platform.Api.Security
 {
 	public static class Add
 	{
@@ -57,7 +59,16 @@ namespace HQ.Platform.Api.Security.AspNetCore
 			var superUser = new SuperUserOptions();
 			configureSuperUserAction?.Invoke(superUser);
 
-			AuthenticationExtensions.MaybeSetSecurityKeys(security);
+			var credentials = new
+			{
+				SigningKeyCredentials = security.Signing,
+				EncryptingKey = security.Encrypting
+			}.QuackLike<ITokenCredentials>();
+
+			AuthenticationExtensions.MaybeSetSecurityKeys(credentials);
+
+			security.Signing = credentials.SigningKey;
+			security.Encrypting = credentials.EncryptingKey;
 
 			if (configureSecurityAction != null)
 			{

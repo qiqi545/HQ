@@ -16,20 +16,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using ActiveAuth.Configuration;
 using ActiveRoutes;
-using HQ.Platform.Identity.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Identity
+namespace HQ.Platform.Api.Security.Mvc
 {
-	public class IdentityApiFeature : DynamicFeature
+	public static class Add
 	{
-		public override IList<Type> ControllerTypes { get; } = new[]
-		{
-			typeof(UserController<,,>), 
-			typeof(RoleController<,>), 
-			typeof(TenantController<,>),
-			typeof(ApplicationController<,>)
-		};
 	}
 }

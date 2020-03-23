@@ -16,14 +16,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using ActiveAuth.Configuration;
 using ActiveAuth.Models;
-using HQ.Common;
 using HQ.Platform.Api.Security.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,14 +32,18 @@ using Microsoft.IdentityModel.Tokens;
 using Sodium;
 using CookieOptions = HQ.Platform.Api.Security.Configuration.CookieOptions;
 
-namespace HQ.Platform.Api.Security.AspNetCore.Models
+namespace HQ.Platform.Api.Security.Extensions
 {
 	public static class AuthenticationExtensions
 	{
 		private static readonly object Sync = new object();
 
-		public static void AddAuthentication(this IServiceCollection services, SecurityOptions security,
-			SuperUserOptions superUser, TokenOptions tokens, CookieOptions cookies, ClaimOptions claims)
+		public static void AddAuthentication(this IServiceCollection services, 
+			SecurityOptions security,
+			SuperUserOptions superUser, 
+			TokenOptions tokens,
+			CookieOptions cookies, 
+			ClaimOptions claims)
 		{
 			lock (Sync)
 			{
@@ -144,108 +146,61 @@ namespace HQ.Platform.Api.Security.AspNetCore.Models
 			return Task.CompletedTask;
 		}
 
-		public static string CreateToken<TUser, TKey>(this TUser user, IServerTimestampService timestamps, IEnumerable<Claim> userClaims,
-			SecurityOptions security) where TUser : IUserIdProvider<TKey> where TKey : IEquatable<TKey>
+		internal static void MaybeSetSecurityKeys(ITokenCredentials request)
 		{
-			var now = timestamps.GetCurrentTime();
-			var expires = now.AddSeconds(security.Tokens.TimeToLiveSeconds);
-
-			/*
-                See: https://tools.ietf.org/html/rfc7519#section-4.1
-                All claims are optional, but since our JSON conventions elide null values,
-                We need to ensure any optional claims are emitted as empty strings.
-            */
-
-			// JWT.io claims:
-			var sub = user.Id?.ToString() ?? string.Empty;
-			var jti = $"{Guid.NewGuid()}";
-			var iat = now.ToUnixTimeSeconds().ToString();
-			var exp = expires.ToUnixTimeSeconds().ToString();
-			var nbf = now.ToUnixTimeSeconds().ToString();
-			var iss = security.Tokens?.Issuer ?? string.Empty;
-			var aud = security.Tokens?.Audience ?? string.Empty;
-
-			var claims = new List<Claim>
-			{
-				new Claim(JwtRegisteredClaimNames.Sub, sub, ClaimValueTypes.String),
-				new Claim(JwtRegisteredClaimNames.Jti, jti, ClaimValueTypes.String),
-				new Claim(JwtRegisteredClaimNames.Iat, iat, ClaimValueTypes.Integer64),
-				new Claim(JwtRegisteredClaimNames.Nbf, nbf, ClaimValueTypes.Integer64),
-				new Claim(JwtRegisteredClaimNames.Exp, exp, ClaimValueTypes.Integer64)
-			};
-
-			claims.AddRange(userClaims);
-
-			MaybeSetSecurityKeys(security);
-
-			var handler = new JwtSecurityTokenHandler();
-
-			if (!security.Tokens.Encrypt)
-			{
-				var jwt = new JwtSecurityToken(iss, aud, claims, now.UtcDateTime, expires.UtcDateTime,
-					security.Signing);
-
-				return handler.WriteToken(jwt);
-			}
-
-			var descriptor = new SecurityTokenDescriptor
-			{
-				Audience = aud,
-				Issuer = iss,
-				Subject = new ClaimsIdentity(claims),
-				EncryptingCredentials = security.Encrypting
-			};
-
-			return handler.CreateEncodedJwt(descriptor);
+			request.SigningKey ??= request.SigningKey = BuildSigningCredentials(request);
+			request.EncryptingKey ??= (request.EncryptingKey = BuildEncryptingCredentials(request));
 		}
 
-		internal static void MaybeSetSecurityKeys(SecurityOptions security)
+		private static SigningCredentials BuildSigningCredentials(ITokenCredentials request)
 		{
-			security.Signing = security.Signing ?? (security.Signing = BuildSigningCredentials(security.Tokens));
-			security.Encrypting =
-				security.Encrypting ?? (security.Encrypting = BuildEncryptingCredentials(security.Tokens));
-		}
-
-		private static SigningCredentials BuildSigningCredentials(TokenOptions options)
-		{
-			MaybeSelfCreateMissingKeys(options);
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.SigningKey));
+			MaybeSelfCreateMissingKeyStrings(request);
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(request.SigningKeyString));
 			return new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 		}
 
-		private static EncryptingCredentials BuildEncryptingCredentials(TokenOptions options)
+		private static EncryptingCredentials BuildEncryptingCredentials(ITokenCredentials request)
 		{
-			MaybeSelfCreateMissingKeys(options);
-			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.EncryptionKey));
+			MaybeSelfCreateMissingKeyStrings(request);
+			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(request.EncryptingKeyString));
 			return new EncryptingCredentials(securityKey, JwtConstants.DirectKeyUseAlg,
 				SecurityAlgorithms.Aes256CbcHmacSha512);
 		}
 
-		public static bool MaybeSelfCreateMissingKeys(TokenOptions options)
+		public static bool MaybeSelfCreateMissingKeyStrings(ITokenCredentials feature)
 		{
 			var changed = false;
 
-			if (options.SigningKey == null || options.SigningKey == Constants.Tokens.NoSigningKeySet)
+			if (feature.SigningKey == null || feature.SigningKeyString == ActiveAuth.Constants.Tokens.NoSigningKeySet)
 			{
 				Trace.TraceWarning("No JWT signing key found, creating temporary key.");
-				options.SigningKey = Encoding.UTF8.GetString(SodiumCore.GetRandomBytes(128));
+				feature.SigningKeyString = Encoding.UTF8.GetString(SodiumCore.GetRandomBytes(128));
 				changed = true;
 			}
 
-			if (options.EncryptionKey == null || options.EncryptionKey == Constants.Tokens.NoEncryptionKeySet)
+			if (feature.EncryptingKey == null || feature.EncryptingKeyString == ActiveAuth.Constants.Tokens.NoEncryptingKeySet)
 			{
 				Trace.TraceWarning("No JWT encryption key found, using signing key.");
-				options.EncryptionKey = options.SigningKey;
+				feature.EncryptingKeyString = feature.SigningKeyString;
 				changed = true;
 			}
 
 			return changed;
 		}
 
-		private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions security,
-			TokenOptions tokens, ClaimOptions claims)
+		private static TokenValidationParameters BuildTokenValidationParameters(SecurityOptions security, TokenOptions tokens, ClaimOptions claims)
 		{
-			MaybeSetSecurityKeys(security);
+			MaybeSetSecurityKeys(new TokenFabricationRequest
+			{
+				TokenAudience = tokens.Audience,
+				Encrypt = tokens.Encrypt,
+				EncryptingKey = security.Encrypting,
+				EncryptingKeyString = tokens.EncryptingKey,
+				SigningKey = security.Signing,
+				SigningKeyString = tokens.SigningKey,
+				TokenIssuer = tokens.Issuer,
+				TokenTimeToLiveSeconds = tokens.TimeToLiveSeconds
+			});
 
 			var name = claims.UserNameClaim;
 			var role = claims.RoleClaim;
@@ -254,8 +209,7 @@ namespace HQ.Platform.Api.Security.AspNetCore.Models
 			{
 				return new TokenValidationParameters
 				{
-					TokenDecryptionKeyResolver =
-						(token, securityToken, kid, parameters) => new[] {security.Encrypting.Key},
+					TokenDecryptionKeyResolver = (token, securityToken, kid, parameters) => new[] {security.Encrypting.Key},
 					ValidateIssuerSigningKey = false,
 					ValidIssuer = tokens.Issuer,
 					ValidateLifetime = true,

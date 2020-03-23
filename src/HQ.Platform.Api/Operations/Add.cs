@@ -18,9 +18,7 @@
 using System;
 using ActiveOptions;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Common.Dates;
-using HQ.Data.Contracts.Mvc;
 using HQ.Platform.Api.Operations.Configuration;
 using Metrics;
 using Metrics.Reporters.ServerTiming;
@@ -74,16 +72,6 @@ namespace HQ.Platform.Api.Operations
 				});
 			});
 			
-			return services;
-		}
-
-		public static IServiceCollection AddGraphViz(this IServiceCollection services)
-		{
-			services.AddMvcCommon(o =>
-			{
-				o.OutputFormatters.Add(new GraphVizOutputFormatter());
-			});
-
 			return services;
 		}
 	}
