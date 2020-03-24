@@ -20,9 +20,9 @@ using System.Diagnostics;
 using System.Reflection;
 using ActiveLogging;
 using ActiveOptions;
+using ActiveOptions.Azure.Cosmos;
 using HQ.Extensions.Deployment;
 using HQ.Integration.Azure;
-using HQ.Integration.DocumentDb.Options;
 using HQ.Integration.Sqlite.Options;
 using HQ.Integration.SqlServer.Options;
 using HQ.Platform.Node.Backends;
@@ -132,7 +132,7 @@ namespace HQ.Platform.Node
 			switch (backendType)
 			{
 				case nameof(DocumentDb):
-					config.AddDocumentDb(connectionString, true, seed, DefaultSaveOptions);
+					config.AddCosmosConfigurationProvider(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				case nameof(Sqlite):
 					config.AddSqlite(connectionString, true, seed, DefaultSaveOptions);
