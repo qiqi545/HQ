@@ -52,7 +52,6 @@ using HQ.Integration.SqlServer.Sql.Configuration;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Correlation;
-using HQ.Platform.Api.Functions.AspNetCore.Mvc;
 using HQ.Platform.Api.Operations;
 using HQ.Platform.Api.Runtime.GraphQl;
 using HQ.Platform.Api.Runtime.Rest;
