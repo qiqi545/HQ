@@ -26,6 +26,7 @@ using ActiveOptions;
 using ActiveOptions.Api;
 using ActiveRoutes.Meta;
 using ActiveScheduler;
+using ActiveScheduler.Api;
 using ActiveScheduler.Sqlite;
 using ActiveScheduler.SqlServer;
 using ActiveTenant;

@@ -22,14 +22,17 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.5.0" />
+
     <PackageReference Include="ActiveOptions.Api" Version="1.0.4" />
     <PackageReference Include="ActiveOptions.Azure.Cosmos" Version="1.0.5" />
     <PackageReference Include="ActiveRoutes.Meta" Version="1.0.9" />
     <PackageReference Include="ActiveScheduler.Sqlite" Version="1.0.7" />
     <PackageReference Include="ActiveScheduler.SqlServer" Version="1.1.0" />
+    <PackageReference Include="ActiveScheduler.Api" Version="1.1.0" />
     <PackageReference Include="ActiveVersion" Version="1.0.3" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="3.5.0" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.5.0" />
+    
   </ItemGroup>
 
   <ItemGroup>
