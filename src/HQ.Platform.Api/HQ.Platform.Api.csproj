@@ -11,22 +11,34 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveAuth" Version="1.0.0-pre-0" />
-    <PackageReference Include="ActiveScheduler" Version="1.1.0" />
-    <PackageReference Include="ActiveTenant" Version="1.0.4" />
-    <PackageReference Include="Metrics" Version="2.0.2" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.3" />
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.Http" Version="3.0.2" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.1.3" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.5.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="Sodium.Core" Version="1.2.3" />
-    <PackageReference Include="System.Buffers" Version="4.5.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="3.1.3" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="2.2.8" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.0.0" />
-    <PackageReference Include="GraphQL-Parser" Version="5.1.0" />
+    <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
+    <PackageReference Include="System.Reactive.Linq" Version="4.3.2" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="ActiveAuth" Version="1.0.0-pre-0" />
+    <PackageReference Include="ActiveCaching" Version="1.0.2" />
+    <PackageReference Include="ActiveScheduler" Version="1.1.0" />
+    <PackageReference Include="ActiveTenant" Version="1.0.4" />
+    <PackageReference Include="Metrics" Version="2.0.2" />
+    <PackageReference Include="Sodium.Core" Version="1.2.3" />
+    <PackageReference Include="GraphQL-Parser" Version="5.1.0" />
+    <PackageReference Include="DotLiquid" Version="2.0.325" />
+    <PackageReference Include="Postmark" Version="4.2.2" />
+    <PackageReference Include="WyHash" Version="1.0.4" />
+    <PackageReference Include="Metrics" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,7 +46,6 @@
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
     <ProjectReference Include="..\HQ.Data.Sql\HQ.Data.Sql.csproj" />
-    <ProjectReference Include="..\HQ.Extensions\HQ.Extensions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

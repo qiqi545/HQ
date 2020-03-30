@@ -20,7 +20,7 @@ using HQ.Common.AspNetCore;
 using HQ.Extensions.SplitTests;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Metrics.AspNetCore.SplitTesting
+namespace HQ.Extensions.Metrics.SplitTesting
 {
 	/// <summary>
 	///     A default identity that is based on the user first, if they are authenticated,

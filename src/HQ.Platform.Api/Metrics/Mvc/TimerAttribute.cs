@@ -17,11 +17,11 @@
 
 using System;
 using System.Diagnostics;
-using HQ.Extensions.Metrics.AspNetCore.Internal;
+using HQ.Extensions.Metrics.Internal;
 using Metrics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Extensions.Metrics.AspNetCore.Mvc
+namespace HQ.Extensions.Metrics.Mvc
 {
 	[AttributeUsage(AttributeTargets.Method)]
 	public class TimerAttribute : ActionFilterAttribute

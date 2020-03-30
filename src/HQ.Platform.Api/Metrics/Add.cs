@@ -15,13 +15,13 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.AspNetCore.SplitTesting;
+using HQ.Extensions.Metrics.SplitTesting;
 using HQ.Extensions.SplitTests;
 using Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics.AspNetCore
+namespace HQ.Extensions.Metrics
 {
 	public static class Add
 	{

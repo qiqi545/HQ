@@ -15,12 +15,32 @@
 
 #endregion
 
-namespace HQ.Data.Streaming.Memory
+using System;
+using Metrics;
+using Microsoft.AspNetCore.Mvc.Filters;
+
+namespace HQ.Extensions.Metrics.Internal
 {
-	public struct SegmentStats
+	internal static class ActionExecutedContextExtensions
 	{
-		public long RecordCount { get; set; }
-		public int RecordLength { get; set; }
-		public int SegmentCount { get; set; }
+		public static Type GetMetricOwner(this ActionExecutingContext filterContext)
+		{
+			return filterContext.Controller.GetType();
+		}
+
+		public static string GetMetricName<T>(this ActionExecutingContext filterContext) where T : IMetric
+		{
+			return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
+		}
+
+		public static Type GetMetricOwner(this ActionExecutedContext filterContext)
+		{
+			return filterContext.Controller.GetType();
+		}
+
+		public static string GetMetricName<T>(this ActionExecutedContext filterContext) where T : IMetric
+		{
+			return $"{filterContext.ActionDescriptor.RouteValues["action"]}.{typeof(T).Name}";
+		}
 	}
 }

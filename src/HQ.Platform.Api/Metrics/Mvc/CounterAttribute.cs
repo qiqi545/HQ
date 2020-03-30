@@ -16,22 +16,20 @@
 #endregion
 
 using System;
-using HQ.Extensions.Metrics.AspNetCore.Internal;
+using HQ.Extensions.Metrics.Internal;
 using Metrics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Extensions.Metrics.AspNetCore.Mvc
+namespace HQ.Extensions.Metrics.Mvc
 {
 	[AttributeUsage(AttributeTargets.Method)]
-	public class HistogramAttribute : ActionFilterAttribute
+	public class CounterAttribute : ActionFilterAttribute
 	{
-		private readonly SampleType _sampleType;
-		private readonly long _value;
+		private readonly long _incrementBy;
 
-		public HistogramAttribute(SampleType sampleType, long value, string name = null, Type owner = null)
+		public CounterAttribute(long incrementBy = 1L, string name = null, Type owner = null)
 		{
-			_sampleType = sampleType;
-			_value = value;
+			_incrementBy = incrementBy;
 			Name = name;
 			Owner = owner;
 		}
@@ -41,13 +39,11 @@ namespace HQ.Extensions.Metrics.AspNetCore.Mvc
 
 		public override void OnActionExecuted(ActionExecutedContext filterContext)
 		{
-			var type = Owner ?? filterContext.GetMetricOwner();
-			var name = Name ?? filterContext.GetMetricName<HistogramMetric>();
-
 			var metricsHost =
 				filterContext.HttpContext.RequestServices.GetService(typeof(IMetricsHost)) as IMetricsHost;
-			var histogram = metricsHost?.Histogram(type, name, _sampleType);
-			histogram?.Update(_value);
+			var counter = metricsHost?.Counter(Owner ?? filterContext.GetMetricOwner(),
+				Name ?? filterContext.GetMetricName<CounterMetric>());
+			counter?.Increment(_incrementBy);
 		}
 	}
 }

@@ -27,7 +27,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 
-namespace HQ.Extensions.Metrics.AspNetCore.Internal
+namespace HQ.Extensions.Metrics.Internal
 {
 	internal class MetricsMiddleware
 	{
