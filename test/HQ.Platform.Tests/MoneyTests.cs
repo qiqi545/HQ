@@ -20,11 +20,10 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using HQ.Common.Numerics;
-using HQ.Platform.Tests.Extensions;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Common.Numerics
+namespace HQ.Platform.Tests
 {
 	public class MoneyTests
 	{
@@ -84,10 +83,10 @@ namespace HQ.Platform.Tests.Common.Numerics
 			Money money = 1000;
 			Assert.Equal(currency, money.CurrencyInfo.Code);
 
-			_console.WriteLine(money.CurrencyInfo.Code);
-			_console.WriteLine(money.CurrencyInfo.DisplayCulture);
+			_console.WriteLine(money.CurrencyInfo.Code.ToString());
+			_console.WriteLine(money.CurrencyInfo.DisplayCulture.ToString());
 			_console.WriteLine(money.CurrencyInfo.DisplayName);
-			_console.WriteLine(money.CurrencyInfo.NativeRegion);
+			_console.WriteLine(money.CurrencyInfo.NativeRegion.ToString());
 		}
 
 		[Fact]
@@ -411,7 +410,7 @@ namespace HQ.Platform.Tests.Common.Numerics
 			Assert.Throws<ArithmeticException>(() =>
 			{
 				var total = left + right;
-				_console.WriteLine(total);
+				_console.WriteLine(total.ToString());
 			});
 		}
 	}

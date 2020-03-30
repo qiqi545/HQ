@@ -20,6 +20,7 @@ using System.Buffers;
 using System.IO;
 using Microsoft.Extensions.Primitives;
 using TypeKitchen;
+using TypeKitchen.Serialization;
 
 namespace HQ.Data.Contracts.Serialization
 {

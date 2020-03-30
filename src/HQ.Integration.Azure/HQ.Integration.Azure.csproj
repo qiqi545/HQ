@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
+    <ProjectReference Include="..\HQ.Extensions\HQ.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

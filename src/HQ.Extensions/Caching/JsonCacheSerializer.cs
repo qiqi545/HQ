@@ -15,15 +15,25 @@
 
 #endregion
 
-using Xunit.Abstractions;
+using System;
+using System.Text;
+using ActiveCaching;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using TypeKitchen.Serialization;
 
-namespace HQ.Platform.Tests.Extensions
+namespace HQ.Extensions.Caching
 {
-    internal static class TestOutputHelperExtensions
-    {
-        public static void WriteLine(this ITestOutputHelper helper, object value)
-        {
-            helper.WriteLine($"{value}");
-        }
-    }
+	internal class JsonCacheSerializer : ICacheSerializer, ICacheDeserializer
+	{
+		public void ObjectToBuffer<T>(T value, ref Span<byte> buffer, ref int startAt)
+		{
+			buffer.WriteString(ref startAt, new StringValues(JsonConvert.SerializeObject(value)));
+		}
+
+		public T BufferToObject<T>(ReadOnlySpan<byte> bytes)
+		{
+			return JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(bytes));
+		}
+	}
 }

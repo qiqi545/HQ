@@ -39,8 +39,6 @@
     <ProjectReference Include="..\..\..\ActiveAuth\src\ActiveAuth.Api\ActiveAuth.Api.csproj" />
     <ProjectReference Include="..\HQ.Common\HQ.Common.csproj" />
     <ProjectReference Include="..\HQ.Data.SessionManagement\HQ.Data.SessionManagement.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Deployment\HQ.Extensions.Deployment.csproj" />
-    <ProjectReference Include="..\HQ.Extensions.Notifications\HQ.Extensions.Notifications.csproj" />
     <ProjectReference Include="..\HQ.Integration.Azure\HQ.Integration.Azure.csproj" />
     <ProjectReference Include="..\HQ.Integration.DocumentDb\HQ.Integration.DocumentDb.csproj" />
     <ProjectReference Include="..\HQ.Integration.Sqlite\HQ.Integration.Sqlite.csproj" />
