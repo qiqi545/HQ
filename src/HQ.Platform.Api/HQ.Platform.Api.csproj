@@ -30,7 +30,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="ActiveAuth" Version="1.0.0-pre-0" />
     <PackageReference Include="ActiveCaching" Version="1.0.2" />
-    <PackageReference Include="ActiveScheduler" Version="1.1.0" />
+    <PackageReference Include="ActiveScheduler" Version="1.1.1" />
     <PackageReference Include="ActiveTenant" Version="1.0.4" />
     <PackageReference Include="Metrics" Version="2.0.2" />
     <PackageReference Include="Sodium.Core" Version="1.2.3" />

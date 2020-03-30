@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using ActiveScheduler;
 using ActiveScheduler.SqlServer;
 using HQ.Platform.Tests.Fixtures;
@@ -27,7 +28,7 @@ namespace HQ.Platform.Tests.Scheduling.SqlServer
         public override void ConfigureServices(IServiceCollection services)
         {
             services.AddBackgroundTasks(o => { })
-                .AddSqlServerBackgroundTasksStore(ConnectionString);
+                .AddSqlServerBackgroundTasksStore(ConnectionString, r => DateTimeOffset.Now);
         }
     }
 }

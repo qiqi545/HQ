@@ -20,10 +20,9 @@ using System.Diagnostics;
 using System.Reflection;
 using ActiveLogging;
 using ActiveOptions;
+using ActiveOptions.Sqlite;
 using ActiveOptions.Azure.Cosmos;
 using HQ.Integration.Azure;
-using HQ.Integration.Sqlite.Options;
-using HQ.Integration.SqlServer.Options;
 using HQ.Platform.Api.Deployment;
 using HQ.Platform.Node.Backends;
 using HQ.Platform.Node.Clouds;
@@ -135,10 +134,10 @@ namespace HQ.Platform.Node
 					config.AddCosmosConfigurationProvider(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				case nameof(Sqlite):
-					config.AddSqlite(connectionString, true, seed, DefaultSaveOptions);
+					config.AddSqliteConfigurationProvider(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				case nameof(SqlServer):
-					config.AddSqlServer(connectionString, true, seed, DefaultSaveOptions);
+					config.AddSqlServerConfigurationProvider(connectionString, true, seed, DefaultSaveOptions);
 					break;
 				default:
 					throw new ArgumentOutOfRangeException(backendType, typeof(string), null);

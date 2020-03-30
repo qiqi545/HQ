@@ -26,7 +26,8 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.5.0" />
 
     <PackageReference Include="ActiveOptions.Api" Version="1.0.4" />
-    <PackageReference Include="ActiveOptions.Azure.Cosmos" Version="1.0.5" />
+    <PackageReference Include="ActiveOptions.Azure.Cosmos" Version="1.0.6" />
+    <PackageReference Include="ActiveOptions.Sqlite" Version="1.0.6" />
     <PackageReference Include="ActiveRoutes.Meta" Version="1.0.9" />
     <PackageReference Include="ActiveScheduler.Sqlite" Version="1.0.7" />
     <PackageReference Include="ActiveScheduler.SqlServer" Version="1.1.0" />
