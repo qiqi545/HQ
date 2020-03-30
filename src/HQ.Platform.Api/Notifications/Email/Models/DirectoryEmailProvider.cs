@@ -20,9 +20,9 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
-using HQ.Extensions.Notifications.Email.Providers;
+using HQ.Platform.Api.Notifications.Email.Providers;
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Platform.Api.Notifications.Email.Models
 {
 	/// <summary>
 	///     Delivers email as .EML files to a specified directory.

@@ -23,7 +23,7 @@ using Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace HQ.Extensions.Deployment
+namespace HQ.Platform.Api.Deployment
 {
 	public static class CloudExtensions
 	{

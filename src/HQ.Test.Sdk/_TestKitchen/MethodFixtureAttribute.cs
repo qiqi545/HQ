@@ -2,7 +2,7 @@
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 	public class MethodFixtureAttribute : BeforeAfterTestAttribute

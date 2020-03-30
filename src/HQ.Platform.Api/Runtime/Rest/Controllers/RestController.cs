@@ -27,7 +27,7 @@ using HQ.Common.AspNetCore.MergePatch;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Mvc;
-using HQ.Extensions.Caching;
+using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using HQ.Platform.Api.Models;

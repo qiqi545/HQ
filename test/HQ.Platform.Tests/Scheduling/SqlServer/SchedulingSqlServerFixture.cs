@@ -20,7 +20,7 @@ using ActiveScheduler.SqlServer;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
+namespace HQ.Platform.Tests.Scheduling.SqlServer
 {
     public class SchedulingSqlServerFixture : SqlServerFixture
     {

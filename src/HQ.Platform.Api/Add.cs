@@ -29,7 +29,6 @@ using HQ.Data.Contracts.Runtime;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.SessionManagement;
 using HQ.Data.Sql.Implementation;
-using HQ.Extensions.Caching;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Filters;
 using HQ.Platform.Api.Models;
@@ -46,6 +45,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using ActiveOptions;
+using HQ.Platform.Api.Caching;
 
 namespace HQ.Platform.Api
 {

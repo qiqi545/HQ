@@ -16,7 +16,7 @@
 #endregion
 
 using System.Diagnostics;
-using HQ.Extensions.Deployment;
+using HQ.Platform.Api.Deployment;
 using Microsoft.Extensions.Logging;
 
 namespace HQ.Integration.Azure

@@ -17,7 +17,7 @@
 
 using ActiveScheduler.Models;
 
-namespace HQ.Extensions.Notifications.Configuration
+namespace HQ.Platform.Api.Notifications.Configuration
 {
 	public class NotificationDeliveryOptions
 	{

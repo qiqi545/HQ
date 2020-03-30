@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Extensions.Deployment;
+using HQ.Platform.Api.Deployment;
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 
 namespace HQ.Integration.Azure

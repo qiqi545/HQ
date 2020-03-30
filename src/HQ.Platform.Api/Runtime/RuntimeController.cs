@@ -25,7 +25,7 @@ using ActiveRoutes.Meta;
 using ActiveVersion;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Runtime;
-using HQ.Extensions.Caching;
+using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;

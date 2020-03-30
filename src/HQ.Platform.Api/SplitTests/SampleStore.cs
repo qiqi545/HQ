@@ -17,7 +17,7 @@
 
 using System.Collections.Concurrent;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public static class SampleStore
 	{

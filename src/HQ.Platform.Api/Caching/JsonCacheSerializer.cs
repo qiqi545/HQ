@@ -22,7 +22,7 @@ using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using TypeKitchen.Serialization;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Platform.Api.Caching
 {
 	internal class JsonCacheSerializer : ICacheSerializer, ICacheDeserializer
 	{

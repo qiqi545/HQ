@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Platform.Api.Notifications.Email.Models
 {
 	public interface IEmailTemplateEngine
 	{

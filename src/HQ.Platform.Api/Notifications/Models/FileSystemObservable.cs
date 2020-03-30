@@ -20,7 +20,7 @@ using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 
-namespace HQ.Extensions.Notifications.Models
+namespace HQ.Platform.Api.Notifications.Models
 {
 	internal class FileSystemObservable
 	{

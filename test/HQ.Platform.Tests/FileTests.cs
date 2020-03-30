@@ -17,7 +17,7 @@ using HQ.Data.Contracts.Serialization;
 using HQ.Test.Sdk;
 using HQ.Test.Sdk.Fixtures;
 
-namespace HQ.Platform.Tests.Data.Contracts.Serialization
+namespace HQ.Platform.Tests
 {
     public class FileTests : UnitUnderTest
     {

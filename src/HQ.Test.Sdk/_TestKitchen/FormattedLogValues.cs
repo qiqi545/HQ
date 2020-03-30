@@ -7,7 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	public readonly struct FormattedLogValues : IReadOnlyList<KeyValuePair<string, object>>
 	{

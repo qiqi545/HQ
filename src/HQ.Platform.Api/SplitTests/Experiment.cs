@@ -20,7 +20,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public class Experiment
 	{

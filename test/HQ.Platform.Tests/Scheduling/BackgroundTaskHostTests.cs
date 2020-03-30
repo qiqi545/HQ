@@ -23,14 +23,14 @@ using ActiveLogging;
 using ActiveScheduler;
 using ActiveScheduler.Configuration;
 using ActiveScheduler.Models;
-using HQ.Platform.Tests.Extensions.Scheduling.Handlers;
+using HQ.Platform.Tests.Scheduling.Handlers;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TypeKitchen;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling
+namespace HQ.Platform.Tests.Scheduling
 {
 	public abstract class BackgroundTaskHostTests : ServiceUnderTest
 	{

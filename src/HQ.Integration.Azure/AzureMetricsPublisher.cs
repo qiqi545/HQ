@@ -16,8 +16,8 @@
 #endregion
 
 using ActiveLogging;
-using HQ.Extensions.Deployment;
 using HQ.Integration.Azure.Metrics.Reporters;
+using HQ.Platform.Api.Deployment;
 using Metrics;
 
 namespace HQ.Integration.Azure

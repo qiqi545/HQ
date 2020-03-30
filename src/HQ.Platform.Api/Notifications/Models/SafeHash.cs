@@ -18,7 +18,7 @@
 using System.Dynamic;
 using DotLiquid;
 
-namespace HQ.Extensions.Notifications.Models
+namespace HQ.Platform.Api.Notifications.Models
 {
 	/// <summary>
 	///     Allows a dynamic hash to access values that don't exist

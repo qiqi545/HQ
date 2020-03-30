@@ -17,11 +17,11 @@
 
 using System.Collections.Generic;
 using DotLiquid;
-using HQ.Extensions.Notifications.Extensions;
-using HQ.Extensions.Notifications.Models;
+using HQ.Platform.Api.Notifications.Extensions;
+using HQ.Platform.Api.Notifications.Models;
 using WyHash;
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Platform.Api.Notifications.Email.Models
 {
 	internal class LiquidEmailTemplateEngine : IEmailTemplateEngine
 	{

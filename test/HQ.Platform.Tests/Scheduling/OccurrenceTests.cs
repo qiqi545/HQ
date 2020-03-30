@@ -18,11 +18,9 @@
 using System;
 using ActiveScheduler;
 using ActiveScheduler.Models;
-using HQ.Common;
-using HQ.Platform.Tests.Fixtures;
 using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling
+namespace HQ.Platform.Tests.Scheduling
 {
 	public class OccurrenceTests : UnitUnderTest
 	{

@@ -18,7 +18,7 @@
 using ActiveLogging;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Extensions.Deployment
+namespace HQ.Platform.Api.Deployment
 {
 	public interface ICloudTelemetry<in T> where T : ICloudOptions
 	{

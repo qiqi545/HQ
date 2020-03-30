@@ -23,11 +23,11 @@ using System.Linq;
 using System.Reflection;
 using Dynamitey;
 using Dynamitey.DynamicObjects;
+using HQ.Test.Sdk._TestKitchen;
 using HQ.Test.Sdk.Internal;
 using HQ.Test.Sdk.Logging;
 using ImpromptuInterface;
 using Microsoft.Extensions.Logging;
-using TestKitchen;
 using TypeKitchen;
 using TypeKitchen.Creation;
 

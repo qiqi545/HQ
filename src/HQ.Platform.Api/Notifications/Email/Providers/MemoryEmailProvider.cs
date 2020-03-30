@@ -15,10 +15,10 @@
 
 #endregion
 
-using HQ.Extensions.Notifications.Email.Models;
-using HQ.Extensions.Notifications.Models;
+using HQ.Platform.Api.Notifications.Email.Models;
+using HQ.Platform.Api.Notifications.Models;
 
-namespace HQ.Extensions.Notifications.Email.Providers
+namespace HQ.Platform.Api.Notifications.Email.Providers
 {
 	/// <summary>
 	///     Sends messages to a memory bucket. Probably only really useful for tests, but could be used in an intermediary

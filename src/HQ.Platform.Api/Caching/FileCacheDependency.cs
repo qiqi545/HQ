@@ -23,7 +23,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Primitives;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Platform.Api.Caching
 {
 	public class FileCacheDependency : ICacheDependency
 	{

@@ -18,7 +18,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
+namespace HQ.Platform.Tests.Scheduling.Sqlite
 {
 	public class SqliteBackgroundTaskHostTests : BackgroundTaskHostTests, IClassFixture<SchedulingSqliteFixture>
 	{

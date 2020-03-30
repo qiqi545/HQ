@@ -19,7 +19,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 
-namespace HQ.Platform.Tests.Common.Numerics
+namespace HQ.Platform.Tests.Fixtures
 {
     public class CultureFixture : IDisposable
     {

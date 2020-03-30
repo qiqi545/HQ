@@ -21,7 +21,7 @@ using ActiveScheduler.Hooks;
 using ActiveScheduler.Models;
 using Microsoft.Extensions.Logging;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
+namespace HQ.Platform.Tests.Scheduling.Handlers
 {
 	public class StaticCountingHandler : Handler
 	{

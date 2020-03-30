@@ -17,10 +17,10 @@
 
 using System.Net;
 using HQ.Common.AspNetCore;
-using HQ.Extensions.SplitTests;
+using HQ.Platform.Api.SplitTests;
 using Microsoft.AspNetCore.Http;
 
-namespace HQ.Extensions.Metrics.SplitTesting
+namespace HQ.Platform.Api.Metrics.SplitTesting
 {
 	/// <summary>
 	///     A default identity that is based on the user first, if they are authenticated,

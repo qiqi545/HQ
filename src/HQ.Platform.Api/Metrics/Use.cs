@@ -15,14 +15,14 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.Internal;
+using HQ.Platform.Api.Metrics.Internal;
 using Metrics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Platform.Api.Metrics
 {
 	public static class Use
 	{

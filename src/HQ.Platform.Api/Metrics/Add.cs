@@ -15,13 +15,13 @@
 
 #endregion
 
-using HQ.Extensions.Metrics.SplitTesting;
-using HQ.Extensions.SplitTests;
+using HQ.Platform.Api.Metrics.SplitTesting;
+using HQ.Platform.Api.SplitTests;
 using Metrics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace HQ.Extensions.Metrics
+namespace HQ.Platform.Api.Metrics
 {
 	public static class Add
 	{

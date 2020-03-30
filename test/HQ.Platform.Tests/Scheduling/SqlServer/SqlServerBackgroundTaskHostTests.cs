@@ -18,7 +18,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.SqlServer
+namespace HQ.Platform.Tests.Scheduling.SqlServer
 {
 	public class SqlServerBackgroundTaskHostTests : BackgroundTaskHostTests, IClassFixture<SchedulingSqlServerFixture>
 	{

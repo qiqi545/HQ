@@ -17,14 +17,14 @@
 
 using System;
 using System.IO;
-using HQ.Extensions.Notifications.Configuration;
-using HQ.Extensions.Notifications.Email.Models;
-using HQ.Extensions.Notifications.Email.Providers;
+using ActiveOptions;
+using HQ.Platform.Api.Notifications.Configuration;
+using HQ.Platform.Api.Notifications.Email.Models;
+using HQ.Platform.Api.Notifications.Email.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using ActiveOptions;
 
-namespace HQ.Extensions.Notifications
+namespace HQ.Platform.Api.Notifications
 {
 	public static class Add
 	{

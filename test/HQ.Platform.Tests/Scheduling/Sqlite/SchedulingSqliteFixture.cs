@@ -22,7 +22,7 @@ using ActiveScheduler.Sqlite;
 using HQ.Platform.Tests.Fixtures;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
+namespace HQ.Platform.Tests.Scheduling.Sqlite
 {
     public class SchedulingSqliteFixture : SqliteFixture
     {

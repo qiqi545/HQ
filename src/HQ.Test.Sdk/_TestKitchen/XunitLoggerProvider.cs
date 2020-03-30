@@ -4,7 +4,7 @@
 using Microsoft.Extensions.Logging;
 using Xunit.Abstractions;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	public class XunitLoggerProvider : ILoggerProvider
 	{

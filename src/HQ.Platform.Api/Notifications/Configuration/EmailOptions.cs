@@ -15,9 +15,9 @@
 
 #endregion
 
-using HQ.Extensions.Notifications.Email.Models;
+using HQ.Platform.Api.Notifications.Email.Models;
 
-namespace HQ.Extensions.Notifications.Configuration
+namespace HQ.Platform.Api.Notifications.Configuration
 {
 	public class EmailOptions
 	{

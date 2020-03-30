@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using ActiveScheduler.Hooks;
 using ActiveScheduler.Models;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Handlers
+namespace HQ.Platform.Tests.Scheduling.Handlers
 {
 	public class TerminalTaskHandler : Handler
 	{

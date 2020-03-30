@@ -20,7 +20,7 @@ using System.IO;
 using HQ.Data.Contracts.Serialization;
 using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Data.Contracts.Serialization
+namespace HQ.Platform.Tests
 {
     public class MirrorTests : UnitUnderTest
     {

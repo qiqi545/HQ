@@ -17,7 +17,7 @@ using HQ.Common;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Platform.Tests.Common
+namespace HQ.Platform.Tests
 {
     public class StringExtensionsTests : UnitUnderTest
     {

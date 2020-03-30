@@ -19,7 +19,7 @@ using System;
 using Metrics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Extensions.Metrics.Internal
+namespace HQ.Platform.Api.Metrics.Internal
 {
 	internal static class ActionExecutedContextExtensions
 	{

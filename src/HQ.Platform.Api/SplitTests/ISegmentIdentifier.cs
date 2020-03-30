@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public interface ISegmentIdentifier
 	{

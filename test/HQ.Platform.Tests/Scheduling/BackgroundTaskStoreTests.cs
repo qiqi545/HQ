@@ -25,7 +25,7 @@ using Dapper;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling
+namespace HQ.Platform.Tests.Scheduling
 {
     public abstract class BackgroundTaskStoreTests : ServiceUnderTest
     {

@@ -16,11 +16,11 @@
 #endregion
 
 using System;
-using HQ.Extensions.Metrics.Internal;
+using HQ.Platform.Api.Metrics.Internal;
 using Metrics;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace HQ.Extensions.Metrics.Mvc
+namespace HQ.Platform.Api.Metrics.Mvc
 {
 	[AttributeUsage(AttributeTargets.Method)]
 	public class HistogramAttribute : ActionFilterAttribute

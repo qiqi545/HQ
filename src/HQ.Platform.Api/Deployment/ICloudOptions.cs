@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.Deployment
+namespace HQ.Platform.Api.Deployment
 {
 	public interface ICloudOptions
 	{

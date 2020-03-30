@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using ActiveCaching;
 using HQ.Common.Models;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Platform.Api.Caching
 {
 	public class CacheKeyValueStore<TKey, TValue> : IKeyValueStore<TKey, TValue>
 	{

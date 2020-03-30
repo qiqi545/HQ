@@ -21,7 +21,7 @@ using HQ.Test.Sdk;
 using NCrontab;
 using Xunit;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling
+namespace HQ.Platform.Tests.Scheduling
 {
     public class CronTemplatesTests : UnitUnderTest
     {
@@ -33,7 +33,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Secondly(n);
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.Equal(n, diff.Seconds);
+            Xunit.Assert.Equal(n, diff.Seconds);
         }
 
         [DataDrivenTest]
@@ -44,7 +44,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Minutely(n);
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.Equal(n, diff.Minutes);
+            Xunit.Assert.Equal(n, diff.Minutes);
         }
 
         [DataDrivenTest]
@@ -54,7 +54,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Hourly(n);
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.Equal(n, diff.Hours);
+            Xunit.Assert.Equal(n, diff.Hours);
         }
 
         [DataDrivenTest]
@@ -65,7 +65,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Daily(n);
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.Equal(n, diff.Days);
+            Xunit.Assert.Equal(n, diff.Days);
         }
 
         [DataDrivenTest]
@@ -75,7 +75,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Weekly(n);
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.Equal(7, diff.Days);
+            Xunit.Assert.Equal(7, diff.Days);
         }
 
         [DataDrivenTest]
@@ -95,7 +95,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var from = schedule.GetNextOccurrence(start); // should always start on 9/5/2016 (Monday)
             var to = schedule.GetNextOccurrence(from);
             var diff = to - from;
-            Assert.Equal(expected, diff.Days);
+            Xunit.Assert.Equal(expected, diff.Days);
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace HQ.Platform.Tests.Extensions.Scheduling
             var cron = CronTemplates.Monthly();
             var schedule = CronTemplates.Parse(cron);
             var diff = CompareTwoCronOccurrences(schedule);
-            Assert.True(diff.Days == 30 || diff.Days == 31);
+            Xunit.Assert.True(diff.Days == 30 || diff.Days == 31);
         }
 
         private static TimeSpan CompareTwoCronOccurrences(CrontabSchedule schedule)

@@ -16,10 +16,9 @@
 #endregion
 
 using System;
-using HQ.Data.Contracts.Serialization;
 using TypeKitchen.Serialization;
 
-namespace HQ.Platform.Tests.Data.Contracts.Serialization
+namespace HQ.Platform.Tests
 {
     namespace V1
     {

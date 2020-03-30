@@ -18,7 +18,7 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.InMemory
+namespace HQ.Platform.Tests.Scheduling.InMemory
 {
 	public class InMemoryBackgroundTaskHostTests : BackgroundTaskHostTests, IClassFixture<InMemoryBackgroundTasksFixture>
 	{

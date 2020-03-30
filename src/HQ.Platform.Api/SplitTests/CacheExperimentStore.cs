@@ -16,9 +16,9 @@
 #endregion
 
 using ActiveCaching;
-using HQ.Extensions.Caching;
+using HQ.Platform.Api.Caching;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public class CacheExperimentStore : CacheKeyValueStore<ExperimentKey, Experiment>, IExperimentStore
 	{

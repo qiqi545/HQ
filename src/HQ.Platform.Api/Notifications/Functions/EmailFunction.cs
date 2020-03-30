@@ -15,7 +15,7 @@
 
 #endregion
 
-namespace HQ.Extensions.Notifications.Functions
+namespace HQ.Platform.Api.Notifications.Functions
 {
 	public class EmailFunction
 	{

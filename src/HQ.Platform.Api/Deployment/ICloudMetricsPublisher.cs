@@ -18,7 +18,7 @@
 using ActiveLogging;
 using Metrics;
 
-namespace HQ.Extensions.Deployment
+namespace HQ.Platform.Api.Deployment
 {
 	public interface ICloudMetricsPublisher<in T> where T : ICloudOptions
 	{

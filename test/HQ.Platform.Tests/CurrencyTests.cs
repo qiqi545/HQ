@@ -18,10 +18,11 @@
 using System.Globalization;
 using System.Threading;
 using HQ.Common.Numerics;
+using HQ.Platform.Tests.Fixtures;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace HQ.Platform.Tests.Common.Numerics
+namespace HQ.Platform.Tests
 {
     public class CurrencyTests : IClassFixture<CultureFixture>
     {

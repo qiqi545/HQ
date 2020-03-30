@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public class Audience
 	{

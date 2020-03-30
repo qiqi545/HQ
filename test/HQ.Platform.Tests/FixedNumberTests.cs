@@ -2,7 +2,7 @@ using HQ.Common.Numerics;
 using HQ.Test.Sdk;
 using Xunit;
 
-namespace HQ.Platform.Tests.Common.Numerics
+namespace HQ.Platform.Tests
 {
     public class FixedNumberTests : UnitUnderTest
     {

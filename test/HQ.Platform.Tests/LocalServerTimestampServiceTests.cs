@@ -3,7 +3,7 @@ using System.IO;
 using HQ.Common;
 using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Common
+namespace HQ.Platform.Tests
 {
     public class LocalServerTimestampServiceTests : UnitUnderTest
     {

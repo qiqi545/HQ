@@ -17,9 +17,9 @@
 
 using System;
 using System.Collections.Generic;
-using HQ.Extensions.Notifications.Models;
+using HQ.Platform.Api.Notifications.Models;
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Platform.Api.Notifications.Email.Models
 {
 	public class EmailMessage
 	{

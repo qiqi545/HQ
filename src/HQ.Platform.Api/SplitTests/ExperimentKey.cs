@@ -18,7 +18,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public struct ExperimentKey : IComparable<ExperimentKey>
 	{

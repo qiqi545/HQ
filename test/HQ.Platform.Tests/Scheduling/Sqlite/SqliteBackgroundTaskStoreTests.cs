@@ -17,7 +17,7 @@
 
 using Xunit;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.Sqlite
+namespace HQ.Platform.Tests.Scheduling.Sqlite
 {
     public class SqliteBackgroundTaskStoreTests : BackgroundTaskStoreTests, IClassFixture<SchedulingSqliteFixture>
     {

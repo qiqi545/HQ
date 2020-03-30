@@ -18,7 +18,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HQ.Extensions.Notifications.Models
+namespace HQ.Platform.Api.Notifications.Models
 {
 	public interface INotificationProvider<in T>
 	{

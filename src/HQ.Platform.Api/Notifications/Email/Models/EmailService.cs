@@ -17,10 +17,10 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using HQ.Extensions.Notifications.Configuration;
+using HQ.Platform.Api.Notifications.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace HQ.Extensions.Notifications.Email.Models
+namespace HQ.Platform.Api.Notifications.Email.Models
 {
 	internal sealed class EmailService : IEmailService
 	{

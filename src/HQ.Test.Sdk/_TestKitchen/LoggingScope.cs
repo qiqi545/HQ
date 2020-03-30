@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	public abstract class LoggingScope : ILogger
 	{

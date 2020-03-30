@@ -18,10 +18,10 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using ActiveCaching;
-using HQ.Extensions.Caching;
+using HQ.Platform.Api.Caching;
 using Metrics;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
 	{

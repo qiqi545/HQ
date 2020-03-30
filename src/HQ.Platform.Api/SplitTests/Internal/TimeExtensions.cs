@@ -17,7 +17,7 @@
 
 using System;
 
-namespace HQ.Extensions.SplitTests.Internal
+namespace HQ.Platform.Api.SplitTests.Internal
 {
 	internal static class TimeExtensions
 	{

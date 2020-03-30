@@ -24,7 +24,7 @@ using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Extensions.Caching;
+using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Mvc;

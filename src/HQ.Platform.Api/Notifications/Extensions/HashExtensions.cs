@@ -21,7 +21,7 @@ using System.Dynamic;
 using System.Reflection;
 using DotLiquid;
 
-namespace HQ.Extensions.Notifications.Extensions
+namespace HQ.Platform.Api.Notifications.Extensions
 {
 	internal static class HashExtensions
 	{

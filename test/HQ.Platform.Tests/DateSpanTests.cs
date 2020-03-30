@@ -19,7 +19,7 @@ using System;
 using HQ.Common.Dates;
 using HQ.Test.Sdk;
 
-namespace HQ.Platform.Tests.Common.Dates
+namespace HQ.Platform.Tests
 {
     public class DateSpanTests : UnitUnderTest
     {

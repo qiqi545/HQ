@@ -18,10 +18,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
-using HQ.Extensions.SplitTests.Internal;
+using HQ.Platform.Api.SplitTests.Internal;
 using Metrics;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public static class ExperimentExtensions
 	{

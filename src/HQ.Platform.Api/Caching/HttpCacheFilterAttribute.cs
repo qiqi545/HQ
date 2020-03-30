@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
-namespace HQ.Extensions.Caching
+namespace HQ.Platform.Api.Caching
 {
 	public class HttpCacheFilterAttribute : ActionFilterAttribute
 	{

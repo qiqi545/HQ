@@ -3,7 +3,7 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	public class UnitUnderTest : LoggingScope
 	{

@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace TestKitchen
+namespace HQ.Test.Sdk._TestKitchen
 {
 	internal sealed class LogValuesFormatter
 	{

@@ -17,7 +17,7 @@
 
 using HQ.Common.Models;
 
-namespace HQ.Extensions.SplitTests
+namespace HQ.Platform.Api.SplitTests
 {
 	public interface IExperimentStore : IKeyValueStore<ExperimentKey, Experiment>
 	{

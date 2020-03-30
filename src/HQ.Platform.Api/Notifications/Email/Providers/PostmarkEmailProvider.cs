@@ -19,11 +19,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HQ.Extensions.Notifications.Email.Models;
+using HQ.Platform.Api.Notifications.Email.Models;
 using PostmarkDotNet;
 using PostmarkDotNet.Model;
 
-namespace HQ.Extensions.Notifications.Email.Providers
+namespace HQ.Platform.Api.Notifications.Email.Providers
 {
 	public class PostmarkEmailProvider : IEmailProvider
 	{

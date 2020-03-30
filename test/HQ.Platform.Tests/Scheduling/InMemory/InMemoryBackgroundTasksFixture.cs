@@ -18,11 +18,10 @@
 using System;
 using ActiveScheduler;
 using ActiveScheduler.Models;
-using HQ.Platform.Tests.Fixtures;
 using HQ.Test.Sdk;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HQ.Platform.Tests.Extensions.Scheduling.InMemory
+namespace HQ.Platform.Tests.Scheduling.InMemory
 {
     public class InMemoryBackgroundTasksFixture : IServiceFixture
     {
