@@ -22,7 +22,6 @@ using ActiveAuth.Models;
 using ActiveLogging;
 using ActiveOptions;
 using HQ.Common;
-using HQ.Common.AspNetCore.Mvc;
 using HQ.Platform.Api.Security.Configuration;
 using HQ.Platform.Api.Security.Extensions;
 using Microsoft.AspNetCore.Authorization;
@@ -135,9 +134,6 @@ namespace HQ.Platform.Api.Security
 						builder.SetPreflightMaxAge(TimeSpan.FromSeconds(cors.PreflightMaxAgeSeconds.Value));
 				});
 			});
-
-
-			services.AddMvcCommon();
 		}
 
 		private static void AddHttps(this IServiceCollection services, ISafeLogger logger, SecurityOptions options)

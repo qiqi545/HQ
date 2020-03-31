@@ -18,12 +18,13 @@
 using System;
 using ActiveAuth.Models;
 using ActiveLogging;
+using ActiveOptions.Api;
 using ActiveTenant;
 using ActiveVersion;
+using ActiveOps;
 using HQ.Common;
 using HQ.Platform.Api;
 using HQ.Platform.Api.Correlation;
-using HQ.Platform.Api.Operations;
 using HQ.Platform.Api.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -46,8 +47,7 @@ namespace HQ.Platform.Node
 			app.UseVersioning();
 			app.UseOperationsApi();
 			app.UsePlatformApi();
-			app.UseConfigurationApi();
-			app.UseMetaApi();
+			//app.UseConfigurationApi();
 			app.UseMultiTenancy<IdentityTenant, string>();
 
 			app.UseStaticFiles();

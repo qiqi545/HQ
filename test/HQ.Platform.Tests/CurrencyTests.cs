@@ -17,7 +17,7 @@
 
 using System.Globalization;
 using System.Threading;
-using HQ.Common.Numerics;
+using HQ.Common;
 using HQ.Platform.Tests.Fixtures;
 using Xunit;
 using Xunit.Abstractions;

@@ -1,5 +1,5 @@
 using System;
-using HQ.Common.Dates;
+using HQ.Common;
 using HQ.Test.Sdk;
 using Xunit;
 

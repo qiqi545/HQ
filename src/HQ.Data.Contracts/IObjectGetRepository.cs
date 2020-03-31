@@ -18,6 +18,7 @@
 using System;
 using System.Threading.Tasks;
 using ActiveErrors;
+using ActiveStorage;
 
 namespace HQ.Data.Contracts
 {

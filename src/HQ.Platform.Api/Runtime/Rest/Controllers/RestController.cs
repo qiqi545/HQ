@@ -20,17 +20,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using ActiveCaching;
+using ActiveCaching.Internal;
 using ActiveRoutes;
 using ActiveErrors;
+using ActiveStorage;
+using ActiveText;
+using ActiveText.Enveloping;
 using ActiveVersion;
-using HQ.Common.AspNetCore.MergePatch;
+using HQ.Common.MergePatch;
 using HQ.Data.Contracts;
-using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Mvc;
-using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Extensions;
-using HQ.Platform.Api.Models;
 using HQ.Platform.Api.Runtime.Rest.Attributes;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,7 @@ using Microsoft.Extensions.Options;
 using Error = ActiveErrors.Error;
 using ErrorEvents = HQ.Data.Contracts.ErrorEvents;
 using ErrorStrings = HQ.Data.Contracts.ErrorStrings;
+using ObjectSave = HQ.Data.Contracts.ObjectSave;
 
 namespace HQ.Platform.Api.Runtime.Rest.Controllers
 {
@@ -56,14 +58,11 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 		});
 
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
-		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
 		private readonly IObjectRepository<TObject, TKey> _repository;
 
-		public RestController(IObjectRepository<TObject, TKey> repository, IOptionsMonitor<QueryOptions> queryOptions,
-			IOptionsMonitor<ApiOptions> apiOptions)
+		public RestController(IObjectRepository<TObject, TKey> repository, IOptionsMonitor<ApiOptions> apiOptions)
 		{
 			_repository = repository;
-			_queryOptions = queryOptions;
 			_apiOptions = apiOptions;
 		}
 
@@ -125,8 +124,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 				return Ok();
 			}
 
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, result.Errors,
-				out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue.JsonConversion, result.Errors, out var body);
 			return Ok(body);
 		}
 
@@ -152,13 +150,13 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			{
 				// ReSharper disable once PossibleMultipleEnumeration
 				var slice = await _repository.GetAsync(segment, fields, filter, projection);
-				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue.JsonConversion, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 			else
 			{
 				var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
-				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, slice?.Data, slice?.Errors, out var body);
+				Response.MaybeEnvelope(Request, _apiOptions.CurrentValue.JsonConversion, slice?.Data, slice?.Errors, out var body);
 				return Ok(body);
 			}
 		}
@@ -179,7 +177,7 @@ namespace HQ.Platform.Api.Runtime.Rest.Controllers
 			var @object = await _repository.GetAsync(id, fields);
 			if (@object?.Data == null)
 				return NotFound();
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, @object.Data, @object.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue.JsonConversion, @object.Data, @object.Errors, out var body);
 			return Ok(body);
 		}
 

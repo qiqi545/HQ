@@ -17,7 +17,7 @@
 
 using System;
 using System.Linq;
-using HQ.Common.Dates;
+using HQ.Common;
 using HQ.Test.Sdk;
 
 namespace HQ.Platform.Tests

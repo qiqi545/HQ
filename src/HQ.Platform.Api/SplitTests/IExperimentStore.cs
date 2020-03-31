@@ -15,7 +15,7 @@
 
 #endregion
 
-using HQ.Common.Models;
+using ActiveStorage;
 
 namespace HQ.Platform.Api.SplitTests
 {

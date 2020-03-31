@@ -6,10 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ActiveLogging" Version="1.0.2" />
-    <PackageReference Include="ActiveOptions" Version="1.0.6" />
-    <PackageReference Include="ActiveRoutes" Version="1.0.9" />
-    <PackageReference Include="Metrics" Version="2.0.2" />
+    <PackageReference Include="ActiveLogging" Version="1.0.3" />
+    <PackageReference Include="ActiveOptions" Version="1.0.7" />
+    <PackageReference Include="ActiveRoutes" Version="1.0.11" />
+    <PackageReference Include="Metrics" Version="2.0.3" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.13.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.13.1" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.13.1" />

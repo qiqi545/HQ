@@ -380,7 +380,7 @@ namespace HQ.Data.Contracts.Mvc
 			{
 				if (!@interface.IsGenericType)
 					continue;
-				if (@interface.GetGenericTypeDefinition() != typeof(Common.AspNetCore.Mvc.IDynamicComponentEnabled<>))
+				if (@interface.GetGenericTypeDefinition() != typeof(IDynamicComponentEnabled<>))
 					continue;
 				if (!componentTypes.Contains(@interface.GenericTypeArguments[0]))
 					return false; // requires an installed component that isn't present

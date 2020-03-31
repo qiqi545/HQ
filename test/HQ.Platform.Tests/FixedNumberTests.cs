@@ -1,4 +1,4 @@
-using HQ.Common.Numerics;
+using HQ.Common;
 using HQ.Test.Sdk;
 using Xunit;
 

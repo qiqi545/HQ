@@ -43,9 +43,6 @@ namespace HQ.Common
 		public static class ContextKeys
 		{
 			public const string DynamicViewLocation = nameof(DynamicViewLocation);
-			public const string JsonMultiCase = nameof(JsonMultiCase);
-			public const string JsonTrim = nameof(JsonTrim);
-			public const string JsonPrettyPrint = nameof(JsonPrettyPrint);
 			public const string CacheArgument = nameof(CacheArgument);
 			public const string CacheKeyArgument = nameof(CacheKeyArgument);
 			public const string Tenant = nameof(Tenant);

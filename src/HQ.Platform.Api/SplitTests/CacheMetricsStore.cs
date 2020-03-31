@@ -18,19 +18,25 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using ActiveCaching;
-using HQ.Platform.Api.Caching;
 using Metrics;
+using IMetric = Metrics.IMetric;
+using MetricName = Metrics.MetricName;
 
 namespace HQ.Platform.Api.SplitTests
 {
-	public class CacheMetricsStore : CacheKeyValueStore<MetricName, IMetric>
+	public class CacheMetricsStore : ActiveStorage.IKeyValueStore<MetricName, IMetric>
 	{
 		private static readonly IImmutableDictionary<MetricName, IMetric> NoSample =
 			ImmutableDictionary.Create<MetricName, IMetric>();
 
 		private readonly ICache _cache;
+		private readonly ActiveStorage.IKeyValueStore<MetricName, IMetric> _inner;
 
-		public CacheMetricsStore(ICache cache) : base(cache, Common.Constants.Categories.Metrics) => _cache = cache;
+		public CacheMetricsStore(ICache cache)
+		{
+			_inner = new CacheKeyValueStore<MetricName, IMetric>(cache, Common.Constants.Categories.Metrics);
+			_cache = cache;
+		}
 
 		public IImmutableDictionary<MetricName, IMetric> GetSample(MetricType excludeTypes = MetricType.None)
 		{
@@ -58,5 +64,31 @@ namespace HQ.Platform.Api.SplitTests
 
 			return filtered.ToImmutableDictionary();
 		}
+
+		#region Implementation of IKeyValueStore<in MetricName,IMetric>
+
+		public IMetric GetOrAdd(MetricName key, IMetric value)
+		{
+			return _inner.GetOrAdd(key, value);
+		}
+
+		public bool TryGetValue(MetricName key, out IMetric value)
+		{
+			return _inner.TryGetValue(key, out value);
+		}
+
+		public bool Contains(MetricName key)
+		{
+			return _inner.Contains(key);
+		}
+
+		public void AddOrUpdate<T>(MetricName key, T value) where T : IMetric
+		{
+			_inner.AddOrUpdate(key, value);
+		}
+
+		public IMetric this[MetricName key] => _inner[key];
+
+		#endregion
 	}
 }

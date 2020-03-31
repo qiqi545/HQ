@@ -16,7 +16,6 @@
 #endregion
 
 using ActiveRoutes;
-using HQ.Common;
 
 namespace HQ.Platform.Api.Configuration
 {
@@ -27,7 +26,9 @@ namespace HQ.Platform.Api.Configuration
 
 		public string[] AllowedMethodOverrides { get; set; } =
 		{
-			Microsoft.AspNetCore.Http.HttpMethods.Delete, Microsoft.AspNetCore.Http.HttpMethods.Head, Microsoft.AspNetCore.Http.HttpMethods.Put
+			HttpMethods.Delete, 
+			HttpMethods.Head, 
+			HttpMethods.Put
 		};
 	}
 }

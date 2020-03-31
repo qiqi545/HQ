@@ -15,6 +15,8 @@
 
 #endregion
 
+using ActiveText.Configuration;
+
 namespace HQ.Platform.Api.Configuration
 {
 	public class ApiOptions

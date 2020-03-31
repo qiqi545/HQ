@@ -19,13 +19,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ActiveCaching;
+using ActiveCaching.Internal;
 using ActiveErrors;
 using ActiveRoutes;
 using ActiveRoutes.Meta;
 using ActiveVersion;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Runtime;
-using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +43,7 @@ namespace HQ.Platform.Api.Runtime
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to API resources over HTTP.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class RuntimeController : Controller, Common.AspNetCore.Mvc.IDynamicComponentEnabled<RuntimeComponent>
+	public class RuntimeController : Controller, IDynamicComponentEnabled<RuntimeComponent>
 	{
 		private readonly IObjectGetRepository<long> _repository;
 

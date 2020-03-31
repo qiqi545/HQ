@@ -16,7 +16,7 @@
 #endregion
 
 using System;
-using HQ.Common.Dates;
+using HQ.Common;
 using HQ.Test.Sdk;
 
 namespace HQ.Platform.Tests

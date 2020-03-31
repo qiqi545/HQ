@@ -17,6 +17,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using ActiveCaching;
 
 namespace HQ.Data.Contracts
 {
@@ -25,6 +26,8 @@ namespace HQ.Data.Contracts
 	public interface IObject<TKey> where TKey : IEquatable<TKey>
 	{
 		[Key] TKey Id { get; set; }
+
+		[CacheTimestamp]
 		DateTimeOffset CreatedAt { get; set; }
 		DateTimeOffset? DeletedAt { get; set; }
 	}

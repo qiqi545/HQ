@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ActiveErrors;
+using ActiveStorage;
 using Dapper;
 using HQ.Data.Contracts;
 using HQ.Data.Contracts.Configuration;

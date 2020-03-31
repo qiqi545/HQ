@@ -22,6 +22,7 @@ using ActiveAuth;
 using ActiveAuth.Api;
 using ActiveAuth.Models;
 using ActiveLogging;
+using ActiveOps;
 using ActiveOptions;
 using ActiveOptions.Api;
 using ActiveRoutes.Meta;
@@ -53,7 +54,6 @@ using HQ.Platform.Api.Configuration;
 using HQ.Platform.Api.Correlation;
 using HQ.Platform.Api.Deployment;
 using HQ.Platform.Api.Notifications;
-using HQ.Platform.Api.Operations;
 using HQ.Platform.Api.Runtime.GraphQl;
 using HQ.Platform.Api.Runtime.Rest;
 using HQ.Platform.Api.Security;
@@ -145,31 +145,20 @@ namespace HQ.Platform.Node
 			{
 				case nameof(DocumentDb):
 					tasksBuilder.AddDocumentDbBackgroundTaskStore(backend.GetConnectionString("Tasks"));
-					identityBuilder
-						.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-							IdentityApplication>(backend.GetConnectionString("Identity"));
-					runtimeBuilder.AddDocumentDbRuntimeStores(backend.GetConnectionString("Runtime"),
-						ConnectionScope.ByRequest, dbConfig);
+					identityBuilder.AddDocumentDbIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"));
+					runtimeBuilder.AddDocumentDbRuntimeStores(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddDocumentDbSchemaStores(backend.GetConnectionString("Schema"));
 					break;
 				case nameof(SqlServer):
-					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"), ActiveConnection.ConnectionScope.ByRequest);
-					identityBuilder
-						.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
-							dbConfig);
-					runtimeBuilder.AddSqlServerRuntime(backend.GetConnectionString("Runtime"),
-						ConnectionScope.ByRequest, dbConfig);
+					tasksBuilder.AddSqlServerBackgroundTasksStore(backend.GetConnectionString("Tasks"), r => r.GetRequiredService<IServerTimestampService>().GetCurrentTime());
+					identityBuilder.AddSqlServerIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqlServerRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddSqlServerSchemaStores();
 					break;
 				case nameof(Sqlite):
 					tasksBuilder.AddSqliteBackgroundTasksStore(backend.GetConnectionString("Tasks"));
-					identityBuilder
-						.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant,
-							IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest,
-							dbConfig);
-					runtimeBuilder.AddSqliteRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest,
-						dbConfig);
+					identityBuilder.AddSqliteIdentityStore<IdentityUserExtended, IdentityRoleExtended, IdentityTenant, IdentityApplication>(backend.GetConnectionString("Identity"), ConnectionScope.ByRequest, dbConfig);
+					runtimeBuilder.AddSqliteRuntime(backend.GetConnectionString("Runtime"), ConnectionScope.ByRequest, dbConfig);
 					schemaBuilder.AddSqliteSchemaStores();
 					break;
 				default:

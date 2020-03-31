@@ -20,10 +20,39 @@ using HQ.Platform.Api.Caching;
 
 namespace HQ.Platform.Api.SplitTests
 {
-	public class CacheExperimentStore : CacheKeyValueStore<ExperimentKey, Experiment>, IExperimentStore
+	public class CacheExperimentStore : IExperimentStore
 	{
-		public CacheExperimentStore(ICache cache, string keyGroup = null) : base(cache, keyGroup)
+		private readonly CacheKeyValueStore<ExperimentKey, Experiment> _inner;
+
+		public CacheExperimentStore(ICache cache, string keyGroup = null)
 		{
+			_inner = new CacheKeyValueStore<ExperimentKey, Experiment>(cache, keyGroup);
 		}
+
+		#region Implementation of IKeyValueStore<in ExperimentKey,Experiment>
+
+		public Experiment GetOrAdd(ExperimentKey key, Experiment value)
+		{
+			return _inner.GetOrAdd(key, value);
+		}
+
+		public bool TryGetValue(ExperimentKey key, out Experiment value)
+		{
+			return _inner.TryGetValue(key, out value);
+		}
+
+		public bool Contains(ExperimentKey key)
+		{
+			return _inner.Contains(key);
+		}
+
+		public void AddOrUpdate<T>(ExperimentKey key, T value) where T : Experiment
+		{
+			_inner.AddOrUpdate(key, value);
+		}
+
+		public Experiment this[ExperimentKey key] => _inner[key];
+
+		#endregion
 	}
 }

@@ -15,21 +15,22 @@
 
 #endregion
 
-using System.Linq;
 using System.Threading.Tasks;
+using ActiveCaching;
+using ActiveCaching.Internal;
 using ActiveErrors;
 using ActiveRoutes;
 using ActiveRoutes.Meta;
-using HQ.Data.Contracts;
+using ActiveStorage;
+using ActiveText;
 using HQ.Data.Contracts.Configuration;
 using HQ.Data.Contracts.Schema.Configuration;
 using HQ.Data.Contracts.Schema.Models;
-using HQ.Platform.Api.Caching;
 using HQ.Platform.Api.Configuration;
-using HQ.Platform.Api.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using TypeKitchen;
 
 namespace HQ.Platform.Api.Schemas
 {
@@ -39,7 +40,7 @@ namespace HQ.Platform.Api.Schemas
 	[ApiExplorerSettings(IgnoreApi = false)]
 	[MetaCategory("Objects", "Provides programmatic access to weak-typed object schemas.")]
 	[ServiceFilter(typeof(HttpCacheFilterAttribute))]
-	public class SchemaController : Controller, Common.AspNetCore.Mvc.IDynamicComponentEnabled<SchemaComponent>
+	public class SchemaController : Controller, IDynamicComponentEnabled<SchemaComponent>
 	{
 		private readonly IOptionsMonitor<ApiOptions> _apiOptions;
 		private readonly IOptionsMonitor<QueryOptions> _queryOptions;
@@ -56,13 +57,11 @@ namespace HQ.Platform.Api.Schemas
 		[DynamicHttpGet("{applicationId}")]
 		public async Task<IActionResult> GetSchemas([FromRoute] [BindRequired] string applicationId)
 		{
-			//var slice = await _repository.GetAsync(query, sort, page, fields, filter, projection);
-			var data = await _store.GetByApplicationId(applicationId);
-			var count = data.Count();
+			var data = (await _store.GetByApplicationId(applicationId)).AsList();
+			var count = data.Count;
 			var page = new Page<SchemaVersion>(data, count, 0, count, count);
 			var slice = new Operation<IPage<SchemaVersion>>(page);
-			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue, _queryOptions.CurrentValue, slice.Data,
-				slice.Errors, out var body);
+			Response.MaybeEnvelope(Request, _apiOptions.CurrentValue.JsonConversion, slice.Data, slice.Errors, out var body);
 			return Ok(body);
 		}
 	}
